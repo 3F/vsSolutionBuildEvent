@@ -46,17 +46,19 @@ namespace reg.ext.vsSolutionBuildEvent
     [ProvideAutoLoad(UIContextGuids80.SolutionExists)]
     public sealed class vsSolutionBuildEventPackage : Package, IVsSolutionEvents, IVsUpdateSolutionEvents
     {
+        public const string PANE_ITEM                       = "Solution BuildEvents";
+
         private DTE2 _dte                                   = null;
         private IVsSolution _solution                       = null;
         private IVsSolutionBuildManager _solBuildManager    = null;
         private uint _cookieSEvents;
         private uint _cookieUpdateSEvents;
 
-        MenuCommand _menuItem       = null;
-        EventsFrm _configFrm        = null;
+        MenuCommand _menuItem                               = null;
+        EventsFrm _configFrm                                = null;
 
-        private string _configFname = ".xprojvsbe";
-        private string _configPath  = "";
+        private const string _configFname                   = ".xprojvsbe";
+        private string _configPath                          = "";
         private string _config
         {
             get { return _configPath + _configFname; }
@@ -80,14 +82,42 @@ namespace reg.ext.vsSolutionBuildEvent
             _configFrm.Show();
         }
 
+        public OutputWindowPane Pane
+        {
+            get
+            {
+                try
+                {
+                    return _dte.ToolWindows.OutputWindow.OutputWindowPanes.Item(PANE_ITEM);
+                }
+                catch { }
+                return _dte.ToolWindows.OutputWindow.OutputWindowPanes.Add(PANE_ITEM);
+            }
+        }
+
         int IVsSolutionEvents.OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
         {
             _configPath = Path.GetDirectoryName(_dte.Solution.FullName) + "\\";
 
             Config.load(_config);
+            _info();
 
             _menuItem.Visible = true;
             return VSConstants.S_OK;
+        }
+
+        //TODO:
+        private void _info()
+        {
+            Pane.Clear();
+            string stat = string.Format(
+                CultureInfo.CurrentCulture,
+                "loaded settings: {6}\n\nReady:\n\t* [Pre-Build][{0}]: {1}\n\t* [Post-Build][{2}]: {3}\n\t* [Cancel-Build][{4}]: {5}\n---\n",
+                Config.data.preBuild.enabled.ToString(), Config.data.preBuild.caption,
+                Config.data.postBuild.enabled.ToString(), Config.data.postBuild.caption,
+                Config.data.cancelBuild.enabled.ToString(), Config.data.cancelBuild.caption, _configPath);
+
+            Pane.OutputString(stat);
         }
 
         int IVsSolutionEvents.OnAfterCloseSolution(object pUnkReserved)
@@ -99,20 +129,40 @@ namespace reg.ext.vsSolutionBuildEvent
 
         int IVsUpdateSolutionEvents.UpdateSolution_Begin(ref int pfCancelUpdate)
         {
-
-            Command.basic(Config.data.preBuild, _configPath);
+            try
+            {
+                Command.basic(Config.data.preBuild, _configPath);
+            }
+            catch (Exception e)
+            {
+                Pane.OutputString("Pre-Build error: " + e.Message + Environment.NewLine);
+            }
             return VSConstants.S_OK;
         }
 
         int IVsUpdateSolutionEvents.UpdateSolution_Cancel()
         {
-            Command.basic(Config.data.cancelBuild, _configPath);
+            try
+            {
+                Command.basic(Config.data.cancelBuild, _configPath);
+            }
+            catch (Exception e)
+            {
+                Pane.OutputString("Cancel-Build error: " + e.Message + Environment.NewLine);
+            }
             return VSConstants.S_OK;
         }
 
         int IVsUpdateSolutionEvents.UpdateSolution_Done(int fSucceeded, int fModified, int fCancelCommand)
         {
-            Command.basic(Config.data.postBuild, _configPath);
+            try
+            {
+                Command.basic(Config.data.postBuild, _configPath);
+            }
+            catch (Exception e)
+            {
+                Pane.OutputString("Post-Build error: " + e.Message + Environment.NewLine);
+            }
             return VSConstants.S_OK;
         }
 

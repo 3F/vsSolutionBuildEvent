@@ -45,15 +45,19 @@ namespace reg.ext.vsSolutionBuildEvent
                 return;
             }
 
-            ProcessStartInfo cmd = new ProcessStartInfo("cmd.exe");
+            ProcessStartInfo psi = new ProcessStartInfo("cmd.exe");
             if (isHidden)
             {
-                cmd.WindowStyle = ProcessWindowStyle.Hidden;
+                psi.WindowStyle = ProcessWindowStyle.Hidden;
             }
 
-            //TODO: capture message...
-            cmd.Arguments = @"/C cd " + context + " & " + _letDisk(context) + ": & " + evt.command;
-            Process.Start(cmd);
+            //TODO: [optional] capture message...
+
+            psi.Arguments = @"/C cd " + context + " & " + _letDisk(context) + ": & " + evt.command.Trim();
+            Process process = new Process();
+            process.StartInfo = psi;
+            process.Start();
+            process.WaitForExit(); //TODO: !replace it on handling build
         }
 
         private static string _letDisk(string path)
