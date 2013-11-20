@@ -56,7 +56,7 @@
         <CommandFlag>DynamicVisibility</CommandFlag>
         <Strings>
           <CommandName>cmdSolutionBuildEvent</CommandName>
-          <ButtonText>BuildEvent's Solution</ButtonText>
+          <ButtonText>Events Solution</ButtonText>
         </Strings>
       </Button>
 

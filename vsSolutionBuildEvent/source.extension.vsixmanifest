@@ -3,8 +3,12 @@
     <Identifier Id="94ecd13f-15f3-4f51-9afd-17f0275c6266">
         <Name>vsSolutionBuildEvent</Name>
         <Author>reg [entry.reg@gmail.com]</Author>
-        <Version>0.1</Version>
-        <Description xml:space="preserve">Solution Build Event's
+        <Version>0.1.2</Version>
+        <Description xml:space="preserve">Solution Build-Events
+
+This extension for additional event handling to all subprojects at once in solution. This feature is not provided by default for solution
+
+Sources: bitbucket.org/3F
 
 License: MIT</Description>
         <Locale>1033</Locale>
@@ -14,10 +18,35 @@ License: MIT</Description>
         <InstalledByMsi>false</InstalledByMsi>
         <SupportedProducts>
             <VisualStudio Version="10.0">
+                <Edition>Ultimate</Edition>
+                <Edition>Premium</Edition>
                 <Edition>Pro</Edition>
+                <Edition>IntegratedShell</Edition>
+            </VisualStudio>
+            <VisualStudio Version="11.0">
+                <Edition>Ultimate</Edition>
+                <Edition>Premium</Edition>
+                <Edition>Pro</Edition>
+                <Edition>IntegratedShell</Edition>
+                <Edition>VWDExpress</Edition>
+                <Edition>VPDExpress</Edition>
+                <Edition>VSWinExpress</Edition>
+                <Edition>VSWinDesktopExpress</Edition>
+                <Edition>VSLS</Edition>
+            </VisualStudio>
+            <VisualStudio Version="12.0">
+                <Edition>Ultimate</Edition>
+                <Edition>Premium</Edition>
+                <Edition>Pro</Edition>
+                <Edition>IntegratedShell</Edition>
+                <Edition>VWDExpress</Edition>
+                <Edition>VPDExpress</Edition>
+                <Edition>VSWinExpress</Edition>
+                <Edition>VSWinDesktopExpress</Edition>
+                <Edition>VSLS</Edition>
             </VisualStudio>
         </SupportedProducts>
-        <SupportedFrameworkRuntimeEdition MinVersion="4.0" MaxVersion="4.0" />
+        <SupportedFrameworkRuntimeEdition MinVersion="4.0" />
     </Identifier>
     <References>
         <Reference Id="Microsoft.VisualStudio.MPF" MinVersion="10.0">
