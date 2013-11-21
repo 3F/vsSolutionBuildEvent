@@ -39,25 +39,19 @@ namespace reg.ext.vsSolutionBuildEvent
 
         public static void load(string path)
         {
-            _path               = path;
-            FileStream stream   = null;
+            _path = path;
             try
             {
-                XmlSerializer xml   = new XmlSerializer(typeof(SolutionEvents));
-                stream              = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-                data                = (SolutionEvents)xml.Deserialize(stream);
+                using(FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    XmlSerializer xml   = new XmlSerializer(typeof(SolutionEvents));
+                    data                = (SolutionEvents)xml.Deserialize(stream);
+                }
             }
             catch (Exception)
             {
                 //Debug.Assert(false);
                 data = new SolutionEvents();
-            }
-            finally
-            {
-                if (stream != null)
-                {
-                    stream.Close();
-                }
             }
         }
 
@@ -72,31 +66,32 @@ namespace reg.ext.vsSolutionBuildEvent
 
         public static void save()
         {
-            TextWriter stream = null;
             try
             {
-                if (data == null)
+                using(TextWriter stream = new StreamWriter(_path))
                 {
-                    data = new SolutionEvents();
+                    if(data == null){
+                        data = new SolutionEvents();
+                    }
+                    XmlSerializer xml = new XmlSerializer(typeof(SolutionEvents));
+                    xml.Serialize(stream, data);
                 }
-                XmlSerializer xml   = new XmlSerializer(typeof(SolutionEvents));
-                stream              = new StreamWriter(_path);
-
-                xml.Serialize(stream, data);
             }
             catch (Exception e)
             {
                 MessageBox.Show("Failed save settings:\n" + e.Message, "Solution BuildEvent", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-            finally
-            {
-                if (stream != null)
-                {
-                    stream.Close();
-                }
-            }
         }
 
-        private Config(){}
+        public static string getWorkPath()
+        {
+            int pos = _path.Replace('\\', '/').LastIndexOf('/');
+            if(pos < 0){
+                return "";
+            }
+            return _path.Substring(0, pos);
+        }
+
+        protected Config(){}
     }
 }

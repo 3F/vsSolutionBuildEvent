@@ -51,11 +51,17 @@ namespace reg.ext.vsSolutionBuildEvent
 
         private void _saveData()
         {
-            Event evt   = _solutionEvents[comboBoxEvents.SelectedIndex];
-            evt.enabled = checkBoxStatus.Checked;
-            evt.command = textBoxCommand.Text;
-            evt.caption = textBoxCaption.Text;
-
+            Event evt           = _solutionEvents[comboBoxEvents.SelectedIndex];
+            evt.enabled         = checkBoxStatus.Checked;
+            evt.command         = textBoxCommand.Text;
+            evt.caption         = textBoxCaption.Text;
+            evt.interpreter     = comboBoxInterpreter.Text;
+            evt.processHide     = checkBoxProcessHide.Checked;
+            evt.waitForExit     = checkBoxWaitForExit.Checked;
+            evt.processKeep     = checkBoxProcessKeep.Checked;
+            evt.newline         = comboBoxNewline.Text.Trim();
+            evt.wrapper         = comboBoxWrapper.Text.Trim();
+            evt.modeScript      = radioModeScript.Checked;
             Config.save();
         }
 
@@ -85,7 +91,7 @@ namespace reg.ext.vsSolutionBuildEvent
         private void btnExample_Click(object sender, EventArgs e)
         {
             MessageBox.Show(
-                "see on: bitbucket.org/3F \n https://bitbucket.org/3F/vssolutionbuildevent\n\nentry.reg@gmail.com",
+                "examples of how to use it, see on: bitbucket.org/3F \n\n\t\t\tentry.reg@gmail.com",
                 this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -107,7 +113,13 @@ namespace reg.ext.vsSolutionBuildEvent
 
         private void checkBoxStatus_CheckedChanged(object sender, EventArgs e)
         {
-            checkBoxStatus.Text = checkBoxStatus.Checked ? _checkedStatus[1] : _checkedStatus[0];
+            toolTip.SetToolTip(checkBoxStatus, checkBoxStatus.Checked ? _checkedStatus[1] : _checkedStatus[0]);
+            if(checkBoxStatus.Checked) {
+                this.textBoxCommand.BackColor = System.Drawing.Color.FromArgb(242, 250, 241);
+            }
+            else{
+                this.textBoxCommand.BackColor = System.Drawing.Color.FromArgb(248, 243, 243);
+            }
         }
 
         private void _notice(bool isOn)
@@ -122,10 +134,42 @@ namespace reg.ext.vsSolutionBuildEvent
 
         private void _renderData()
         {
-            Event evt               = _solutionEvents[comboBoxEvents.SelectedIndex];
-            checkBoxStatus.Checked  = evt.enabled;
-            textBoxCommand.Text     = evt.command;
-            textBoxCaption.Text     = evt.caption;
+            Event evt                       = _solutionEvents[comboBoxEvents.SelectedIndex];
+            checkBoxStatus.Checked          = evt.enabled;
+            textBoxCommand.Text             = evt.command.Replace("\n", "\r\n");
+            textBoxCaption.Text             = evt.caption;
+            comboBoxInterpreter.Text        = evt.interpreter;
+            checkBoxProcessHide.Checked     = evt.processHide;
+            checkBoxWaitForExit.Checked     = evt.waitForExit;
+            checkBoxProcessKeep.Checked     = evt.processKeep;
+            comboBoxNewline.Text            = evt.newline;
+            comboBoxWrapper.Text            = evt.wrapper;
+
+            if(evt.modeScript) {
+                radioModeScript.Checked = true; 
+            }
+            else{
+                radioModeFiles.Checked = true;
+            }
+        }
+
+        private void radioModeScript_CheckedChanged(object sender, EventArgs e)
+        {
+            labelToInterpreterMode.Visible = true;
+            labelToFilesMode.Visible = false;
+            groupBoxMode.Enabled = true;
+        }
+
+        private void radioModeFiles_CheckedChanged(object sender, EventArgs e)
+        {
+            labelToInterpreterMode.Visible = false;
+            labelToFilesMode.Visible = true;
+            groupBoxMode.Enabled = false;
+        }
+
+        private void checkBoxProcessHide_CheckedChanged(object sender, EventArgs e)
+        {
+            checkBoxProcessKeep.Enabled = !checkBoxProcessHide.Checked;
         }
     }
 }

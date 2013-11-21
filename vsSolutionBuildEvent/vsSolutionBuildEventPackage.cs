@@ -46,16 +46,15 @@ namespace reg.ext.vsSolutionBuildEvent
     [ProvideAutoLoad(UIContextGuids80.SolutionExists)]
     public sealed class vsSolutionBuildEventPackage : Package, IVsSolutionEvents, IVsUpdateSolutionEvents
     {
-        public const string PANE_ITEM                       = "Solution BuildEvents";
+        public const string PANE_ITEM                       = "Solution Build-Events";
 
         private DTE2 _dte                                   = null;
         private IVsSolution _solution                       = null;
         private IVsSolutionBuildManager _solBuildManager    = null;
+        private MenuCommand _menuItem                       = null;
+        private EventsFrm _configFrm                        = null;
         private uint _cookieSEvents;
         private uint _cookieUpdateSEvents;
-
-        MenuCommand _menuItem                               = null;
-        EventsFrm _configFrm                                = null;
 
         private const string _configFname                   = ".xprojvsbe";
         private string _configPath                          = "";
@@ -131,7 +130,9 @@ namespace reg.ext.vsSolutionBuildEvent
         {
             try
             {
-                Command.basic(Config.data.preBuild, _configPath);
+                if((new SBECommand()).basic(Config.data.preBuild)){
+                    Pane.OutputString("[Pre] finished SBE: " + Config.data.preBuild.caption + Environment.NewLine);
+                }
             }
             catch (Exception e)
             {
@@ -144,7 +145,9 @@ namespace reg.ext.vsSolutionBuildEvent
         {
             try
             {
-                Command.basic(Config.data.cancelBuild, _configPath);
+                if((new SBECommand()).basic(Config.data.cancelBuild)){
+                    Pane.OutputString("[Cancel] finished SBE: " + Config.data.cancelBuild.caption + Environment.NewLine);
+                }
             }
             catch (Exception e)
             {
@@ -157,7 +160,9 @@ namespace reg.ext.vsSolutionBuildEvent
         {
             try
             {
-                Command.basic(Config.data.postBuild, _configPath);
+                if((new SBECommand()).basic(Config.data.postBuild)){
+                    Pane.OutputString("[Post] finished SBE: " + Config.data.postBuild.caption + Environment.NewLine);
+                }
             }
             catch (Exception e)
             {
