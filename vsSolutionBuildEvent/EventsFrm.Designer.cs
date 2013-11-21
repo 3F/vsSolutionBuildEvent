@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.comboBoxEvents = new System.Windows.Forms.ComboBox();
-            this.textBoxCommand = new System.Windows.Forms.TextBox();
             this.checkBoxStatus = new System.Windows.Forms.CheckBox();
             this.btnApply = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
@@ -52,8 +51,11 @@
             this.checkBoxProcessKeep = new System.Windows.Forms.CheckBox();
             this.labelToFilesMode = new System.Windows.Forms.Label();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.panelCommand = new System.Windows.Forms.Panel();
+            this.textBoxCommand = new System.Windows.Forms.RichTextBox();
             this.groupBoxSettings.SuspendLayout();
             this.groupBoxMode.SuspendLayout();
+            this.panelCommand.SuspendLayout();
             this.SuspendLayout();
             // 
             // comboBoxEvents
@@ -66,20 +68,6 @@
             this.comboBoxEvents.Size = new System.Drawing.Size(425, 21);
             this.comboBoxEvents.TabIndex = 1;
             this.comboBoxEvents.SelectedIndexChanged += new System.EventHandler(this.comboBoxEvents_SelectedIndexChanged);
-            // 
-            // textBoxCommand
-            // 
-            this.textBoxCommand.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxCommand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(243)))), ((int)(((byte)(243)))));
-            this.textBoxCommand.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxCommand.Location = new System.Drawing.Point(3, 222);
-            this.textBoxCommand.Multiline = true;
-            this.textBoxCommand.Name = "textBoxCommand";
-            this.textBoxCommand.Size = new System.Drawing.Size(419, 125);
-            this.textBoxCommand.TabIndex = 3;
-            this.textBoxCommand.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCommand_KeyPress);
             // 
             // checkBoxStatus
             // 
@@ -156,6 +144,7 @@
             this.labelToInterpreterMode.Size = new System.Drawing.Size(85, 13);
             this.labelToInterpreterMode.TabIndex = 9;
             this.labelToInterpreterMode.Text = "Command script:";
+            this.toolTip.SetToolTip(this.labelToInterpreterMode, "Do not use a single-line comment");
             // 
             // checkBoxWaitForExit
             // 
@@ -321,11 +310,37 @@
             this.labelToFilesMode.Text = "Files to execute (separated by enter key):";
             this.labelToFilesMode.Visible = false;
             // 
+            // panelCommand
+            // 
+            this.panelCommand.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelCommand.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelCommand.Controls.Add(this.textBoxCommand);
+            this.panelCommand.Location = new System.Drawing.Point(3, 219);
+            this.panelCommand.Name = "panelCommand";
+            this.panelCommand.Size = new System.Drawing.Size(419, 131);
+            this.panelCommand.TabIndex = 16;
+            // 
+            // textBoxCommand
+            // 
+            this.textBoxCommand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(243)))), ((int)(((byte)(243)))));
+            this.textBoxCommand.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBoxCommand.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxCommand.Location = new System.Drawing.Point(0, 0);
+            this.textBoxCommand.Name = "textBoxCommand";
+            this.textBoxCommand.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            this.textBoxCommand.Size = new System.Drawing.Size(417, 129);
+            this.textBoxCommand.TabIndex = 4;
+            this.textBoxCommand.Text = "";
+            this.textBoxCommand.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCaption_KeyPress);
+            // 
             // EventsFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(425, 422);
+            this.Controls.Add(this.panelCommand);
             this.Controls.Add(this.groupBoxSettings);
             this.Controls.Add(this.labelToInterpreterMode);
             this.Controls.Add(this.labelCaption);
@@ -334,7 +349,6 @@
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.btnApply);
             this.Controls.Add(this.checkBoxStatus);
-            this.Controls.Add(this.textBoxCommand);
             this.Controls.Add(this.comboBoxEvents);
             this.Controls.Add(this.labelToFilesMode);
             this.MinimizeBox = false;
@@ -347,6 +361,7 @@
             this.groupBoxSettings.PerformLayout();
             this.groupBoxMode.ResumeLayout(false);
             this.groupBoxMode.PerformLayout();
+            this.panelCommand.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -355,7 +370,6 @@
         #endregion
 
         private System.Windows.Forms.ComboBox comboBoxEvents;
-        private System.Windows.Forms.TextBox textBoxCommand;
         private System.Windows.Forms.CheckBox checkBoxStatus;
         private System.Windows.Forms.Button btnApply;
         private System.Windows.Forms.Button btnClear;
@@ -377,5 +391,7 @@
         private System.Windows.Forms.ComboBox comboBoxWrapper;
         private System.Windows.Forms.Label labelWrapper;
         private System.Windows.Forms.ToolTip toolTip;
+        private System.Windows.Forms.Panel panelCommand;
+        private System.Windows.Forms.RichTextBox textBoxCommand;
     }
 }
