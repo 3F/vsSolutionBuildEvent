@@ -109,7 +109,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Command.cs" />
+    <Compile Include="SBECommand.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="EventsFrm.cs">
       <SubType>Form</SubType>
@@ -118,36 +118,29 @@
       <DependentUpon>EventsFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="Guids.cs" />
-    <Compile Include="Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="ISolutionEvent.cs" />
+    <Compile Include="SBEEvent.cs" />
+    <Compile Include="SBESettings.cs" />
     <Compile Include="SolutionEvents.cs" />
     <Compile Include="vsSolutionBuildEventPackage.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PkgCmdID.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="EventsFrm.resx">
       <DependentUpon>EventsFrm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="VSPackage.resx">
       <MergeWithCTO>true</MergeWithCTO>
       <ManifestResourceName>VSPackage</ManifestResourceName>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="screen1.png">
+    <Content Include="preview.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -165,10 +158,10 @@
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Images_32bit.bmp" />
+    <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\Package.ico" />
+    <Folder Include="Properties\" />
   </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>

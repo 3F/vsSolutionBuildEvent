@@ -1,9 +1,8 @@
 ﻿/*
  * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
- * 
- * Distributed under the MIT license
- * (see accompanying file LICENSE or a copy at http://opensource.org/licenses/MIT)
-*/
+ * Distributed under the Boost Software License, Version 1.0
+ * (See accompanying file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
+ */
 
 using System;
 using System.Diagnostics;
@@ -21,30 +20,52 @@ using EnvDTE;
 
 namespace reg.ext.vsSolutionBuildEvent
 {
+    // Managed Package Registration
     [PackageRegistration(UseManagedResourcesOnly = true)]
+
+    // To register the informations needed to in the Help/About dialog of Visual Studio
     [InstalledProductRegistration("#110", "#112", "0.2.2", IconResourceID = 400)]
+
     // This attribute is needed to let the shell know that this package exposes some menus.
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    [Guid(GuidList.guidvsSolutionBuildEventPkgString)]
+
+    //  To be automatically loaded when a specified UI context is active
     [ProvideAutoLoad(UIContextGuids80.SolutionExists)]
+
+    // Package Guid
+    [Guid(GuidList.guidvsSolutionBuildEventPkgString)]
+
     public sealed class vsSolutionBuildEventPackage : Package, IVsSolutionEvents, IVsUpdateSolutionEvents
     {
-        public const string PANE_ITEM                       = "Solution Build-Events";
-
+        /// <summary>
+        /// this object for a top-level functionality
+        /// </summary>
         private DTE2 _dte                                   = null;
+        /// <summary>
+        /// for register events -> _cookieSEvents
+        /// </summary>
         private IVsSolution _solution                       = null;
-        private IVsSolutionBuildManager _solBuildManager    = null;
-        private MenuCommand _menuItem                       = null;
-        private EventsFrm _configFrm                        = null;
         private uint _cookieSEvents;
+
+        /// <summary>
+        /// for register events -> _cookieUpdateSEvents
+        /// </summary>
+        private IVsSolutionBuildManager _solBuildManager    = null;
         private uint _cookieUpdateSEvents;
 
-        private const string _configFname                   = ".xprojvsbe";
-        private string _configPath                          = "";
-        private string _config
-        {
-            get { return _configPath + _configFname; }
-        }
+        /// <summary>
+        /// commands with menu of VS - Build/
+        /// </summary>
+        private MenuCommand _menuItem                       = null;
+        
+        /// <summary>
+        /// main form of settings
+        /// </summary>
+        private EventsFrm _configFrm                        = null;
+
+
+        //TODO
+        public const string PANE_ITEM                       = "Solution Build-Events";
 
         public vsSolutionBuildEventPackage()
         {
@@ -52,7 +73,7 @@ namespace reg.ext.vsSolutionBuildEvent
         }
 
         /// <summary>
-        /// execute a command when the a menu item is clicked
+        /// execute a command when the a menu item (Build/<pack>) is clicked
         /// </summary>
         private void MenuItemCallback(object sender, EventArgs e)
         {
@@ -64,6 +85,7 @@ namespace reg.ext.vsSolutionBuildEvent
             _configFrm.Show();
         }
 
+        //TODO:
         public OutputWindowPane Pane
         {
             get
@@ -79,9 +101,7 @@ namespace reg.ext.vsSolutionBuildEvent
 
         int IVsSolutionEvents.OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
         {
-            _configPath = Path.GetDirectoryName(_dte.Solution.FullName) + "\\";
-
-            Config.load(_config);
+            Config.load(Path.GetDirectoryName(_dte.Solution.FullName) + "\\");
             _info();
 
             _menuItem.Visible = true;
@@ -97,7 +117,7 @@ namespace reg.ext.vsSolutionBuildEvent
                 "loaded settings: {6}\n\nReady:\n\t* [Pre-Build][{0}]: {1}\n\t* [Post-Build][{2}]: {3}\n\t* [Cancel-Build][{4}]: {5}\n---\n",
                 Config.data.preBuild.enabled.ToString(), Config.data.preBuild.caption,
                 Config.data.postBuild.enabled.ToString(), Config.data.postBuild.caption,
-                Config.data.cancelBuild.enabled.ToString(), Config.data.cancelBuild.caption, _configPath);
+                Config.data.cancelBuild.enabled.ToString(), Config.data.cancelBuild.caption, Config.getWorkPath());
 
             Pane.OutputString(stat);
         }

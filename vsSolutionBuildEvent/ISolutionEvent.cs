@@ -30,85 +30,59 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Xml.Serialization;
-using System.IO;
 
 namespace reg.ext.vsSolutionBuildEvent
 {
-    class Config
+    interface ISolutionEvent
     {
         /// <summary>
-        /// data format
+        /// execution of shell command
         /// </summary>
-        public static SolutionEvents data = null;
+        string command { get; set; }
 
         /// <summary>
-        /// configuration file in the file system
+        /// output information to "Output" window or something else...
         /// </summary>
-        private const string _name = ".xprojvsbe";
+        string caption { get; set; }
 
         /// <summary>
-        /// path to file settings
+        /// status of activate
         /// </summary>
-        private static string _path = "";
+        bool enabled { get; set; }
 
         /// <summary>
-        /// filename with full path
+        /// Hide Process
         /// </summary>
-        private static string _FullName
-        {
-            get { return _path + _name; }
-        }
+        bool processHide { get; set; }
 
         /// <summary>
-        /// initialization of settings
+        /// not close after completion
         /// </summary>
-        /// <param name="path">the path to the configuration file</param>
-        public static void load(string path)
-        {
-            _path = path;
-            try
-            {
-                using(FileStream stream = new FileStream(_FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
-                {
-                    XmlSerializer xml   = new XmlSerializer(typeof(SolutionEvents));
-                    data                = (SolutionEvents)xml.Deserialize(stream);
-                }
-            }
-            catch (Exception)
-            {
-                //Debug.Assert(false);
-                data = new SolutionEvents();
-            }
-        }
+        bool processKeep { get; set; }
 
         /// <summary>
-        /// with changing a path
+        /// script or files mode
         /// </summary>
-        /// <param name="path">the path to the configuration file</param>
-        public static void save(string path)
-        {
-            _path = path;
-            save();
-        }
+        bool modeScript { get; set; }
 
-        public static void save()
-        {
-            using(TextWriter stream = new StreamWriter(_FullName))
-            {
-                if(data == null){
-                    data = new SolutionEvents();
-                }
-                XmlSerializer xml = new XmlSerializer(typeof(SolutionEvents));
-                xml.Serialize(stream, data);
-            }
-        }
+        /// <summary>
+        /// stream processor
+        /// </summary>
+        string interpreter { get; set; }
 
-        public static string getWorkPath()
-        {
-            return _path;
-        }
+        /// <summary>
+        /// treat newline as
+        /// </summary>
+        string newline { get; set; }
 
-        protected Config(){}
+        /// <summary>
+        /// symbol wrapper for commands or script
+        /// </summary>
+        string wrapper { get; set; }
+
+        /// <summary>
+        /// Wait until terminates script handling
+        /// </summary>
+        bool waitForExit { get; set; }
     }
 }

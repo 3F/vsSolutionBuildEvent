@@ -1,0 +1,7 @@
+v0.2.2 (2013.11.22):
+
+* [enhancement] advanced control of events
+* [enhancement] New modes: interpreter & files mode
+* [fix] vsix. removed restrictions on products
+* [fix] change slashes (/ to \\) for relative paths
+* minor UI changes

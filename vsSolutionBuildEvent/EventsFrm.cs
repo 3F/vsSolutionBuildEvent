@@ -1,25 +1,7 @@
 ﻿/*
-    * The MIT License (MIT)
-    * 
-    * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
-    * 
-    * Permission is hereby granted, free of charge, to any person obtaining a copy
-    * of this software and associated documentation files (the "Software"), to deal
-    * in the Software without restriction, including without limitation the rights
-    * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    * copies of the Software, and to permit persons to whom the Software is
-    * furnished to do so, subject to the following conditions:
-    * 
-    * The above copyright notice and this permission notice shall be included in
-    * all copies or substantial portions of the Software.
-    * 
-    * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-    * THE SOFTWARE.
+ * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Distributed under the Boost Software License, Version 1.0
+ * (See accompanying file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
 using System;
@@ -35,7 +17,7 @@ namespace reg.ext.vsSolutionBuildEvent
 {
     public partial class EventsFrm : Form
     {
-        private List<vsSolutionBuildEvent.Event> _solutionEvents    = new List<vsSolutionBuildEvent.Event>();
+        private List<vsSolutionBuildEvent.SBEEvent> _solutionEvents = new List<vsSolutionBuildEvent.SBEEvent>();
         private readonly List<string> _checkedStatus                = new List<string> { "Disabled", "Enabled" };
 
         public EventsFrm()
@@ -51,7 +33,7 @@ namespace reg.ext.vsSolutionBuildEvent
 
         private void _saveData()
         {
-            Event evt           = _solutionEvents[comboBoxEvents.SelectedIndex];
+            SBEEvent evt        = _solutionEvents[comboBoxEvents.SelectedIndex];
             evt.enabled         = checkBoxStatus.Checked;
             evt.command         = textBoxCommand.Text;
             evt.caption         = textBoxCaption.Text;
@@ -62,7 +44,13 @@ namespace reg.ext.vsSolutionBuildEvent
             evt.newline         = comboBoxNewline.Text.Trim();
             evt.wrapper         = comboBoxWrapper.Text.Trim();
             evt.modeScript      = radioModeScript.Checked;
-            Config.save();
+
+            try {
+                Config.save();
+            }
+            catch(Exception e) {
+                MessageBox.Show("Failed save settings:\n" + e.Message, "Solution BuildEvent", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void btnClear_Click(object sender, EventArgs e)
@@ -134,7 +122,7 @@ namespace reg.ext.vsSolutionBuildEvent
 
         private void _renderData()
         {
-            Event evt                       = _solutionEvents[comboBoxEvents.SelectedIndex];
+            SBEEvent evt                    = _solutionEvents[comboBoxEvents.SelectedIndex];
             checkBoxStatus.Checked          = evt.enabled;
             textBoxCommand.Text             = evt.command.Replace("\n", "\r\n");
             textBoxCaption.Text             = evt.caption;
