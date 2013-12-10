@@ -33,61 +33,21 @@ using System.Text;
 
 namespace reg.ext.vsSolutionBuildEvent
 {
-    interface ISolutionEvent
+    interface IMSBuildProperty
     {
         /// <summary>
-        /// execution of shell command
+        /// MSBuild Property from default Project
         /// </summary>
-        string command { get; set; }
+        /// <param name="name">key property</param>
+        /// <returns>evaluated value</returns>
+        string getProperty(string name);
 
         /// <summary>
-        /// output information to "Output" window or something else...
+        /// MSBuild Property from specific project
         /// </summary>
-        string caption { get; set; }
-
-        /// <summary>
-        /// status of activate
-        /// </summary>
-        bool enabled { get; set; }
-
-        /// <summary>
-        /// Hide Process
-        /// </summary>
-        bool processHide { get; set; }
-
-        /// <summary>
-        /// not close after completion
-        /// </summary>
-        bool processKeep { get; set; }
-
-        /// <summary>
-        /// script or files mode
-        /// </summary>
-        bool modeScript { get; set; }
-
-        /// <summary>
-        /// stream processor
-        /// </summary>
-        string interpreter { get; set; }
-
-        /// <summary>
-        /// treat newline as
-        /// </summary>
-        string newline { get; set; }
-
-        /// <summary>
-        /// symbol wrapper for commands or script
-        /// </summary>
-        string wrapper { get; set; }
-
-        /// <summary>
-        /// Wait until terminates script handling
-        /// </summary>
-        bool waitForExit { get; set; }
-
-        /// <summary>
-        /// support of MSBuild environment variables (properties)
-        /// </summary>
-        bool parseVariablesMSBuild { get; set; }
+        /// <param name="name">key property</param>
+        /// <param name="projectName">project name</param>
+        /// <returns>evaluated value</returns>
+        string getProperty(string name, string projectName);
     }
 }

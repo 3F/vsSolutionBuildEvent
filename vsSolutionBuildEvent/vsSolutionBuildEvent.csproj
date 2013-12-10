@@ -33,6 +33,7 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.OLE.Interop" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop" />
@@ -109,6 +110,10 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IMSBuildProperty.cs" />
+    <Compile Include="ISBEParserScript.cs" />
+    <Compile Include="MSBuildParser.cs" />
+    <Compile Include="MSBuildParserException.cs" />
     <Compile Include="SBECommand.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="EventsFrm.cs">

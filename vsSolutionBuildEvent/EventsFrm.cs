@@ -33,23 +33,24 @@ namespace reg.ext.vsSolutionBuildEvent
 
         private void _saveData()
         {
-            SBEEvent evt        = _solutionEvents[comboBoxEvents.SelectedIndex];
-            evt.enabled         = checkBoxStatus.Checked;
-            evt.command         = textBoxCommand.Text;
-            evt.caption         = textBoxCaption.Text;
-            evt.interpreter     = comboBoxInterpreter.Text;
-            evt.processHide     = checkBoxProcessHide.Checked;
-            evt.waitForExit     = checkBoxWaitForExit.Checked;
-            evt.processKeep     = checkBoxProcessKeep.Checked;
-            evt.newline         = comboBoxNewline.Text.Trim();
-            evt.wrapper         = comboBoxWrapper.Text.Trim();
-            evt.modeScript      = radioModeScript.Checked;
+            SBEEvent evt                = _solutionEvents[comboBoxEvents.SelectedIndex];
+            evt.enabled                 = checkBoxStatus.Checked;
+            evt.command                 = textBoxCommand.Text;
+            evt.caption                 = textBoxCaption.Text;
+            evt.interpreter             = comboBoxInterpreter.Text;
+            evt.processHide             = checkBoxProcessHide.Checked;
+            evt.waitForExit             = checkBoxWaitForExit.Checked;
+            evt.processKeep             = checkBoxProcessKeep.Checked;
+            evt.newline                 = comboBoxNewline.Text.Trim();
+            evt.wrapper                 = comboBoxWrapper.Text.Trim();
+            evt.modeScript              = radioModeScript.Checked;
+            evt.parseVariablesMSBuild   = checkBoxParseVariables.Checked;
 
             try {
                 Config.save();
             }
             catch(Exception e) {
-                MessageBox.Show("Failed save settings:\n" + e.Message, "Solution BuildEvent", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Failed applying settings:\n" + e.Message, "Configuration of event", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
@@ -132,6 +133,7 @@ namespace reg.ext.vsSolutionBuildEvent
             checkBoxProcessKeep.Checked     = evt.processKeep;
             comboBoxNewline.Text            = evt.newline;
             comboBoxWrapper.Text            = evt.wrapper;
+            checkBoxParseVariables.Checked  = evt.parseVariablesMSBuild;
 
             if(evt.modeScript) {
                 radioModeScript.Checked = true; 

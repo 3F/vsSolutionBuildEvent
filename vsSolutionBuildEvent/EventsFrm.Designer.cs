@@ -53,6 +53,7 @@
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.panelCommand = new System.Windows.Forms.Panel();
             this.textBoxCommand = new System.Windows.Forms.RichTextBox();
+            this.checkBoxParseVariables = new System.Windows.Forms.CheckBox();
             this.groupBoxSettings.SuspendLayout();
             this.groupBoxMode.SuspendLayout();
             this.panelCommand.SuspendLayout();
@@ -335,11 +336,25 @@
             this.textBoxCommand.Text = "";
             this.textBoxCommand.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCaption_KeyPress);
             // 
+            // checkBoxParseVariables
+            // 
+            this.checkBoxParseVariables.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxParseVariables.AutoSize = true;
+            this.checkBoxParseVariables.Checked = true;
+            this.checkBoxParseVariables.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxParseVariables.Location = new System.Drawing.Point(316, 199);
+            this.checkBoxParseVariables.Name = "checkBoxParseVariables";
+            this.checkBoxParseVariables.Size = new System.Drawing.Size(111, 17);
+            this.checkBoxParseVariables.TabIndex = 17;
+            this.checkBoxParseVariables.Text = "MSBuild Variables";
+            this.checkBoxParseVariables.UseVisualStyleBackColor = true;
+            // 
             // EventsFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(425, 422);
+            this.Controls.Add(this.checkBoxParseVariables);
             this.Controls.Add(this.panelCommand);
             this.Controls.Add(this.groupBoxSettings);
             this.Controls.Add(this.labelToInterpreterMode);
@@ -393,5 +408,6 @@
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.Panel panelCommand;
         private System.Windows.Forms.RichTextBox textBoxCommand;
+        private System.Windows.Forms.CheckBox checkBoxParseVariables;
     }
 }

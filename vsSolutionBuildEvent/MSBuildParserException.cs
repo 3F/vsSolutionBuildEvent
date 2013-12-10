@@ -33,61 +33,26 @@ using System.Text;
 
 namespace reg.ext.vsSolutionBuildEvent
 {
-    interface ISolutionEvent
+    class MSBuildParserException: Exception
     {
-        /// <summary>
-        /// execution of shell command
-        /// </summary>
-        string command { get; set; }
+        public MSBuildParserException(string msg) : base(msg) { }
+    }
 
-        /// <summary>
-        /// output information to "Output" window or something else...
-        /// </summary>
-        string caption { get; set; }
+    //TODO:
+    class MSBuildParserProjectNotFoundException: MSBuildParserException
+    {
+        public MSBuildParserProjectNotFoundException(string msg) : base(msg)
+        {
 
-        /// <summary>
-        /// status of activate
-        /// </summary>
-        bool enabled { get; set; }
+        }
+    }
 
-        /// <summary>
-        /// Hide Process
-        /// </summary>
-        bool processHide { get; set; }
+    //TODO:
+    class MSBuildParserProjectPropertyNotFoundException: MSBuildParserException
+    {
+        public MSBuildParserProjectPropertyNotFoundException(string msg) : base(msg)
+        {
 
-        /// <summary>
-        /// not close after completion
-        /// </summary>
-        bool processKeep { get; set; }
-
-        /// <summary>
-        /// script or files mode
-        /// </summary>
-        bool modeScript { get; set; }
-
-        /// <summary>
-        /// stream processor
-        /// </summary>
-        string interpreter { get; set; }
-
-        /// <summary>
-        /// treat newline as
-        /// </summary>
-        string newline { get; set; }
-
-        /// <summary>
-        /// symbol wrapper for commands or script
-        /// </summary>
-        string wrapper { get; set; }
-
-        /// <summary>
-        /// Wait until terminates script handling
-        /// </summary>
-        bool waitForExit { get; set; }
-
-        /// <summary>
-        /// support of MSBuild environment variables (properties)
-        /// </summary>
-        bool parseVariablesMSBuild { get; set; }
+        }
     }
 }

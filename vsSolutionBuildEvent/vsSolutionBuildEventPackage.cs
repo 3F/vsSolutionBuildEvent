@@ -38,9 +38,13 @@ namespace reg.ext.vsSolutionBuildEvent
     public sealed class vsSolutionBuildEventPackage : Package, IVsSolutionEvents, IVsUpdateSolutionEvents
     {
         /// <summary>
-        /// this object for a top-level functionality
+        /// for a top-level functionality
         /// </summary>
         private DTE2 _dte                                   = null;
+
+        /// <summary>
+        /// for register events -> _cookieSEvents
+        /// </summary>
         /// <summary>
         /// for register events -> _cookieSEvents
         /// </summary>

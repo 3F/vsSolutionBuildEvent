@@ -131,5 +131,15 @@ namespace reg.ext.vsSolutionBuildEvent
             get { return _waitForExit; }
             set { _waitForExit = value; }
         }
+
+        private bool _parseVariablesMSBuild = true;
+        /// <summary>
+        /// support of MSBuild environment variables (properties)
+        /// </summary>
+        public bool parseVariablesMSBuild
+        {
+            get { return _parseVariablesMSBuild; }
+            set { _parseVariablesMSBuild = value; }
+        }
     }
 }

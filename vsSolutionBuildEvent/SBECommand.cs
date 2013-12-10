@@ -41,6 +41,10 @@ namespace reg.ext.vsSolutionBuildEvent
         /// </summary>
         private SBEContext _context = null;
 
+        /// <summary>
+        /// basic implementation
+        /// </summary>
+        /// <param name="evt">provided sbe-events</param>
         public bool basic(ISolutionEvent evt)
         {
             if(!evt.enabled){
@@ -68,11 +72,17 @@ namespace reg.ext.vsSolutionBuildEvent
 
             //TODO: [optional] capture message...
 
+            string script = evt.command;
+
+            if(evt.parseVariablesMSBuild) {
+                script = (new MSBuildParser()).parseVariablesMSBuild(script);
+            }
+
             string args = string.Format(
                 "/C cd {0}{1} & {2}",
                 _context.path, 
                 (_context.disk != null) ? " & " + _context.disk + ":" : "",
-                _treatNewlineAs(" & ", _modifySlash(evt.command)));
+                _treatNewlineAs(" & ", _modifySlash(script)));
 
             if(!evt.processHide && evt.processKeep){
                 args += " & pause";
@@ -98,6 +108,10 @@ namespace reg.ext.vsSolutionBuildEvent
             //new ProcessStartInfo(evt.interpreter);
 
             string script = evt.command;
+
+            if(evt.parseVariablesMSBuild) {
+                script = (new MSBuildParser()).parseVariablesMSBuild(script);
+            }
 
             script = _treatNewlineAs(evt.newline, script);
 

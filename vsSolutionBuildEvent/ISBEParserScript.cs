@@ -33,61 +33,13 @@ using System.Text;
 
 namespace reg.ext.vsSolutionBuildEvent
 {
-    interface ISolutionEvent
+    interface ISBEParserScript
     {
         /// <summary>
-        /// execution of shell command
+        /// handler to MSBuild environment variables (properties)
         /// </summary>
-        string command { get; set; }
-
-        /// <summary>
-        /// output information to "Output" window or something else...
-        /// </summary>
-        string caption { get; set; }
-
-        /// <summary>
-        /// status of activate
-        /// </summary>
-        bool enabled { get; set; }
-
-        /// <summary>
-        /// Hide Process
-        /// </summary>
-        bool processHide { get; set; }
-
-        /// <summary>
-        /// not close after completion
-        /// </summary>
-        bool processKeep { get; set; }
-
-        /// <summary>
-        /// script or files mode
-        /// </summary>
-        bool modeScript { get; set; }
-
-        /// <summary>
-        /// stream processor
-        /// </summary>
-        string interpreter { get; set; }
-
-        /// <summary>
-        /// treat newline as
-        /// </summary>
-        string newline { get; set; }
-
-        /// <summary>
-        /// symbol wrapper for commands or script
-        /// </summary>
-        string wrapper { get; set; }
-
-        /// <summary>
-        /// Wait until terminates script handling
-        /// </summary>
-        bool waitForExit { get; set; }
-
-        /// <summary>
-        /// support of MSBuild environment variables (properties)
-        /// </summary>
-        bool parseVariablesMSBuild { get; set; }
+        /// <param name="data">text with $(ident) data</param>
+        /// <returns>text with values of MSBuild properties</returns>
+        string parseVariablesMSBuild(string data);
     }
 }
