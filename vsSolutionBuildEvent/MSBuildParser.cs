@@ -59,16 +59,9 @@ namespace reg.ext.vsSolutionBuildEvent
         /// <returns>evaluated value</returns>
         public string getProperty(string name, string projectName)
         {
-            Project project = null;
+            Project project         = getProject(projectName);
+            ProjectProperty prop    = project.GetProperty(name);
 
-            if(projectName == null) {
-                project = getProjectDefault();
-            }
-            else {
-                project = getProject(projectName.Trim());
-            }
-
-            ProjectProperty prop = project.GetProperty(name);
             if(prop != null) {
                 return prop.EvaluatedValue;
             }
@@ -77,6 +70,33 @@ namespace reg.ext.vsSolutionBuildEvent
                 projectName = "<default>";
             }
             throw new MSBuildParserProjectPropertyNotFoundException(String.Format("variable - '{0}' : project - '{1}'", name, projectName));
+        }
+
+        public List<MSBuildPropertyItem> listProperties(string projectName = null)
+        {
+            List<MSBuildPropertyItem> properties = new List<MSBuildPropertyItem>();
+
+            Project project = getProject(projectName);
+            foreach(ProjectProperty property in project.AllEvaluatedProperties) {
+                properties.Add(new MSBuildPropertyItem(property.Name, property.EvaluatedValue));
+            }
+            return properties;
+        }
+
+        public List<string> listProjects()
+        {
+            List<string> projects = new List<string>();
+
+            IEnumerator<Project> eprojects = loadedProjects();
+            while(eprojects.MoveNext()) {
+                string projectName = eprojects.Current.GetPropertyValue("ProjectName");
+                if(projectName != null) {
+                    if(!projects.Contains(projectName)) { //TODO: !
+                        projects.Add(projectName);
+                    }
+                }
+            }
+            return projects;
         }
 
         /// <summary>
@@ -106,6 +126,7 @@ namespace reg.ext.vsSolutionBuildEvent
 
         /// <summary>
         /// get default (first in the list at first time) project for access to properties etc.
+        /// TODO: 
         /// </summary>
         /// <returns>Microsoft.Build.Evaluation.Project</returns>
         protected Project getProjectDefault()
@@ -119,6 +140,10 @@ namespace reg.ext.vsSolutionBuildEvent
 
         protected Project getProject(string project)
         {
+            if(project == null) {
+                return getProjectDefault();
+            }
+
             IEnumerator<Project> eprojects = loadedProjects();
             while(eprojects.MoveNext()) {
                 if(eprojects.Current.GetPropertyValue("ProjectName").Equals(project)) {
@@ -131,6 +156,21 @@ namespace reg.ext.vsSolutionBuildEvent
         protected IEnumerator<Project> loadedProjects()
         {
             return ((ICollection<Project>)ProjectCollection.GlobalProjectCollection.LoadedProjects).GetEnumerator();
+        }
+    }
+
+    /// <summary>
+    /// item of property: name = value
+    /// </summary>
+    sealed class MSBuildPropertyItem
+    {
+        public string name;
+        public string value;
+
+        public MSBuildPropertyItem(string name, string value)
+        {
+            this.name  = name;
+            this.value = value;
         }
     }
 }

@@ -110,6 +110,12 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EnvironmentVariablesFrm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EnvironmentVariablesFrm.Designer.cs">
+      <DependentUpon>EnvironmentVariablesFrm.cs</DependentUpon>
+    </Compile>
     <Compile Include="IMSBuildProperty.cs" />
     <Compile Include="ISBEParserScript.cs" />
     <Compile Include="MSBuildParser.cs" />
@@ -132,6 +138,9 @@
     <Compile Include="PkgCmdID.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="EnvironmentVariablesFrm.resx">
+      <DependentUpon>EnvironmentVariablesFrm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="EventsFrm.resx">
       <DependentUpon>EventsFrm.cs</DependentUpon>
     </EmbeddedResource>

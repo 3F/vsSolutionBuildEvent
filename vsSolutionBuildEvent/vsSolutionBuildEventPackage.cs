@@ -83,6 +83,7 @@ namespace reg.ext.vsSolutionBuildEvent
         {
             if (_configFrm != null && !_configFrm.IsDisposed)
             {
+                _configFrm.Focus();
                 return;
             }
             _configFrm = new EventsFrm();

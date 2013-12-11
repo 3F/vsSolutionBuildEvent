@@ -54,6 +54,7 @@
             this.panelCommand = new System.Windows.Forms.Panel();
             this.textBoxCommand = new System.Windows.Forms.RichTextBox();
             this.checkBoxParseVariables = new System.Windows.Forms.CheckBox();
+            this.buttonEnvVariables = new System.Windows.Forms.Button();
             this.groupBoxSettings.SuspendLayout();
             this.groupBoxMode.SuspendLayout();
             this.panelCommand.SuspendLayout();
@@ -97,9 +98,9 @@
             // 
             this.btnClear.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClear.Location = new System.Drawing.Point(109, 395);
+            this.btnClear.Location = new System.Drawing.Point(151, 395);
             this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(75, 23);
+            this.btnClear.Size = new System.Drawing.Size(51, 23);
             this.btnClear.TabIndex = 5;
             this.btnClear.Text = "Clear";
             this.btnClear.UseVisualStyleBackColor = true;
@@ -111,9 +112,9 @@
             this.btnExample.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnExample.Location = new System.Drawing.Point(3, 395);
             this.btnExample.Name = "btnExample";
-            this.btnExample.Size = new System.Drawing.Size(100, 23);
+            this.btnExample.Size = new System.Drawing.Size(26, 23);
             this.btnExample.TabIndex = 6;
-            this.btnExample.Text = "Example / detail";
+            this.btnExample.Text = "?";
             this.btnExample.UseVisualStyleBackColor = true;
             this.btnExample.Click += new System.EventHandler(this.btnExample_Click);
             // 
@@ -334,6 +335,7 @@
             this.textBoxCommand.Size = new System.Drawing.Size(417, 129);
             this.textBoxCommand.TabIndex = 4;
             this.textBoxCommand.Text = "";
+            this.textBoxCommand.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxCommand_KeyDown);
             this.textBoxCommand.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCaption_KeyPress);
             // 
             // checkBoxParseVariables
@@ -349,11 +351,23 @@
             this.checkBoxParseVariables.Text = "MSBuild Variables";
             this.checkBoxParseVariables.UseVisualStyleBackColor = true;
             // 
+            // buttonEnvVariables
+            // 
+            this.buttonEnvVariables.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.buttonEnvVariables.Location = new System.Drawing.Point(35, 395);
+            this.buttonEnvVariables.Name = "buttonEnvVariables";
+            this.buttonEnvVariables.Size = new System.Drawing.Size(110, 23);
+            this.buttonEnvVariables.TabIndex = 18;
+            this.buttonEnvVariables.Text = "MSBuild Properties";
+            this.buttonEnvVariables.UseVisualStyleBackColor = true;
+            this.buttonEnvVariables.Click += new System.EventHandler(this.buttonEnvVariables_Click);
+            // 
             // EventsFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(425, 422);
+            this.Controls.Add(this.buttonEnvVariables);
             this.Controls.Add(this.checkBoxParseVariables);
             this.Controls.Add(this.panelCommand);
             this.Controls.Add(this.groupBoxSettings);
@@ -409,5 +423,6 @@
         private System.Windows.Forms.Panel panelCommand;
         private System.Windows.Forms.RichTextBox textBoxCommand;
         private System.Windows.Forms.CheckBox checkBoxParseVariables;
+        private System.Windows.Forms.Button buttonEnvVariables;
     }
 }
