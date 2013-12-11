@@ -68,12 +68,10 @@ namespace reg.ext.vsSolutionBuildEvent
         private EventsFrm _configFrm                        = null;
 
 
-        //TODO
-        public const string PANE_ITEM                       = "Solution Build-Events";
-
         public vsSolutionBuildEventPackage()
         {
             _dte = (DTE2)Package.GetGlobalService(typeof(SDTE));
+            PaneVS.instance.setDTE(_dte);
         }
 
         /// <summary>
@@ -91,17 +89,21 @@ namespace reg.ext.vsSolutionBuildEvent
         }
 
         //TODO:
-        public OutputWindowPane Pane
+        private void _info()
         {
-            get
-            {
-                try
-                {
-                    return _dte.ToolWindows.OutputWindow.OutputWindowPanes.Item(PANE_ITEM);
-                }
-                catch { }
-                return _dte.ToolWindows.OutputWindow.OutputWindowPanes.Add(PANE_ITEM);
-            }
+            Func<ISolutionEvent, string, string> aboutEvent = delegate(ISolutionEvent evt, string caption) {
+                return String.Format("\n\t* [{0}][{1}]: {2}", caption, evt.enabled.ToString(), evt.caption);
+            };
+
+
+            // TODO: Pane wrapper
+            PaneVS.instance.outputString(String.Format("{0} {1}", 
+                String.Format("loaded settings: {0}\n\nReady:", Config.getWorkPath()),
+                String.Format("{0}{1}{2}\n---\n",
+                    aboutEvent(Config.data.preBuild, "Pre-Build"),
+                    aboutEvent(Config.data.postBuild, "Post-Build"),
+                    aboutEvent(Config.data.cancelBuild, "Cancel-Build"))
+            ));
         }
 
         int IVsSolutionEvents.OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
@@ -111,20 +113,6 @@ namespace reg.ext.vsSolutionBuildEvent
 
             _menuItem.Visible = true;
             return VSConstants.S_OK;
-        }
-
-        //TODO:
-        private void _info()
-        {
-            Pane.Clear();
-            string stat = string.Format(
-                CultureInfo.CurrentCulture,
-                "loaded settings: {6}\n\nReady:\n\t* [Pre-Build][{0}]: {1}\n\t* [Post-Build][{2}]: {3}\n\t* [Cancel-Build][{4}]: {5}\n---\n",
-                Config.data.preBuild.enabled.ToString(), Config.data.preBuild.caption,
-                Config.data.postBuild.enabled.ToString(), Config.data.postBuild.caption,
-                Config.data.cancelBuild.enabled.ToString(), Config.data.cancelBuild.caption, Config.getWorkPath());
-
-            Pane.OutputString(stat);
         }
 
         int IVsSolutionEvents.OnAfterCloseSolution(object pUnkReserved)
@@ -139,12 +127,12 @@ namespace reg.ext.vsSolutionBuildEvent
             try
             {
                 if((new SBECommand()).basic(Config.data.preBuild)){
-                    Pane.OutputString("[Pre] finished SBE: " + Config.data.preBuild.caption + Environment.NewLine);
+                    PaneVS.instance.outputString("[Pre] finished SBE: " + Config.data.preBuild.caption + Environment.NewLine);
                 }
             }
             catch (Exception e)
             {
-                Pane.OutputString("Pre-Build error: " + e.Message + Environment.NewLine);
+                PaneVS.instance.outputString("Pre-Build error: " + e.Message + Environment.NewLine);
             }
             return VSConstants.S_OK;
         }
@@ -154,12 +142,12 @@ namespace reg.ext.vsSolutionBuildEvent
             try
             {
                 if((new SBECommand()).basic(Config.data.cancelBuild)){
-                    Pane.OutputString("[Cancel] finished SBE: " + Config.data.cancelBuild.caption + Environment.NewLine);
+                    PaneVS.instance.outputString("[Cancel] finished SBE: " + Config.data.cancelBuild.caption + Environment.NewLine);
                 }
             }
             catch (Exception e)
             {
-                Pane.OutputString("Cancel-Build error: " + e.Message + Environment.NewLine);
+                PaneVS.instance.outputString("Cancel-Build error: " + e.Message + Environment.NewLine);
             }
             return VSConstants.S_OK;
         }
@@ -169,12 +157,12 @@ namespace reg.ext.vsSolutionBuildEvent
             try
             {
                 if((new SBECommand()).basic(Config.data.postBuild)){
-                    Pane.OutputString("[Post] finished SBE: " + Config.data.postBuild.caption + Environment.NewLine);
+                    PaneVS.instance.outputString("[Post] finished SBE: " + Config.data.postBuild.caption + Environment.NewLine);
                 }
             }
             catch (Exception e)
             {
-                Pane.OutputString("Post-Build error: " + e.Message + Environment.NewLine);
+                PaneVS.instance.outputString("Post-Build error: " + e.Message + Environment.NewLine);
             }
             return VSConstants.S_OK;
         }

@@ -118,6 +118,7 @@
     </Compile>
     <Compile Include="IMSBuildProperty.cs" />
     <Compile Include="ISBEParserScript.cs" />
+    <Compile Include="PaneVS.cs" />
     <Compile Include="MSBuildParser.cs" />
     <Compile Include="MSBuildParserException.cs" />
     <Compile Include="SBECommand.cs" />
