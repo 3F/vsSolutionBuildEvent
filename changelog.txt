@@ -1,3 +1,7 @@
+v0.3 (2013.12.11)
+* [enhancement] MSBuild environment variables (properties). See help for detail.
+* New License: BSL 1.0
+
 v0.2.2 (2013.11.22):
 
 * [enhancement] advanced control of events
