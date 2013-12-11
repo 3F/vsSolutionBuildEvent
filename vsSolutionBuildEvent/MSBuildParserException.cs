@@ -33,48 +33,26 @@ using System.Text;
 
 namespace reg.ext.vsSolutionBuildEvent
 {
-    [Serializable]
-    public class SolutionEvents
+    class MSBuildParserException: Exception
     {
-        private SBESettings _settings = new SBESettings();
-        /// <summary>
-        /// global settings
-        /// </summary>
-        public SBESettings settings
-        {
-            get { return _settings; }
-            set { _settings = value; }
-        }
+        public MSBuildParserException(string msg) : base(msg) { }
+    }
 
-        private SBEEvent _preBuild = new SBEEvent();
-        /// <summary>
-        /// Before building solution
-        /// </summary>
-        public SBEEvent preBuild
+    //TODO:
+    class MSBuildParserProjectNotFoundException: MSBuildParserException
+    {
+        public MSBuildParserProjectNotFoundException(string msg) : base(msg)
         {
-            get { return _preBuild; }
-            set { _preBuild = value; }
-        }
 
-        private SBEEvent _postBuild = new SBEEvent();
-        /// <summary>
-        /// After building solution
-        /// </summary>
-        public SBEEvent postBuild
-        {
-            get { return _postBuild; }
-            set { _postBuild = value; }
         }
+    }
 
-        private SBEEvent _cancelBuild = new SBEEvent();
-        /// <summary>
-        /// When cancel building solution
-        /// e.g. fatal error of compilation or cancel of user
-        /// </summary>
-        public SBEEvent cancelBuild
+    //TODO:
+    class MSBuildParserProjectPropertyNotFoundException: MSBuildParserException
+    {
+        public MSBuildParserProjectPropertyNotFoundException(string msg) : base(msg)
         {
-            get { return _cancelBuild; }
-            set { _cancelBuild = value; }
+
         }
     }
 }

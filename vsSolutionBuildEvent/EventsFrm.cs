@@ -1,25 +1,7 @@
 ﻿/*
-    * The MIT License (MIT)
-    * 
-    * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
-    * 
-    * Permission is hereby granted, free of charge, to any person obtaining a copy
-    * of this software and associated documentation files (the "Software"), to deal
-    * in the Software without restriction, including without limitation the rights
-    * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    * copies of the Software, and to permit persons to whom the Software is
-    * furnished to do so, subject to the following conditions:
-    * 
-    * The above copyright notice and this permission notice shall be included in
-    * all copies or substantial portions of the Software.
-    * 
-    * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-    * THE SOFTWARE.
+ * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Distributed under the Boost Software License, Version 1.0
+ * (See accompanying file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
 using System;
@@ -33,14 +15,39 @@ using System.Windows.Forms;
 
 namespace reg.ext.vsSolutionBuildEvent
 {
-    public partial class EventsFrm : Form
+    public partial class EventsFrm: Form, ITransferEnvironmentVariable
     {
-        private List<vsSolutionBuildEvent.Event> _solutionEvents    = new List<vsSolutionBuildEvent.Event>();
+        /// <summary>
+        /// UI-helper for MSBuild Environment Variables
+        /// </summary>
+        protected EnvironmentVariablesFrm envVariables;
+
+        private List<vsSolutionBuildEvent.SBEEvent> _solutionEvents = new List<vsSolutionBuildEvent.SBEEvent>();
         private readonly List<string> _checkedStatus                = new List<string> { "Disabled", "Enabled" };
 
         public EventsFrm()
         {
             InitializeComponent();
+        }
+
+        /// <summary>
+        /// implements main output for variable
+        /// TODO: highlighting
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="project"></param>
+        public void outputName(string name, string project = null)
+        {
+            textBoxCommand.Select(textBoxCommand.SelectionStart, 0);
+
+            if(project == null) {
+                textBoxCommand.SelectedText = String.Format("$({0})", name);
+            }
+            else {
+                textBoxCommand.SelectedText = String.Format("$({0}:{1})", name, project);
+            }
+
+            this.Focus();
         }
 
         private void btnApply_Click(object sender, EventArgs e)
@@ -51,18 +58,25 @@ namespace reg.ext.vsSolutionBuildEvent
 
         private void _saveData()
         {
-            Event evt           = _solutionEvents[comboBoxEvents.SelectedIndex];
-            evt.enabled         = checkBoxStatus.Checked;
-            evt.command         = textBoxCommand.Text;
-            evt.caption         = textBoxCaption.Text;
-            evt.interpreter     = comboBoxInterpreter.Text;
-            evt.processHide     = checkBoxProcessHide.Checked;
-            evt.waitForExit     = checkBoxWaitForExit.Checked;
-            evt.processKeep     = checkBoxProcessKeep.Checked;
-            evt.newline         = comboBoxNewline.Text.Trim();
-            evt.wrapper         = comboBoxWrapper.Text.Trim();
-            evt.modeScript      = radioModeScript.Checked;
-            Config.save();
+            SBEEvent evt                = _solutionEvents[comboBoxEvents.SelectedIndex];
+            evt.enabled                 = checkBoxStatus.Checked;
+            evt.command                 = textBoxCommand.Text;
+            evt.caption                 = textBoxCaption.Text;
+            evt.interpreter             = comboBoxInterpreter.Text;
+            evt.processHide             = checkBoxProcessHide.Checked;
+            evt.waitForExit             = checkBoxWaitForExit.Checked;
+            evt.processKeep             = checkBoxProcessKeep.Checked;
+            evt.newline                 = comboBoxNewline.Text.Trim();
+            evt.wrapper                 = comboBoxWrapper.Text.Trim();
+            evt.modeScript              = radioModeScript.Checked;
+            evt.parseVariablesMSBuild   = checkBoxParseVariables.Checked;
+
+            try {
+                Config.save();
+            }
+            catch(Exception e) {
+                MessageBox.Show("Failed applying settings:\n" + e.Message, "Configuration of event", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void btnClear_Click(object sender, EventArgs e)
@@ -91,7 +105,7 @@ namespace reg.ext.vsSolutionBuildEvent
         private void btnExample_Click(object sender, EventArgs e)
         {
             MessageBox.Show(
-                "examples of how to use it, see on: bitbucket.org/3F \n\n\t\t\tentry.reg@gmail.com",
+                "examples of how to use it and other detail, see on: bitbucket.org/3F \n\n\t\t\tentry.reg@gmail.com",
                 this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -134,7 +148,7 @@ namespace reg.ext.vsSolutionBuildEvent
 
         private void _renderData()
         {
-            Event evt                       = _solutionEvents[comboBoxEvents.SelectedIndex];
+            SBEEvent evt                    = _solutionEvents[comboBoxEvents.SelectedIndex];
             checkBoxStatus.Checked          = evt.enabled;
             textBoxCommand.Text             = evt.command.Replace("\n", "\r\n");
             textBoxCaption.Text             = evt.caption;
@@ -144,6 +158,7 @@ namespace reg.ext.vsSolutionBuildEvent
             checkBoxProcessKeep.Checked     = evt.processKeep;
             comboBoxNewline.Text            = evt.newline;
             comboBoxWrapper.Text            = evt.wrapper;
+            checkBoxParseVariables.Checked  = evt.parseVariablesMSBuild;
 
             if(evt.modeScript) {
                 radioModeScript.Checked = true; 
@@ -151,6 +166,21 @@ namespace reg.ext.vsSolutionBuildEvent
             else{
                 radioModeFiles.Checked = true;
             }
+        }
+
+        private void envVariablesUIHelper()
+        {
+            if(envVariables != null && !envVariables.IsDisposed) {
+                if(envVariables.WindowState != FormWindowState.Minimized) {
+                    envVariables.Dispose();
+                    envVariables = null;
+                    return;
+                }
+                envVariables.Focus();
+                return;
+            }
+            envVariables = new EnvironmentVariablesFrm(this);
+            envVariables.Show();
         }
 
         private void radioModeScript_CheckedChanged(object sender, EventArgs e)
@@ -170,6 +200,19 @@ namespace reg.ext.vsSolutionBuildEvent
         private void checkBoxProcessHide_CheckedChanged(object sender, EventArgs e)
         {
             checkBoxProcessKeep.Enabled = !checkBoxProcessHide.Checked;
+        }
+
+        private void buttonEnvVariables_Click(object sender, EventArgs e)
+        {
+            envVariablesUIHelper();
+        }
+
+        private void textBoxCommand_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Modifiers == Keys.Control && e.KeyCode == Keys.Space) {
+                e.SuppressKeyPress = true;
+                envVariablesUIHelper();
+            }
         }
     }
 }

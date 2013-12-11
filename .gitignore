@@ -1,3 +1,4 @@
 /vsSolutionBuildEvent/obj
 /vsSolutionBuildEvent/bin
 *.csproj.user
+/vsSolutionBuildEvent/Version.cs

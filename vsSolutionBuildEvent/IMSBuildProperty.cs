@@ -33,48 +33,21 @@ using System.Text;
 
 namespace reg.ext.vsSolutionBuildEvent
 {
-    [Serializable]
-    public class SolutionEvents
+    interface IMSBuildProperty
     {
-        private SBESettings _settings = new SBESettings();
         /// <summary>
-        /// global settings
+        /// MSBuild Property from default Project
         /// </summary>
-        public SBESettings settings
-        {
-            get { return _settings; }
-            set { _settings = value; }
-        }
+        /// <param name="name">key property</param>
+        /// <returns>evaluated value</returns>
+        string getProperty(string name);
 
-        private SBEEvent _preBuild = new SBEEvent();
         /// <summary>
-        /// Before building solution
+        /// MSBuild Property from specific project
         /// </summary>
-        public SBEEvent preBuild
-        {
-            get { return _preBuild; }
-            set { _preBuild = value; }
-        }
-
-        private SBEEvent _postBuild = new SBEEvent();
-        /// <summary>
-        /// After building solution
-        /// </summary>
-        public SBEEvent postBuild
-        {
-            get { return _postBuild; }
-            set { _postBuild = value; }
-        }
-
-        private SBEEvent _cancelBuild = new SBEEvent();
-        /// <summary>
-        /// When cancel building solution
-        /// e.g. fatal error of compilation or cancel of user
-        /// </summary>
-        public SBEEvent cancelBuild
-        {
-            get { return _cancelBuild; }
-            set { _cancelBuild = value; }
-        }
+        /// <param name="name">key property</param>
+        /// <param name="projectName">project name</param>
+        /// <returns>evaluated value</returns>
+        string getProperty(string name, string projectName);
     }
 }

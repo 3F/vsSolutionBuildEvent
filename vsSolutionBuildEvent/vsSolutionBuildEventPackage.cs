@@ -1,9 +1,8 @@
 ﻿/*
  * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
- * 
- * Distributed under the MIT license
- * (see accompanying file LICENSE or a copy at http://opensource.org/licenses/MIT)
-*/
+ * Distributed under the Boost Software License, Version 1.0
+ * (See accompanying file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
+ */
 
 using System;
 using System.Diagnostics;
@@ -21,85 +20,99 @@ using EnvDTE;
 
 namespace reg.ext.vsSolutionBuildEvent
 {
+    // Managed Package Registration
     [PackageRegistration(UseManagedResourcesOnly = true)]
+
+    // To register the informations needed to in the Help/About dialog of Visual Studio
     [InstalledProductRegistration("#110", "#112", "0.2.2", IconResourceID = 400)]
+
     // This attribute is needed to let the shell know that this package exposes some menus.
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    [Guid(GuidList.guidvsSolutionBuildEventPkgString)]
+
+    //  To be automatically loaded when a specified UI context is active
     [ProvideAutoLoad(UIContextGuids80.SolutionExists)]
+
+    // Package Guid
+    [Guid(GuidList.guidvsSolutionBuildEventPkgString)]
+
     public sealed class vsSolutionBuildEventPackage : Package, IVsSolutionEvents, IVsUpdateSolutionEvents
     {
-        public const string PANE_ITEM                       = "Solution Build-Events";
-
+        /// <summary>
+        /// for a top-level functionality
+        /// </summary>
         private DTE2 _dte                                   = null;
+
+        /// <summary>
+        /// for register events -> _cookieSEvents
+        /// </summary>
+        /// <summary>
+        /// for register events -> _cookieSEvents
+        /// </summary>
         private IVsSolution _solution                       = null;
-        private IVsSolutionBuildManager _solBuildManager    = null;
-        private MenuCommand _menuItem                       = null;
-        private EventsFrm _configFrm                        = null;
         private uint _cookieSEvents;
+
+        /// <summary>
+        /// for register events -> _cookieUpdateSEvents
+        /// </summary>
+        private IVsSolutionBuildManager _solBuildManager    = null;
         private uint _cookieUpdateSEvents;
 
-        private const string _configFname                   = ".xprojvsbe";
-        private string _configPath                          = "";
-        private string _config
-        {
-            get { return _configPath + _configFname; }
-        }
+        /// <summary>
+        /// commands with menu of VS - Build/
+        /// </summary>
+        private MenuCommand _menuItem                       = null;
+        
+        /// <summary>
+        /// main form of settings
+        /// </summary>
+        private EventsFrm _configFrm                        = null;
+
 
         public vsSolutionBuildEventPackage()
         {
             _dte = (DTE2)Package.GetGlobalService(typeof(SDTE));
+            PaneVS.instance.setDTE(_dte);
         }
 
         /// <summary>
-        /// execute a command when the a menu item is clicked
+        /// execute a command when the a menu item (Build/<pack>) is clicked
         /// </summary>
         private void MenuItemCallback(object sender, EventArgs e)
         {
             if (_configFrm != null && !_configFrm.IsDisposed)
             {
+                _configFrm.Focus();
                 return;
             }
             _configFrm = new EventsFrm();
             _configFrm.Show();
         }
 
-        public OutputWindowPane Pane
+        //TODO:
+        private void _info()
         {
-            get
-            {
-                try
-                {
-                    return _dte.ToolWindows.OutputWindow.OutputWindowPanes.Item(PANE_ITEM);
-                }
-                catch { }
-                return _dte.ToolWindows.OutputWindow.OutputWindowPanes.Add(PANE_ITEM);
-            }
+            Func<ISolutionEvent, string, string> aboutEvent = delegate(ISolutionEvent evt, string caption) {
+                return String.Format("\n\t* [{0}][{1}]: {2}", caption, evt.enabled.ToString(), evt.caption);
+            };
+
+
+            // TODO: Pane wrapper
+            PaneVS.instance.outputString(String.Format("{0} {1}", 
+                String.Format("loaded settings: {0}\n\nReady:", Config.getWorkPath()),
+                String.Format("{0}{1}{2}\n---\n",
+                    aboutEvent(Config.data.preBuild, "Pre-Build"),
+                    aboutEvent(Config.data.postBuild, "Post-Build"),
+                    aboutEvent(Config.data.cancelBuild, "Cancel-Build"))
+            ));
         }
 
         int IVsSolutionEvents.OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
         {
-            _configPath = Path.GetDirectoryName(_dte.Solution.FullName) + "\\";
-
-            Config.load(_config);
+            Config.load(Path.GetDirectoryName(_dte.Solution.FullName) + "\\");
             _info();
 
             _menuItem.Visible = true;
             return VSConstants.S_OK;
-        }
-
-        //TODO:
-        private void _info()
-        {
-            Pane.Clear();
-            string stat = string.Format(
-                CultureInfo.CurrentCulture,
-                "loaded settings: {6}\n\nReady:\n\t* [Pre-Build][{0}]: {1}\n\t* [Post-Build][{2}]: {3}\n\t* [Cancel-Build][{4}]: {5}\n---\n",
-                Config.data.preBuild.enabled.ToString(), Config.data.preBuild.caption,
-                Config.data.postBuild.enabled.ToString(), Config.data.postBuild.caption,
-                Config.data.cancelBuild.enabled.ToString(), Config.data.cancelBuild.caption, _configPath);
-
-            Pane.OutputString(stat);
         }
 
         int IVsSolutionEvents.OnAfterCloseSolution(object pUnkReserved)
@@ -114,12 +127,12 @@ namespace reg.ext.vsSolutionBuildEvent
             try
             {
                 if((new SBECommand()).basic(Config.data.preBuild)){
-                    Pane.OutputString("[Pre] finished SBE: " + Config.data.preBuild.caption + Environment.NewLine);
+                    PaneVS.instance.outputString("[Pre] finished SBE: " + Config.data.preBuild.caption + Environment.NewLine);
                 }
             }
             catch (Exception e)
             {
-                Pane.OutputString("Pre-Build error: " + e.Message + Environment.NewLine);
+                PaneVS.instance.outputString("Pre-Build error: " + e.Message + Environment.NewLine);
             }
             return VSConstants.S_OK;
         }
@@ -129,12 +142,12 @@ namespace reg.ext.vsSolutionBuildEvent
             try
             {
                 if((new SBECommand()).basic(Config.data.cancelBuild)){
-                    Pane.OutputString("[Cancel] finished SBE: " + Config.data.cancelBuild.caption + Environment.NewLine);
+                    PaneVS.instance.outputString("[Cancel] finished SBE: " + Config.data.cancelBuild.caption + Environment.NewLine);
                 }
             }
             catch (Exception e)
             {
-                Pane.OutputString("Cancel-Build error: " + e.Message + Environment.NewLine);
+                PaneVS.instance.outputString("Cancel-Build error: " + e.Message + Environment.NewLine);
             }
             return VSConstants.S_OK;
         }
@@ -144,12 +157,12 @@ namespace reg.ext.vsSolutionBuildEvent
             try
             {
                 if((new SBECommand()).basic(Config.data.postBuild)){
-                    Pane.OutputString("[Post] finished SBE: " + Config.data.postBuild.caption + Environment.NewLine);
+                    PaneVS.instance.outputString("[Post] finished SBE: " + Config.data.postBuild.caption + Environment.NewLine);
                 }
             }
             catch (Exception e)
             {
-                Pane.OutputString("Post-Build error: " + e.Message + Environment.NewLine);
+                PaneVS.instance.outputString("Post-Build error: " + e.Message + Environment.NewLine);
             }
             return VSConstants.S_OK;
         }

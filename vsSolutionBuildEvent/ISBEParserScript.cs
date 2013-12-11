@@ -33,48 +33,13 @@ using System.Text;
 
 namespace reg.ext.vsSolutionBuildEvent
 {
-    [Serializable]
-    public class SolutionEvents
+    interface ISBEParserScript
     {
-        private SBESettings _settings = new SBESettings();
         /// <summary>
-        /// global settings
+        /// handler to MSBuild environment variables (properties)
         /// </summary>
-        public SBESettings settings
-        {
-            get { return _settings; }
-            set { _settings = value; }
-        }
-
-        private SBEEvent _preBuild = new SBEEvent();
-        /// <summary>
-        /// Before building solution
-        /// </summary>
-        public SBEEvent preBuild
-        {
-            get { return _preBuild; }
-            set { _preBuild = value; }
-        }
-
-        private SBEEvent _postBuild = new SBEEvent();
-        /// <summary>
-        /// After building solution
-        /// </summary>
-        public SBEEvent postBuild
-        {
-            get { return _postBuild; }
-            set { _postBuild = value; }
-        }
-
-        private SBEEvent _cancelBuild = new SBEEvent();
-        /// <summary>
-        /// When cancel building solution
-        /// e.g. fatal error of compilation or cancel of user
-        /// </summary>
-        public SBEEvent cancelBuild
-        {
-            get { return _cancelBuild; }
-            set { _cancelBuild = value; }
-        }
+        /// <param name="data">text with $(ident) data</param>
+        /// <returns>text with values of MSBuild properties</returns>
+        string parseVariablesMSBuild(string data);
     }
 }
