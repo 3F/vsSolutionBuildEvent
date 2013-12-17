@@ -24,7 +24,7 @@ namespace reg.ext.vsSolutionBuildEvent
     [PackageRegistration(UseManagedResourcesOnly = true)]
 
     // To register the informations needed to in the Help/About dialog of Visual Studio
-    [InstalledProductRegistration("#110", "#112", "0.3", IconResourceID = 400)]
+    [InstalledProductRegistration("#110", "#112", "0.3.1", IconResourceID = 400)]
 
     // This attribute is needed to let the shell know that this package exposes some menus.
     [ProvideMenuResource("Menus.ctmenu", 1)]

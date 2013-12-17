@@ -353,6 +353,7 @@
             // 
             // buttonEnvVariables
             // 
+            this.buttonEnvVariables.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.buttonEnvVariables.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.buttonEnvVariables.Location = new System.Drawing.Point(35, 395);
             this.buttonEnvVariables.Name = "buttonEnvVariables";

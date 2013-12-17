@@ -1,3 +1,7 @@
+v0.3.1 (2013.12.17)
+* [bug] Button "MSBuild Properties" does not resize with the Window
+* [bug] doubling escape symbol
+
 v0.3 (2013.12.11)
 * [enhancement] MSBuild environment variables (properties). See help for detail.
 * New License: BSL 1.0

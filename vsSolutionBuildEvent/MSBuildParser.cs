@@ -120,7 +120,7 @@ namespace reg.ext.vsSolutionBuildEvent
                 }
                 return getProperty(m.Groups[1].Value, m.Groups[2].Value);
 
-            }, RegexOptions.IgnoreCase);
+            }, RegexOptions.IgnoreCase).Replace("$$(", "$(");
         }
 
 

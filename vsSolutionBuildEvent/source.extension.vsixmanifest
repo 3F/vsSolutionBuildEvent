@@ -3,7 +3,7 @@
     <Identifier Id="94ecd13f-15f3-4f51-9afd-17f0275c6266">
         <Name>vsSolutionBuildEvent</Name>
         <Author>reg [entry.reg@gmail.com]</Author>
-        <Version>0.3</Version>
+        <Version>0.3.1</Version>
         <Description xml:space="preserve">Solution Build-Events
 
 This extension for additional event handling to all subprojects at once in solution. This feature is not provided by default for solution
