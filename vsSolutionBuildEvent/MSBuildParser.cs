@@ -65,11 +65,7 @@ namespace reg.ext.vsSolutionBuildEvent
             if(prop != null) {
                 return prop.EvaluatedValue;
             }
-
-            if(projectName == null) {
-                projectName = "<default>";
-            }
-            throw new MSBuildParserProjectPropertyNotFoundException(String.Format("variable - '{0}' : project - '{1}'", name, projectName));
+            throw new MSBuildParserProjectPropertyNotFoundException(String.Format("variable - '{0}' : project - '{1}'", name, (projectName == null) ? "<default>" : projectName));
         }
 
         public List<MSBuildPropertyItem> listProperties(string projectName = null)
@@ -85,15 +81,14 @@ namespace reg.ext.vsSolutionBuildEvent
 
         public List<string> listProjects()
         {
-            List<string> projects = new List<string>();
+            List<string> projects           = new List<string>();
+            IEnumerator<Project> eprojects  = _loadedProjects();
 
-            IEnumerator<Project> eprojects = loadedProjects();
             while(eprojects.MoveNext()) {
                 string projectName = eprojects.Current.GetPropertyValue("ProjectName");
-                if(projectName != null) {
-                    if(!projects.Contains(projectName)) { //TODO: !
-                        projects.Add(projectName);
-                    }
+
+                if(projectName != null && _isActiveConfiguration(eprojects.Current)) {
+                    projects.Add(projectName);
                 }
             }
             return projects;
@@ -125,15 +120,17 @@ namespace reg.ext.vsSolutionBuildEvent
 
 
         /// <summary>
-        /// get default (first in the list at first time) project for access to properties etc.
-        /// TODO: 
+        /// get default project for access to properties etc.
+        /// first in the list at Configuration & Platform
         /// </summary>
         /// <returns>Microsoft.Build.Evaluation.Project</returns>
         protected Project getProjectDefault()
         {
-            IEnumerator<Project> eprojects = loadedProjects();
-            if(eprojects.MoveNext()) {
-                return eprojects.Current;
+            IEnumerator<Project> eprojects = _loadedProjects();
+            while(eprojects.MoveNext()) {
+                if(_isActiveConfiguration(eprojects.Current)) {
+                    return eprojects.Current;
+                }
             }
             throw new MSBuildParserProjectNotFoundException("not found project: <default>");
         }
@@ -144,18 +141,56 @@ namespace reg.ext.vsSolutionBuildEvent
                 return getProjectDefault();
             }
 
-            IEnumerator<Project> eprojects = loadedProjects();
+            IEnumerator<Project> eprojects = _loadedProjects();
             while(eprojects.MoveNext()) {
-                if(eprojects.Current.GetPropertyValue("ProjectName").Equals(project)) {
+                if(eprojects.Current.GetPropertyValue("ProjectName").Equals(project) && _isActiveConfiguration(eprojects.Current)) {
                     return eprojects.Current;
                 }
             }
             throw new MSBuildParserProjectNotFoundException(String.Format("not found project: '{0}'", project));
         }
 
-        protected IEnumerator<Project> loadedProjects()
+        // TODO:
+        private TRuntimeSettings _getRuntimeSettings()
+        {
+            // TODO: settings in Runtime... Where are placed the individual ?
+            string xml = ProjectCollection.GlobalProjectCollection.GetGlobalProperty("CurrentSolutionConfigurationContents").EvaluatedValue;
+
+            // ProjectConfiguration
+            Match m = Regex.Match(xml, @"ProjectConfiguration[^>]*>(\S+?)\|(\S+?)<", RegexOptions.IgnoreCase);
+            if(!m.Success){
+                throw new MSBuildParserProjectPropertyNotFoundException("Runtime settings - 'ProjectConfiguration'");
+            }
+            return new TRuntimeSettings(m.Groups[1].Value, m.Groups[2].Value);
+        }
+
+        private bool _isActiveConfiguration(Project project)
+        {
+            TRuntimeSettings runtime    = _getRuntimeSettings();
+            string configuration        = project.GetPropertyValue("Configuration");
+            string platform             = project.GetPropertyValue("Platform");
+
+            if(configuration.Equals(runtime.configuration) && platform.Equals(runtime.platform)) {
+                return true;
+            }
+            return false;
+        }
+
+        private IEnumerator<Project> _loadedProjects()
         {
             return ((ICollection<Project>)ProjectCollection.GlobalProjectCollection.LoadedProjects).GetEnumerator();
+        }
+
+        private struct TRuntimeSettings
+        {
+            public string configuration;
+            public string platform;
+
+            public TRuntimeSettings(string configuration, string platform)
+            {
+                this.configuration  = configuration;
+                this.platform       = platform;
+            }
         }
     }
 
