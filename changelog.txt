@@ -1,3 +1,6 @@
+v0.3.2 (2013.12.28)
+* fixed: MSBuild variables with custom Configuration & Platform at Runtime
+
 v0.3.1 (2013.12.17)
 * [bug] Button "MSBuild Properties" does not resize with the Window
 * [bug] doubling escape symbol
