@@ -35,16 +35,13 @@ namespace reg.ext.vsSolutionBuildEvent
     // Package Guid
     [Guid(GuidList.guidvsSolutionBuildEventPkgString)]
 
-    public sealed class vsSolutionBuildEventPackage : Package, IVsSolutionEvents, IVsUpdateSolutionEvents
+    public sealed class vsSolutionBuildEventPackage: Package, IVsSolutionEvents, IVsUpdateSolutionEvents, IListenerOWPL
     {
         /// <summary>
         /// for a top-level functionality
         /// </summary>
         private DTE2 _dte                                   = null;
 
-        /// <summary>
-        /// for register events -> _cookieSEvents
-        /// </summary>
         /// <summary>
         /// for register events -> _cookieSEvents
         /// </summary>
@@ -67,15 +64,23 @@ namespace reg.ext.vsSolutionBuildEvent
         /// </summary>
         private EventsFrm _configFrm                        = null;
 
+        /// <summary>
+        /// Working with the OutputWindowsPane -> "Build" pane
+        /// </summary>
+        private OutputWPListener _owpBuild;
 
         public vsSolutionBuildEventPackage()
         {
             _dte = (DTE2)Package.GetGlobalService(typeof(SDTE));
             PaneVS.instance.setDTE(_dte);
+
+            _owpBuild = new OutputWPListener(_dte, "Build");
+            _owpBuild.attachEvents();
+            _owpBuild.register(this);
         }
 
         /// <summary>
-        /// execute a command when the a menu item (Build/<pack>) is clicked
+        /// execute a command when clicked menu item (Build/<pack>)
         /// </summary>
         private void MenuItemCallback(object sender, EventArgs e)
         {
@@ -97,7 +102,7 @@ namespace reg.ext.vsSolutionBuildEvent
 
 
             // TODO: Pane wrapper
-            PaneVS.instance.outputString(String.Format("{0} {1}", 
+            PaneVS.instance.outputString(String.Format("{0} {1}",
                 String.Format("loaded settings: {0}\n\nReady:", Config.getWorkPath()),
                 String.Format("{0}{1}{2}\n---\n",
                     aboutEvent(Config.data.preBuild, "Pre-Build"),
@@ -217,32 +222,55 @@ namespace reg.ext.vsSolutionBuildEvent
             return VSConstants.S_OK;
         }
 
+        void IListenerOWPL.raw(string data)
+        {
+            OutputWPBuildParser res = new OutputWPBuildParser(ref data);
+
+            string test = data;
+        }
+
+        #region cookies
         protected override void Initialize()
         {
-            Trace.WriteLine (string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
+            Trace.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
             base.Initialize();
 
-            // Add our command handlers for menu
-            OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
-            if ( null != mcs )
-            {
-                CommandID menuCommandID = new CommandID(GuidList.guidvsSolutionBuildEventCmdSet, (int)PkgCmdIDList.cmdSolutionBuildEvent);
-                _menuItem               = new MenuCommand(MenuItemCallback, menuCommandID);
+            try {
+                // menu
+                OleMenuCommandService mcs   = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+                CommandID menuCommandID     = new CommandID(GuidList.guidvsSolutionBuildEventCmdSet, (int)PkgCmdIDList.cmdSolutionBuildEvent);
+                _menuItem                   = new MenuCommand(MenuItemCallback, menuCommandID);
                 mcs.AddCommand(_menuItem);
-            }
 
-            // register events - IVsSolutionEvents
-            _solution = ServiceProvider.GlobalProvider.GetService(typeof(SVsSolution)) as IVsSolution;
-            if (_solution != null)
-            {
+                // register events - IVsSolutionEvents
+                _solution = ServiceProvider.GlobalProvider.GetService(typeof(SVsSolution)) as IVsSolution;
                 _solution.AdviseSolutionEvents(this, out _cookieSEvents);
-            }
 
-            // register events - IVsUpdateSolutionEvents
-            _solBuildManager = ServiceProvider.GlobalProvider.GetService(typeof(SVsSolutionBuildManager)) as IVsSolutionBuildManager;
-            if (_solBuildManager != null)
-            {
+                // register events - IVsUpdateSolutionEvents
+                _solBuildManager = ServiceProvider.GlobalProvider.GetService(typeof(SVsSolutionBuildManager)) as IVsSolutionBuildManager;
                 _solBuildManager.AdviseUpdateSolutionEvents(this, out _cookieUpdateSEvents);
+            }
+            catch(Exception e) {
+                IVsUIShell uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
+                
+                int res;
+                Guid id = Guid.Empty;
+                Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(
+                    uiShell.ShowMessageBox(
+                           0,
+                           ref id,
+                           "Initialize vsSolutionBuildEvent",
+                           string.Format("{0}\n{1}\n\n-----\n{2}", 
+                                "Something went wrong -_-", 
+                                "Try to restart a VS IDE or reinstall current plugin in the Extension Manager...", 
+                                e.StackTrace),
+                           string.Empty,
+                           0,
+                           OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                           OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST,
+                           OLEMSGICON.OLEMSGICON_WARNING,
+                           0,
+                           out res));
             }
         }
 
@@ -250,15 +278,14 @@ namespace reg.ext.vsSolutionBuildEvent
         {
             base.Dispose(disposing);
 
-            if (_solBuildManager != null && _cookieUpdateSEvents != 0)
-            {
+            if(_solBuildManager != null && _cookieUpdateSEvents != 0) {
                 _solBuildManager.UnadviseUpdateSolutionEvents(_cookieUpdateSEvents);
             }
 
-            if (_solution != null && _cookieSEvents != 0)
-            {
+            if(_solution != null && _cookieSEvents != 0) {
                 _solution.UnadviseSolutionEvents(_cookieSEvents);
             }
         }
+        #endregion
     }
 }
