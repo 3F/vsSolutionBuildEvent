@@ -33,23 +33,16 @@ using System.Text;
 
 namespace reg.ext.vsSolutionBuildEvent
 {
-    public class SBESettings
+    public class SBEEventOWP: SBEEvent, ISolutionEvent
     {
+        private List<TEventOWP> _eventsOWP = new List<TEventOWP>();
         /// <summary>
-        /// this value used by by default if current attr not found after deserialize
-        /// :: v0.2.x/v0.1.x
+        /// List of term
         /// </summary>
-        private string _compatibility = "0.1";
-        /// <summary>
-        /// for identification of compatibility between versions
-        /// </summary>
-        public string compatibility
+        public List<TEventOWP> eventsOWP
         {
-            get { return _compatibility; }
-            set { _compatibility = value; }
+            get { return _eventsOWP; }
+            set { _eventsOWP = value; }
         }
-
-        //TODO: direct..
-        public readonly string application = "http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/";
     }
 }

@@ -51,7 +51,7 @@ namespace reg.ext.vsSolutionBuildEvent
                 return false;
             }
 
-            if(evt.modeScript){
+            if(evt.mode == TModeCommands.Interpreter) {
                 return hModeScript(evt);
             }
             return hModeFile(evt);

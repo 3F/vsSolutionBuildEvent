@@ -111,10 +111,14 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EnvironmentVariablesFrm.cs">
+    <Compile Include="SBEEventOWP.cs" />
+    <Compile Include="TEventOWP.cs" />
+    <Compile Include="ISolutionEventEW.cs" />
+    <Compile Include="SBEEventEW.cs" />
+    <Compile Include="UI\EnvironmentVariablesFrm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EnvironmentVariablesFrm.Designer.cs">
+    <Compile Include="UI\EnvironmentVariablesFrm.Designer.cs">
       <DependentUpon>EnvironmentVariablesFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="IMSBuildProperty.cs" />
@@ -126,10 +130,10 @@
     <Compile Include="MSBuildParserException.cs" />
     <Compile Include="SBECommand.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="EventsFrm.cs">
+    <Compile Include="UI\EventsFrm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EventsFrm.Designer.cs">
+    <Compile Include="UI\EventsFrm.Designer.cs">
       <DependentUpon>EventsFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="Guids.cs" />
@@ -138,14 +142,15 @@
     <Compile Include="SBEEvent.cs" />
     <Compile Include="SBESettings.cs" />
     <Compile Include="SolutionEvents.cs" />
+    <Compile Include="Upgrade\0.3_0.4.cs" />
     <Compile Include="vsSolutionBuildEventPackage.cs" />
     <Compile Include="PkgCmdID.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="EnvironmentVariablesFrm.resx">
+    <EmbeddedResource Include="UI\EnvironmentVariablesFrm.resx">
       <DependentUpon>EnvironmentVariablesFrm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="EventsFrm.resx">
+    <EmbeddedResource Include="UI\EventsFrm.resx">
       <DependentUpon>EventsFrm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="VSPackage.resx">

@@ -58,6 +58,11 @@ namespace reg.ext.vsSolutionBuildEvent
             Pane.Clear();
         }
 
+        public void show()
+        {
+            Pane.Activate();
+        }
+
         public void outputString(string data)
         {
             Pane.OutputString(data);

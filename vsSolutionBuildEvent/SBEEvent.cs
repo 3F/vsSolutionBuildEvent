@@ -72,14 +72,14 @@ namespace reg.ext.vsSolutionBuildEvent
             set { _processHide = value; }
         }
 
-        private bool _modeScript = true;
+        private TModeCommands _mode = TModeCommands.Interpreter;
         /// <summary>
-        /// not close after completion
+        /// processing mode
         /// </summary>
-        public bool modeScript
+        public TModeCommands mode
         {
-            get { return _modeScript; }
-            set { _modeScript = value; }
+            get { return _mode; }
+            set { _mode = value; }
         }
 
         private bool _processKeep = false;

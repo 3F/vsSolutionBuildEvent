@@ -33,23 +33,29 @@ using System.Text;
 
 namespace reg.ext.vsSolutionBuildEvent
 {
-    public class SBESettings
+    public enum TEventOWPTerm
+    {
+        Default,
+        Regexp,
+
+        // TODO: find or a porting - ESS / EXT:
+        // https://bitbucket.org/3F/sandbox/src/2bc1073f9953ddc3d9289c924059bc0d0e0bd9e4/cpp/text/wildcards/wildcards/versions/essential/AlgorithmEss.h?at=master-C%2B%2B
+        Wildcards
+    }
+
+    /// <summary>
+    /// Customization of OutputWindowPane
+    /// </summary>
+    public class TEventOWP
     {
         /// <summary>
-        /// this value used by by default if current attr not found after deserialize
-        /// :: v0.2.x/v0.1.x
+        /// various condition
         /// </summary>
-        private string _compatibility = "0.1";
-        /// <summary>
-        /// for identification of compatibility between versions
-        /// </summary>
-        public string compatibility
-        {
-            get { return _compatibility; }
-            set { _compatibility = value; }
-        }
+        public string term { get; set; }
 
-        //TODO: direct..
-        public readonly string application = "http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/";
+        /// <summary>
+        /// type of recognition
+        /// </summary>
+        public TEventOWPTerm type { get; set; }
     }
 }

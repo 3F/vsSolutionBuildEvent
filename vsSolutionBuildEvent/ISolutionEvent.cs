@@ -61,9 +61,9 @@ namespace reg.ext.vsSolutionBuildEvent
         bool processKeep { get; set; }
 
         /// <summary>
-        /// script or files mode
+        /// processing mode
         /// </summary>
-        bool modeScript { get; set; }
+        TModeCommands mode { get; set; }
 
         /// <summary>
         /// stream processor
@@ -89,5 +89,24 @@ namespace reg.ext.vsSolutionBuildEvent
         /// support of MSBuild environment variables (properties)
         /// </summary>
         bool parseVariablesMSBuild { get; set; }
+    }
+
+    /// <summary>
+    /// Processing mode
+    /// </summary>
+    public enum TModeCommands
+    {
+        /// <summary>
+        /// external commands
+        /// </summary>
+        File,
+        /// <summary>
+        /// command script
+        /// </summary>
+        Interpreter,
+        /// <summary>
+        /// DTE commands
+        /// </summary>
+        Operation,
     }
 }

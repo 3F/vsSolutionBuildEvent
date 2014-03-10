@@ -38,6 +38,11 @@ namespace reg.ext.vsSolutionBuildEvent
     class Config
     {
         /// <summary>
+        /// Current config version
+        /// </summary>
+        const string VERSION = "0.4";
+
+        /// <summary>
         /// data format
         /// </summary>
         public static SolutionEvents data = null;
@@ -73,6 +78,7 @@ namespace reg.ext.vsSolutionBuildEvent
                 {
                     XmlSerializer xml   = new XmlSerializer(typeof(SolutionEvents));
                     data                = (SolutionEvents)xml.Deserialize(stream);
+                    compatibilityCheck(stream);
                 }
             }
             catch (Exception)
@@ -107,6 +113,31 @@ namespace reg.ext.vsSolutionBuildEvent
         public static string getWorkPath()
         {
             return _path;
+        }
+
+        /// <summary>
+        /// Check version and reorganize structure if needed..
+        /// </summary>
+        /// <param name="stream"></param>
+        protected static void compatibilityCheck(FileStream stream)
+        {
+            Version ver = Version.Parse(data.settings.compatibility);
+
+            if(ver.Major == 0 && ver.Minor < 4) {
+                PaneVS.instance.show();
+                try {
+                    Upgrade.Migration03_04.migrate(stream);
+                    //TODO: to ErrorList
+                    PaneVS.instance.outputString("[info] Successfully upgraded configuration 0.3 -> 0.4\nPlease, save manually!\n\n");
+                }
+                catch(Exception e){
+                    //TODO: to ErrorList
+                    PaneVS.instance.outputString(String.Format("[warning] {0}\n{1}\n\n-----\n{2}\n\n", "cannot upgrade config 0.3 -> 0.4", "Please contact to author.", e.Message));
+                }
+            }
+            
+            //update version
+            data.settings.compatibility = VERSION;
         }
 
         protected Config(){}

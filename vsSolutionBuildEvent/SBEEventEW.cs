@@ -33,23 +33,27 @@ using System.Text;
 
 namespace reg.ext.vsSolutionBuildEvent
 {
-    public class SBESettings
+    public class SBEEventEW: SBEEvent, ISolutionEvent, ISolutionEventEW
     {
+        private List<string> _codes = new List<string>();
         /// <summary>
-        /// this value used by by default if current attr not found after deserialize
-        /// :: v0.2.x/v0.1.x
+        /// list of code####
+        /// ..and "for all" if empty
         /// </summary>
-        private string _compatibility = "0.1";
-        /// <summary>
-        /// for identification of compatibility between versions
-        /// </summary>
-        public string compatibility
+        public List<string> codes
         {
-            get { return _compatibility; }
-            set { _compatibility = value; }
+            get { return _codes; }
+            set { _codes = value; }
         }
 
-        //TODO: direct..
-        public readonly string application = "http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/";
+        private bool _isWhitelist = true;
+        /// <summary>
+        /// Whitelist or Blacklist codes
+        /// </summary>
+        public bool isWhitelist
+        {
+            get { return _isWhitelist; }
+            set { _isWhitelist = value; }
+        }
     }
 }

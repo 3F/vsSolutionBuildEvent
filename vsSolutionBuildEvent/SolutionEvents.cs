@@ -76,5 +76,35 @@ namespace reg.ext.vsSolutionBuildEvent
             get { return _cancelBuild; }
             set { _cancelBuild = value; }
         }
+
+        private SBEEventEW _warningBuild = new SBEEventEW();
+        /// <summary>
+        /// Warnings during assembly
+        /// </summary>
+        public SBEEventEW warningBuild
+        {
+            get { return _warningBuild; }
+            set { _warningBuild = value; }
+        }
+
+        private SBEEventEW _errorsBuild = new SBEEventEW();
+        /// <summary>
+        /// Errors during assembly
+        /// </summary>
+        public SBEEventEW errorsBuild
+        {
+            get { return _errorsBuild; }
+            set { _errorsBuild = value; }
+        }
+
+        private SBEEventOWP _outputCustomBuild = new SBEEventOWP();
+        /// <summary>
+        /// Output-Build customization
+        /// </summary>
+        public SBEEventOWP outputCustomBuild
+        {
+            get { return _outputCustomBuild; }
+            set { _outputCustomBuild = value; }
+        }
     }
 }
