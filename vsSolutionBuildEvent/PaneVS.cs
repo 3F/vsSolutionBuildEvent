@@ -12,7 +12,7 @@ using Microsoft.VisualStudio.Shell;
 using EnvDTE80;
 using EnvDTE;
 
-namespace reg.ext.vsSolutionBuildEvent
+namespace net.r_eg.vsSBE
 {
     /// <summary>
     /// Working with a VS-pane

@@ -18,7 +18,7 @@ using Microsoft.VisualStudio.Shell;
 using EnvDTE80;
 using EnvDTE;
 
-namespace reg.ext.vsSolutionBuildEvent
+namespace net.r_eg.vsSBE
 {
     // Managed Package Registration
     [PackageRegistration(UseManagedResourcesOnly = true)]

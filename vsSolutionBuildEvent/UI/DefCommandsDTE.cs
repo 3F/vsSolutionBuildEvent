@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace reg.ext.vsSolutionBuildEvent.UI
+namespace net.r_eg.vsSBE.UI
 {
     /// <summary>
     /// Predefined operations for gui

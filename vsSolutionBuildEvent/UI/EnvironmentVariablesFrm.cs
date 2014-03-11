@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace reg.ext.vsSolutionBuildEvent.UI
+namespace net.r_eg.vsSBE.UI
 {
     public interface ITransferEnvironmentVariable
     {

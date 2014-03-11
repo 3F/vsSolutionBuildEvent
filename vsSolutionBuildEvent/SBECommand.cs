@@ -32,7 +32,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace reg.ext.vsSolutionBuildEvent
+namespace net.r_eg.vsSBE
 {
     class SBECommand
     {

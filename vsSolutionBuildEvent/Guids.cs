@@ -2,7 +2,7 @@
 // MUST match guids.h
 using System;
 
-namespace reg.ext.vsSolutionBuildEvent
+namespace net.r_eg.vsSBE
 {
     static class GuidList
     {

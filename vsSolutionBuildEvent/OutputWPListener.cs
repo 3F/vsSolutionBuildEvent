@@ -33,7 +33,7 @@ using System.Text;
 using EnvDTE;
 using EnvDTE80;
 
-namespace reg.ext.vsSolutionBuildEvent
+namespace net.r_eg.vsSBE
 {
     public interface IListenerOWPL
     {

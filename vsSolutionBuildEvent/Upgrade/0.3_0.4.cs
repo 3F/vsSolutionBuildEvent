@@ -11,7 +11,7 @@ using System.Text;
 using System.Xml.Serialization;
 using System.IO;
 
-namespace reg.ext.vsSolutionBuildEvent.Upgrade
+namespace net.r_eg.vsSBE.Upgrade
 {
     public class Migration03_04/*: IMigration*/
     {

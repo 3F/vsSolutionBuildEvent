@@ -33,7 +33,7 @@ using System.Text;
 using System.Xml.Serialization;
 using System.IO;
 
-namespace reg.ext.vsSolutionBuildEvent
+namespace net.r_eg.vsSBE
 {
     class Config
     {

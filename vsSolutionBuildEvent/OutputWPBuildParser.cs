@@ -32,7 +32,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace reg.ext.vsSolutionBuildEvent
+namespace net.r_eg.vsSBE
 {
     /// <summary>
     /// Working with a "Build" format

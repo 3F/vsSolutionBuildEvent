@@ -1,4 +1,4 @@
-﻿namespace reg.ext.vsSolutionBuildEvent.UI
+﻿namespace net.r_eg.vsSBE.UI
 {
     partial class EventsFrm
     {
