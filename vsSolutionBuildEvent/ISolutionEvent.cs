@@ -89,6 +89,12 @@ namespace reg.ext.vsSolutionBuildEvent
         /// support of MSBuild environment variables (properties)
         /// </summary>
         bool parseVariablesMSBuild { get; set; }
+
+        /// <summary>
+        /// Common Environment Visual Studio. Executes the specified commands
+        /// TODO: custom list
+        /// </summary>
+        TOperation dteExec { get; set; }
     }
 
     /// <summary>
@@ -108,5 +114,20 @@ namespace reg.ext.vsSolutionBuildEvent
         /// DTE commands
         /// </summary>
         Operation,
+    }
+
+    /// <summary>
+    /// Single DTE operation
+    /// </summary>
+    public class TOperation
+    {
+        /// <summary>
+        /// exec-command
+        /// </summary>
+        public string cmd = "";
+        /// <summary>
+        /// optional ident
+        /// </summary>
+        public string caption = "";
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace reg.ext.vsSolutionBuildEvent
+﻿namespace reg.ext.vsSolutionBuildEvent.UI
 {
     partial class EventsFrm
     {
@@ -240,12 +240,13 @@
             // 
             // checkBoxStatus
             // 
+            this.checkBoxStatus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(243)))), ((int)(((byte)(243)))));
             this.checkBoxStatus.Location = new System.Drawing.Point(12, 18);
             this.checkBoxStatus.Name = "checkBoxStatus";
             this.checkBoxStatus.Size = new System.Drawing.Size(145, 17);
             this.checkBoxStatus.TabIndex = 0;
             this.checkBoxStatus.Text = "Disabled";
-            this.checkBoxStatus.UseVisualStyleBackColor = true;
+            this.checkBoxStatus.UseVisualStyleBackColor = false;
             this.checkBoxStatus.CheckedChanged += new System.EventHandler(this.checkBoxStatus_CheckedChanged);
             // 
             // groupBoxEW
@@ -481,7 +482,7 @@
             this.groupBoxVariants.Location = new System.Drawing.Point(0, 175);
             this.groupBoxVariants.Margin = new System.Windows.Forms.Padding(0);
             this.groupBoxVariants.Name = "groupBoxVariants";
-            this.groupBoxVariants.Size = new System.Drawing.Size(197, 85);
+            this.groupBoxVariants.Size = new System.Drawing.Size(197, 87);
             this.groupBoxVariants.TabIndex = 29;
             this.groupBoxVariants.TabStop = false;
             this.groupBoxVariants.Text = "Operation variants:";
@@ -490,9 +491,6 @@
             // 
             this.listBoxOperation.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listBoxOperation.FormattingEnabled = true;
-            this.listBoxOperation.Items.AddRange(new object[] {
-            "Build.Cancel",
-            ">> User custom <<"});
             this.listBoxOperation.Location = new System.Drawing.Point(4, 16);
             this.listBoxOperation.Margin = new System.Windows.Forms.Padding(0);
             this.listBoxOperation.Name = "listBoxOperation";

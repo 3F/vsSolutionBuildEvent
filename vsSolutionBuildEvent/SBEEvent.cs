@@ -141,5 +141,16 @@ namespace reg.ext.vsSolutionBuildEvent
             get { return _parseVariablesMSBuild; }
             set { _parseVariablesMSBuild = value; }
         }
+
+        private TOperation _dteExec = new TOperation();
+        /// <summary>
+        /// Common Environment Visual Studio. Executes the specified commands
+        /// TODO: custom list
+        /// </summary>
+        public TOperation dteExec
+        {
+            get { return _dteExec; }
+            set { _dteExec = value; }
+        }
     }
 }

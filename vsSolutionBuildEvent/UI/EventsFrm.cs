@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace reg.ext.vsSolutionBuildEvent
+namespace reg.ext.vsSolutionBuildEvent.UI
 {
     public partial class EventsFrm: Form, ITransferEnvironmentVariable
     {
@@ -51,6 +51,20 @@ namespace reg.ext.vsSolutionBuildEvent
         /// </summary>
         private List<_SBEWrap> _solutionEvents = new List<_SBEWrap>();
 
+        /// <summary>
+        /// Current SBE
+        /// </summary>
+        private _SBEWrap _SBE
+        {
+            get { return _solutionEvents[comboBoxEvents.SelectedIndex]; }
+        }
+
+        /// <summary>
+        /// Predefined operations
+        /// TODO:
+        /// </summary>
+        private List<TOperation> _listOperations = DefCommandsDTE.operations();
+
         public EventsFrm()
         {
             InitializeComponent();
@@ -87,19 +101,17 @@ namespace reg.ext.vsSolutionBuildEvent
 
         private void _saveData()
         {
-            _SBEWrap sbe = _solutionEvents[comboBoxEvents.SelectedIndex];
-
             try
             {
-                _saveData(sbe.evt);
+                _saveData(_SBE.evt);
 
-                switch(sbe.subtype) {
+                switch(_SBE.subtype) {
                     case _SBEWrap.SBEEvetnType.SBEEventEW: {
-                        _saveData((SBEEventEW)sbe.evt);
+                        _saveData((SBEEventEW)_SBE.evt);
                         break;
                     }
                     case _SBEWrap.SBEEvetnType.SBEEventOWP: {
-                        _saveData((SBEEventOWP)sbe.evt);
+                        _saveData((SBEEventOWP)_SBE.evt);
                         break;
                     }
                 }
@@ -114,7 +126,6 @@ namespace reg.ext.vsSolutionBuildEvent
         private void _saveData(SBEEvent evt)
         {
             evt.enabled                 = checkBoxStatus.Checked;
-            evt.command                 = textBoxCommand.Text;
             evt.caption                 = textBoxCaption.Text;
             evt.interpreter             = comboBoxInterpreter.Text;
             evt.processHide             = checkBoxProcessHide.Checked;
@@ -132,6 +143,20 @@ namespace reg.ext.vsSolutionBuildEvent
             }
             else if(radioModeOperation.Checked) {
                 evt.mode = TModeCommands.Operation;
+            }
+
+            //joint .. TODO:
+            if(!radioModeOperation.Checked) {
+                evt.command = textBoxCommand.Text;
+            }
+            else {
+                if(_isOperationCustomUse()){
+                    evt.dteExec.cmd = textBoxCommand.Text;
+                }
+                else{
+                    evt.dteExec.cmd = _listOperations[listBoxOperation.SelectedIndex].cmd;
+                }
+                evt.dteExec.caption = listBoxOperation.Text;
             }
         }
 
@@ -186,18 +211,30 @@ namespace reg.ext.vsSolutionBuildEvent
 
             comboBoxEvents.SelectedIndex = 0;
             _renderData();
+            _operationsInit();
         }
 
         private void btnExample_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(
-                "examples of how to use it and other detail, see on: bitbucket.org/3F \n\n\t\t\tentry.reg@gmail.com",
-                this.Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            DialogResult ret = MessageBox.Show(String.Format("{0}\n{1}\n\n{2}\n{3}",
+                                                    "Help is contained on VS Gallery Page - scripts, solutions, etc.,",
+                                                    "Click 'Yes' to go to the page",
+                                                    "Other detail, see on: bitbucket.org/3F",
+                                                    "entry.reg@gmail.com"
+                                                    ),
+                                                this.Text, 
+                                                MessageBoxButtons.YesNo, 
+                                                MessageBoxIcon.Information);
+
+            if(ret == DialogResult.Yes) {
+                System.Diagnostics.Process.Start("http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
+            }
         }
 
         private void comboBoxEvents_SelectedIndexChanged(object sender, EventArgs e)
         {
             _renderData();
+            _operationsSelect();
             _notice(false);
         }
 
@@ -215,11 +252,12 @@ namespace reg.ext.vsSolutionBuildEvent
         {
             if(checkBoxStatus.Checked) {
                 checkBoxStatus.Text = "Enabled";
-                this.textBoxCommand.BackColor = System.Drawing.Color.FromArgb(242, 250, 241);
+                checkBoxStatus.BackColor = textBoxCommand.BackColor = System.Drawing.Color.FromArgb(242, 250, 241);
+                
             }
             else{
                 checkBoxStatus.Text = "Disabled";
-                this.textBoxCommand.BackColor = System.Drawing.Color.FromArgb(248, 243, 243);
+                checkBoxStatus.BackColor = textBoxCommand.BackColor = System.Drawing.Color.FromArgb(248, 243, 243);
             }
         }
 
@@ -234,18 +272,17 @@ namespace reg.ext.vsSolutionBuildEvent
 
         private void _renderData()
         {
-            _SBEWrap sbe = _solutionEvents[comboBoxEvents.SelectedIndex];
-            _renderData(sbe.evt);
+            _renderData(_SBE.evt);
 
-            switch(sbe.subtype) {
+            switch(_SBE.subtype) {
                 case _SBEWrap.SBEEvetnType.SBEEventEW: {
-                    _renderData((SBEEventEW)sbe.evt);
+                    _renderData((SBEEventEW)_SBE.evt);
                     groupBoxEW.Enabled = true;
                     groupBoxOutputControl.Enabled = false;
                     return;
                 }
                 case _SBEWrap.SBEEvetnType.SBEEventOWP: {
-                    _renderData((SBEEventOWP)sbe.evt);
+                    _renderData((SBEEventOWP)_SBE.evt);
                     groupBoxEW.Enabled = false;
                     groupBoxOutputControl.Enabled = true;
                     return;
@@ -308,6 +345,67 @@ namespace reg.ext.vsSolutionBuildEvent
             }
         }
 
+        //TODO: additional component
+        private void _renderDataStubCommand(bool isOperation)
+        {
+            if(!isOperation) {
+                textBoxCommand.Text = _SBE.evt.command;
+                return;
+            }
+            textBoxCommand.Text = _SBE.evt.dteExec.cmd;
+        }
+
+        // TODO: ~ DefCommandsDTE
+        private void _operationsInit()
+        {            
+            listBoxOperation.Items.Clear();
+            foreach(TOperation operation in _listOperations) {
+                listBoxOperation.Items.Add(operation.caption);
+
+            }
+            listBoxOperation.Items.Add(">> User custom <<");
+            _operationsSelect();
+        }
+
+        private void _operationsSelect()
+        {
+            if(listBoxOperation.SelectedIndex != -1) {
+                return;
+            }
+
+            int idx = 0;
+            foreach(string caption in listBoxOperation.Items) {
+                if(_SBE.evt.dteExec.caption == caption) {
+                    listBoxOperation.SelectedIndex = idx;
+                    return;
+                }
+                ++idx;
+            }
+            listBoxOperation.SelectedIndex = idx - 1;
+        }
+
+        private void _operationsAction()
+        {
+            if(_isOperationCustomUse()) {
+                labelToCommandBox.Text = "DTE execute (separated by enter key):";
+                textBoxCommand.Enabled = true;
+                _renderDataStubCommand(true);
+            }
+            else {
+                labelToCommandBox.Text = "~";
+                textBoxCommand.Enabled = false;
+                textBoxCommand.Text    = "";
+            }
+        }
+
+        private bool _isOperationCustomUse()
+        {
+            if(listBoxOperation.SelectedIndex == listBoxOperation.Items.Count - 1) {
+                return true;
+            }
+            return false;
+        }
+
         private void envVariablesUIHelper()
         {
             if(envVariables != null && !envVariables.IsDisposed) {
@@ -328,7 +426,8 @@ namespace reg.ext.vsSolutionBuildEvent
             labelToCommandBox.Text      = "Command script:";
             groupBoxInterpreter.Enabled = true;
             listBoxOperation.Enabled    = false;
-            //listBoxOperation.ClearSelected();
+            textBoxCommand.Enabled      = true;
+            _renderDataStubCommand(false);
         }
 
         private void radioModeFiles_CheckedChanged(object sender, EventArgs e)
@@ -336,24 +435,20 @@ namespace reg.ext.vsSolutionBuildEvent
             labelToCommandBox.Text      = "Files to execute (separated by enter key):";            
             groupBoxInterpreter.Enabled = false;
             listBoxOperation.Enabled    = false;
-            //listBoxOperation.ClearSelected();
+            textBoxCommand.Enabled      = true;
+            _renderDataStubCommand(false);
         }
 
         private void radioModeOperation_CheckedChanged(object sender, EventArgs e)
         {
-            labelToCommandBox.Text      = "DTE execute (separated by enter key):";            
-            groupBoxInterpreter.Enabled = true;
-            listBoxOperation.Enabled    = true;
+            _operationsAction();
+            groupBoxInterpreter.Enabled = false;
+            listBoxOperation.Enabled = true;
         }
 
         private void listBoxOperation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(listBoxOperation.SelectedIndex == listBoxOperation.Items.Count - 1) {
-                textBoxCommand.Enabled = true;
-            }
-            else {
-                textBoxCommand.Enabled = false;
-            }
+            _operationsAction();
         }
 
         private void checkBoxProcessHide_CheckedChanged(object sender, EventArgs e)

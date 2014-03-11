@@ -1,4 +1,4 @@
-﻿namespace reg.ext.vsSolutionBuildEvent
+﻿namespace reg.ext.vsSolutionBuildEvent.UI
 {
     partial class EnvironmentVariablesFrm
     {

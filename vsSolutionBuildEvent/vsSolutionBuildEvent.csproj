@@ -115,6 +115,7 @@
     <Compile Include="TEventOWP.cs" />
     <Compile Include="ISolutionEventEW.cs" />
     <Compile Include="SBEEventEW.cs" />
+    <Compile Include="UI\DefCommandsDTE.cs" />
     <Compile Include="UI\EnvironmentVariablesFrm.cs">
       <SubType>Form</SubType>
     </Compile>

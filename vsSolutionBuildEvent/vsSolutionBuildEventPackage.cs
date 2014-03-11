@@ -62,7 +62,7 @@ namespace reg.ext.vsSolutionBuildEvent
         /// <summary>
         /// main form of settings
         /// </summary>
-        private EventsFrm _configFrm                        = null;
+        private UI.EventsFrm _configFrm                     = null;
 
         /// <summary>
         /// Working with the OutputWindowsPane -> "Build" pane
@@ -89,7 +89,7 @@ namespace reg.ext.vsSolutionBuildEvent
                 _configFrm.Focus();
                 return;
             }
-            _configFrm = new EventsFrm();
+            _configFrm = new UI.EventsFrm();
             _configFrm.Show();
         }
 
