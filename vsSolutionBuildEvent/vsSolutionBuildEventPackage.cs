@@ -103,12 +103,16 @@ namespace net.r_eg.vsSBE
 
 
             // TODO: Pane wrapper
+            // TODO: indication of SBE into individual UI
             PaneVS.instance.outputString(String.Format("{0} {1}",
                 String.Format("loaded settings: {0}\n\nReady:", Config.WorkPath),
-                String.Format("{0}{1}{2}\n---\n",
+                String.Format("{0}{1}{2}{3}{4}{5}\n---\n",
                     aboutEvent(Config.data.preBuild, "Pre-Build"),
                     aboutEvent(Config.data.postBuild, "Post-Build"),
-                    aboutEvent(Config.data.cancelBuild, "Cancel-Build"))
+                    aboutEvent(Config.data.cancelBuild, "Cancel-Build"),
+                    aboutEvent(Config.data.warningsBuild, "Warning-Build"),
+                    aboutEvent(Config.data.errorsBuild, "Errors-Build"),
+                    aboutEvent(Config.data.outputCustomBuild, "Output-Build"))
             ));
         }
 
@@ -209,7 +213,18 @@ namespace net.r_eg.vsSBE
 
         void sbeOutput(ISolutionEventOWP evt, ref string raw)
         {
-            //TODO:
+            if(!(new OWPMatcher()).match(evt.eventsOWP, raw)) {
+                return;
+            }
+
+            try {
+                if((new SBECommand(_dte, SBEQueueDTE.Type.OWP)).basic(evt)) {
+                    PaneVS.instance.outputString(String.Format("['{0}'] finished SBE: {1}{2}", "Output", evt.caption, Environment.NewLine));
+                }
+            }
+            catch(Exception e) {
+                PaneVS.instance.outputString(String.Format("SBE '{0}' error: {1}{2}", "Output", e.Message, Environment.NewLine));
+            }
         }
 
         #region unused

@@ -111,6 +111,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OWPMatcher.cs" />
     <Compile Include="ISolutionEventOWP.cs" />
     <Compile Include="SBEEventOWP.cs" />
     <Compile Include="ISolutionEventEW.cs" />
