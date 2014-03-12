@@ -33,6 +33,17 @@ using System.Text;
 
 namespace net.r_eg.vsSBE
 {
+    /// <summary>
+    /// Errors & Warnings
+    /// </summary>
+    interface ISolutionEventOWP: ISolutionEvent
+    {
+        /// <summary>
+        /// List of term
+        /// </summary>
+        List<TEventOWP> eventsOWP { get; set; }
+    }
+
     public enum TEventOWPTerm
     {
         Default,

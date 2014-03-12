@@ -39,10 +39,11 @@
             this.radioModeScript = new System.Windows.Forms.RadioButton();
             this.radioModeFiles = new System.Windows.Forms.RadioButton();
             this.groupBoxSettings = new System.Windows.Forms.GroupBox();
-            this.checkBoxParseVariables = new System.Windows.Forms.CheckBox();
+            this.panelControlByOperation = new System.Windows.Forms.Panel();
             this.checkBoxProcessKeep = new System.Windows.Forms.CheckBox();
             this.checkBoxWaitForExit = new System.Windows.Forms.CheckBox();
             this.checkBoxProcessHide = new System.Windows.Forms.CheckBox();
+            this.checkBoxParseVariables = new System.Windows.Forms.CheckBox();
             this.checkBoxStatus = new System.Windows.Forms.CheckBox();
             this.groupBoxEW = new System.Windows.Forms.GroupBox();
             this.textBoxEW = new System.Windows.Forms.TextBox();
@@ -71,9 +72,11 @@
             this.btnExample = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnApply = new System.Windows.Forms.Button();
+            this.btnDteCmd = new System.Windows.Forms.Button();
             this.panelCommand.SuspendLayout();
             this.groupBoxPMode.SuspendLayout();
             this.groupBoxSettings.SuspendLayout();
+            this.panelControlByOperation.SuspendLayout();
             this.groupBoxEW.SuspendLayout();
             this.groupBoxOutputControl.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOutput)).BeginInit();
@@ -176,10 +179,8 @@
             // 
             // groupBoxSettings
             // 
+            this.groupBoxSettings.Controls.Add(this.panelControlByOperation);
             this.groupBoxSettings.Controls.Add(this.checkBoxParseVariables);
-            this.groupBoxSettings.Controls.Add(this.checkBoxProcessKeep);
-            this.groupBoxSettings.Controls.Add(this.checkBoxWaitForExit);
-            this.groupBoxSettings.Controls.Add(this.checkBoxProcessHide);
             this.groupBoxSettings.Controls.Add(this.checkBoxStatus);
             this.groupBoxSettings.Location = new System.Drawing.Point(0, 27);
             this.groupBoxSettings.Name = "groupBoxSettings";
@@ -187,6 +188,54 @@
             this.groupBoxSettings.TabIndex = 25;
             this.groupBoxSettings.TabStop = false;
             this.groupBoxSettings.Text = "Control";
+            // 
+            // panelControlByOperation
+            // 
+            this.panelControlByOperation.Controls.Add(this.checkBoxProcessKeep);
+            this.panelControlByOperation.Controls.Add(this.checkBoxWaitForExit);
+            this.panelControlByOperation.Controls.Add(this.checkBoxProcessHide);
+            this.panelControlByOperation.Location = new System.Drawing.Point(4, 36);
+            this.panelControlByOperation.Name = "panelControlByOperation";
+            this.panelControlByOperation.Size = new System.Drawing.Size(181, 72);
+            this.panelControlByOperation.TabIndex = 18;
+            // 
+            // checkBoxProcessKeep
+            // 
+            this.checkBoxProcessKeep.AutoSize = true;
+            this.checkBoxProcessKeep.Checked = true;
+            this.checkBoxProcessKeep.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxProcessKeep.Enabled = false;
+            this.checkBoxProcessKeep.Location = new System.Drawing.Point(8, 51);
+            this.checkBoxProcessKeep.Name = "checkBoxProcessKeep";
+            this.checkBoxProcessKeep.Size = new System.Drawing.Size(164, 17);
+            this.checkBoxProcessKeep.TabIndex = 18;
+            this.checkBoxProcessKeep.Text = "Do not close after completion";
+            this.checkBoxProcessKeep.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxWaitForExit
+            // 
+            this.checkBoxWaitForExit.AutoSize = true;
+            this.checkBoxWaitForExit.Checked = true;
+            this.checkBoxWaitForExit.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxWaitForExit.Location = new System.Drawing.Point(8, 5);
+            this.checkBoxWaitForExit.Name = "checkBoxWaitForExit";
+            this.checkBoxWaitForExit.Size = new System.Drawing.Size(145, 17);
+            this.checkBoxWaitForExit.TabIndex = 16;
+            this.checkBoxWaitForExit.Text = "Wait for completion script";
+            this.checkBoxWaitForExit.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxProcessHide
+            // 
+            this.checkBoxProcessHide.AutoSize = true;
+            this.checkBoxProcessHide.Checked = true;
+            this.checkBoxProcessHide.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxProcessHide.Location = new System.Drawing.Point(8, 28);
+            this.checkBoxProcessHide.Name = "checkBoxProcessHide";
+            this.checkBoxProcessHide.Size = new System.Drawing.Size(88, 17);
+            this.checkBoxProcessHide.TabIndex = 17;
+            this.checkBoxProcessHide.Text = "Hide process";
+            this.checkBoxProcessHide.UseVisualStyleBackColor = true;
+            this.checkBoxProcessHide.CheckedChanged += new System.EventHandler(this.checkBoxProcessHide_CheckedChanged);
             // 
             // checkBoxParseVariables
             // 
@@ -199,44 +248,6 @@
             this.checkBoxParseVariables.TabIndex = 17;
             this.checkBoxParseVariables.Text = "MSBuild Variables";
             this.checkBoxParseVariables.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxProcessKeep
-            // 
-            this.checkBoxProcessKeep.AutoSize = true;
-            this.checkBoxProcessKeep.Checked = true;
-            this.checkBoxProcessKeep.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxProcessKeep.Enabled = false;
-            this.checkBoxProcessKeep.Location = new System.Drawing.Point(12, 87);
-            this.checkBoxProcessKeep.Name = "checkBoxProcessKeep";
-            this.checkBoxProcessKeep.Size = new System.Drawing.Size(164, 17);
-            this.checkBoxProcessKeep.TabIndex = 15;
-            this.checkBoxProcessKeep.Text = "Do not close after completion";
-            this.checkBoxProcessKeep.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxWaitForExit
-            // 
-            this.checkBoxWaitForExit.AutoSize = true;
-            this.checkBoxWaitForExit.Checked = true;
-            this.checkBoxWaitForExit.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxWaitForExit.Location = new System.Drawing.Point(12, 41);
-            this.checkBoxWaitForExit.Name = "checkBoxWaitForExit";
-            this.checkBoxWaitForExit.Size = new System.Drawing.Size(145, 17);
-            this.checkBoxWaitForExit.TabIndex = 13;
-            this.checkBoxWaitForExit.Text = "Wait for completion script";
-            this.checkBoxWaitForExit.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxProcessHide
-            // 
-            this.checkBoxProcessHide.AutoSize = true;
-            this.checkBoxProcessHide.Checked = true;
-            this.checkBoxProcessHide.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxProcessHide.Location = new System.Drawing.Point(12, 64);
-            this.checkBoxProcessHide.Name = "checkBoxProcessHide";
-            this.checkBoxProcessHide.Size = new System.Drawing.Size(88, 17);
-            this.checkBoxProcessHide.TabIndex = 14;
-            this.checkBoxProcessHide.Text = "Hide process";
-            this.checkBoxProcessHide.UseVisualStyleBackColor = true;
-            this.checkBoxProcessHide.CheckedChanged += new System.EventHandler(this.checkBoxProcessHide_CheckedChanged);
             // 
             // checkBoxStatus
             // 
@@ -501,6 +512,7 @@
             // panelBottom
             // 
             this.panelBottom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelBottom.Controls.Add(this.btnDteCmd);
             this.panelBottom.Controls.Add(this.buttonEnvVariables);
             this.panelBottom.Controls.Add(this.labelCaption);
             this.panelBottom.Controls.Add(this.textBoxCaption);
@@ -554,9 +566,9 @@
             // btnClear
             // 
             this.btnClear.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnClear.Location = new System.Drawing.Point(154, 42);
+            this.btnClear.Location = new System.Drawing.Point(258, 42);
             this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(51, 23);
+            this.btnClear.Size = new System.Drawing.Size(46, 23);
             this.btnClear.TabIndex = 20;
             this.btnClear.Text = "Clear";
             this.btnClear.UseVisualStyleBackColor = true;
@@ -572,6 +584,17 @@
             this.btnApply.Text = "Apply";
             this.btnApply.UseVisualStyleBackColor = true;
             this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
+            // 
+            // btnDteCmd
+            // 
+            this.btnDteCmd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDteCmd.Location = new System.Drawing.Point(154, 42);
+            this.btnDteCmd.Name = "btnDteCmd";
+            this.btnDteCmd.Size = new System.Drawing.Size(98, 23);
+            this.btnDteCmd.TabIndex = 25;
+            this.btnDteCmd.Text = "DTE Commands";
+            this.btnDteCmd.UseVisualStyleBackColor = true;
+            this.btnDteCmd.Click += new System.EventHandler(this.btnDteCmd_Click);
             // 
             // EventsFrm
             // 
@@ -600,6 +623,8 @@
             this.groupBoxPMode.PerformLayout();
             this.groupBoxSettings.ResumeLayout(false);
             this.groupBoxSettings.PerformLayout();
+            this.panelControlByOperation.ResumeLayout(false);
+            this.panelControlByOperation.PerformLayout();
             this.groupBoxEW.ResumeLayout(false);
             this.groupBoxEW.PerformLayout();
             this.groupBoxOutputControl.ResumeLayout(false);
@@ -626,9 +651,6 @@
         private System.Windows.Forms.RadioButton radioModeFiles;
         private System.Windows.Forms.GroupBox groupBoxSettings;
         private System.Windows.Forms.CheckBox checkBoxParseVariables;
-        private System.Windows.Forms.CheckBox checkBoxProcessKeep;
-        private System.Windows.Forms.CheckBox checkBoxWaitForExit;
-        private System.Windows.Forms.CheckBox checkBoxProcessHide;
         private System.Windows.Forms.CheckBox checkBoxStatus;
         private System.Windows.Forms.GroupBox groupBoxEW;
         private System.Windows.Forms.Button btnEWRemove;
@@ -657,5 +679,10 @@
         private System.Windows.Forms.DataGridViewComboBoxColumn owpType;
         private System.Windows.Forms.DataGridViewButtonColumn owpRemove;
         private System.Windows.Forms.TextBox textBoxEW;
+        private System.Windows.Forms.Panel panelControlByOperation;
+        private System.Windows.Forms.CheckBox checkBoxProcessKeep;
+        private System.Windows.Forms.CheckBox checkBoxWaitForExit;
+        private System.Windows.Forms.CheckBox checkBoxProcessHide;
+        private System.Windows.Forms.Button btnDteCmd;
     }
 }

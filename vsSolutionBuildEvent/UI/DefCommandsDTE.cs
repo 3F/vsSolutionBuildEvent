@@ -21,10 +21,10 @@ namespace net.r_eg.vsSBE.UI
         {
             List<TOperation> dte = new List<TOperation>();
 
-            dte.Add(new TOperationQ("Build.Cancel", "Stop building"));
-            dte.Add(new TOperationQ("Build.Cancel\nBuild.RebuildSolution", "Rebuild Solution"));
-            dte.Add(new TOperationQ("Debug.Start", "Run project"));
-            dte.Add(new TOperationQ("Debug.StartWithoutDebugging", "Run Without Debugging"));
+            dte.Add(new TOperationQ(new string[]{"Build.Cancel"}, "Stop building"));
+            dte.Add(new TOperationQ(new string[]{"Build.Cancel", "Build.RebuildSolution"}, "Rebuild Solution"));
+            dte.Add(new TOperationQ(new string[]{"Debug.Start"}, "Run project"));
+            dte.Add(new TOperationQ(new string[]{"Debug.StartWithoutDebugging"}, "Run Without Debugging"));
 
             return dte;
         }
@@ -35,7 +35,7 @@ namespace net.r_eg.vsSBE.UI
         /// </summary>
         class TOperationQ: TOperation
         {
-            public TOperationQ(string cmd, string caption)
+            public TOperationQ(string[] cmd, string caption)
             {
                 this.cmd     = cmd;
                 this.caption = caption;

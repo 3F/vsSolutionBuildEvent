@@ -33,7 +33,7 @@ using System.Text;
 
 namespace net.r_eg.vsSBE
 {
-    public class SBEEventEW: SBEEvent, ISolutionEvent, ISolutionEventEW
+    public class SBEEventEW: SBEEvent, ISolutionEventEW
     {
         private List<string> _codes = new List<string>();
         /// <summary>

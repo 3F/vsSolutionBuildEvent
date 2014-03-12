@@ -50,6 +50,6 @@ namespace net.r_eg.vsSBE
         }
 
         //TODO: direct..
-        public readonly string application = "http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/";
+        public string application = "http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/";
     }
 }

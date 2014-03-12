@@ -31,15 +31,54 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using EnvDTE80;
 
 namespace net.r_eg.vsSBE
 {
+    /// <summary>
+    /// 
+    /// TODO: logger for user
+    /// </summary>
     class SBECommand
     {
+        const string CMD_DEFAULT = "cmd";
+
+        public class SBEContext
+        {
+            public string path;
+            public string disk;
+
+            public SBEContext(string path, string disk)
+            {
+                this.path = path;
+                this.disk = disk;
+            }
+        }
+
         /// <summary>
         /// working directory for commands
         /// </summary>
         private SBEContext _context = null;
+
+        /// <summary>
+        /// DTE context
+        /// </summary>
+        private DTE2 _dte;
+
+        /// <summary>
+        /// type for recursive DTE commands
+        /// </summary>
+        private SBEQueueDTE.Type _queueType;
+        private SBEQueueDTE.Rec _QueueRec
+        {
+            get { return SBEQueueDTE.queue[_queueType]; }
+            set {
+                if(!SBEQueueDTE.queue.ContainsKey(_queueType)) {
+                    SBEQueueDTE.queue[_queueType] = value;
+                }
+            }
+        }
+
 
         /// <summary>
         /// basic implementation
@@ -51,21 +90,28 @@ namespace net.r_eg.vsSBE
                 return false;
             }
 
-            if(evt.mode == TModeCommands.Interpreter) {
-                return hModeScript(evt);
+            switch(evt.mode) {
+                case TModeCommands.Operation: {
+                    return hModeOperation(evt);
+                }
+                case TModeCommands.Interpreter: {
+                    return hModeScript(evt);
+                }
             }
             return hModeFile(evt);
         }
 
-        public SBECommand()
+        public SBECommand(DTE2 dte, SBEQueueDTE.Type queueType)
         {
-            string path = Config.getWorkPath();
-            _context    = new SBEContext(path, _letDisk(path));
+            _context    = new SBEContext(Config.WorkPath, _letDisk(Config.WorkPath));
+            _dte        = dte;
+            _queueType  = queueType;
+            _QueueRec   = new SBEQueueDTE.Rec();
         }
 
         protected bool hModeFile(ISolutionEvent evt)
         {
-            ProcessStartInfo psi = new ProcessStartInfo("cmd.exe");
+            ProcessStartInfo psi = new ProcessStartInfo(CMD_DEFAULT);
             if(evt.processHide){
                 psi.WindowStyle = ProcessWindowStyle.Hidden;
             }
@@ -99,6 +145,48 @@ namespace net.r_eg.vsSBE
             return true;
         }
 
+        protected bool hModeOperation(ISolutionEvent evt)
+        {
+            if(_QueueRec.level == 0) {
+                _QueueRec.cmd = evt.dteExec.cmd;
+            }
+
+            if(_QueueRec.cmd.Length < 1) {
+                return true; //all pushed
+            }
+
+            ++_QueueRec.level;
+
+            string[] newer = new string[_QueueRec.cmd.Length - 1];
+            for(int i = 1; i < _QueueRec.cmd.Length; ++i) {
+                newer[i - 1] = _QueueRec.cmd[i];
+            }
+            string current = _QueueRec.cmd[0];
+            _QueueRec.cmd = newer;
+
+            Exception terminated = null;
+            try {
+                // * error if command not available at current time
+                // * recursive to Debug.Start, Debug.StartWithoutDebugging, etc.,
+                _dte.ExecuteCommand(current);
+            }
+            catch(Exception e) {
+                terminated = e;
+            }
+
+            if(_QueueRec.cmd.Length > 0) {
+                //other.. like a File.Print, etc.
+                hModeOperation(evt);
+            }
+
+            --_QueueRec.level;
+
+            if(terminated != null) {
+                throw new Exception(terminated.Message, terminated);
+            }
+            return true;
+        }
+
         //TODO:
         protected bool hModeScript(ISolutionEvent evt)
         {
@@ -119,7 +207,7 @@ namespace net.r_eg.vsSBE
                 script = evt.wrapper + script.Replace(evt.wrapper, "\\" + evt.wrapper) + evt.wrapper;
             }
 
-            ProcessStartInfo psi = new ProcessStartInfo("cmd.exe");
+            ProcessStartInfo psi = new ProcessStartInfo(CMD_DEFAULT);
             if(evt.processHide) {
                 psi.WindowStyle = ProcessWindowStyle.Hidden;
             }
@@ -168,15 +256,25 @@ namespace net.r_eg.vsSBE
         }
     }
 
-    class SBEContext
+    /// <summary>
+    /// Support recursive DTE commands
+    /// e.g.:
+    ///   exec - "Debug.Start"
+    ///   exec - "Debug.Start"
+    ///   exec - "File.Print"
+    /// </summary>
+    class SBEQueueDTE
     {
-        public string path;
-        public string disk;
-
-        public SBEContext(string path, string disk)
+        public enum Type
         {
-            this.path = path;
-            this.disk = disk;
+            PRE, POST, CANCEL, WARNINGS, ERRORS, OWP
         }
+
+        public class Rec
+        {
+            public int level = 0;
+            public string[] cmd;
+        }
+        public static Dictionary<Type, Rec> queue = new Dictionary<Type, Rec>();
     }
 }

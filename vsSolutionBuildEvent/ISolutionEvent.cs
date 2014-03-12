@@ -124,7 +124,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// exec-command
         /// </summary>
-        public string cmd = "";
+        public string[] cmd = new string[]{""};
         /// <summary>
         /// optional ident
         /// </summary>

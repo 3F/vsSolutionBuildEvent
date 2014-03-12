@@ -33,7 +33,7 @@ using System.Text;
 
 namespace net.r_eg.vsSBE
 {
-    public class SBEEventOWP: SBEEvent, ISolutionEvent
+    public class SBEEventOWP: SBEEvent, ISolutionEventOWP
     {
         private List<TEventOWP> _eventsOWP = new List<TEventOWP>();
         /// <summary>

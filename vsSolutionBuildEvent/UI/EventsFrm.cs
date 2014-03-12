@@ -151,7 +151,7 @@ namespace net.r_eg.vsSBE.UI
             }
             else {
                 if(_isOperationCustomUse()){
-                    evt.dteExec.cmd = textBoxCommand.Text;
+                    evt.dteExec.cmd = textBoxCommand.Text.Split('\n');
                 }
                 else{
                     evt.dteExec.cmd = _listOperations[listBoxOperation.SelectedIndex].cmd;
@@ -200,7 +200,7 @@ namespace net.r_eg.vsSBE.UI
             _solutionEvents.Add(new _SBEWrap(Config.data.cancelBuild));
             comboBoxEvents.Items.Add("Cancel-Build  (by user or it's errors of compilation)");
 
-            _solutionEvents.Add(new _SBEWrap(Config.data.warningBuild, _SBEWrap.SBEEvetnType.SBEEventEW));
+            _solutionEvents.Add(new _SBEWrap(Config.data.warningsBuild, _SBEWrap.SBEEvetnType.SBEEventEW));
             comboBoxEvents.Items.Add("Warning-Build (Warnings during assembly)");
 
             _solutionEvents.Add(new _SBEWrap(Config.data.errorsBuild, _SBEWrap.SBEEvetnType.SBEEventEW));
@@ -352,7 +352,7 @@ namespace net.r_eg.vsSBE.UI
                 textBoxCommand.Text = _SBE.evt.command;
                 return;
             }
-            textBoxCommand.Text = _SBE.evt.dteExec.cmd;
+            textBoxCommand.Text = String.Join("\n", _SBE.evt.dteExec.cmd);
         }
 
         // TODO: ~ DefCommandsDTE
@@ -369,10 +369,6 @@ namespace net.r_eg.vsSBE.UI
 
         private void _operationsSelect()
         {
-            if(listBoxOperation.SelectedIndex != -1) {
-                return;
-            }
-
             int idx = 0;
             foreach(string caption in listBoxOperation.Items) {
                 if(_SBE.evt.dteExec.caption == caption) {
@@ -428,6 +424,7 @@ namespace net.r_eg.vsSBE.UI
             listBoxOperation.Enabled    = false;
             textBoxCommand.Enabled      = true;
             _renderDataStubCommand(false);
+            panelControlByOperation.Enabled = true;
         }
 
         private void radioModeFiles_CheckedChanged(object sender, EventArgs e)
@@ -437,13 +434,15 @@ namespace net.r_eg.vsSBE.UI
             listBoxOperation.Enabled    = false;
             textBoxCommand.Enabled      = true;
             _renderDataStubCommand(false);
+            panelControlByOperation.Enabled = true;
         }
 
         private void radioModeOperation_CheckedChanged(object sender, EventArgs e)
         {
             _operationsAction();
-            groupBoxInterpreter.Enabled = false;
-            listBoxOperation.Enabled = true;
+            groupBoxInterpreter.Enabled     = false;
+            listBoxOperation.Enabled        = true;
+            panelControlByOperation.Enabled = false;
         }
 
         private void listBoxOperation_SelectedIndexChanged(object sender, EventArgs e)
@@ -493,6 +492,11 @@ namespace net.r_eg.vsSBE.UI
                 return;
             }
             listBoxEW.Items.RemoveAt(listBoxEW.SelectedIndex);
+        }
+
+        private void btnDteCmd_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

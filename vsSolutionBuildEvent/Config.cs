@@ -110,9 +110,9 @@ namespace net.r_eg.vsSBE
             }
         }
 
-        public static string getWorkPath()
+        public static string WorkPath
         {
-            return _path;
+            get { return _path; }
         }
 
         /// <summary>
@@ -132,7 +132,9 @@ namespace net.r_eg.vsSBE
                 }
                 catch(Exception e){
                     //TODO: to ErrorList
-                    PaneVS.instance.outputString(String.Format("[warning] {0}\n{1}\n\n-----\n{2}\n\n", "cannot upgrade config 0.3 -> 0.4", "Please contact to author.", e.Message));
+                    PaneVS.instance.outputString(String.Format("[warning] {0}\n{1}\n\n-----\n{2}\n\n", 
+                                                               "cannot upgrade config 0.3 -> 0.4", 
+                                                               "Please contact to author.", e.Message));
                 }
             }
             

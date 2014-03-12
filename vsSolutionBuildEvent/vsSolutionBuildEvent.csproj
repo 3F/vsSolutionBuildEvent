@@ -111,8 +111,8 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ISolutionEventOWP.cs" />
     <Compile Include="SBEEventOWP.cs" />
-    <Compile Include="TEventOWP.cs" />
     <Compile Include="ISolutionEventEW.cs" />
     <Compile Include="SBEEventEW.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />

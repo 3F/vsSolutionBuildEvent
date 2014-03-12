@@ -64,11 +64,25 @@ namespace net.r_eg.vsSBE
         /// all errors in partial data
         /// </summary>
         protected List<string> errors   = new List<string>();
+        public List<string> Errors
+        {
+            get { return errors; }
+        }
 
         /// <summary>
         /// all warnings in partial data
         /// </summary>
         protected List<string> warnings = new List<string>();
+        public List<string> Warnings
+        {
+            get { return warnings; }
+        }
+
+        public enum Type
+        {
+            Warnings,
+            Errors
+        }
 
         protected string rawdata;
 
@@ -76,6 +90,25 @@ namespace net.r_eg.vsSBE
         {
             this.rawdata = rawdata;
             extract();
+        }
+
+        public bool checkRule(Type type, bool isWhitelist, List<string> codes)
+        {
+            if(isWhitelist) {
+                if((codes.Count < 1 && (type == Type.Warnings ? Warnings : Errors).Count > 0) || 
+                    (codes.Count > 0 && codes.Intersect(type == Type.Warnings ? Warnings : Errors).Count() > 0)) {
+                    return true;
+                }
+                return false;
+            }
+
+            if(codes.Count < 1) {
+                return false;
+            }
+            if((type == Type.Warnings ? Warnings : Errors).Except(codes).Count() > 0) {
+                return true;
+            }
+            return false;
         }
 
         protected void extract()

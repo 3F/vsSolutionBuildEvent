@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.ComponentModel.Design;
 using Microsoft.Win32;
@@ -103,7 +104,7 @@ namespace net.r_eg.vsSBE
 
             // TODO: Pane wrapper
             PaneVS.instance.outputString(String.Format("{0} {1}",
-                String.Format("loaded settings: {0}\n\nReady:", Config.getWorkPath()),
+                String.Format("loaded settings: {0}\n\nReady:", Config.WorkPath),
                 String.Format("{0}{1}{2}\n---\n",
                     aboutEvent(Config.data.preBuild, "Pre-Build"),
                     aboutEvent(Config.data.postBuild, "Post-Build"),
@@ -131,7 +132,7 @@ namespace net.r_eg.vsSBE
         {
             try
             {
-                if((new SBECommand()).basic(Config.data.preBuild)){
+                if((new SBECommand(_dte, SBEQueueDTE.Type.PRE)).basic(Config.data.preBuild)){
                     PaneVS.instance.outputString("[Pre] finished SBE: " + Config.data.preBuild.caption + Environment.NewLine);
                 }
             }
@@ -146,7 +147,7 @@ namespace net.r_eg.vsSBE
         {
             try
             {
-                if((new SBECommand()).basic(Config.data.cancelBuild)){
+                if((new SBECommand(_dte, SBEQueueDTE.Type.CANCEL)).basic(Config.data.cancelBuild)){
                     PaneVS.instance.outputString("[Cancel] finished SBE: " + Config.data.cancelBuild.caption + Environment.NewLine);
                 }
             }
@@ -161,7 +162,7 @@ namespace net.r_eg.vsSBE
         {
             try
             {
-                if((new SBECommand()).basic(Config.data.postBuild)){
+                if((new SBECommand(_dte, SBEQueueDTE.Type.POST)).basic(Config.data.postBuild)){
                     PaneVS.instance.outputString("[Post] finished SBE: " + Config.data.postBuild.caption + Environment.NewLine);
                 }
             }
@@ -171,6 +172,47 @@ namespace net.r_eg.vsSBE
             }
             return VSConstants.S_OK;
         }
+
+        void IListenerOWPL.raw(string data)
+        {
+            OutputWPBuildParser res = new OutputWPBuildParser(ref data);
+
+            if(Config.data.warningsBuild.enabled) {
+                sbeEW(Config.data.warningsBuild, OutputWPBuildParser.Type.Warnings, res);
+            }
+
+            if(Config.data.errorsBuild.enabled) {
+                sbeEW(Config.data.errorsBuild, OutputWPBuildParser.Type.Errors, res);
+            }
+
+            if(Config.data.outputCustomBuild.enabled) {
+                sbeOutput(Config.data.outputCustomBuild, ref data);
+            }
+        }
+
+        void sbeEW(ISolutionEventEW evt, OutputWPBuildParser.Type type, OutputWPBuildParser info)
+        {
+            // TODO: capture code####, message..
+            if(!info.checkRule(type, evt.isWhitelist, evt.codes)) {
+                return;
+            }
+
+            try {
+                if((new SBECommand(_dte, type == OutputWPBuildParser.Type.Warnings ? SBEQueueDTE.Type.WARNINGS : SBEQueueDTE.Type.ERRORS)).basic(evt)) {
+                    PaneVS.instance.outputString(String.Format("['{0}'] finished SBE: {1}{2}", type.ToString(), evt.caption, Environment.NewLine));
+                }
+            }
+            catch(Exception e) {
+                PaneVS.instance.outputString(String.Format("SBE '{0}' error: {1}{2}", type.ToString(), e.Message, Environment.NewLine));
+            }
+        }
+
+        void sbeOutput(ISolutionEventOWP evt, ref string raw)
+        {
+            //TODO:
+        }
+
+        #region unused
 
         int IVsUpdateSolutionEvents.UpdateSolution_StartUpdate(ref int pfCancelUpdate)
         {
@@ -222,12 +264,7 @@ namespace net.r_eg.vsSBE
             return VSConstants.S_OK;
         }
 
-        void IListenerOWPL.raw(string data)
-        {
-            OutputWPBuildParser res = new OutputWPBuildParser(ref data);
-
-            string test = data;
-        }
+        #endregion
 
         #region cookies
         protected override void Initialize()

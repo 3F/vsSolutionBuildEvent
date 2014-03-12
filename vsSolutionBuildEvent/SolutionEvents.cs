@@ -77,14 +77,14 @@ namespace net.r_eg.vsSBE
             set { _cancelBuild = value; }
         }
 
-        private SBEEventEW _warningBuild = new SBEEventEW();
+        private SBEEventEW _warningsBuild = new SBEEventEW();
         /// <summary>
         /// Warnings during assembly
         /// </summary>
-        public SBEEventEW warningBuild
+        public SBEEventEW warningsBuild
         {
-            get { return _warningBuild; }
-            set { _warningBuild = value; }
+            get { return _warningsBuild; }
+            set { _warningsBuild = value; }
         }
 
         private SBEEventEW _errorsBuild = new SBEEventEW();
