@@ -12,9 +12,9 @@ Sources: bitbucket.org/3F
 
 Distributed under the Boost Software License, Version 1.0</Description>
         <Locale>1033</Locale>
-        <MoreInfoUrl>https://bitbucket.org/3F/vssolutionbuildevent</MoreInfoUrl>
-        <License>vsixinfo</License>
-        <PreviewImage>preview.png</PreviewImage>
+        <MoreInfoUrl>http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/</MoreInfoUrl>
+        <License>Resources/vsixinfo</License>
+        <PreviewImage>Resources/preview.png</PreviewImage>
         <InstalledByMsi>false</InstalledByMsi>
         <SupportedProducts>
             <VisualStudio Version="10.0">

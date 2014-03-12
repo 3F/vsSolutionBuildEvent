@@ -36,7 +36,7 @@ namespace net.r_eg.vsSBE
     public class SBESettings
     {
         /// <summary>
-        /// this value used by by default if current attr not found after deserialize
+        /// this value used by default if current attr not found after deserialize
         /// :: v0.2.x/v0.1.x
         /// </summary>
         private string _compatibility = "0.1";

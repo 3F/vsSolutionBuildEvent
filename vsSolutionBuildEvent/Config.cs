@@ -86,6 +86,9 @@ namespace net.r_eg.vsSBE
                 //Debug.Assert(false);
                 data = new SolutionEvents();
             }
+
+            // now compatibility should be updated to the latest
+            data.settings.compatibility = VERSION;
         }
 
         /// <summary>
@@ -138,8 +141,6 @@ namespace net.r_eg.vsSBE
                 }
             }
             
-            //update version
-            data.settings.compatibility = VERSION;
         }
 
         protected Config(){}
