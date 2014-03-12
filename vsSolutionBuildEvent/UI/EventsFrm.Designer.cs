@@ -66,13 +66,13 @@
             this.groupBoxVariants = new System.Windows.Forms.GroupBox();
             this.listBoxOperation = new System.Windows.Forms.ListBox();
             this.panelBottom = new System.Windows.Forms.Panel();
+            this.btnDteCmd = new System.Windows.Forms.Button();
             this.buttonEnvVariables = new System.Windows.Forms.Button();
             this.labelCaption = new System.Windows.Forms.Label();
             this.textBoxCaption = new System.Windows.Forms.TextBox();
             this.btnExample = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnApply = new System.Windows.Forms.Button();
-            this.btnDteCmd = new System.Windows.Forms.Button();
             this.panelCommand.SuspendLayout();
             this.groupBoxPMode.SuspendLayout();
             this.groupBoxSettings.SuspendLayout();
@@ -524,6 +524,17 @@
             this.panelBottom.Size = new System.Drawing.Size(432, 70);
             this.panelBottom.TabIndex = 30;
             // 
+            // btnDteCmd
+            // 
+            this.btnDteCmd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDteCmd.Location = new System.Drawing.Point(154, 42);
+            this.btnDteCmd.Name = "btnDteCmd";
+            this.btnDteCmd.Size = new System.Drawing.Size(98, 23);
+            this.btnDteCmd.TabIndex = 25;
+            this.btnDteCmd.Text = "DTE Commands";
+            this.btnDteCmd.UseVisualStyleBackColor = true;
+            this.btnDteCmd.Click += new System.EventHandler(this.btnDteCmd_Click);
+            // 
             // buttonEnvVariables
             // 
             this.buttonEnvVariables.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -584,17 +595,6 @@
             this.btnApply.Text = "Apply";
             this.btnApply.UseVisualStyleBackColor = true;
             this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
-            // 
-            // btnDteCmd
-            // 
-            this.btnDteCmd.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDteCmd.Location = new System.Drawing.Point(154, 42);
-            this.btnDteCmd.Name = "btnDteCmd";
-            this.btnDteCmd.Size = new System.Drawing.Size(98, 23);
-            this.btnDteCmd.TabIndex = 25;
-            this.btnDteCmd.Text = "DTE Commands";
-            this.btnDteCmd.UseVisualStyleBackColor = true;
-            this.btnDteCmd.Click += new System.EventHandler(this.btnDteCmd_Click);
             // 
             // EventsFrm
             // 

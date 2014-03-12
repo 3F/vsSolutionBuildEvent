@@ -116,6 +116,12 @@
     <Compile Include="ISolutionEventEW.cs" />
     <Compile Include="SBEEventEW.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
+    <Compile Include="UI\DTECommandsFrm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\DTECommandsFrm.Designer.cs">
+      <DependentUpon>DTECommandsFrm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\EnvironmentVariablesFrm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -143,11 +149,15 @@
     <Compile Include="SBEEvent.cs" />
     <Compile Include="SBESettings.cs" />
     <Compile Include="SolutionEvents.cs" />
+    <Compile Include="UI\ITransferEnvironmentVariable.cs" />
     <Compile Include="Upgrade\0.3_0.4.cs" />
     <Compile Include="vsSolutionBuildEventPackage.cs" />
     <Compile Include="PkgCmdID.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="UI\DTECommandsFrm.resx">
+      <DependentUpon>DTECommandsFrm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\EnvironmentVariablesFrm.resx">
       <DependentUpon>EnvironmentVariablesFrm.cs</DependentUpon>
     </EmbeddedResource>

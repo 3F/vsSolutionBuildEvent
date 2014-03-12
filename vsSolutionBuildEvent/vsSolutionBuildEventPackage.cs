@@ -90,7 +90,7 @@ namespace net.r_eg.vsSBE
                 _configFrm.Focus();
                 return;
             }
-            _configFrm = new UI.EventsFrm();
+            _configFrm = new UI.EventsFrm(_dte);
             _configFrm.Show();
         }
 

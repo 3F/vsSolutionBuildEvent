@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using EnvDTE80;
 
 namespace net.r_eg.vsSBE.UI
 {
@@ -65,8 +66,15 @@ namespace net.r_eg.vsSBE.UI
         /// </summary>
         private List<TOperation> _listOperations = DefCommandsDTE.operations();
 
-        public EventsFrm()
+        /// <summary>
+        /// UI-helper for DTE Commands
+        /// </summary>
+        private DTECommandsFrm _frmDTECommands;
+        private DTE2 _dte;
+
+        public EventsFrm(DTE2 dte)
         {
+            _dte = dte;
             InitializeComponent();
             foreach(DataGridViewRow row in dataGridViewOutput.Rows) {
                 row.Height = dataGridViewOutput.RowTemplate.Height;
@@ -496,7 +504,19 @@ namespace net.r_eg.vsSBE.UI
 
         private void btnDteCmd_Click(object sender, EventArgs e)
         {
+            IEnumerable<EnvDTE.Command> commands = _dte.Commands.Cast<EnvDTE.Command>();
+            if(_frmDTECommands != null && !_frmDTECommands.IsDisposed) {
+                if(_frmDTECommands.WindowState != FormWindowState.Minimized) {
+                    _frmDTECommands.Dispose();
+                    _frmDTECommands = null;
+                    return;
+                }
+                _frmDTECommands.Focus();
+                return;
+            }
 
+            _frmDTECommands = new DTECommandsFrm(commands);
+            _frmDTECommands.Show();
         }
     }
 }
