@@ -3,10 +3,12 @@
     <Identifier Id="94ecd13f-15f3-4f51-9afd-17f0275c6266">
         <Name>vsSolutionBuildEvent</Name>
         <Author>reg [entry.reg@gmail.com]</Author>
-        <Version>0.3.2</Version>
+        <Version>0.4</Version>
         <Description xml:space="preserve">Solution Build-Events
 
-This extension for additional event handling to all subprojects at once in solution. This feature is not provided by default for solution
+Extended event handling for the Visual Studio. Events for all Solution or a Projects singly.
+Ability to handle: Warning-Build, Errors-Build, Output-Build, Pre-Build, Post-Build, Cancel-Build.
+And different flexible actions for all events..
 
 Sources: bitbucket.org/3F
 
