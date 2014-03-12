@@ -33,21 +33,40 @@ using System.Text;
 
 namespace net.r_eg.vsSBE
 {
-    interface IMSBuildProperty
+    /// <summary>
+    /// Errors & Warnings
+    /// </summary>
+    interface ISolutionEventOWP: ISolutionEvent
     {
         /// <summary>
-        /// MSBuild Property from default Project
+        /// List of term
         /// </summary>
-        /// <param name="name">key property</param>
-        /// <returns>evaluated value</returns>
-        string getProperty(string name);
+        List<TEventOWP> eventsOWP { get; set; }
+    }
+
+    public enum TEventOWPTerm
+    {
+        Default,
+        Regexp,
+
+        // TODO: find or a porting - ESS / EXT:
+        // https://bitbucket.org/3F/sandbox/src/2bc1073f9953ddc3d9289c924059bc0d0e0bd9e4/cpp/text/wildcards/wildcards/versions/essential/AlgorithmEss.h?at=master-C%2B%2B
+        Wildcards
+    }
+
+    /// <summary>
+    /// Customization of OutputWindowPane
+    /// </summary>
+    public class TEventOWP
+    {
+        /// <summary>
+        /// various condition
+        /// </summary>
+        public string term { get; set; }
 
         /// <summary>
-        /// MSBuild Property from specific project
+        /// type of recognition
         /// </summary>
-        /// <param name="name">key property</param>
-        /// <param name="projectName">project name</param>
-        /// <returns>evaluated value</returns>
-        string getProperty(string name, string projectName);
+        public TEventOWPTerm type { get; set; }
     }
 }

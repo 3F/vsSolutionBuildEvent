@@ -13,18 +13,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace reg.ext.vsSolutionBuildEvent
+namespace net.r_eg.vsSBE.UI
 {
-    public interface ITransferEnvironmentVariable
-    {
-        /// <summary>
-        /// Output name of Environment Variable
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="project">name of project</param>
-        void outputName(string name, string project);
-    }
-
     public partial class EnvironmentVariablesFrm: Form
     {
         /// <summary>

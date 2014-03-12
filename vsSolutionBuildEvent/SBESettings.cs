@@ -31,11 +31,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace reg.ext.vsSolutionBuildEvent
+namespace net.r_eg.vsSBE
 {
     public class SBESettings
     {
-        private string _compatibility = "0.3";
+        /// <summary>
+        /// this value used by by default if current attr not found after deserialize
+        /// :: v0.2.x/v0.1.x
+        /// </summary>
+        private string _compatibility = "0.1";
         /// <summary>
         /// for identification of compatibility between versions
         /// </summary>
@@ -44,5 +48,8 @@ namespace reg.ext.vsSolutionBuildEvent
             get { return _compatibility; }
             set { _compatibility = value; }
         }
+
+        //TODO: direct..
+        public string application = "http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/";
     }
 }

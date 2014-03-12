@@ -31,7 +31,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace reg.ext.vsSolutionBuildEvent
+namespace net.r_eg.vsSBE
 {
     public class SBEEvent: ISolutionEvent
     {
@@ -72,14 +72,14 @@ namespace reg.ext.vsSolutionBuildEvent
             set { _processHide = value; }
         }
 
-        private bool _modeScript = true;
+        private TModeCommands _mode = TModeCommands.Interpreter;
         /// <summary>
-        /// not close after completion
+        /// processing mode
         /// </summary>
-        public bool modeScript
+        public TModeCommands mode
         {
-            get { return _modeScript; }
-            set { _modeScript = value; }
+            get { return _mode; }
+            set { _mode = value; }
         }
 
         private bool _processKeep = false;
@@ -140,6 +140,17 @@ namespace reg.ext.vsSolutionBuildEvent
         {
             get { return _parseVariablesMSBuild; }
             set { _parseVariablesMSBuild = value; }
+        }
+
+        private TOperation _dteExec = new TOperation();
+        /// <summary>
+        /// Common Environment Visual Studio. Executes the specified commands
+        /// TODO: custom list
+        /// </summary>
+        public TOperation dteExec
+        {
+            get { return _dteExec; }
+            set { _dteExec = value; }
         }
     }
 }

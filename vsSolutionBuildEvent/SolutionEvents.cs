@@ -31,7 +31,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace reg.ext.vsSolutionBuildEvent
+namespace net.r_eg.vsSBE
 {
     [Serializable]
     public class SolutionEvents
@@ -75,6 +75,36 @@ namespace reg.ext.vsSolutionBuildEvent
         {
             get { return _cancelBuild; }
             set { _cancelBuild = value; }
+        }
+
+        private SBEEventEW _warningsBuild = new SBEEventEW();
+        /// <summary>
+        /// Warnings during assembly
+        /// </summary>
+        public SBEEventEW warningsBuild
+        {
+            get { return _warningsBuild; }
+            set { _warningsBuild = value; }
+        }
+
+        private SBEEventEW _errorsBuild = new SBEEventEW();
+        /// <summary>
+        /// Errors during assembly
+        /// </summary>
+        public SBEEventEW errorsBuild
+        {
+            get { return _errorsBuild; }
+            set { _errorsBuild = value; }
+        }
+
+        private SBEEventOWP _outputCustomBuild = new SBEEventOWP();
+        /// <summary>
+        /// Output-Build customization
+        /// </summary>
+        public SBEEventOWP outputCustomBuild
+        {
+            get { return _outputCustomBuild; }
+            set { _outputCustomBuild = value; }
         }
     }
 }

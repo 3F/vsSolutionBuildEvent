@@ -1,4 +1,4 @@
-﻿namespace reg.ext.vsSolutionBuildEvent
+﻿namespace net.r_eg.vsSBE.UI
 {
     partial class EnvironmentVariablesFrm
     {

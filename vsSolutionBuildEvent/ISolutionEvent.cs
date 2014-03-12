@@ -31,7 +31,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace reg.ext.vsSolutionBuildEvent
+namespace net.r_eg.vsSBE
 {
     interface ISolutionEvent
     {
@@ -61,9 +61,9 @@ namespace reg.ext.vsSolutionBuildEvent
         bool processKeep { get; set; }
 
         /// <summary>
-        /// script or files mode
+        /// processing mode
         /// </summary>
-        bool modeScript { get; set; }
+        TModeCommands mode { get; set; }
 
         /// <summary>
         /// stream processor
@@ -89,5 +89,45 @@ namespace reg.ext.vsSolutionBuildEvent
         /// support of MSBuild environment variables (properties)
         /// </summary>
         bool parseVariablesMSBuild { get; set; }
+
+        /// <summary>
+        /// Common Environment Visual Studio. Executes the specified commands
+        /// TODO: custom list
+        /// </summary>
+        TOperation dteExec { get; set; }
+    }
+
+    /// <summary>
+    /// Processing mode
+    /// </summary>
+    public enum TModeCommands
+    {
+        /// <summary>
+        /// external commands
+        /// </summary>
+        File,
+        /// <summary>
+        /// command script
+        /// </summary>
+        Interpreter,
+        /// <summary>
+        /// DTE commands
+        /// </summary>
+        Operation,
+    }
+
+    /// <summary>
+    /// Single DTE operation
+    /// </summary>
+    public class TOperation
+    {
+        /// <summary>
+        /// exec-command
+        /// </summary>
+        public string[] cmd = new string[]{""};
+        /// <summary>
+        /// optional ident
+        /// </summary>
+        public string caption = "";
     }
 }

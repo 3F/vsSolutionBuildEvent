@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.ComponentModel.Design;
 using Microsoft.Win32;
@@ -18,7 +19,7 @@ using Microsoft.VisualStudio.Shell;
 using EnvDTE80;
 using EnvDTE;
 
-namespace reg.ext.vsSolutionBuildEvent
+namespace net.r_eg.vsSBE
 {
     // Managed Package Registration
     [PackageRegistration(UseManagedResourcesOnly = true)]
@@ -35,16 +36,13 @@ namespace reg.ext.vsSolutionBuildEvent
     // Package Guid
     [Guid(GuidList.guidvsSolutionBuildEventPkgString)]
 
-    public sealed class vsSolutionBuildEventPackage : Package, IVsSolutionEvents, IVsUpdateSolutionEvents
+    public sealed class vsSolutionBuildEventPackage: Package, IVsSolutionEvents, IVsUpdateSolutionEvents, IListenerOWPL
     {
         /// <summary>
         /// for a top-level functionality
         /// </summary>
         private DTE2 _dte                                   = null;
 
-        /// <summary>
-        /// for register events -> _cookieSEvents
-        /// </summary>
         /// <summary>
         /// for register events -> _cookieSEvents
         /// </summary>
@@ -65,17 +63,25 @@ namespace reg.ext.vsSolutionBuildEvent
         /// <summary>
         /// main form of settings
         /// </summary>
-        private EventsFrm _configFrm                        = null;
+        private UI.EventsFrm _configFrm                     = null;
 
+        /// <summary>
+        /// Working with the OutputWindowsPane -> "Build" pane
+        /// </summary>
+        private OutputWPListener _owpBuild;
 
         public vsSolutionBuildEventPackage()
         {
             _dte = (DTE2)Package.GetGlobalService(typeof(SDTE));
             PaneVS.instance.setDTE(_dte);
+
+            _owpBuild = new OutputWPListener(_dte, "Build");
+            _owpBuild.attachEvents();
+            _owpBuild.register(this);
         }
 
         /// <summary>
-        /// execute a command when the a menu item (Build/<pack>) is clicked
+        /// execute a command when clicked menu item (Build/<pack>)
         /// </summary>
         private void MenuItemCallback(object sender, EventArgs e)
         {
@@ -84,7 +90,7 @@ namespace reg.ext.vsSolutionBuildEvent
                 _configFrm.Focus();
                 return;
             }
-            _configFrm = new EventsFrm();
+            _configFrm = new UI.EventsFrm(_dte);
             _configFrm.Show();
         }
 
@@ -97,12 +103,16 @@ namespace reg.ext.vsSolutionBuildEvent
 
 
             // TODO: Pane wrapper
-            PaneVS.instance.outputString(String.Format("{0} {1}", 
-                String.Format("loaded settings: {0}\n\nReady:", Config.getWorkPath()),
-                String.Format("{0}{1}{2}\n---\n",
+            // TODO: indication of SBE into individual UI
+            PaneVS.instance.outputString(String.Format("{0} {1}",
+                String.Format("loaded settings: {0}\n\nReady:", Config.WorkPath),
+                String.Format("{0}{1}{2}{3}{4}{5}\n---\n",
                     aboutEvent(Config.data.preBuild, "Pre-Build"),
                     aboutEvent(Config.data.postBuild, "Post-Build"),
-                    aboutEvent(Config.data.cancelBuild, "Cancel-Build"))
+                    aboutEvent(Config.data.cancelBuild, "Cancel-Build"),
+                    aboutEvent(Config.data.warningsBuild, "Warning-Build"),
+                    aboutEvent(Config.data.errorsBuild, "Errors-Build"),
+                    aboutEvent(Config.data.outputCustomBuild, "Output-Build"))
             ));
         }
 
@@ -126,7 +136,7 @@ namespace reg.ext.vsSolutionBuildEvent
         {
             try
             {
-                if((new SBECommand()).basic(Config.data.preBuild)){
+                if((new SBECommand(_dte, SBEQueueDTE.Type.PRE)).basic(Config.data.preBuild)){
                     PaneVS.instance.outputString("[Pre] finished SBE: " + Config.data.preBuild.caption + Environment.NewLine);
                 }
             }
@@ -141,7 +151,7 @@ namespace reg.ext.vsSolutionBuildEvent
         {
             try
             {
-                if((new SBECommand()).basic(Config.data.cancelBuild)){
+                if((new SBECommand(_dte, SBEQueueDTE.Type.CANCEL)).basic(Config.data.cancelBuild)){
                     PaneVS.instance.outputString("[Cancel] finished SBE: " + Config.data.cancelBuild.caption + Environment.NewLine);
                 }
             }
@@ -156,7 +166,7 @@ namespace reg.ext.vsSolutionBuildEvent
         {
             try
             {
-                if((new SBECommand()).basic(Config.data.postBuild)){
+                if((new SBECommand(_dte, SBEQueueDTE.Type.POST)).basic(Config.data.postBuild)){
                     PaneVS.instance.outputString("[Post] finished SBE: " + Config.data.postBuild.caption + Environment.NewLine);
                 }
             }
@@ -166,6 +176,58 @@ namespace reg.ext.vsSolutionBuildEvent
             }
             return VSConstants.S_OK;
         }
+
+        void IListenerOWPL.raw(string data)
+        {
+            OutputWPBuildParser res = new OutputWPBuildParser(ref data);
+
+            if(Config.data.warningsBuild.enabled) {
+                sbeEW(Config.data.warningsBuild, OutputWPBuildParser.Type.Warnings, res);
+            }
+
+            if(Config.data.errorsBuild.enabled) {
+                sbeEW(Config.data.errorsBuild, OutputWPBuildParser.Type.Errors, res);
+            }
+
+            if(Config.data.outputCustomBuild.enabled) {
+                sbeOutput(Config.data.outputCustomBuild, ref data);
+            }
+        }
+
+        void sbeEW(ISolutionEventEW evt, OutputWPBuildParser.Type type, OutputWPBuildParser info)
+        {
+            // TODO: capture code####, message..
+            if(!info.checkRule(type, evt.isWhitelist, evt.codes)) {
+                return;
+            }
+
+            try {
+                if((new SBECommand(_dte, type == OutputWPBuildParser.Type.Warnings ? SBEQueueDTE.Type.WARNINGS : SBEQueueDTE.Type.ERRORS)).basic(evt)) {
+                    PaneVS.instance.outputString(String.Format("['{0}'] finished SBE: {1}{2}", type.ToString(), evt.caption, Environment.NewLine));
+                }
+            }
+            catch(Exception e) {
+                PaneVS.instance.outputString(String.Format("SBE '{0}' error: {1}{2}", type.ToString(), e.Message, Environment.NewLine));
+            }
+        }
+
+        void sbeOutput(ISolutionEventOWP evt, ref string raw)
+        {
+            if(!(new OWPMatcher()).match(evt.eventsOWP, raw)) {
+                return;
+            }
+
+            try {
+                if((new SBECommand(_dte, SBEQueueDTE.Type.OWP)).basic(evt)) {
+                    PaneVS.instance.outputString(String.Format("['{0}'] finished SBE: {1}{2}", "Output", evt.caption, Environment.NewLine));
+                }
+            }
+            catch(Exception e) {
+                PaneVS.instance.outputString(String.Format("SBE '{0}' error: {1}{2}", "Output", e.Message, Environment.NewLine));
+            }
+        }
+
+        #region unused
 
         int IVsUpdateSolutionEvents.UpdateSolution_StartUpdate(ref int pfCancelUpdate)
         {
@@ -217,32 +279,50 @@ namespace reg.ext.vsSolutionBuildEvent
             return VSConstants.S_OK;
         }
 
+        #endregion
+
+        #region cookies
         protected override void Initialize()
         {
-            Trace.WriteLine (string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
+            Trace.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
             base.Initialize();
 
-            // Add our command handlers for menu
-            OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
-            if ( null != mcs )
-            {
-                CommandID menuCommandID = new CommandID(GuidList.guidvsSolutionBuildEventCmdSet, (int)PkgCmdIDList.cmdSolutionBuildEvent);
-                _menuItem               = new MenuCommand(MenuItemCallback, menuCommandID);
+            try {
+                // menu
+                OleMenuCommandService mcs   = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+                CommandID menuCommandID     = new CommandID(GuidList.guidvsSolutionBuildEventCmdSet, (int)PkgCmdIDList.cmdSolutionBuildEvent);
+                _menuItem                   = new MenuCommand(MenuItemCallback, menuCommandID);
                 mcs.AddCommand(_menuItem);
-            }
 
-            // register events - IVsSolutionEvents
-            _solution = ServiceProvider.GlobalProvider.GetService(typeof(SVsSolution)) as IVsSolution;
-            if (_solution != null)
-            {
+                // register events - IVsSolutionEvents
+                _solution = ServiceProvider.GlobalProvider.GetService(typeof(SVsSolution)) as IVsSolution;
                 _solution.AdviseSolutionEvents(this, out _cookieSEvents);
-            }
 
-            // register events - IVsUpdateSolutionEvents
-            _solBuildManager = ServiceProvider.GlobalProvider.GetService(typeof(SVsSolutionBuildManager)) as IVsSolutionBuildManager;
-            if (_solBuildManager != null)
-            {
+                // register events - IVsUpdateSolutionEvents
+                _solBuildManager = ServiceProvider.GlobalProvider.GetService(typeof(SVsSolutionBuildManager)) as IVsSolutionBuildManager;
                 _solBuildManager.AdviseUpdateSolutionEvents(this, out _cookieUpdateSEvents);
+            }
+            catch(Exception e) {
+                IVsUIShell uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
+                
+                int res;
+                Guid id = Guid.Empty;
+                Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(
+                    uiShell.ShowMessageBox(
+                           0,
+                           ref id,
+                           "Initialize vsSolutionBuildEvent",
+                           string.Format("{0}\n{1}\n\n-----\n{2}", 
+                                "Something went wrong -_-", 
+                                "Try to restart a VS IDE or reinstall current plugin in the Extension Manager...", 
+                                e.StackTrace),
+                           string.Empty,
+                           0,
+                           OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                           OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST,
+                           OLEMSGICON.OLEMSGICON_WARNING,
+                           0,
+                           out res));
             }
         }
 
@@ -250,15 +330,14 @@ namespace reg.ext.vsSolutionBuildEvent
         {
             base.Dispose(disposing);
 
-            if (_solBuildManager != null && _cookieUpdateSEvents != 0)
-            {
+            if(_solBuildManager != null && _cookieUpdateSEvents != 0) {
                 _solBuildManager.UnadviseUpdateSolutionEvents(_cookieUpdateSEvents);
             }
 
-            if (_solution != null && _cookieSEvents != 0)
-            {
+            if(_solution != null && _cookieSEvents != 0) {
                 _solution.UnadviseSolutionEvents(_cookieSEvents);
             }
         }
+        #endregion
     }
 }

@@ -2,7 +2,7 @@
 // MUST match PkgCmdID.h
 using System;
 
-namespace reg.ext.vsSolutionBuildEvent
+namespace net.r_eg.vsSBE
 {
     static class PkgCmdIDList
     {

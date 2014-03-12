@@ -33,21 +33,16 @@ using System.Text;
 
 namespace net.r_eg.vsSBE
 {
-    interface IMSBuildProperty
+    public class SBEEventOWP: SBEEvent, ISolutionEventOWP
     {
+        private List<TEventOWP> _eventsOWP = new List<TEventOWP>();
         /// <summary>
-        /// MSBuild Property from default Project
+        /// List of term
         /// </summary>
-        /// <param name="name">key property</param>
-        /// <returns>evaluated value</returns>
-        string getProperty(string name);
-
-        /// <summary>
-        /// MSBuild Property from specific project
-        /// </summary>
-        /// <param name="name">key property</param>
-        /// <param name="projectName">project name</param>
-        /// <returns>evaluated value</returns>
-        string getProperty(string name, string projectName);
+        public List<TEventOWP> eventsOWP
+        {
+            get { return _eventsOWP; }
+            set { _eventsOWP = value; }
+        }
     }
 }

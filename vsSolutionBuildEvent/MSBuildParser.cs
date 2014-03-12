@@ -36,7 +36,7 @@ using Microsoft.Build.Evaluation;
 using Microsoft.Build.Collections;
 using System.Text.RegularExpressions;
 
-namespace reg.ext.vsSolutionBuildEvent
+namespace net.r_eg.vsSBE
 {
     class MSBuildParser: IMSBuildProperty, ISBEParserScript
     {

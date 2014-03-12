@@ -31,23 +31,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.UI
 {
-    interface IMSBuildProperty
+    public interface ITransferEnvironmentVariable
     {
         /// <summary>
-        /// MSBuild Property from default Project
+        /// Output name of Environment Variable
         /// </summary>
-        /// <param name="name">key property</param>
-        /// <returns>evaluated value</returns>
-        string getProperty(string name);
-
-        /// <summary>
-        /// MSBuild Property from specific project
-        /// </summary>
-        /// <param name="name">key property</param>
-        /// <param name="projectName">project name</param>
-        /// <returns>evaluated value</returns>
-        string getProperty(string name, string projectName);
+        /// <param name="name"></param>
+        /// <param name="project">name of project</param>
+        void outputName(string name, string project);
     }
 }

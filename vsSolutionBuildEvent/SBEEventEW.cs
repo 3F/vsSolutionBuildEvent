@@ -33,21 +33,27 @@ using System.Text;
 
 namespace net.r_eg.vsSBE
 {
-    interface IMSBuildProperty
+    public class SBEEventEW: SBEEvent, ISolutionEventEW
     {
+        private List<string> _codes = new List<string>();
         /// <summary>
-        /// MSBuild Property from default Project
+        /// list of code####
+        /// ..and "for all" if empty
         /// </summary>
-        /// <param name="name">key property</param>
-        /// <returns>evaluated value</returns>
-        string getProperty(string name);
+        public List<string> codes
+        {
+            get { return _codes; }
+            set { _codes = value; }
+        }
 
+        private bool _isWhitelist = true;
         /// <summary>
-        /// MSBuild Property from specific project
+        /// Whitelist or Blacklist codes
         /// </summary>
-        /// <param name="name">key property</param>
-        /// <param name="projectName">project name</param>
-        /// <returns>evaluated value</returns>
-        string getProperty(string name, string projectName);
+        public bool isWhitelist
+        {
+            get { return _isWhitelist; }
+            set { _isWhitelist = value; }
+        }
     }
 }
