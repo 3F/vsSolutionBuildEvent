@@ -79,6 +79,11 @@ namespace net.r_eg.vsSBE.UI
             foreach(DataGridViewRow row in dataGridViewOutput.Rows) {
                 row.Height = dataGridViewOutput.RowTemplate.Height;
             }
+            _notice(typeof(CheckBox));
+            _notice(typeof(RadioButton));
+            _notice(typeof(TextBox));
+            _notice(typeof(ListBox));
+            _notice(typeof(ComboBox));
         }
 
         /// <summary>
@@ -191,10 +196,7 @@ namespace net.r_eg.vsSBE.UI
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            textBoxCommand.Clear();
-            textBoxCaption.Clear();
-            checkBoxStatus.Checked = false;
-            _notice(true);
+            comboBoxEvents_SelectedIndexChanged(sender, e);
         }
 
         private void EventsFrm_Load(object sender, EventArgs e)
@@ -218,8 +220,8 @@ namespace net.r_eg.vsSBE.UI
             comboBoxEvents.Items.Add("Output-Build customization (Full control)");
 
             comboBoxEvents.SelectedIndex = 0;
-            _renderData();
             _operationsInit();
+            _renderData();
         }
 
         private void btnExample_Click(object sender, EventArgs e)
@@ -241,30 +243,29 @@ namespace net.r_eg.vsSBE.UI
 
         private void comboBoxEvents_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _renderData();
             _operationsSelect();
-            _notice(false);
+            _renderData();
         }
 
         private void textBoxCommand_KeyPress(object sender, KeyPressEventArgs e)
         {
-            _notice(true);
+            
         }
 
         private void textBoxCaption_KeyPress(object sender, KeyPressEventArgs e)
         {
-            _notice(true);
+            
         }
 
         private void checkBoxStatus_CheckedChanged(object sender, EventArgs e)
         {
             if(checkBoxStatus.Checked) {
-                checkBoxStatus.Text = "Enabled";
+                //checkBoxStatus.Text = "Enabled";
                 checkBoxStatus.BackColor = textBoxCommand.BackColor = System.Drawing.Color.FromArgb(242, 250, 241);
                 
             }
             else{
-                checkBoxStatus.Text = "Disabled";
+                //checkBoxStatus.Text = "Disabled";
                 checkBoxStatus.BackColor = textBoxCommand.BackColor = System.Drawing.Color.FromArgb(248, 243, 243);
             }
         }
@@ -277,9 +278,41 @@ namespace net.r_eg.vsSBE.UI
             }
             btnApply.FlatAppearance.BorderColor = Color.FromArgb(0, 0, 0);
         }
+        
+        private void _notice(Type component)
+        {
+            EventHandler call = (sender, e) => { _notice(true); };
+            foreach(Control ctrl in getControls(this, c => c.GetType() == component))
+            {
+                if(component == typeof(CheckBox)){
+                    ((CheckBox)ctrl).CheckedChanged += call;
+                }
+                else if(component == typeof(RadioButton)){
+                    ((RadioButton)ctrl).CheckedChanged += call;
+                }
+                else if(component == typeof(TextBox)){
+                    ((TextBox)ctrl).TextChanged += call;
+                }
+                else if(component == typeof(ListBox) && ctrl.Name != "listBoxEW") {
+                    ((ListBox)ctrl).SelectedIndexChanged += call;
+                }
+                else if(component == typeof(ComboBox)) {
+                    ((ComboBox)ctrl).TextChanged += call;
+                }
+            }
+        }
+
+        protected IEnumerable<Control> getControls(Control ctrl, Func<Control, bool> predicate)
+        {
+            IEnumerable<Control> tctrl = ctrl.Controls.Cast<Control>();
+            return tctrl.SelectMany(c => getControls(c, predicate)).Concat(tctrl).Where(predicate);
+        }
 
         private void _renderData()
         {
+            foreach(RadioButton rb in getControls(groupBoxPMode, c => c.GetType() == typeof(RadioButton))) {
+                rb.Checked = false;
+            }
             _renderData(_SBE.evt);
 
             switch(_SBE.subtype) {
@@ -287,20 +320,21 @@ namespace net.r_eg.vsSBE.UI
                     _renderData((SBEEventEW)_SBE.evt);
                     groupBoxEW.Enabled = true;
                     groupBoxOutputControl.Enabled = false;
-                    return;
+                    break;
                 }
                 case _SBEWrap.SBEEvetnType.SBEEventOWP: {
                     _renderData((SBEEventOWP)_SBE.evt);
                     groupBoxEW.Enabled = false;
                     groupBoxOutputControl.Enabled = true;
-                    return;
+                    break;
                 }
                 default:{
                     groupBoxEW.Enabled = false;
                     groupBoxOutputControl.Enabled = false;
-                    return;
+                    break;
                 }
-            }
+            }            
+            _notice(false);
         }
 
         private void _renderData(SBEEvent evt)

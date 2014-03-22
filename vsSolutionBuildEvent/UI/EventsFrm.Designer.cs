@@ -256,7 +256,7 @@
             this.checkBoxStatus.Name = "checkBoxStatus";
             this.checkBoxStatus.Size = new System.Drawing.Size(145, 17);
             this.checkBoxStatus.TabIndex = 0;
-            this.checkBoxStatus.Text = "Disabled";
+            this.checkBoxStatus.Text = "Enabled";
             this.checkBoxStatus.UseVisualStyleBackColor = false;
             this.checkBoxStatus.CheckedChanged += new System.EventHandler(this.checkBoxStatus_CheckedChanged);
             // 
@@ -581,7 +581,7 @@
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(46, 23);
             this.btnClear.TabIndex = 20;
-            this.btnClear.Text = "Clear";
+            this.btnClear.Text = "Reset";
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
