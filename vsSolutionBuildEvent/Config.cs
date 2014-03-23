@@ -35,34 +35,38 @@ using System.IO;
 
 namespace net.r_eg.vsSBE
 {
-    class Config
+    internal class Config
     {
         /// <summary>
-        /// Current config version
-        /// </summary>
-        const string VERSION = "0.4";
-
-        /// <summary>
-        /// data format
+        /// SBE data at runtime
         /// </summary>
         public static SolutionEvents data = null;
 
-        /// <summary>
-        /// configuration file in the file system
-        /// </summary>
-        private const string _name = ".xprojvsbe";
+        private struct Entity
+        {
+            /// <summary>
+            /// Current config version
+            /// Notice: version of app is controlled by Package
+            /// </summary>
+            public const string VERSION = "0.4";
+
+            /// <summary>
+            /// into file system
+            /// </summary>
+            public const string NAME    = ".xprojvsbe";
+        }
 
         /// <summary>
-        /// path to file settings
+        /// path to settings file
         /// </summary>
         private static string _path = "";
 
         /// <summary>
-        /// filename with full path
+        /// identification with full path
         /// </summary>
         private static string _FullName
         {
-            get { return _path + _name; }
+            get { return _path + Entity.NAME; }
         }
 
         /// <summary>
@@ -83,18 +87,18 @@ namespace net.r_eg.vsSBE
             }
             catch (Exception)
             {
-                //Debug.Assert(false);
+                //TODO: notice about a clean boot
                 data = new SolutionEvents();
             }
 
             // now compatibility should be updated to the latest
-            data.settings.compatibility = VERSION;
+            data.settings.compatibility = Entity.VERSION;
         }
 
         /// <summary>
-        /// with changing a path
+        /// with changing path
         /// </summary>
-        /// <param name="path">the path to the configuration file</param>
+        /// <param name="path">path to configuration file</param>
         public static void save(string path)
         {
             _path = path;

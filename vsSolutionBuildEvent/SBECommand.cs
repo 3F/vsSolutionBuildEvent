@@ -39,7 +39,7 @@ namespace net.r_eg.vsSBE
     /// 
     /// TODO: logger for user
     /// </summary>
-    class SBECommand
+    public class SBECommand
     {
         const string CMD_DEFAULT = "cmd";
 
@@ -263,7 +263,7 @@ namespace net.r_eg.vsSBE
     ///   exec - "Debug.Start"
     ///   exec - "File.Print"
     /// </summary>
-    class SBEQueueDTE
+    public class SBEQueueDTE
     {
         public enum Type
         {

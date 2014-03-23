@@ -33,7 +33,7 @@ using System.Text;
 
 namespace net.r_eg.vsSBE
 {
-    interface IMSBuildProperty
+    public interface IMSBuildProperty
     {
         /// <summary>
         /// MSBuild Property from default Project

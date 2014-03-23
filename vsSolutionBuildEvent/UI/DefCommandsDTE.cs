@@ -15,7 +15,7 @@ namespace net.r_eg.vsSBE.UI
     /// Predefined operations for gui
     /// TODO: move to SBE ~
     /// </summary>
-    class DefCommandsDTE
+    internal class DefCommandsDTE
     {
         public static List<TOperation> operations()
         {
@@ -33,7 +33,7 @@ namespace net.r_eg.vsSBE.UI
         /// TOperation cannot contain a constructor to serialize
         /// .. benefits the principle LSP =_=
         /// </summary>
-        class TOperationQ: TOperation
+        private class TOperationQ: TOperation
         {
             public TOperationQ(string[] cmd, string caption)
             {

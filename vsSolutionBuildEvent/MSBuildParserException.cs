@@ -33,13 +33,13 @@ using System.Text;
 
 namespace net.r_eg.vsSBE
 {
-    class MSBuildParserException: Exception
+    public class MSBuildParserException: Exception
     {
         public MSBuildParserException(string msg) : base(msg) { }
     }
 
     //TODO:
-    class MSBuildParserProjectNotFoundException: MSBuildParserException
+    public class MSBuildParserProjectNotFoundException: MSBuildParserException
     {
         public MSBuildParserProjectNotFoundException(string msg) : base(msg)
         {
@@ -48,7 +48,7 @@ namespace net.r_eg.vsSBE
     }
 
     //TODO:
-    class MSBuildParserProjectPropertyNotFoundException: MSBuildParserException
+    public class MSBuildParserProjectPropertyNotFoundException: MSBuildParserException
     {
         public MSBuildParserProjectPropertyNotFoundException(string msg) : base(msg)
         {

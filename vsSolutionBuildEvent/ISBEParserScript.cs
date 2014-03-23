@@ -33,7 +33,7 @@ using System.Text;
 
 namespace net.r_eg.vsSBE
 {
-    interface ISBEParserScript
+    public interface ISBEParserScript
     {
         /// <summary>
         /// handler to MSBuild environment variables (properties)

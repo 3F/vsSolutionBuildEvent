@@ -16,9 +16,9 @@ namespace net.r_eg.vsSBE
 {
     /// <summary>
     /// Working with a VS-pane
-    /// TODO: verbose option
+    /// TODO: verbose option ; logger
     /// </summary>
-    class PaneVS
+    internal class PaneVS
     {
         public const string ITEM_NAME = "Solution Build-Events";
 

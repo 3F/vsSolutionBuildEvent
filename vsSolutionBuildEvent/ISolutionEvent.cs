@@ -33,7 +33,7 @@ using System.Text;
 
 namespace net.r_eg.vsSBE
 {
-    interface ISolutionEvent
+    public interface ISolutionEvent
     {
         /// <summary>
         /// execution of shell command

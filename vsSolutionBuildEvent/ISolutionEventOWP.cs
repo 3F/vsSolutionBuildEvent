@@ -36,7 +36,7 @@ namespace net.r_eg.vsSBE
     /// <summary>
     /// Errors & Warnings
     /// </summary>
-    interface ISolutionEventOWP: ISolutionEvent
+    public interface ISolutionEventOWP: ISolutionEvent
     {
         /// <summary>
         /// List of term

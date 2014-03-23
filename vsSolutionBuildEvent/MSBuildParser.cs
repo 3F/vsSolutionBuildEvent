@@ -38,7 +38,7 @@ using System.Text.RegularExpressions;
 
 namespace net.r_eg.vsSBE
 {
-    class MSBuildParser: IMSBuildProperty, ISBEParserScript
+    public class MSBuildParser: IMSBuildProperty, ISBEParserScript
     {
 
         /// <summary>
@@ -197,7 +197,7 @@ namespace net.r_eg.vsSBE
     /// <summary>
     /// item of property: name = value
     /// </summary>
-    sealed class MSBuildPropertyItem
+    public sealed class MSBuildPropertyItem
     {
         public string name;
         public string value;
