@@ -1,23 +1,29 @@
-v0.4
-* [enhancement] New Events: Warning-Build, Errors-Build, Output-Build
-* [enhancement] Different action for all events. Experimental combination of DTE Commands.
-* other minor bug fixes
+[v0.4.1]
+    * FIXED: Incorrect render settings for some UI-items
+    * CHANGED: Minor UI changes - the "Clear" functionality changed to the "Reset" & lock label of status
 
-v0.3.2 (2013.12.28)
-* fixed: MSBuild variables with custom Configuration & Platform at Runtime
+[v0.4]
+    * NEW: New Events: Warnings-Build, Errors-Build, Output-Build
+    * NEW: New modes: Operation Mode
+    * NEW: Different action for all events. Experimental combination of DTE Commands.
+    * FIXED: Other minor bug fixes
 
-v0.3.1 (2013.12.17)
-* [bug] Button "MSBuild Properties" does not resize with the Window
-* [bug] doubling escape symbol
+[v0.3.2]
+    * FIXED: MSBuild variables with custom Configuration & Platform at Runtime
 
-v0.3 (2013.12.11)
-* [enhancement] MSBuild environment variables (properties). See help for detail.
-* New License: BSL 1.0
+[v0.3.1]
+    * FIXED: Button "MSBuild Properties" does not resize with the Window
+    * FIXED: Doubling escape symbol
 
-v0.2.2 (2013.11.22):
+[v0.3]
+    * NEW: MSBuild environment variables (properties). See help for detail.
+    * CHANGED: New License:: BSL 1.0
 
-* [enhancement] advanced control of events
-* [enhancement] New modes: interpreter & files mode
-* [fix] vsix. removed restrictions on products
-* [fix] change slashes (/ to \\) for relative paths
-* minor UI changes
+[v0.2.2]
+    * NEW: Advanced control of events
+    * NEW: New modes: interpreter & files mode
+    * FIXED: vsix. restrictions removed
+    * FIXED: Slashes (/ to \\) for relative paths
+    * CHANGED: minor UI changes
+...
+~

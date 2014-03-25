@@ -124,7 +124,7 @@
     <value>Solution Build-Events
 
 Extended event handling for the Visual Studio. Events for all Solution or a Projects singly.
-Ability to handle: Warning-Build, Errors-Build, Output-Build, Pre-Build, Post-Build, Cancel-Build.
+Ability to handle: Warnings-Build, Errors-Build, Output-Build, Pre-Build, Post-Build, Cancel-Build.
 And different flexible actions for all events..
 
 Sources: bitbucket.org/3F
