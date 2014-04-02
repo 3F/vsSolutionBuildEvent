@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" ?>
+<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    
+    <targets>
+        <target name="OWP" xsi:type="MethodCall" className="net.r_eg.vsSBE.Log, vsSolutionBuildEvent" methodName="_print">
+            <parameter layout="${level:uppercase=true}" />
+            <parameter layout="${message}" />
+            <parameter layout="${ticks}" />
+        </target>
+    </targets>
+
+    <rules>
+        <logger name="*" minlevel="Trace" writeTo="OWP" />
+    </rules>
+</nlog>

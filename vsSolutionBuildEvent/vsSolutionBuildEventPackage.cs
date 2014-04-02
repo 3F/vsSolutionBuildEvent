@@ -73,7 +73,7 @@ namespace net.r_eg.vsSBE
         public vsSolutionBuildEventPackage()
         {
             _dte = (DTE2)Package.GetGlobalService(typeof(SDTE));
-            PaneVS.instance.setDTE(_dte);
+            Log.init(_dte);
 
             _owpBuild = new OutputWPListener(_dte, "Build");
             _owpBuild.attachEvents();
@@ -104,7 +104,7 @@ namespace net.r_eg.vsSBE
 
             // TODO: Pane wrapper
             // TODO: indication of SBE into individual UI
-            PaneVS.instance.outputString(String.Format("{0} {1}",
+            Log.print(String.Format("{0} {1}",
                 String.Format("loaded settings: {0}\n\nReady:", Config.WorkPath),
                 String.Format("{0}{1}{2}{3}{4}{5}\n---\n",
                     aboutEvent(Config.data.preBuild, "Pre-Build"),
@@ -137,12 +137,12 @@ namespace net.r_eg.vsSBE
             try
             {
                 if((new SBECommand(_dte, SBEQueueDTE.Type.PRE)).basic(Config.data.preBuild)){
-                    PaneVS.instance.outputString("[Pre] finished SBE: " + Config.data.preBuild.caption + Environment.NewLine);
+                    Log.nlog.Info("[Pre] finished SBE: " + Config.data.preBuild.caption + Environment.NewLine);
                 }
             }
             catch (Exception e)
             {
-                PaneVS.instance.outputString("Pre-Build error: " + e.Message + Environment.NewLine);
+                Log.nlog.Error("Pre-Build error: " + e.Message + Environment.NewLine);
             }
             return VSConstants.S_OK;
         }
@@ -152,12 +152,12 @@ namespace net.r_eg.vsSBE
             try
             {
                 if((new SBECommand(_dte, SBEQueueDTE.Type.CANCEL)).basic(Config.data.cancelBuild)){
-                    PaneVS.instance.outputString("[Cancel] finished SBE: " + Config.data.cancelBuild.caption + Environment.NewLine);
+                    Log.nlog.Info("[Cancel] finished SBE: " + Config.data.cancelBuild.caption + Environment.NewLine);
                 }
             }
             catch (Exception e)
             {
-                PaneVS.instance.outputString("Cancel-Build error: " + e.Message + Environment.NewLine);
+                Log.nlog.Error("Cancel-Build error: " + e.Message + Environment.NewLine);
             }
             return VSConstants.S_OK;
         }
@@ -167,12 +167,12 @@ namespace net.r_eg.vsSBE
             try
             {
                 if((new SBECommand(_dte, SBEQueueDTE.Type.POST)).basic(Config.data.postBuild)){
-                    PaneVS.instance.outputString("[Post] finished SBE: " + Config.data.postBuild.caption + Environment.NewLine);
+                    Log.nlog.Info("[Post] finished SBE: " + Config.data.postBuild.caption + Environment.NewLine);
                 }
             }
             catch (Exception e)
             {
-                PaneVS.instance.outputString("Post-Build error: " + e.Message + Environment.NewLine);
+                Log.nlog.Error("Post-Build error: " + e.Message + Environment.NewLine);
             }
             return VSConstants.S_OK;
         }
@@ -203,11 +203,11 @@ namespace net.r_eg.vsSBE
 
             try {
                 if((new SBECommand(_dte, type == OutputWPBuildParser.Type.Warnings ? SBEQueueDTE.Type.WARNINGS : SBEQueueDTE.Type.ERRORS)).basic(evt)) {
-                    PaneVS.instance.outputString(String.Format("['{0}'] finished SBE: {1}{2}", type.ToString(), evt.caption, Environment.NewLine));
+                    Log.nlog.Info(String.Format("['{0}'] finished SBE: {1}{2}", type.ToString(), evt.caption, Environment.NewLine));
                 }
             }
             catch(Exception e) {
-                PaneVS.instance.outputString(String.Format("SBE '{0}' error: {1}{2}", type.ToString(), e.Message, Environment.NewLine));
+                Log.nlog.Error(String.Format("SBE '{0}' error: {1}{2}", type.ToString(), e.Message, Environment.NewLine));
             }
         }
 
@@ -219,11 +219,11 @@ namespace net.r_eg.vsSBE
 
             try {
                 if((new SBECommand(_dte, SBEQueueDTE.Type.OWP)).basic(evt)) {
-                    PaneVS.instance.outputString(String.Format("['{0}'] finished SBE: {1}{2}", "Output", evt.caption, Environment.NewLine));
+                    Log.nlog.Info(String.Format("['{0}'] finished SBE: {1}{2}", "Output", evt.caption, Environment.NewLine));
                 }
             }
             catch(Exception e) {
-                PaneVS.instance.outputString(String.Format("SBE '{0}' error: {1}{2}", "Output", e.Message, Environment.NewLine));
+                Log.nlog.Error(String.Format("SBE '{0}' error: {1}{2}", "Output", e.Message, Environment.NewLine));
             }
         }
 

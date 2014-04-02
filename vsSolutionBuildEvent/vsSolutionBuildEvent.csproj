@@ -8,10 +8,11 @@
     <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>reg.ext.vsSolutionBuildEvent</RootNamespace>
+    <RootNamespace>net.r_eg.vsSBE</RootNamespace>
     <AssemblyName>vsSolutionBuildEvent</AssemblyName>
-    <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -114,6 +115,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Log.cs" />
     <Compile Include="OWPMatcher.cs" />
     <Compile Include="ISolutionEventOWP.cs" />
     <Compile Include="SBEEventOWP.cs" />
@@ -136,7 +138,6 @@
     <Compile Include="ISBEParserScript.cs" />
     <Compile Include="OutputWPListener.cs" />
     <Compile Include="OutputWPBuildParser.cs" />
-    <Compile Include="PaneVS.cs" />
     <Compile Include="MSBuildParser.cs" />
     <Compile Include="MSBuildParserException.cs" />
     <Compile Include="SBECommand.cs" />
@@ -175,6 +176,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="NLog.dll.nlog">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -186,9 +191,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Key.snk" />
   </ItemGroup>
   <ItemGroup>
     <VSCTCompile Include="vsSolutionBuildEvent.vsct">

@@ -130,18 +130,19 @@ namespace net.r_eg.vsSBE
         {
             Version ver = Version.Parse(data.settings.compatibility);
 
-            if(ver.Major == 0 && ver.Minor < 4) {
-                PaneVS.instance.show();
+            if(ver.Major == 0 && ver.Minor < 4)
+            {
+                Log.show();
                 try {
                     Upgrade.Migration03_04.migrate(stream);
                     //TODO: to ErrorList
-                    PaneVS.instance.outputString("[info] Successfully upgraded configuration 0.3 -> 0.4\nPlease, save manually!\n\n");
+                    Log.nlog.Warn("Successfully upgraded configuration 0.3 -> 0.4\nPlease, save manually!\n");
                 }
                 catch(Exception e){
                     //TODO: to ErrorList
-                    PaneVS.instance.outputString(String.Format("[warning] {0}\n{1}\n\n-----\n{2}\n\n", 
-                                                               "cannot upgrade config 0.3 -> 0.4", 
-                                                               "Please contact to author.", e.Message));
+                    Log.nlog.Error(String.Format("{0}\n{1}\n\n-----\n{2}\n", 
+                                                 "cannot upgrade config 0.3 -> 0.4", 
+                                                 "Please contact to author.", e.Message));
                 }
             }
             
