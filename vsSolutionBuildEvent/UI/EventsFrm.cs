@@ -201,22 +201,22 @@ namespace net.r_eg.vsSBE.UI
 
         private void EventsFrm_Load(object sender, EventArgs e)
         {
-            _solutionEvents.Add(new _SBEWrap(Config.data.preBuild));
+            _solutionEvents.Add(new _SBEWrap(Config.Data.preBuild));
             comboBoxEvents.Items.Add("Pre-Build     (Before building solution)");
 
-            _solutionEvents.Add(new _SBEWrap(Config.data.postBuild));
+            _solutionEvents.Add(new _SBEWrap(Config.Data.postBuild));
             comboBoxEvents.Items.Add("Post-Build    (After building solution)");
 
-            _solutionEvents.Add(new _SBEWrap(Config.data.cancelBuild));
+            _solutionEvents.Add(new _SBEWrap(Config.Data.cancelBuild));
             comboBoxEvents.Items.Add("Cancel-Build  (by user or it's errors of compilation)");
 
-            _solutionEvents.Add(new _SBEWrap(Config.data.warningsBuild, _SBEWrap.SBEEvetnType.SBEEventEW));
+            _solutionEvents.Add(new _SBEWrap(Config.Data.warningsBuild, _SBEWrap.SBEEvetnType.SBEEventEW));
             comboBoxEvents.Items.Add("Warning-Build (Warnings during assembly)");
 
-            _solutionEvents.Add(new _SBEWrap(Config.data.errorsBuild, _SBEWrap.SBEEvetnType.SBEEventEW));
+            _solutionEvents.Add(new _SBEWrap(Config.Data.errorsBuild, _SBEWrap.SBEEvetnType.SBEEventEW));
             comboBoxEvents.Items.Add("Errors-Build  (Errors during assembly)");
 
-            _solutionEvents.Add(new _SBEWrap(Config.data.outputCustomBuild, _SBEWrap.SBEEvetnType.SBEEventOWP));
+            _solutionEvents.Add(new _SBEWrap(Config.Data.outputCustomBuild, _SBEWrap.SBEEvetnType.SBEEventOWP));
             comboBoxEvents.Items.Add("Output-Build customization (Full control)");
 
             comboBoxEvents.SelectedIndex = 0;

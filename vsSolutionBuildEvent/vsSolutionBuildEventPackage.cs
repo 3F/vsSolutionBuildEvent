@@ -102,18 +102,15 @@ namespace net.r_eg.vsSBE
             };
 
 
-            // TODO: Pane wrapper
             // TODO: indication of SBE into individual UI
-            Log.print(String.Format("{0} {1}",
-                String.Format("loaded settings: {0}\n\nReady:", Config.WorkPath),
-                String.Format("{0}{1}{2}{3}{4}{5}\n---\n",
-                    aboutEvent(Config.data.preBuild, "Pre-Build"),
-                    aboutEvent(Config.data.postBuild, "Post-Build"),
-                    aboutEvent(Config.data.cancelBuild, "Cancel-Build"),
-                    aboutEvent(Config.data.warningsBuild, "Warning-Build"),
-                    aboutEvent(Config.data.errorsBuild, "Errors-Build"),
-                    aboutEvent(Config.data.outputCustomBuild, "Output-Build"))
-            ));
+            Log.print(String.Format(
+                        "{0}{1}{2}{3}{4}{5}\n---\n",
+                        aboutEvent(Config.Data.preBuild, "Pre-Build"),
+                        aboutEvent(Config.Data.postBuild, "Post-Build"),
+                        aboutEvent(Config.Data.cancelBuild, "Cancel-Build"),
+                        aboutEvent(Config.Data.warningsBuild, "Warning-Build"),
+                        aboutEvent(Config.Data.errorsBuild, "Errors-Build"),
+                        aboutEvent(Config.Data.outputCustomBuild, "Output-Build")));
         }
 
         int IVsSolutionEvents.OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
@@ -136,8 +133,8 @@ namespace net.r_eg.vsSBE
         {
             try
             {
-                if((new SBECommand(_dte, SBEQueueDTE.Type.PRE)).basic(Config.data.preBuild)){
-                    Log.nlog.Info("[Pre] finished SBE: " + Config.data.preBuild.caption + Environment.NewLine);
+                if((new SBECommand(_dte, SBEQueueDTE.Type.PRE)).basic(Config.Data.preBuild)){
+                    Log.nlog.Info("[Pre] finished SBE: " + Config.Data.preBuild.caption + Environment.NewLine);
                 }
             }
             catch (Exception e)
@@ -151,8 +148,8 @@ namespace net.r_eg.vsSBE
         {
             try
             {
-                if((new SBECommand(_dte, SBEQueueDTE.Type.CANCEL)).basic(Config.data.cancelBuild)){
-                    Log.nlog.Info("[Cancel] finished SBE: " + Config.data.cancelBuild.caption + Environment.NewLine);
+                if((new SBECommand(_dte, SBEQueueDTE.Type.CANCEL)).basic(Config.Data.cancelBuild)){
+                    Log.nlog.Info("[Cancel] finished SBE: " + Config.Data.cancelBuild.caption + Environment.NewLine);
                 }
             }
             catch (Exception e)
@@ -166,8 +163,8 @@ namespace net.r_eg.vsSBE
         {
             try
             {
-                if((new SBECommand(_dte, SBEQueueDTE.Type.POST)).basic(Config.data.postBuild)){
-                    Log.nlog.Info("[Post] finished SBE: " + Config.data.postBuild.caption + Environment.NewLine);
+                if((new SBECommand(_dte, SBEQueueDTE.Type.POST)).basic(Config.Data.postBuild)){
+                    Log.nlog.Info("[Post] finished SBE: " + Config.Data.postBuild.caption + Environment.NewLine);
                 }
             }
             catch (Exception e)
@@ -181,16 +178,16 @@ namespace net.r_eg.vsSBE
         {
             OutputWPBuildParser res = new OutputWPBuildParser(ref data);
 
-            if(Config.data.warningsBuild.enabled) {
-                sbeEW(Config.data.warningsBuild, OutputWPBuildParser.Type.Warnings, res);
+            if(Config.Data.warningsBuild.enabled) {
+                sbeEW(Config.Data.warningsBuild, OutputWPBuildParser.Type.Warnings, res);
             }
 
-            if(Config.data.errorsBuild.enabled) {
-                sbeEW(Config.data.errorsBuild, OutputWPBuildParser.Type.Errors, res);
+            if(Config.Data.errorsBuild.enabled) {
+                sbeEW(Config.Data.errorsBuild, OutputWPBuildParser.Type.Errors, res);
             }
 
-            if(Config.data.outputCustomBuild.enabled) {
-                sbeOutput(Config.data.outputCustomBuild, ref data);
+            if(Config.Data.outputCustomBuild.enabled) {
+                sbeOutput(Config.Data.outputCustomBuild, ref data);
             }
         }
 
