@@ -50,13 +50,8 @@ namespace net.r_eg.vsSBE
     /// Working with the OutputWindowsPane
     /// Must receive and send different data for own subscribers
     /// </summary>
-    internal class OutputWPListener
+    internal class OutputWPListener: SynchSubscribers<IListenerOWPL>
     {
-        /// <summary>
-        /// thread-safe collection of subscribers
-        /// </summary>
-        protected SynchronizedCollection<IListenerOWPL> subscribers = new SynchronizedCollection<IListenerOWPL>();
-
         /// <summary>
         /// Keep events for the any pane
         /// </summary>
@@ -75,16 +70,6 @@ namespace net.r_eg.vsSBE
         private _dispOutputWindowEvents_PaneClearingEventHandler _ePClearing;
 
         private Object _eLock = new Object();
-
-        public void register(IListenerOWPL l)
-        {
-            subscribers.Add(l);
-        }
-
-        public void unregister(IListenerOWPL l)
-        {
-            subscribers.Remove(l);
-        }
 
         public OutputWPListener(DTE2 dte, string pName)
         {
@@ -119,8 +104,10 @@ namespace net.r_eg.vsSBE
         /// <param name="data">raw data</param>
         protected void notifyRaw(ref string data)
         {
-            foreach(IListenerOWPL l in subscribers){
-                l.raw(data);
+            lock(_eLock) {
+                foreach(IListenerOWPL l in subscribers) {
+                    l.raw(data);
+                }
             }
         }
 

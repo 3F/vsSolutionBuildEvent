@@ -35,8 +35,18 @@ using System.IO;
 
 namespace net.r_eg.vsSBE
 {
+    /// <summary>
+    /// hooking up notifications
+    /// </summary>
+    internal delegate void ConfigEventHandler();
+
     internal class Config
     {
+        /// <summary>
+        /// After update SBE-data
+        /// </summary>
+        public static event ConfigEventHandler Update = delegate { };
+
         /// <summary>
         /// SBE data at runtime
         /// </summary>
@@ -96,6 +106,7 @@ namespace net.r_eg.vsSBE
                     compatibilityCheck(stream);
                 }
                 Log.nlog.Info("loaded settings: {0}\n\nReady:", _path);
+                Update();
             }
             catch(FileNotFoundException)
             {
@@ -123,13 +134,19 @@ namespace net.r_eg.vsSBE
 
         public static void save()
         {
-            using(TextWriter stream = new StreamWriter(_Link))
-            {
-                if(data == null){
-                    data = new SolutionEvents();
+            try {
+                using(TextWriter stream = new StreamWriter(_Link)) {
+                    if(data == null) {
+                        data = new SolutionEvents();
+                    }
+                    XmlSerializer xml = new XmlSerializer(typeof(SolutionEvents));
+                    xml.Serialize(stream, data);
                 }
-                XmlSerializer xml = new XmlSerializer(typeof(SolutionEvents));
-                xml.Serialize(stream, data);
+                Log.nlog.Debug("Configuration saved: {0}", _path);
+                Update();
+            }
+            catch(Exception e) {
+                Log.nlog.Error("Cannot apply configuration {0}", e.Message);
             }
         }
 

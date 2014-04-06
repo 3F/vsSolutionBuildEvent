@@ -38,7 +38,12 @@ using NLog;
 
 namespace net.r_eg.vsSBE
 {
-    public class Log
+    /// <summary>
+    /// hooking up notifications
+    /// </summary>
+    internal delegate void LogEventHandler();
+
+    internal class Log
     {
         public const string OWP_ITEM_NAME = "Solution Build-Events";
 
@@ -48,9 +53,16 @@ namespace net.r_eg.vsSBE
         public static readonly Logger nlog = LogManager.GetCurrentClassLogger();
 
         /// <summary>
+        /// During message processing
+        /// </summary>
+        public static event LogEventHandler Receive = delegate { };
+        
+        /// <summary>
         /// to display text output, represented by the OutputWindowPane
         /// </summary>
         protected static OutputWindowPane pane = null;
+
+        private static DTE2 _dte;
 
         /// <summary>
         /// NLog :: static "MethodCall"
@@ -62,6 +74,15 @@ namespace net.r_eg.vsSBE
         /// <param name="stamp"></param>
         public static void _print(string level, string message, string stamp)
         {
+            LogLevel oLevel = LogLevel.FromString(level);
+
+#if !DEBUG
+            if(oLevel < LogLevel.Info) {
+                return;
+            }
+#endif
+
+            notify(oLevel);
             string format = String.Format(
                                 "{0} [{1}]: {2}{3}",
                                 (new DateTime(long.Parse(stamp))).ToString(CultureInfo.CurrentCulture.DateTimeFormat),
@@ -86,11 +107,12 @@ namespace net.r_eg.vsSBE
         /// <param name="dte"></param>
         public static void init(DTE2 dte)
         {
+            _dte = dte;
             try {
-                pane = dte.ToolWindows.OutputWindow.OutputWindowPanes.Item(OWP_ITEM_NAME);
+                pane = _dte.ToolWindows.OutputWindow.OutputWindowPanes.Item(OWP_ITEM_NAME);
             }
             catch(ArgumentException) {
-                pane = dte.ToolWindows.OutputWindow.OutputWindowPanes.Add(OWP_ITEM_NAME);
+                pane = _dte.ToolWindows.OutputWindow.OutputWindowPanes.Add(OWP_ITEM_NAME);
             }
             catch(Exception e) {
                 throw new Exception("Log :: inner exception", e);
@@ -99,7 +121,27 @@ namespace net.r_eg.vsSBE
 
         public static void show()
         {
-            pane.Activate();
+            if(pane == null) {
+                Log.nlog.Trace("Log::show() :: pane is null");
+                return;
+            }
+
+            try {
+                _dte.ExecuteCommand("View.Output");
+                pane.Activate();
+            }
+            catch(Exception e) {
+                //not critical because that option for quick access
+                Log.nlog.Debug("DTE error 'View.Output' {0}", e.Message);
+            }
+        }
+
+        protected static void notify(LogLevel level)
+        {
+            if(level < LogLevel.Warn) {
+                return;
+            }
+            Receive();
         }
 
         protected Log() { }

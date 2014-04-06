@@ -49,6 +49,8 @@
     <Reference Include="NLog">
       <HintPath>..\external\NLog\net40\NLog.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -56,7 +58,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="EnvDTE">
@@ -121,6 +125,7 @@
     <Compile Include="SBEEventOWP.cs" />
     <Compile Include="ISolutionEventEW.cs" />
     <Compile Include="SBEEventEW.cs" />
+    <Compile Include="SynchSubscribers.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
     <Compile Include="UI\DTECommandsFrm.cs">
       <SubType>Form</SubType>
@@ -155,6 +160,10 @@
     <Compile Include="SBESettings.cs" />
     <Compile Include="SolutionEvents.cs" />
     <Compile Include="UI\ITransferEnvironmentVariable.cs" />
+    <Compile Include="UI\StatusControl.xaml.cs">
+      <DependentUpon>StatusControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\StatusToolWindow.cs" />
     <Compile Include="Upgrade\0.3_0.4.cs" />
     <Compile Include="vsSolutionBuildEventPackage.cs" />
     <Compile Include="PkgCmdID.cs" />
@@ -183,10 +192,12 @@
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
+    <Resource Include="Resources\Exclamation_16.png" />
     <Content Include="Resources\preview.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Resource Include="Resources\Settings_16.png" />
     <Content Include="Resources\vsixinfo">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -202,6 +213,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="UI\StatusControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
