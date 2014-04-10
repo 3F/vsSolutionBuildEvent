@@ -125,6 +125,7 @@
     <Compile Include="SBEEventOWP.cs" />
     <Compile Include="ISolutionEventEW.cs" />
     <Compile Include="SBEEventEW.cs" />
+    <Compile Include="SBETransmitter.cs" />
     <Compile Include="SynchSubscribers.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
     <Compile Include="UI\DTECommandsFrm.cs">

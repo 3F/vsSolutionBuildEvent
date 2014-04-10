@@ -65,6 +65,13 @@ namespace net.r_eg.vsSBE
             }
         }
 
+        protected readonly MSBuildParser parser = new MSBuildParser();
+
+        /// <summary>
+        /// Special raw data from the output window pane
+        /// </summary>
+        protected string owpDataRaw = null;
+
         /// <summary>
         /// Where to work..
         /// </summary>
@@ -115,6 +122,18 @@ namespace net.r_eg.vsSBE
             return hModeFile(evt);
         }
 
+        /// <summary>
+        /// Addition accompanying information from assembly
+        /// </summary>
+        /// <param name="evt"></param>
+        /// <param name="raw"></param>
+        /// <returns></returns>
+        public bool supportOWP(ISolutionEvent evt, string raw)
+        {
+            owpDataRaw = raw;
+            return basic(evt);
+        }
+
         public SBECommand(DTE2 dte, SBEQueueDTE.Type queueType)
         {
             _context    = new SBEContext(Config.WorkPath, letDisk(Config.WorkPath));
@@ -127,11 +146,9 @@ namespace net.r_eg.vsSBE
         {
             string cFiles = evt.command;
 
-            if(evt.parseVariablesMSBuild) {
-                cFiles = (new MSBuildParser()).parseVariablesMSBuild(cFiles);
-            }
-
+            parseVariables(evt, ref cFiles);
             useShell(evt, _treatNewlineAs(" & ", _modifySlash(cFiles)));
+
             return true;
         }
 
@@ -161,7 +178,7 @@ namespace net.r_eg.vsSBE
                 _dte.ExecuteCommand(current);
             }
             catch(Exception e) {
-                Log.nlog.Debug("DTE-ExecuteCommand {0}", e.Message);
+                Log.nlog.Debug("DTE-ExecuteCommand '{0}' {1}", current, e.Message);
                 terminated = e;
             }
 
@@ -186,14 +203,22 @@ namespace net.r_eg.vsSBE
             }
             string script = evt.command;
 
-            if(evt.parseVariablesMSBuild) {
-                script = (new MSBuildParser()).parseVariablesMSBuild(script);
-            }
-
+            parseVariables(evt, ref script);
             script = _treatNewlineAs(evt.newline, script);
 
-            if(evt.wrapper.Length > 0){
-                script = evt.wrapper + script.Replace(evt.wrapper, "\\" + evt.wrapper) + evt.wrapper;
+            switch(evt.wrapper.Length) {
+                case 1: {
+                    script = string.Format("{0}{1}{0}", evt.wrapper, script.Replace(evt.wrapper, "\\" + evt.wrapper));
+                    break;
+                }
+                case 2: {
+                    //pair as: (), {}, [] ...
+                    //e.g.: (echo str&echo.&echo str) >> out
+                    string wL = evt.wrapper.ElementAt(0).ToString();
+                    string wR = evt.wrapper.ElementAt(1).ToString();
+                    script = string.Format("{0}{1}{2}", wL, script.Replace(wL, "\\" + wL).Replace(wR, "\\" + wR), wR);
+                    break;
+                }
             }
 
             useShell(evt, string.Format("{0} {1}", evt.interpreter, script));
@@ -205,8 +230,6 @@ namespace net.r_eg.vsSBE
 
         protected void useShell(ISolutionEvent evt, string cmd)
         {
-            Log.nlog.Trace("push {0}", cmd);
-
             ProcessStartInfo psi = new ProcessStartInfo(CMD_DEFAULT);
             if(evt.processHide) {
                 psi.WindowStyle = ProcessWindowStyle.Hidden;
@@ -223,7 +246,7 @@ namespace net.r_eg.vsSBE
 
             //TODO: verbose as option
             //if() {
-            //    Log.nlog.Info(cmd);
+                Log.nlog.Info(cmd);
             //}
 
             //TODO: stdout/stderr capture & add to OWP
@@ -235,6 +258,17 @@ namespace net.r_eg.vsSBE
 
             if(evt.waitForExit) {
                 process.WaitForExit();
+            }
+        }
+
+        protected void parseVariables(ISolutionEvent evt, ref string data)
+        {
+            data = parser.parseCustomVariable(data, SBECustomVariable.OWP_BUILD, owpDataRaw);
+            data = parser.parseCustomVariable(data, SBECustomVariable.OWP_BUILD_WARNINGS, null); // reserved
+            data = parser.parseCustomVariable(data, SBECustomVariable.OWP_BUILD_ERRORS, null);   // reserved
+
+            if(evt.parseVariablesMSBuild) {
+                data = parser.parseVariablesMSBuild(data);
             }
         }
 
@@ -268,7 +302,7 @@ namespace net.r_eg.vsSBE
     {
         public enum Type
         {
-            PRE, POST, CANCEL, WARNINGS, ERRORS, OWP
+            PRE, POST, CANCEL, WARNINGS, ERRORS, OWP, TRANSMITTER
         }
 
         public class Rec

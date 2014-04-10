@@ -175,6 +175,15 @@ namespace net.r_eg.vsSBE
 
         void IListenerOWPL.raw(string data)
         {
+            try {
+                if((new SBECommand(_dte, SBEQueueDTE.Type.TRANSMITTER)).supportOWP(Config.Data.transmitter, data)) {
+                    //Log.nlog.Info("[Transmitter]: " + Config.Data.transmitter.caption);
+                }
+            }
+            catch(Exception e) {
+                Log.nlog.Error("Transmitter error: " + e.Message);
+            }
+
             OutputWPBuildParser res = new OutputWPBuildParser(ref data);
 
             if(Config.Data.warningsBuild.enabled) {
@@ -229,13 +238,14 @@ namespace net.r_eg.vsSBE
                 return String.Format("\n\t* [{0}][{1}]: {2}", evt.enabled ? "!" : "X", caption, evt.caption);
             };
 
-            Log.print(String.Format("{0}{1}{2}{3}{4}{5}\n---\n",
+            Log.print(String.Format("{0}{1}{2}{3}{4}{5}{6}\n---\n",
                                     aboutEvent(Config.Data.preBuild,            "Pre-Build"),
                                     aboutEvent(Config.Data.postBuild,           "Post-Build"),
                                     aboutEvent(Config.Data.cancelBuild,         "Cancel-Build"),
                                     aboutEvent(Config.Data.warningsBuild,       "Warnings-Build"),
                                     aboutEvent(Config.Data.errorsBuild,         "Errors-Build"),
-                                    aboutEvent(Config.Data.outputCustomBuild,   "Output-Build")));
+                                    aboutEvent(Config.Data.outputCustomBuild,   "Output-Build"),
+                                    aboutEvent(Config.Data.transmitter,         "Transmitter")));
 
             Log.nlog.Info("Use vsSBE panel: View -> Other Windows -> Solution Build-Events");
         }

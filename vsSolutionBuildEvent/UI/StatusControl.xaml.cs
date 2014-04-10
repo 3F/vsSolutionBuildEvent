@@ -41,12 +41,13 @@ namespace net.r_eg.vsSBE.UI
 
         public void updateData()
         {
-            btnPre.IsChecked        = Config.Data.preBuild.enabled;
-            btnPost.IsChecked       = Config.Data.postBuild.enabled;
-            btnCancel.IsChecked     = Config.Data.cancelBuild.enabled;
-            btnWarnings.IsChecked   = Config.Data.warningsBuild.enabled;
-            btnErrors.IsChecked     = Config.Data.errorsBuild.enabled;
-            btnOutput.IsChecked     = Config.Data.outputCustomBuild.enabled;
+            btnPre.IsChecked            = Config.Data.preBuild.enabled;
+            btnPost.IsChecked           = Config.Data.postBuild.enabled;
+            btnCancel.IsChecked         = Config.Data.cancelBuild.enabled;
+            btnWarnings.IsChecked       = Config.Data.warningsBuild.enabled;
+            btnErrors.IsChecked         = Config.Data.errorsBuild.enabled;
+            btnOutput.IsChecked         = Config.Data.outputCustomBuild.enabled;
+            btnTransmitter.IsChecked    = Config.Data.transmitter.enabled;
         }
 
         public void notify()
@@ -121,6 +122,12 @@ namespace net.r_eg.vsSBE.UI
         private void btnOutput_Click(object sender, RoutedEventArgs e)
         {
             Config.Data.outputCustomBuild.enabled = btnOutput.IsChecked.Value;
+            Config.save();
+        }
+
+        private void btnTransmitter_Click(object sender, RoutedEventArgs e)
+        {
+            Config.Data.transmitter.enabled = btnTransmitter.IsChecked.Value;
             Config.save();
         }
     }

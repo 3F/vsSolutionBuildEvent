@@ -62,7 +62,7 @@ namespace net.r_eg.vsSBE
             /// Current config version
             /// Notice: version of app is controlled by Package
             /// </summary>
-            public const string VERSION = "0.4";
+            public const string VERSION = "0.5";
 
             /// <summary>
             /// into file system

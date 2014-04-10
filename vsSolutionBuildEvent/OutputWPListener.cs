@@ -32,6 +32,7 @@ using System.Linq;
 using System.Text;
 using EnvDTE;
 using EnvDTE80;
+using System.Threading;
 
 namespace net.r_eg.vsSBE
 {
@@ -53,9 +54,13 @@ namespace net.r_eg.vsSBE
     internal class OutputWPListener: SynchSubscribers<IListenerOWPL>
     {
         /// <summary>
-        /// Keep events for the any pane
+        /// Keep events for any pane
         /// </summary>
-        private OutputWindowEvents _evtOWP;
+        protected OutputWindowEvents evtOWP;
+
+        //TODO: fix me. Prevent Duplicate Data / bug with OutputWindowPane
+        protected SynchronizedCollection<string> dataList = new SynchronizedCollection<string>();
+        protected System.Threading.Thread tUpdated;
 
         /// <summary>
         /// previous count of lines for EditPoint::GetLines
@@ -71,73 +76,99 @@ namespace net.r_eg.vsSBE
 
         private Object _eLock = new Object();
 
-        public OutputWPListener(DTE2 dte, string pName)
-        {
-            _evtOWP     = dte.Events.get_OutputWindowEvents(pName);
-            _ePUpdated  = new _dispOutputWindowEvents_PaneUpdatedEventHandler(evtPaneUpdated);
-            _ePAdded    = new _dispOutputWindowEvents_PaneAddedEventHandler(evtPaneAdded);
-            _ePClearing = new _dispOutputWindowEvents_PaneClearingEventHandler(evtPaneClearing);
-        }
-
         public void attachEvents()
         {
             lock(_eLock) {
                 detachEvents();
-                _evtOWP.PaneUpdated     += _ePUpdated;
-                _evtOWP.PaneAdded       += _ePAdded;
-                _evtOWP.PaneClearing    += _ePClearing;
+                evtOWP.PaneUpdated     += _ePUpdated;
+                evtOWP.PaneAdded       += _ePAdded;
+                evtOWP.PaneClearing    += _ePClearing;
             }
         }
 
         public void detachEvents()
         {
             lock(_eLock) {
-                _evtOWP.PaneUpdated     -= _ePUpdated;
-                _evtOWP.PaneAdded       -= _ePAdded;
-                _evtOWP.PaneClearing    -= _ePClearing;
+                evtOWP.PaneUpdated     -= _ePUpdated;
+                evtOWP.PaneAdded       -= _ePAdded;
+                evtOWP.PaneClearing    -= _ePClearing;
             }
+        }
+
+        public OutputWPListener(DTE2 dte, string pName)
+        {
+            evtOWP      = dte.Events.get_OutputWindowEvents(pName);
+            _ePUpdated  = new _dispOutputWindowEvents_PaneUpdatedEventHandler(evtPaneUpdated);
+            _ePAdded    = new _dispOutputWindowEvents_PaneAddedEventHandler(evtPaneAdded);
+            _ePClearing = new _dispOutputWindowEvents_PaneClearingEventHandler(evtPaneClearing);
         }
 
         /// <summary>
-        /// all collection must receive the raw-data
+        /// all collection must receive raw-data
+        /// TODO: fix me. Prevent Duplicate Data / bug with OutputWindowPane
         /// </summary>
-        /// <param name="data">raw data</param>
-        protected void notifyRaw(ref string data)
+        protected virtual void notifyRaw()
         {
-            lock(_eLock) {
-                foreach(IListenerOWPL l in subscribers) {
-                    l.raw(data);
+            if(dataList.Count < 1) {
+                return;
+            }
+
+            lock(_eLock)
+            {
+                string envelope = "";
+                while(dataList.Count > 0) {
+                    envelope += dataList[0];
+                    dataList.RemoveAt(0);
                 }
+            
+                foreach(IListenerOWPL l in subscribers) {
+                    l.raw(envelope);
+                }
+            }
+
+            if(dataList.Count > 0) {
+                notifyRaw();
             }
         }
 
-        protected void evtPaneUpdated(OutputWindowPane pane)
+        protected virtual void evtPaneUpdated(OutputWindowPane pane)
         {
             TextDocument textD   = pane.TextDocument;
             int countLines       = textD.EndPoint.Line;
 
-            if(countLines < 1 || countLines - _prevCountLines < 1) {
+            if(countLines <= 1 || countLines - _prevCountLines < 1) {
                 return;
             }
 
             EditPoint point = textD.StartPoint.CreateEditPoint();
 
             // text between Start (inclusive) and ExclusiveEnd (exclusive)
-            string text = point.GetLines(_prevCountLines, countLines); // e.g. first line: 1, 2
+            dataList.Add(point.GetLines(_prevCountLines, countLines)); // e.g. first line: 1, 2
             _prevCountLines = countLines;
 
-            notifyRaw(ref text);
+            //TODO: fix me. Prevent Duplicate Data / bug with OutputWindowPane
+            if(tUpdated == null || tUpdated.ThreadState == ThreadState.Unstarted || tUpdated.ThreadState == ThreadState.Stopped)
+            {
+                tUpdated = new System.Threading.Thread(() => { notifyRaw(); });
+                try {
+                    tUpdated.Start();
+                }
+                catch(Exception e) {
+                    Log.nlog.Warn("notifyRaw() {0}", e.Message);
+                }
+            }
         }
 
-        protected void evtPaneAdded(OutputWindowPane pane)
+        protected virtual void evtPaneAdded(OutputWindowPane pane)
         {
             _prevCountLines = 1;
+            dataList.Clear();
         }
 
-        protected void evtPaneClearing(OutputWindowPane pane)
+        protected virtual void evtPaneClearing(OutputWindowPane pane)
         {
             _prevCountLines = 1;
+            dataList.Clear();
         }
-
     }
 }

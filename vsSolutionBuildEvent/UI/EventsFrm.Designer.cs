@@ -436,7 +436,10 @@
             "\"",
             "",
             "\'",
-            "`"});
+            "`",
+            "()",
+            "{}",
+            "[]"});
             this.comboBoxWrapper.Location = new System.Drawing.Point(104, 69);
             this.comboBoxWrapper.Name = "comboBoxWrapper";
             this.comboBoxWrapper.Size = new System.Drawing.Size(462, 21);
@@ -468,7 +471,8 @@
             this.comboBoxNewline.Items.AddRange(new object[] {
             "&",
             "",
-            "\\"});
+            "\\",
+            "&echo.&echo "});
             this.comboBoxNewline.Location = new System.Drawing.Point(104, 44);
             this.comboBoxNewline.Name = "comboBoxNewline";
             this.comboBoxNewline.Size = new System.Drawing.Size(462, 21);

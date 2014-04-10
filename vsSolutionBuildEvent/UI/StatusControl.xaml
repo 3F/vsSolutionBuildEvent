@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="23" d:DesignWidth="460">
+             d:DesignHeight="23" d:DesignWidth="536">
     <Grid Name="grid">
         <ToggleButton Content="Pre" Height="23" HorizontalAlignment="Left" Margin="124,0,0,0" Name="btnPre" VerticalAlignment="Top" Width="39" Click="btnPre_Click" />
         <ToggleButton Content="Post" Height="23" HorizontalAlignment="Left" Margin="169,0,0,0" Name="btnPost" VerticalAlignment="Top" Width="40" Click="btnPost_Click" />
@@ -12,6 +12,7 @@
         <ToggleButton Content="Warnings" Height="23" HorizontalAlignment="Left" Margin="273,0,0,0" Name="btnWarnings" VerticalAlignment="Top" Width="61" Click="btnWarnings_Click" />
         <ToggleButton Content="Errors" Height="23" HorizontalAlignment="Left" Margin="340,0,0,0" Name="btnErrors" VerticalAlignment="Top" Width="50" Click="btnErrors_Click" />
         <ToggleButton Content="Output" Height="23" HorizontalAlignment="Left" Margin="396,0,0,0" Name="btnOutput" VerticalAlignment="Top" Width="53" Click="btnOutput_Click" />
+        <ToggleButton Content="Transmitter" Height="23" HorizontalAlignment="Left" Margin="455,0,0,0" Name="btnTransmitter" VerticalAlignment="Top" Width="66" Click="btnTransmitter_Click" />
         <Button Height="23" HorizontalAlignment="Left" Name="btnSettings" VerticalAlignment="Top" Width="20" Padding="0" Click="btnSettings_Click">
             <StackPanel>
                 <Image Source="/vsSolutionBuildEvent;component/Resources/Settings_16.png" Height="20" Width="20" Stretch="None" />
