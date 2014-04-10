@@ -1,3 +1,14 @@
+[v0.5]
+    * NEW: UI-State panel of SBE: ( VS IDE View -> Other Windows -> Solution Build-Events )
+    * NEW: Experimental New Event - Transmitter. To transfer output data to outer handler. 
+           Uses custom variables.
+    * CHANGED: Configuration file name - .xprojvsbe -> .vssbe 
+               Automatically updated from older version.
+    * CHANGED: Extended notice of work (used NLog)
+    * FIXED: Ability handle a pair for wrapper (UI) & trim removed for "treat newline as"
+    * FIXED: Duplicate data with OutputWindowPane
+    * FIXED: Other UI/Core bugs fixed
+
 [v0.4.1]
     * FIXED: Incorrect render settings for some UI-items
     * CHANGED: Minor UI changes - the "Clear" functionality changed to the "Reset" & lock label of status
