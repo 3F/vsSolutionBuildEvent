@@ -28,7 +28,7 @@
 
   <!--The Commands section is where we the commands, menus and menu groups are defined.
       This section uses a Guid to identify the package that provides the command defined inside it. -->
-  <Commands package="guidvsSolutionBuildEventPkg">
+  <Commands package="GUID_PACKAGE">
     <!-- Inside this section we have different sub-sections: one for the menus, another  
     for the menu groups, one for the buttons (the actual commands), one for the combos 
     and the last one for the bitmaps used. Each element is identified by a command id that  
@@ -50,15 +50,23 @@
               <CommandFlag>DynamicVisibility</CommandFlag>
           If you do not want an image next to your command, remove the Icon node or set it to <Icon guid="guidOfficeIcon" id="msotcidNoIcon" /> -->
 
-      <Button guid="guidvsSolutionBuildEventCmdSet" id="cmdSolutionBuildEvent" priority="0x0100" type="Button">
+      <Button guid="GUID_MAIN_CMD" id="CMD_MAIN" priority="0x0100" type="Button">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_BUILD_SOLUTION" />
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
         <Strings>
-          <CommandName>cmdSolutionBuildEvent</CommandName>
+          <CommandName>CMD_MAIN</CommandName>
           <ButtonText>Events Solution</ButtonText>
         </Strings>
       </Button>
+
+     <Button guid="GUID_PANEL_CMD" id="CMD_PANEL" priority="0x0100" type="Button">
+       <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
+       <Strings>
+          <CommandName>CMD_PANEL</CommandName>
+          <ButtonText>Solution Build-Events</ButtonText>
+       </Strings>
+     </Button>
 
     </Buttons>
  
@@ -70,12 +78,15 @@
 
   <Symbols>
     <!-- This is the package guid. -->
-    <GuidSymbol name="guidvsSolutionBuildEventPkg" value="{94ecd13f-15f3-4f51-9afd-17f0275c6266}" />
+    <GuidSymbol name="GUID_PACKAGE" value="{94ecd13f-15f3-4f51-9afd-17f0275c6266}" />
     
     <!-- This is the guid used to group the menu commands together -->
-    <GuidSymbol name="guidvsSolutionBuildEventCmdSet" value="{5547e550-6d81-4f97-91ed-338926673efa}">
+    <GuidSymbol name="GUID_MAIN_CMD" value="{5547e550-6d81-4f97-91ed-338926673efa}">
+      <IDSymbol name="CMD_MAIN" value="0x0100" />
+    </GuidSymbol>
 
-      <IDSymbol name="cmdSolutionBuildEvent" value="0x0100" />
+    <GuidSymbol name="GUID_PANEL_CMD" value="{B53B115A-F433-44EB-85E0-94767FAA23E0}">
+        <IDSymbol name="CMD_PANEL" value="0x0101" />
     </GuidSymbol>
         
   </Symbols>

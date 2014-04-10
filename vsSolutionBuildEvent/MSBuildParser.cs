@@ -101,8 +101,8 @@ namespace net.r_eg.vsSBE
         /// <returns>text with values of MSBuild properties</returns>
         public string parseVariablesMSBuild(string data)
         {
-            return Regex.Replace(data, @"(?<!\$)\$\((?:([^\:\r\n\)]+?)\:([^\)\r\n]+?)|([^\)]*?))\)", delegate(Match m) {
-
+            return Regex.Replace(data, @"(?<!\$)\$\((?:([^\:\r\n\)]+?)\:([^\)\r\n]+?)|([^\)]*?))\)", delegate(Match m)
+            {
                 if(!m.Success) {
                     return m.Value;
                 }
@@ -114,6 +114,26 @@ namespace net.r_eg.vsSBE
                     return getProperty(m.Groups[3].Value);
                 }
                 return getProperty(m.Groups[1].Value, m.Groups[2].Value);
+
+            }, RegexOptions.IgnoreCase).Replace("$$(", "$(");
+        }
+
+        /// <summary>
+        /// All variables which are not included in MSBuild environment.
+        /// Customization for our data
+        /// </summary>
+        /// <param name="data">where to look</param>
+        /// <param name="name">we're looking for..</param>
+        /// <param name="value">replace with this value if found</param>
+        /// <returns></returns>
+        public string parseCustomVariable(string data, string name, string value)
+        {
+            return Regex.Replace(data, @"(?<!\$)\$\(([^\)]*?)\)", delegate(Match m)
+            {
+                if(m.Success && m.Groups[1].Value == name){
+                    return (value == null)? "" : value;
+                }
+                return m.Value;
 
             }, RegexOptions.IgnoreCase).Replace("$$(", "$(");
         }
@@ -207,5 +227,13 @@ namespace net.r_eg.vsSBE
             this.name  = name;
             this.value = value;
         }
+    }
+
+    //TODO:
+    public struct SBECustomVariable
+    {
+        public const string OWP_BUILD           = "vsSBE_OWPBuild";
+        public const string OWP_BUILD_WARNINGS  = "vsSBE_OWPBuildWarnings";
+        public const string OWP_BUILD_ERRORS    = "vsSBE_OWPBuildErrors";
     }
 }

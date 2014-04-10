@@ -35,60 +35,87 @@ using System.IO;
 
 namespace net.r_eg.vsSBE
 {
+    /// <summary>
+    /// hooking up notifications
+    /// </summary>
+    internal delegate void ConfigEventHandler();
+
     internal class Config
     {
         /// <summary>
+        /// After update SBE-data
+        /// </summary>
+        public static event ConfigEventHandler Update = delegate { };
+
+        /// <summary>
         /// SBE data at runtime
         /// </summary>
-        public static SolutionEvents data = null;
+        public static SolutionEvents Data
+        {
+            get { return data; }
+        }
+        protected static SolutionEvents data = null;
 
-        private struct Entity
+        protected struct Entity
         {
             /// <summary>
             /// Current config version
             /// Notice: version of app is controlled by Package
             /// </summary>
-            public const string VERSION = "0.4";
+            public const string VERSION = "0.5";
 
             /// <summary>
             /// into file system
             /// </summary>
-            public const string NAME    = ".xprojvsbe";
+            public const string NAME    = ".vssbe";
         }
 
         /// <summary>
-        /// path to settings file
+        /// Current location
         /// </summary>
+        public static string WorkPath
+        {
+            get { return _path; }
+        }
         private static string _path = "";
 
         /// <summary>
         /// identification with full path
         /// </summary>
-        private static string _FullName
+        private static string _Link
         {
             get { return _path + Entity.NAME; }
         }
 
         /// <summary>
-        /// initialization of settings
+        /// Initialization settings
         /// </summary>
-        /// <param name="path">the path to the configuration file</param>
+        /// <param name="path">path to configuration file</param>
         public static void load(string path)
         {
             _path = path;
+            _xprojvsbeUpgrade();
+
+            data = new SolutionEvents();
             try
             {
-                using(FileStream stream = new FileStream(_FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using(FileStream stream = new FileStream(_Link, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     XmlSerializer xml   = new XmlSerializer(typeof(SolutionEvents));
                     data                = (SolutionEvents)xml.Deserialize(stream);
                     compatibilityCheck(stream);
                 }
+                Log.nlog.Info("loaded settings: {0}\n\nReady:", _path);
+                Update();
             }
-            catch (Exception)
+            catch(FileNotFoundException)
             {
-                //TODO: notice about a clean boot
-                data = new SolutionEvents();
+                Log.nlog.Info("Initialize with new settings");
+            }
+            catch(Exception e)
+            {
+                Log.nlog.Fatal("Configuration file is corrupt {0}", e.Message);
+                //TODO: choice actions /UI
             }
 
             // now compatibility should be updated to the latest
@@ -107,45 +134,60 @@ namespace net.r_eg.vsSBE
 
         public static void save()
         {
-            using(TextWriter stream = new StreamWriter(_FullName))
-            {
-                if(data == null){
-                    data = new SolutionEvents();
+            try {
+                using(TextWriter stream = new StreamWriter(_Link)) {
+                    if(data == null) {
+                        data = new SolutionEvents();
+                    }
+                    XmlSerializer xml = new XmlSerializer(typeof(SolutionEvents));
+                    xml.Serialize(stream, data);
                 }
-                XmlSerializer xml = new XmlSerializer(typeof(SolutionEvents));
-                xml.Serialize(stream, data);
+                Log.nlog.Debug("Configuration saved: {0}", _path);
+                Update();
+            }
+            catch(Exception e) {
+                Log.nlog.Error("Cannot apply configuration {0}", e.Message);
             }
         }
 
-        public static string WorkPath
-        {
-            get { return _path; }
-        }
-
         /// <summary>
-        /// Check version and reorganize structure if needed..
+        /// Older versions support :: Check version and reorganize structure if needed..
         /// </summary>
         /// <param name="stream"></param>
         protected static void compatibilityCheck(FileStream stream)
         {
             Version ver = Version.Parse(data.settings.compatibility);
 
-            if(ver.Major == 0 && ver.Minor < 4) {
-                PaneVS.instance.show();
-                try {
-                    Upgrade.Migration03_04.migrate(stream);
-                    //TODO: to ErrorList
-                    PaneVS.instance.outputString("[info] Successfully upgraded configuration 0.3 -> 0.4\nPlease, save manually!\n\n");
-                }
-                catch(Exception e){
-                    //TODO: to ErrorList
-                    PaneVS.instance.outputString(String.Format("[warning] {0}\n{1}\n\n-----\n{2}\n\n", 
-                                                               "cannot upgrade config 0.3 -> 0.4", 
-                                                               "Please contact to author.", e.Message));
-                }
+            if(ver.Major == 0 && ver.Minor < 4)
+            {
+                Log.show();
+                Log.nlog.Info("Start upgrade configuration 0.3 -> 0.4");
+                Upgrade.Migration03_04.migrate(stream);
+                //TODO: to ErrorList
+                Log.nlog.Warn("Successfully upgraded. *Please, save manually!");
             }
-            
         }
+
+        /// <summary>
+        /// Older versions support :: Change name settings
+        /// </summary>
+        /// <returns></returns>
+        private static void _xprojvsbeUpgrade()
+        {
+            string oldcfg = _path + ".xprojvsbe";
+            if(!(File.Exists(oldcfg) && !File.Exists(_Link))) {
+                return;
+            }
+
+            try {
+                File.Move(oldcfg, _Link);
+                Log.nlog.Info("Successfully upgraded settings :: .xprojvsbe -> {0}", Entity.NAME);
+            }
+            catch(Exception e) {
+                Log.nlog.Fatal("Failed upgrade .xprojvsbe\n\n-----\n{0}\n", e.Message);
+            }
+        }
+
 
         protected Config(){}
     }

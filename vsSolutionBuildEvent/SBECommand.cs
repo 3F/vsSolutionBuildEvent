@@ -32,13 +32,11 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using EnvDTE80;
+using System.Runtime.InteropServices;
+using System.Globalization;
 
 namespace net.r_eg.vsSBE
 {
-    /// <summary>
-    /// 
-    /// TODO: logger for user
-    /// </summary>
     public class SBECommand
     {
         const string CMD_DEFAULT = "cmd";
@@ -56,7 +54,26 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// working directory for commands
+        /// The current OEM code page from the system locale
+        /// </summary>
+        protected int OEMCodePage
+        {
+            get
+            {
+                CultureInfo inf = CultureInfo.GetCultureInfo(GetSystemDefaultLCID());
+                return inf.TextInfo.OEMCodePage;
+            }
+        }
+
+        protected readonly MSBuildParser parser = new MSBuildParser();
+
+        /// <summary>
+        /// Special raw data from the output window pane
+        /// </summary>
+        protected string owpDataRaw = null;
+
+        /// <summary>
+        /// Where to work..
         /// </summary>
         private SBEContext _context = null;
 
@@ -90,62 +107,52 @@ namespace net.r_eg.vsSBE
                 return false;
             }
 
+            Log.nlog.Info("Launching '{0}'", evt.caption);
             switch(evt.mode) {
                 case TModeCommands.Operation: {
+                    Log.nlog.Info("Use Operation Mode");
                     return hModeOperation(evt);
                 }
                 case TModeCommands.Interpreter: {
+                    Log.nlog.Info("Use Interpreter Mode");
                     return hModeScript(evt);
                 }
             }
+            Log.nlog.Info("Use File Mode");
             return hModeFile(evt);
+        }
+
+        /// <summary>
+        /// Addition accompanying information from assembly
+        /// </summary>
+        /// <param name="evt"></param>
+        /// <param name="raw"></param>
+        /// <returns></returns>
+        public bool supportOWP(ISolutionEvent evt, string raw)
+        {
+            owpDataRaw = raw;
+            return basic(evt);
         }
 
         public SBECommand(DTE2 dte, SBEQueueDTE.Type queueType)
         {
-            _context    = new SBEContext(Config.WorkPath, _letDisk(Config.WorkPath));
+            _context    = new SBEContext(Config.WorkPath, letDisk(Config.WorkPath));
             _dte        = dte;
             _queueType  = queueType;
             _QueueRec   = new SBEQueueDTE.Rec();
         }
 
-        protected bool hModeFile(ISolutionEvent evt)
+        protected virtual bool hModeFile(ISolutionEvent evt)
         {
-            ProcessStartInfo psi = new ProcessStartInfo(CMD_DEFAULT);
-            if(evt.processHide){
-                psi.WindowStyle = ProcessWindowStyle.Hidden;
-            }
+            string cFiles = evt.command;
 
-            //TODO: [optional] capture message...
+            parseVariables(evt, ref cFiles);
+            useShell(evt, _treatNewlineAs(" & ", _modifySlash(cFiles)));
 
-            string script = evt.command;
-
-            if(evt.parseVariablesMSBuild) {
-                script = (new MSBuildParser()).parseVariablesMSBuild(script);
-            }
-
-            string args = string.Format(
-                "/C cd {0}{1} & {2}",
-                _context.path, 
-                (_context.disk != null) ? " & " + _context.disk + ":" : "",
-                _treatNewlineAs(" & ", _modifySlash(script)));
-
-            if(!evt.processHide && evt.processKeep){
-                args += " & pause";
-            }
-
-            psi.Arguments       = args;
-            Process process     = new Process();
-            process.StartInfo   = psi;
-            process.Start();
-
-            if(evt.waitForExit){
-                process.WaitForExit(); //TODO: !replace it on handling build
-            }
             return true;
         }
 
-        protected bool hModeOperation(ISolutionEvent evt)
+        protected virtual bool hModeOperation(ISolutionEvent evt)
         {
             if(_QueueRec.level == 0) {
                 _QueueRec.cmd = evt.dteExec.cmd;
@@ -171,6 +178,7 @@ namespace net.r_eg.vsSBE
                 _dte.ExecuteCommand(current);
             }
             catch(Exception e) {
+                Log.nlog.Debug("DTE-ExecuteCommand '{0}' {1}", current, e.Message);
                 terminated = e;
             }
 
@@ -187,54 +195,89 @@ namespace net.r_eg.vsSBE
             return true;
         }
 
-        //TODO:
-        protected bool hModeScript(ISolutionEvent evt)
+        protected virtual bool hModeScript(ISolutionEvent evt)
         {
             if(evt.interpreter.Trim().Length < 1){
+                Log.nlog.Warn("interpreter not selected");
                 return false;
             }
-            //new ProcessStartInfo(evt.interpreter);
-
             string script = evt.command;
 
-            if(evt.parseVariablesMSBuild) {
-                script = (new MSBuildParser()).parseVariablesMSBuild(script);
-            }
-
+            parseVariables(evt, ref script);
             script = _treatNewlineAs(evt.newline, script);
 
-            if(evt.wrapper.Length > 0){
-                script = evt.wrapper + script.Replace(evt.wrapper, "\\" + evt.wrapper) + evt.wrapper;
+            switch(evt.wrapper.Length) {
+                case 1: {
+                    script = string.Format("{0}{1}{0}", evt.wrapper, script.Replace(evt.wrapper, "\\" + evt.wrapper));
+                    break;
+                }
+                case 2: {
+                    //pair as: (), {}, [] ...
+                    //e.g.: (echo str&echo.&echo str) >> out
+                    string wL = evt.wrapper.ElementAt(0).ToString();
+                    string wR = evt.wrapper.ElementAt(1).ToString();
+                    script = string.Format("{0}{1}{2}", wL, script.Replace(wL, "\\" + wL).Replace(wR, "\\" + wR), wR);
+                    break;
+                }
             }
 
+            useShell(evt, string.Format("{0} {1}", evt.interpreter, script));
+            return true;
+        }
+
+        [DllImport("kernel32.dll")]
+        protected static extern int GetSystemDefaultLCID();
+
+        protected void useShell(ISolutionEvent evt, string cmd)
+        {
             ProcessStartInfo psi = new ProcessStartInfo(CMD_DEFAULT);
             if(evt.processHide) {
                 psi.WindowStyle = ProcessWindowStyle.Hidden;
             }
+            //psi.StandardErrorEncoding = psi.StandardOutputEncoding = Encoding.GetEncoding(OEMCodePage);
 
-            string args = string.Format("/C cd {0}{1} & {2} {3}",
+            string args = string.Format("/C cd {0}{1} & {2}",
                                         _context.path,
-                                        (_context.disk != null) ? " & " + _context.disk + ":" : "",
-                                        evt.interpreter, //TODO: optional manually..
-                                        script);
+                                        (_context.disk != null) ? " & " + _context.disk + ":" : "", cmd);
 
             if(!evt.processHide && evt.processKeep) {
                 args += " & pause";
             }
 
-            Debug.WriteLine(args);
+            //TODO: verbose as option
+            //if() {
+                Log.nlog.Info(cmd);
+            //}
+
+            //TODO: stdout/stderr capture & add to OWP
 
             psi.Arguments       = args;
             Process process     = new Process();
             process.StartInfo   = psi;
             process.Start();
 
-            //TODO: [optional] capture message...
-
             if(evt.waitForExit) {
-                process.WaitForExit(); //TODO: !replace it on handling build
+                process.WaitForExit();
             }
-            return true;
+        }
+
+        protected void parseVariables(ISolutionEvent evt, ref string data)
+        {
+            data = parser.parseCustomVariable(data, SBECustomVariable.OWP_BUILD, owpDataRaw);
+            data = parser.parseCustomVariable(data, SBECustomVariable.OWP_BUILD_WARNINGS, null); // reserved
+            data = parser.parseCustomVariable(data, SBECustomVariable.OWP_BUILD_ERRORS, null);   // reserved
+
+            if(evt.parseVariablesMSBuild) {
+                data = parser.parseVariablesMSBuild(data);
+            }
+        }
+
+        protected string letDisk(string path)
+        {
+            if(path.Length < 1) {
+                return null;
+            }
+            return path.Substring(0, 1);
         }
 
         private string _modifySlash(string data)
@@ -245,14 +288,6 @@ namespace net.r_eg.vsSBE
         private string _treatNewlineAs(string str, string data)
         {
             return data.Replace("\r", "").Replace("\n", str);
-        }
-
-        private static string _letDisk(string path)
-        {
-            if(path.Length < 1){
-                return null;
-            }
-            return path.Substring(0, 1);
         }
     }
 
@@ -267,7 +302,7 @@ namespace net.r_eg.vsSBE
     {
         public enum Type
         {
-            PRE, POST, CANCEL, WARNINGS, ERRORS, OWP
+            PRE, POST, CANCEL, WARNINGS, ERRORS, OWP, TRANSMITTER
         }
 
         public class Rec

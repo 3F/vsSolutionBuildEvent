@@ -8,10 +8,11 @@
     <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>reg.ext.vsSolutionBuildEvent</RootNamespace>
+    <RootNamespace>net.r_eg.vsSBE</RootNamespace>
     <AssemblyName>vsSolutionBuildEvent</AssemblyName>
-    <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -45,6 +46,11 @@
       <Private>false</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.10.0" />
+    <Reference Include="NLog">
+      <HintPath>..\external\NLog\net40\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -52,7 +58,9 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="EnvDTE">
@@ -111,11 +119,14 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Log.cs" />
     <Compile Include="OWPMatcher.cs" />
     <Compile Include="ISolutionEventOWP.cs" />
     <Compile Include="SBEEventOWP.cs" />
     <Compile Include="ISolutionEventEW.cs" />
     <Compile Include="SBEEventEW.cs" />
+    <Compile Include="SBETransmitter.cs" />
+    <Compile Include="SynchSubscribers.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
     <Compile Include="UI\DTECommandsFrm.cs">
       <SubType>Form</SubType>
@@ -133,7 +144,6 @@
     <Compile Include="ISBEParserScript.cs" />
     <Compile Include="OutputWPListener.cs" />
     <Compile Include="OutputWPBuildParser.cs" />
-    <Compile Include="PaneVS.cs" />
     <Compile Include="MSBuildParser.cs" />
     <Compile Include="MSBuildParserException.cs" />
     <Compile Include="SBECommand.cs" />
@@ -151,6 +161,10 @@
     <Compile Include="SBESettings.cs" />
     <Compile Include="SolutionEvents.cs" />
     <Compile Include="UI\ITransferEnvironmentVariable.cs" />
+    <Compile Include="UI\StatusControl.xaml.cs">
+      <DependentUpon>StatusControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UI\StatusToolWindow.cs" />
     <Compile Include="Upgrade\0.3_0.4.cs" />
     <Compile Include="vsSolutionBuildEventPackage.cs" />
     <Compile Include="PkgCmdID.cs" />
@@ -172,20 +186,23 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="NLog.dll.nlog">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
+    <Resource Include="Resources\Exclamation_16.png" />
     <Content Include="Resources\preview.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Resource Include="Resources\Settings_16.png" />
     <Content Include="Resources\vsixinfo">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Key.snk" />
   </ItemGroup>
   <ItemGroup>
     <VSCTCompile Include="vsSolutionBuildEvent.vsct">
@@ -197,6 +214,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="UI\StatusControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>

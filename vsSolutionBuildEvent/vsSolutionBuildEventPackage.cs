@@ -33,8 +33,11 @@ namespace net.r_eg.vsSBE
     //  To be automatically loaded when a specified UI context is active
     [ProvideAutoLoad(UIContextGuids80.SolutionExists)]
 
+    // Registers the tool window
+    [ProvideToolWindow(typeof(UI.StatusToolWindow), Height=23, Style=VsDockStyle.Linked, Orientation=ToolWindowOrientation.Top, Window=ToolWindowGuids80.Outputwindow)]
+
     // Package Guid
-    [Guid(GuidList.guidvsSolutionBuildEventPkgString)]
+    [Guid(GuidList.PACKAGE_STRING)]
 
     public sealed class vsSolutionBuildEventPackage: Package, IVsSolutionEvents, IVsUpdateSolutionEvents, IListenerOWPL
     {
@@ -56,9 +59,9 @@ namespace net.r_eg.vsSBE
         private uint _cookieUpdateSEvents;
 
         /// <summary>
-        /// commands with menu of VS - Build/
+        /// VS IDE menu - Build / <Main App>
         /// </summary>
-        private MenuCommand _menuItem                       = null;
+        private MenuCommand _menuItemMain                   = null;
         
         /// <summary>
         /// main form of settings
@@ -73,17 +76,21 @@ namespace net.r_eg.vsSBE
         public vsSolutionBuildEventPackage()
         {
             _dte = (DTE2)Package.GetGlobalService(typeof(SDTE));
-            PaneVS.instance.setDTE(_dte);
+            Log.init(_dte);
+            Log.show();
 
             _owpBuild = new OutputWPListener(_dte, "Build");
             _owpBuild.attachEvents();
             _owpBuild.register(this);
+
+            //TODO: don't like it
+            UI.StatusToolWindow.control.setDTE(_dte);
         }
 
         /// <summary>
         /// execute a command when clicked menu item (Build/<pack>)
         /// </summary>
-        private void MenuItemCallback(object sender, EventArgs e)
+        private void _menuMainCallback(object sender, EventArgs e)
         {
             if (_configFrm != null && !_configFrm.IsDisposed)
             {
@@ -94,41 +101,30 @@ namespace net.r_eg.vsSBE
             _configFrm.Show();
         }
 
-        //TODO:
-        private void _info()
+        private void _menuPanelCallback(object sender, EventArgs e)
         {
-            Func<ISolutionEvent, string, string> aboutEvent = delegate(ISolutionEvent evt, string caption) {
-                return String.Format("\n\t* [{0}][{1}]: {2}", caption, evt.enabled.ToString(), evt.caption);
-            };
-
-
-            // TODO: Pane wrapper
-            // TODO: indication of SBE into individual UI
-            PaneVS.instance.outputString(String.Format("{0} {1}",
-                String.Format("loaded settings: {0}\n\nReady:", Config.WorkPath),
-                String.Format("{0}{1}{2}{3}{4}{5}\n---\n",
-                    aboutEvent(Config.data.preBuild, "Pre-Build"),
-                    aboutEvent(Config.data.postBuild, "Post-Build"),
-                    aboutEvent(Config.data.cancelBuild, "Cancel-Build"),
-                    aboutEvent(Config.data.warningsBuild, "Warning-Build"),
-                    aboutEvent(Config.data.errorsBuild, "Errors-Build"),
-                    aboutEvent(Config.data.outputCustomBuild, "Output-Build"))
-            ));
+            ToolWindowPane window = FindToolWindow(typeof(UI.StatusToolWindow), 0, true);
+            if(window == null || window.Frame == null) {
+                throw new NotSupportedException("Cannot create UI.StatusToolWindow");
+            }
+            ErrorHandler.ThrowOnFailure(((IVsWindowFrame)window.Frame).Show());
         }
 
         int IVsSolutionEvents.OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
         {
             Config.load(Path.GetDirectoryName(_dte.Solution.FullName) + "\\");
-            _info();
+            _state();
 
-            _menuItem.Visible = true;
+            _menuItemMain.Visible = true;
+            UI.StatusToolWindow.control.enabled(true);
             return VSConstants.S_OK;
         }
 
         int IVsSolutionEvents.OnAfterCloseSolution(object pUnkReserved)
         {
+            _menuItemMain.Visible = false;
+            UI.StatusToolWindow.control.enabled(false);
             _configFrm.Close();
-            _menuItem.Visible = false;
             return VSConstants.S_OK;
         }
 
@@ -136,13 +132,13 @@ namespace net.r_eg.vsSBE
         {
             try
             {
-                if((new SBECommand(_dte, SBEQueueDTE.Type.PRE)).basic(Config.data.preBuild)){
-                    PaneVS.instance.outputString("[Pre] finished SBE: " + Config.data.preBuild.caption + Environment.NewLine);
+                if((new SBECommand(_dte, SBEQueueDTE.Type.PRE)).basic(Config.Data.preBuild)){
+                    Log.nlog.Info("[Pre] finished SBE: " + Config.Data.preBuild.caption);
                 }
             }
             catch (Exception e)
             {
-                PaneVS.instance.outputString("Pre-Build error: " + e.Message + Environment.NewLine);
+                Log.nlog.Error("Pre-Build error: " + e.Message);
             }
             return VSConstants.S_OK;
         }
@@ -151,13 +147,13 @@ namespace net.r_eg.vsSBE
         {
             try
             {
-                if((new SBECommand(_dte, SBEQueueDTE.Type.CANCEL)).basic(Config.data.cancelBuild)){
-                    PaneVS.instance.outputString("[Cancel] finished SBE: " + Config.data.cancelBuild.caption + Environment.NewLine);
+                if((new SBECommand(_dte, SBEQueueDTE.Type.CANCEL)).basic(Config.Data.cancelBuild)){
+                    Log.nlog.Info("[Cancel] finished SBE: " + Config.Data.cancelBuild.caption);
                 }
             }
             catch (Exception e)
             {
-                PaneVS.instance.outputString("Cancel-Build error: " + e.Message + Environment.NewLine);
+                Log.nlog.Error("Cancel-Build error: " + e.Message);
             }
             return VSConstants.S_OK;
         }
@@ -166,31 +162,40 @@ namespace net.r_eg.vsSBE
         {
             try
             {
-                if((new SBECommand(_dte, SBEQueueDTE.Type.POST)).basic(Config.data.postBuild)){
-                    PaneVS.instance.outputString("[Post] finished SBE: " + Config.data.postBuild.caption + Environment.NewLine);
+                if((new SBECommand(_dte, SBEQueueDTE.Type.POST)).basic(Config.Data.postBuild)){
+                    Log.nlog.Info("[Post] finished SBE: " + Config.Data.postBuild.caption);
                 }
             }
             catch (Exception e)
             {
-                PaneVS.instance.outputString("Post-Build error: " + e.Message + Environment.NewLine);
+                Log.nlog.Error("Post-Build error: " + e.Message);
             }
             return VSConstants.S_OK;
         }
 
         void IListenerOWPL.raw(string data)
         {
+            try {
+                if((new SBECommand(_dte, SBEQueueDTE.Type.TRANSMITTER)).supportOWP(Config.Data.transmitter, data)) {
+                    //Log.nlog.Info("[Transmitter]: " + Config.Data.transmitter.caption);
+                }
+            }
+            catch(Exception e) {
+                Log.nlog.Error("Transmitter error: " + e.Message);
+            }
+
             OutputWPBuildParser res = new OutputWPBuildParser(ref data);
 
-            if(Config.data.warningsBuild.enabled) {
-                sbeEW(Config.data.warningsBuild, OutputWPBuildParser.Type.Warnings, res);
+            if(Config.Data.warningsBuild.enabled) {
+                sbeEW(Config.Data.warningsBuild, OutputWPBuildParser.Type.Warnings, res);
             }
 
-            if(Config.data.errorsBuild.enabled) {
-                sbeEW(Config.data.errorsBuild, OutputWPBuildParser.Type.Errors, res);
+            if(Config.Data.errorsBuild.enabled) {
+                sbeEW(Config.Data.errorsBuild, OutputWPBuildParser.Type.Errors, res);
             }
 
-            if(Config.data.outputCustomBuild.enabled) {
-                sbeOutput(Config.data.outputCustomBuild, ref data);
+            if(Config.Data.outputCustomBuild.enabled) {
+                sbeOutput(Config.Data.outputCustomBuild, ref data);
             }
         }
 
@@ -203,11 +208,11 @@ namespace net.r_eg.vsSBE
 
             try {
                 if((new SBECommand(_dte, type == OutputWPBuildParser.Type.Warnings ? SBEQueueDTE.Type.WARNINGS : SBEQueueDTE.Type.ERRORS)).basic(evt)) {
-                    PaneVS.instance.outputString(String.Format("['{0}'] finished SBE: {1}{2}", type.ToString(), evt.caption, Environment.NewLine));
+                    Log.nlog.Info(String.Format("['{0}'] finished SBE: {1}", type.ToString(), evt.caption));
                 }
             }
             catch(Exception e) {
-                PaneVS.instance.outputString(String.Format("SBE '{0}' error: {1}{2}", type.ToString(), e.Message, Environment.NewLine));
+                Log.nlog.Error(String.Format("SBE '{0}' error: {1}", type.ToString(), e.Message));
             }
         }
 
@@ -219,12 +224,30 @@ namespace net.r_eg.vsSBE
 
             try {
                 if((new SBECommand(_dte, SBEQueueDTE.Type.OWP)).basic(evt)) {
-                    PaneVS.instance.outputString(String.Format("['{0}'] finished SBE: {1}{2}", "Output", evt.caption, Environment.NewLine));
+                    Log.nlog.Info(String.Format("['{0}'] finished SBE: {1}", "Output", evt.caption));
                 }
             }
             catch(Exception e) {
-                PaneVS.instance.outputString(String.Format("SBE '{0}' error: {1}{2}", "Output", e.Message, Environment.NewLine));
+                Log.nlog.Error(String.Format("SBE '{0}' error: {1}", "Output", e.Message));
             }
+        }
+
+        private void _state()
+        {
+            Func<ISolutionEvent, string, string> aboutEvent = delegate(ISolutionEvent evt, string caption) {
+                return String.Format("\n\t* [{0}][{1}]: {2}", evt.enabled ? "!" : "X", caption, evt.caption);
+            };
+
+            Log.print(String.Format("{0}{1}{2}{3}{4}{5}{6}\n---\n",
+                                    aboutEvent(Config.Data.preBuild,            "Pre-Build"),
+                                    aboutEvent(Config.Data.postBuild,           "Post-Build"),
+                                    aboutEvent(Config.Data.cancelBuild,         "Cancel-Build"),
+                                    aboutEvent(Config.Data.warningsBuild,       "Warnings-Build"),
+                                    aboutEvent(Config.Data.errorsBuild,         "Errors-Build"),
+                                    aboutEvent(Config.Data.outputCustomBuild,   "Output-Build"),
+                                    aboutEvent(Config.Data.transmitter,         "Transmitter")));
+
+            Log.nlog.Info("Use vsSBE panel: View -> Other Windows -> Solution Build-Events");
         }
 
         #region unused
@@ -284,15 +307,20 @@ namespace net.r_eg.vsSBE
         #region cookies
         protected override void Initialize()
         {
-            Trace.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
+            Log.nlog.Trace(string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
             base.Initialize();
 
-            try {
-                // menu
-                OleMenuCommandService mcs   = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
-                CommandID menuCommandID     = new CommandID(GuidList.guidvsSolutionBuildEventCmdSet, (int)PkgCmdIDList.cmdSolutionBuildEvent);
-                _menuItem                   = new MenuCommand(MenuItemCallback, menuCommandID);
-                mcs.AddCommand(_menuItem);
+            try
+            {
+                OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+
+                // Build / <Main App>
+                _menuItemMain = new MenuCommand(_menuMainCallback, new CommandID(GuidList.MAIN_CMD_SET, (int)PkgCmdIDList.CMD_MAIN));
+                _menuItemMain.Visible = false;
+                mcs.AddCommand(_menuItemMain);
+
+                // View / Other Windows / <Status Panel>
+                mcs.AddCommand(new MenuCommand(_menuPanelCallback, new CommandID(GuidList.PANEL_CMD_SET, (int)PkgCmdIDList.CMD_PANEL)));
 
                 // register events - IVsSolutionEvents
                 _solution = ServiceProvider.GlobalProvider.GetService(typeof(SVsSolution)) as IVsSolution;
@@ -302,20 +330,25 @@ namespace net.r_eg.vsSBE
                 _solBuildManager = ServiceProvider.GlobalProvider.GetService(typeof(SVsSolutionBuildManager)) as IVsSolutionBuildManager;
                 _solBuildManager.AdviseUpdateSolutionEvents(this, out _cookieUpdateSEvents);
             }
-            catch(Exception e) {
-                IVsUIShell uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
+            catch(Exception e)
+            {
+                string msg = string.Format("{0}\n{1}\n\n-----\n{2}", 
+                                "Something went wrong -_-", 
+                                "Try to restart a VS IDE or reinstall current plugin in the Extension Manager...", 
+                                e.StackTrace);
+
+                Log.nlog.Fatal(msg);
                 
                 int res;
                 Guid id = Guid.Empty;
+                IVsUIShell uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
+
                 Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(
                     uiShell.ShowMessageBox(
                            0,
                            ref id,
                            "Initialize vsSolutionBuildEvent",
-                           string.Format("{0}\n{1}\n\n-----\n{2}", 
-                                "Something went wrong -_-", 
-                                "Try to restart a VS IDE or reinstall current plugin in the Extension Manager...", 
-                                e.StackTrace),
+                           msg,
                            string.Empty,
                            0,
                            OLEMSGBUTTON.OLEMSGBUTTON_OK,

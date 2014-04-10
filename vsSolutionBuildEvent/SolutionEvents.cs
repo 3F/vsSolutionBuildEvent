@@ -106,5 +106,15 @@ namespace net.r_eg.vsSBE
             get { return _outputCustomBuild; }
             set { _outputCustomBuild = value; }
         }
+
+        private SBETransmitter _transmitter = new SBETransmitter();
+        /// <summary>
+        /// Transfer output data to outer handler
+        /// </summary>
+        public SBETransmitter transmitter
+        {
+            get { return _transmitter; }
+            set { _transmitter = value; }
+        }
     }
 }

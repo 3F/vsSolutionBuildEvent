@@ -24,7 +24,8 @@ namespace net.r_eg.vsSBE.UI
             {
                 SBEEvent,
                 SBEEventEW,
-                SBEEventOWP
+                SBEEventOWP,
+                SBETransmitter
             }
 
             public SBEEvent evt;
@@ -144,7 +145,7 @@ namespace net.r_eg.vsSBE.UI
             evt.processHide             = checkBoxProcessHide.Checked;
             evt.waitForExit             = checkBoxWaitForExit.Checked;
             evt.processKeep             = checkBoxProcessKeep.Checked;
-            evt.newline                 = comboBoxNewline.Text.Trim();
+            evt.newline                 = comboBoxNewline.Text;
             evt.wrapper                 = comboBoxWrapper.Text.Trim();
             evt.parseVariablesMSBuild   = checkBoxParseVariables.Checked;
 
@@ -201,23 +202,26 @@ namespace net.r_eg.vsSBE.UI
 
         private void EventsFrm_Load(object sender, EventArgs e)
         {
-            _solutionEvents.Add(new _SBEWrap(Config.data.preBuild));
-            comboBoxEvents.Items.Add("Pre-Build     (Before building solution)");
+            _solutionEvents.Add(new _SBEWrap(Config.Data.preBuild));
+            comboBoxEvents.Items.Add(":: Pre-Build :: Before assembly");
 
-            _solutionEvents.Add(new _SBEWrap(Config.data.postBuild));
-            comboBoxEvents.Items.Add("Post-Build    (After building solution)");
+            _solutionEvents.Add(new _SBEWrap(Config.Data.postBuild));
+            comboBoxEvents.Items.Add(":: Post-Build :: After assembly");
 
-            _solutionEvents.Add(new _SBEWrap(Config.data.cancelBuild));
-            comboBoxEvents.Items.Add("Cancel-Build  (by user or it's errors of compilation)");
+            _solutionEvents.Add(new _SBEWrap(Config.Data.cancelBuild));
+            comboBoxEvents.Items.Add(":: Cancel-Build :: by user or compilation errors");
 
-            _solutionEvents.Add(new _SBEWrap(Config.data.warningsBuild, _SBEWrap.SBEEvetnType.SBEEventEW));
-            comboBoxEvents.Items.Add("Warning-Build (Warnings during assembly)");
+            _solutionEvents.Add(new _SBEWrap(Config.Data.warningsBuild, _SBEWrap.SBEEvetnType.SBEEventEW));
+            comboBoxEvents.Items.Add(":: Warnings-Build :: Warnings during assembly");
 
-            _solutionEvents.Add(new _SBEWrap(Config.data.errorsBuild, _SBEWrap.SBEEvetnType.SBEEventEW));
-            comboBoxEvents.Items.Add("Errors-Build  (Errors during assembly)");
+            _solutionEvents.Add(new _SBEWrap(Config.Data.errorsBuild, _SBEWrap.SBEEvetnType.SBEEventEW));
+            comboBoxEvents.Items.Add(":: Errors-Build :: Errors during assembly");
 
-            _solutionEvents.Add(new _SBEWrap(Config.data.outputCustomBuild, _SBEWrap.SBEEvetnType.SBEEventOWP));
-            comboBoxEvents.Items.Add("Output-Build customization (Full control)");
+            _solutionEvents.Add(new _SBEWrap(Config.Data.outputCustomBuild, _SBEWrap.SBEEvetnType.SBEEventOWP));
+            comboBoxEvents.Items.Add(":: Output-Build customization :: Full control");
+
+            _solutionEvents.Add(new _SBEWrap(Config.Data.transmitter, _SBEWrap.SBEEvetnType.SBETransmitter));
+            comboBoxEvents.Items.Add(":: Transmitter :: Transfer output data to outer handler");
 
             comboBoxEvents.SelectedIndex = 0;
             _operationsInit();
