@@ -1,3 +1,17 @@
+[v0.6]
+    * CHANGED: Additional support of MSBuild variables. 
+               Property Functions 
+               - MSDN: http://msdn.microsoft.com/en-us/library/vstudio/dd633440%28v=vs.120%29.aspx
+               
+               * $(var.Method(p, p2, ..)) / Static: $([class]::Method(p, p2, ..))
+               * $(var.Property) / Static: $([class]::Property)
+               Examples:
+                    * $([System.Guid]::NewGuid())
+                    * $(SolutionDir.Substring(0,3))
+                    * See our documentation for more detail and other samples.
+                    
+    * FIXED: bug fixed with escape symbol for additional variables.
+
 [v0.5]
     * NEW: UI-State panel of SBE: ( VS IDE View -> Other Windows -> Solution Build-Events )
     * NEW: Experimental New Event - Transmitter. To transfer output data to outer handler. 
