@@ -35,11 +35,13 @@ using EnvDTE80;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Collections;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace net.r_eg.vsSBE
 {
     public class MSBuildParser: IMSBuildProperty, ISBEParserScript
     {
+        private Object _eLock = new Object();
 
         /// <summary>
         /// MSBuild Property from default Project
@@ -94,19 +96,40 @@ namespace net.r_eg.vsSBE
             return projects;
         }
 
-        /// <summary>
-        /// handler to MSBuild environment variables (properties)
-        /// </summary>
-        /// <param name="data">text with $(ident) data</param>
-        /// <returns>text with values of MSBuild properties</returns>
-        public string parseVariablesMSBuild(string data)
+        public string evaluateVariableWithMSBuild(string unevaluatedValue, Project project)
         {
-            return Regex.Replace(data, @"(?<!\$)\$\((?:([^\:\r\n\)]+?)\:([^\)\r\n]+?)|([^\)]*?))\)", delegate(Match m)
-            {
-                if(!m.Success) {
-                    return m.Value;
-                }
+            lock(_eLock) {
+                project.SetProperty("vsSBE_latestEvaluated", string.Format("$({0})", unevaluatedValue));
+            }
+            return project.GetProperty("vsSBE_latestEvaluated").EvaluatedValue;
+        }
 
+        /// <summary>
+        /// Simple handler properties of MSBuild environment
+        /// </summary>
+        /// <remarks>deprecated</remarks>
+        /// <param name="data">text with $(ident) data</param>
+        /// <returns>text with evaluated properties</returns>
+        public string parseVariablesMSBuildSimple(string data)
+        {
+            return Regex.Replace(data, @"
+                                         (?<!\$)\$
+                                         \(
+                                           (?:
+                                             (
+                                               [^\:\r\n)]+?
+                                             )
+                                             \:
+                                             (
+                                               [^)\r\n]+?
+                                             )
+                                             |
+                                             (
+                                               [^)]*?
+                                             )
+                                           )
+                                         \)", delegate(Match m)
+            {
                 // 3   -> $(name)
                 // 1,2 -> $(name:project)
 
@@ -115,8 +138,61 @@ namespace net.r_eg.vsSBE
                 }
                 return getProperty(m.Groups[1].Value, m.Groups[2].Value);
 
-            }, RegexOptions.IgnoreCase).Replace("$$(", "$(");
+            }, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace).Replace("$$(", "$(");
         }
+
+        public virtual string parseVariablesMSBuild(string data)
+        {
+            /*
+                    (
+                      \${1,2}
+                    )
+                    (?=
+                      (
+                        \(
+                          (?>
+                            [^()]
+                            |
+                            (?2)
+                          )*
+                        \)
+                      )
+                    )            -> for .NET: v             
+             */
+            return Regex.Replace(data,  @"(
+                                            \${1,2}
+                                          )
+                                          (
+                                            \(
+                                              (?>
+                                                [^()]
+                                                |
+                                                \((?<R>)
+                                                |
+                                                \)(?<-R>)
+                                              )*
+                                              (?(R)(?!))
+                                            \)
+                                          )", delegate(Match m)
+            {
+                // 1 - $ or $$
+                // 2 - (name) or (name:project) or ([MSBuild]::MakeRelative($(path1), ...):project) .. 
+                //      http://msdn.microsoft.com/en-us/library/vstudio/dd633440%28v=vs.120%29.aspx
+
+                if(m.Groups[1].Value.Length > 1) { //escape
+                    return m.Value.Substring(1);
+                }
+
+                string unevaluated  = m.Groups[2].Value;
+                string projectName  = _splitGeneralProjectAttr(ref unevaluated);
+
+                if(_isSimpleProperty(ref unevaluated)) {
+                    return getProperty(unevaluated, projectName);
+                }
+                return evaluateVariableWithMSBuild(unevaluated, getProject(projectName));
+            }, RegexOptions.IgnorePatternWhitespace);
+        }
+
 
         /// <summary>
         /// All variables which are not included in MSBuild environment.
@@ -128,16 +204,42 @@ namespace net.r_eg.vsSBE
         /// <returns></returns>
         public string parseCustomVariable(string data, string name, string value)
         {
-            return Regex.Replace(data, @"(?<!\$)\$\(([^\)]*?)\)", delegate(Match m)
+            return Regex.Replace(data,  @"(
+                                            \${1,2}
+                                          )
+                                          \(
+                                            (
+                                              [^)]+?
+                                            )
+                                          \)", delegate(Match m)
             {
-                if(m.Success && m.Groups[1].Value == name){
-                    return (value == null)? "" : value;
+                if(m.Groups[2].Value != name || m.Groups[1].Value.Length > 1) {
+                    return m.Value;
                 }
-                return m.Value;
-
-            }, RegexOptions.IgnoreCase).Replace("$$(", "$(");
+                return (value == null)? "" : value;
+            }, RegexOptions.IgnorePatternWhitespace);
         }
+        
+        public MSBuildParser()
+        {
+#if DEBUG
+            string unevaluated = "(name:project)";
+            Debug.Assert(_splitGeneralProjectAttr(ref unevaluated).CompareTo("project") == 0);
+            Debug.Assert(unevaluated.CompareTo("name") == 0);
 
+            unevaluated = "(name)";
+            Debug.Assert(_splitGeneralProjectAttr(ref unevaluated) == null);
+            Debug.Assert(unevaluated.CompareTo("name") == 0);
+
+            unevaluated = "([class]::func($(path:project), $([class]::func2($(path2)):project)):project)";
+            Debug.Assert(_splitGeneralProjectAttr(ref unevaluated).CompareTo("project") == 0);
+            Debug.Assert(unevaluated.CompareTo("[class]::func($(path:project), $([class]::func2($(path2)):project))") == 0);
+
+            unevaluated = "([class]::func($(path:project), $([class]::func2($(path2)):project)):project))";
+            Debug.Assert(_splitGeneralProjectAttr(ref unevaluated) == null);
+            Debug.Assert(unevaluated.CompareTo("[class]::func($(path:project), $([class]::func2($(path2)):project)):project)") == 0);
+#endif
+        }
 
         /// <summary>
         /// get default project for access to properties etc.
@@ -199,6 +301,41 @@ namespace net.r_eg.vsSBE
         private IEnumerator<Project> _loadedProjects()
         {
             return ((ICollection<Project>)ProjectCollection.GlobalProjectCollection.LoadedProjects).GetEnumerator();
+        }
+
+        /// <summary>
+        /// Getting the project name and format unevaluated variable
+        /// ~ (variable:project) -> variable & project
+        /// </summary>
+        /// <param name="unevaluated">to be formatted after handling</param>
+        /// <returns>project name or null if not present</returns>
+        private string _splitGeneralProjectAttr(ref string unevaluated)
+        {
+            unevaluated = unevaluated.Substring(1, unevaluated.Length - 2);
+            int pos     = unevaluated.LastIndexOf(':');
+
+            if(pos == -1) {
+                return null; //(ProjectOutputFolder.Substring(0, 1)), (OS), (OS.Length)
+            }
+            if(unevaluated.ElementAt(pos - 1).CompareTo(':') == 0) {
+                return null; //([System.DateTime]::Now), ([System.Guid]::NewGuid())
+            }
+            if(unevaluated.IndexOf(')', pos) != -1) {
+                return null; // allow only for latest block (general option)  :project)) | :project) ... )-> :project)
+            }
+
+            string project  = unevaluated.Substring(pos + 1, unevaluated.Length - pos - 1);
+            unevaluated     = unevaluated.Substring(0, pos);
+
+            return project;
+        }
+
+        private bool _isSimpleProperty(ref string unevaluated)
+        {
+            if(unevaluated.IndexOfAny(new char[]{'.', ':', '(', ')', '\'', '"'}) != -1) {
+                return false;
+            }
+            return true;
         }
 
         private struct TRuntimeSettings
