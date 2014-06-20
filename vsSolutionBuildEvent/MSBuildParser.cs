@@ -96,10 +96,17 @@ namespace net.r_eg.vsSBE
             return projects;
         }
 
-        public string evaluateVariableWithMSBuild(string unevaluatedValue, Project project)
+        /// <summary>
+        /// Evaluate data with the MSBuild engine
+        /// </summary>
+        /// <param name="unevaluated">raw string as $(..data..)</param>
+        /// <param name="projectName">push null if default</param>
+        /// <returns>evaluated value</returns>
+        public string evaluateVariable(string unevaluated, string projectName)
         {
+            Project project = getProject(projectName);
             lock(_eLock) {
-                project.SetProperty("vsSBE_latestEvaluated", string.Format("$({0})", unevaluatedValue));
+                project.SetProperty("vsSBE_latestEvaluated", unevaluated);
             }
             return project.GetProperty("vsSBE_latestEvaluated").EvaluatedValue;
         }
@@ -189,7 +196,7 @@ namespace net.r_eg.vsSBE
                 if(_isSimpleProperty(ref unevaluated)) {
                     return getProperty(unevaluated, projectName);
                 }
-                return evaluateVariableWithMSBuild(unevaluated, getProject(projectName));
+                return evaluateVariable(string.Format("$({0})", unevaluated), projectName);
             }, RegexOptions.IgnorePatternWhitespace);
         }
 

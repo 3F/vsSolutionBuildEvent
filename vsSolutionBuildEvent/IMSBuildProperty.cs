@@ -49,5 +49,15 @@ namespace net.r_eg.vsSBE
         /// <param name="projectName">project name</param>
         /// <returns>evaluated value</returns>
         string getProperty(string name, string projectName);
+
+        /// <summary>
+        /// Evaluate data with the MSBuild engine.
+        /// Property Function Syntax: 
+        ///   http://msdn.microsoft.com/en-us/library/vstudio/dd633440%28v=vs.120%29.aspx
+        /// </summary>
+        /// <param name="unevaluated">raw string as $(..data..)</param>
+        /// <param name="projectName"></param>
+        /// <returns>evaluated value</returns>
+        string evaluateVariable(string unevaluated, string projectName);
     }
 }
