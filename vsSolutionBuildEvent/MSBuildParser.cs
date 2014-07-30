@@ -58,6 +58,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         /// <param name="name">key property</param>
         /// <param name="projectName">project name</param>
+        /// <exception cref="MSBuildParserProjectPropertyNotFoundException">problem with getting property</exception>
         /// <returns>evaluated value</returns>
         public string getProperty(string name, string projectName)
         {
@@ -86,7 +87,7 @@ namespace net.r_eg.vsSBE
             List<string> projects           = new List<string>();
             IEnumerator<Project> eprojects  = _loadedProjects();
 
-            while(eprojects.MoveNext()) {
+            while(eprojects != null && eprojects.MoveNext()) {
                 string projectName = eprojects.Current.GetPropertyValue("ProjectName");
 
                 if(projectName != null && _isActiveConfiguration(eprojects.Current)) {
@@ -252,6 +253,7 @@ namespace net.r_eg.vsSBE
         /// get default project for access to properties etc.
         /// first in the list at Configuration & Platform
         /// </summary>
+        /// <exception cref="MSBuildParserProjectNotFoundException">something wrong with loaded projects</exception>
         /// <returns>Microsoft.Build.Evaluation.Project</returns>
         protected Project getProjectDefault()
         {
@@ -264,6 +266,7 @@ namespace net.r_eg.vsSBE
             throw new MSBuildParserProjectNotFoundException("not found project: <default>");
         }
 
+        /// <exception cref="MSBuildParserProjectNotFoundException">if not found the specific project</exception>
         protected Project getProject(string project)
         {
             if(project == null) {
@@ -279,7 +282,8 @@ namespace net.r_eg.vsSBE
             throw new MSBuildParserProjectNotFoundException(String.Format("not found project: '{0}'", project));
         }
 
-        // TODO:
+        /// <remarks>TODO: </remarks>
+        /// <exception cref="MSBuildParserProjectPropertyNotFoundException">problem with the CurrentSolutionConfigurationContents property</exception>
         private TRuntimeSettings _getRuntimeSettings()
         {
             // TODO: settings in Runtime... Where are placed the individual ?

@@ -69,6 +69,11 @@ namespace net.r_eg.vsSBE
         private UI.EventsFrm _configFrm                     = null;
 
         /// <summary>
+        /// General action
+        /// </summary>
+        private SBECommand _sbe                             = null;
+
+        /// <summary>
         /// Working with the OutputWindowsPane -> "Build" pane
         /// </summary>
         private OutputWPListener _owpBuild;
@@ -78,6 +83,8 @@ namespace net.r_eg.vsSBE
             _dte = (DTE2)Package.GetGlobalService(typeof(SDTE));
             Log.init(_dte);
             Log.show();
+
+            _sbe = new SBECommand(_dte, new MSBuildParser());
 
             _owpBuild = new OutputWPListener(_dte, "Build");
             _owpBuild.attachEvents();
@@ -132,7 +139,7 @@ namespace net.r_eg.vsSBE
         {
             try
             {
-                if((new SBECommand(_dte, SBEQueueDTE.Type.PRE)).basic(Config.Data.preBuild)){
+                if(_sbe.basic(Config.Data.preBuild, SBEQueueDTE.Type.PRE)) {
                     Log.nlog.Info("[Pre] finished SBE: " + Config.Data.preBuild.caption);
                 }
             }
@@ -147,7 +154,7 @@ namespace net.r_eg.vsSBE
         {
             try
             {
-                if((new SBECommand(_dte, SBEQueueDTE.Type.CANCEL)).basic(Config.Data.cancelBuild)){
+                if(_sbe.basic(Config.Data.cancelBuild, SBEQueueDTE.Type.CANCEL)) {
                     Log.nlog.Info("[Cancel] finished SBE: " + Config.Data.cancelBuild.caption);
                 }
             }
@@ -162,7 +169,7 @@ namespace net.r_eg.vsSBE
         {
             try
             {
-                if((new SBECommand(_dte, SBEQueueDTE.Type.POST)).basic(Config.Data.postBuild)){
+                if(_sbe.basic(Config.Data.postBuild, SBEQueueDTE.Type.POST)) {
                     Log.nlog.Info("[Post] finished SBE: " + Config.Data.postBuild.caption);
                 }
             }
@@ -176,7 +183,7 @@ namespace net.r_eg.vsSBE
         void IListenerOWPL.raw(string data)
         {
             try {
-                if((new SBECommand(_dte, SBEQueueDTE.Type.TRANSMITTER)).supportOWP(Config.Data.transmitter, data)) {
+                if(_sbe.supportOWP(Config.Data.transmitter, SBEQueueDTE.Type.TRANSMITTER, data)) {
                     //Log.nlog.Info("[Transmitter]: " + Config.Data.transmitter.caption);
                 }
             }
@@ -207,7 +214,7 @@ namespace net.r_eg.vsSBE
             }
 
             try {
-                if((new SBECommand(_dte, type == OutputWPBuildParser.Type.Warnings ? SBEQueueDTE.Type.WARNINGS : SBEQueueDTE.Type.ERRORS)).basic(evt)) {
+                if(_sbe.basic(evt, type == OutputWPBuildParser.Type.Warnings ? SBEQueueDTE.Type.WARNINGS : SBEQueueDTE.Type.ERRORS)) {
                     Log.nlog.Info(String.Format("['{0}'] finished SBE: {1}", type.ToString(), evt.caption));
                 }
             }
@@ -223,7 +230,7 @@ namespace net.r_eg.vsSBE
             }
 
             try {
-                if((new SBECommand(_dte, SBEQueueDTE.Type.OWP)).basic(evt)) {
+                if(_sbe.basic(evt, SBEQueueDTE.Type.OWP)) {
                     Log.nlog.Info(String.Format("['{0}'] finished SBE: {1}", "Output", evt.caption));
                 }
             }

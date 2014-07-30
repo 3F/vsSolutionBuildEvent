@@ -46,14 +46,18 @@ namespace net.r_eg.vsSBE.UI
 
         protected void fillProperties(string project, string filter = null)
         {
-            List<MSBuildPropertyItem> properties = _msbuild.listProperties(project);
-
             dataGridViewVariables.Rows.Clear();
-            foreach(MSBuildPropertyItem prop in properties) {
-                if(filter != null && !prop.name.ToLower().Contains(filter)) {
-                    continue;
+            try
+            {
+                foreach(MSBuildPropertyItem prop in _msbuild.listProperties(project)) {
+                    if(filter != null && !prop.name.ToLower().Contains(filter)) {
+                        continue;
+                    }
+                    dataGridViewVariables.Rows.Add(prop.name, prop.value);
                 }
-                dataGridViewVariables.Rows.Add(prop.name, prop.value);
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Error with getting properties: " + ex.Message);
             }
         }
 
