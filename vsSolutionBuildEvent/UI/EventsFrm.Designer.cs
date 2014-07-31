@@ -30,6 +30,7 @@
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventsFrm));
             this.comboBoxEvents = new System.Windows.Forms.ComboBox();
             this.labelToCommandBox = new System.Windows.Forms.Label();
             this.panelCommand = new System.Windows.Forms.Panel();
@@ -73,6 +74,7 @@
             this.btnExample = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnApply = new System.Windows.Forms.Button();
+            this.btnBugReport = new System.Windows.Forms.Button();
             this.panelCommand.SuspendLayout();
             this.groupBoxPMode.SuspendLayout();
             this.groupBoxSettings.SuspendLayout();
@@ -600,11 +602,25 @@
             this.btnApply.UseVisualStyleBackColor = true;
             this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
             // 
+            // btnBugReport
+            // 
+            this.btnBugReport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnBugReport.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnBugReport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnBugReport.Image = ((System.Drawing.Image)(resources.GetObject("btnBugReport.Image")));
+            this.btnBugReport.Location = new System.Drawing.Point(-3, 487);
+            this.btnBugReport.Name = "btnBugReport";
+            this.btnBugReport.Size = new System.Drawing.Size(26, 23);
+            this.btnBugReport.TabIndex = 31;
+            this.btnBugReport.UseVisualStyleBackColor = true;
+            this.btnBugReport.Click += new System.EventHandler(this.btnBugReport_Click);
+            // 
             // EventsFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(772, 509);
+            this.Controls.Add(this.btnBugReport);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.groupBoxVariants);
             this.Controls.Add(this.groupBoxInterpreter);
@@ -688,5 +704,6 @@
         private System.Windows.Forms.CheckBox checkBoxWaitForExit;
         private System.Windows.Forms.CheckBox checkBoxProcessHide;
         private System.Windows.Forms.Button btnDteCmd;
+        private System.Windows.Forms.Button btnBugReport;
     }
 }
