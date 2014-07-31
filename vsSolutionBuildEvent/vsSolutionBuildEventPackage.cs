@@ -42,9 +42,12 @@ namespace net.r_eg.vsSBE
     public sealed class vsSolutionBuildEventPackage: Package, IVsSolutionEvents, IVsUpdateSolutionEvents, IListenerOWPL
     {
         /// <summary>
-        /// for a top-level functionality
+        /// top-level object in the Visual Studio
         /// </summary>
-        private DTE2 _dte                                   = null;
+        public static DTE2 Dte2
+        {
+            get{ return (DTE2)Package.GetGlobalService(typeof(SDTE)); }
+        }
 
         /// <summary>
         /// for register events -> _cookieSEvents
@@ -69,22 +72,28 @@ namespace net.r_eg.vsSBE
         private UI.EventsFrm _configFrm                     = null;
 
         /// <summary>
+        /// General action
+        /// </summary>
+        private SBECommand _sbe                             = null;
+
+        /// <summary>
         /// Working with the OutputWindowsPane -> "Build" pane
         /// </summary>
         private OutputWPListener _owpBuild;
 
         public vsSolutionBuildEventPackage()
         {
-            _dte = (DTE2)Package.GetGlobalService(typeof(SDTE));
-            Log.init(_dte);
+            Log.init(Dte2);
             Log.show();
+            
+            _sbe = new SBECommand(Dte2, new MSBuildParser(Dte2));
 
-            _owpBuild = new OutputWPListener(_dte, "Build");
+            _owpBuild = new OutputWPListener(Dte2, "Build");
             _owpBuild.attachEvents();
             _owpBuild.register(this);
 
             //TODO: don't like it
-            UI.StatusToolWindow.control.setDTE(_dte);
+            UI.StatusToolWindow.control.setDTE(Dte2);
         }
 
         /// <summary>
@@ -97,7 +106,7 @@ namespace net.r_eg.vsSBE
                 _configFrm.Focus();
                 return;
             }
-            _configFrm = new UI.EventsFrm(_dte);
+            _configFrm = new UI.EventsFrm(Dte2);
             _configFrm.Show();
         }
 
@@ -112,9 +121,20 @@ namespace net.r_eg.vsSBE
 
         int IVsSolutionEvents.OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
         {
-            Config.load(Path.GetDirectoryName(_dte.Solution.FullName) + "\\");
-            _state();
+            try
+            {
+                string path = Dte2.Solution.FullName; // may be empty e.g. if fNewSolution == 1 etc.
+                if(string.IsNullOrEmpty(path)) {
+                    path = Dte2.Solution.Properties.Item("Path").Value.ToString();
+                }
 
+                Config.load(Path.GetDirectoryName(path) + "\\");
+                _state();
+            }
+            catch(Exception ex) {
+                Log.nlog.Fatal("Cannot load configuration: " + ex.Message);
+                return VSConstants.S_FALSE;
+            }
             _menuItemMain.Visible = true;
             UI.StatusToolWindow.control.enabled(true);
             return VSConstants.S_OK;
@@ -124,7 +144,10 @@ namespace net.r_eg.vsSBE
         {
             _menuItemMain.Visible = false;
             UI.StatusToolWindow.control.enabled(false);
-            _configFrm.Close();
+
+            if(_configFrm != null && !_configFrm.IsDisposed) {
+                _configFrm.Close();
+            }
             return VSConstants.S_OK;
         }
 
@@ -132,7 +155,7 @@ namespace net.r_eg.vsSBE
         {
             try
             {
-                if((new SBECommand(_dte, SBEQueueDTE.Type.PRE)).basic(Config.Data.preBuild)){
+                if(_sbe.basic(Config.Data.preBuild, SBEQueueDTE.Type.PRE)) {
                     Log.nlog.Info("[Pre] finished SBE: " + Config.Data.preBuild.caption);
                 }
             }
@@ -147,7 +170,7 @@ namespace net.r_eg.vsSBE
         {
             try
             {
-                if((new SBECommand(_dte, SBEQueueDTE.Type.CANCEL)).basic(Config.Data.cancelBuild)){
+                if(_sbe.basic(Config.Data.cancelBuild, SBEQueueDTE.Type.CANCEL)) {
                     Log.nlog.Info("[Cancel] finished SBE: " + Config.Data.cancelBuild.caption);
                 }
             }
@@ -162,7 +185,7 @@ namespace net.r_eg.vsSBE
         {
             try
             {
-                if((new SBECommand(_dte, SBEQueueDTE.Type.POST)).basic(Config.Data.postBuild)){
+                if(_sbe.basic(Config.Data.postBuild, SBEQueueDTE.Type.POST)) {
                     Log.nlog.Info("[Post] finished SBE: " + Config.Data.postBuild.caption);
                 }
             }
@@ -176,7 +199,7 @@ namespace net.r_eg.vsSBE
         void IListenerOWPL.raw(string data)
         {
             try {
-                if((new SBECommand(_dte, SBEQueueDTE.Type.TRANSMITTER)).supportOWP(Config.Data.transmitter, data)) {
+                if(_sbe.supportOWP(Config.Data.transmitter, SBEQueueDTE.Type.TRANSMITTER, data)) {
                     //Log.nlog.Info("[Transmitter]: " + Config.Data.transmitter.caption);
                 }
             }
@@ -207,7 +230,7 @@ namespace net.r_eg.vsSBE
             }
 
             try {
-                if((new SBECommand(_dte, type == OutputWPBuildParser.Type.Warnings ? SBEQueueDTE.Type.WARNINGS : SBEQueueDTE.Type.ERRORS)).basic(evt)) {
+                if(_sbe.basic(evt, type == OutputWPBuildParser.Type.Warnings ? SBEQueueDTE.Type.WARNINGS : SBEQueueDTE.Type.ERRORS)) {
                     Log.nlog.Info(String.Format("['{0}'] finished SBE: {1}", type.ToString(), evt.caption));
                 }
             }
@@ -223,7 +246,7 @@ namespace net.r_eg.vsSBE
             }
 
             try {
-                if((new SBECommand(_dte, SBEQueueDTE.Type.OWP)).basic(evt)) {
+                if(_sbe.basic(evt, SBEQueueDTE.Type.OWP)) {
                     Log.nlog.Info(String.Format("['{0}'] finished SBE: {1}", "Output", evt.caption));
                 }
             }

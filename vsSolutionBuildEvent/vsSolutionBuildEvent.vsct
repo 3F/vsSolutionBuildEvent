@@ -15,13 +15,13 @@
         defining some of the constants that we will use inside the file. -->
 
   <!--This is the file that defines the IDs for all the commands exposed by VisualStudio. -->
-  <Extern href="stdidcmd.h"/>
+  <Extern href="stdidcmd.h" />
 
   <!--This header contains the command ids for the menus provided by the shell. -->
-  <Extern href="vsshlids.h"/>
+  <Extern href="vsshlids.h" />
 
   <!--Definition of some VSCT specific constants. In this sample we use it for the IDs inside the guidOfficeIcon group. -->
-  <Extern href="msobtnid.h"/>
+  <!--<Extern href="msobtnid.h" xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable" />-->
 
 
 
@@ -61,7 +61,7 @@
       </Button>
 
      <Button guid="GUID_PANEL_CMD" id="CMD_PANEL" priority="0x0100" type="Button">
-       <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1"/>
+       <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1" />
        <Strings>
           <CommandName>CMD_PANEL</CommandName>
           <ButtonText>Solution Build-Events</ButtonText>

@@ -65,7 +65,12 @@ namespace net.r_eg.vsSBE
             }
         }
 
-        protected readonly MSBuildParser parser = new MSBuildParser();
+        protected MSBuildParser parser;
+
+        /// <summary>
+        /// DTE context
+        /// </summary>
+        protected DTE2 dte;
 
         /// <summary>
         /// Special raw data from the output window pane
@@ -76,11 +81,6 @@ namespace net.r_eg.vsSBE
         /// Where to work..
         /// </summary>
         private SBEContext _context = null;
-
-        /// <summary>
-        /// DTE context
-        /// </summary>
-        private DTE2 _dte;
 
         /// <summary>
         /// type for recursive DTE commands
@@ -101,11 +101,12 @@ namespace net.r_eg.vsSBE
         /// basic implementation
         /// </summary>
         /// <param name="evt">provided sbe-events</param>
-        public bool basic(ISolutionEvent evt)
+        public bool basic(ISolutionEvent evt, SBEQueueDTE.Type type)
         {
             if(!evt.enabled){
                 return false;
             }
+            _queueType = type;
 
             Log.nlog.Info("Launching '{0}'", evt.caption);
             switch(evt.mode) {
@@ -128,18 +129,18 @@ namespace net.r_eg.vsSBE
         /// <param name="evt"></param>
         /// <param name="raw"></param>
         /// <returns></returns>
-        public bool supportOWP(ISolutionEvent evt, string raw)
+        public bool supportOWP(ISolutionEvent evt, SBEQueueDTE.Type type, string raw)
         {
             owpDataRaw = raw;
-            return basic(evt);
+            return basic(evt, type);
         }
 
-        public SBECommand(DTE2 dte, SBEQueueDTE.Type queueType)
+        public SBECommand(DTE2 dte, MSBuildParser parser)
         {
             _context    = new SBEContext(Config.WorkPath, letDisk(Config.WorkPath));
-            _dte        = dte;
-            _queueType  = queueType;
+            this.dte    = dte;
             _QueueRec   = new SBEQueueDTE.Rec();
+            this.parser = parser;
         }
 
         protected virtual bool hModeFile(ISolutionEvent evt)
@@ -175,7 +176,7 @@ namespace net.r_eg.vsSBE
             try {
                 // * error if command not available at current time
                 // * recursive to Debug.Start, Debug.StartWithoutDebugging, etc.,
-                _dte.ExecuteCommand(current);
+                dte.ExecuteCommand(current);
             }
             catch(Exception e) {
                 Log.nlog.Debug("DTE-ExecuteCommand '{0}' {1}", current, e.Message);

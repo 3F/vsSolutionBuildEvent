@@ -30,30 +30,39 @@ namespace net.r_eg.vsSBE.UI
         public EnvironmentVariablesFrm(ITransferEnvironmentVariable pin)
         {
             InitializeComponent();
-            _msbuild    = new MSBuildParser();
+            _msbuild    = new MSBuildParser(vsSolutionBuildEventPackage.Dte2);
             this._pin   = pin;
         }
 
         protected void fillProjects()
         {
-            List<string> projects = _msbuild.listProjects();
-
             comboBoxProjects.Items.Clear();
             comboBoxProjects.Items.Add("<default>");
-            comboBoxProjects.Items.AddRange(projects.ToArray());
+
+            try {
+                comboBoxProjects.Items.AddRange(_msbuild.listProjects().ToArray());
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Error with getting projects: " + ex.Message);
+            }
+
             comboBoxProjects.SelectedIndex = 0;
         }
 
         protected void fillProperties(string project, string filter = null)
         {
-            List<MSBuildPropertyItem> properties = _msbuild.listProperties(project);
-
             dataGridViewVariables.Rows.Clear();
-            foreach(MSBuildPropertyItem prop in properties) {
-                if(filter != null && !prop.name.ToLower().Contains(filter)) {
-                    continue;
+            try
+            {
+                foreach(MSBuildPropertyItem prop in _msbuild.listProperties(project)) {
+                    if(filter != null && !prop.name.ToLower().Contains(filter)) {
+                        continue;
+                    }
+                    dataGridViewVariables.Rows.Add(prop.name, prop.value);
                 }
-                dataGridViewVariables.Rows.Add(prop.name, prop.value);
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Error with getting properties: " + ex.Message);
             }
         }
 

@@ -226,6 +226,10 @@ namespace net.r_eg.vsSBE.UI
             comboBoxEvents.SelectedIndex = 0;
             _operationsInit();
             _renderData();
+
+#if DEBUG
+            this.Text += " [Debug version]";
+#endif
         }
 
         private void btnExample_Click(object sender, EventArgs e)
@@ -242,6 +246,15 @@ namespace net.r_eg.vsSBE.UI
 
             if(ret == DialogResult.Yes) {
                 System.Diagnostics.Process.Start("http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
+            }
+        }
+
+        private void btnBugReport_Click(object sender, EventArgs e)
+        {
+            DialogResult ret = MessageBox.Show("Click 'Yes' if you found error or have a proposal", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if(ret == DialogResult.Yes) {
+                System.Diagnostics.Process.Start("https://bitbucket.org/3F/vssolutionbuildevent/issues/new");
             }
         }
 
