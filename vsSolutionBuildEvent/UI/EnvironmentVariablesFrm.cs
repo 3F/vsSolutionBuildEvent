@@ -30,17 +30,22 @@ namespace net.r_eg.vsSBE.UI
         public EnvironmentVariablesFrm(ITransferEnvironmentVariable pin)
         {
             InitializeComponent();
-            _msbuild    = new MSBuildParser();
+            _msbuild    = new MSBuildParser(vsSolutionBuildEventPackage.Dte2);
             this._pin   = pin;
         }
 
         protected void fillProjects()
         {
-            List<string> projects = _msbuild.listProjects();
-
             comboBoxProjects.Items.Clear();
             comboBoxProjects.Items.Add("<default>");
-            comboBoxProjects.Items.AddRange(projects.ToArray());
+
+            try {
+                comboBoxProjects.Items.AddRange(_msbuild.listProjects().ToArray());
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Error with getting projects: " + ex.Message);
+            }
+
             comboBoxProjects.SelectedIndex = 0;
         }
 

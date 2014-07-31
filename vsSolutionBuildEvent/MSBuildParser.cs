@@ -41,7 +41,21 @@ namespace net.r_eg.vsSBE
 {
     public class MSBuildParser: IMSBuildProperty, ISBEParserScript
     {
-        private Object _eLock = new Object();
+        /// <summary>
+        /// DTE context
+        /// </summary>
+        protected DTE2 dte2                     = null;
+
+        /// <summary>
+        /// Flag of optimisation reload projects.
+        /// See _reloadProjectCollection() for detail
+        /// </summary>
+        private static bool _flagBugLoadProject = false;
+
+        /// <summary>
+        /// object synch.
+        /// </summary>
+        private Object _eLock                   = new Object();
 
         /// <summary>
         /// MSBuild Property from default Project
@@ -87,7 +101,7 @@ namespace net.r_eg.vsSBE
             List<string> projects           = new List<string>();
             IEnumerator<Project> eprojects  = _loadedProjects();
 
-            while(eprojects != null && eprojects.MoveNext()) {
+            while(eprojects.MoveNext()) {
                 string projectName = eprojects.Current.GetPropertyValue("ProjectName");
 
                 if(projectName != null && _isActiveConfiguration(eprojects.Current)) {
@@ -227,9 +241,12 @@ namespace net.r_eg.vsSBE
                 return (value == null)? "" : value;
             }, RegexOptions.IgnorePatternWhitespace);
         }
-        
-        public MSBuildParser()
+
+        /// <param name="dte2">DTE context</param>
+        public MSBuildParser(DTE2 dte2)
         {
+            this.dte2 = dte2;
+
 #if DEBUG
             string unevaluated = "(name:project)";
             Debug.Assert(_splitGeneralProjectAttr(ref unevaluated).CompareTo("project") == 0);
@@ -282,11 +299,10 @@ namespace net.r_eg.vsSBE
             throw new MSBuildParserProjectNotFoundException(String.Format("not found project: '{0}'", project));
         }
 
-        /// <remarks>TODO: </remarks>
+        /// <remarks>deprecated, see _getRuntimeSettings()</remarks>
         /// <exception cref="MSBuildParserProjectPropertyNotFoundException">problem with the CurrentSolutionConfigurationContents property</exception>
-        private TRuntimeSettings _getRuntimeSettings()
+        private TRuntimeSettings _getRuntimeSettingsCfg()
         {
-            // TODO: settings in Runtime... Where are placed the individual ?
             string xml = ProjectCollection.GlobalProjectCollection.GetGlobalProperty("CurrentSolutionConfigurationContents").EvaluatedValue;
 
             // ProjectConfiguration
@@ -295,6 +311,12 @@ namespace net.r_eg.vsSBE
                 throw new MSBuildParserProjectPropertyNotFoundException("Runtime settings - 'ProjectConfiguration'");
             }
             return new TRuntimeSettings(m.Groups[1].Value, m.Groups[2].Value);
+        }
+
+        private TRuntimeSettings _getRuntimeSettings()
+        {
+            SolutionConfiguration2 cfg = (SolutionConfiguration2)dte2.Solution.SolutionBuild.ActiveConfiguration;
+            return new TRuntimeSettings(cfg.Name, cfg.PlatformName);
         }
 
         private bool _isActiveConfiguration(Project project)
@@ -309,9 +331,45 @@ namespace net.r_eg.vsSBE
             return false;
         }
 
+        /// <summary>
+        /// This solution for similar problems - MS Connect Issue #508628:
+        /// http://connect.microsoft.com/VisualStudio/feedback/details/508628/
+        /// </summary>
+        private void _reloadProjectCollection()
+        {
+            TRuntimeSettings runtime            = _getRuntimeSettings();
+            Dictionary<string, string> prop     = new Dictionary<string, string>();
+
+            prop["Configuration"]   = runtime.configuration;
+            prop["Platform"]        = runtime.platform;
+            
+            foreach(EnvDTE.Project project in dte2.Solution.Projects)
+            {
+                if(project.FullName == null || project.FullName.Length < 1) {
+                    continue;
+                }
+                ProjectCollection.GlobalProjectCollection.LoadProject(project.FullName, prop, null);
+            }
+        }
+
+        /// <exception cref="MSBuildParserProjectNotFoundException"></exception>
         private IEnumerator<Project> _loadedProjects()
         {
-            return ((ICollection<Project>)ProjectCollection.GlobalProjectCollection.LoadedProjects).GetEnumerator();
+            if(_flagBugLoadProject) {
+                ProjectCollection.GlobalProjectCollection.UnloadAllProjects();
+            }
+
+            ICollection<Project> prgs = ProjectCollection.GlobalProjectCollection.LoadedProjects;
+            if(prgs == null || prgs.Count < 1) { // https://bitbucket.org/3F/vssolutionbuildevent/issue/3/
+                _flagBugLoadProject = true; // on some VS versions
+                _reloadProjectCollection();                
+            }
+
+            prgs = ProjectCollection.GlobalProjectCollection.LoadedProjects;
+            if(prgs == null || prgs.Count < 1) { //if still...
+                throw new MSBuildParserProjectNotFoundException("not loaded projects");
+            }
+            return prgs.GetEnumerator();
         }
 
         /// <summary>

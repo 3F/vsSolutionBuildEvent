@@ -42,9 +42,12 @@ namespace net.r_eg.vsSBE
     public sealed class vsSolutionBuildEventPackage: Package, IVsSolutionEvents, IVsUpdateSolutionEvents, IListenerOWPL
     {
         /// <summary>
-        /// for a top-level functionality
+        /// top-level object in the Visual Studio
         /// </summary>
-        private DTE2 _dte                                   = null;
+        public static DTE2 Dte2
+        {
+            get{ return (DTE2)Package.GetGlobalService(typeof(SDTE)); }
+        }
 
         /// <summary>
         /// for register events -> _cookieSEvents
@@ -80,18 +83,17 @@ namespace net.r_eg.vsSBE
 
         public vsSolutionBuildEventPackage()
         {
-            _dte = (DTE2)Package.GetGlobalService(typeof(SDTE));
-            Log.init(_dte);
+            Log.init(Dte2);
             Log.show();
+            
+            _sbe = new SBECommand(Dte2, new MSBuildParser(Dte2));
 
-            _sbe = new SBECommand(_dte, new MSBuildParser());
-
-            _owpBuild = new OutputWPListener(_dte, "Build");
+            _owpBuild = new OutputWPListener(Dte2, "Build");
             _owpBuild.attachEvents();
             _owpBuild.register(this);
 
             //TODO: don't like it
-            UI.StatusToolWindow.control.setDTE(_dte);
+            UI.StatusToolWindow.control.setDTE(Dte2);
         }
 
         /// <summary>
@@ -104,7 +106,7 @@ namespace net.r_eg.vsSBE
                 _configFrm.Focus();
                 return;
             }
-            _configFrm = new UI.EventsFrm(_dte);
+            _configFrm = new UI.EventsFrm(Dte2);
             _configFrm.Show();
         }
 
@@ -119,7 +121,7 @@ namespace net.r_eg.vsSBE
 
         int IVsSolutionEvents.OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
         {
-            Config.load(Path.GetDirectoryName(_dte.Solution.FullName) + "\\");
+            Config.load(Path.GetDirectoryName(Dte2.Solution.FullName) + "\\");
             _state();
 
             _menuItemMain.Visible = true;
@@ -131,7 +133,10 @@ namespace net.r_eg.vsSBE
         {
             _menuItemMain.Visible = false;
             UI.StatusToolWindow.control.enabled(false);
-            _configFrm.Close();
+
+            if(_configFrm != null && !_configFrm.IsDisposed) {
+                _configFrm.Close();
+            }
             return VSConstants.S_OK;
         }
 
