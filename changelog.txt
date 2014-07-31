@@ -1,3 +1,8 @@
+[v0.6.1]
+    * CHANGED: MSBuild Properties are evaluated as they appear.
+    * FIXED: Crashes with the MSBuild Properties on some VS versions.
+    * FIXED: Plugin not loading on project creation with the wizzard.
+
 [v0.6]
     * CHANGED: Additional support of MSBuild variables. 
                Property Functions 
