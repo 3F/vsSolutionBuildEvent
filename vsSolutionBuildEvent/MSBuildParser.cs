@@ -90,7 +90,7 @@ namespace net.r_eg.vsSBE
             List<MSBuildPropertyItem> properties = new List<MSBuildPropertyItem>();
 
             Project project = getProject(projectName);
-            foreach(ProjectProperty property in project.AllEvaluatedProperties) {
+            foreach(ProjectProperty property in project.Properties) {
                 properties.Add(new MSBuildPropertyItem(property.Name, property.EvaluatedValue));
             }
             return properties;
