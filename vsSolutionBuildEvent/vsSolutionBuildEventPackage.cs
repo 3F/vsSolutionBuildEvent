@@ -151,12 +151,6 @@ namespace net.r_eg.vsSBE
             return VSConstants.S_OK;
         }
 
-        int IVsUpdateSolutionEvents.OnActiveProjectCfgChange(IVsHierarchy pIVsHierarchy)
-        {
-            MSBuildParser.updateRuntimeSettings(Dte2); //TODO
-            return VSConstants.S_OK;
-        }
-
         int IVsUpdateSolutionEvents.UpdateSolution_Begin(ref int pfCancelUpdate)
         {
             try
@@ -282,6 +276,11 @@ namespace net.r_eg.vsSBE
         #region unused
 
         int IVsUpdateSolutionEvents.UpdateSolution_StartUpdate(ref int pfCancelUpdate)
+        {
+            return VSConstants.S_OK;
+        }
+
+        int IVsUpdateSolutionEvents.OnActiveProjectCfgChange(IVsHierarchy pIVsHierarchy)
         {
             return VSConstants.S_OK;
         }
