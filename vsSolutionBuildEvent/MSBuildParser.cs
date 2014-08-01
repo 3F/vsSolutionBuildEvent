@@ -44,7 +44,20 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// DTE context
         /// </summary>
-        protected DTE2 dte2                     = null;
+        protected DTE2 dte2 = null;
+
+        protected struct TRuntimeSettings
+        {
+            public string configuration;
+            public string platform;
+
+            public TRuntimeSettings(string configuration, string platform)
+            {
+                this.configuration  = configuration;
+                this.platform       = platform;
+            }
+        }
+        protected static TRuntimeSettings runtime;
 
         /// <summary>
         /// Flag of optimisation reload projects.
@@ -55,7 +68,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// object synch.
         /// </summary>
-        private Object _eLock                   = new Object();
+        private Object _eLock = new Object();
 
         /// <summary>
         /// MSBuild Property from default Project
@@ -117,7 +130,7 @@ namespace net.r_eg.vsSBE
         /// <param name="unevaluated">raw string as $(..data..)</param>
         /// <param name="projectName">push null if default</param>
         /// <returns>evaluated value</returns>
-        public string evaluateVariable(string unevaluated, string projectName)
+        public virtual string evaluateVariable(string unevaluated, string projectName)
         {
             Project project = getProject(projectName);
             lock(_eLock) {
@@ -242,6 +255,28 @@ namespace net.r_eg.vsSBE
             }, RegexOptions.IgnorePatternWhitespace);
         }
 
+        /// <exception cref="MSBuildParserProjectPropertyNotFoundException">any problem with getting current configuration / platform</exception>
+        public static void updateRuntimeSettings(DTE2 dte2)
+        {
+            runtime = _getRuntimeSettingsDte2(dte2);
+            Log.nlog.Debug(string.Format("_getRuntimeSettingsDte2 = {0}, {1}", runtime.configuration, runtime.platform));
+
+            if(string.IsNullOrEmpty(runtime.configuration) || string.IsNullOrEmpty(runtime.platform)) {
+                runtime = _getRuntimeSettingsCfg(); // try from another place
+                Log.nlog.Debug(string.Format("-> _getRuntimeSettingsCfg = {0}, {1}", runtime.configuration, runtime.platform));
+            }
+            else {
+                return; // success with the SolutionConfiguration2
+            }
+
+            if(string.IsNullOrEmpty(runtime.configuration) || string.IsNullOrEmpty(runtime.platform)) {
+                throw new MSBuildParserProjectPropertyNotFoundException(
+                    string.Format("Error with runtime settings - {0}, {1}", runtime.configuration, runtime.platform)
+                );
+            }
+            // success with the CurrentSolutionConfigurationContents property
+        }
+
         /// <param name="dte2">DTE context</param>
         public MSBuildParser(DTE2 dte2)
         {
@@ -272,7 +307,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         /// <exception cref="MSBuildParserProjectNotFoundException">something wrong with loaded projects</exception>
         /// <returns>Microsoft.Build.Evaluation.Project</returns>
-        protected Project getProjectDefault()
+        protected virtual Project getProjectDefault()
         {
             IEnumerator<Project> eprojects = _loadedProjects();
             while(eprojects.MoveNext()) {
@@ -284,7 +319,7 @@ namespace net.r_eg.vsSBE
         }
 
         /// <exception cref="MSBuildParserProjectNotFoundException">if not found the specific project</exception>
-        protected Project getProject(string project)
+        protected virtual Project getProject(string project)
         {
             if(project == null) {
                 return getProjectDefault();
@@ -299,9 +334,8 @@ namespace net.r_eg.vsSBE
             throw new MSBuildParserProjectNotFoundException(String.Format("not found project: '{0}'", project));
         }
 
-        /// <remarks>deprecated, see _getRuntimeSettings()</remarks>
         /// <exception cref="MSBuildParserProjectPropertyNotFoundException">problem with the CurrentSolutionConfigurationContents property</exception>
-        private TRuntimeSettings _getRuntimeSettingsCfg()
+        private static TRuntimeSettings _getRuntimeSettingsCfg()
         {
             string xml = ProjectCollection.GlobalProjectCollection.GetGlobalProperty("CurrentSolutionConfigurationContents").EvaluatedValue;
 
@@ -313,10 +347,18 @@ namespace net.r_eg.vsSBE
             return new TRuntimeSettings(m.Groups[1].Value, m.Groups[2].Value);
         }
 
-        private TRuntimeSettings _getRuntimeSettings()
+        private static TRuntimeSettings _getRuntimeSettingsDte2(DTE2 dte2)
         {
             SolutionConfiguration2 cfg = (SolutionConfiguration2)dte2.Solution.SolutionBuild.ActiveConfiguration;
             return new TRuntimeSettings(cfg.Name, cfg.PlatformName);
+        }
+
+        private TRuntimeSettings _getRuntimeSettings()
+        {
+            if(runtime.configuration == null || runtime.platform == null) {
+                updateRuntimeSettings(dte2);
+            }
+            return runtime;
         }
 
         private bool _isActiveConfiguration(Project project)
@@ -342,7 +384,10 @@ namespace net.r_eg.vsSBE
 
             prop["Configuration"]   = runtime.configuration;
             prop["Platform"]        = runtime.platform;
-            
+
+            Log.nlog.Debug(string.Format("TRuntimeSettings :: {0}, {1}", runtime.configuration, runtime.platform));
+            Log.nlog.Debug(string.Format("Solution.Projects = {0}", dte2.Solution.Projects.Count));
+
             foreach(EnvDTE.Project project in dte2.Solution.Projects)
             {
                 if(project.FullName == null || project.FullName.Length < 1) {
@@ -356,13 +401,17 @@ namespace net.r_eg.vsSBE
         private IEnumerator<Project> _loadedProjects()
         {
             if(_flagBugLoadProject) {
+                Log.nlog.Debug("call UnloadAllProjects()");
                 ProjectCollection.GlobalProjectCollection.UnloadAllProjects();
             }
 
             ICollection<Project> prgs = ProjectCollection.GlobalProjectCollection.LoadedProjects;
-            if(prgs == null || prgs.Count < 1) { // https://bitbucket.org/3F/vssolutionbuildevent/issue/3/
+            if(prgs == null || prgs.Count < 1) // https://bitbucket.org/3F/vssolutionbuildevent/issue/3/
+            {
                 _flagBugLoadProject = true; // on some VS versions
-                _reloadProjectCollection();                
+
+                Log.nlog.Debug("call _reloadProjectCollection()");
+                _reloadProjectCollection();
             }
 
             prgs = ProjectCollection.GlobalProjectCollection.LoadedProjects;
@@ -405,18 +454,6 @@ namespace net.r_eg.vsSBE
                 return false;
             }
             return true;
-        }
-
-        private struct TRuntimeSettings
-        {
-            public string configuration;
-            public string platform;
-
-            public TRuntimeSettings(string configuration, string platform)
-            {
-                this.configuration  = configuration;
-                this.platform       = platform;
-            }
         }
     }
 
