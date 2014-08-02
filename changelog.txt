@@ -1,3 +1,7 @@
+[v0.6.2]
+    * FIXED: Incorrect check configuration from the "Configuration Manager". 
+             Possible bug - "MSBuild Properties are empty not listed and used"
+
 [v0.6.1]
     * CHANGED: MSBuild Properties are evaluated as they appear.
     * FIXED: Crashes with the MSBuild Properties on some VS versions.
