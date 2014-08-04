@@ -51,7 +51,12 @@ namespace net.r_eg.vsSBE
         /// </summary>
         protected string StartupProjectString
         {
-            get { return dte2.Solution.SolutionBuild.StartupProjects.ToString();  }
+            get {
+                foreach(string project in (Array)dte2.Solution.SolutionBuild.StartupProjects) {
+                    return project;
+                }
+                return null;
+            }
         }
 
         protected SolutionConfiguration2 SolutionActiveConfiguration
@@ -62,8 +67,9 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Flag of optimisation reload projects.
         /// See _reloadProjectCollection() for detail
+        /// TODO: https://bitbucket.org/3F/vssolutionbuildevent/issue/5/msbuild-properties-are-empty-not-listed
         /// </summary>
-        private static bool _flagBugLoadProject = false;
+        private static bool _flagBugLoadProject = true;
 
         /// <summary>
         /// object synch.
@@ -114,10 +120,10 @@ namespace net.r_eg.vsSBE
             List<string> projects           = new List<string>();
             IEnumerator<Project> eprojects  = _loadedProjects();
 
-            while(eprojects.MoveNext()) {
+            while(eprojects.MoveNext())
+            {
                 string projectName = eprojects.Current.GetPropertyValue("ProjectName");
-
-                if(projectName != null && isActiveConfiguration(eprojects.Current)) {
+                if(!String.IsNullOrEmpty(projectName) && isActiveConfiguration(eprojects.Current)) {
                     projects.Add(projectName);
                 }
             }
@@ -293,7 +299,12 @@ namespace net.r_eg.vsSBE
             while(eprojects.MoveNext())
             {
                 bool isActive = isActiveConfiguration(eprojects.Current);
-                if(isActive && eprojects.Current.FullPath.EndsWith(StartupProjectString)) {
+                Log.nlog.Trace(String.Format("getProjectDefault: '{0}' isActive = {1} [Sturtup: {2}]", eprojects.Current.FullPath, isActive, StartupProjectString));
+
+                if(!String.IsNullOrEmpty(StartupProjectString) 
+                    && isActive && _cmpPathBEProjectWithString(eprojects.Current, StartupProjectString))
+                {
+                    Log.nlog.Trace("ret selected");
                     ret = eprojects.Current;
                     break;
                 }
@@ -305,6 +316,8 @@ namespace net.r_eg.vsSBE
 
             // Solution context for selected
             if(ret != null) {
+                //TODO: private storage get/set for specific properties from Solution-context.
+                //      Currently overrides only with reloading GlobalProjectCollection, because this prop should be reset if project selected by manually.
                 ret.SetGlobalProperty("Configuration", SolutionActiveConfiguration.Name);
                 ret.SetGlobalProperty("Platform", SolutionActiveConfiguration.PlatformName);
 
@@ -336,13 +349,17 @@ namespace net.r_eg.vsSBE
             string configuration    = project.GetPropertyValue("Configuration");
             string platform         = project.GetPropertyValue("Platform");
 
-            foreach(EnvDTE.SolutionContext sln in SolutionActiveConfiguration.SolutionContexts) {
-                if(project.FullPath.EndsWith(sln.ProjectName)
-                    && sln.ConfigurationName.Equals(configuration) && sln.PlatformName.Equals(platform)) {
+            foreach(EnvDTE.SolutionContext sln in SolutionActiveConfiguration.SolutionContexts)
+            {
+                Log.nlog.Trace(String.Format("isActiveConfiguration for '{0}' : '{1}' [{2} = {3} ; {4} = {5}]",
+                                              project.FullPath, sln.ProjectName, sln.ConfigurationName, configuration, sln.PlatformName, platform));
+
+                if(_cmpPathBEProjectWithString(project, sln.ProjectName)
+                    && sln.ConfigurationName.Equals(configuration) && sln.PlatformName.Equals(platform))
+                {
+                    Log.nlog.Trace("isActiveConfiguration: matched");
                     return true;
                 }
-                Log.nlog.Trace(String.Format("_isActiveConfiguration skipped: {0} [{1} = {2} ; {3} - {4}]", 
-                                                sln.ProjectName, sln.ConfigurationName, configuration, sln.PlatformName, platform));
             }
             return false;
         }
@@ -353,27 +370,18 @@ namespace net.r_eg.vsSBE
         /// </summary>
         private void _reloadProjectCollection()
         {
-            Dictionary<string, string> paths = new Dictionary<string, string>();
-            foreach (EnvDTE.Project project in dte2.Solution.Projects) {
-                if(String.IsNullOrEmpty(project.FullName) || String.IsNullOrEmpty(project.UniqueName)) {
-                    continue;
-                }
-                paths[project.UniqueName] = project.FullName;
-            }
-
             Log.nlog.Debug(string.Format("Solution.Projects = {0}", SolutionActiveConfiguration.SolutionContexts.Count));
             foreach(EnvDTE.SolutionContext sln in SolutionActiveConfiguration.SolutionContexts)
             {
-                if(!paths.ContainsKey(sln.ProjectName)) {
-                    Log.nlog.Warn(String.Format("can't reload project '{0}' in GlobalProjectCollection", sln.ProjectName));
-                }
+                string pFile = System.IO.Path.Combine(Config.WorkPath, sln.ProjectName);
 
                 Dictionary<string, string> prop = new Dictionary<string, string>();
                 prop["Configuration"]   = sln.ConfigurationName;
                 prop["Platform"]        = sln.PlatformName;
 
-                Log.nlog.Debug(string.Format("ActiveConfiguration :: {0}, {1}", sln.ConfigurationName, sln.PlatformName));
-                ProjectCollection.GlobalProjectCollection.LoadProject(paths[sln.ProjectName], prop, null);
+                Log.nlog.Trace(string.Format("reload->ActiveConfiguration :: '{0}' [{1} ; {2}]", pFile, sln.ConfigurationName, sln.PlatformName));
+                //TODO: optimize - only what we need. Currently, this for fixes problem with GlobalProjectCollection
+                ProjectCollection.GlobalProjectCollection.LoadProject(pFile, prop, null);
             }
         }
 
@@ -382,6 +390,8 @@ namespace net.r_eg.vsSBE
         {
             if(_flagBugLoadProject) {
                 Log.nlog.Debug("call UnloadAllProjects()");
+                //TODO: unloaded all because we have a problem with GlobalProjectCollection on some VS versions
+                //      see _reloadProjectCollection. For optimize we can also load only what we need... fix me
                 ProjectCollection.GlobalProjectCollection.UnloadAllProjects();
             }
 
@@ -434,6 +444,33 @@ namespace net.r_eg.vsSBE
                 return false;
             }
             return true;
+        }
+        
+        /// <summary>
+        /// Comparison of paths projects
+        /// </summary>
+        /// <param name="eProject">Microsoft.Build.Evaluation.Project provides absolute path with the FullPath property</param>
+        /// <param name="project">
+        /// project name with any path, e.g.: 
+        ///   * 'C:\Projects\Foo\Foo.csproj' == '..\..\Foo\Foo.csproj'
+        ///   * 'C:\Projects\Foo\Foo.csproj' == 'Foo.csproj'
+        ///   * 'C:\Projects\Foo\Foo.csproj' == 'C:\Projects\Foo\Foo.csproj'
+        ///   
+        /// The properties below can provide the path + name:
+        ///   * EnvDTE.Project.UniqueName
+        ///   * EnvDTE.SolutionBuild.StartupProjects
+        ///   * EnvDTE.SolutionContext.ProjectName
+        /// </param>
+        /// <returns>true if equal</returns>
+        private bool _cmpPathBEProjectWithString(Project eProject, string project)
+        {
+            if(String.IsNullOrEmpty(project)) {
+                return false;
+            }
+            string path = System.IO.Path.GetFullPath(System.IO.Path.Combine(Config.WorkPath, project));
+
+            Log.nlog.Trace(String.Format("_cmpPathBEProjectWithString: '{0}' :: '{1}' :: '{2}' == {3}", Config.WorkPath, project, path, eProject.FullPath));
+            return path.Equals(eProject.FullPath);
         }
     }
 
