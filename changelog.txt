@@ -1,3 +1,7 @@
+[v0.6.3]
+    * FIXED: Resolved the problem - "Error with getting properties: not found project: <default>".
+    * FIXED: Problem with the UI-State panel initialization on some projects.
+
 [v0.6.2]
     * FIXED: Incorrect check configuration from the "Configuration Manager". 
              Possible bug - "MSBuild Properties are empty not listed and used"
