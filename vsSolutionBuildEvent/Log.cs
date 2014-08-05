@@ -115,7 +115,7 @@ namespace net.r_eg.vsSBE
                 pane = _dte.ToolWindows.OutputWindow.OutputWindowPanes.Add(OWP_ITEM_NAME);
             }
             catch(Exception e) {
-                throw new Exception("Log :: inner exception", e);
+                throw new NotSupportedException("Log :: inner exception", e);
             }
         }
 

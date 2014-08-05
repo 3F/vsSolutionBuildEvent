@@ -112,7 +112,7 @@ namespace net.r_eg.vsSBE
 
         private void _menuPanelCallback(object sender, EventArgs e)
         {
-            ToolWindowPane window = FindToolWindow(typeof(UI.StatusToolWindow), 0, true);
+            ToolWindowPane window = FindToolWindow(typeof(UI.StatusToolWindow), 0, true); // find or create
             if(window == null || window.Frame == null) {
                 throw new NotSupportedException("Cannot create UI.StatusToolWindow");
             }
@@ -121,6 +121,7 @@ namespace net.r_eg.vsSBE
 
         int IVsSolutionEvents.OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
         {
+            FindToolWindow(typeof(UI.StatusToolWindow), 0, true);
             try
             {
                 string path = Dte2.Solution.FullName; // may be empty e.g. if fNewSolution == 1 etc.

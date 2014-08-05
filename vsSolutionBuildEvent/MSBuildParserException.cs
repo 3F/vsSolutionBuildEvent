@@ -33,7 +33,7 @@ using System.Text;
 
 namespace net.r_eg.vsSBE
 {
-    public class MSBuildParserException: Exception
+    public class MSBuildParserException: NotSupportedException
     {
         public MSBuildParserException(string msg) : base(msg) { }
     }
