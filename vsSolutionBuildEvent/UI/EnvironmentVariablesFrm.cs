@@ -5,6 +5,7 @@
  */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -27,11 +28,18 @@ namespace net.r_eg.vsSBE.UI
         /// </summary>
         private MSBuildParser _msbuild;
 
+        /// <summary>
+        /// Caching of retrieved properties
+        /// </summary>
+        private ConcurrentDictionary<string, List<MSBuildPropertyItem>> _cacheProperties;
+
         public EnvironmentVariablesFrm(ITransferEnvironmentVariable pin)
         {
             InitializeComponent();
-            _msbuild    = new MSBuildParser(vsSolutionBuildEventPackage.Dte2);
-            this._pin   = pin;
+
+            _msbuild            = new MSBuildParser(vsSolutionBuildEventPackage.Dte2);
+            this._pin           = pin;
+            _cacheProperties    = new ConcurrentDictionary<string, List<MSBuildPropertyItem>>();
         }
 
         protected void fillProjects()
@@ -54,7 +62,7 @@ namespace net.r_eg.vsSBE.UI
             dataGridViewVariables.Rows.Clear();
             try
             {
-                foreach(MSBuildPropertyItem prop in _msbuild.listProperties(project)) {
+                foreach(MSBuildPropertyItem prop in _getProperties(project)) {
                     if(filter != null && !prop.name.ToLower().Contains(filter)) {
                         continue;
                     }
@@ -62,7 +70,7 @@ namespace net.r_eg.vsSBE.UI
                 }
             }
             catch(Exception ex) {
-                Log.nlog.Error("Error with getting properties: " + ex.Message);
+                Log.nlog.Error("Error with getting properties for '{0}': {1}", project, ex.Message);
             }
         }
 
@@ -92,6 +100,22 @@ namespace net.r_eg.vsSBE.UI
             }
         }
 
+        /// <exception cref="MSBuildParserProjectNotFoundException">if not found the specific project</exception>
+        private List<MSBuildPropertyItem> _getProperties(string project)
+        {
+            string key = project;
+            if(String.IsNullOrEmpty(key)) {
+                key = "default";
+            }
+
+            if(!_cacheProperties.ContainsKey(key))
+            {
+                _cacheProperties[key] = _msbuild.listProperties(project);
+                Log.nlog.Debug("Properties has been saved in the cache. ['{0}']", key);
+            }
+            return _cacheProperties[key];
+        }
+
         private string getSelectedProject()
         {
             if(comboBoxProjects.SelectedIndex > 0) {
@@ -102,6 +126,7 @@ namespace net.r_eg.vsSBE.UI
 
         private void EnvironmentVariablesFrm_Load(object sender, EventArgs e)
         {
+            _cacheProperties.Clear();
             fillProjects();            
             textBoxFilter.Select();
         }

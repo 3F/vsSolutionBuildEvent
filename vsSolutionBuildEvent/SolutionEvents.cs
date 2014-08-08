@@ -36,6 +36,7 @@ namespace net.r_eg.vsSBE
     [Serializable]
     public class SolutionEvents
     {
+        [NonSerialized]
         private SBESettings _settings = new SBESettings();
         /// <summary>
         /// global settings
@@ -46,6 +47,7 @@ namespace net.r_eg.vsSBE
             set { _settings = value; }
         }
 
+        [NonSerialized]
         private SBEEvent _preBuild = new SBEEvent();
         /// <summary>
         /// Before building solution
@@ -56,6 +58,7 @@ namespace net.r_eg.vsSBE
             set { _preBuild = value; }
         }
 
+        [NonSerialized]
         private SBEEvent _postBuild = new SBEEvent();
         /// <summary>
         /// After building solution
@@ -66,6 +69,7 @@ namespace net.r_eg.vsSBE
             set { _postBuild = value; }
         }
 
+        [NonSerialized]
         private SBEEvent _cancelBuild = new SBEEvent();
         /// <summary>
         /// When cancel building solution
@@ -77,6 +81,7 @@ namespace net.r_eg.vsSBE
             set { _cancelBuild = value; }
         }
 
+        [NonSerialized]
         private SBEEventEW _warningsBuild = new SBEEventEW();
         /// <summary>
         /// Warnings during assembly
@@ -87,6 +92,7 @@ namespace net.r_eg.vsSBE
             set { _warningsBuild = value; }
         }
 
+        [NonSerialized]
         private SBEEventEW _errorsBuild = new SBEEventEW();
         /// <summary>
         /// Errors during assembly
@@ -97,6 +103,7 @@ namespace net.r_eg.vsSBE
             set { _errorsBuild = value; }
         }
 
+        [NonSerialized]
         private SBEEventOWP _outputCustomBuild = new SBEEventOWP();
         /// <summary>
         /// Output-Build customization
@@ -107,6 +114,7 @@ namespace net.r_eg.vsSBE
             set { _outputCustomBuild = value; }
         }
 
+        [NonSerialized]
         private SBETransmitter _transmitter = new SBETransmitter();
         /// <summary>
         /// Transfer output data to outer handler

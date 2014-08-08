@@ -299,7 +299,7 @@ namespace net.r_eg.vsSBE
             while(eprojects.MoveNext())
             {
                 bool isActive = isActiveConfiguration(eprojects.Current);
-                Log.nlog.Trace(String.Format("getProjectDefault: '{0}' isActive = {1} [Sturtup: {2}]", eprojects.Current.FullPath, isActive, StartupProjectString));
+                Log.nlog.Trace("getProjectDefault: '{0}' isActive = {1} [Sturtup: {2}]", eprojects.Current.FullPath, isActive, StartupProjectString);
 
                 if(!String.IsNullOrEmpty(StartupProjectString) 
                     && isActive && _cmpPathBEProjectWithString(eprojects.Current, StartupProjectString))
@@ -322,7 +322,7 @@ namespace net.r_eg.vsSBE
                 ret.SetGlobalProperty("Platform", SolutionActiveConfiguration.PlatformName);
 
                 Log.nlog.Debug("Selected default project: " + ret.FullPath);
-                Log.nlog.Debug(String.Format("Override properties: ({0}, {1})", SolutionActiveConfiguration.Name, SolutionActiveConfiguration.PlatformName));
+                Log.nlog.Debug("Override properties: ({0}, {1})", SolutionActiveConfiguration.Name, SolutionActiveConfiguration.PlatformName);
                 return ret;
             }
             throw new MSBuildParserProjectNotFoundException("not found project: <default>");
@@ -351,8 +351,8 @@ namespace net.r_eg.vsSBE
 
             foreach(EnvDTE.SolutionContext sln in SolutionActiveConfiguration.SolutionContexts)
             {
-                Log.nlog.Trace(String.Format("isActiveConfiguration for '{0}' : '{1}' [{2} = {3} ; {4} = {5}]",
-                                              project.FullPath, sln.ProjectName, sln.ConfigurationName, configuration, sln.PlatformName, platform));
+                Log.nlog.Trace("isActiveConfiguration for '{0}' : '{1}' [{2} = {3} ; {4} = {5}]",
+                                project.FullPath, sln.ProjectName, sln.ConfigurationName, configuration, sln.PlatformName, platform);
 
                 if(_cmpPathBEProjectWithString(project, sln.ProjectName)
                     && sln.ConfigurationName.Equals(configuration) && sln.PlatformName.Equals(platform))
@@ -370,7 +370,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         private void _reloadProjectCollection()
         {
-            Log.nlog.Debug(string.Format("Solution.Projects = {0}", SolutionActiveConfiguration.SolutionContexts.Count));
+            Log.nlog.Debug("Solution.Projects = {0}", SolutionActiveConfiguration.SolutionContexts.Count);
             foreach(EnvDTE.SolutionContext sln in SolutionActiveConfiguration.SolutionContexts)
             {
                 string pFile = System.IO.Path.Combine(Config.WorkPath, sln.ProjectName);
@@ -379,7 +379,7 @@ namespace net.r_eg.vsSBE
                 prop["Configuration"]   = sln.ConfigurationName;
                 prop["Platform"]        = sln.PlatformName;
 
-                Log.nlog.Trace(string.Format("reload->ActiveConfiguration :: '{0}' [{1} ; {2}]", pFile, sln.ConfigurationName, sln.PlatformName));
+                Log.nlog.Trace("reload->ActiveConfiguration :: '{0}' [{1} ; {2}]", pFile, sln.ConfigurationName, sln.PlatformName);
                 //TODO: optimize - only what we need. Currently, this for fixes problem with GlobalProjectCollection
                 ProjectCollection.GlobalProjectCollection.LoadProject(pFile, prop, null);
             }
@@ -469,7 +469,7 @@ namespace net.r_eg.vsSBE
             }
             string path = System.IO.Path.GetFullPath(System.IO.Path.Combine(Config.WorkPath, project));
 
-            Log.nlog.Trace(String.Format("_cmpPathBEProjectWithString: '{0}' :: '{1}' :: '{2}' == {3}", Config.WorkPath, project, path, eProject.FullPath));
+            Log.nlog.Trace("_cmpPathBEProjectWithString: '{0}' :: '{1}' :: '{2}' == {3}", Config.WorkPath, project, path, eProject.FullPath);
             return path.Equals(eProject.FullPath);
         }
     }

@@ -134,7 +134,7 @@ namespace net.r_eg.vsSBE
             }
             catch(Exception ex) {
                 Log.nlog.Fatal("Cannot load configuration: " + ex.Message);
-                return VSConstants.S_FALSE;
+                return VSConstants.E_FAIL;
             }
             _menuItemMain.Visible = true;
             UI.StatusToolWindow.control.enabled(true);
@@ -232,11 +232,11 @@ namespace net.r_eg.vsSBE
 
             try {
                 if(_sbe.basic(evt, type == OutputWPBuildParser.Type.Warnings ? SBEQueueDTE.Type.WARNINGS : SBEQueueDTE.Type.ERRORS)) {
-                    Log.nlog.Info(String.Format("['{0}'] finished SBE: {1}", type.ToString(), evt.caption));
+                    Log.nlog.Info("['{0}'] finished SBE: {1}", type.ToString(), evt.caption);
                 }
             }
             catch(Exception e) {
-                Log.nlog.Error(String.Format("SBE '{0}' error: {1}", type.ToString(), e.Message));
+                Log.nlog.Error("SBE '{0}' error: {1}", type.ToString(), e.Message);
             }
         }
 
@@ -248,11 +248,11 @@ namespace net.r_eg.vsSBE
 
             try {
                 if(_sbe.basic(evt, SBEQueueDTE.Type.OWP)) {
-                    Log.nlog.Info(String.Format("['{0}'] finished SBE: {1}", "Output", evt.caption));
+                    Log.nlog.Info("['{0}'] finished SBE: {1}", "Output", evt.caption);
                 }
             }
             catch(Exception e) {
-                Log.nlog.Error(String.Format("SBE '{0}' error: {1}", "Output", e.Message));
+                Log.nlog.Error("SBE '{0}' error: {1}", "Output", e.Message);
             }
         }
 
@@ -386,6 +386,9 @@ namespace net.r_eg.vsSBE
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
+            if(_configFrm != null && !_configFrm.IsDisposed) {
+                _configFrm.Close(); //+Dispose
+            }
 
             if(_solBuildManager != null && _cookieUpdateSEvents != 0) {
                 _solBuildManager.UnadviseUpdateSolutionEvents(_cookieUpdateSEvents);
