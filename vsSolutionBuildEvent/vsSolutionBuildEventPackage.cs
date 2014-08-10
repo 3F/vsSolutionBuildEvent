@@ -50,6 +50,22 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
+        /// top-level manipulation or maintenance of the solution
+        /// </summary>
+        public static IVsSolution Solution
+        {
+            get { return (IVsSolution)Package.GetGlobalService(typeof(SVsSolution)); }
+        }
+
+        /// <summary>
+        /// access to the fundamental environment services
+        /// </summary>
+        public static IVsShell Shell
+        {
+            get { return (IVsShell)Package.GetGlobalService(typeof(SVsShell)); }
+        }
+
+        /// <summary>
         /// for register events -> _cookieSEvents
         /// </summary>
         private IVsSolution _solution                       = null;
@@ -128,8 +144,12 @@ namespace net.r_eg.vsSBE
                 if(string.IsNullOrEmpty(path)) {
                     path = Dte2.Solution.Properties.Item("Path").Value.ToString();
                 }
+                string dir = Path.GetDirectoryName(path);
 
-                Config.load(Path.GetDirectoryName(path) + "\\");
+                if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
+                    dir += Path.DirectorySeparatorChar;
+                }
+                Config.load(dir);
                 _state();
             }
             catch(Exception ex) {
