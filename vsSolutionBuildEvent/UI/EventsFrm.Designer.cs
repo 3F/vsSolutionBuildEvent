@@ -40,11 +40,13 @@
             this.radioModeScript = new System.Windows.Forms.RadioButton();
             this.radioModeFiles = new System.Windows.Forms.RadioButton();
             this.groupBoxSettings = new System.Windows.Forms.GroupBox();
+            this.panelControl = new System.Windows.Forms.Panel();
+            this.checkBoxIgnoreIfFailed = new System.Windows.Forms.CheckBox();
+            this.checkBoxParseVariables = new System.Windows.Forms.CheckBox();
             this.panelControlByOperation = new System.Windows.Forms.Panel();
             this.checkBoxProcessKeep = new System.Windows.Forms.CheckBox();
             this.checkBoxWaitForExit = new System.Windows.Forms.CheckBox();
             this.checkBoxProcessHide = new System.Windows.Forms.CheckBox();
-            this.checkBoxParseVariables = new System.Windows.Forms.CheckBox();
             this.checkBoxStatus = new System.Windows.Forms.CheckBox();
             this.groupBoxEW = new System.Windows.Forms.GroupBox();
             this.textBoxEW = new System.Windows.Forms.TextBox();
@@ -78,6 +80,7 @@
             this.panelCommand.SuspendLayout();
             this.groupBoxPMode.SuspendLayout();
             this.groupBoxSettings.SuspendLayout();
+            this.panelControl.SuspendLayout();
             this.panelControlByOperation.SuspendLayout();
             this.groupBoxEW.SuspendLayout();
             this.groupBoxOutputControl.SuspendLayout();
@@ -181,9 +184,7 @@
             // 
             // groupBoxSettings
             // 
-            this.groupBoxSettings.Controls.Add(this.panelControlByOperation);
-            this.groupBoxSettings.Controls.Add(this.checkBoxParseVariables);
-            this.groupBoxSettings.Controls.Add(this.checkBoxStatus);
+            this.groupBoxSettings.Controls.Add(this.panelControl);
             this.groupBoxSettings.Location = new System.Drawing.Point(0, 27);
             this.groupBoxSettings.Name = "groupBoxSettings";
             this.groupBoxSettings.Size = new System.Drawing.Size(197, 142);
@@ -191,14 +192,53 @@
             this.groupBoxSettings.TabStop = false;
             this.groupBoxSettings.Text = "Control";
             // 
+            // panelControl
+            // 
+            this.panelControl.AutoScroll = true;
+            this.panelControl.Controls.Add(this.checkBoxIgnoreIfFailed);
+            this.panelControl.Controls.Add(this.checkBoxParseVariables);
+            this.panelControl.Controls.Add(this.panelControlByOperation);
+            this.panelControl.Controls.Add(this.checkBoxStatus);
+            this.panelControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelControl.Location = new System.Drawing.Point(3, 16);
+            this.panelControl.Margin = new System.Windows.Forms.Padding(0);
+            this.panelControl.Name = "panelControl";
+            this.panelControl.Size = new System.Drawing.Size(191, 123);
+            this.panelControl.TabIndex = 32;
+            // 
+            // checkBoxIgnoreIfFailed
+            // 
+            this.checkBoxIgnoreIfFailed.AutoSize = true;
+            this.checkBoxIgnoreIfFailed.Checked = true;
+            this.checkBoxIgnoreIfFailed.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxIgnoreIfFailed.Location = new System.Drawing.Point(8, 84);
+            this.checkBoxIgnoreIfFailed.Name = "checkBoxIgnoreIfFailed";
+            this.checkBoxIgnoreIfFailed.Size = new System.Drawing.Size(135, 17);
+            this.checkBoxIgnoreIfFailed.TabIndex = 19;
+            this.checkBoxIgnoreIfFailed.Text = "Ignore if the build failed";
+            this.checkBoxIgnoreIfFailed.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxParseVariables
+            // 
+            this.checkBoxParseVariables.AutoSize = true;
+            this.checkBoxParseVariables.Checked = true;
+            this.checkBoxParseVariables.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxParseVariables.Location = new System.Drawing.Point(8, 105);
+            this.checkBoxParseVariables.Name = "checkBoxParseVariables";
+            this.checkBoxParseVariables.Size = new System.Drawing.Size(103, 17);
+            this.checkBoxParseVariables.TabIndex = 17;
+            this.checkBoxParseVariables.Text = "MSBuild support";
+            this.checkBoxParseVariables.UseVisualStyleBackColor = true;
+            // 
             // panelControlByOperation
             // 
             this.panelControlByOperation.Controls.Add(this.checkBoxProcessKeep);
             this.panelControlByOperation.Controls.Add(this.checkBoxWaitForExit);
             this.panelControlByOperation.Controls.Add(this.checkBoxProcessHide);
-            this.panelControlByOperation.Location = new System.Drawing.Point(4, 36);
+            this.panelControlByOperation.Location = new System.Drawing.Point(0, 21);
+            this.panelControlByOperation.Margin = new System.Windows.Forms.Padding(0);
             this.panelControlByOperation.Name = "panelControlByOperation";
-            this.panelControlByOperation.Size = new System.Drawing.Size(181, 72);
+            this.panelControlByOperation.Size = new System.Drawing.Size(171, 63);
             this.panelControlByOperation.TabIndex = 18;
             // 
             // checkBoxProcessKeep
@@ -207,11 +247,11 @@
             this.checkBoxProcessKeep.Checked = true;
             this.checkBoxProcessKeep.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxProcessKeep.Enabled = false;
-            this.checkBoxProcessKeep.Location = new System.Drawing.Point(8, 51);
+            this.checkBoxProcessKeep.Location = new System.Drawing.Point(8, 42);
             this.checkBoxProcessKeep.Name = "checkBoxProcessKeep";
-            this.checkBoxProcessKeep.Size = new System.Drawing.Size(164, 17);
+            this.checkBoxProcessKeep.Size = new System.Drawing.Size(140, 17);
             this.checkBoxProcessKeep.TabIndex = 18;
-            this.checkBoxProcessKeep.Text = "Do not close after completion";
+            this.checkBoxProcessKeep.Text = "Keep window with result";
             this.checkBoxProcessKeep.UseVisualStyleBackColor = true;
             // 
             // checkBoxWaitForExit
@@ -219,11 +259,11 @@
             this.checkBoxWaitForExit.AutoSize = true;
             this.checkBoxWaitForExit.Checked = true;
             this.checkBoxWaitForExit.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxWaitForExit.Location = new System.Drawing.Point(8, 5);
+            this.checkBoxWaitForExit.Location = new System.Drawing.Point(8, 0);
             this.checkBoxWaitForExit.Name = "checkBoxWaitForExit";
-            this.checkBoxWaitForExit.Size = new System.Drawing.Size(145, 17);
+            this.checkBoxWaitForExit.Size = new System.Drawing.Size(131, 17);
             this.checkBoxWaitForExit.TabIndex = 16;
-            this.checkBoxWaitForExit.Text = "Wait for completion script";
+            this.checkBoxWaitForExit.Text = "Waiting for completion";
             this.checkBoxWaitForExit.UseVisualStyleBackColor = true;
             // 
             // checkBoxProcessHide
@@ -231,7 +271,7 @@
             this.checkBoxProcessHide.AutoSize = true;
             this.checkBoxProcessHide.Checked = true;
             this.checkBoxProcessHide.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxProcessHide.Location = new System.Drawing.Point(8, 28);
+            this.checkBoxProcessHide.Location = new System.Drawing.Point(8, 21);
             this.checkBoxProcessHide.Name = "checkBoxProcessHide";
             this.checkBoxProcessHide.Size = new System.Drawing.Size(88, 17);
             this.checkBoxProcessHide.TabIndex = 17;
@@ -239,22 +279,10 @@
             this.checkBoxProcessHide.UseVisualStyleBackColor = true;
             this.checkBoxProcessHide.CheckedChanged += new System.EventHandler(this.checkBoxProcessHide_CheckedChanged);
             // 
-            // checkBoxParseVariables
-            // 
-            this.checkBoxParseVariables.AutoSize = true;
-            this.checkBoxParseVariables.Checked = true;
-            this.checkBoxParseVariables.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxParseVariables.Location = new System.Drawing.Point(12, 110);
-            this.checkBoxParseVariables.Name = "checkBoxParseVariables";
-            this.checkBoxParseVariables.Size = new System.Drawing.Size(111, 17);
-            this.checkBoxParseVariables.TabIndex = 17;
-            this.checkBoxParseVariables.Text = "MSBuild Variables";
-            this.checkBoxParseVariables.UseVisualStyleBackColor = true;
-            // 
             // checkBoxStatus
             // 
             this.checkBoxStatus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(243)))), ((int)(((byte)(243)))));
-            this.checkBoxStatus.Location = new System.Drawing.Point(12, 18);
+            this.checkBoxStatus.Location = new System.Drawing.Point(8, 0);
             this.checkBoxStatus.Name = "checkBoxStatus";
             this.checkBoxStatus.Size = new System.Drawing.Size(145, 17);
             this.checkBoxStatus.TabIndex = 0;
@@ -620,6 +648,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(772, 509);
+            this.Controls.Add(this.groupBoxSettings);
             this.Controls.Add(this.btnBugReport);
             this.Controls.Add(this.panelBottom);
             this.Controls.Add(this.groupBoxVariants);
@@ -628,7 +657,6 @@
             this.Controls.Add(this.groupBoxEW);
             this.Controls.Add(this.panelCommand);
             this.Controls.Add(this.groupBoxPMode);
-            this.Controls.Add(this.groupBoxSettings);
             this.Controls.Add(this.comboBoxEvents);
             this.Controls.Add(this.labelToCommandBox);
             this.MinimizeBox = false;
@@ -642,7 +670,8 @@
             this.groupBoxPMode.ResumeLayout(false);
             this.groupBoxPMode.PerformLayout();
             this.groupBoxSettings.ResumeLayout(false);
-            this.groupBoxSettings.PerformLayout();
+            this.panelControl.ResumeLayout(false);
+            this.panelControl.PerformLayout();
             this.panelControlByOperation.ResumeLayout(false);
             this.panelControlByOperation.PerformLayout();
             this.groupBoxEW.ResumeLayout(false);
@@ -705,5 +734,7 @@
         private System.Windows.Forms.CheckBox checkBoxProcessHide;
         private System.Windows.Forms.Button btnDteCmd;
         private System.Windows.Forms.Button btnBugReport;
+        private System.Windows.Forms.Panel panelControl;
+        private System.Windows.Forms.CheckBox checkBoxIgnoreIfFailed;
     }
 }

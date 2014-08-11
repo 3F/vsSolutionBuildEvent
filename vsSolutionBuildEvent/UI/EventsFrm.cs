@@ -25,7 +25,8 @@ namespace net.r_eg.vsSBE.UI
                 SBEEvent,
                 SBEEventEW,
                 SBEEventOWP,
-                SBETransmitter
+                SBETransmitter,
+                SBEEventPost
             }
 
             public SBEEvent evt;
@@ -148,6 +149,7 @@ namespace net.r_eg.vsSBE.UI
             evt.newline                 = comboBoxNewline.Text;
             evt.wrapper                 = comboBoxWrapper.Text.Trim();
             evt.parseVariablesMSBuild   = checkBoxParseVariables.Checked;
+            evt.buildFailedIgnore       = checkBoxIgnoreIfFailed.Checked;
 
             if(radioModeScript.Checked) {
                 evt.mode = TModeCommands.Interpreter;
@@ -205,7 +207,7 @@ namespace net.r_eg.vsSBE.UI
             _solutionEvents.Add(new _SBEWrap(Config.Data.preBuild));
             comboBoxEvents.Items.Add(":: Pre-Build :: Before assembly");
 
-            _solutionEvents.Add(new _SBEWrap(Config.Data.postBuild));
+            _solutionEvents.Add(new _SBEWrap(Config.Data.postBuild, _SBEWrap.SBEEvetnType.SBEEventPost));
             comboBoxEvents.Items.Add(":: Post-Build :: After assembly");
 
             _solutionEvents.Add(new _SBEWrap(Config.Data.cancelBuild));
@@ -332,25 +334,27 @@ namespace net.r_eg.vsSBE.UI
             }
             _renderData(_SBE.evt);
 
-            switch(_SBE.subtype) {
+            checkBoxIgnoreIfFailed.Enabled  = false;
+            groupBoxOutputControl.Enabled   = false;
+            groupBoxEW.Enabled              = false;
+
+            switch(_SBE.subtype)
+            {
                 case _SBEWrap.SBEEvetnType.SBEEventEW: {
                     _renderData((SBEEventEW)_SBE.evt);
                     groupBoxEW.Enabled = true;
-                    groupBoxOutputControl.Enabled = false;
                     break;
                 }
                 case _SBEWrap.SBEEvetnType.SBEEventOWP: {
-                    _renderData((SBEEventOWP)_SBE.evt);
-                    groupBoxEW.Enabled = false;
+                    _renderData((SBEEventOWP)_SBE.evt);                    
                     groupBoxOutputControl.Enabled = true;
                     break;
                 }
-                default:{
-                    groupBoxEW.Enabled = false;
-                    groupBoxOutputControl.Enabled = false;
+                case _SBEWrap.SBEEvetnType.SBEEventPost: {
+                    checkBoxIgnoreIfFailed.Enabled = true;
                     break;
                 }
-            }            
+            }
             _notice(false);
         }
 
@@ -366,6 +370,7 @@ namespace net.r_eg.vsSBE.UI
             comboBoxNewline.Text            = evt.newline;
             comboBoxWrapper.Text            = evt.wrapper;
             checkBoxParseVariables.Checked  = evt.parseVariablesMSBuild;
+            checkBoxIgnoreIfFailed.Checked  = evt.buildFailedIgnore;
 
             switch(evt.mode) {
                 case TModeCommands.Interpreter: {

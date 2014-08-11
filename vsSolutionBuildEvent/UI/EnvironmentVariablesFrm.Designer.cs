@@ -140,7 +140,7 @@
             this.Name = "EnvironmentVariablesFrm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "MSBuild environment variables";
+            this.Text = "MSBuild Properties";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.EnvironmentVariablesFrm_Load);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.EnvironmentVariablesFrm_KeyUp);
