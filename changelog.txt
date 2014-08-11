@@ -1,3 +1,8 @@
+[v0.7]
+    * NEW: Option for ignoring POST actions if the build failed.
+    * CHANGED: Major changes & fixes with the MSBuildParser.
+    * CHANGED: Improve work performance with the properties of projects
+
 [v0.6.3]
     * FIXED: Resolved the problem - "Error with getting properties: not found project: <default>".
     * FIXED: Problem with the UI-State panel initialization on some projects.
