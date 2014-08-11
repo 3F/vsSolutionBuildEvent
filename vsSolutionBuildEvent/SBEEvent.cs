@@ -142,6 +142,16 @@ namespace net.r_eg.vsSBE
             set { _parseVariablesMSBuild = value; }
         }
 
+        private bool _buildFailedIgnore = false;
+        /// <summary>
+        /// Ignore all actions if the build failed
+        /// </summary>
+        public bool buildFailedIgnore
+        {
+            get { return _buildFailedIgnore; }
+            set { _buildFailedIgnore = value; }
+        }
+
         private TOperation _dteExec = new TOperation();
         /// <summary>
         /// Common Environment Visual Studio. Executes the specified commands

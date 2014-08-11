@@ -108,7 +108,6 @@ namespace net.r_eg.vsSBE
             _owpBuild.attachEvents();
             _owpBuild.register(this);
 
-            //TODO: don't like it
             UI.StatusToolWindow.control.setDTE(Dte2);
         }
 
@@ -179,12 +178,12 @@ namespace net.r_eg.vsSBE
                 if(_sbe.basic(Config.Data.preBuild, SBEQueueDTE.Type.PRE)) {
                     Log.nlog.Info("[Pre] finished SBE: " + Config.Data.preBuild.caption);
                 }
+                return VSConstants.S_OK;
             }
-            catch (Exception e)
-            {
-                Log.nlog.Error("Pre-Build error: " + e.Message);
+            catch (Exception ex) {
+                Log.nlog.Error("Pre-Build error: " + ex.Message);
             }
-            return VSConstants.S_OK;
+            return VSConstants.E_FAIL;
         }
 
         int IVsUpdateSolutionEvents.UpdateSolution_Cancel()
@@ -194,38 +193,43 @@ namespace net.r_eg.vsSBE
                 if(_sbe.basic(Config.Data.cancelBuild, SBEQueueDTE.Type.CANCEL)) {
                     Log.nlog.Info("[Cancel] finished SBE: " + Config.Data.cancelBuild.caption);
                 }
+                return VSConstants.S_OK;
             }
-            catch (Exception e)
-            {
-                Log.nlog.Error("Cancel-Build error: " + e.Message);
+            catch (Exception ex) {
+                Log.nlog.Error("Cancel-Build error: " + ex.Message);
             }
-            return VSConstants.S_OK;
+            return VSConstants.E_FAIL;
         }
 
         int IVsUpdateSolutionEvents.UpdateSolution_Done(int fSucceeded, int fModified, int fCancelCommand)
         {
             try
             {
+                if(fSucceeded != 1 && Config.Data.postBuild.buildFailedIgnore && Config.Data.postBuild.enabled) {
+                    Log.nlog.Info("[Post] ignored SBE: " + Config.Data.postBuild.caption);
+                    return VSConstants.S_OK;
+                }
+
                 if(_sbe.basic(Config.Data.postBuild, SBEQueueDTE.Type.POST)) {
                     Log.nlog.Info("[Post] finished SBE: " + Config.Data.postBuild.caption);
                 }
+                return VSConstants.S_OK;
             }
-            catch (Exception e)
-            {
-                Log.nlog.Error("Post-Build error: " + e.Message);
+            catch (Exception ex) {
+                Log.nlog.Error("Post-Build error: " + ex.Message);
             }
-            return VSConstants.S_OK;
+            return VSConstants.E_FAIL;
         }
 
         void IListenerOWPL.raw(string data)
         {
             try {
                 if(_sbe.supportOWP(Config.Data.transmitter, SBEQueueDTE.Type.TRANSMITTER, data)) {
-                    //Log.nlog.Info("[Transmitter]: " + Config.Data.transmitter.caption);
+                    //Log.nlog.Trace("[Transmitter]: " + Config.Data.transmitter.caption);
                 }
             }
-            catch(Exception e) {
-                Log.nlog.Error("Transmitter error: " + e.Message);
+            catch(Exception ex) {
+                Log.nlog.Error("Transmitter error: " + ex.Message);
             }
 
             OutputWPBuildParser res = new OutputWPBuildParser(ref data);
@@ -255,8 +259,8 @@ namespace net.r_eg.vsSBE
                     Log.nlog.Info("['{0}'] finished SBE: {1}", type.ToString(), evt.caption);
                 }
             }
-            catch(Exception e) {
-                Log.nlog.Error("SBE '{0}' error: {1}", type.ToString(), e.Message);
+            catch(Exception ex) {
+                Log.nlog.Error("SBE '{0}' error: {1}", type.ToString(), ex.Message);
             }
         }
 
@@ -271,8 +275,8 @@ namespace net.r_eg.vsSBE
                     Log.nlog.Info("['{0}'] finished SBE: {1}", "Output", evt.caption);
                 }
             }
-            catch(Exception e) {
-                Log.nlog.Error("SBE '{0}' error: {1}", "Output", e.Message);
+            catch(Exception ex) {
+                Log.nlog.Error("SBE '{0}' error: {1}", "Output", ex.Message);
             }
         }
 
@@ -374,12 +378,12 @@ namespace net.r_eg.vsSBE
                 _solBuildManager = ServiceProvider.GlobalProvider.GetService(typeof(SVsSolutionBuildManager)) as IVsSolutionBuildManager;
                 _solBuildManager.AdviseUpdateSolutionEvents(this, out _cookieUpdateSEvents);
             }
-            catch(Exception e)
+            catch(Exception ex)
             {
                 string msg = string.Format("{0}\n{1}\n\n-----\n{2}", 
                                 "Something went wrong -_-", 
                                 "Try to restart a VS IDE or reinstall current plugin in the Extension Manager...", 
-                                e.StackTrace);
+                                ex.StackTrace);
 
                 Log.nlog.Fatal(msg);
                 

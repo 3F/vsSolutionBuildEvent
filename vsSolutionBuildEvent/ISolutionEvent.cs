@@ -91,6 +91,11 @@ namespace net.r_eg.vsSBE
         bool parseVariablesMSBuild { get; set; }
 
         /// <summary>
+        /// Ignore all actions if the build failed
+        /// </summary>
+        bool buildFailedIgnore { get; set; }
+
+        /// <summary>
         /// Common Environment Visual Studio. Executes the specified commands
         /// TODO: custom list
         /// </summary>

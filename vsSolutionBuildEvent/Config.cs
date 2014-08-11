@@ -62,7 +62,7 @@ namespace net.r_eg.vsSBE
             /// Current config version
             /// Notice: version of app is controlled by Package
             /// </summary>
-            public const string VERSION = "0.5";
+            public const string VERSION = "0.7";
 
             /// <summary>
             /// into file system
@@ -105,7 +105,7 @@ namespace net.r_eg.vsSBE
                     data                = (SolutionEvents)xml.Deserialize(stream);
                     compatibilityCheck(stream);
                 }
-                Log.nlog.Info("loaded settings: {0}\n\nReady:", _path);
+                Log.nlog.Info("Loaded settings (v{0}): '{1}'\n\nReady:", data.settings.compatibility, _path);
                 Update();
             }
             catch(FileNotFoundException)

@@ -60,7 +60,6 @@ namespace net.r_eg.vsSBE.UI
             grid.IsEnabled = flag;
         }
 
-        //TODO: don't like it
         public void setDTE(DTE2 dte)
         {
             this.dte = dte;
