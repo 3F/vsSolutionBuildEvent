@@ -43,7 +43,12 @@ namespace net.r_eg.vsSBE
     internal class Config
     {
         /// <summary>
-        /// After update SBE-data
+        /// Debug mode for current application
+        /// </summary>
+        public static bool debugMode = false;
+
+        /// <summary>
+        /// Event after updates SBE-data
         /// </summary>
         public static event ConfigEventHandler Update = delegate { };
 

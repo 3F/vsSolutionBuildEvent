@@ -228,6 +228,7 @@ namespace net.r_eg.vsSBE.UI
             comboBoxEvents.SelectedIndex = 0;
             _operationsInit();
             _renderData();
+            menuItemDebugMode.Checked = Config.debugMode;
 
 #if DEBUG
             this.Text += " [Debug version]";
@@ -556,6 +557,11 @@ namespace net.r_eg.vsSBE.UI
                 return;
             }
             listBoxEW.Items.RemoveAt(listBoxEW.SelectedIndex);
+        }
+
+        private void menuItemDebugMode_Click(object sender, EventArgs e)
+        {
+            Config.debugMode = (menuItemDebugMode.Checked = !menuItemDebugMode.Checked);
         }
 
         private void btnDteCmd_Click(object sender, EventArgs e)

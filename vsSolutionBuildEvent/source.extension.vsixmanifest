@@ -39,6 +39,13 @@ Distributed under the Boost Software License, Version 1.0</Description>
                 <Edition>IntegratedShell</Edition>
                 <Edition>VSLS</Edition>
             </VisualStudio>
+            <VisualStudio Version="14.0">
+                <Edition>Ultimate</Edition>
+                <Edition>Premium</Edition>
+                <Edition>Pro</Edition>
+                <Edition>IntegratedShell</Edition>
+                <Edition>VSLS</Edition>
+            </VisualStudio>            
         </SupportedProducts>
         <SupportedFrameworkRuntimeEdition MinVersion="4.0" />
     </Identifier>

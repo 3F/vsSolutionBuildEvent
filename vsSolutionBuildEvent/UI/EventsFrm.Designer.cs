@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventsFrm));
@@ -77,6 +78,8 @@
             this.btnClear = new System.Windows.Forms.Button();
             this.btnApply = new System.Windows.Forms.Button();
             this.btnBugReport = new System.Windows.Forms.Button();
+            this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.menuItemDebugMode = new System.Windows.Forms.ToolStripMenuItem();
             this.panelCommand.SuspendLayout();
             this.groupBoxPMode.SuspendLayout();
             this.groupBoxSettings.SuspendLayout();
@@ -88,6 +91,7 @@
             this.groupBoxInterpreter.SuspendLayout();
             this.groupBoxVariants.SuspendLayout();
             this.panelBottom.SuspendLayout();
+            this.contextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // comboBoxEvents
@@ -643,11 +647,26 @@
             this.btnBugReport.UseVisualStyleBackColor = true;
             this.btnBugReport.Click += new System.EventHandler(this.btnBugReport_Click);
             // 
+            // contextMenu
+            // 
+            this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuItemDebugMode});
+            this.contextMenu.Name = "contextMenu";
+            this.contextMenu.Size = new System.Drawing.Size(144, 26);
+            // 
+            // menuItemDebugMode
+            // 
+            this.menuItemDebugMode.Name = "menuItemDebugMode";
+            this.menuItemDebugMode.Size = new System.Drawing.Size(143, 22);
+            this.menuItemDebugMode.Text = "Debug Mode";
+            this.menuItemDebugMode.Click += new System.EventHandler(this.menuItemDebugMode_Click);
+            // 
             // EventsFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(772, 509);
+            this.ContextMenuStrip = this.contextMenu;
             this.Controls.Add(this.groupBoxSettings);
             this.Controls.Add(this.btnBugReport);
             this.Controls.Add(this.panelBottom);
@@ -683,6 +702,7 @@
             this.groupBoxVariants.ResumeLayout(false);
             this.panelBottom.ResumeLayout(false);
             this.panelBottom.PerformLayout();
+            this.contextMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -736,5 +756,7 @@
         private System.Windows.Forms.Button btnBugReport;
         private System.Windows.Forms.Panel panelControl;
         private System.Windows.Forms.CheckBox checkBoxIgnoreIfFailed;
+        private System.Windows.Forms.ContextMenuStrip contextMenu;
+        private System.Windows.Forms.ToolStripMenuItem menuItemDebugMode;
     }
 }
