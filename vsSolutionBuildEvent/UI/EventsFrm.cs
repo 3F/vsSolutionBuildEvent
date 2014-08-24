@@ -228,8 +228,9 @@ namespace net.r_eg.vsSBE.UI
             comboBoxEvents.SelectedIndex = 0;
             _operationsInit();
             _renderData();
-            menuItemDebugMode.Checked = Config.debugMode;
+            labelVersion.Text = string.Format("v{0} [ {1} ]", Version.numberString, Version.branchSha1);
 
+            menuItemDebugMode.Checked = Config.debugMode;
 #if DEBUG
             this.Text += " [Debug version]";
 #endif

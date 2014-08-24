@@ -161,7 +161,7 @@ namespace net.r_eg.vsSBE
         /// <param name="stream"></param>
         protected static void compatibilityCheck(FileStream stream)
         {
-            Version ver = Version.Parse(data.settings.compatibility);
+            System.Version ver = System.Version.Parse(data.settings.compatibility);
 
             if(ver.Major == 0 && ver.Minor < 4)
             {

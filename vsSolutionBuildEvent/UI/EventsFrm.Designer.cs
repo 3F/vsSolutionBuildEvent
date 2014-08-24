@@ -80,6 +80,7 @@
             this.btnBugReport = new System.Windows.Forms.Button();
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuItemDebugMode = new System.Windows.Forms.ToolStripMenuItem();
+            this.labelVersion = new System.Windows.Forms.Label();
             this.panelCommand.SuspendLayout();
             this.groupBoxPMode.SuspendLayout();
             this.groupBoxSettings.SuspendLayout();
@@ -661,12 +662,22 @@
             this.menuItemDebugMode.Text = "Debug Mode";
             this.menuItemDebugMode.Click += new System.EventHandler(this.menuItemDebugMode_Click);
             // 
+            // labelVersion
+            // 
+            this.labelVersion.AutoSize = true;
+            this.labelVersion.Location = new System.Drawing.Point(29, 492);
+            this.labelVersion.Name = "labelVersion";
+            this.labelVersion.Size = new System.Drawing.Size(41, 13);
+            this.labelVersion.TabIndex = 32;
+            this.labelVersion.Text = "version";
+            // 
             // EventsFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(772, 509);
             this.ContextMenuStrip = this.contextMenu;
+            this.Controls.Add(this.labelVersion);
             this.Controls.Add(this.groupBoxSettings);
             this.Controls.Add(this.btnBugReport);
             this.Controls.Add(this.panelBottom);
@@ -758,5 +769,6 @@
         private System.Windows.Forms.CheckBox checkBoxIgnoreIfFailed;
         private System.Windows.Forms.ContextMenuStrip contextMenu;
         private System.Windows.Forms.ToolStripMenuItem menuItemDebugMode;
+        private System.Windows.Forms.Label labelVersion;
     }
 }

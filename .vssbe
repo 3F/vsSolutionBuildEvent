@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<SolutionEvents xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <settings>
+    <application>http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/</application>
+    <compatibility>0.7</compatibility>
+  </settings>
+  <preBuild>
+    <command>$(MSBuildBinPath)\MSBuild "$(ProjectPath:Version)" /t:Build /p:Configuration=Release
+
+ &amp; 
+
+"$(TargetPath:Version)" "$(SolutionDir)_version" "$(SolutionDir).git" "$(ProjectDir:Version)Version.tpl" "$(ProjectDir:vsSolutionBuildEvent)Version.cs" "$(ProjectDir:vsSolutionBuildEvent)source.extension.vsixmanifest"</command>
+    <caption>Update version</caption>
+    <enabled>true</enabled>
+    <processHide>true</processHide>
+    <mode>Interpreter</mode>
+    <processKeep>true</processKeep>
+    <interpreter>cmd.exe /C</interpreter>
+    <newline />
+    <wrapper />
+    <waitForExit>true</waitForExit>
+    <parseVariablesMSBuild>true</parseVariablesMSBuild>
+    <buildFailedIgnore>false</buildFailedIgnore>
+    <dteExec>
+      <cmd>
+        <string />
+      </cmd>
+      <caption />
+    </dteExec>
+  </preBuild>
+  <postBuild>
+    <command />
+    <caption />
+    <enabled>false</enabled>
+    <processHide>true</processHide>
+    <mode>Interpreter</mode>
+    <processKeep>false</processKeep>
+    <interpreter />
+    <newline />
+    <wrapper />
+    <waitForExit>true</waitForExit>
+    <parseVariablesMSBuild>true</parseVariablesMSBuild>
+    <buildFailedIgnore>false</buildFailedIgnore>
+    <dteExec>
+      <cmd>
+        <string />
+      </cmd>
+      <caption />
+    </dteExec>
+  </postBuild>
+  <cancelBuild>
+    <command />
+    <caption />
+    <enabled>false</enabled>
+    <processHide>true</processHide>
+    <mode>Interpreter</mode>
+    <processKeep>false</processKeep>
+    <interpreter />
+    <newline />
+    <wrapper />
+    <waitForExit>true</waitForExit>
+    <parseVariablesMSBuild>true</parseVariablesMSBuild>
+    <buildFailedIgnore>false</buildFailedIgnore>
+    <dteExec>
+      <cmd>
+        <string />
+      </cmd>
+      <caption />
+    </dteExec>
+  </cancelBuild>
+  <warningsBuild>
+    <command />
+    <caption />
+    <enabled>false</enabled>
+    <processHide>true</processHide>
+    <mode>Interpreter</mode>
+    <processKeep>false</processKeep>
+    <interpreter />
+    <newline />
+    <wrapper />
+    <waitForExit>true</waitForExit>
+    <parseVariablesMSBuild>true</parseVariablesMSBuild>
+    <buildFailedIgnore>false</buildFailedIgnore>
+    <dteExec>
+      <cmd>
+        <string />
+      </cmd>
+      <caption />
+    </dteExec>
+    <codes />
+    <isWhitelist>true</isWhitelist>
+  </warningsBuild>
+  <errorsBuild>
+    <command />
+    <caption />
+    <enabled>false</enabled>
+    <processHide>true</processHide>
+    <mode>Interpreter</mode>
+    <processKeep>false</processKeep>
+    <interpreter />
+    <newline />
+    <wrapper />
+    <waitForExit>true</waitForExit>
+    <parseVariablesMSBuild>true</parseVariablesMSBuild>
+    <buildFailedIgnore>false</buildFailedIgnore>
+    <dteExec>
+      <cmd>
+        <string />
+      </cmd>
+      <caption />
+    </dteExec>
+    <codes />
+    <isWhitelist>true</isWhitelist>
+  </errorsBuild>
+  <outputCustomBuild>
+    <command />
+    <caption />
+    <enabled>false</enabled>
+    <processHide>true</processHide>
+    <mode>Interpreter</mode>
+    <processKeep>false</processKeep>
+    <interpreter />
+    <newline />
+    <wrapper />
+    <waitForExit>true</waitForExit>
+    <parseVariablesMSBuild>true</parseVariablesMSBuild>
+    <buildFailedIgnore>false</buildFailedIgnore>
+    <dteExec>
+      <cmd>
+        <string />
+      </cmd>
+      <caption />
+    </dteExec>
+    <eventsOWP />
+  </outputCustomBuild>
+  <transmitter>
+    <command />
+    <caption />
+    <enabled>false</enabled>
+    <processHide>true</processHide>
+    <mode>Interpreter</mode>
+    <processKeep>false</processKeep>
+    <interpreter />
+    <newline />
+    <wrapper />
+    <waitForExit>true</waitForExit>
+    <parseVariablesMSBuild>true</parseVariablesMSBuild>
+    <buildFailedIgnore>false</buildFailedIgnore>
+    <dteExec>
+      <cmd>
+        <string />
+      </cmd>
+      <caption />
+    </dteExec>
+  </transmitter>
+</SolutionEvents>
