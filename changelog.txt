@@ -1,3 +1,7 @@
+[v0.7.1]
+    * NEW: Support for Visual Studio 14.0
+    * FIXED: trivial bug with "Keep window with result" in Files Mode.
+    
 [v0.7]
     * NEW: Option for ignoring POST actions if the build failed.
     * CHANGED: Major changes & fixes with the MSBuildParser.
