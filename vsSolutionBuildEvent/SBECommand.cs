@@ -288,7 +288,7 @@ namespace net.r_eg.vsSBE
 
         private string _treatNewlineAs(string str, string data)
         {
-            return data.Replace("\r", "").Replace("\n", str);
+            return data.Trim(new char[]{'\r', '\n'}).Replace("\r", "").Replace("\n", str);
         }
     }
 
