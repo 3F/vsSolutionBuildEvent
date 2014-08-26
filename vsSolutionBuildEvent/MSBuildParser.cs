@@ -182,18 +182,27 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Evaluate data with the MSBuild engine
+        /// Evaluate data with the MSBuild engine.
+        /// alternative to Microsoft.Build.BuildEngine - http://msdn.microsoft.com/en-us/library/Microsoft.Build.BuildEngine
         /// </summary>
         /// <param name="unevaluated">raw string as $(..data..)</param>
         /// <param name="projectName">push null if default</param>
         /// <returns>evaluated value</returns>
         public virtual string evaluateVariable(string unevaluated, string projectName)
         {
-            Project project = getProject(projectName);
-            lock(_eLock) {
-                project.SetProperty("vsSBE_latestEvaluated", unevaluated);
+            const string container  = "vsSBE_latestEvaluated";
+            Project project         = getProject(projectName);
+
+            lock(_eLock)
+            {
+                try {
+                    project.SetProperty(container, unevaluated);
+                    return project.GetProperty(container).EvaluatedValue;
+                }
+                finally {
+                    project.RemoveProperty(project.GetProperty(container));
+                }
             }
-            return project.GetProperty("vsSBE_latestEvaluated").EvaluatedValue;
         }
 
         /// <summary>

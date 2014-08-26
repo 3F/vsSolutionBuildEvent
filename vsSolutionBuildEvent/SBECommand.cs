@@ -148,7 +148,7 @@ namespace net.r_eg.vsSBE
             string cFiles = evt.command;
 
             parseVariables(evt, ref cFiles);
-            useShell(evt, _treatNewlineAs(" & ", _modifySlash(cFiles)));
+            useShell(evt, _treatNewlineAs(" & ", cFiles));
 
             return true;
         }
@@ -279,11 +279,6 @@ namespace net.r_eg.vsSBE
                 return null;
             }
             return path.Substring(0, 1);
-        }
-
-        private string _modifySlash(string data)
-        {
-            return data.Replace("/", "\\");
         }
 
         private string _treatNewlineAs(string str, string data)
