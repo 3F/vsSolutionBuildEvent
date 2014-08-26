@@ -44,6 +44,42 @@ namespace net.r_eg.vsSBE
     public class MSBuildParser: IMSBuildProperty, ISBEParserScript
     {
         /// <summary>
+        /// Work with DTE because the ProjectCollection.GlobalProjectCollection can be is empty
+        /// https://bitbucket.org/3F/vssolutionbuildevent/issue/8/
+        /// </summary>
+        public IEnumerable<EnvDTE.Project> DTEProjects
+        {
+            get
+            {
+                foreach(EnvDTE.Project project in DTEProjectsRaw)
+                {
+                    if(String.IsNullOrEmpty(project.FullName) || String.IsNullOrEmpty(project.Name)) {
+                        continue;
+                    }
+                    yield return project;
+                }
+            }
+        }
+
+        protected IEnumerable<EnvDTE.Project> DTEProjectsRaw
+        {
+            get
+            {
+                foreach(EnvDTE.Project project in dte2.Solution.Projects)
+                {
+                    if(project.Kind != ProjectKinds.vsProjectKindSolutionFolder) {
+                        yield return project;
+                        continue;
+                    }
+
+                    foreach(EnvDTE.Project subproject in listSubProjectsDTE(project)) {
+                        yield return subproject;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// DTE context
         /// </summary>
         protected DTE2 dte2 = null;
@@ -63,24 +99,6 @@ namespace net.r_eg.vsSBE
                     return project;
                 }
                 return null;
-            }
-        }
-
-        /// <summary>
-        /// Work with DTE because the ProjectCollection.GlobalProjectCollection can be is empty
-        /// https://bitbucket.org/3F/vssolutionbuildevent/issue/8/
-        /// </summary>
-        protected IEnumerable<EnvDTE.Project> DTEProjects
-        {
-            get
-            {
-                foreach(EnvDTE.Project project in dte2.Solution.Projects)
-                {
-                    if(String.IsNullOrEmpty(project.FullName) || String.IsNullOrEmpty(project.Name)) {
-                        continue;
-                    }
-                    yield return project;
-                }
             }
         }
 
@@ -393,6 +411,25 @@ namespace net.r_eg.vsSBE
             Log.nlog.Debug("tryLoadPCollection :: '{0}' [{1} ; {2}]", dteProject.FullName, prop["Configuration"], prop["Platform"]);
             //ProjectCollection.GlobalProjectCollection.LoadProject(dteProject.FullName, prop, null);
             return new Project(dteProject.FullName, prop, null, ProjectCollection.GlobalProjectCollection);
+        }
+
+        protected IEnumerable<EnvDTE.Project> listSubProjectsDTE(EnvDTE.Project project)
+        {
+            foreach(EnvDTE.ProjectItem item in project.ProjectItems)
+            {
+                if(item.SubProject == null) {
+                    continue; //e.g. project is incompatible with used version of visual studio
+                }
+
+                if(item.SubProject.Kind != ProjectKinds.vsProjectKindSolutionFolder) {
+                    yield return item.SubProject;
+                    continue;
+                }
+
+                foreach(EnvDTE.Project subproject in listSubProjectsDTE(item.SubProject)) {
+                    yield return subproject;
+                }
+            }
         }
 
         private Dictionary<string, string> _getGlobalProperties(EnvDTE.Project dteProject)

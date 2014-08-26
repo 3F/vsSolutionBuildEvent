@@ -3,7 +3,7 @@
     <Identifier Id="94ecd13f-15f3-4f51-9afd-17f0275c6266">
         <Name>vsSolutionBuildEvent</Name>
         <Author>reg [entry.reg@gmail.com]</Author>
-        <Version>0.7.1.70077</Version>
+        <Version>0.7.1</Version>
         <Description xml:space="preserve">Solution Build-Events
 
 Extended event handling in Visual Studio. Events for all Solution or Projects a singly.

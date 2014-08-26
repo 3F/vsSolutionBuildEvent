@@ -30,4 +30,4 @@ using net.r_eg.vsSBE;
 //      Revision
 //
 [assembly: AssemblyVersion(Version.numberString)]
-[assembly: AssemblyFileVersion(Version.numberWithRevString)]
+[assembly: AssemblyFileVersion(Version.numberString)]

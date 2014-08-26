@@ -56,7 +56,7 @@ namespace net.r_eg.vsSBE.Version
             _write(manifest, 
                 Regex.Replace(_read(manifest), 
                                 @"<Version>[0-9\.]+</Version>",
-                                string.Format("<Version>{0}.{1}.{2}.{3}</Version>", version.Major, version.Minor, version.Build, version.Revision), 
+                                string.Format("<Version>{0}.{1}.{2}</Version>", version.Major, version.Minor, version.Build), 
                                 RegexOptions.IgnoreCase
                 )
             );

@@ -69,10 +69,7 @@ namespace net.r_eg.vsSBE
         /// use with nlog
         /// https://github.com/nlog/nlog/wiki/MethodCall-target
         /// </summary>
-        /// <param name="level"></param>
-        /// <param name="message"></param>
-        /// <param name="stamp"></param>
-        public static void _print(string level, string message, string stamp)
+        public static void nprint(string level, string message, string stamp)
         {
             LogLevel oLevel = LogLevel.FromString(level);
 
