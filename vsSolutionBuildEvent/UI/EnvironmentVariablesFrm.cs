@@ -31,7 +31,7 @@ namespace net.r_eg.vsSBE.UI
         /// <summary>
         /// Caching of retrieved properties
         /// </summary>
-        private ConcurrentDictionary<string, List<MSBuildPropertyItem>> _cacheProperties;
+        private ConcurrentDictionary<string, List<TMSBuildPropertyItem>> _cacheProperties;
 
         public EnvironmentVariablesFrm(ITransferEnvironmentVariable pin)
         {
@@ -39,7 +39,7 @@ namespace net.r_eg.vsSBE.UI
 
             _msbuild            = new MSBuildParser(vsSolutionBuildEventPackage.Dte2);
             this._pin           = pin;
-            _cacheProperties    = new ConcurrentDictionary<string, List<MSBuildPropertyItem>>();
+            _cacheProperties    = new ConcurrentDictionary<string, List<TMSBuildPropertyItem>>();
         }
 
         protected void fillProjects()
@@ -62,7 +62,7 @@ namespace net.r_eg.vsSBE.UI
             dataGridViewVariables.Rows.Clear();
             try
             {
-                foreach(MSBuildPropertyItem prop in _getProperties(project)) {
+                foreach(TMSBuildPropertyItem prop in _getProperties(project)) {
                     if(filter != null && !prop.name.ToLower().Contains(filter)) {
                         continue;
                     }
@@ -101,7 +101,7 @@ namespace net.r_eg.vsSBE.UI
         }
 
         /// <exception cref="MSBuildParserProjectNotFoundException">if not found the specific project</exception>
-        private List<MSBuildPropertyItem> _getProperties(string project)
+        private List<TMSBuildPropertyItem> _getProperties(string project)
         {
             string key = project;
             if(String.IsNullOrEmpty(key)) {

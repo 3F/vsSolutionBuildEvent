@@ -26,18 +26,19 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
+using EnvDTE80;
+using Microsoft.Build.Collections;
+using Microsoft.Build.Evaluation;
+using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using EnvDTE80;
-using Microsoft.Build.Evaluation;
-using Microsoft.Build.Collections;
-using Microsoft.VisualStudio.Shell.Interop;
-using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace net.r_eg.vsSBE
 {
@@ -83,6 +84,11 @@ namespace net.r_eg.vsSBE
         /// DTE context
         /// </summary>
         protected DTE2 dte2 = null;
+
+        /// <summary>
+        /// Definitions of user scripts
+        /// </summary>
+        protected ConcurrentDictionary<string, string> definitions = new ConcurrentDictionary<string, string>();
 
         /// <summary>
         /// Getting name from "Set as SturtUp Project"
@@ -149,9 +155,9 @@ namespace net.r_eg.vsSBE
             throw new MSBuildParserProjectPropertyNotFoundException(String.Format("variable - '{0}' : project - '{1}'", name, (projectName == null) ? "<default>" : projectName));
         }
 
-        public List<MSBuildPropertyItem> listProperties(string projectName = null)
+        public List<TMSBuildPropertyItem> listProperties(string projectName = null)
         {
-            List<MSBuildPropertyItem> properties = new List<MSBuildPropertyItem>();
+            List<TMSBuildPropertyItem> properties = new List<TMSBuildPropertyItem>();
 
             Project project = getProject(projectName);
             foreach(ProjectProperty property in project.Properties)
@@ -166,7 +172,7 @@ namespace net.r_eg.vsSBE
                     }
                 }
 
-                properties.Add(new MSBuildPropertyItem(property.Name, eValue));
+                properties.Add(new TMSBuildPropertyItem(property.Name, eValue));
             }
             return properties;
         }
@@ -284,14 +290,9 @@ namespace net.r_eg.vsSBE
                     return m.Value.Substring(1);
                 }
 
-                string unevaluated  = m.Groups[2].Value;
-                string projectName  = _splitGeneralProjectAttr(ref unevaluated);
-
-                if(_isSimpleProperty(ref unevaluated)) {
-                    return getProperty(unevaluated, projectName);
-                }
-                return evaluateVariable(string.Format("$({0})", unevaluated), projectName);
-            }, RegexOptions.IgnorePatternWhitespace);
+                return evaluateVariable(prepareVariables(m.Groups[2].Value));
+            }, 
+            RegexOptions.IgnorePatternWhitespace);
         }
 
 
@@ -343,6 +344,141 @@ namespace net.r_eg.vsSBE
             Debug.Assert(_splitGeneralProjectAttr(ref unevaluated) == null);
             Debug.Assert(unevaluated.CompareTo("[class]::func($(path:project), $([class]::func2($(path2)):project)):project)") == 0);
 #endif
+        }
+
+        /// <param name="raw">raw data at format - '(..data..)'</param>
+        protected TPreparedData prepareVariables(string raw)
+        {
+            TPreparedData ret = new TPreparedData();
+
+            Match m = Regex.Match(raw.Trim(), @"^\(  
+                                                   (?:
+                                                     (\#)?           # 1 -> special char  (optional)
+                                                     ([A-z_0-9]+)    # 2 -> variable name (optional)
+                                                     \s*=\s*
+                                                   )?
+                                                   (?:
+                                                      (.+)           # 3 -> unevaluated data
+                                                      :([^)]+)       # 4 -> specific project for variable if 2 is present or for unevaluated data
+                                                    |                # or:
+                                                      (.+)           # 5 -> unevaluated data
+                                                   )
+                                               \)$", RegexOptions.IgnorePatternWhitespace);
+
+            if(!m.Success) {
+                Log.nlog.Debug("impossible to prepare data '{0}'", raw);
+                throw new NotSupportedException(String.Format("prepare failed - '{0}'", raw)); //TODO
+            }
+            bool hasVar     = m.Groups[2].Success;
+            bool hasProject = m.Groups[3].Success ? true : false;
+
+            if(hasVar) {
+                ret.variable.name           = m.Groups[2].Value.Trim();
+                ret.variable.isPersistence  = (m.Groups[1].Success && m.Groups[1].Value == "#") ? true : false;
+            }
+
+            ret.property.raw = (hasProject ? m.Groups[3] : m.Groups[5]).Value.Trim();
+
+            bool composite          = (ret.property.raw[0] == '$') ? true : false;
+            ret.property.escaped    = (composite && ret.property.raw[1] == '$') ? true : false;
+
+            if(hasProject)
+            {
+                string project = m.Groups[4].Value.Trim();
+
+                if(!composite) {
+                    ret.property.project = project;
+                }
+                else if(hasVar) {
+                    ret.variable.project = project;
+                }
+                else {
+                    // can be variable variables e.g.: ($(var:project):project)
+                    ret.property.project = project; // TODO
+                }
+            }
+
+            ret.property.complex = !_isPropertySimple(ref ret.property.raw) || composite;
+
+            if(!ret.property.complex) {
+                ret.property.unevaluated = ret.property.raw;
+                ret.property.completed   = true;
+                Log.nlog.Debug("Prepared: simple - '{0}'", ret.property.unevaluated);
+                return ret;
+            }
+            if(ret.property.escaped) {
+                ret.property.unevaluated = ret.property.raw.Substring(1);
+                ret.property.completed   = true;
+                Log.nlog.Debug("Prepared: complex escaped - '{0}'", ret.property.unevaluated);
+                return ret;
+            }
+            
+            // try to simplify
+            m = Regex.Match(ret.property.raw, @"^
+                                                  \$
+                                                  \(
+                                                     ([A-z_0-9]+)     # 1 - name
+                                                     (?::([^)]+))?    # 2 - project
+                                                  \)
+                                                $", RegexOptions.IgnorePatternWhitespace);
+
+            if(m.Success)
+            {
+                ret.property.complex        = false;
+                ret.property.unevaluated    = m.Groups[1].Value;
+                ret.property.project        = (m.Groups[2].Success) ? m.Groups[2].Value.Trim() : null;
+                ret.property.completed      = true;
+                Log.nlog.Debug("Prepared: found simple property '{0}' for '{1}'", ret.property.unevaluated, ret.property.project);
+                return ret;
+            }
+
+            //TODO: internal projects
+            ret.property.unevaluated = ret.property.raw;
+            if(!ret.property.unevaluated.StartsWith("$(")) {
+                ret.property.unevaluated = String.Format("$({0})", ret.property.unevaluated);
+            }
+
+            Log.nlog.Debug("Prepared: step out");
+            return ret;
+        }
+
+        protected string evaluateVariable(TPreparedData prepared)
+        {
+            string evaluated = "";
+            
+            if(prepared.property.completed && !prepared.property.complex)
+            {
+                string defindex = String.Format("{0}:{1}", prepared.property.unevaluated, prepared.property.project);
+
+                if(definitions.ContainsKey(defindex)) {
+                    Log.nlog.Debug("Evaluate: use the definitions");
+                    evaluated = definitions[defindex];
+                }
+                else {
+                    Log.nlog.Debug("Evaluate: use the getProperty");
+                    evaluated = getProperty(prepared.property.unevaluated, prepared.property.project);
+                }
+            }
+            else if(prepared.property.escaped){
+                Log.nlog.Debug("Evaluate: escaped value");
+                evaluated = prepared.property.unevaluated;
+            }
+            else{
+                Log.nlog.Debug("Evaluate: use the evaluateVariable");
+                evaluated = evaluateVariable(prepared.property.unevaluated, prepared.property.project);
+            }
+
+            if(!String.IsNullOrEmpty(prepared.variable.name))
+            {
+                //INFO: prepared.variable.isPersistence - [reserved]
+                string defindex = String.Format("{0}:{1}", prepared.variable.name, prepared.variable.project);
+                Log.nlog.Debug("Variable of user: set '{0}' = '{1}'", defindex, evaluated);
+                definitions[defindex] = evaluated;
+                evaluated = "";
+            }
+
+            Log.nlog.Debug("Evaluated: '{0}'", evaluated);
+            return evaluated;
         }
 
         /// <summary>
@@ -545,24 +681,83 @@ namespace net.r_eg.vsSBE
             return project;
         }
 
-        private bool _isSimpleProperty(ref string unevaluated)
+        private bool _isPropertySimple(ref string unevaluated)
         {
-            if(unevaluated.IndexOfAny(new char[]{'.', ':', '(', ')', '\'', '"'}) != -1) {
+            if(unevaluated.IndexOfAny(new char[]{'.', ':', '(', ')', '\'', '"', '[', ']'}) != -1) {
                 return false;
             }
             return true;
         }
     }
 
+    public struct TPreparedData
+    {
+        /// <summary>
+        /// Dynamically define variables
+        /// </summary>
+        public TVar variable;
+        /// <summary>
+        /// Unit of properties
+        /// </summary>
+        public TProperty property;
+
+        public struct TVar
+        {
+            /// <summary>
+            /// Storage if present
+            /// </summary>
+            public string name;
+            /// <summary>
+            /// Specific project where to store.
+            /// null value - project by default
+            /// </summary>
+            public string project;
+            /// <summary>
+            /// Storing in the projects files ~ .csproj, .vcxproj, ..
+            /// </summary>
+            /// <remarks>reserved</remarks>
+            public bool isPersistence;
+        }
+
+        public struct TProperty
+        {
+            /// <summary>
+            /// Complex phrase or simple property
+            /// </summary>
+            public bool complex;
+            /// <summary>
+            /// has escaped property
+            /// </summary>
+            public bool escaped;
+            /// <summary>
+            /// Contain all prepared data from specific projects. Not complete evaluation!
+            /// i.e.: prepares only all $(..:project) data
+            /// </summary>
+            public string unevaluated;
+            /// <summary>
+            /// Specific project for unevaluated data
+            /// </summary>
+            public string project;
+            /// <summary>
+            /// Step of handling
+            /// </summary>
+            public bool completed;
+            /// <summary>
+            /// Raw unprepared data without(in any case) storage variable
+            /// </summary>
+            public string raw;
+        }
+    }
+
     /// <summary>
     /// item of property: name = value
     /// </summary>
-    public sealed class MSBuildPropertyItem
+    public struct TMSBuildPropertyItem
     {
         public string name;
         public string value;
 
-        public MSBuildPropertyItem(string name, string value)
+        public TMSBuildPropertyItem(string name, string value)
         {
             this.name  = name;
             this.value = value;
@@ -570,7 +765,7 @@ namespace net.r_eg.vsSBE
     }
 
     //TODO:
-    public struct SBECustomVariable
+    internal struct SBECustomVariable
     {
         public const string OWP_BUILD           = "vsSBE_OWPBuild";
         public const string OWP_BUILD_WARNINGS  = "vsSBE_OWPBuildWarnings";
