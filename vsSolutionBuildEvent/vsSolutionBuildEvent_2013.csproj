@@ -176,6 +176,7 @@
     </Compile>
     <Compile Include="UI\StatusToolWindow.cs" />
     <Compile Include="Upgrade\0.3_0.4.cs" />
+    <Compile Include="Version.cs" />
     <Compile Include="vsSolutionBuildEventPackage.cs" />
     <Compile Include="PkgCmdID.cs" />
   </ItemGroup>
