@@ -1,3 +1,7 @@
+[v0.7.2]
+    * FIXED: Saving property into files(*.csproj, *.vcxproj,..) after evaluating.
+    * CHANGED: List projects inside the solution - possible bug "Solution Subfolders not resolved"
+
 [v0.7.1]
     * NEW: Support for Visual Studio 14.0
     * FIXED: trivial bug with "Keep window with result" in Files Mode.
