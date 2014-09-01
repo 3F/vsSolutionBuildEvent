@@ -76,16 +76,16 @@ namespace net.r_eg.vsSBE
             try {
                 return Regex.Match(raw, term/*, RegexOptions.IgnoreCase*/).Success;
             }
-            catch(Exception) {
+            catch(Exception ex) {
                 // all incorrect syntax should be simply false
-                //TODO: to top level for information pane
+                Log.nlog.Warn("OWPMatcher: {0}", ex.Message);
             }
             return false;
         }
 
         protected bool mWildcards(string term, ref string raw)
         {
-            //TODO: rich & rapid wildcards https://bitbucket.org/3F/sandbox/src/2bc1073f9953ddc3d9289c924059bc0d0e0bd9e4/cpp/text/wildcards/wildcards/versions/essential/AlgorithmEss.h?at=master-C%2B%2B
+            //TODO: rapid alternative https://bitbucket.org/3F/sandbox/src/master-C%2B%2B/cpp/text/wildcards/wildcards/versions/essential/AlgorithmEss.h
             //_
             string stub = Regex.Escape(term).Replace("\\*", ".*?").Replace("\\+", ".+?").Replace("\\?", ".");
             return mRegexp(stub, ref raw);

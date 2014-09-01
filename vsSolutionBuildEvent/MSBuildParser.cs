@@ -26,10 +26,6 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using EnvDTE80;
-using Microsoft.Build.Collections;
-using Microsoft.Build.Evaluation;
-using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -39,6 +35,10 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using EnvDTE80;
+using Microsoft.Build.Collections;
+using Microsoft.Build.Evaluation;
+using Microsoft.VisualStudio.Shell.Interop;
 
 namespace net.r_eg.vsSBE
 {
@@ -214,9 +214,9 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Simple handler properties of MSBuild environment
         /// </summary>
-        /// <remarks>deprecated</remarks>
         /// <param name="data">text with $(ident) data</param>
         /// <returns>text with evaluated properties</returns>
+        [Obsolete("Use the parseVariablesMSBuild", false)]
         public string parseVariablesMSBuildSimple(string data)
         {
             return Regex.Replace(data, @"
@@ -326,24 +326,6 @@ namespace net.r_eg.vsSBE
         public MSBuildParser(DTE2 dte2)
         {
             this.dte2 = dte2;
-
-#if DEBUG
-            string unevaluated = "(name:project)";
-            Debug.Assert(_splitGeneralProjectAttr(ref unevaluated).CompareTo("project") == 0);
-            Debug.Assert(unevaluated.CompareTo("name") == 0);
-
-            unevaluated = "(name)";
-            Debug.Assert(_splitGeneralProjectAttr(ref unevaluated) == null);
-            Debug.Assert(unevaluated.CompareTo("name") == 0);
-
-            unevaluated = "([class]::func($(path:project), $([class]::func2($(path2)):project)):project)";
-            Debug.Assert(_splitGeneralProjectAttr(ref unevaluated).CompareTo("project") == 0);
-            Debug.Assert(unevaluated.CompareTo("[class]::func($(path:project), $([class]::func2($(path2)):project))") == 0);
-
-            unevaluated = "([class]::func($(path:project), $([class]::func2($(path2)):project)):project))";
-            Debug.Assert(_splitGeneralProjectAttr(ref unevaluated) == null);
-            Debug.Assert(unevaluated.CompareTo("[class]::func($(path:project), $([class]::func2($(path2)):project)):project)") == 0);
-#endif
         }
 
         /// <param name="raw">raw data at format - '(..data..)'</param>
@@ -643,6 +625,10 @@ namespace net.r_eg.vsSBE
 
         private string _getSolutionGlobalProperty(string name)
         {
+            if(String.IsNullOrEmpty(name)) {
+                return null;
+            }
+
             if(name.Equals("Configuration")) {
                 return SolutionActiveConfiguration.Name;
             }
