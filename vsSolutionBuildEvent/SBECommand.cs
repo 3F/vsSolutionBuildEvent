@@ -70,7 +70,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// DTE context
         /// </summary>
-        protected DTE2 dte;
+        protected DTE2 dte2;
 
         /// <summary>
         /// Special raw data from the output window pane
@@ -96,6 +96,10 @@ namespace net.r_eg.vsSBE
             }
         }
 
+        /// <summary>
+        /// object synch.
+        /// </summary>
+        private Object _eLock = new Object();
 
         /// <summary>
         /// basic implementation
@@ -135,10 +139,10 @@ namespace net.r_eg.vsSBE
             return basic(evt, type);
         }
 
-        public SBECommand(DTE2 dte, MSBuildParser parser)
+        public SBECommand(DTE2 dte2, MSBuildParser parser)
         {
             _context    = new SBEContext(Config.WorkPath, letDisk(Config.WorkPath));
-            this.dte    = dte;
+            this.dte2   = dte2;
             _QueueRec   = new SBEQueueDTE.Rec();
             this.parser = parser;
         }
@@ -155,45 +159,50 @@ namespace net.r_eg.vsSBE
 
         protected virtual bool hModeOperation(ISolutionEvent evt)
         {
-            if(_QueueRec.level == 0) {
-                _QueueRec.cmd = evt.dteExec.cmd;
-            }
+            lock(_eLock)
+            {
+                if(_QueueRec.level == 0) {
+                    _QueueRec.cmd = evt.dteExec.cmd;
+                }
 
-            if(_QueueRec.cmd.Length < 1) {
-                return true; //all pushed
-            }
+                if(_QueueRec.cmd.Length < 1) {
+                    return true; //all pushed
+                }
 
-            ++_QueueRec.level;
+                ++_QueueRec.level;
 
-            string[] newer = new string[_QueueRec.cmd.Length - 1];
-            for(int i = 1; i < _QueueRec.cmd.Length; ++i) {
-                newer[i - 1] = _QueueRec.cmd[i];
-            }
-            string current = _QueueRec.cmd[0];
-            _QueueRec.cmd = newer;
+                string[] newer = new string[_QueueRec.cmd.Length - 1];
+                for(int i = 1; i < _QueueRec.cmd.Length; ++i) {
+                    newer[i - 1] = _QueueRec.cmd[i];
+                }
+                string current = _QueueRec.cmd[0].Trim();
+                _QueueRec.cmd = newer;
 
-            Exception terminated = null;
-            try {
-                // * error if command not available at current time
-                // * recursive to Debug.Start, Debug.StartWithoutDebugging, etc.,
-                dte.ExecuteCommand(current);
-            }
-            catch(Exception e) {
-                Log.nlog.Debug("DTE-ExecuteCommand '{0}' {1}", current, e.Message);
-                terminated = e;
-            }
+                // TODO: UI ~ AND/OR variants
+                Exception terminated = null;
+                try {
+                    // * also error if command not available at current time
+                    // * recursive to Debug.Start, Debug.StartWithoutDebugging, etc.,
+                    Log.nlog.Debug("DTE exec: '{0}'", current);
+                    ((EnvDTE.DTE)dte2).ExecuteCommand(current);
+                }
+                catch(Exception ex) {
+                    Log.nlog.Debug("DTE fail: {0} :: '{1}'", ex.Message, current);
+                    terminated = ex;
+                }
 
-            if(_QueueRec.cmd.Length > 0) {
-                //other.. like a File.Print, etc.
-                hModeOperation(evt);
-            }
+                if(_QueueRec.cmd.Length > 0) {
+                    //other.. like a File.Print, etc.
+                    hModeOperation(evt);
+                }
 
-            --_QueueRec.level;
+                --_QueueRec.level;
 
-            if(terminated != null) {
-                throw new Exception(terminated.Message, terminated);
+                if(_QueueRec.level < 1 && terminated != null) {
+                    throw new Exception(terminated.Message, terminated);
+                }
+                return true;
             }
-            return true;
         }
 
         protected virtual bool hModeScript(ISolutionEvent evt)
