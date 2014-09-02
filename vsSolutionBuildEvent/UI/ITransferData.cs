@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -33,13 +33,19 @@ using System.Text;
 
 namespace net.r_eg.vsSBE.UI
 {
-    public interface ITransferEnvironmentVariable
+    public interface ITransferDataProperty
     {
         /// <summary>
-        /// Output name of Environment Variable
+        /// Standard output of property
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="project">name of project</param>
-        void outputName(string name, string project);
+        void property(string name, string project);
+    }
+
+    public interface ITransferDataCommand
+    {
+        /// <summary>
+        /// Various commands such as DTE, etc.
+        /// </summary>
+        void command(string name);
     }
 }

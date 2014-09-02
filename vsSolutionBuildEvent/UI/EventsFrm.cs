@@ -16,7 +16,7 @@ using EnvDTE80;
 
 namespace net.r_eg.vsSBE.UI
 {
-    public partial class EventsFrm: Form, ITransferEnvironmentVariable
+    public partial class EventsFrm: Form, ITransferDataProperty, ITransferDataCommand
     {
         private class _SBEWrap
         {
@@ -89,12 +89,12 @@ namespace net.r_eg.vsSBE.UI
         }
 
         /// <summary>
-        /// implements main output for variable
+        /// Implements transport for MSBuild property
         /// TODO: highlighting
         /// </summary>
         /// <param name="name"></param>
         /// <param name="project"></param>
-        public void outputName(string name, string project = null)
+        public void property(string name, string project = null)
         {
             textBoxCommand.Select(textBoxCommand.SelectionStart, 0);
 
@@ -105,6 +105,17 @@ namespace net.r_eg.vsSBE.UI
                 textBoxCommand.SelectedText = String.Format("$({0}:{1})", name, project);
             }
 
+            this.Focus();
+        }
+
+        /// <summary>
+        /// Implements transport for DTE command
+        /// </summary>
+        /// <param name="name"></param>
+        public void command(string name)
+        {
+            textBoxCommand.Select(textBoxCommand.SelectionStart, 0);
+            textBoxCommand.SelectedText = name;
             this.Focus();
         }
 
@@ -174,6 +185,7 @@ namespace net.r_eg.vsSBE.UI
                 }
                 evt.dteExec.caption = listBoxOperation.Text;
             }
+            evt.dteExec.abortOnFirstError = checkBoxOperationsAbort.Checked;
         }
 
         private void _saveData(SBEEventEW evt)
@@ -373,6 +385,7 @@ namespace net.r_eg.vsSBE.UI
             comboBoxWrapper.Text            = evt.wrapper;
             checkBoxParseVariables.Checked  = evt.parseVariablesMSBuild;
             checkBoxIgnoreIfFailed.Checked  = evt.buildFailedIgnore;
+            checkBoxOperationsAbort.Checked = evt.dteExec.abortOnFirstError;
 
             switch(evt.mode) {
                 case TModeCommands.Interpreter: {
@@ -491,6 +504,7 @@ namespace net.r_eg.vsSBE.UI
             textBoxCommand.Enabled      = true;
             _renderDataStubCommand(false);
             panelControlByOperation.Enabled = true;
+            checkBoxOperationsAbort.Enabled = false;
         }
 
         private void radioModeFiles_CheckedChanged(object sender, EventArgs e)
@@ -501,6 +515,7 @@ namespace net.r_eg.vsSBE.UI
             textBoxCommand.Enabled      = true;
             _renderDataStubCommand(false);
             panelControlByOperation.Enabled = true;
+            checkBoxOperationsAbort.Enabled = false;
         }
 
         private void radioModeOperation_CheckedChanged(object sender, EventArgs e)
@@ -509,6 +524,7 @@ namespace net.r_eg.vsSBE.UI
             groupBoxInterpreter.Enabled     = false;
             listBoxOperation.Enabled        = true;
             panelControlByOperation.Enabled = false;
+            checkBoxOperationsAbort.Enabled = true;
         }
 
         private void listBoxOperation_SelectedIndexChanged(object sender, EventArgs e)
@@ -560,6 +576,21 @@ namespace net.r_eg.vsSBE.UI
             listBoxEW.Items.RemoveAt(listBoxEW.SelectedIndex);
         }
 
+        private void menuItemEditorCut_Click(object sender, EventArgs e)
+        {
+            textBoxCommand.Cut();
+        }
+
+        private void menuItemEditorCopy_Click(object sender, EventArgs e)
+        {
+            textBoxCommand.Copy();
+        }
+
+        private void menuItemEditorPaste_Click(object sender, EventArgs e)
+        {
+            textBoxCommand.Paste();
+        }
+
         private void menuItemDebugMode_Click(object sender, EventArgs e)
         {
             Config.debugMode = (menuItemDebugMode.Checked = !menuItemDebugMode.Checked);
@@ -578,7 +609,7 @@ namespace net.r_eg.vsSBE.UI
                 return;
             }
 
-            _frmDTECommands = new DTECommandsFrm(commands);
+            _frmDTECommands = new DTECommandsFrm(commands, this);
             _frmDTECommands.Show();
         }
     }

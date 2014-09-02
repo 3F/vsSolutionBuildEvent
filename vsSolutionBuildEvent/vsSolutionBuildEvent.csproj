@@ -161,7 +161,7 @@
     <Compile Include="SBEEvent.cs" />
     <Compile Include="SBESettings.cs" />
     <Compile Include="SolutionEvents.cs" />
-    <Compile Include="UI\ITransferEnvironmentVariable.cs" />
+    <Compile Include="UI\ITransferData.cs" />
     <Compile Include="UI\StatusControl.xaml.cs">
       <DependentUpon>StatusControl.xaml</DependentUpon>
     </Compile>

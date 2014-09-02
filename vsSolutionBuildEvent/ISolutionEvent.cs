@@ -134,5 +134,9 @@ namespace net.r_eg.vsSBE
         /// optional ident
         /// </summary>
         public string caption = "";
+        /// <summary>
+        /// Abort operations on first error
+        /// </summary>
+        public bool abortOnFirstError = true;
     }
 }

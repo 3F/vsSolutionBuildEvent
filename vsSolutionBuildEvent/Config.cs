@@ -67,12 +67,12 @@ namespace net.r_eg.vsSBE
             /// Current config version
             /// Notice: version of app is controlled by Package
             /// </summary>
-            public const string VERSION = "0.7";
+            public static readonly System.Version Version = new System.Version(0, 7);
 
             /// <summary>
-            /// into file system
+            /// To file system
             /// </summary>
-            public const string NAME    = ".vssbe";
+            public const string NAME = ".vssbe";
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace net.r_eg.vsSBE
             }
 
             // now compatibility should be updated to the latest
-            data.settings.compatibility = Entity.VERSION;
+            data.settings.compatibility = Entity.Version.ToString();
         }
 
         /// <summary>
@@ -161,9 +161,16 @@ namespace net.r_eg.vsSBE
         /// <param name="stream"></param>
         protected static void compatibilityCheck(FileStream stream)
         {
-            System.Version ver = System.Version.Parse(data.settings.compatibility);
+            System.Version cfg = System.Version.Parse(data.settings.compatibility);
 
-            if(ver.Major == 0 && ver.Minor < 4)
+            if(cfg.Major > Entity.Version.Major || (cfg.Major == Entity.Version.Major && cfg.Minor > Entity.Version.Minor)) {
+                Log.nlog.Warn(
+                    "Version {0} of configuration file is higher supported version {1}. Please update application. Several settings may be not correctly loaded.",
+                    cfg.ToString(2), Entity.Version.ToString(2)
+                );
+            }
+
+            if(cfg.Major == 0 && cfg.Minor < 4)
             {
                 Log.show();
                 Log.nlog.Info("Start upgrade configuration 0.3 -> 0.4");

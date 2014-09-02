@@ -178,22 +178,29 @@ namespace net.r_eg.vsSBE
                 string current = _QueueRec.cmd[0].Trim();
                 _QueueRec.cmd = newer;
 
-                // TODO: UI ~ AND/OR variants
-                Exception terminated = null;
+                string progressCaption  = String.Format("({0}/{1})", _QueueRec.level, _QueueRec.level + _QueueRec.cmd.Length);
+                Exception terminated    = null;
                 try {
-                    // * also error if command not available at current time
-                    // * recursive to Debug.Start, Debug.StartWithoutDebugging, etc.,
-                    Log.nlog.Debug("DTE exec: '{0}'", current);
+                    // also error if command not available at current time
+                    // * +causes recursion with Debug.Start, Debug.StartWithoutDebugging, etc.,
+                    Log.nlog.Info("DTE exec {0}: '{1}'", progressCaption, current);
                     ((EnvDTE.DTE)dte2).ExecuteCommand(current);
                 }
                 catch(Exception ex) {
-                    Log.nlog.Debug("DTE fail: {0} :: '{1}'", ex.Message, current);
+                    Log.nlog.Debug("DTE fail {0}: {1} :: '{2}'", progressCaption, ex.Message, current);
                     terminated = ex;
                 }
 
-                if(_QueueRec.cmd.Length > 0) {
-                    //other.. like a File.Print, etc.
-                    hModeOperation(evt);
+                if(_QueueRec.cmd.Length > 0)
+                {
+                    // remaining commands
+                    if(terminated != null && evt.dteExec.abortOnFirstError) {
+                        Log.nlog.Info("DTE exec {0}: Aborted", progressCaption);
+                    }
+                    else {
+                        Log.nlog.Debug("DTE {0}: step into", progressCaption);
+                        hModeOperation(evt);
+                    }
                 }
 
                 --_QueueRec.level;

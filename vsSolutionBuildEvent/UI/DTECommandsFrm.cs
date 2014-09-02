@@ -10,14 +10,19 @@ using EnvDTE80;
 
 namespace net.r_eg.vsSBE.UI
 {
-    //TODO:
     public partial class DTECommandsFrm: Form
     {
+        /// <summary>
+        /// Transport support
+        /// </summary>
+        private ITransferDataCommand _pin;
+
         IEnumerable<EnvDTE.Command> _commands;
 
-        public DTECommandsFrm(IEnumerable<EnvDTE.Command> commands)
+        public DTECommandsFrm(IEnumerable<EnvDTE.Command> commands, ITransferDataCommand pin)
         {
             _commands = commands;
+            this._pin = pin;
             InitializeComponent();
         }
 
@@ -47,7 +52,7 @@ namespace net.r_eg.vsSBE.UI
 
         private void dataGridViewDTE_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            Clipboard.SetText(dataGridViewDTE[0, e.RowIndex].Value.ToString());
+            _pin.command(String.Format("{0}{1}", dataGridViewDTE[0, e.RowIndex].Value, Environment.NewLine));
 
             dataGridViewDTE.Rows[e.RowIndex].DefaultCellStyle.SelectionBackColor = Color.FromArgb(245, 242, 203);
             dataGridViewDTE.Rows[e.RowIndex].DefaultCellStyle.SelectionForeColor = Color.FromArgb(23, 36, 47);

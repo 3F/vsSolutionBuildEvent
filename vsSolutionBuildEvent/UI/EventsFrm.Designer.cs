@@ -36,6 +36,11 @@
             this.labelToCommandBox = new System.Windows.Forms.Label();
             this.panelCommand = new System.Windows.Forms.Panel();
             this.textBoxCommand = new System.Windows.Forms.RichTextBox();
+            this.contextMenuEditor = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.menuItemEditorCut = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuItemEditorCopy = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuItemEditorPaste = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxPMode = new System.Windows.Forms.GroupBox();
             this.radioModeOperation = new System.Windows.Forms.RadioButton();
             this.radioModeScript = new System.Windows.Forms.RadioButton();
@@ -81,7 +86,9 @@
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuItemDebugMode = new System.Windows.Forms.ToolStripMenuItem();
             this.labelVersion = new System.Windows.Forms.Label();
+            this.checkBoxOperationsAbort = new System.Windows.Forms.CheckBox();
             this.panelCommand.SuspendLayout();
+            this.contextMenuEditor.SuspendLayout();
             this.groupBoxPMode.SuspendLayout();
             this.groupBoxSettings.SuspendLayout();
             this.panelControl.SuspendLayout();
@@ -131,6 +138,7 @@
             // 
             this.textBoxCommand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(243)))), ((int)(((byte)(243)))));
             this.textBoxCommand.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBoxCommand.ContextMenuStrip = this.contextMenuEditor;
             this.textBoxCommand.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBoxCommand.Location = new System.Drawing.Point(0, 0);
             this.textBoxCommand.Name = "textBoxCommand";
@@ -140,6 +148,42 @@
             this.textBoxCommand.Text = "";
             this.textBoxCommand.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxCommand_KeyDown);
             this.textBoxCommand.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxCaption_KeyPress);
+            // 
+            // contextMenuEditor
+            // 
+            this.contextMenuEditor.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuItemEditorCut,
+            this.menuItemEditorCopy,
+            this.toolStripSeparator1,
+            this.menuItemEditorPaste});
+            this.contextMenuEditor.Name = "contextMenuEditor";
+            this.contextMenuEditor.Size = new System.Drawing.Size(103, 76);
+            // 
+            // menuItemEditorCut
+            // 
+            this.menuItemEditorCut.Name = "menuItemEditorCut";
+            this.menuItemEditorCut.Size = new System.Drawing.Size(102, 22);
+            this.menuItemEditorCut.Text = "Cut";
+            this.menuItemEditorCut.Click += new System.EventHandler(this.menuItemEditorCut_Click);
+            // 
+            // menuItemEditorCopy
+            // 
+            this.menuItemEditorCopy.Name = "menuItemEditorCopy";
+            this.menuItemEditorCopy.Size = new System.Drawing.Size(102, 22);
+            this.menuItemEditorCopy.Text = "Copy";
+            this.menuItemEditorCopy.Click += new System.EventHandler(this.menuItemEditorCopy_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(99, 6);
+            // 
+            // menuItemEditorPaste
+            // 
+            this.menuItemEditorPaste.Name = "menuItemEditorPaste";
+            this.menuItemEditorPaste.Size = new System.Drawing.Size(102, 22);
+            this.menuItemEditorPaste.Text = "Paste";
+            this.menuItemEditorPaste.Click += new System.EventHandler(this.menuItemEditorPaste_Click);
             // 
             // groupBoxPMode
             // 
@@ -200,6 +244,7 @@
             // panelControl
             // 
             this.panelControl.AutoScroll = true;
+            this.panelControl.Controls.Add(this.checkBoxOperationsAbort);
             this.panelControl.Controls.Add(this.checkBoxIgnoreIfFailed);
             this.panelControl.Controls.Add(this.checkBoxParseVariables);
             this.panelControl.Controls.Add(this.panelControlByOperation);
@@ -671,6 +716,18 @@
             this.labelVersion.TabIndex = 32;
             this.labelVersion.Text = "version";
             // 
+            // checkBoxOperationsAbort
+            // 
+            this.checkBoxOperationsAbort.AutoSize = true;
+            this.checkBoxOperationsAbort.Checked = true;
+            this.checkBoxOperationsAbort.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxOperationsAbort.Location = new System.Drawing.Point(8, 126);
+            this.checkBoxOperationsAbort.Name = "checkBoxOperationsAbort";
+            this.checkBoxOperationsAbort.Size = new System.Drawing.Size(161, 17);
+            this.checkBoxOperationsAbort.TabIndex = 20;
+            this.checkBoxOperationsAbort.Text = "Abort operations on first error";
+            this.checkBoxOperationsAbort.UseVisualStyleBackColor = true;
+            // 
             // EventsFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -697,6 +754,7 @@
             this.Text = "Solution Build-Events";
             this.Load += new System.EventHandler(this.EventsFrm_Load);
             this.panelCommand.ResumeLayout(false);
+            this.contextMenuEditor.ResumeLayout(false);
             this.groupBoxPMode.ResumeLayout(false);
             this.groupBoxPMode.PerformLayout();
             this.groupBoxSettings.ResumeLayout(false);
@@ -770,5 +828,11 @@
         private System.Windows.Forms.ContextMenuStrip contextMenu;
         private System.Windows.Forms.ToolStripMenuItem menuItemDebugMode;
         private System.Windows.Forms.Label labelVersion;
+        private System.Windows.Forms.ContextMenuStrip contextMenuEditor;
+        private System.Windows.Forms.ToolStripMenuItem menuItemEditorCut;
+        private System.Windows.Forms.ToolStripMenuItem menuItemEditorCopy;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem menuItemEditorPaste;
+        private System.Windows.Forms.CheckBox checkBoxOperationsAbort;
     }
 }

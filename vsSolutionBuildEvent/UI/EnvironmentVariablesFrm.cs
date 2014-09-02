@@ -19,9 +19,9 @@ namespace net.r_eg.vsSBE.UI
     public partial class EnvironmentVariablesFrm: Form
     {
         /// <summary>
-        /// Support of output data
+        /// Transport support
         /// </summary>
-        private ITransferEnvironmentVariable _pin;
+        private ITransferDataProperty _pin;
 
         /// <summary>
         /// Work with properties
@@ -33,7 +33,7 @@ namespace net.r_eg.vsSBE.UI
         /// </summary>
         private ConcurrentDictionary<string, List<TMSBuildPropertyItem>> _cacheProperties;
 
-        public EnvironmentVariablesFrm(ITransferEnvironmentVariable pin)
+        public EnvironmentVariablesFrm(ITransferDataProperty pin)
         {
             InitializeComponent();
 
@@ -93,7 +93,7 @@ namespace net.r_eg.vsSBE.UI
 
             foreach(DataGridViewRow row in dataGridViewVariables.Rows) {
                 if(row.Selected) {
-                    _pin.outputName(row.Cells[0].Value.ToString(), getSelectedProject());
+                    _pin.property(row.Cells[0].Value.ToString(), getSelectedProject());
                     this.Dispose();
                     return;
                 }
@@ -172,7 +172,7 @@ namespace net.r_eg.vsSBE.UI
         private void dataGridViewVariables_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if(e.RowIndex >= 0) {
-                _pin.outputName(dataGridViewVariables[0, e.RowIndex].Value.ToString(), getSelectedProject());
+                _pin.property(dataGridViewVariables[0, e.RowIndex].Value.ToString(), getSelectedProject());
                 this.Dispose();
             }
         }
