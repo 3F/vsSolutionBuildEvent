@@ -37,7 +37,7 @@ namespace vsSBETest
         [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void mWildcardsTest()
         {
-            OWPMatcher_Accessor target = new OWPMatcher_Accessor();
+            OWPMatcherAccessor.ToWildcards target = new OWPMatcherAccessor.ToWildcards();
             
             string raw          = "new tes;ted project-12, and 75_protection of various systems.";
             string rawExpected  = raw;
@@ -54,7 +54,7 @@ namespace vsSBETest
         [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void mWildcardsTest1()
         {
-            OWPMatcher_Accessor target = new OWPMatcher_Accessor();
+            OWPMatcherAccessor.ToWildcards target = new OWPMatcherAccessor.ToWildcards();
 
             string raw = "new tes;ted project-12, and 75_protection of various systems";
             
@@ -71,6 +71,19 @@ namespace vsSBETest
             Assert.AreEqual(true, target.mWildcards("+", ref raw));
             Assert.AreEqual(true, target.mWildcards("new+systems", ref raw));
             Assert.AreEqual(false, target.mWildcards("systems+", ref raw));
+        }
+
+        internal class OWPMatcherAccessor
+        {
+            public class Accessor: OWPMatcher {}
+
+            public class ToWildcards: Accessor
+            {
+                public new bool mWildcards(string term, ref string raw)
+                {
+                    return base.mWildcards(term, ref raw);
+                }
+            }
         }
     }
 }

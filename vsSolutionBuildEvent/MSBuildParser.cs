@@ -640,33 +640,6 @@ namespace net.r_eg.vsSBE
             return null;
         }
 
-        /// <summary>
-        /// Getting the project name and format unevaluated variable
-        /// ~ (variable:project) -> variable & project
-        /// </summary>
-        /// <param name="unevaluated">to be formatted after handling</param>
-        /// <returns>project name or null if not present</returns>
-        private string _splitGeneralProjectAttr(ref string unevaluated)
-        {
-            unevaluated = unevaluated.Substring(1, unevaluated.Length - 2);
-            int pos     = unevaluated.LastIndexOf(':');
-
-            if(pos == -1) {
-                return null; //(ProjectOutputFolder.Substring(0, 1)), (OS), (OS.Length)
-            }
-            if(unevaluated.ElementAt(pos - 1).CompareTo(':') == 0) {
-                return null; //([System.DateTime]::Now), ([System.Guid]::NewGuid())
-            }
-            if(unevaluated.IndexOf(')', pos) != -1) {
-                return null; // allow only for latest block (general option)  :project)) | :project) ... )-> :project)
-            }
-
-            string project  = unevaluated.Substring(pos + 1, unevaluated.Length - pos - 1);
-            unevaluated     = unevaluated.Substring(0, pos);
-
-            return project;
-        }
-
         private bool _isPropertySimple(ref string unevaluated)
         {
             if(unevaluated.IndexOfAny(new char[]{'.', ':', '(', ')', '\'', '"', '[', ']'}) != -1) {

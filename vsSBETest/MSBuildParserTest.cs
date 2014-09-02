@@ -35,83 +35,11 @@ namespace vsSBETest
         }
 
         /// <summary>
-        ///A test for _splitGeneralProjectAttr
+        ///A test for getProperty
         ///</summary>
         [TestMethod()]
         [DeploymentItem("vsSolutionBuildEvent.dll")]
-        public void _splitGeneralProjectAttrTest()
-        {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
-
-            string unevaluated  = "(name:project)";
-            string expectedArg  = "name";
-            string expectedRet  = "project";
-
-            string actual = target._splitGeneralProjectAttr(ref unevaluated);
-            Assert.AreEqual(expectedArg, unevaluated);
-            Assert.AreEqual(expectedRet, actual);
-        }
-
-        /// <summary>
-        ///A test for _splitGeneralProjectAttr
-        ///</summary>
-        [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
-        public void _splitGeneralProjectAttrTest2()
-        {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
-
-            string unevaluated  = "([class]::func($(path:project), $([class]::func2($(path2)):project)):project)";
-            string expectedArg  = "[class]::func($(path:project), $([class]::func2($(path2)):project))";
-            string expectedRet  = "project";
-
-            string actual = target._splitGeneralProjectAttr(ref unevaluated);
-            Assert.AreEqual(expectedArg, unevaluated);
-            Assert.AreEqual(expectedRet, actual);
-        }
-
-        /// <summary>
-        ///A test for _splitGeneralProjectAttr
-        ///</summary>
-        [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
-        public void _splitGeneralProjectAttrTest3()
-        {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
-
-            string unevaluated  = "(name)";
-            string expectedArg  = "name";
-            string expectedRet  = null;
-
-            string actual = target._splitGeneralProjectAttr(ref unevaluated);
-            Assert.AreEqual(expectedArg, unevaluated);
-            Assert.AreEqual(expectedRet, actual);
-        }
-
-        /// <summary>
-        ///A test for _splitGeneralProjectAttr
-        ///</summary>
-        [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
-        public void _splitGeneralProjectAttrTest4()
-        {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
-
-            string unevaluated  = "([class]::func($(path:project), $([class]::func2($(path2)):project)):project))";
-            string expectedArg  = "[class]::func($(path:project), $([class]::func2($(path2)):project)):project)";
-            string expectedRet  = null;
-
-            string actual = target._splitGeneralProjectAttr(ref unevaluated);
-            Assert.AreEqual(expectedArg, unevaluated);
-            Assert.AreEqual(expectedRet, actual);
-        }
-
-        /// <summary>
-        ///A test for _getSolutionGlobalProperty
-        ///</summary>
-        [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
-        public void _getSolutionGlobalPropertyTest()
+        public void getPropertyTest()
         {
             var mockDte2                    = new Mock<EnvDTE80.DTE2>();
             var mockSolution                = new Mock<EnvDTE.Solution>();
@@ -125,11 +53,9 @@ namespace vsSBETest
             mockSolution.SetupGet(p => p.SolutionBuild).Returns(mockSolutionBuild.Object);
             mockDte2.SetupGet(p => p.Solution).Returns(mockSolution.Object);
 
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor(mockDte2.Object);
-            Assert.IsNotNull(target._getSolutionGlobalProperty("Configuration"));
-            Assert.IsNotNull(target._getSolutionGlobalProperty("Platform"));
-            Assert.IsNull(target._getSolutionGlobalProperty("Foo"));
-            Assert.IsNull(target._getSolutionGlobalProperty(null));
+            MSBuildParser target = new MSBuildParser(mockDte2.Object);
+            Assert.IsNotNull(target.getProperty("Configuration"));
+            Assert.IsNotNull(target.getProperty("Platform"));
         }
 
         /// <summary>
@@ -138,7 +64,7 @@ namespace vsSBETest
         [TestMethod()]
         public void parseCustomVariableTest()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
+            MSBuildParser target = new MSBuildParser((DTE2)null);
 
             string expected = "$(name)";
             string actual   = target.parseCustomVariable("$(name)", "subname", "value");
@@ -151,7 +77,7 @@ namespace vsSBETest
         [TestMethod()]
         public void parseCustomVariableTest2()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
+            MSBuildParser target = new MSBuildParser((DTE2)null);
 
             string expected = "value";
             string actual   = target.parseCustomVariable("$(name)", "name", "value");
@@ -164,7 +90,7 @@ namespace vsSBETest
         [TestMethod()]
         public void parseCustomVariableTest3()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
+            MSBuildParser target = new MSBuildParser((DTE2)null);
 
             string expected = "$$(name)";
             string actual   = target.parseCustomVariable("$$(name)", "name", "value");
@@ -177,7 +103,7 @@ namespace vsSBETest
         [TestMethod()]
         public void parseCustomVariableTest4()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
+            MSBuildParser target = new MSBuildParser((DTE2)null);
 
             string expected = String.Empty;
             string actual   = target.parseCustomVariable("$(name)", "name", null);
@@ -192,8 +118,7 @@ namespace vsSBETest
         [ExpectedException(typeof(NotSupportedException))]
         public void prepareVariablesTest()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
-            TPreparedData actual = target.prepareVariables("var=$(Path:project):project");
+            (new MSBuildParserAccessor.ToPrepareVariables()).prepareVariables("var=$(Path:project2):project");
         }
 
         /// <summary>
@@ -204,8 +129,7 @@ namespace vsSBETest
         [ExpectedException(typeof(NotSupportedException))]
         public void prepareVariablesTest2()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
-            TPreparedData actual = target.prepareVariables("$(var=$(Path:project):project)");
+            (new MSBuildParserAccessor.ToPrepareVariables()).prepareVariables("$(var=$(Path:project2):project)");
         }
 
         /// <summary>
@@ -215,7 +139,7 @@ namespace vsSBETest
         [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest3()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
+            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
 
             string raw = "(var=$(Path:project2):project)";
 
@@ -241,7 +165,7 @@ namespace vsSBETest
         [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest4()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
+            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
 
             string raw = "(#var=$(Path:project2):project)";
 
@@ -267,7 +191,7 @@ namespace vsSBETest
         [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest5()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
+            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
 
             string raw = "(Path:project)";
 
@@ -293,7 +217,7 @@ namespace vsSBETest
         [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest6()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
+            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
 
             string raw = "(Path)";
 
@@ -320,7 +244,7 @@ namespace vsSBETest
         [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest7()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
+            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
 
             string raw = "(var=$$(Path:project2):project)";
 
@@ -346,7 +270,7 @@ namespace vsSBETest
         [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest8()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
+            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
 
             string raw = "(var=$(Path.Replace('\', '/')):project)";
 
@@ -372,7 +296,7 @@ namespace vsSBETest
         [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest9()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
+            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
 
             string raw = "(Path.Replace('\', '/'))";
 
@@ -398,7 +322,7 @@ namespace vsSBETest
         [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest10()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
+            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
 
             string raw = "(var=$(Path:project))";
 
@@ -424,7 +348,7 @@ namespace vsSBETest
         [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest11()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
+            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
 
             string raw = "($(Path:project))";
 
@@ -450,7 +374,7 @@ namespace vsSBETest
         [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest12()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
+            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
 
             string raw = "(var=$$(Path:project))";
 
@@ -476,7 +400,7 @@ namespace vsSBETest
         [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void evaluateVariableTest()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
+            MSBuildParserAccessor.ToEvaluateVariable target = new MSBuildParserAccessor.ToEvaluateVariable();
 
             TPreparedData prepared  = new TPreparedData();
             prepared.variable.name          = "var";
@@ -514,7 +438,7 @@ namespace vsSBETest
         [TestMethod()]
         public void parseVariablesMSBuildTest2()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
+            MSBuildParser target = new MSBuildParser((DTE2)null);
 
             string actual   = target.parseVariablesMSBuild("FooBar");
             string expected = "FooBar";
@@ -528,7 +452,7 @@ namespace vsSBETest
         [TestMethod()]
         public void parseVariablesMSBuildTest3()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
+            MSBuildParser target = new MSBuildParser((DTE2)null);
                         
             string actual   = target.parseVariablesMSBuild("$$(Path.Replace('\', '/'):project)");
             string expected = "$(Path.Replace('\', '/'):project)";
@@ -542,7 +466,7 @@ namespace vsSBETest
         [TestMethod()]
         public void parseVariablesMSBuildTest4()
         {
-            MSBuildParser_Accessor target = new MSBuildParser_Accessor((DTE2)null);
+            MSBuildParserAccessor.ToParseVariablesMSBuild target = new MSBuildParserAccessor.ToParseVariablesMSBuild();
 
             target.definitions["var:project"] = "is a Windows_NT"; //"$(var.Replace('%OS%', $(OS)):project)";
 
@@ -553,19 +477,54 @@ namespace vsSBETest
         /// <summary>
         ///A test for parseVariablesMSBuild
         ///</summary>
-        
-        class AccessorToParseVariablesMSBuildTest5: MSBuildParser
-        {
-            public override string evaluateVariable(string u, string p) { return u; }
-            public AccessorToParseVariablesMSBuildTest5() : base((DTE2)null) { }
-        }
-
         [TestMethod()]
         public void parseVariablesMSBuildTest5()
         {
             string data     = "$((var.Replace('%OS%', $(OS)):project).Concat($($(Path:project2).Replace('.', '_')), ' ($()) '))";
-            string actual   = (new AccessorToParseVariablesMSBuildTest5()).parseVariablesMSBuild(data);
+            string actual   = (new MSBuildParserAccessor.ToParseVariablesMSBuild()).parseVariablesMSBuild(data);
             Assert.AreEqual(data, actual);
+        }
+    }
+
+    internal class MSBuildParserAccessor
+    {
+        public class Accessor: MSBuildParser
+        {
+            public Accessor(): base((DTE2)null) {}
+            public Accessor(DTE2 dte2): base(dte2) {}
+        }
+
+        public class ToParseVariablesMSBuild: Accessor
+        {
+            public new System.Collections.Concurrent.ConcurrentDictionary<string, string> definitions
+            {
+                get { return base.definitions; }
+                set { base.definitions = value; }
+            }
+
+            public override string evaluateVariable(string u, string p) { return u; }
+        }
+
+        public class ToPrepareVariables: Accessor
+        {
+            public new TPreparedData prepareVariables(string raw)
+            {
+                return base.prepareVariables(raw);
+            }
+        }
+
+        public class ToEvaluateVariable: Accessor
+        {
+            public new System.Collections.Concurrent.ConcurrentDictionary<string, string> definitions
+            {
+                get { return base.definitions; }
+                set { base.definitions = value; }
+            }
+
+            public new string evaluateVariable(TPreparedData prepared)
+            {
+                return base.evaluateVariable(prepared);
+            }
         }
     }
 }

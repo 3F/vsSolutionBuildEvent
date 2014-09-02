@@ -51,7 +51,7 @@ namespace vsSBETest
         public void extractTest()
         {
             string rawdata = String.Empty;
-            OutputWPBuildParser_Accessor target = new OutputWPBuildParser_Accessor(ref rawdata);
+            OutputWPBuildParserAccessor.ToExtract target = new OutputWPBuildParserAccessor.ToExtract(ref rawdata);
 
             Assert.IsTrue(target.ErrorsCount < 1);
             Assert.IsTrue(target.WarningsCount < 1);
@@ -71,7 +71,7 @@ namespace vsSBETest
         public void extractTest2()
         {
             string rawdata = @"9>C:\VC\atlmfc\include\atlhost.h(422): warning C4505: 'ATL::CAxHostWindow::AddRef' : unreferenced local function has been removed";
-            OutputWPBuildParser_Accessor target = new OutputWPBuildParser_Accessor(ref rawdata);
+            OutputWPBuildParser target = new OutputWPBuildParser(ref rawdata);
             Assert.IsTrue(target.ErrorsCount < 1);
             Assert.IsTrue(target.WarningsCount == 1);
         }
@@ -84,7 +84,7 @@ namespace vsSBETest
         public void extractTest3()
         {
             string rawdata = @"11>windows\Search.cpp(2246): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int";
-            OutputWPBuildParser_Accessor target = new OutputWPBuildParser_Accessor(ref rawdata);
+            OutputWPBuildParser target = new OutputWPBuildParser(ref rawdata);
             Assert.IsTrue(target.ErrorsCount == 1);
             Assert.IsTrue(target.WarningsCount < 1);
         }
@@ -96,7 +96,7 @@ namespace vsSBETest
         public void checkRuleTest()
         {
             string rawdata = String.Empty;
-            OutputWPBuildParser_Accessor target = new OutputWPBuildParser_Accessor(ref rawdata);
+            OutputWPBuildParserAccessor.ToCheckRule target = new OutputWPBuildParserAccessor.ToCheckRule(ref rawdata);
             
             target.warnings = new List<string>() { "C4505" };
             Assert.AreEqual(true, target.checkRule(OutputWPBuildParser.Type.Warnings, true, new List<string>()));
@@ -114,7 +114,7 @@ namespace vsSBETest
         public void checkRuleTest2()
         {
             string rawdata = String.Empty;
-            OutputWPBuildParser_Accessor target = new OutputWPBuildParser_Accessor(ref rawdata);
+            OutputWPBuildParserAccessor.ToCheckRule target = new OutputWPBuildParserAccessor.ToCheckRule(ref rawdata);
 
             target.warnings = new List<string>() { "C4505", "C4507" };
             Assert.AreEqual(false, target.checkRule(OutputWPBuildParser.Type.Warnings, true, new List<string>() { "C4506" }));
@@ -132,7 +132,7 @@ namespace vsSBETest
         public void checkRuleTest3()
         {
             string rawdata = String.Empty;
-            OutputWPBuildParser_Accessor target = new OutputWPBuildParser_Accessor(ref rawdata);
+            OutputWPBuildParserAccessor.ToCheckRule target = new OutputWPBuildParserAccessor.ToCheckRule(ref rawdata);
 
             target.warnings = new List<string>() { "C4505", "C4507" };
             Assert.AreEqual(true, target.checkRule(OutputWPBuildParser.Type.Warnings, true, new List<string>() { "C4507" }));
@@ -150,7 +150,7 @@ namespace vsSBETest
         public void checkRuleTest4()
         {
             string rawdata = String.Empty;
-            OutputWPBuildParser_Accessor target = new OutputWPBuildParser_Accessor(ref rawdata);
+            OutputWPBuildParserAccessor.ToCheckRule target = new OutputWPBuildParserAccessor.ToCheckRule(ref rawdata);
 
             target.warnings = new List<string>() { "C4505", "C4507" };
             Assert.AreEqual(false, target.checkRule(OutputWPBuildParser.Type.Warnings, false, new List<string>()));
@@ -170,7 +170,7 @@ namespace vsSBETest
         public void checkRuleTest5()
         {
             string rawdata = String.Empty;
-            OutputWPBuildParser_Accessor target = new OutputWPBuildParser_Accessor(ref rawdata);
+            OutputWPBuildParserAccessor.ToCheckRule target = new OutputWPBuildParserAccessor.ToCheckRule(ref rawdata);
 
             target.warnings = new List<string>() { "C4505", "C4507" };
             Assert.AreEqual(true, target.checkRule(OutputWPBuildParser.Type.Warnings, false, new List<string>() { "C4507" }));
@@ -188,7 +188,7 @@ namespace vsSBETest
         public void checkRuleTest6()
         {
             string rawdata = String.Empty;
-            OutputWPBuildParser_Accessor target = new OutputWPBuildParser_Accessor(ref rawdata);
+            OutputWPBuildParserAccessor.ToCheckRule target = new OutputWPBuildParserAccessor.ToCheckRule(ref rawdata);
 
             target.warnings = new List<string>() { "C4505" };
             Assert.AreEqual(false, target.checkRule(OutputWPBuildParser.Type.Warnings, false, new List<string>() { "C4505" }));
@@ -197,6 +197,47 @@ namespace vsSBETest
             target.errors = new List<string>() { "C4430" };
             Assert.AreEqual(false, target.checkRule(OutputWPBuildParser.Type.Errors, false, new List<string>() { "C4430" }));
             target.errors.Clear();
+        }
+
+        internal class OutputWPBuildParserAccessor
+        {
+            public class Accessor: OutputWPBuildParser
+            {
+                public Accessor(ref string rawdata): base(ref rawdata) { }
+            }
+
+            public class ToCheckRule: Accessor
+            {
+                public new List<string> errors
+                {
+                    get { return base.errors; }
+                    set { base.errors = value; }
+                }
+
+                public new List<string> warnings
+                {
+                    get { return base.warnings; }
+                    set { base.warnings = value; }
+                }
+
+                public ToCheckRule(ref string rawdata): base(ref rawdata) { }
+            }
+
+            public class ToExtract: Accessor
+            {
+                public new string rawdata
+                {
+                    get { return base.rawdata; }
+                    set { base.rawdata = value; }
+                }
+
+                public new void extract()
+                {
+                    base.extract();
+                }
+
+                public ToExtract(ref string rawdata): base(ref rawdata) { }
+            }
         }
     }
 }
