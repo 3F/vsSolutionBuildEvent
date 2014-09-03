@@ -31,18 +31,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Events
 {
-    public class SBEEventOWP: SBEEvent, ISolutionEventOWP
+    public class SBEEventEW: SBEEvent, ISolutionEventEW
     {
-        private List<TEventOWP> _eventsOWP = new List<TEventOWP>();
+        private List<string> _codes = new List<string>();
         /// <summary>
-        /// List of term
+        /// list of code####
+        /// ..and "for all" if empty
         /// </summary>
-        public List<TEventOWP> eventsOWP
+        public List<string> codes
         {
-            get { return _eventsOWP; }
-            set { _eventsOWP = value; }
+            get { return _codes; }
+            set { _codes = value; }
+        }
+
+        private bool _isWhitelist = true;
+        /// <summary>
+        /// Whitelist or Blacklist codes
+        /// </summary>
+        public bool isWhitelist
+        {
+            get { return _isWhitelist; }
+            set { _isWhitelist = value; }
         }
     }
 }

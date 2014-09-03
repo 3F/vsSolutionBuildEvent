@@ -34,8 +34,9 @@ using System.Diagnostics;
 using EnvDTE80;
 using System.Runtime.InteropServices;
 using System.Globalization;
+using net.r_eg.vsSBE.Events;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Actions
 {
     public class SBECommand
     {

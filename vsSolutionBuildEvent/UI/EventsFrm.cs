@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using EnvDTE80;
+using net.r_eg.vsSBE.Events;
 
 namespace net.r_eg.vsSBE.UI
 {

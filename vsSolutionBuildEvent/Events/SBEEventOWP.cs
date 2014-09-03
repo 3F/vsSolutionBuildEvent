@@ -31,42 +31,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Events
 {
-    /// <summary>
-    /// Errors & Warnings
-    /// </summary>
-    public interface ISolutionEventOWP: ISolutionEvent
+    public class SBEEventOWP: SBEEvent, ISolutionEventOWP
     {
+        private List<TEventOWP> _eventsOWP = new List<TEventOWP>();
         /// <summary>
         /// List of term
         /// </summary>
-        List<TEventOWP> eventsOWP { get; set; }
-    }
-
-    public enum TEventOWPTerm
-    {
-        Default,
-        Regexp,
-
-        // TODO: find or a porting - ESS / EXT:
-        // https://bitbucket.org/3F/sandbox/src/2bc1073f9953ddc3d9289c924059bc0d0e0bd9e4/cpp/text/wildcards/wildcards/versions/essential/AlgorithmEss.h?at=master-C%2B%2B
-        Wildcards
-    }
-
-    /// <summary>
-    /// Customization of OutputWindowPane
-    /// </summary>
-    public class TEventOWP
-    {
-        /// <summary>
-        /// various condition
-        /// </summary>
-        public string term { get; set; }
-
-        /// <summary>
-        /// type of recognition
-        /// </summary>
-        public TEventOWPTerm type { get; set; }
+        public List<TEventOWP> eventsOWP
+        {
+            get { return _eventsOWP; }
+            set { _eventsOWP = value; }
+        }
     }
 }

@@ -31,7 +31,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Events
 {
     public interface ISolutionEvent
     {
@@ -122,7 +122,7 @@ namespace net.r_eg.vsSBE
     }
 
     /// <summary>
-    /// Single DTE operation
+    /// Atomic DTE operation
     /// </summary>
     public class TOperation
     {

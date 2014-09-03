@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using System.IO;
+using net.r_eg.vsSBE.Events;
 
 namespace net.r_eg.vsSBE.Upgrade
 {

@@ -31,22 +31,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
     /// Errors & Warnings
     /// </summary>
-    public interface ISolutionEventEW: ISolutionEvent
+    public interface ISolutionEventOWP: ISolutionEvent
     {
         /// <summary>
-        /// list of code####
-        /// ..and "for all" if empty
+        /// List of term
         /// </summary>
-        List<string> codes { get; set; }
+        List<TEventOWP> eventsOWP { get; set; }
+    }
+
+    public enum TEventOWPTerm
+    {
+        Default,
+        Regexp,
+        Wildcards
+    }
+
+    /// <summary>
+    /// Customization of OutputWindowPane
+    /// </summary>
+    public struct TEventOWP
+    {
+        /// <summary>
+        /// various condition
+        /// </summary>
+        public string term { get; set; }
 
         /// <summary>
-        /// Whitelist or Blacklist codes
+        /// type of recognition
         /// </summary>
-        bool isWhitelist { get; set; }
+        public TEventOWPTerm type { get; set; }
     }
 }
