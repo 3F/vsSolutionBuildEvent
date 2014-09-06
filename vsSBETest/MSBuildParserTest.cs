@@ -6,6 +6,7 @@ using Microsoft.Build.Evaluation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using net.r_eg.vsSBE;
+using net.r_eg.vsSBE.Exceptions;
 
 namespace vsSBETest
 {
@@ -115,7 +116,7 @@ namespace vsSBETest
         ///</summary>
         [TestMethod()]
         [DeploymentItem("vsSolutionBuildEvent.dll")]
-        [ExpectedException(typeof(NotSupportedException))]
+        [ExpectedException(typeof(IncorrectSyntaxException))]
         public void prepareVariablesTest()
         {
             (new MSBuildParserAccessor.ToPrepareVariables()).prepareVariables("var=$(Path:project2):project");
@@ -126,7 +127,7 @@ namespace vsSBETest
         ///</summary>
         [TestMethod()]
         [DeploymentItem("vsSolutionBuildEvent.dll")]
-        [ExpectedException(typeof(NotSupportedException))]
+        [ExpectedException(typeof(IncorrectSyntaxException))]
         public void prepareVariablesTest2()
         {
             (new MSBuildParserAccessor.ToPrepareVariables()).prepareVariables("$(var=$(Path:project2):project)");

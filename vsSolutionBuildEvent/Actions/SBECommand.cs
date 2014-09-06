@@ -84,34 +84,14 @@ namespace net.r_eg.vsSBE.Actions
         private SBEContext _context = null;
 
         /// <summary>
-        /// type for recursive DTE commands
-        /// </summary>
-        private SBEQueueDTE.Type _queueType;
-        private SBEQueueDTE.Rec _QueueRec
-        {
-            get { return SBEQueueDTE.queue[_queueType]; }
-            set {
-                if(!SBEQueueDTE.queue.ContainsKey(_queueType)) {
-                    SBEQueueDTE.queue[_queueType] = value;
-                }
-            }
-        }
-
-        /// <summary>
-        /// object synch.
-        /// </summary>
-        private Object _eLock = new Object();
-
-        /// <summary>
         /// basic implementation
         /// </summary>
         /// <param name="evt">provided sbe-events</param>
-        public bool basic(ISolutionEvent evt, SBEQueueDTE.Type type)
+        public bool basic(ISolutionEvent evt)
         {
             if(!evt.enabled){
                 return false;
             }
-            _queueType = type;
 
             Log.nlog.Info("Launching '{0}'", evt.caption);
             switch(evt.mode) {
@@ -134,17 +114,16 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="evt"></param>
         /// <param name="raw"></param>
         /// <returns></returns>
-        public bool supportOWP(ISolutionEvent evt, SBEQueueDTE.Type type, string raw)
+        public bool supportOWP(ISolutionEvent evt, string raw)
         {
             owpDataRaw = raw;
-            return basic(evt, type);
+            return basic(evt);
         }
 
         public SBECommand(DTE2 dte2, MSBuildParser parser)
         {
             _context    = new SBEContext(Config.WorkPath, letDisk(Config.WorkPath));
             this.dte2   = dte2;
-            _QueueRec   = new SBEQueueDTE.Rec();
             this.parser = parser;
         }
 
@@ -160,57 +139,11 @@ namespace net.r_eg.vsSBE.Actions
 
         protected virtual bool hModeOperation(ISolutionEvent evt)
         {
-            lock(_eLock)
-            {
-                if(_QueueRec.level == 0) {
-                    _QueueRec.cmd = evt.dteExec.cmd;
-                }
-
-                if(_QueueRec.cmd.Length < 1) {
-                    return true; //all pushed
-                }
-
-                ++_QueueRec.level;
-
-                string[] newer = new string[_QueueRec.cmd.Length - 1];
-                for(int i = 1; i < _QueueRec.cmd.Length; ++i) {
-                    newer[i - 1] = _QueueRec.cmd[i];
-                }
-                string current = _QueueRec.cmd[0].Trim();
-                _QueueRec.cmd = newer;
-
-                string progressCaption  = String.Format("({0}/{1})", _QueueRec.level, _QueueRec.level + _QueueRec.cmd.Length);
-                Exception terminated    = null;
-                try {
-                    // also error if command not available at current time
-                    // * +causes recursion with Debug.Start, Debug.StartWithoutDebugging, etc.,
-                    Log.nlog.Info("DTE exec {0}: '{1}'", progressCaption, current);
-                    ((EnvDTE.DTE)dte2).ExecuteCommand(current);
-                }
-                catch(Exception ex) {
-                    Log.nlog.Debug("DTE fail {0}: {1} :: '{2}'", progressCaption, ex.Message, current);
-                    terminated = ex;
-                }
-
-                if(_QueueRec.cmd.Length > 0)
-                {
-                    // remaining commands
-                    if(terminated != null && evt.dteExec.abortOnFirstError) {
-                        Log.nlog.Info("DTE exec {0}: Aborted", progressCaption);
-                    }
-                    else {
-                        Log.nlog.Debug("DTE {0}: step into", progressCaption);
-                        hModeOperation(evt);
-                    }
-                }
-
-                --_QueueRec.level;
-
-                if(_QueueRec.level < 1 && terminated != null) {
-                    throw new Exception(terminated.Message, terminated);
-                }
+            if(evt.dteExec.cmd == null || evt.dteExec.cmd.Length < 1) {
                 return true;
             }
+            (new DTEOperation((EnvDTE.DTE)dte2)).exec(evt.dteExec.cmd, evt.dteExec.abortOnFirstError);
+            return true;
         }
 
         protected virtual bool hModeScript(ISolutionEvent evt)
@@ -262,10 +195,7 @@ namespace net.r_eg.vsSBE.Actions
                 args += " & pause";
             }
 
-            //TODO: verbose as option
-            //if() {
-                Log.nlog.Info(cmd);
-            //}
+            Log.nlog.Info(cmd);
 
             //TODO: stdout/stderr capture & add to OWP
 
@@ -302,27 +232,5 @@ namespace net.r_eg.vsSBE.Actions
         {
             return data.Trim(new char[]{'\r', '\n'}).Replace("\r", "").Replace("\n", str);
         }
-    }
-
-    /// <summary>
-    /// Support recursive DTE commands
-    /// e.g.:
-    ///   exec - "Debug.Start"
-    ///   exec - "Debug.Start"
-    ///   exec - "File.Print"
-    /// </summary>
-    public class SBEQueueDTE
-    {
-        public enum Type
-        {
-            PRE, POST, CANCEL, WARNINGS, ERRORS, OWP, TRANSMITTER
-        }
-
-        public class Rec
-        {
-            public int level = 0;
-            public string[] cmd;
-        }
-        public static Dictionary<Type, Rec> queue = new Dictionary<Type, Rec>();
     }
 }

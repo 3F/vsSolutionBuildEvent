@@ -50,7 +50,7 @@ namespace net.r_eg.vsSBE.Actions
         public int bindPre(ref int pfCancelUpdate)
         {
             try {
-                if(sbe.basic(Config.Data.preBuild, SBEQueueDTE.Type.PRE)) {
+                if(sbe.basic(Config.Data.preBuild)) {
                     Log.nlog.Info("[Pre] finished SBE: " + Config.Data.preBuild.caption);
                 }
                 return VSConstants.S_OK;
@@ -69,7 +69,7 @@ namespace net.r_eg.vsSBE.Actions
                     return VSConstants.S_OK;
                 }
 
-                if(sbe.basic(Config.Data.postBuild, SBEQueueDTE.Type.POST)) {
+                if(sbe.basic(Config.Data.postBuild)) {
                     Log.nlog.Info("[Post] finished SBE: " + Config.Data.postBuild.caption);
                 }
                 return VSConstants.S_OK;
@@ -83,7 +83,7 @@ namespace net.r_eg.vsSBE.Actions
         public int bindCancel()
         {
             try {
-                if(sbe.basic(Config.Data.cancelBuild, SBEQueueDTE.Type.CANCEL)) {
+                if(sbe.basic(Config.Data.cancelBuild)) {
                     Log.nlog.Info("[Cancel] finished SBE: " + Config.Data.cancelBuild.caption);
                 }
                 return VSConstants.S_OK;
@@ -97,7 +97,7 @@ namespace net.r_eg.vsSBE.Actions
         void IListenerOWPL.raw(string data)
         {
             try {
-                if(sbe.supportOWP(Config.Data.transmitter, SBEQueueDTE.Type.TRANSMITTER, data)) {
+                if(sbe.supportOWP(Config.Data.transmitter, data)) {
                     //Log.nlog.Trace("[Transmitter]: " + Config.Data.transmitter.caption);
                 }
             }
@@ -128,7 +128,7 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             try {
-                if(sbe.basic(evt, type == OutputWPBuildParser.Type.Warnings ? SBEQueueDTE.Type.WARNINGS : SBEQueueDTE.Type.ERRORS)) {
+                if(sbe.basic(evt)) {
                     Log.nlog.Info("['{0}'] finished SBE: {1}", type.ToString(), evt.caption);
                 }
             }
@@ -144,7 +144,7 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             try {
-                if(sbe.basic(evt, SBEQueueDTE.Type.OWP)) {
+                if(sbe.basic(evt)) {
                     Log.nlog.Info("['{0}'] finished SBE: {1}", "Output", evt.caption);
                 }
             }

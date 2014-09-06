@@ -28,12 +28,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
-using System.Globalization;
+using net.r_eg.vsSBE.Exceptions;
 using NLog;
 
 namespace net.r_eg.vsSBE
@@ -111,8 +112,8 @@ namespace net.r_eg.vsSBE
             catch(ArgumentException) {
                 pane = _dte.ToolWindows.OutputWindow.OutputWindowPanes.Add(OWP_ITEM_NAME);
             }
-            catch(Exception e) {
-                throw new NotSupportedException("Log :: inner exception", e);
+            catch(Exception ex) {
+                throw new ComponentException("Log :: inner exception", ex);
             }
         }
 

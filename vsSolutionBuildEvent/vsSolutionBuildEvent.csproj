@@ -120,6 +120,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\Connection.cs" />
+    <Compile Include="DTEOperation.cs" />
+    <Compile Include="Exceptions\SBEException.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="OWPMatcher.cs" />
     <Compile Include="Events\ISolutionEventOWP.cs" />
@@ -147,7 +149,7 @@
     <Compile Include="OutputWPListener.cs" />
     <Compile Include="OutputWPBuildParser.cs" />
     <Compile Include="MSBuildParser.cs" />
-    <Compile Include="MSBuildParserException.cs" />
+    <Compile Include="Exceptions\MSBuildParserException.cs" />
     <Compile Include="Actions\SBECommand.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="UI\EventsFrm.cs">

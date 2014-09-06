@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -31,28 +31,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Exceptions
 {
-    public class MSBuildParserException: NotSupportedException
+    public class SBEException: NotSupportedException
     {
-        public MSBuildParserException(string msg) : base(msg) { }
+        public SBEException() {}
+        public SBEException(string message): base(message) {}
+        public SBEException(string message, Exception innerException): base(message, innerException) {}
     }
 
-    //TODO:
-    public class MSBuildParserProjectNotFoundException: MSBuildParserException
+    public class IncorrectSyntaxException: SBEException
     {
-        public MSBuildParserProjectNotFoundException(string msg) : base(msg)
-        {
-
-        }
+        public IncorrectSyntaxException(string message): base(message) {}
     }
 
-    //TODO:
-    public class MSBuildParserProjectPropertyNotFoundException: MSBuildParserException
+    public class ComponentException: SBEException
     {
-        public MSBuildParserProjectPropertyNotFoundException(string msg) : base(msg)
-        {
-
-        }
+        public ComponentException(string message): base(message) {}
+        public ComponentException(string message, Exception innerException): base(message, innerException) {}
     }
 }

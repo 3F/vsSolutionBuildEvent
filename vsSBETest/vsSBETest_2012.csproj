@@ -91,6 +91,7 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTEOperationTest.cs" />
     <Compile Include="MSBuildParserTest.cs" />
     <Compile Include="OutputWPBuildParserTest.cs" />
     <Compile Include="OWPMatcherTest.cs" />

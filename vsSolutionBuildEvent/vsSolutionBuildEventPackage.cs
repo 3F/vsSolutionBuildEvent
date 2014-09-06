@@ -20,6 +20,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.Win32;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events;
+using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.UI;
 
 namespace net.r_eg.vsSBE
@@ -136,7 +137,7 @@ namespace net.r_eg.vsSBE
         {
             ToolWindowPane window = FindToolWindow(typeof(UI.StatusToolWindow), 0, true); // find or create
             if(window == null || window.Frame == null) {
-                throw new NotSupportedException("Cannot create UI.StatusToolWindow");
+                throw new ComponentException("Cannot create UI.StatusToolWindow");
             }
             ErrorHandler.ThrowOnFailure(((IVsWindowFrame)window.Frame).Show());
         }

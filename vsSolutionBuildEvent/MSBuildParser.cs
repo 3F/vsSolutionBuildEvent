@@ -39,6 +39,7 @@ using EnvDTE80;
 using Microsoft.Build.Collections;
 using Microsoft.Build.Evaluation;
 using Microsoft.VisualStudio.Shell.Interop;
+using net.r_eg.vsSBE.Exceptions;
 
 namespace net.r_eg.vsSBE
 {
@@ -133,7 +134,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         /// <param name="name">key of property</param>
         /// <param name="projectName">Specific project</param>
-        /// <exception cref="MSBuildParserProjectPropertyNotFoundException">problem with getting property</exception>
+        /// <exception cref="MSBPropertyNotFoundException">problem with getting property</exception>
         /// <returns>Evaluated value of property</returns>
         public string getProperty(string name, string projectName)
         {
@@ -152,7 +153,7 @@ namespace net.r_eg.vsSBE
             if(prop != null) {
                 return prop.EvaluatedValue;
             }
-            throw new MSBuildParserProjectPropertyNotFoundException(String.Format("variable - '{0}' : project - '{1}'", name, (projectName == null) ? "<default>" : projectName));
+            throw new MSBPropertyNotFoundException(String.Format("variable - '{0}' : project - '{1}'", name, (projectName == null) ? "<default>" : projectName));
         }
 
         public List<TMSBuildPropertyItem> listProperties(string projectName = null)
@@ -349,7 +350,7 @@ namespace net.r_eg.vsSBE
 
             if(!m.Success) {
                 Log.nlog.Debug("impossible to prepare data '{0}'", raw);
-                throw new NotSupportedException(String.Format("prepare failed - '{0}'", raw)); //TODO
+                throw new IncorrectSyntaxException(String.Format("prepare failed - '{0}'", raw));
             }
             bool hasVar     = m.Groups[2].Success;
             bool hasProject = m.Groups[3].Success ? true : false;
@@ -468,7 +469,7 @@ namespace net.r_eg.vsSBE
         /// if the project as null then selected startup-project in the list or the first with the same Configuration & Platform
         /// </summary>
         /// <param name="project">Specific project</param>
-        /// <exception cref="MSBuildParserProjectNotFoundException">something wrong with loaded projects</exception>
+        /// <exception cref="MSBProjectNotFoundException">something wrong with loaded projects</exception>
         /// <returns>Microsoft.Build.Evaluation.Project</returns>
         protected virtual Project getProject(string project = null)
         {
@@ -503,7 +504,7 @@ namespace net.r_eg.vsSBE
                 Log.nlog.Debug("getProject->selected '{0}'", selected.FullName);
                 return tryLoadPCollection(selected);
             }
-            throw new MSBuildParserProjectNotFoundException(String.Format("not found project: '{0}' [sturtup: '{1}']", project, sturtup));
+            throw new MSBProjectNotFoundException(String.Format("not found project: '{0}' [sturtup: '{1}']", project, sturtup));
         }
 
         protected bool isEquals(EnvDTE.Project dteProject, Project eProject)
