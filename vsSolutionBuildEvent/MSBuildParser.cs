@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -40,6 +40,7 @@ using Microsoft.Build.Collections;
 using Microsoft.Build.Evaluation;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.MSBuild;
 
 namespace net.r_eg.vsSBE
 {
@@ -134,9 +135,9 @@ namespace net.r_eg.vsSBE
         /// </summary>
         /// <param name="name">key of property</param>
         /// <param name="projectName">Specific project</param>
-        /// <exception cref="MSBPropertyNotFoundException">problem with getting property</exception>
+        /// <exception cref="MSBPropertyNotFoundException"></exception>
         /// <returns>Evaluated value of property</returns>
-        public string getProperty(string name, string projectName)
+        public virtual string getProperty(string name, string projectName)
         {
             if(projectName == null)
             {
@@ -330,6 +331,7 @@ namespace net.r_eg.vsSBE
         }
 
         /// <param name="raw">raw data at format - '(..data..)'</param>
+        /// <exception cref="IncorrectSyntaxException"></exception>
         protected TPreparedData prepareVariables(string raw)
         {
             TPreparedData ret = new TPreparedData();
@@ -376,8 +378,8 @@ namespace net.r_eg.vsSBE
                     ret.variable.project = project;
                 }
                 else {
-                    // can be variable variables e.g.: ($(var:project):project)
-                    ret.property.project = project; // TODO
+                    // should be variable of variable e.g.: ($(var:project):project)
+                    ret.property.project = project;
                 }
             }
 
@@ -415,11 +417,13 @@ namespace net.r_eg.vsSBE
                 return ret;
             }
 
-            //TODO: internal projects
             ret.property.unevaluated = ret.property.raw;
             if(!ret.property.unevaluated.StartsWith("$(")) {
                 ret.property.unevaluated = String.Format("$({0})", ret.property.unevaluated);
             }
+
+            // nested data
+            ret = prepareNested(ret);
 
             Log.nlog.Debug("Prepared: step out");
             return ret;
@@ -446,9 +450,13 @@ namespace net.r_eg.vsSBE
                 Log.nlog.Debug("Evaluate: escaped value");
                 evaluated = prepared.property.unevaluated;
             }
-            else{
-                Log.nlog.Debug("Evaluate: use the evaluateVariable");
-                evaluated = evaluateVariable(prepared.property.unevaluated, prepared.property.project);
+            else
+            {
+                Log.nlog.Debug("Evaluate: use the evaluateVariable :: nested {0}", prepared.property.nested.nodes.Count);
+                string unevaluated = prepared.property.nested.hasProperty ? buildNested(prepared.property.nested) : prepared.property.unevaluated;
+
+                Log.nlog.Debug("Evaluate: ready to '{0}'", unevaluated);
+                evaluated = evaluateVariable(unevaluated, prepared.property.project);
             }
 
             if(!String.IsNullOrEmpty(prepared.variable.name))
@@ -462,6 +470,177 @@ namespace net.r_eg.vsSBE
 
             Log.nlog.Debug("Evaluated: '{0}'", evaluated);
             return evaluated;
+        }
+
+        /// <summary>
+        /// Work with complex nested data
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="limit">Maximum of nesting level. Aborts if reached</param>
+        /// <exception cref="MSBPropertyParseException"></exception>
+        /// <exception cref="LimitException"></exception>
+        /// <returns></returns>
+        protected TPreparedData prepareNested(TPreparedData data, int limit = 50)
+        {
+            if(String.IsNullOrEmpty(data.property.unevaluated)) {
+                throw new MSBPropertyParseException(String.Format("the 'unevaluated' of TPreparedData is empty. raw == '{0}'", data.property.raw));
+            }
+
+            data.property.nested        = new TPreparedData.Nested();
+            data.property.nested.nodes  = new Dictionary<int, List<TPreparedData.Nested.Node>>();
+            string unevaluated          = data.property.unevaluated;
+
+            string patternC = @"(
+                                  (?:
+                                      ""          # notice: "" - is a single double quote, i.e. escaped in @ mode
+                                       (?:
+                                          [^""\\]
+                                        |
+                                          \\""?
+                                       )*""
+                                   |
+                                     '(?:
+                                         [^'\\]
+                                       |
+                                         \\.'?
+                                      )*'
+                                  )
+                                )            #1 - strings - "", ''
+                                ([\s,)])     #2 - limiter symbol";
+
+
+            string patternV = @"(?:
+                                    (
+                                      \${1,2}     #1 - $ or $$
+                                    )
+                                    \(
+                                      (
+                                        [^$:)]+
+                                        [^:]
+                                      )           #2 - name
+                                      :
+                                      (
+                                        [^:]
+                                        [^$()]+
+                                      )           #3 - project
+                                    \)
+                                 |
+                                    !p!
+                                )";
+
+            Log.nlog.Debug("nested: started with '{0}'", unevaluated);
+            Func<bool> h = null;
+            h = delegate()
+            {
+                int level = data.property.nested.nodes.Count;
+
+                if(level > limit) {
+                    throw new LimitException(String.Format("Nesting level of '{0}' reached. Aborted.", limit));
+                }
+                data.property.nested.nodes[level] = new List<TPreparedData.Nested.Node>();
+
+                // string arguments
+
+                unevaluated = Regex.Replace(unevaluated, patternC, delegate(Match m)
+                {
+                    data.property.nested.nodes[level].Add(
+                        new TPreparedData.Nested.Node(m.Groups[1].Value, TPreparedData.Nested.TypeValue.String)
+                    );
+                    Log.nlog.Debug("nested: added string '{0}' :: level {1}", m.Groups[1].Value, level);
+
+                    // no conflict, because all variants with '!' as argument is not possible without quotes.
+                    return String.Format("!p{0}!{1}", level, m.Groups[2].Value);
+                }, RegexOptions.IgnorePatternWhitespace);
+
+                if(data.property.nested.nodes[level].Count > 0)
+                {
+                    data.property.nested.data = unevaluated;
+                    //Log.nlog.Debug("nested: '{0}' :: level {1}", unevaluated, level);
+
+                    level = data.property.nested.nodes.Count;
+                    data.property.nested.nodes[level] = new List<TPreparedData.Nested.Node>();
+                }
+
+                // complex-type arguments
+
+                data.property.nested.nodes[level] = _nestedComplex(data.property, ref patternV, ref unevaluated, level);
+
+                if(data.property.nested.nodes[level].Count > 0) {
+                    data.property.nested.data           = unevaluated;
+                    data.property.nested.hasProperty    = true;
+                    //Log.nlog.Debug("nested: '{0}' :: level {1}", unevaluated, level);
+                }
+
+                if(Regex.Match(unevaluated, patternV, RegexOptions.IgnorePatternWhitespace).Success
+                    || Regex.Match(unevaluated, patternC, RegexOptions.IgnorePatternWhitespace).Success)
+                {
+                    Log.nlog.Debug("nested: step in");
+                    h();
+                }
+                return true;
+            };
+            h();
+
+            data.property.completed = true;
+            data.property.complex   = true;
+
+            Log.nlog.Debug("nested: completed");
+            return data;
+        }
+
+        /// <summary>
+        /// Final assembly for nested levels
+        /// </summary>
+        /// <param name="nested"></param>
+        /// <exception cref="MismatchException"></exception>
+        /// <returns></returns>
+        protected string buildNested(TPreparedData.Nested nested)
+        {
+            string data = nested.data;
+            Log.nlog.Debug("build nested: started with '{0}'", data);
+            for(int level = nested.nodes.Count - 1; level >= 0; --level)
+            {
+                string placeholder                      = String.Format("!p{0}!", level);
+                List<TPreparedData.Nested.Node> dropped = new List<TPreparedData.Nested.Node>();
+
+                foreach(TPreparedData.Nested.Node node in nested.nodes[level])
+                {
+                    int pos = data.IndexOf(placeholder);
+                    if(pos == -1) {
+                        throw new MismatchException(String.Format("Nodes is greater than the data. placeholder:{0} /data:{1}", placeholder, data));
+                    }
+                    string result;
+
+                    if(node.type == TPreparedData.Nested.TypeValue.PropertyEscaped
+                        || node.type == TPreparedData.Nested.TypeValue.String)
+                    {
+                        result = node.data;
+                    }
+                    else if(node.type == TPreparedData.Nested.TypeValue.Property) {
+                        result = node.evaluated;
+                    }
+                    else {
+                        result = node.data;
+                    }
+
+                    data = String.Format("{0}{1}{2}",
+                                            data.Substring(0, pos),
+                                            result,
+                                            data.Substring(pos + placeholder.Length));
+
+                    if(node.backLinkL != -1) {
+                        dropped.Add(nested.nodes[level - 1][node.backLinkL]);
+                    }
+                    if(node.backLinkR != -1) {
+                        dropped.Add(nested.nodes[level - 1][node.backLinkR]);
+                    }
+                }
+
+                foreach(TPreparedData.Nested.Node node in dropped) {
+                    nested.nodes[level - 1].Remove(node);
+                }
+            }
+            return data;
         }
 
         /// <summary>
@@ -641,71 +820,90 @@ namespace net.r_eg.vsSBE
             return null;
         }
 
+        /// <summary>
+        /// Handler for complex-type arguments
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="pattern"></param>
+        /// <param name="data">[Modifiable] Unevaluated data</param>
+        /// <param name="level">Current level for nested</param>
+        /// <returns>Added nodes</returns>
+        private List<TPreparedData.Nested.Node> _nestedComplex(TPreparedData.TProperty property, ref string pattern, ref string data, int level)
+        {
+            int idx         = -1;
+            string identLnk = String.Format("!p{0}!", level - 1);
+
+            data = Regex.Replace(data, pattern.Replace("!p!", identLnk), delegate(Match m)
+            {
+                ++idx;
+                if(!m.Groups[2].Success) {
+                    return m.Value; // backLink support
+                }
+
+                string ret                      = String.Format("!p{0}!", level);
+                TPreparedData.Nested.Node node  = new TPreparedData.Nested.Node();
+                node.backLinkL                  = -1;
+                node.backLinkR                  = -1;
+
+                if(m.Groups[1].Value.Length > 1) {
+                    node.data       = m.Value;
+                    node.evaluated  = m.Value.Substring(1);
+                    node.type       = TPreparedData.Nested.TypeValue.PropertyEscaped;
+
+                    property.nested.nodes[level].Add(node);
+                    Log.nlog.Debug("nested: added escaped '{0}' /({1}:{2}) :: level {3}", node.evaluated, node.backLinkL, node.backLinkR, level);
+                    return ret;
+                }
+
+                node.data       = m.Groups[2].Value.Trim();
+                node.project    = m.Groups[3].Value.Trim();
+                node.type       = TPreparedData.Nested.TypeValue.Property;
+
+                // Evaluating for nested data:project - to support variable of variable
+
+                bool dataLinked     = (node.data == identLnk);
+                bool projectLinked  = (node.project == identLnk);
+
+                string eData        = node.data;
+                string eProject     = node.project;
+
+                if(dataLinked || projectLinked)
+                {
+                    node.backLinkL = idx;
+                    List<TPreparedData.Nested.Node> prev = property.nested.nodes[level - 1];
+            
+                    string eNode = prev[idx].evaluated == null ? prev[idx].data : prev[idx].evaluated;
+
+                    if(dataLinked && projectLinked) {
+                        node.backLinkR  = ++idx;
+                        eData           = eNode;
+                        eProject        = prev[idx].evaluated == null ? prev[idx].data : prev[idx].evaluated;
+                    }
+                    else if(dataLinked) {
+                        eData = eNode;
+                    }
+                    else {
+                        eProject = eNode;
+                    }
+                }
+                node.evaluated = _isPropertySimple(ref eData) ? getProperty(eData, eProject) : evaluateVariable(eData, eProject);
+
+                property.nested.nodes[level].Add(node);
+                Log.nlog.Debug("nested: added '{0}':'{1}' == '{2}' /({3}:{4}) :: level {5}",
+                                node.data, node.project, node.evaluated, node.backLinkL, node.backLinkR, level);
+
+                return ret;
+            }, RegexOptions.IgnorePatternWhitespace);
+
+            return property.nested.nodes[level];
+        }
+
         private bool _isPropertySimple(ref string unevaluated)
         {
             if(unevaluated.IndexOfAny(new char[]{'.', ':', '(', ')', '\'', '"', '[', ']'}) != -1) {
                 return false;
             }
             return true;
-        }
-    }
-
-    public struct TPreparedData
-    {
-        /// <summary>
-        /// Dynamically define variables
-        /// </summary>
-        public TVar variable;
-        /// <summary>
-        /// Unit of properties
-        /// </summary>
-        public TProperty property;
-
-        public struct TVar
-        {
-            /// <summary>
-            /// Storage if present
-            /// </summary>
-            public string name;
-            /// <summary>
-            /// Specific project where to store.
-            /// null value - project by default
-            /// </summary>
-            public string project;
-            /// <summary>
-            /// Storing in the projects files ~ .csproj, .vcxproj, ..
-            /// </summary>
-            /// <remarks>reserved</remarks>
-            public bool isPersistence;
-        }
-
-        public struct TProperty
-        {
-            /// <summary>
-            /// Complex phrase or simple property
-            /// </summary>
-            public bool complex;
-            /// <summary>
-            /// has escaped property
-            /// </summary>
-            public bool escaped;
-            /// <summary>
-            /// Contain all prepared data from specific projects. Not complete evaluation!
-            /// i.e.: prepares only all $(..:project) data
-            /// </summary>
-            public string unevaluated;
-            /// <summary>
-            /// Specific project for unevaluated data
-            /// </summary>
-            public string project;
-            /// <summary>
-            /// Step of handling
-            /// </summary>
-            public bool completed;
-            /// <summary>
-            /// Raw unprepared data without(in any case) storage variable
-            /// </summary>
-            public string raw;
         }
     }
 

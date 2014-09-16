@@ -141,6 +141,7 @@
     <Compile Include="Events\SBEEventEW.cs" />
     <Compile Include="Events\SBETransmitter.cs" />
     <Compile Include="SynchSubscribers.cs" />
+    <Compile Include="TPreparedData.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
     <Compile Include="UI\DTECommandsFrm.cs">
       <SubType>Form</SubType>

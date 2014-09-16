@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using net.r_eg.vsSBE;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.MSBuild;
 
 namespace vsSBETest
 {
@@ -273,21 +274,18 @@ namespace vsSBETest
         {
             MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
 
-            string raw = "(var=$(Path.Replace('\', '/')):project)";
+            string raw              = "(var=$(Path.Replace('\', '/')):project)";
+            TPreparedData actual    = target.prepareVariables(raw);
 
-            TPreparedData expected  = new TPreparedData();
-            expected.variable.name          = "var";
-            expected.variable.project       = "project";
-            expected.variable.isPersistence = false;
-            expected.property.raw           = "$(Path.Replace('\', '/'))";
-            expected.property.escaped       = false;
-            expected.property.project       = null;
-            expected.property.completed     = false;
-            expected.property.complex       = true;
-            expected.property.unevaluated   = "$(Path.Replace('\', '/'))";
-
-            TPreparedData actual = target.prepareVariables(raw);
-            Assert.AreEqual(expected, actual);
+            Assert.AreEqual(actual.variable.name,           "var");
+            Assert.AreEqual(actual.variable.project,        "project");
+            Assert.AreEqual(actual.variable.isPersistence,  false);
+            Assert.AreEqual(actual.property.raw,            "$(Path.Replace('\', '/'))");
+            Assert.AreEqual(actual.property.escaped,        false);
+            Assert.AreEqual(actual.property.project,        null);
+            //Assert.AreEqual(actual.property.completed,      true);
+            Assert.AreEqual(actual.property.complex,        true);
+            Assert.AreEqual(actual.property.unevaluated,    "$(Path.Replace('\', '/'))");
         }
 
         /// <summary>
@@ -299,22 +297,19 @@ namespace vsSBETest
         {
             MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
 
-            string raw = "(Path.Replace('\', '/'))";
-
-            TPreparedData expected  = new TPreparedData();
-            expected.variable.name          = null;
-            expected.variable.project       = null;
-            expected.variable.isPersistence = false;
-            expected.property.raw           = "Path.Replace('\', '/')";
-            expected.property.escaped       = false;
-            expected.property.project       = null;
-            expected.property.completed     = false;
-            expected.property.complex       = true;
-            expected.property.unevaluated   = "$(Path.Replace('\', '/'))";
-
-            TPreparedData actual = target.prepareVariables(raw);
-            Assert.AreEqual(expected, actual);
-        }        
+            string raw              = "(Path.Replace('\', '/'))";
+            TPreparedData actual    = target.prepareVariables(raw);
+            
+            Assert.AreEqual(actual.variable.name,           null);
+            Assert.AreEqual(actual.variable.project,        null);
+            Assert.AreEqual(actual.variable.isPersistence,  false);
+            Assert.AreEqual(actual.property.raw,            "Path.Replace('\', '/')");
+            Assert.AreEqual(actual.property.escaped,        false);
+            Assert.AreEqual(actual.property.project,        null);
+            //Assert.AreEqual(actual.property.completed,      true);
+            Assert.AreEqual(actual.property.complex,        true);
+            Assert.AreEqual(actual.property.unevaluated,    "$(Path.Replace('\', '/'))");
+        }
 
         /// <summary>
         ///A test for prepareVariables
@@ -481,7 +476,7 @@ namespace vsSBETest
         [TestMethod()]
         public void parseVariablesMSBuildTest5()
         {
-            string data     = "$((var.Replace('%OS%', $(OS)):project).Concat($($(Path:project2).Replace('.', '_')), ' ($()) '))";
+            string data     = "$($($(var.Replace('~OS~', $(OS)):project).Concat($($(Path:project2).Replace('.', '_')), ' ($()) ')))";
             string actual   = (new MSBuildParserAccessor.ToParseVariablesMSBuild()).parseVariablesMSBuild(data);
             Assert.AreEqual(data, actual);
         }
@@ -503,7 +498,15 @@ namespace vsSBETest
                 set { base.definitions = value; }
             }
 
-            public override string evaluateVariable(string u, string p) { return u; }
+            public override string evaluateVariable(string unevaluated, string project)
+            {
+                return String.Format("~E:{0}->{1}~", unevaluated, project);
+            }
+
+            public override string getProperty(string name, string project)
+            {
+                return String.Format("~P:{0}->{1}~", name, project);
+            }
         }
 
         public class ToPrepareVariables: Accessor

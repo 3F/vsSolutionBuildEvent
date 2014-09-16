@@ -45,6 +45,16 @@ namespace net.r_eg.vsSBE.Exceptions
         public IncorrectSyntaxException(string message): base(message) {}
     }
 
+    public class MismatchException: SBEException
+    {
+        public MismatchException(string message): base(message) {}
+    }
+
+    public class LimitException: SBEException
+    {
+        public LimitException(string message): base(message) {}
+    }
+
     public class ComponentException: SBEException
     {
         public ComponentException(string message): base(message) {}

@@ -48,4 +48,9 @@ namespace net.r_eg.vsSBE.Exceptions
 
         }
     }
+
+    public class MSBPropertyParseException: SBEException
+    {
+        public MSBPropertyParseException(string message): base(message) {}
+    }
 }
