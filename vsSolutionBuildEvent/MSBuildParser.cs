@@ -510,22 +510,38 @@ namespace net.r_eg.vsSBE
 
 
             string patternV = @"(?:
-                                    (
-                                      \${1,2}     #1 - $ or $$
-                                    )
-                                    \(
-                                      (
-                                        [^$:)]+
-                                        [^:]
-                                      )           #2 - name
-                                      :
-                                      (
-                                        [^:]
-                                        [^$()]+
-                                      )           #3 - project
-                                    \)
-                                 |
-                                    !p!
+                                  (\${1,2})                  #1 - $ or $$
+                                  \(
+                                     (?:
+                                        (
+                                          [^$:()]+
+                                          [^()]
+                                        )                    #2 - name [Simple]
+                                        (?:
+                                          ::?
+                                          (
+                                            [^:]
+                                            [^$()]+ [^()]
+                                          )                  #3 - project [Simple] (optional)
+                                        )?
+                                      |
+                                        (
+                                          [^$:]+? \)?        #4 - name [Complex]
+                                        )
+                                        (?:
+                                          ::?
+                                          (
+                                            [^:]
+                                            [^$()]+ [^()]
+                                           |
+                                            [^:$]+?
+                                            [^$)]+ \)?
+                                          )                  #5 - project [Complex] (optional)
+                                        )?
+                                     )
+                                  \)
+                                  |
+                                  !p!
                                 )";
 
             Log.nlog.Debug("nested: started with '{0}'", unevaluated);
@@ -836,7 +852,7 @@ namespace net.r_eg.vsSBE
             data = Regex.Replace(data, pattern.Replace("!p!", identLnk), delegate(Match m)
             {
                 ++idx;
-                if(!m.Groups[2].Success) {
+                if(!m.Groups[2].Success && !m.Groups[4].Success) {
                     return m.Value; // backLink support
                 }
 
@@ -855,11 +871,17 @@ namespace net.r_eg.vsSBE
                     return ret;
                 }
 
-                node.data       = m.Groups[2].Value.Trim();
-                node.project    = m.Groups[3].Value.Trim();
-                node.type       = TPreparedData.Nested.TypeValue.Property;
+                node.type = TPreparedData.Nested.TypeValue.Property;
+                node.data = m.Groups[m.Groups[2].Success ? 2 : 4].Value.Trim();
 
-                // Evaluating for nested data:project - to support variable of variable
+                if(m.Groups[3].Success) {
+                    node.project = m.Groups[3].Value.Trim();
+                }
+                else if(m.Groups[5].Success) {
+                    node.project = m.Groups[5].Value.Trim();
+                }
+
+                // Evaluating for nested 'data:project' - to support variable of variable
 
                 bool dataLinked     = (node.data == identLnk);
                 bool projectLinked  = (node.project == identLnk);
@@ -886,7 +908,10 @@ namespace net.r_eg.vsSBE
                         eProject = eNode;
                     }
                 }
-                node.evaluated = _isPropertySimple(ref eData) ? getProperty(eData, eProject) : evaluateVariable(eData, eProject);
+                //if(!String.IsNullOrEmpty(eProject) && !_isPropertySimple(ref eProject)) {
+                //    //eProject = evaluateVariable(eProject, null); // should be set as part of eData, e.g.: $(project) if needed
+                //}
+                node.evaluated  = _isPropertySimple(ref eData) ? getProperty(eData, eProject) : evaluateVariable(eData, eProject);
 
                 property.nested.nodes[level].Add(node);
                 Log.nlog.Debug("nested: added '{0}':'{1}' == '{2}' /({3}:{4}) :: level {5}",

@@ -478,7 +478,7 @@ namespace vsSBETest
         {
             string data     = "$($($(var.Replace('~OS~', $(OS)):project).Concat($($(Path:project2).Replace('.', '_')), ' ($()) ')))";
             string actual   = (new MSBuildParserAccessor.ToParseVariablesMSBuild()).parseVariablesMSBuild(data);
-            Assert.AreEqual(data, actual);
+            Assert.AreEqual("[E:[E:[E:var.Replace('~OS~', [P:OS:]):project].Concat([E:[P:Path:project2].Replace('.', '_'):], ' ($()) '):]:]", actual);
         }
     }
 
@@ -490,26 +490,29 @@ namespace vsSBETest
             public Accessor(DTE2 dte2): base(dte2) {}
         }
 
-        public class ToParseVariablesMSBuild: Accessor
+        public class StubEvaluatingProperty: Accessor
+        {
+            public override string evaluateVariable(string unevaluated, string project)
+            {
+                return String.Format("[E:{0}:{1}]", unevaluated, project);
+            }
+
+            public override string getProperty(string name, string project)
+            {
+                return String.Format("[P:{0}:{1}]", name, project);
+            }
+        }
+
+        public class ToParseVariablesMSBuild: StubEvaluatingProperty
         {
             public new System.Collections.Concurrent.ConcurrentDictionary<string, string> definitions
             {
                 get { return base.definitions; }
                 set { base.definitions = value; }
             }
-
-            public override string evaluateVariable(string unevaluated, string project)
-            {
-                return String.Format("~E:{0}->{1}~", unevaluated, project);
-            }
-
-            public override string getProperty(string name, string project)
-            {
-                return String.Format("~P:{0}->{1}~", name, project);
-            }
         }
 
-        public class ToPrepareVariables: Accessor
+        public class ToPrepareVariables: StubEvaluatingProperty
         {
             public new TPreparedData prepareVariables(string raw)
             {
