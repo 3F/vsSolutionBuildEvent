@@ -154,7 +154,7 @@ namespace net.r_eg.vsSBE
             if(prop != null) {
                 return prop.EvaluatedValue;
             }
-            throw new MSBPropertyNotFoundException(String.Format("variable - '{0}' : project - '{1}'", name, (projectName == null) ? "<default>" : projectName));
+            throw new MSBPropertyNotFoundException("variable - '{0}' : project - '{1}'", name, (projectName == null) ? "<default>" : projectName);
         }
 
         public List<TMSBuildPropertyItem> listProperties(string projectName = null)
@@ -204,7 +204,7 @@ namespace net.r_eg.vsSBE
             lock(_eLock)
             {
                 try {
-                    project.SetProperty(container, unevaluated);
+                    project.SetProperty(container, _wrapVariable(ref unevaluated));
                     return project.GetProperty(container).EvaluatedValue;
                 }
                 finally {
@@ -352,7 +352,7 @@ namespace net.r_eg.vsSBE
 
             if(!m.Success) {
                 Log.nlog.Debug("impossible to prepare data '{0}'", raw);
-                throw new IncorrectSyntaxException(String.Format("prepare failed - '{0}'", raw));
+                throw new IncorrectSyntaxException("prepare failed - '{0}'", raw);
             }
             bool hasVar     = m.Groups[2].Success;
             bool hasProject = m.Groups[3].Success ? true : false;
@@ -418,13 +418,11 @@ namespace net.r_eg.vsSBE
             }
 
             ret.property.unevaluated = ret.property.raw;
-            if(!ret.property.unevaluated.StartsWith("$(")) {
-                ret.property.unevaluated = String.Format("$({0})", ret.property.unevaluated);
-            }
 
             // nested data
             ret = prepareNested(ret);
 
+            ret.property.unevaluated = _wrapVariable(ref ret.property.unevaluated);
             Log.nlog.Debug("Prepared: step out");
             return ret;
         }
@@ -452,7 +450,10 @@ namespace net.r_eg.vsSBE
             }
             else
             {
-                Log.nlog.Debug("Evaluate: use the evaluateVariable :: nested {0}", prepared.property.nested.nodes.Count);
+                Log.nlog.Debug("Evaluate: use the evaluateVariable :: nested[{0}] {1}",
+                                                                    prepared.property.nested.hasProperty,
+                                                                    prepared.property.nested.nodes.Count);
+
                 string unevaluated = prepared.property.nested.hasProperty ? buildNested(prepared.property.nested) : prepared.property.unevaluated;
 
                 Log.nlog.Debug("Evaluate: ready to '{0}'", unevaluated);
@@ -483,7 +484,7 @@ namespace net.r_eg.vsSBE
         protected TPreparedData prepareNested(TPreparedData data, int limit = 50)
         {
             if(String.IsNullOrEmpty(data.property.unevaluated)) {
-                throw new MSBPropertyParseException(String.Format("the 'unevaluated' of TPreparedData is empty. raw == '{0}'", data.property.raw));
+                throw new MSBPropertyParseException("the 'unevaluated' of TPreparedData is empty. raw == '{0}'", data.property.raw);
             }
 
             data.property.nested        = new TPreparedData.Nested();
@@ -518,7 +519,7 @@ namespace net.r_eg.vsSBE
                                           [^()]
                                         )                    #2 - name [Simple]
                                         (?:
-                                          ::?
+                                          :
                                           (
                                             [^:]
                                             [^$()]+ [^()]
@@ -529,7 +530,7 @@ namespace net.r_eg.vsSBE
                                           [^$:]+? \)?        #4 - name [Complex]
                                         )
                                         (?:
-                                          ::?
+                                          :
                                           (
                                             [^:]
                                             [^$()]+ [^()]
@@ -551,7 +552,7 @@ namespace net.r_eg.vsSBE
                 int level = data.property.nested.nodes.Count;
 
                 if(level > limit) {
-                    throw new LimitException(String.Format("Nesting level of '{0}' reached. Aborted.", limit));
+                    throw new LimitException("Nesting level of '{0}' reached. Aborted.", limit);
                 }
                 data.property.nested.nodes[level] = new List<TPreparedData.Nested.Node>();
 
@@ -623,7 +624,7 @@ namespace net.r_eg.vsSBE
                 {
                     int pos = data.IndexOf(placeholder);
                     if(pos == -1) {
-                        throw new MismatchException(String.Format("Nodes is greater than the data. placeholder:{0} /data:{1}", placeholder, data));
+                        throw new MismatchException("Nodes is greater than the data. placeholder:{0} /data:{1}", placeholder, data);
                     }
                     string result;
 
@@ -699,7 +700,7 @@ namespace net.r_eg.vsSBE
                 Log.nlog.Debug("getProject->selected '{0}'", selected.FullName);
                 return tryLoadPCollection(selected);
             }
-            throw new MSBProjectNotFoundException(String.Format("not found project: '{0}' [sturtup: '{1}']", project, sturtup));
+            throw new MSBProjectNotFoundException("not found project: '{0}' [sturtup: '{1}']", project, sturtup);
         }
 
         protected bool isEquals(EnvDTE.Project dteProject, Project eProject)
@@ -921,6 +922,15 @@ namespace net.r_eg.vsSBE
             }, RegexOptions.IgnorePatternWhitespace);
 
             return property.nested.nodes[level];
+        }
+
+        private string _wrapVariable(ref string var)
+        {
+            if(!var.StartsWith("$(")) {
+                Log.nlog.Debug("wrap: '{0}'", var);
+                return String.Format("$({0})", var);
+            }
+            return var;
         }
 
         private bool _isPropertySimple(ref string unevaluated)

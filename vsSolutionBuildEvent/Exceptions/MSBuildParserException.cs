@@ -35,22 +35,19 @@ namespace net.r_eg.vsSBE.Exceptions
 {
     public class MSBProjectNotFoundException: SBEException
     {
-        public MSBProjectNotFoundException(string message): base(message)
-        {
-
-        }
+        public MSBProjectNotFoundException(string message): base(message) {}
+        public MSBProjectNotFoundException(string message, params object[] args): base(message, args) {}
     }
 
     public class MSBPropertyNotFoundException: SBEException
     {
-        public MSBPropertyNotFoundException(string message): base(message)
-        {
-
-        }
+        public MSBPropertyNotFoundException(string message): base(message) {}
+        public MSBPropertyNotFoundException(string message, params object[] args): base(message, args) {}
     }
 
     public class MSBPropertyParseException: SBEException
     {
         public MSBPropertyParseException(string message): base(message) {}
+        public MSBPropertyParseException(string message, params object[] args): base(message, args) {}
     }
 }

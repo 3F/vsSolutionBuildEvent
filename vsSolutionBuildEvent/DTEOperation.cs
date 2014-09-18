@@ -99,7 +99,7 @@ namespace net.r_eg.vsSBE
 
             if(!m.Success) {
                 Log.nlog.Debug("Operation '{0}' is not correct", line);
-                throw new IncorrectSyntaxException(String.Format("prepare failed - '{0}'", line));
+                throw new IncorrectSyntaxException("prepare failed - '{0}'", line);
             }
             return new TPrepared(m.Groups[1].Value, m.Groups[2].Success ? m.Groups[2].Value.Trim() : String.Empty);
         }
