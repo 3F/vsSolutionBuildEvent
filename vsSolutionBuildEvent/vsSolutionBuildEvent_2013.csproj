@@ -159,7 +159,7 @@
       <DependentUpon>PropertiesFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="IMSBuildProperty.cs" />
-    <Compile Include="ISBEParserScript.cs" />
+    <Compile Include="ISBEParser.cs" />
     <Compile Include="OutputWPListener.cs" />
     <Compile Include="OutputWPBuildParser.cs" />
     <Compile Include="MSBuildParser.cs" />

@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -33,13 +33,30 @@ using System.Text;
 
 namespace net.r_eg.vsSBE
 {
-    public interface ISBEParserScript
+    public interface ISBEParser
     {
         /// <summary>
-        /// handler to MSBuild environment variables (properties)
+        /// Handler of variables/properties
         /// </summary>
-        /// <param name="data">text with $(ident) data</param>
-        /// <returns>text with values of MSBuild properties</returns>
+        /// <param name="data">string with $(ident) data</param>
+        /// <returns>All evaluated values for data</returns>
         string parseVariablesMSBuild(string data);
+
+        /// <summary>
+        /// Handler of SBE-variables for internal processing
+        /// </summary>
+        /// <param name="raw"></param>
+        /// <param name="ident">Expected variable</param>
+        /// <param name="vTrue">Value if found</param>
+        /// <returns>String with evaluated data as vTrue value or unevaluated as is</returns>
+        string parseVariablesSBE(string raw, string ident, string vTrue);
+
+        /// <summary>
+        /// Should evaluating property-data
+        /// </summary>
+        /// <param name="unevaluated">raw unevaluated data</param>
+        /// <param name="projectName">Specific project for evaluating</param>
+        /// <returns>Evaluated end value</returns>
+        string evaluateVariable(string unevaluated, string projectName);
     }
 }

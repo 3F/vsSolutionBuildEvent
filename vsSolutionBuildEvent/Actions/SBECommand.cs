@@ -233,9 +233,9 @@ namespace net.r_eg.vsSBE.Actions
 
         protected void parseVariables(ISolutionEvent evt, ref string data)
         {
-            data = parser.parseCustomVariable(data, SBECustomVariable.OWP_BUILD, owpDataRaw);
-            data = parser.parseCustomVariable(data, SBECustomVariable.OWP_BUILD_WARNINGS, null); // reserved
-            data = parser.parseCustomVariable(data, SBECustomVariable.OWP_BUILD_ERRORS, null);   // reserved
+            data = parser.parseVariablesSBE(data, SBECustomVariable.OWP_BUILD, owpDataRaw);
+            data = parser.parseVariablesSBE(data, SBECustomVariable.OWP_BUILD_WARNINGS, null); // reserved
+            data = parser.parseVariablesSBE(data, SBECustomVariable.OWP_BUILD_ERRORS, null);   // reserved
 
             if(evt.parseVariablesMSBuild) {
                 data = parser.parseVariablesMSBuild(data);

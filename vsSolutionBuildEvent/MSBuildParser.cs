@@ -44,7 +44,7 @@ using net.r_eg.vsSBE.MSBuild;
 
 namespace net.r_eg.vsSBE
 {
-    public class MSBuildParser: IMSBuildProperty, ISBEParserScript
+    public class MSBuildParser: IMSBuildProperty, ISBEParser
     {
         /// <summary>
         /// Provides operation with environment
@@ -228,30 +228,31 @@ namespace net.r_eg.vsSBE
             RegexOptions.IgnorePatternWhitespace);
         }
 
-
         /// <summary>
+        /// Internal processing.
+        /// 
         /// All variables which are not included in MSBuild environment.
-        /// Customization for our data
+        /// Customization for our data.
         /// </summary>
-        /// <param name="data">where to look</param>
-        /// <param name="name">we're looking for..</param>
-        /// <param name="value">replace with this value if found</param>
-        /// <returns></returns>
-        public string parseCustomVariable(string data, string name, string value)
+        /// <param name="raw">Where to look</param>
+        /// <param name="ident">Expected variable. What we're looking for..</param>
+        /// <param name="vTrue">Value if found</param>
+        /// <returns>String with evaluated data as vTrue value or unevaluated as is</returns>
+        public virtual string parseVariablesSBE(string raw, string ident, string vTrue)
         {
-            return Regex.Replace(data,  @"(
-                                            \${1,2}
-                                          )
-                                          \(
-                                            (
-                                              [^)]+?
-                                            )
-                                          \)", delegate(Match m)
+            return Regex.Replace(raw, @"(
+                                          \${1,2}     #1 -> $ or $$
+                                        )
+                                        \(
+                                           (
+                                             [^)]+?   #2 -> unevaluated data
+                                           )
+                                        \)", delegate(Match m)
             {
-                if(m.Groups[2].Value != name || m.Groups[1].Value.Length > 1) {
+                if(m.Groups[2].Value != ident || m.Groups[1].Value.Length > 1) {
                     return m.Value;
                 }
-                return (value == null)? "" : value;
+                return (vTrue == null)? "" : vTrue;
             }, RegexOptions.IgnorePatternWhitespace);
         }
 

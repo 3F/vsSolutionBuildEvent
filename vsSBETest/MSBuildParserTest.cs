@@ -61,54 +61,54 @@ namespace vsSBETest
         }
 
         /// <summary>
-        ///A test for parseCustomVariable
+        ///A test for parseVariablesSBE
         ///</summary>
         [TestMethod()]
-        public void parseCustomVariableTest()
+        public void parseVariablesSBETest()
         {
             MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment((DTE2)null));
 
             string expected = "$(name)";
-            string actual   = target.parseCustomVariable("$(name)", "subname", "value");
+            string actual   = target.parseVariablesSBE("$(name)", "subname", "value");
             Assert.AreEqual(expected, actual);
         }
 
         /// <summary>
-        ///A test for parseCustomVariable
+        ///A test for parseVariablesSBE
         ///</summary>
         [TestMethod()]
-        public void parseCustomVariableTest2()
+        public void parseVariablesSBETest2()
         {
             MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment((DTE2)null));
 
             string expected = "value";
-            string actual   = target.parseCustomVariable("$(name)", "name", "value");
+            string actual   = target.parseVariablesSBE("$(name)", "name", "value");
             Assert.AreEqual(expected, actual);
         }
 
         /// <summary>
-        ///A test for parseCustomVariable
+        ///A test for parseVariablesSBE
         ///</summary>
         [TestMethod()]
-        public void parseCustomVariableTest3()
+        public void parseVariablesSBETest3()
         {
             MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment((DTE2)null));
 
             string expected = "$$(name)";
-            string actual   = target.parseCustomVariable("$$(name)", "name", "value");
+            string actual   = target.parseVariablesSBE("$$(name)", "name", "value");
             Assert.AreEqual(expected, actual);
         }
 
         /// <summary>
-        ///A test for parseCustomVariable
+        ///A test for parseVariablesSBE
         ///</summary>
         [TestMethod()]
-        public void parseCustomVariableTest4()
+        public void parseVariablesSBETest4()
         {
             MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment((DTE2)null));
 
             string expected = String.Empty;
-            string actual   = target.parseCustomVariable("$(name)", "name", null);
+            string actual   = target.parseVariablesSBE("$(name)", "name", null);
             Assert.AreEqual(expected, actual);
         }
 
