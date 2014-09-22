@@ -47,73 +47,14 @@ namespace net.r_eg.vsSBE
     public class MSBuildParser: IMSBuildProperty, ISBEParserScript
     {
         /// <summary>
-        /// Work with DTE because the ProjectCollection.GlobalProjectCollection can be is empty
-        /// https://bitbucket.org/3F/vssolutionbuildevent/issue/8/
+        /// Provides operation with environment
         /// </summary>
-        public IEnumerable<EnvDTE.Project> DTEProjects
-        {
-            get
-            {
-                foreach(EnvDTE.Project project in DTEProjectsRaw)
-                {
-                    if(String.IsNullOrEmpty(project.FullName) || String.IsNullOrEmpty(project.Name)) {
-                        continue;
-                    }
-                    yield return project;
-                }
-            }
-        }
-
-        protected IEnumerable<EnvDTE.Project> DTEProjectsRaw
-        {
-            get
-            {
-                foreach(EnvDTE.Project project in dte2.Solution.Projects)
-                {
-                    if(project.Kind != ProjectKinds.vsProjectKindSolutionFolder) {
-                        yield return project;
-                        continue;
-                    }
-
-                    foreach(EnvDTE.Project subproject in listSubProjectsDTE(project)) {
-                        yield return subproject;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// DTE context
-        /// </summary>
-        protected DTE2 dte2 = null;
+        protected IEnvironment env;
 
         /// <summary>
         /// Definitions of user scripts
         /// </summary>
         protected ConcurrentDictionary<string, string> definitions = new ConcurrentDictionary<string, string>();
-
-        /// <summary>
-        /// Getting name from "Set as SturtUp Project"
-        /// </summary>
-        protected string StartupProjectString
-        {
-            get
-            {
-                foreach(string project in (Array)dte2.Solution.SolutionBuild.StartupProjects)
-                {
-                    if(String.IsNullOrEmpty(project)) {
-                        continue;
-                    }
-                    return project;
-                }
-                return null;
-            }
-        }
-
-        protected SolutionConfiguration2 SolutionActiveConfiguration
-        {
-            get { return (SolutionConfiguration2)dte2.Solution.SolutionBuild.ActiveConfiguration; }
-        }
 
         /// <summary>
         /// object synch.
@@ -141,14 +82,14 @@ namespace net.r_eg.vsSBE
         {
             if(projectName == null)
             {
-                string slnProp = _getSolutionGlobalProperty(name);
+                string slnProp = env.getSolutionGlobalProperty(name);
                 if(slnProp != null) {
                     Log.nlog.Debug("Solution-context for getProperty - '{0}' = '{1}'", name, slnProp);
                     return slnProp;
                 }
             }
-            
-            Project project         = getProject(projectName);
+
+            Project project         = env.getProject(projectName);
             ProjectProperty prop    = project.GetProperty(name);
 
             if(prop != null) {
@@ -161,13 +102,13 @@ namespace net.r_eg.vsSBE
         {
             List<TMSBuildPropertyItem> properties = new List<TMSBuildPropertyItem>();
 
-            Project project = getProject(projectName);
+            Project project = env.getProject(projectName);
             foreach(ProjectProperty property in project.Properties)
             {
                 string eValue = property.EvaluatedValue;
                 if(projectName == null)
                 {
-                    string slnProp = _getSolutionGlobalProperty(property.Name);
+                    string slnProp = env.getSolutionGlobalProperty(property.Name);
                     if(slnProp != null) {
                         Log.nlog.Debug("Solution-context for listProperties - '{0}' = '{1}'", property.Name, slnProp);
                         eValue = slnProp;
@@ -177,16 +118,6 @@ namespace net.r_eg.vsSBE
                 properties.Add(new TMSBuildPropertyItem(property.Name, eValue));
             }
             return properties;
-        }
-
-        public List<string> listProjects()
-        {
-            List<string> projects = new List<string>();
-
-            foreach(EnvDTE.Project project in DTEProjects) {
-                projects.Add(project.Name);
-            }
-            return projects;
         }
 
         /// <summary>
@@ -199,7 +130,7 @@ namespace net.r_eg.vsSBE
         public virtual string evaluateVariable(string unevaluated, string projectName)
         {
             const string container  = "vsSBE_latestEvaluated";
-            Project project         = getProject(projectName);
+            Project project         = env.getProject(projectName);
 
             lock(_eLock)
             {
@@ -324,10 +255,10 @@ namespace net.r_eg.vsSBE
             }, RegexOptions.IgnorePatternWhitespace);
         }
 
-        /// <param name="dte2">DTE context</param>
-        public MSBuildParser(DTE2 dte2)
+        /// <param name="env">Used environment</param>
+        public MSBuildParser(IEnvironment env)
         {
-            this.dte2 = dte2;
+            this.env = env;
         }
 
         /// <param name="raw">raw data at format - '(..data..)'</param>
@@ -429,7 +360,7 @@ namespace net.r_eg.vsSBE
 
         protected string evaluateVariable(TPreparedData prepared)
         {
-            string evaluated = "";
+            string evaluated = String.Empty;
             
             if(prepared.property.completed && !prepared.property.complex)
             {
@@ -658,183 +589,6 @@ namespace net.r_eg.vsSBE
                 }
             }
             return data;
-        }
-
-        /// <summary>
-        /// Getting the Build.Evaluation.Project for access to properties etc.
-        /// if the project as null then selected startup-project in the list or the first with the same Configuration & Platform
-        /// </summary>
-        /// <param name="project">Specific project</param>
-        /// <exception cref="MSBProjectNotFoundException">something wrong with loaded projects</exception>
-        /// <returns>Microsoft.Build.Evaluation.Project</returns>
-        protected virtual Project getProject(string project = null)
-        {
-            EnvDTE.Project selected = null;
-            string sturtup          = StartupProjectString;
-
-            if(project == null) {
-                Log.nlog.Debug("default project is a '{0}'", sturtup);
-            }
-
-            foreach(EnvDTE.Project dteProject in DTEProjects)
-            {
-                if(project == null && !String.IsNullOrEmpty(sturtup) && !dteProject.UniqueName.Equals(sturtup)) {
-                    continue;
-                }
-                else if(project != null && !dteProject.Name.Equals(project)) {
-                    continue;
-                }
-                selected = dteProject;
-                Log.nlog.Trace("selected = dteProject: '{0}'", dteProject.FullName);
-
-                foreach(Project eProject in ProjectCollection.GlobalProjectCollection.LoadedProjects)
-                {
-                    if(isEquals(dteProject, eProject)) {
-                        return eProject;
-                    }
-                }
-                break; // selected & LoadedProjects is empty
-            }
-
-            if(selected != null) {
-                Log.nlog.Debug("getProject->selected '{0}'", selected.FullName);
-                return tryLoadPCollection(selected);
-            }
-            throw new MSBProjectNotFoundException("not found project: '{0}' [sturtup: '{1}']", project, sturtup);
-        }
-
-        protected bool isEquals(EnvDTE.Project dteProject, Project eProject)
-        {
-            string ePrgName         = eProject.GetPropertyValue("ProjectName");
-            string ePrgCfg          = eProject.GetPropertyValue("Configuration");
-            string ePrgPlatform     = eProject.GetPropertyValue("Platform");
-
-            string dtePrgName       = dteProject.Name;
-            string dtePrgCfg        = dteProject.ConfigurationManager.ActiveConfiguration.ConfigurationName;
-            string dtePrgPlatform   = dteProject.ConfigurationManager.ActiveConfiguration.PlatformName;
-
-            Log.nlog.Trace("isEquals for '{0}' : '{1}' [{2} = {3} ; {4} = {5}]",
-                            eProject.FullPath, dtePrgName, dtePrgCfg, ePrgCfg, dtePrgPlatform, ePrgPlatform);
-
-            if(dtePrgName.Equals(ePrgName) && dtePrgCfg.Equals(ePrgCfg) && dtePrgPlatform.Equals(ePrgPlatform))
-            {
-                Log.nlog.Trace("isEquals: matched");
-                return true;
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// This solution for similar problems - MS Connect Issue #508628:
-        /// http://connect.microsoft.com/VisualStudio/feedback/details/508628/
-        /// </summary>
-        protected Project tryLoadPCollection(EnvDTE.Project dteProject)
-        {
-            Dictionary<string, string> prop = _getGlobalProperties(dteProject);
-
-            Log.nlog.Debug("tryLoadPCollection :: '{0}' [{1} ; {2}]", dteProject.FullName, prop["Configuration"], prop["Platform"]);
-            //ProjectCollection.GlobalProjectCollection.LoadProject(dteProject.FullName, prop, null);
-            return new Project(dteProject.FullName, prop, null, ProjectCollection.GlobalProjectCollection);
-        }
-
-        protected IEnumerable<EnvDTE.Project> listSubProjectsDTE(EnvDTE.Project project)
-        {
-            foreach(EnvDTE.ProjectItem item in project.ProjectItems)
-            {
-                if(item.SubProject == null) {
-                    continue; //e.g. project is incompatible with used version of visual studio
-                }
-
-                if(item.SubProject.Kind != ProjectKinds.vsProjectKindSolutionFolder) {
-                    yield return item.SubProject;
-                    continue;
-                }
-
-                foreach(EnvDTE.Project subproject in listSubProjectsDTE(item.SubProject)) {
-                    yield return subproject;
-                }
-            }
-        }
-
-        private Dictionary<string, string> _getGlobalProperties(EnvDTE.Project dteProject)
-        {
-            Dictionary<string, string> prop = new Dictionary<string, string>(ProjectCollection.GlobalProjectCollection.GlobalProperties); // copy from ProjectCollection
-            
-            if(!prop.ContainsKey("Configuration")) {
-                prop["Configuration"] = dteProject.ConfigurationManager.ActiveConfiguration.ConfigurationName;
-            }
-
-            if(!prop.ContainsKey("Platform")) {
-                prop["Platform"] = dteProject.ConfigurationManager.ActiveConfiguration.PlatformName;
-            }
-            
-            if(!prop.ContainsKey("BuildingInsideVisualStudio")) {
-                // by default(can be changed in other components) set as "true" in Microsoft.VisualStudio.Project.ProjectNode :: DoMSBuildSubmission & SetupProjectGlobalPropertiesThatAllProjectSystemsMustSet
-                prop["BuildingInsideVisualStudio"] = "true";
-            }
-            if(!prop.ContainsKey("DevEnvDir"))
-            {
-                // http://technet.microsoft.com/en-us/microsoft.visualstudio.shell.interop.__vsspropid%28v=vs.71%29.aspx
-
-                object dirObject = null;
-                vsSolutionBuildEventPackage.Shell.GetProperty((int)__VSSPROPID.VSSPROPID_InstallDirectory, out dirObject);
-
-                string dir              = (string)dirObject;
-                const string vDefault   = "Undefined";
-
-                if(String.IsNullOrEmpty(dir)) {
-                    prop["DevEnvDir"] = vDefault;
-                }
-                else if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
-                    dir += Path.DirectorySeparatorChar;
-                }
-                prop["DevEnvDir"] = dir;
-            }
-
-            if(!prop.ContainsKey("SolutionDir")  
-               || !prop.ContainsKey("SolutionName")
-               || !prop.ContainsKey("SolutionFileName")
-               || !prop.ContainsKey("SolutionExt")
-               || !prop.ContainsKey("SolutionPath"))
-            {
-                string dir, file, opts;
-                vsSolutionBuildEventPackage.Solution.GetSolutionInfo(out dir, out file, out opts);
-
-                string fname                = Path.GetFileName(file);
-                string name                 = Path.GetFileNameWithoutExtension(file);
-                string ext                  = Path.GetExtension(file);
-                const string vDefault       = "Undefined";
-
-                prop["SolutionDir"]         = dir != null ? dir : vDefault;
-                prop["SolutionName"]        = name != null ? name : vDefault;
-                prop["SolutionFileName"]    = fname != null ? fname : vDefault;
-                prop["SolutionExt"]         = ext != null ? ext : vDefault;
-                prop["SolutionPath"]        = file != null ? file : vDefault;
-            }
-
-            if(!prop.ContainsKey("RunCodeAnalysisOnce")) {
-                // by default set as "false" in Microsoft.VisualStudio.Package.GlobalPropertyHandler
-                prop["RunCodeAnalysisOnce"] = "false";
-            }
-
-            return prop;
-        }
-
-        private string _getSolutionGlobalProperty(string name)
-        {
-            if(String.IsNullOrEmpty(name)) {
-                return null;
-            }
-
-            if(name.Equals("Configuration")) {
-                return SolutionActiveConfiguration.Name;
-            }
-
-            if(name.Equals("Platform")) {
-                return SolutionActiveConfiguration.PlatformName;
-            }
-
-            return null;
         }
 
         /// <summary>

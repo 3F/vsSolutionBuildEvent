@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Events;
 
 namespace net.r_eg.vsSBE.Actions
@@ -47,11 +48,14 @@ namespace net.r_eg.vsSBE.Actions
             this.sbe = sbe;
         }
 
+        /// <summary>
+        /// Binding 'PRE' of Solution
+        /// </summary>
         public int bindPre(ref int pfCancelUpdate)
         {
             try {
-                if(sbe.basic(Config.Data.preBuild)) {
-                    Log.nlog.Info("[Pre] finished SBE: " + Config.Data.preBuild.caption);
+                if(sbe.basic(Config._.Data.preBuild)) {
+                    Log.nlog.Info("[Pre] finished SBE: " + Config._.Data.preBuild.caption);
                 }
                 return VSConstants.S_OK;
             }
@@ -61,16 +65,19 @@ namespace net.r_eg.vsSBE.Actions
             return VSConstants.E_FAIL;
         }
 
+        /// <summary>
+        /// Binding 'POST' of Solution
+        /// </summary>
         public int bindPost(int fSucceeded, int fModified, int fCancelCommand)
         {
             try {
-                if(fSucceeded != 1 && Config.Data.postBuild.buildFailedIgnore && Config.Data.postBuild.enabled) {
-                    Log.nlog.Info("[Post] ignored SBE: " + Config.Data.postBuild.caption);
+                if(fSucceeded != 1 && Config._.Data.postBuild.buildFailedIgnore && Config._.Data.postBuild.enabled) {
+                    Log.nlog.Info("[Post] ignored SBE: " + Config._.Data.postBuild.caption);
                     return VSConstants.S_OK;
                 }
 
-                if(sbe.basic(Config.Data.postBuild)) {
-                    Log.nlog.Info("[Post] finished SBE: " + Config.Data.postBuild.caption);
+                if(sbe.basic(Config._.Data.postBuild)) {
+                    Log.nlog.Info("[Post] finished SBE: " + Config._.Data.postBuild.caption);
                 }
                 return VSConstants.S_OK;
             }
@@ -80,11 +87,14 @@ namespace net.r_eg.vsSBE.Actions
             return VSConstants.E_FAIL;
         }
 
+        /// <summary>
+        /// Binding 'Cancel/Abort' of Solution
+        /// </summary>
         public int bindCancel()
         {
             try {
-                if(sbe.basic(Config.Data.cancelBuild)) {
-                    Log.nlog.Info("[Cancel] finished SBE: " + Config.Data.cancelBuild.caption);
+                if(sbe.basic(Config._.Data.cancelBuild)) {
+                    Log.nlog.Info("[Cancel] finished SBE: " + Config._.Data.cancelBuild.caption);
                 }
                 return VSConstants.S_OK;
             }
@@ -94,11 +104,46 @@ namespace net.r_eg.vsSBE.Actions
             return VSConstants.E_FAIL;
         }
 
+        /// <summary>
+        /// Binding 'PRE' of Projects
+        /// </summary>
+        public int bindProjectPre(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel)
+        {
+            // TODO: implement
+            string nameCfgProj;
+            pCfgProj.get_DisplayName(out nameCfgProj);
+
+            string nameCfgSln;
+            pCfgSln.get_DisplayName(out nameCfgSln);
+
+            object name;
+            pHierProj.GetProperty((uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_Name, out name);
+
+            throw new Exceptions.SBEException("not yet implemented");
+        }
+
+        /// <summary>
+        /// Binding 'POST' of Projects
+        /// </summary>
+        public int bindProjectPost(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
+        {
+            // TODO: implement
+            throw new Exceptions.SBEException("not yet implemented");
+        }
+
+        public void updateContext(SBECommand.ShellContext context)
+        {
+            sbe.updateContext(context);
+        }
+
+        /// <summary>
+        /// Listener of raw OWP
+        /// </summary>
         void IListenerOWPL.raw(string data)
         {
             try {
-                if(sbe.supportOWP(Config.Data.transmitter, data)) {
-                    //Log.nlog.Trace("[Transmitter]: " + Config.Data.transmitter.caption);
+                if(sbe.supportOWP(Config._.Data.transmitter, data)) {
+                    //Log.nlog.Trace("[Transmitter]: " + Config._.Data.transmitter.caption);
                 }
             }
             catch(Exception ex) {
@@ -107,19 +152,22 @@ namespace net.r_eg.vsSBE.Actions
 
             OutputWPBuildParser res = new OutputWPBuildParser(ref data);
 
-            if(Config.Data.warningsBuild.enabled) {
-                sbeEW(Config.Data.warningsBuild, OutputWPBuildParser.Type.Warnings, res);
+            if(Config._.Data.warningsBuild.enabled) {
+                sbeEW(Config._.Data.warningsBuild, OutputWPBuildParser.Type.Warnings, res);
             }
 
-            if(Config.Data.errorsBuild.enabled) {
-                sbeEW(Config.Data.errorsBuild, OutputWPBuildParser.Type.Errors, res);
+            if(Config._.Data.errorsBuild.enabled) {
+                sbeEW(Config._.Data.errorsBuild, OutputWPBuildParser.Type.Errors, res);
             }
 
-            if(Config.Data.outputCustomBuild.enabled) {
-                sbeOutput(Config.Data.outputCustomBuild, ref data);
+            if(Config._.Data.outputCustomBuild.enabled) {
+                sbeOutput(Config._.Data.outputCustomBuild, ref data);
             }
         }
 
+        /// <summary>
+        /// Entry point to Errors/Warnings
+        /// </summary>
         protected void sbeEW(ISolutionEventEW evt, OutputWPBuildParser.Type type, OutputWPBuildParser info)
         {
             // TODO: capture code####, message..
@@ -137,6 +185,9 @@ namespace net.r_eg.vsSBE.Actions
             }
         }
 
+        /// <summary>
+        /// Entry point to the OWP
+        /// </summary>
         protected void sbeOutput(ISolutionEventOWP evt, ref string raw)
         {
             if(!(new OWPMatcher()).match(evt.eventsOWP, raw)) {

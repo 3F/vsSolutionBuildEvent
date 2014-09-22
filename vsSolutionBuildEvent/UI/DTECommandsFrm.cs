@@ -52,7 +52,7 @@ namespace net.r_eg.vsSBE.UI
 
         private void dataGridViewDTE_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            _pin.command(String.Format("{0}{1}", dataGridViewDTE[0, e.RowIndex].Value, Environment.NewLine));
+            _pin.command(String.Format("{0}{1}", dataGridViewDTE[0, e.RowIndex].Value, System.Environment.NewLine));
 
             dataGridViewDTE.Rows[e.RowIndex].DefaultCellStyle.SelectionBackColor = Color.FromArgb(245, 242, 203);
             dataGridViewDTE.Rows[e.RowIndex].DefaultCellStyle.SelectionForeColor = Color.FromArgb(23, 36, 47);

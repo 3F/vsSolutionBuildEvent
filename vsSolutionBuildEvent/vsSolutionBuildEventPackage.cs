@@ -43,10 +43,11 @@ namespace net.r_eg.vsSBE
     // Package Guid
     [Guid(GuidList.PACKAGE_STRING)]
 
-    public sealed class vsSolutionBuildEventPackage: Package, IVsSolutionEvents, IVsUpdateSolutionEvents 
+    public sealed class vsSolutionBuildEventPackage: Package, IVsSolutionEvents, IVsUpdateSolutionEvents2
     {
         /// <summary>
         /// top-level object in the Visual Studio
+        /// TODO: replace on the Environment
         /// </summary>
         public static DTE2 Dte2
         {
@@ -97,18 +98,23 @@ namespace net.r_eg.vsSBE
         private Connection _c;
 
         /// <summary>
+        /// Used environment
+        /// </summary>
+        private Environment _env;
+
+        /// <summary>
         /// Working with the OutputWindowsPane -> "Build" pane
         /// </summary>
         private OutputWPListener _owpBuild;
 
         public vsSolutionBuildEventPackage()
         {
-            Log.init(Dte2);
             Log.show();
+            _env = new Environment(Dte2);
 
             _c = new Connection(
-                    new SBECommand(Dte2, 
-                        new MSBuildParser(Dte2)
+                    new SBECommand(_env,
+                        new MSBuildParser(_env)
                     )
             );
 
@@ -119,34 +125,12 @@ namespace net.r_eg.vsSBE
             UI.StatusToolWindow.control.setDTE(Dte2);
         }
 
-        /// <summary>
-        /// execute a command when clicked menu item (Build/<pack>)
-        /// </summary>
-        private void _menuMainCallback(object sender, EventArgs e)
-        {
-            if (_configFrm != null && !_configFrm.IsDisposed)
-            {
-                _configFrm.Focus();
-                return;
-            }
-            _configFrm = new UI.EventsFrm(Dte2);
-            _configFrm.Show();
-        }
-
-        private void _menuPanelCallback(object sender, EventArgs e)
-        {
-            ToolWindowPane window = FindToolWindow(typeof(UI.StatusToolWindow), 0, true); // find or create
-            if(window == null || window.Frame == null) {
-                throw new ComponentException("Cannot create UI.StatusToolWindow");
-            }
-            ErrorHandler.ThrowOnFailure(((IVsWindowFrame)window.Frame).Show());
-        }
-
         int IVsSolutionEvents.OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
-        {
-            FindToolWindow(typeof(UI.StatusToolWindow), 0, true);
+        {            
             try
             {
+                FindToolWindow(typeof(UI.StatusToolWindow), 0, true);
+
                 string path = Dte2.Solution.FullName; // may be empty e.g. if fNewSolution == 1 etc.
                 if(string.IsNullOrEmpty(path)) {
                     path = Dte2.Solution.Properties.Item("Path").Value.ToString();
@@ -156,13 +140,15 @@ namespace net.r_eg.vsSBE
                 if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
                     dir += Path.DirectorySeparatorChar;
                 }
-                Config.load(dir);
-                _state();
+
+                Config._.load(dir);
+                _c.updateContext(new SBECommand.ShellContext(Settings.WorkingPath));
             }
             catch(Exception ex) {
                 Log.nlog.Fatal("Cannot load configuration: " + ex.Message);
                 return VSConstants.E_FAIL;
             }
+            _state();
             _menuItemMain.Visible = true;
             UI.StatusToolWindow.control.enabled(true);
             return VSConstants.S_OK;
@@ -179,19 +165,52 @@ namespace net.r_eg.vsSBE
             return VSConstants.S_OK;
         }
 
-        int IVsUpdateSolutionEvents.UpdateSolution_Begin(ref int pfCancelUpdate)
+        public int UpdateSolution_Begin(ref int pfCancelUpdate)
         {
             return _c.bindPre(ref pfCancelUpdate);
         }
 
-        int IVsUpdateSolutionEvents.UpdateSolution_Cancel()
+        public int UpdateSolution_Cancel()
         {
             return _c.bindCancel();
         }
 
-        int IVsUpdateSolutionEvents.UpdateSolution_Done(int fSucceeded, int fModified, int fCancelCommand)
+        public int UpdateSolution_Done(int fSucceeded, int fModified, int fCancelCommand)
         {
             return _c.bindPost(fSucceeded, fModified, fCancelCommand);
+        }
+
+        public int UpdateProjectCfg_Begin(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel)
+        {
+            return _c.bindProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel);
+        }
+
+        public int UpdateProjectCfg_Done(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
+        {
+            return _c.bindProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
+        }
+
+        /// <summary>
+        /// to show the main window if clicked # Build/<pack> #
+        /// </summary>
+        private void _menuMainCallback(object sender, EventArgs e)
+        {
+            if(_configFrm != null && !_configFrm.IsDisposed)
+            {
+                _configFrm.Focus();
+                return;
+            }
+            _configFrm = new UI.EventsFrm(_env);
+            _configFrm.Show();
+        }
+
+        private void _menuPanelCallback(object sender, EventArgs e)
+        {
+            ToolWindowPane window = FindToolWindow(typeof(UI.StatusToolWindow), 0, true); // find or create
+            if(window == null || window.Frame == null) {
+                throw new ComponentException("Cannot create UI.StatusToolWindow");
+            }
+            ErrorHandler.ThrowOnFailure(((IVsWindowFrame)window.Frame).Show());
         }
 
         private void _state()
@@ -201,25 +220,25 @@ namespace net.r_eg.vsSBE
             };
 
             Log.print(String.Format("{0}{1}{2}{3}{4}{5}{6}\n---\n",
-                                    aboutEvent(Config.Data.preBuild,            "Pre-Build"),
-                                    aboutEvent(Config.Data.postBuild,           "Post-Build"),
-                                    aboutEvent(Config.Data.cancelBuild,         "Cancel-Build"),
-                                    aboutEvent(Config.Data.warningsBuild,       "Warnings-Build"),
-                                    aboutEvent(Config.Data.errorsBuild,         "Errors-Build"),
-                                    aboutEvent(Config.Data.outputCustomBuild,   "Output-Build"),
-                                    aboutEvent(Config.Data.transmitter,         "Transmitter")));
+                                    aboutEvent(Config._.Data.preBuild,           "Pre-Build"),
+                                    aboutEvent(Config._.Data.postBuild,          "Post-Build"),
+                                    aboutEvent(Config._.Data.cancelBuild,        "Cancel-Build"),
+                                    aboutEvent(Config._.Data.warningsBuild,      "Warnings-Build"),
+                                    aboutEvent(Config._.Data.errorsBuild,        "Errors-Build"),
+                                    aboutEvent(Config._.Data.outputCustomBuild,  "Output-Build"),
+                                    aboutEvent(Config._.Data.transmitter,        "Transmitter")));
 
             Log.nlog.Info("Use vsSBE panel: View -> Other Windows -> Solution Build-Events");
         }
 
         #region unused
 
-        int IVsUpdateSolutionEvents.UpdateSolution_StartUpdate(ref int pfCancelUpdate)
+        public int UpdateSolution_StartUpdate(ref int pfCancelUpdate)
         {
             return VSConstants.S_OK;
         }
 
-        int IVsUpdateSolutionEvents.OnActiveProjectCfgChange(IVsHierarchy pIVsHierarchy)
+        public int OnActiveProjectCfgChange(IVsHierarchy pIVsHierarchy)
         {
             return VSConstants.S_OK;
         }

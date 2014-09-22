@@ -41,13 +41,13 @@ namespace net.r_eg.vsSBE.UI
 
         public void updateData()
         {
-            btnPre.IsChecked            = Config.Data.preBuild.enabled;
-            btnPost.IsChecked           = Config.Data.postBuild.enabled;
-            btnCancel.IsChecked         = Config.Data.cancelBuild.enabled;
-            btnWarnings.IsChecked       = Config.Data.warningsBuild.enabled;
-            btnErrors.IsChecked         = Config.Data.errorsBuild.enabled;
-            btnOutput.IsChecked         = Config.Data.outputCustomBuild.enabled;
-            btnTransmitter.IsChecked    = Config.Data.transmitter.enabled;
+            btnPre.IsChecked            = Config._.Data.preBuild.enabled;
+            btnPost.IsChecked           = Config._.Data.postBuild.enabled;
+            btnCancel.IsChecked         = Config._.Data.cancelBuild.enabled;
+            btnWarnings.IsChecked       = Config._.Data.warningsBuild.enabled;
+            btnErrors.IsChecked         = Config._.Data.errorsBuild.enabled;
+            btnOutput.IsChecked         = Config._.Data.outputCustomBuild.enabled;
+            btnTransmitter.IsChecked    = Config._.Data.transmitter.enabled;
         }
 
         public void notify()
@@ -90,44 +90,44 @@ namespace net.r_eg.vsSBE.UI
 
         private void btnPre_Click(object sender, RoutedEventArgs e)
         {
-            Config.Data.preBuild.enabled = btnPre.IsChecked.Value;
-            Config.save();
+            Config._.Data.preBuild.enabled = btnPre.IsChecked.Value;
+            Config._.save();
         }
 
         private void btnPost_Click(object sender, RoutedEventArgs e)
         {
-            Config.Data.postBuild.enabled = btnPost.IsChecked.Value;
-            Config.save();
+            Config._.Data.postBuild.enabled = btnPost.IsChecked.Value;
+            Config._.save();
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
-            Config.Data.cancelBuild.enabled = btnCancel.IsChecked.Value;
-            Config.save();
+            Config._.Data.cancelBuild.enabled = btnCancel.IsChecked.Value;
+            Config._.save();
         }
 
         private void btnWarnings_Click(object sender, RoutedEventArgs e)
         {
-            Config.Data.warningsBuild.enabled = btnWarnings.IsChecked.Value;
-            Config.save();
+            Config._.Data.warningsBuild.enabled = btnWarnings.IsChecked.Value;
+            Config._.save();
         }
 
         private void btnErrors_Click(object sender, RoutedEventArgs e)
         {
-            Config.Data.errorsBuild.enabled = btnErrors.IsChecked.Value;
-            Config.save();
+            Config._.Data.errorsBuild.enabled = btnErrors.IsChecked.Value;
+            Config._.save();
         }
 
         private void btnOutput_Click(object sender, RoutedEventArgs e)
         {
-            Config.Data.outputCustomBuild.enabled = btnOutput.IsChecked.Value;
-            Config.save();
+            Config._.Data.outputCustomBuild.enabled = btnOutput.IsChecked.Value;
+            Config._.save();
         }
 
         private void btnTransmitter_Click(object sender, RoutedEventArgs e)
         {
-            Config.Data.transmitter.enabled = btnTransmitter.IsChecked.Value;
-            Config.save();
+            Config._.Data.transmitter.enabled = btnTransmitter.IsChecked.Value;
+            Config._.save();
         }
     }
 }

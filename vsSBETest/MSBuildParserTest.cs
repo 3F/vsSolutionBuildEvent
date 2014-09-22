@@ -55,7 +55,7 @@ namespace vsSBETest
             mockSolution.SetupGet(p => p.SolutionBuild).Returns(mockSolutionBuild.Object);
             mockDte2.SetupGet(p => p.Solution).Returns(mockSolution.Object);
 
-            MSBuildParser target = new MSBuildParser(mockDte2.Object);
+            MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment(mockDte2.Object));
             Assert.IsNotNull(target.getProperty("Configuration"));
             Assert.IsNotNull(target.getProperty("Platform"));
         }
@@ -66,7 +66,7 @@ namespace vsSBETest
         [TestMethod()]
         public void parseCustomVariableTest()
         {
-            MSBuildParser target = new MSBuildParser((DTE2)null);
+            MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment((DTE2)null));
 
             string expected = "$(name)";
             string actual   = target.parseCustomVariable("$(name)", "subname", "value");
@@ -79,7 +79,7 @@ namespace vsSBETest
         [TestMethod()]
         public void parseCustomVariableTest2()
         {
-            MSBuildParser target = new MSBuildParser((DTE2)null);
+            MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment((DTE2)null));
 
             string expected = "value";
             string actual   = target.parseCustomVariable("$(name)", "name", "value");
@@ -92,7 +92,7 @@ namespace vsSBETest
         [TestMethod()]
         public void parseCustomVariableTest3()
         {
-            MSBuildParser target = new MSBuildParser((DTE2)null);
+            MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment((DTE2)null));
 
             string expected = "$$(name)";
             string actual   = target.parseCustomVariable("$$(name)", "name", "value");
@@ -105,7 +105,7 @@ namespace vsSBETest
         [TestMethod()]
         public void parseCustomVariableTest4()
         {
-            MSBuildParser target = new MSBuildParser((DTE2)null);
+            MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment((DTE2)null));
 
             string expected = String.Empty;
             string actual   = target.parseCustomVariable("$(name)", "name", null);
@@ -420,7 +420,7 @@ namespace vsSBETest
         [TestMethod()]
         public void parseVariablesMSBuildTest()
         {
-            MSBuildParser target = new MSBuildParser((DTE2)null);
+            MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment((DTE2)null));
 
             string actual   = target.parseVariablesMSBuild("$$(Path:project)");
             string expected = "$(Path:project)";
@@ -434,7 +434,7 @@ namespace vsSBETest
         [TestMethod()]
         public void parseVariablesMSBuildTest2()
         {
-            MSBuildParser target = new MSBuildParser((DTE2)null);
+            MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment((DTE2)null));
 
             string actual   = target.parseVariablesMSBuild("FooBar");
             string expected = "FooBar";
@@ -448,7 +448,7 @@ namespace vsSBETest
         [TestMethod()]
         public void parseVariablesMSBuildTest3()
         {
-            MSBuildParser target = new MSBuildParser((DTE2)null);
+            MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment((DTE2)null));
                         
             string actual   = target.parseVariablesMSBuild("$$(Path.Replace('\', '/'):project)");
             string expected = "$(Path.Replace('\', '/'):project)";
@@ -486,8 +486,8 @@ namespace vsSBETest
     {
         public class Accessor: MSBuildParser
         {
-            public Accessor(): base((DTE2)null) {}
-            public Accessor(DTE2 dte2): base(dte2) {}
+            public Accessor(): base(new net.r_eg.vsSBE.Environment((DTE2)null)) {}
+            public Accessor(net.r_eg.vsSBE.Environment env): base(env) { }
         }
 
         public class StubEvaluatingProperty: Accessor

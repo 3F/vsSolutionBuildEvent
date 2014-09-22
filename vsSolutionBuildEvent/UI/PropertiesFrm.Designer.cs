@@ -1,6 +1,6 @@
 ﻿namespace net.r_eg.vsSBE.UI
 {
-    partial class EnvironmentVariablesFrm
+    partial class PropertiesFrm
     {
         /// <summary>
         /// Required designer variable.

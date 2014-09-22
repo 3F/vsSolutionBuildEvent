@@ -16,7 +16,7 @@ using System.Windows.Forms;
 
 namespace net.r_eg.vsSBE.UI
 {
-    public partial class EnvironmentVariablesFrm: Form
+    public partial class PropertiesFrm: Form
     {
         /// <summary>
         /// Transport support
@@ -29,15 +29,21 @@ namespace net.r_eg.vsSBE.UI
         private MSBuildParser _msbuild;
 
         /// <summary>
+        /// 
+        /// </summary>
+        private Environment _env;
+
+        /// <summary>
         /// Caching of retrieved properties
         /// </summary>
         private ConcurrentDictionary<string, List<TMSBuildPropertyItem>> _cacheProperties;
 
-        public EnvironmentVariablesFrm(ITransferDataProperty pin)
+        public PropertiesFrm(ITransferDataProperty pin)
         {
             InitializeComponent();
 
-            _msbuild            = new MSBuildParser(vsSolutionBuildEventPackage.Dte2);
+            _env                = new Environment(vsSolutionBuildEventPackage.Dte2);
+            _msbuild            = new MSBuildParser(_env);
             this._pin           = pin;
             _cacheProperties    = new ConcurrentDictionary<string, List<TMSBuildPropertyItem>>();
         }
@@ -48,7 +54,7 @@ namespace net.r_eg.vsSBE.UI
             comboBoxProjects.Items.Add("<default>");
 
             try {
-                comboBoxProjects.Items.AddRange(_msbuild.listProjects().ToArray());
+                comboBoxProjects.Items.AddRange(_env.DTEProjectsList.ToArray());
             }
             catch(Exception ex) {
                 Log.nlog.Error("Error with getting projects: " + ex.Message);

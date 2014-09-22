@@ -30,10 +30,10 @@ namespace net.r_eg.vsSBE.UI
             ConfigEventHandler cfgEvent = new ConfigEventHandler(control.updateData);
             LogEventHandler logEvent    = new LogEventHandler(control.notify);
             lock(_eLock) {
-                Config.Update -= cfgEvent;
-                Config.Update += cfgEvent;
-                Log.Receive   -= logEvent;
-                Log.Receive   += logEvent;
+                Config._.Update -= cfgEvent;
+                Config._.Update += cfgEvent;
+                Log.Receive -= logEvent;
+                Log.Receive += logEvent;
             }
         }
     }

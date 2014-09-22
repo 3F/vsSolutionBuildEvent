@@ -96,6 +96,19 @@ namespace net.r_eg.vsSBE.Events
         bool buildFailedIgnore { get; set; }
 
         /// <summary>
+        /// Run only for a specific configuration of solution
+        /// strings format as:
+        ///   'configname'|'platformname'
+        ///   Compatible with: http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivscfg.get_displayname.aspx
+        /// </summary>
+        string[] toConfiguration { get; set; }
+
+        /// <summary>
+        /// Run for selected projects with execution order
+        /// </summary>
+        TExecutionOrder[] executionOrder { get; set; }
+
+        /// <summary>
         /// Common Environment Visual Studio. Executes the specified commands
         /// TODO: custom list
         /// </summary>
@@ -138,5 +151,17 @@ namespace net.r_eg.vsSBE.Events
         /// Abort operations on first error
         /// </summary>
         public bool abortOnFirstError = true;
+    }
+
+    public struct TExecutionOrder
+    {
+        public string project;
+        public Order order;
+
+        public enum Order
+        {
+            Before,
+            After
+        }
     }
 }

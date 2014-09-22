@@ -152,6 +152,29 @@ namespace net.r_eg.vsSBE.Events
             set { _buildFailedIgnore = value; }
         }
 
+        private string[] _toConfiguration = null;
+        /// <summary>
+        /// Run only for a specific configuration of solution
+        /// strings format as:
+        ///   'configname'|'platformname'
+        ///   Compatible with: http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivscfg.get_displayname.aspx
+        /// </summary>
+        public string[] toConfiguration
+        {
+            get { return _toConfiguration; }
+            set { _toConfiguration = value; }
+        }
+
+        private TExecutionOrder[] _executionOrder;
+        /// <summary>
+        /// Run for selected projects with execution order
+        /// </summary>
+        public TExecutionOrder[] executionOrder
+        {
+            get { return _executionOrder; }
+            set { _executionOrder = value; }
+        }
+
         private TOperation _dteExec = new TOperation();
         /// <summary>
         /// Common Environment Visual Studio. Executes the specified commands

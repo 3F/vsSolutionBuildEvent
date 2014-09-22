@@ -35,6 +35,7 @@ using EnvDTE80;
 using System.Runtime.InteropServices;
 using System.Globalization;
 using net.r_eg.vsSBE.Events;
+using net.r_eg.vsSBE.Exceptions;
 
 namespace net.r_eg.vsSBE.Actions
 {
@@ -42,15 +43,23 @@ namespace net.r_eg.vsSBE.Actions
     {
         const string CMD_DEFAULT = "cmd";
 
-        public class SBEContext
+        public class ShellContext
         {
             public string path;
             public string disk;
 
-            public SBEContext(string path, string disk)
+            public ShellContext(string path)
             {
                 this.path = path;
-                this.disk = disk;
+                this.disk = getDisk(path);
+            }
+
+            protected string getDisk(string path)
+            {
+                if(String.IsNullOrEmpty(path)) {
+                    throw new SBEException("path is empty or null");
+                }
+                return path.Substring(0, 1);
             }
         }
 
@@ -69,19 +78,19 @@ namespace net.r_eg.vsSBE.Actions
         protected MSBuildParser parser;
 
         /// <summary>
-        /// DTE context
+        /// Used environment
         /// </summary>
-        protected DTE2 dte2;
+        protected Environment env;
 
         /// <summary>
         /// Special raw data from the output window pane
         /// </summary>
-        protected string owpDataRaw = null;
+        protected string owpDataRaw;
 
         /// <summary>
-        /// Where to work..
+        /// Current working context for scripts or files
         /// </summary>
-        private SBEContext _context = null;
+        protected ShellContext context;
 
         /// <summary>
         /// basic implementation
@@ -93,7 +102,16 @@ namespace net.r_eg.vsSBE.Actions
                 return false;
             }
 
-            Log.nlog.Info("Launching '{0}'", evt.caption);
+            string cfg = env.SolutionConfigurationFormat(env.SolutionActiveConfiguration);
+
+            if(evt.toConfiguration != null 
+                && evt.toConfiguration.Length > 0 && evt.toConfiguration.Where(s => s == cfg).Count() < 1)
+            {
+                Log.nlog.Info("Action '{0}' is ignored for current configuration - '{1}'", evt.caption, cfg);
+                return false;
+            }
+
+            Log.nlog.Info("Launching action '{0}' :: Configuration - '{1}'", evt.caption, cfg);
             switch(evt.mode) {
                 case TModeCommands.Operation: {
                     Log.nlog.Info("Use Operation Mode");
@@ -120,11 +138,15 @@ namespace net.r_eg.vsSBE.Actions
             return basic(evt);
         }
 
-        public SBECommand(DTE2 dte2, MSBuildParser parser)
+        public SBECommand(Environment env, MSBuildParser parser)
         {
-            _context    = new SBEContext(Config.WorkPath, letDisk(Config.WorkPath));
-            this.dte2   = dte2;
+            this.env    = env;
             this.parser = parser;
+        }
+
+        public void updateContext(ShellContext context)
+        {
+            this.context = context;
         }
 
         protected virtual bool hModeFile(ISolutionEvent evt)
@@ -142,7 +164,7 @@ namespace net.r_eg.vsSBE.Actions
             if(evt.dteExec.cmd == null || evt.dteExec.cmd.Length < 1) {
                 return true;
             }
-            (new DTEOperation((EnvDTE.DTE)dte2)).exec(evt.dteExec.cmd, evt.dteExec.abortOnFirstError);
+            (new DTEOperation((EnvDTE.DTE)env.DTE2)).exec(evt.dteExec.cmd, evt.dteExec.abortOnFirstError);
             return true;
         }
 
@@ -187,9 +209,9 @@ namespace net.r_eg.vsSBE.Actions
             }
             //psi.StandardErrorEncoding = psi.StandardOutputEncoding = Encoding.GetEncoding(OEMCodePage);
 
-            string args = string.Format("/C cd {0}{1} & {2}",
-                                        _context.path,
-                                        (_context.disk != null) ? " & " + _context.disk + ":" : "", cmd);
+            string args = String.Format("/C cd {0}{1} & {2}",
+                                        context.path,
+                                        (context.disk != null) ? " & " + context.disk + ":" : "", cmd);
 
             if(!evt.processHide && evt.processKeep) {
                 args += " & pause";
@@ -218,14 +240,6 @@ namespace net.r_eg.vsSBE.Actions
             if(evt.parseVariablesMSBuild) {
                 data = parser.parseVariablesMSBuild(data);
             }
-        }
-
-        protected string letDisk(string path)
-        {
-            if(path.Length < 1) {
-                return null;
-            }
-            return path.Substring(0, 1);
         }
 
         private string _treatNewlineAs(string str, string data)
