@@ -156,9 +156,9 @@ namespace net.r_eg.vsSBE.Events
     public struct TExecutionOrder
     {
         public string project;
-        public Order order;
+        public Type order;
 
-        public enum Order
+        public enum Type
         {
             Before,
             After

@@ -39,13 +39,31 @@ namespace net.r_eg.vsSBE.Actions
     public class Connection: IListenerOWPL
     {
         /// <summary>
+        /// Execution order support.
+        /// Contains the current states of all projects
+        /// </summary>
+        protected Dictionary<string, TExecutionOrder.Type> projects;
+
+        /// <summary>
+        /// Contains the current incoming project
+        /// </summary>
+        protected TExecutionOrder current;
+
+        /// <summary>
         /// Connection handler
         /// </summary>
         protected SBECommand sbe;
 
+        /// <summary>
+        /// Support deferred 'PRE' of solution
+        /// TODO: complex semaphore for all type
+        /// </summary>
+        private bool _isExecutedPre = false;
+
         public Connection(SBECommand sbe)
         {
             this.sbe = sbe;
+            projects = new Dictionary<string, TExecutionOrder.Type>();
         }
 
         /// <summary>
@@ -53,16 +71,17 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         public int bindPre(ref int pfCancelUpdate)
         {
-            try {
-                if(sbe.basic(Config._.Data.preBuild)) {
-                    Log.nlog.Info("[Pre] finished SBE: " + Config._.Data.preBuild.caption);
-                }
+            _flushExecuted();
+            if(!Config._.Data.preBuild.enabled) {
                 return VSConstants.S_OK;
             }
-            catch(Exception ex) {
-                Log.nlog.Error("Pre-Build error: " + ex.Message);
+
+            if(hasExecutionOrder(Config._.Data.preBuild))
+            {
+                Log.nlog.Info("[Pre] SBE has deferred action: '{0}' :: waiting... ", Config._.Data.preBuild.caption);
+                return VSConstants.S_OK;
             }
-            return VSConstants.E_FAIL;
+            return execPre();
         }
 
         /// <summary>
@@ -70,36 +89,30 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         public int bindPost(int fSucceeded, int fModified, int fCancelCommand)
         {
-            try {
-                if(fSucceeded != 1 && Config._.Data.postBuild.buildFailedIgnore && Config._.Data.postBuild.enabled) {
-                    Log.nlog.Info("[Post] ignored SBE: " + Config._.Data.postBuild.caption);
-                    return VSConstants.S_OK;
-                }
+            ISolutionEvent evt = Config._.Data.postBuild;
 
-                if(sbe.basic(Config._.Data.postBuild)) {
-                    Log.nlog.Info("[Post] finished SBE: " + Config._.Data.postBuild.caption);
+            if(!evt.enabled) {
+                return VSConstants.S_OK;
+            }
+
+            if(fSucceeded != 1 && evt.buildFailedIgnore) {
+                Log.nlog.Info("[Post] ignored action '{0}' :: Build FAILED. See option 'Ignore if the build failed'", evt.caption);
+                return VSConstants.S_OK;
+            }
+
+            if(!isReached(evt)) {
+                Log.nlog.Info("[Post] ignored action '{0}' ::  not reached selected projects in execution order", evt.caption);
+                return VSConstants.S_OK;
+            }
+
+            try {
+                if(sbe.basic(evt)) {
+                    Log.nlog.Info("[Post] finished SBE: {0}", evt.caption);
                 }
                 return VSConstants.S_OK;
             }
             catch(Exception ex) {
-                Log.nlog.Error("Post-Build error: " + ex.Message);
-            }
-            return VSConstants.E_FAIL;
-        }
-
-        /// <summary>
-        /// Binding 'Cancel/Abort' of Solution
-        /// </summary>
-        public int bindCancel()
-        {
-            try {
-                if(sbe.basic(Config._.Data.cancelBuild)) {
-                    Log.nlog.Info("[Cancel] finished SBE: " + Config._.Data.cancelBuild.caption);
-                }
-                return VSConstants.S_OK;
-            }
-            catch(Exception ex) {
-                Log.nlog.Error("Cancel-Build error: " + ex.Message);
+                Log.nlog.Error("Post-Build error: {0}", ex.Message);
             }
             return VSConstants.E_FAIL;
         }
@@ -109,17 +122,8 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         public int bindProjectPre(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel)
         {
-            // TODO: implement
-            string nameCfgProj;
-            pCfgProj.get_DisplayName(out nameCfgProj);
-
-            string nameCfgSln;
-            pCfgSln.get_DisplayName(out nameCfgSln);
-
-            object name;
-            pHierProj.GetProperty((uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_Name, out name);
-
-            throw new Exceptions.SBEException("not yet implemented");
+            onProject(pHierProj, TExecutionOrder.Type.Before);
+            return VSConstants.S_OK;
         }
 
         /// <summary>
@@ -127,8 +131,36 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         public int bindProjectPost(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
         {
-            // TODO: implement
-            throw new Exceptions.SBEException("not yet implemented");
+            onProject(pHierProj, TExecutionOrder.Type.After, fSuccess == 1 ? true : false);
+            return VSConstants.S_OK;
+        }
+
+        /// <summary>
+        /// Binding 'Cancel/Abort' of Solution
+        /// </summary>
+        public int bindCancel()
+        {
+            ISolutionEvent evt = Config._.Data.cancelBuild;
+
+            if(!evt.enabled) {
+                return VSConstants.S_OK;
+            }
+
+            if(!isReached(evt)) {
+                Log.nlog.Info("[Cancel] ignored action '{0}' :: not reached selected projects in execution order", evt.caption);
+                return VSConstants.S_OK;
+            }
+
+            try {
+                if(sbe.basic(evt)) {
+                    Log.nlog.Info("[Cancel] finished SBE: {0}", evt.caption);
+                }
+                return VSConstants.S_OK;
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Cancel-Build error: {0}", ex.Message);
+            }
+            return VSConstants.E_FAIL;
         }
 
         public void updateContext(SBECommand.ShellContext context)
@@ -141,13 +173,24 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         void IListenerOWPL.raw(string data)
         {
+            ISolutionEvent evt = Config._.Data.transmitter;
+
+            if(!evt.enabled) {
+                return;
+            }
+
+            if(!isExecute(evt, current)) {
+                Log.nlog.Info("[Transmitter] ignored action '{0}' :: by execution order", evt.caption);
+                return;
+            }
+
             try {
-                if(sbe.supportOWP(Config._.Data.transmitter, data)) {
+                if(sbe.supportOWP(evt, data)) {
                     //Log.nlog.Trace("[Transmitter]: " + Config._.Data.transmitter.caption);
                 }
             }
             catch(Exception ex) {
-                Log.nlog.Error("Transmitter error: " + ex.Message);
+                Log.nlog.Error("Transmitter error: {0}", ex.Message);
             }
 
             OutputWPBuildParser res = new OutputWPBuildParser(ref data);
@@ -170,18 +213,27 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         protected void sbeEW(ISolutionEventEW evt, OutputWPBuildParser.Type type, OutputWPBuildParser info)
         {
+            if(!evt.enabled) {
+                return;
+            }
+
             // TODO: capture code####, message..
             if(!info.checkRule(type, evt.isWhitelist, evt.codes)) {
                 return;
             }
 
+            if(!isExecute(evt, current)) {
+                Log.nlog.Info("[{0}] ignored action '{1}' :: by execution order", type, evt.caption);
+                return;
+            }
+
             try {
                 if(sbe.basic(evt)) {
-                    Log.nlog.Info("['{0}'] finished SBE: {1}", type.ToString(), evt.caption);
+                    Log.nlog.Info("[{0}] finished SBE: {1}", type, evt.caption);
                 }
             }
             catch(Exception ex) {
-                Log.nlog.Error("SBE '{0}' error: {1}", type.ToString(), ex.Message);
+                Log.nlog.Error("SBE '{0}' error: {1}", type, ex.Message);
             }
         }
 
@@ -190,18 +242,177 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         protected void sbeOutput(ISolutionEventOWP evt, ref string raw)
         {
+            if(!evt.enabled) {
+                return;
+            }
+
             if(!(new OWPMatcher()).match(evt.eventsOWP, raw)) {
+                return;
+            }
+
+            if(!isExecute(evt, current)) {
+                Log.nlog.Info("[Output] ignored action '{0}' :: by execution order", evt.caption);
                 return;
             }
 
             try {
                 if(sbe.basic(evt)) {
-                    Log.nlog.Info("['{0}'] finished SBE: {1}", "Output", evt.caption);
+                    Log.nlog.Info("[Output] finished SBE: {0}", evt.caption);
                 }
             }
             catch(Exception ex) {
-                Log.nlog.Error("SBE '{0}' error: {1}", "Output", ex.Message);
+                Log.nlog.Error("SBE 'Output' error: {0}", ex.Message);
             }
+        }
+
+        /// <summary>
+        /// Immediately execute 'PRE' of Solution
+        /// </summary>
+        protected int execPre()
+        {
+            try {
+                if(sbe.basic(Config._.Data.preBuild)) {
+                    Log.nlog.Info("[Pre] finished SBE: {0}", Config._.Data.preBuild.caption);
+                }
+                return VSConstants.S_OK;
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Pre-Build error: {0}", ex.Message);
+            }
+            return VSConstants.E_FAIL;
+        }
+
+        protected string getProjectName(IVsHierarchy pHierProj)
+        {
+            object name;
+            // http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivshierarchy.getproperty.aspx
+            // http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.__vshpropid.aspx
+            pHierProj.GetProperty((uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_Name, out name);
+
+            return name.ToString();
+        }
+
+        /// <summary>
+        /// Checking state from incoming projects
+        /// In general, this checking for single the event-action like a POST/Cacnel
+        /// note: 
+        ///   * The 'POST' - exists as successfully completed event, therefore we should getting only the 'After' state.
+        ///   * The 'Cancel' - works differently and contains realy the reached state: 'Before' or 'After'.
+        /// </summary>
+        protected bool isReached(ISolutionEvent evt)
+        {
+            if(!hasExecutionOrder(evt)) {
+                return true;
+            }
+            Log.nlog.Debug("hasExecutionOrder(->isReached) for '{0}' is true", evt.caption);
+
+            return evt.executionOrder.Where(e =>
+                                              projects.ContainsKey(e.project)
+                                               && projects[e.project] == e.order
+                                            ).Count() > 0;
+        }
+
+        /// <summary>
+        /// Checking state with current range of order.
+        /// 
+        /// In general, this checking for multiple the event-action like a EW/OWP:
+        ///   * Before1 -> After1|Cancel
+        ///   * After1  -> POST/Cancel
+        /// </summary>
+        /// <param name="evt"></param>
+        /// <param name="incoming">Current incoming project</param>
+        /// <returns>true value if it's allowed to execute for current state</returns>
+        protected bool isExecute(ISolutionEvent evt, TExecutionOrder incoming)
+        {
+            if(!hasExecutionOrder(evt)) {
+                return true;
+            }
+            Log.nlog.Debug("hasExecutionOrder(->isExecute) for '{0}' is true", evt.caption);
+
+            foreach(TExecutionOrder eo in evt.executionOrder)
+            {
+                if(!projects.ContainsKey(eo.project)) {
+                    continue;
+                }
+
+                // The 'Before' base:
+                if(eo.order == TExecutionOrder.Type.Before)
+                {
+                    // Before1 -> After1
+                    return (projects[eo.project] == TExecutionOrder.Type.Before);
+                }
+
+                // The 'After' base:
+                if(projects[eo.project] != TExecutionOrder.Type.After) {
+                    return false; // waiting for 'After' state..
+                }
+
+                if(incoming.project != eo.project) {
+                    return true; // After1  -> POST/Cancel
+                }
+                return (incoming.order == TExecutionOrder.Type.After); // 'After' is reached ?
+            }
+            return false;
+        }
+
+        protected void onProject(IVsHierarchy pHierProj, TExecutionOrder.Type type, bool fSuccess = true)
+        {
+            string project      = getProjectName(pHierProj);
+            projects[project]   = type;
+
+            current.project = project;
+            current.order   = type;
+
+            Log.nlog.Debug("onProject: '{0}':{1} == {2}", project, type, fSuccess);
+
+            if(!_isExecutedPre) {
+                monitoringPre(project, type, fSuccess);
+            }
+        }
+
+        /// <summary>
+        /// Monitoring for deferred PRE-action - "it's time or not"
+        /// </summary>
+        /// <param name="project">incoming project name</param>
+        /// <param name="type">type of execution order</param>
+        /// <param name="fSuccess">Flag indicating success</param>
+        protected void monitoringPre(string project, TExecutionOrder.Type type, bool fSuccess)
+        {
+            ISolutionEvent evt = Config._.Data.preBuild;
+
+            if(!evt.enabled) {
+                return;
+            }
+
+            if(!fSuccess && evt.buildFailedIgnore) {
+                Log.nlog.Info("[PRE] ignored action '{0}' :: Build FAILED. See option 'Ignore if the build failed'", evt.caption);
+                return;
+            }
+
+            if(!hasExecutionOrder(evt)) {
+                Log.nlog.Debug("[PRE] deferred: executionOrder is null or not contains elements");
+                return;
+            }
+
+            if(evt.executionOrder.Where(o => o.project == project && o.order == type).Count() > 0){
+                _isExecutedPre = true;
+                Log.nlog.Info("Incoming '{0}'({1}) :: Execute the deferred action: '{2}'", project, type, evt.caption);
+                execPre();
+            }
+        }
+
+        private void _flushExecuted()
+        {
+            projects.Clear();
+            _isExecutedPre = false;
+        }
+
+        private bool hasExecutionOrder(ISolutionEvent evt)
+        {
+            if(evt.executionOrder == null || evt.executionOrder.Length < 1) {
+                return false;
+            }
+            return true;
         }
     }
 }

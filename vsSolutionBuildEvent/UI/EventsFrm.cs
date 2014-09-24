@@ -21,19 +21,20 @@ namespace net.r_eg.vsSBE.UI
     {
         private class _SBEWrap
         {
-            public enum SBEEvetnType
+            public enum UIType
             {
-                SBEEvent,
-                SBEEventEW,
-                SBEEventOWP,
-                SBETransmitter,
-                SBEEventPost
+                General,
+                EW,
+                OWP,
+                Transmitter,
+                Post,
+                Pre
             }
 
             public SBEEvent evt;
-            public SBEEvetnType subtype = SBEEvetnType.SBEEvent;
+            public UIType subtype = UIType.General;
 
-            public _SBEWrap(SBEEvent evt, SBEEvetnType subtype)
+            public _SBEWrap(SBEEvent evt, UIType subtype)
             {
                 this.evt = evt;
                 this.subtype = subtype;
@@ -145,11 +146,11 @@ namespace net.r_eg.vsSBE.UI
                 _saveData(_SBE.evt);
 
                 switch(_SBE.subtype) {
-                    case _SBEWrap.SBEEvetnType.SBEEventEW: {
+                    case _SBEWrap.UIType.EW: {
                         _saveData((SBEEventEW)_SBE.evt);
                         break;
                     }
-                    case _SBEWrap.SBEEvetnType.SBEEventOWP: {
+                    case _SBEWrap.UIType.OWP: {
                         _saveData((SBEEventOWP)_SBE.evt);
                         break;
                     }
@@ -232,40 +233,40 @@ namespace net.r_eg.vsSBE.UI
 
         private void EventsFrm_Load(object sender, EventArgs e)
         {
-            _solutionEvents.Add(new _SBEWrap(Config._.Data.preBuild));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.preBuild, _SBEWrap.UIType.Pre));
             comboBoxEvents.Items.Add(":: Pre-Build :: Before assembly");
 
-            _solutionEvents.Add(new _SBEWrap(Config._.Data.postBuild, _SBEWrap.SBEEvetnType.SBEEventPost));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.postBuild, _SBEWrap.UIType.Post));
             comboBoxEvents.Items.Add(":: Post-Build :: After assembly");
 
             _solutionEvents.Add(new _SBEWrap(Config._.Data.cancelBuild));
             comboBoxEvents.Items.Add(":: Cancel-Build :: by user or compilation errors");
 
-            _solutionEvents.Add(new _SBEWrap(Config._.Data.warningsBuild, _SBEWrap.SBEEvetnType.SBEEventEW));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.warningsBuild, _SBEWrap.UIType.EW));
             comboBoxEvents.Items.Add(":: Warnings-Build :: Warnings during assembly");
 
-            _solutionEvents.Add(new _SBEWrap(Config._.Data.errorsBuild, _SBEWrap.SBEEvetnType.SBEEventEW));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.errorsBuild, _SBEWrap.UIType.EW));
             comboBoxEvents.Items.Add(":: Errors-Build :: Errors during assembly");
 
-            _solutionEvents.Add(new _SBEWrap(Config._.Data.outputCustomBuild, _SBEWrap.SBEEvetnType.SBEEventOWP));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.outputCustomBuild, _SBEWrap.UIType.OWP));
             comboBoxEvents.Items.Add(":: Output-Build customization :: Full control");
 
-            _solutionEvents.Add(new _SBEWrap(Config._.Data.transmitter, _SBEWrap.SBEEvetnType.SBETransmitter));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.transmitter, _SBEWrap.UIType.Transmitter));
             comboBoxEvents.Items.Add(":: Transmitter :: Transfer output data to outer handler");
 
             comboBoxEvents.SelectedIndex = 0;
             _operationsInit();
+            _renderData();
             _onlyFor(true);
             _executionOrder(true);
-            _renderData();
         }
 
         private void comboBoxEvents_SelectedIndexChanged(object sender, EventArgs e)
         {
             _operationsSelect();
+            _renderData();
             _onlyFor(false);
             _executionOrder(false);
-            _renderData();
         }
 
         private void checkBoxStatus_CheckedChanged(object sender, EventArgs e)
@@ -335,17 +336,21 @@ namespace net.r_eg.vsSBE.UI
 
             switch(_SBE.subtype)
             {
-                case _SBEWrap.SBEEvetnType.SBEEventEW: {
+                case _SBEWrap.UIType.EW:
+                {
                     _renderData((SBEEventEW)_SBE.evt);
                     groupBoxEW.Enabled = true;
                     break;
                 }
-                case _SBEWrap.SBEEvetnType.SBEEventOWP: {
+                case _SBEWrap.UIType.OWP:
+                {
                     _renderData((SBEEventOWP)_SBE.evt);                    
                     groupBoxOutputControl.Enabled = true;
                     break;
                 }
-                case _SBEWrap.SBEEvetnType.SBEEventPost: {
+                case _SBEWrap.UIType.Pre:
+                case _SBEWrap.UIType.Post:
+                {
                     checkBoxIgnoreIfFailed.Enabled = true;
                     break;
                 }
@@ -501,7 +506,16 @@ namespace net.r_eg.vsSBE.UI
 
             foreach(DataGridViewRow row in dataGridViewOrder.Rows)
             {
-                TExecutionOrder v = _SBE.evt.executionOrder.Where(s => s.project == row.Cells["dgvOrderTextBoxProject"].Value.ToString()).FirstOrDefault();
+                if(_SBE.evt.executionOrder == null) {
+                    row.Cells["dgvOrderCheckBoxEnabled"].Value  = false;
+                    row.Cells["dgvOrderComboBoxType"].Value     = TExecutionOrder.Type.Before.ToString();
+                    continue;
+                }
+
+                TExecutionOrder v = _SBE.evt.executionOrder.Where(s => 
+                                                                    s.project == row.Cells["dgvOrderTextBoxProject"].Value.ToString()
+                                                                  ).FirstOrDefault();
+
                 row.Cells["dgvOrderCheckBoxEnabled"].Value  = !String.IsNullOrEmpty(v.project);
                 row.Cells["dgvOrderComboBoxType"].Value     = v.order.ToString();
             }
@@ -517,7 +531,7 @@ namespace net.r_eg.vsSBE.UI
                 }
                 TExecutionOrder order = new TExecutionOrder();
                 order.project   = row.Cells["dgvOrderTextBoxProject"].Value.ToString();
-                order.order     = (TExecutionOrder.Order)Enum.Parse(typeof(TExecutionOrder.Order), row.Cells["dgvOrderComboBoxType"].Value.ToString());
+                order.order     = (TExecutionOrder.Type)Enum.Parse(typeof(TExecutionOrder.Type), row.Cells["dgvOrderComboBoxType"].Value.ToString());
                 ret.Add(order);
             }
             return ret.ToArray();
@@ -667,10 +681,15 @@ namespace net.r_eg.vsSBE.UI
 
         private void toolStripMenuAbout_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(String.Format("Copyright (c) 2013-{0} Developed by reg < entry.reg@gmail.com >", DateTime.Now.Year),
-                                                toolStripMenuAbout.Text,
-                                                MessageBoxButtons.OK,
-                                                MessageBoxIcon.Information);
+            string inc = "This product includes:\n * NLog (nlog-project.org)\n\n All about graphical resources see /Resources/License";
+            MessageBox.Show(String.Format(
+                                    "Copyright (c) 2013-{0} Developed by reg < entry.reg@gmail.com >\n\n{1}",
+                                    DateTime.Now.Year, inc
+                            ),
+                            toolStripMenuAbout.Text,
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information
+            );
         }
 
         private void toolStripMenuReport_Click(object sender, EventArgs e)
