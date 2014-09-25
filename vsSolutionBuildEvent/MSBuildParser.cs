@@ -343,8 +343,11 @@ namespace net.r_eg.vsSBE
             {
                 ret.property.complex        = false;
                 ret.property.unevaluated    = m.Groups[1].Value;
-                ret.property.project        = (m.Groups[2].Success) ? m.Groups[2].Value.Trim() : null;
                 ret.property.completed      = true;
+                ret.property.project        = (m.Groups[2].Success) ?
+                                                           m.Groups[2].Value.Trim() : 
+                                                           (!String.IsNullOrEmpty(ret.property.project)) ? ret.property.project : null;
+                
                 Log.nlog.Debug("Prepared: found simple property '{0}' for '{1}'", ret.property.unevaluated, ret.property.project);
                 return ret;
             }

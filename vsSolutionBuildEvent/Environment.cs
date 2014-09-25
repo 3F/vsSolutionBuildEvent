@@ -213,7 +213,10 @@ namespace net.r_eg.vsSBE
             Log.nlog.Trace("isEquals for '{0}' : '{1}' [{2} = {3} ; {4} = {5}]",
                             eProject.FullPath, dtePrgName, dtePrgCfg, ePrgCfg, dtePrgPlatform, ePrgPlatform);
 
-            if(dtePrgName.Equals(ePrgName) && dtePrgCfg.Equals(ePrgCfg) && dtePrgPlatform.Equals(ePrgPlatform))
+            // see MS Connect Issue #503935 & https://bitbucket.org/3F/vssolutionbuildevent/issue/14/empty-property-outdir
+            bool isEqualPlatforms = ePrgPlatform.Replace(" ", "") == dtePrgPlatform.Replace(" ", "");
+
+            if(dtePrgName.Equals(ePrgName) && dtePrgCfg.Equals(ePrgCfg) && isEqualPlatforms)
             {
                 Log.nlog.Trace("isEquals: matched");
                 return true;
@@ -244,6 +247,11 @@ namespace net.r_eg.vsSBE
 
             if(!prop.ContainsKey("Platform")) {
                 prop["Platform"] = dteProject.ConfigurationManager.ActiveConfiguration.PlatformName;
+
+                // Bug with $(OutDir) - see MS Connect Issue #503935 & https://bitbucket.org/3F/vssolutionbuildevent/issue/14/empty-property-outdir
+                if(prop["Platform"] == "Any CPU") {
+                    prop["Platform"] = "AnyCPU";
+                }
             }
             
             if(!prop.ContainsKey("BuildingInsideVisualStudio")) {
