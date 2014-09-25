@@ -57,7 +57,7 @@
             this.dataGridViewVariables.ReadOnly = true;
             this.dataGridViewVariables.RowHeadersVisible = false;
             this.dataGridViewVariables.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridViewVariables.Size = new System.Drawing.Size(486, 152);
+            this.dataGridViewVariables.Size = new System.Drawing.Size(560, 183);
             this.dataGridViewVariables.StandardTab = true;
             this.dataGridViewVariables.TabIndex = 2;
             this.dataGridViewVariables.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewVariables_CellDoubleClick);
@@ -86,7 +86,7 @@
             this.comboBoxProjects.FormattingEnabled = true;
             this.comboBoxProjects.Location = new System.Drawing.Point(0, 0);
             this.comboBoxProjects.Name = "comboBoxProjects";
-            this.comboBoxProjects.Size = new System.Drawing.Size(486, 21);
+            this.comboBoxProjects.Size = new System.Drawing.Size(560, 21);
             this.comboBoxProjects.TabIndex = 1;
             this.comboBoxProjects.SelectedIndexChanged += new System.EventHandler(this.comboBoxProjects_SelectedIndexChanged);
             this.comboBoxProjects.KeyUp += new System.Windows.Forms.KeyEventHandler(this.comboBoxProjects_KeyUp);
@@ -96,9 +96,9 @@
             this.textBoxFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.textBoxFilter.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxFilter.Location = new System.Drawing.Point(0, 203);
+            this.textBoxFilter.Location = new System.Drawing.Point(0, 234);
             this.textBoxFilter.Name = "textBoxFilter";
-            this.textBoxFilter.Size = new System.Drawing.Size(486, 20);
+            this.textBoxFilter.Size = new System.Drawing.Size(560, 20);
             this.textBoxFilter.TabIndex = 0;
             this.textBoxFilter.TextChanged += new System.EventHandler(this.textBoxFilter_TextChanged);
             this.textBoxFilter.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxFilter_KeyUp);
@@ -107,7 +107,7 @@
             // 
             this.labelFiler.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelFiler.AutoSize = true;
-            this.labelFiler.Location = new System.Drawing.Point(-3, 187);
+            this.labelFiler.Location = new System.Drawing.Point(-3, 218);
             this.labelFiler.Name = "labelFiler";
             this.labelFiler.Size = new System.Drawing.Size(32, 13);
             this.labelFiler.TabIndex = 3;
@@ -117,27 +117,25 @@
             // 
             this.labelPropCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelPropCount.Location = new System.Drawing.Point(444, 182);
+            this.labelPropCount.Location = new System.Drawing.Point(444, 213);
             this.labelPropCount.Name = "labelPropCount";
-            this.labelPropCount.Size = new System.Drawing.Size(42, 18);
+            this.labelPropCount.Size = new System.Drawing.Size(116, 18);
             this.labelPropCount.TabIndex = 4;
             this.labelPropCount.Text = "0";
             this.labelPropCount.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // EnvironmentVariablesFrm
+            // PropertiesFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(487, 225);
+            this.ClientSize = new System.Drawing.Size(561, 256);
             this.Controls.Add(this.labelPropCount);
             this.Controls.Add(this.labelFiler);
             this.Controls.Add(this.textBoxFilter);
             this.Controls.Add(this.comboBoxProjects);
             this.Controls.Add(this.dataGridViewVariables);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-            this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "EnvironmentVariablesFrm";
+            this.Name = "PropertiesFrm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MSBuild Properties";

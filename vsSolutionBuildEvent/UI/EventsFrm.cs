@@ -49,7 +49,7 @@ namespace net.r_eg.vsSBE.UI
         /// <summary>
         /// UI-helper for MSBuild Properties
         /// </summary>
-        protected PropertiesFrm properties;
+        private PropertiesFrm _frmProperties;
 
         /// <summary>
         /// all types of SBE events
@@ -74,6 +74,11 @@ namespace net.r_eg.vsSBE.UI
         /// UI-helper for DTE Commands
         /// </summary>
         private DTECommandsFrm _frmDTECommands;
+        /// <summary>
+        /// Testing tool - Evaluating Property
+        /// </summary>
+        private PropertyCheckFrm _frmPropertyCheck;
+
         private Environment _env;
 
         public EventsFrm(Environment env)
@@ -539,17 +544,18 @@ namespace net.r_eg.vsSBE.UI
 
         private void envVariablesUIHelper()
         {
-            if(properties != null && !properties.IsDisposed) {
-                if(properties.WindowState != FormWindowState.Minimized) {
-                    properties.Dispose();
-                    properties = null;
+            if(_frmProperties != null && !_frmProperties.IsDisposed)
+            {
+                if(_frmProperties.WindowState != FormWindowState.Minimized) {
+                    _frmProperties.Dispose();
+                    _frmProperties = null;
                     return;
                 }
-                properties.Focus();
+                _frmProperties.Focus();
                 return;
             }
-            properties = new PropertiesFrm(this);
-            properties.Show();
+            _frmProperties = new PropertiesFrm(this);
+            _frmProperties.Show();
         }
 
         private void radioModeScript_CheckedChanged(object sender, EventArgs e)
@@ -794,6 +800,22 @@ namespace net.r_eg.vsSBE.UI
         private void toolStripMenuDTECmd_Click(object sender, EventArgs e)
         {
             btnDteCmd_Click(sender, e);
+        }
+
+        private void toolStripMenuEvaluatingProperty_Click(object sender, EventArgs e)
+        {
+            if(_frmPropertyCheck != null && !_frmPropertyCheck.IsDisposed)
+            {
+                if(_frmPropertyCheck.WindowState != FormWindowState.Minimized) {
+                    _frmPropertyCheck.Dispose();
+                    _frmPropertyCheck = null;
+                    return;
+                }
+                _frmPropertyCheck.Focus();
+                return;
+            }
+            _frmPropertyCheck = new PropertyCheckFrm(_env);
+            _frmPropertyCheck.Show();
         }
     }
 }

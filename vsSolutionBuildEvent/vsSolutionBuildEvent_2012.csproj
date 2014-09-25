@@ -179,6 +179,12 @@
     <Compile Include="Events\SBESettings.cs" />
     <Compile Include="Events\SolutionEvents.cs" />
     <Compile Include="UI\ITransferData.cs" />
+    <Compile Include="UI\PropertyCheckFrm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\PropertyCheckFrm.Designer.cs">
+      <DependentUpon>PropertyCheckFrm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\StatusControl.xaml.cs">
       <DependentUpon>StatusControl.xaml</DependentUpon>
     </Compile>
@@ -202,6 +208,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UI\EventsFrm.resx">
       <DependentUpon>EventsFrm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\PropertyCheckFrm.resx">
+      <DependentUpon>PropertyCheckFrm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="VSPackage.resx">
       <MergeWithCTO>true</MergeWithCTO>
