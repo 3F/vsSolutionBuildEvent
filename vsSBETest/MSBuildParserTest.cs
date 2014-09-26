@@ -476,9 +476,97 @@ namespace vsSBETest
         [TestMethod()]
         public void parseVariablesMSBuildTest5()
         {
-            string data     = "$($($(var.Replace('~OS~', $(OS)):project).Concat($($(Path:project2).Replace('.', '_')), ' ($()) ')))";
+            string data     = "$(ProjectDir.Replace(\"str1\", \"str2\"))";
             string actual   = (new MSBuildParserAccessor.ToParseVariablesMSBuild()).parseVariablesMSBuild(data);
-            Assert.AreEqual("[E:[E:[E:var.Replace('~OS~', [P:OS:]):project].Concat([E:[P:Path:project2].Replace('.', '_'):], ' ($()) '):]:]", actual);
+            Assert.AreEqual("[E~ProjectDir.Replace(\"str1\", \"str2\")~]", actual);
+        }
+
+        /// <summary>
+        ///A test for parseVariablesMSBuild
+        ///</summary>
+        [TestMethod()]
+        public void parseVariablesMSBuildTest6()
+        {
+            string data     = "$($(ProjectDir.Replace('\\', '/'):client))";
+            string actual   = (new MSBuildParserAccessor.ToParseVariablesMSBuild()).parseVariablesMSBuild(data);
+            Assert.AreEqual("[E~ProjectDir.Replace('\\', '/')~client]", actual);
+        }
+
+        /// <summary>
+        ///A test for parseVariablesMSBuild
+        ///</summary>
+        [TestMethod()]
+        public void parseVariablesMSBuildTest7()
+        {
+            string data     = "$(ProjectDir.Replace('\\', '/'):client)";
+            string actual   = (new MSBuildParserAccessor.ToParseVariablesMSBuild()).parseVariablesMSBuild(data);
+            Assert.AreEqual("[E~ProjectDir.Replace('\\', '/')~client]", actual);
+        }
+
+        /// <summary>
+        ///A test for parseVariablesMSBuild
+        ///</summary>
+        [TestMethod()]
+        public void parseVariablesMSBuildTest8()
+        {
+            string data     = "$(ProjectDir.Replace('\\', '/'))";
+            string actual   = (new MSBuildParserAccessor.ToParseVariablesMSBuild()).parseVariablesMSBuild(data);
+            Assert.AreEqual("[E~ProjectDir.Replace('\\', '/')~]", actual);
+        }
+
+        /// <summary>
+        ///A test for parseVariablesMSBuild
+        ///</summary>
+        [TestMethod()]
+        public void parseVariablesMSBuildTest9()
+        {
+            string data     = "$($(ProjectDir.Replace('\\', '/')))";
+            string actual   = (new MSBuildParserAccessor.ToParseVariablesMSBuild()).parseVariablesMSBuild(data);
+            Assert.AreEqual("[E~ProjectDir.Replace('\\', '/')~]", actual);
+        }
+
+        /// <summary>
+        ///A test for parseVariablesMSBuild
+        ///</summary>
+        [TestMethod()]
+        public void parseVariablesMSBuildTest10()
+        {
+            string data     = "$(var.Method('~str~', $(OS:$($(data):project2)), \"~str2~\"):project)";
+            string actual   = (new MSBuildParserAccessor.ToParseVariablesMSBuild()).parseVariablesMSBuild(data);
+            Assert.AreEqual("[E~var.Method('~str~', [P~OS~[E~[P~data~]~project2]], \"~str2~\")~project]", actual);
+        }
+
+        /// <summary>
+        ///A test for parseVariablesMSBuild
+        ///</summary>
+        [TestMethod()]
+        public void parseVariablesMSBuildTest11()
+        {
+            string data     = "$($(var.Method('str', $(OS))):$(var.Method('str2', $(SO))))";
+            string actual   = (new MSBuildParserAccessor.ToParseVariablesMSBuild()).parseVariablesMSBuild(data);
+            Assert.AreEqual("[E~var.Method('str', [P~OS~])~]:[E~var.Method('str2', [P~SO~])~]", actual);
+        }
+
+        /// <summary>
+        ///A test for parseVariablesMSBuild
+        ///</summary>
+        [TestMethod()]
+        public void parseVariablesMSBuildTest12()
+        {
+            string data     = "$(Path)";
+            string actual   = (new MSBuildParserAccessor.ToParseVariablesMSBuild()).parseVariablesMSBuild(data);
+            Assert.AreEqual("[P~Path~]", actual);
+        }
+
+        /// <summary>
+        ///A test for parseVariablesMSBuild
+        ///</summary>
+        [TestMethod()]
+        public void parseVariablesMSBuildTest13()
+        {
+            string data     = "$(Path:project)";
+            string actual   = (new MSBuildParserAccessor.ToParseVariablesMSBuild()).parseVariablesMSBuild(data);
+            Assert.AreEqual("[P~Path~project]", actual);
         }
     }
 
@@ -494,12 +582,12 @@ namespace vsSBETest
         {
             public override string evaluateVariable(string unevaluated, string project)
             {
-                return String.Format("[E:{0}:{1}]", unevaluated, project);
+                return String.Format("[E~{0}~{1}]", unevaluated, project);
             }
 
             public override string getProperty(string name, string project)
             {
-                return String.Format("[P:{0}:{1}]", name, project);
+                return String.Format("[P~{0}~{1}]", name, project);
             }
         }
 
