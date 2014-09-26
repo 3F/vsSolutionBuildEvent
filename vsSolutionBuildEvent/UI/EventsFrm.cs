@@ -13,26 +13,28 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using EnvDTE80;
+using net.r_eg.vsSBE.Events;
 
 namespace net.r_eg.vsSBE.UI
 {
-    public partial class EventsFrm: Form, ITransferEnvironmentVariable
+    public partial class EventsFrm: Form, ITransferDataProperty, ITransferDataCommand
     {
         private class _SBEWrap
         {
-            public enum SBEEvetnType
+            public enum UIType
             {
-                SBEEvent,
-                SBEEventEW,
-                SBEEventOWP,
-                SBETransmitter,
-                SBEEventPost
+                General,
+                EW,
+                OWP,
+                Transmitter,
+                Post,
+                Pre
             }
 
             public SBEEvent evt;
-            public SBEEvetnType subtype = SBEEvetnType.SBEEvent;
+            public UIType subtype = UIType.General;
 
-            public _SBEWrap(SBEEvent evt, SBEEvetnType subtype)
+            public _SBEWrap(SBEEvent evt, UIType subtype)
             {
                 this.evt = evt;
                 this.subtype = subtype;
@@ -45,9 +47,9 @@ namespace net.r_eg.vsSBE.UI
         }
 
         /// <summary>
-        /// UI-helper for MSBuild Environment Variables
+        /// UI-helper for MSBuild Properties
         /// </summary>
-        protected EnvironmentVariablesFrm envVariables;
+        private PropertiesFrm _frmProperties;
 
         /// <summary>
         /// all types of SBE events
@@ -72,29 +74,46 @@ namespace net.r_eg.vsSBE.UI
         /// UI-helper for DTE Commands
         /// </summary>
         private DTECommandsFrm _frmDTECommands;
-        private DTE2 _dte;
+        /// <summary>
+        /// Testing tool - Evaluating Property
+        /// </summary>
+        private PropertyCheckFrm _frmPropertyCheck;
 
-        public EventsFrm(DTE2 dte)
+        private Environment _env;
+
+        public EventsFrm(Environment env)
         {
-            _dte = dte;
+            _env = env;
             InitializeComponent();
-            foreach(DataGridViewRow row in dataGridViewOutput.Rows) {
-                row.Height = dataGridViewOutput.RowTemplate.Height;
-            }
+
+#if DEBUG
+            this.Text                       += " [Debug version]";
+            toolStripMenuDebugMode.Checked  = true;
+            toolStripMenuDebugMode.Enabled  = false;
+            toolStripMenuVersion.Text       = string.Format("based on {0}", Version.branchSha1);
+#else
+            toolStripMenuDebugMode.Checked  = Settings.debugMode;
+            toolStripMenuVersion.Text       = string.Format("v{0} [ {1} ]", Version.numberString, Version.branchSha1);
+#endif
+
+            _fixHeight(dataGridViewOutput);
+            _fixHeight(dataGridViewOrder);
+
             _notice(typeof(CheckBox));
             _notice(typeof(RadioButton));
             _notice(typeof(TextBox));
+            _notice(typeof(RichTextBox));
             _notice(typeof(ListBox));
             _notice(typeof(ComboBox));
         }
 
         /// <summary>
-        /// implements main output for variable
+        /// Implements transport for MSBuild property
         /// TODO: highlighting
         /// </summary>
         /// <param name="name"></param>
         /// <param name="project"></param>
-        public void outputName(string name, string project = null)
+        public void property(string name, string project = null)
         {
             textBoxCommand.Select(textBoxCommand.SelectionStart, 0);
 
@@ -105,6 +124,17 @@ namespace net.r_eg.vsSBE.UI
                 textBoxCommand.SelectedText = String.Format("$({0}:{1})", name, project);
             }
 
+            this.Focus();
+        }
+
+        /// <summary>
+        /// Implements transport for DTE command
+        /// </summary>
+        /// <param name="name"></param>
+        public void command(string name)
+        {
+            textBoxCommand.Select(textBoxCommand.SelectionStart, 0);
+            textBoxCommand.SelectedText = name;
             this.Focus();
         }
 
@@ -121,17 +151,17 @@ namespace net.r_eg.vsSBE.UI
                 _saveData(_SBE.evt);
 
                 switch(_SBE.subtype) {
-                    case _SBEWrap.SBEEvetnType.SBEEventEW: {
+                    case _SBEWrap.UIType.EW: {
                         _saveData((SBEEventEW)_SBE.evt);
                         break;
                     }
-                    case _SBEWrap.SBEEvetnType.SBEEventOWP: {
+                    case _SBEWrap.UIType.OWP: {
                         _saveData((SBEEventOWP)_SBE.evt);
                         break;
                     }
                 }
 
-                Config.save();
+                Config._.save();
             }
             catch(Exception e) {
                 MessageBox.Show("Failed applying settings:\n" + e.Message, "Configuration of event", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -174,6 +204,10 @@ namespace net.r_eg.vsSBE.UI
                 }
                 evt.dteExec.caption = listBoxOperation.Text;
             }
+
+            evt.dteExec.abortOnFirstError   = checkBoxOperationsAbort.Checked;
+            evt.toConfiguration             = checkedListBoxSpecCfg.CheckedItems.OfType<string>().ToArray();
+            evt.executionOrder              = _getExecutionOrder();
         }
 
         private void _saveData(SBEEventEW evt)
@@ -187,95 +221,57 @@ namespace net.r_eg.vsSBE.UI
             evt.eventsOWP = new List<TEventOWP>();
             foreach(DataGridViewRow row in dataGridViewOutput.Rows)
             {
-                if(row.Cells[0].Value == null || row.Cells[1].Value == null) {
+                if(row.Cells["owpTerm"].Value == null || row.Cells["owpType"].Value == null) {
                     continue;
                 }
                 TEventOWP owp = new TEventOWP();
-                owp.term      = row.Cells[0].Value.ToString();
-                owp.type      = (TEventOWPTerm)Enum.Parse(typeof(TEventOWPTerm), row.Cells[1].Value.ToString());
+                owp.term      = row.Cells["owpTerm"].Value.ToString();
+                owp.type      = (TEventOWPTerm)Enum.Parse(typeof(TEventOWPTerm), row.Cells["owpType"].Value.ToString());
                 evt.eventsOWP.Add(owp);
             }
         }
 
-        private void btnClear_Click(object sender, EventArgs e)
+        private void toolStripMenuReset_Click(object sender, EventArgs e)
         {
             comboBoxEvents_SelectedIndexChanged(sender, e);
         }
 
         private void EventsFrm_Load(object sender, EventArgs e)
         {
-            _solutionEvents.Add(new _SBEWrap(Config.Data.preBuild));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.preBuild, _SBEWrap.UIType.Pre));
             comboBoxEvents.Items.Add(":: Pre-Build :: Before assembly");
 
-            _solutionEvents.Add(new _SBEWrap(Config.Data.postBuild, _SBEWrap.SBEEvetnType.SBEEventPost));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.postBuild, _SBEWrap.UIType.Post));
             comboBoxEvents.Items.Add(":: Post-Build :: After assembly");
 
-            _solutionEvents.Add(new _SBEWrap(Config.Data.cancelBuild));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.cancelBuild));
             comboBoxEvents.Items.Add(":: Cancel-Build :: by user or compilation errors");
 
-            _solutionEvents.Add(new _SBEWrap(Config.Data.warningsBuild, _SBEWrap.SBEEvetnType.SBEEventEW));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.warningsBuild, _SBEWrap.UIType.EW));
             comboBoxEvents.Items.Add(":: Warnings-Build :: Warnings during assembly");
 
-            _solutionEvents.Add(new _SBEWrap(Config.Data.errorsBuild, _SBEWrap.SBEEvetnType.SBEEventEW));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.errorsBuild, _SBEWrap.UIType.EW));
             comboBoxEvents.Items.Add(":: Errors-Build :: Errors during assembly");
 
-            _solutionEvents.Add(new _SBEWrap(Config.Data.outputCustomBuild, _SBEWrap.SBEEvetnType.SBEEventOWP));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.outputCustomBuild, _SBEWrap.UIType.OWP));
             comboBoxEvents.Items.Add(":: Output-Build customization :: Full control");
 
-            _solutionEvents.Add(new _SBEWrap(Config.Data.transmitter, _SBEWrap.SBEEvetnType.SBETransmitter));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.transmitter, _SBEWrap.UIType.Transmitter));
             comboBoxEvents.Items.Add(":: Transmitter :: Transfer output data to outer handler");
 
             comboBoxEvents.SelectedIndex = 0;
             _operationsInit();
             _renderData();
-            labelVersion.Text = string.Format("v{0} [ {1} ]", Version.numberString, Version.branchSha1);
-
-            menuItemDebugMode.Checked = Config.debugMode;
-#if DEBUG
-            this.Text += " [Debug version]";
-#endif
-        }
-
-        private void btnExample_Click(object sender, EventArgs e)
-        {
-            DialogResult ret = MessageBox.Show(String.Format("{0}\n{1}\n\n{2}\n{3}",
-                                                    "Help is contained on VS Gallery Page - scripts, solutions, etc.,",
-                                                    "Click 'Yes' to go to the page",
-                                                    "Other detail, see on: bitbucket.org/3F",
-                                                    "entry.reg@gmail.com"
-                                                    ),
-                                                this.Text, 
-                                                MessageBoxButtons.YesNo, 
-                                                MessageBoxIcon.Information);
-
-            if(ret == DialogResult.Yes) {
-                System.Diagnostics.Process.Start("http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
-            }
-        }
-
-        private void btnBugReport_Click(object sender, EventArgs e)
-        {
-            DialogResult ret = MessageBox.Show("Click 'Yes' if you found error or have a proposal", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-            if(ret == DialogResult.Yes) {
-                System.Diagnostics.Process.Start("https://bitbucket.org/3F/vssolutionbuildevent/issues/new");
-            }
+            _onlyFor(true);
+            _executionOrder(true);
         }
 
         private void comboBoxEvents_SelectedIndexChanged(object sender, EventArgs e)
         {
             _operationsSelect();
             _renderData();
-        }
-
-        private void textBoxCommand_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            
-        }
-
-        private void textBoxCaption_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            
+            _onlyFor(false);
+            _executionOrder(false);
         }
 
         private void checkBoxStatus_CheckedChanged(object sender, EventArgs e)
@@ -320,6 +316,9 @@ namespace net.r_eg.vsSBE.UI
                 else if(component == typeof(ComboBox)) {
                     ((ComboBox)ctrl).TextChanged += call;
                 }
+                else if(component == typeof(RichTextBox)) {
+                    ((RichTextBox)ctrl).TextChanged += call;
+                }
             }
         }
 
@@ -342,17 +341,21 @@ namespace net.r_eg.vsSBE.UI
 
             switch(_SBE.subtype)
             {
-                case _SBEWrap.SBEEvetnType.SBEEventEW: {
+                case _SBEWrap.UIType.EW:
+                {
                     _renderData((SBEEventEW)_SBE.evt);
                     groupBoxEW.Enabled = true;
                     break;
                 }
-                case _SBEWrap.SBEEvetnType.SBEEventOWP: {
+                case _SBEWrap.UIType.OWP:
+                {
                     _renderData((SBEEventOWP)_SBE.evt);                    
                     groupBoxOutputControl.Enabled = true;
                     break;
                 }
-                case _SBEWrap.SBEEvetnType.SBEEventPost: {
+                case _SBEWrap.UIType.Pre:
+                case _SBEWrap.UIType.Post:
+                {
                     checkBoxIgnoreIfFailed.Enabled = true;
                     break;
                 }
@@ -373,6 +376,7 @@ namespace net.r_eg.vsSBE.UI
             comboBoxWrapper.Text            = evt.wrapper;
             checkBoxParseVariables.Checked  = evt.parseVariablesMSBuild;
             checkBoxIgnoreIfFailed.Checked  = evt.buildFailedIgnore;
+            checkBoxOperationsAbort.Checked = evt.dteExec.abortOnFirstError;
 
             switch(evt.mode) {
                 case TModeCommands.Interpreter: {
@@ -468,19 +472,90 @@ namespace net.r_eg.vsSBE.UI
             return false;
         }
 
-        private void envVariablesUIHelper()
+        private void _onlyFor(bool isNew)
         {
-            if(envVariables != null && !envVariables.IsDisposed) {
-                if(envVariables.WindowState != FormWindowState.Minimized) {
-                    envVariables.Dispose();
-                    envVariables = null;
-                    return;
+            if(isNew) {
+                checkedListBoxSpecCfg.Items.Clear();
+                foreach(EnvDTE80.SolutionConfiguration2 cfg in _env.SolutionConfigurations)
+                {
+                    string name = _env.SolutionConfigurationFormat(cfg);
+                    bool state  = _SBE.evt.toConfiguration == null ? false : _SBE.evt.toConfiguration.Where(s => s == name).Count() > 0;
+                    checkedListBoxSpecCfg.Items.Add(name, state);
                 }
-                envVariables.Focus();
                 return;
             }
-            envVariables = new EnvironmentVariablesFrm(this);
-            envVariables.Show();
+
+            for(int i = 0; i < checkedListBoxSpecCfg.Items.Count; ++i)
+            {
+                string name = checkedListBoxSpecCfg.Items[i].ToString();
+                bool state  = _SBE.evt.toConfiguration == null ? false : _SBE.evt.toConfiguration.Where(s => s == name).Count() > 0;
+                checkedListBoxSpecCfg.SetItemChecked(i, state);
+            }
+        }
+
+        private void _executionOrder(bool isNew)
+        {
+            if(isNew) {
+                dataGridViewOrder.Rows.Clear();
+                foreach(string name in _env.DTEProjectsList)
+                {
+                    if(_SBE.evt.executionOrder == null) {
+                        dataGridViewOrder.Rows.Add(false, name, dgvOrderComboBoxType.Items[0]);
+                        continue;
+                    }
+                    TExecutionOrder v = _SBE.evt.executionOrder.Where(s => s.project == name).FirstOrDefault();
+                    dataGridViewOrder.Rows.Add(!String.IsNullOrEmpty(v.project), name, v.order.ToString());
+                }
+                return;
+            }
+
+            foreach(DataGridViewRow row in dataGridViewOrder.Rows)
+            {
+                if(_SBE.evt.executionOrder == null) {
+                    row.Cells["dgvOrderCheckBoxEnabled"].Value  = false;
+                    row.Cells["dgvOrderComboBoxType"].Value     = TExecutionOrder.Type.Before.ToString();
+                    continue;
+                }
+
+                TExecutionOrder v = _SBE.evt.executionOrder.Where(s => 
+                                                                    s.project == row.Cells["dgvOrderTextBoxProject"].Value.ToString()
+                                                                  ).FirstOrDefault();
+
+                row.Cells["dgvOrderCheckBoxEnabled"].Value  = !String.IsNullOrEmpty(v.project);
+                row.Cells["dgvOrderComboBoxType"].Value     = v.order.ToString();
+            }
+        }
+
+        private TExecutionOrder[] _getExecutionOrder()
+        {
+            List<TExecutionOrder> ret = new List<TExecutionOrder>(dataGridViewOrder.Rows.Count);
+            foreach(DataGridViewRow row in dataGridViewOrder.Rows)
+            {
+                if(!Convert.ToBoolean(row.Cells["dgvOrderCheckBoxEnabled"].Value)) {
+                    continue;
+                }
+                TExecutionOrder order = new TExecutionOrder();
+                order.project   = row.Cells["dgvOrderTextBoxProject"].Value.ToString();
+                order.order     = (TExecutionOrder.Type)Enum.Parse(typeof(TExecutionOrder.Type), row.Cells["dgvOrderComboBoxType"].Value.ToString());
+                ret.Add(order);
+            }
+            return ret.ToArray();
+        }
+
+        private void envVariablesUIHelper()
+        {
+            if(_frmProperties != null && !_frmProperties.IsDisposed)
+            {
+                if(_frmProperties.WindowState != FormWindowState.Minimized) {
+                    _frmProperties.Dispose();
+                    _frmProperties = null;
+                    return;
+                }
+                _frmProperties.Focus();
+                return;
+            }
+            _frmProperties = new PropertiesFrm(this);
+            _frmProperties.Show();
         }
 
         private void radioModeScript_CheckedChanged(object sender, EventArgs e)
@@ -491,6 +566,7 @@ namespace net.r_eg.vsSBE.UI
             textBoxCommand.Enabled      = true;
             _renderDataStubCommand(false);
             panelControlByOperation.Enabled = true;
+            checkBoxOperationsAbort.Enabled = false;
         }
 
         private void radioModeFiles_CheckedChanged(object sender, EventArgs e)
@@ -501,6 +577,7 @@ namespace net.r_eg.vsSBE.UI
             textBoxCommand.Enabled      = true;
             _renderDataStubCommand(false);
             panelControlByOperation.Enabled = true;
+            checkBoxOperationsAbort.Enabled = false;
         }
 
         private void radioModeOperation_CheckedChanged(object sender, EventArgs e)
@@ -509,6 +586,7 @@ namespace net.r_eg.vsSBE.UI
             groupBoxInterpreter.Enabled     = false;
             listBoxOperation.Enabled        = true;
             panelControlByOperation.Enabled = false;
+            checkBoxOperationsAbort.Enabled = true;
         }
 
         private void listBoxOperation_SelectedIndexChanged(object sender, EventArgs e)
@@ -560,14 +638,117 @@ namespace net.r_eg.vsSBE.UI
             listBoxEW.Items.RemoveAt(listBoxEW.SelectedIndex);
         }
 
-        private void menuItemDebugMode_Click(object sender, EventArgs e)
+        private void toolStripMenuDoc_Click(object sender, EventArgs e)
         {
-            Config.debugMode = (menuItemDebugMode.Checked = !menuItemDebugMode.Checked);
+            DialogResult ret = MessageBox.Show("Help is contained on VS Gallery Page - scripts, solutions, etc.,\nClick 'Yes' to go to the page",
+                                                this.Text,
+                                                MessageBoxButtons.YesNo,
+                                                MessageBoxIcon.Information);
+
+            if(ret == DialogResult.Yes) {
+                _openUrl("http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
+            }
+        }
+
+        private void toolStripMenuChangelog_Click(object sender, EventArgs e)
+        {
+            _openUrl("https://bitbucket.org/3F/vssolutionbuildevent/raw/master/changelog.txt");
+        }
+
+        private void toolStripMenuWiki_Click(object sender, EventArgs e)
+        {
+            _openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki");
+        }
+
+        private void toolStripMenuIssue_Click(object sender, EventArgs e)
+        {
+            _openUrl("https://bitbucket.org/3F/vssolutionbuildevent/issues");
+        }
+
+        private void toolStripMenuSources_Click(object sender, EventArgs e)
+        {
+            _openUrl("https://bitbucket.org/3F/vssolutionbuildevent/commits/all");
+        }
+
+        private void toolStripMenuForkGithub_Click(object sender, EventArgs e)
+        {
+            _openUrl("https://github.com/3F/vsSolutionBuildEvent");
+        }
+
+        private void toolStripMenuForkBitbucket_Click(object sender, EventArgs e)
+        {
+            _openUrl("https://bitbucket.org/3F/vssolutionbuildevent/overview");
+        }
+
+        private void toolStripMenuLicense_Click(object sender, EventArgs e)
+        {
+            _openUrl("https://bitbucket.org/3F/vssolutionbuildevent/raw/master/LICENSE");
+        }
+
+        private void toolStripMenuAbout_Click(object sender, EventArgs e)
+        {
+            string inc = "This product includes:\n * NLog (nlog-project.org)\n\n All about graphical resources see /Resources/License";
+            MessageBox.Show(String.Format(
+                                    "Copyright (c) 2013-{0} Developed by reg < entry.reg@gmail.com >\n\n{1}",
+                                    DateTime.Now.Year, inc
+                            ),
+                            toolStripMenuAbout.Text,
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information
+            );
+        }
+
+        private void toolStripMenuReport_Click(object sender, EventArgs e)
+        {
+            DialogResult ret = MessageBox.Show("Click 'Yes' if you found error or have a proposal", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if(ret == DialogResult.Yes) {
+                System.Diagnostics.Process.Start("https://bitbucket.org/3F/vssolutionbuildevent/issues/new");
+            }
+        }
+
+        private void menuItemEditorCut_Click(object sender, EventArgs e)
+        {
+            textBoxCommand.Cut();
+        }
+
+        private void menuItemEditorCopy_Click(object sender, EventArgs e)
+        {
+            textBoxCommand.Copy();
+        }
+
+        private void menuItemEditorPaste_Click(object sender, EventArgs e)
+        {
+            textBoxCommand.Paste();
+        }
+
+        private void _openUrl(string url)
+        {
+            try {
+                System.Diagnostics.Process.Start(url);
+            }
+            catch(Exception ex) {
+                Log.nlog.Warn(ex.Message);
+            }
+        }
+
+        private void _fixHeight(DataGridView grid)
+        {
+            foreach(DataGridViewRow row in grid.Rows) {
+                row.Height = grid.RowTemplate.Height;
+            }
+        }
+
+        private void toolStripMenuDebugMode_Click(object sender, EventArgs e)
+        {
+#if !DEBUG
+            Settings.debugMode = (toolStripMenuDebugMode.Checked = !toolStripMenuDebugMode.Checked);
+#endif
         }
 
         private void btnDteCmd_Click(object sender, EventArgs e)
         {
-            IEnumerable<EnvDTE.Command> commands = _dte.Commands.Cast<EnvDTE.Command>();
+            IEnumerable<EnvDTE.Command> commands = _env.DTE2.Commands.Cast<EnvDTE.Command>();
             if(_frmDTECommands != null && !_frmDTECommands.IsDisposed) {
                 if(_frmDTECommands.WindowState != FormWindowState.Minimized) {
                     _frmDTECommands.Dispose();
@@ -578,8 +759,63 @@ namespace net.r_eg.vsSBE.UI
                 return;
             }
 
-            _frmDTECommands = new DTECommandsFrm(commands);
+            _frmDTECommands = new DTECommandsFrm(commands, this);
             _frmDTECommands.Show();
+        }
+
+        private void checkedListBoxSpecCfg_Click(object sender, EventArgs e)
+        {
+            int max = dataGridViewOrder.Width + dataGridViewOrder.Location.X;
+            (new System.Threading.Tasks.Task(() =>
+            {
+                int step = (int)(max * 0.052f);
+                while(checkedListBoxSpecCfg.Width < max)
+                {
+                    BeginInvoke((MethodInvoker)delegate {
+                        checkedListBoxSpecCfg.Width += step;
+                    });
+                    System.Threading.Thread.Sleep(4);
+                }
+                BeginInvoke((MethodInvoker)delegate {
+                    checkedListBoxSpecCfg.Width = max;
+                });
+            })).Start();
+        }
+
+        private void checkedListBoxSpecCfg_MouseLeave(object sender, EventArgs e)
+        {
+            checkedListBoxSpecCfg.Width = checkedListBoxSpecCfg.MinimumSize.Width;
+        }
+
+        private void toolStripMenuApply_Click(object sender, EventArgs e)
+        {
+            btnApply_Click(sender, e);
+        }
+
+        private void toolStripMenuMSBuildProp_Click(object sender, EventArgs e)
+        {
+            envVariablesUIHelper();
+        }
+
+        private void toolStripMenuDTECmd_Click(object sender, EventArgs e)
+        {
+            btnDteCmd_Click(sender, e);
+        }
+
+        private void toolStripMenuEvaluatingProperty_Click(object sender, EventArgs e)
+        {
+            if(_frmPropertyCheck != null && !_frmPropertyCheck.IsDisposed)
+            {
+                if(_frmPropertyCheck.WindowState != FormWindowState.Minimized) {
+                    _frmPropertyCheck.Dispose();
+                    _frmPropertyCheck = null;
+                    return;
+                }
+                _frmPropertyCheck.Focus();
+                return;
+            }
+            _frmPropertyCheck = new PropertyCheckFrm(_env);
+            _frmPropertyCheck.Show();
         }
     }
 }

@@ -31,15 +31,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace net.r_eg.vsSBE.UI
+namespace net.r_eg.vsSBE.Events
 {
-    public interface ITransferEnvironmentVariable
+    /// <summary>
+    /// Errors & Warnings
+    /// </summary>
+    public interface ISolutionEventEW: ISolutionEvent
     {
         /// <summary>
-        /// Output name of Environment Variable
+        /// list of code####
+        /// ..and "for all" if empty
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="project">name of project</param>
-        void outputName(string name, string project);
+        List<string> codes { get; set; }
+
+        /// <summary>
+        /// Whitelist or Blacklist codes
+        /// </summary>
+        bool isWhitelist { get; set; }
     }
 }

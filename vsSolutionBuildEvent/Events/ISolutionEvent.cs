@@ -31,136 +31,137 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Events
 {
-    public class SBEEvent: ISolutionEvent
+    public interface ISolutionEvent
     {
-        private string _command = "";
         /// <summary>
         /// execution of shell command
         /// </summary>
-        public string command
-        {
-            get { return _command; }
-            set { _command = value; }
-        }
+        string command { get; set; }
 
-        private string _caption = "";
         /// <summary>
         /// output information to "Output" window or something else...
         /// </summary>
-        public string caption
-        {
-            get { return _caption; }
-            set { _caption = value; }
-        }
+        string caption { get; set; }
 
-        private bool _enabled = false;
         /// <summary>
         /// status of activate
         /// </summary>
-        public bool enabled
-        {
-            get { return _enabled; }
-            set { _enabled = value; }
-        }
+        bool enabled { get; set; }
 
-        private bool _processHide = true;
-        public bool processHide
-        {
-            get { return _processHide; }
-            set { _processHide = value; }
-        }
-
-        private TModeCommands _mode = TModeCommands.Interpreter;
         /// <summary>
-        /// processing mode
+        /// Hide Process
         /// </summary>
-        public TModeCommands mode
-        {
-            get { return _mode; }
-            set { _mode = value; }
-        }
+        bool processHide { get; set; }
 
-        private bool _processKeep = false;
         /// <summary>
         /// not close after completion
         /// </summary>
-        public bool processKeep
-        {
-            get { return _processKeep; }
-            set { _processKeep = value; }
-        }
+        bool processKeep { get; set; }
 
-        private string _interpreter = "";
+        /// <summary>
+        /// processing mode
+        /// </summary>
+        TModeCommands mode { get; set; }
+
         /// <summary>
         /// stream processor
         /// </summary>
-        public string interpreter
-        {
-            get { return _interpreter; }
-            set { _interpreter = value; }
-        }
+        string interpreter { get; set; }
 
-        private string _newline = "";
         /// <summary>
         /// treat newline as
         /// </summary>
-        public string newline
-        {
-            get { return _newline; }
-            set { _newline = value; }
-        }
+        string newline { get; set; }
 
-        private string _wrapper = "";
         /// <summary>
         /// symbol wrapper for commands or script
         /// </summary>
-        public string wrapper
-        {
-            get { return _wrapper; }
-            set { _wrapper = value; }
-        }
+        string wrapper { get; set; }
 
-        private bool _waitForExit = true;
         /// <summary>
         /// Wait until terminates script handling
         /// </summary>
-        public bool waitForExit
-        {
-            get { return _waitForExit; }
-            set { _waitForExit = value; }
-        }
+        bool waitForExit { get; set; }
 
-        private bool _parseVariablesMSBuild = true;
         /// <summary>
         /// support of MSBuild environment variables (properties)
         /// </summary>
-        public bool parseVariablesMSBuild
-        {
-            get { return _parseVariablesMSBuild; }
-            set { _parseVariablesMSBuild = value; }
-        }
+        bool parseVariablesMSBuild { get; set; }
 
-        private bool _buildFailedIgnore = false;
         /// <summary>
         /// Ignore all actions if the build failed
         /// </summary>
-        public bool buildFailedIgnore
-        {
-            get { return _buildFailedIgnore; }
-            set { _buildFailedIgnore = value; }
-        }
+        bool buildFailedIgnore { get; set; }
 
-        private TOperation _dteExec = new TOperation();
+        /// <summary>
+        /// Run only for a specific configuration of solution
+        /// strings format as:
+        ///   'configname'|'platformname'
+        ///   Compatible with: http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivscfg.get_displayname.aspx
+        /// </summary>
+        string[] toConfiguration { get; set; }
+
+        /// <summary>
+        /// Run for selected projects with execution order
+        /// </summary>
+        TExecutionOrder[] executionOrder { get; set; }
+
         /// <summary>
         /// Common Environment Visual Studio. Executes the specified commands
         /// TODO: custom list
         /// </summary>
-        public TOperation dteExec
+        TOperation dteExec { get; set; }
+    }
+
+    /// <summary>
+    /// Processing mode
+    /// </summary>
+    public enum TModeCommands
+    {
+        /// <summary>
+        /// external commands
+        /// </summary>
+        File,
+        /// <summary>
+        /// command script
+        /// </summary>
+        Interpreter,
+        /// <summary>
+        /// DTE commands
+        /// </summary>
+        Operation,
+    }
+
+    /// <summary>
+    /// Atomic DTE operation
+    /// </summary>
+    public class TOperation
+    {
+        /// <summary>
+        /// exec-command
+        /// </summary>
+        public string[] cmd = new string[]{""};
+        /// <summary>
+        /// optional ident
+        /// </summary>
+        public string caption = "";
+        /// <summary>
+        /// Abort operations on first error
+        /// </summary>
+        public bool abortOnFirstError = true;
+    }
+
+    public struct TExecutionOrder
+    {
+        public string project;
+        public Type order;
+
+        public enum Type
         {
-            get { return _dteExec; }
-            set { _dteExec = value; }
+            Before,
+            After
         }
     }
 }

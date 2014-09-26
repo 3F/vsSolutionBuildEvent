@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -31,25 +31,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.UI
 {
-    public class SBESettings
+    public interface ITransferDataProperty
     {
         /// <summary>
-        /// this value used by default if current attr not found after deserialize
-        /// :: v0.2.x/v0.1.x
+        /// Standard output of property
         /// </summary>
-        private string _compatibility = "0.1";
-        /// <summary>
-        /// for identification of compatibility between versions
-        /// </summary>
-        public string compatibility
-        {
-            get { return _compatibility; }
-            set { _compatibility = value; }
-        }
+        void property(string name, string project);
+    }
 
-        //TODO: direct..
-        public string application = "http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/";
+    public interface ITransferDataCommand
+    {
+        /// <summary>
+        /// Various commands such as DTE, etc.
+        /// </summary>
+        void command(string name);
     }
 }

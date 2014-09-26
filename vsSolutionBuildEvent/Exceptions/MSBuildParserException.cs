@@ -31,15 +31,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Exceptions
 {
-    public interface ISBEParserScript
+    public class MSBProjectNotFoundException: SBEException
     {
-        /// <summary>
-        /// handler to MSBuild environment variables (properties)
-        /// </summary>
-        /// <param name="data">text with $(ident) data</param>
-        /// <returns>text with values of MSBuild properties</returns>
-        string parseVariablesMSBuild(string data);
+        public MSBProjectNotFoundException(string message): base(message) {}
+        public MSBProjectNotFoundException(string message, params object[] args): base(message, args) {}
+    }
+
+    public class MSBPropertyNotFoundException: SBEException
+    {
+        public MSBPropertyNotFoundException(string message): base(message) {}
+        public MSBPropertyNotFoundException(string message, params object[] args): base(message, args) {}
+    }
+
+    public class MSBPropertyParseException: SBEException
+    {
+        public MSBPropertyParseException(string message): base(message) {}
+        public MSBPropertyParseException(string message, params object[] args): base(message, args) {}
     }
 }

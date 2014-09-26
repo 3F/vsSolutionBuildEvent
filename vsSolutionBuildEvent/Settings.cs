@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -30,43 +30,35 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using net.r_eg.vsSBE.Exceptions;
 
 namespace net.r_eg.vsSBE
 {
-    /// <summary>
-    /// Errors & Warnings
-    /// </summary>
-    public interface ISolutionEventOWP: ISolutionEvent
+    internal static class Settings
     {
         /// <summary>
-        /// List of term
+        /// Debug mode for current application
         /// </summary>
-        List<TEventOWP> eventsOWP { get; set; }
-    }
-
-    public enum TEventOWPTerm
-    {
-        Default,
-        Regexp,
-
-        // TODO: find or a porting - ESS / EXT:
-        // https://bitbucket.org/3F/sandbox/src/2bc1073f9953ddc3d9289c924059bc0d0e0bd9e4/cpp/text/wildcards/wildcards/versions/essential/AlgorithmEss.h?at=master-C%2B%2B
-        Wildcards
-    }
-
-    /// <summary>
-    /// Customization of OutputWindowPane
-    /// </summary>
-    public class TEventOWP
-    {
-        /// <summary>
-        /// various condition
-        /// </summary>
-        public string term { get; set; }
+        public static bool debugMode = false;
 
         /// <summary>
-        /// type of recognition
+        /// Current location
         /// </summary>
-        public TEventOWPTerm type { get; set; }
+        public static string WorkingPath
+        {
+            get {
+                if(String.IsNullOrEmpty(_workingPath)) {
+                    throw new SBEException("WorkingPath is empty or null");
+                }
+                return _workingPath;
+            }
+        }
+
+        public static void setWorkPath(string path)
+        {
+            _workingPath = path;
+        }
+
+        private static string _workingPath = null;
     }
 }

@@ -31,28 +31,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Events
 {
-    public class MSBuildParserException: NotSupportedException
+    /// <summary>
+    /// Errors & Warnings
+    /// </summary>
+    public interface ISolutionEventOWP: ISolutionEvent
     {
-        public MSBuildParserException(string msg) : base(msg) { }
+        /// <summary>
+        /// List of term
+        /// </summary>
+        List<TEventOWP> eventsOWP { get; set; }
     }
 
-    //TODO:
-    public class MSBuildParserProjectNotFoundException: MSBuildParserException
+    public enum TEventOWPTerm
     {
-        public MSBuildParserProjectNotFoundException(string msg) : base(msg)
-        {
-
-        }
+        Default,
+        Regexp,
+        Wildcards
     }
 
-    //TODO:
-    public class MSBuildParserProjectPropertyNotFoundException: MSBuildParserException
+    /// <summary>
+    /// Customization of OutputWindowPane
+    /// </summary>
+    public struct TEventOWP
     {
-        public MSBuildParserProjectPropertyNotFoundException(string msg) : base(msg)
-        {
+        /// <summary>
+        /// various condition
+        /// </summary>
+        public string term { get; set; }
 
-        }
+        /// <summary>
+        /// type of recognition
+        /// </summary>
+        public TEventOWPTerm type { get; set; }
     }
 }

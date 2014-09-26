@@ -32,6 +32,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using System.IO;
+using net.r_eg.vsSBE.Events;
 
 namespace net.r_eg.vsSBE
 {
@@ -43,62 +44,57 @@ namespace net.r_eg.vsSBE
     internal class Config
     {
         /// <summary>
-        /// Debug mode for current application
-        /// </summary>
-        public static bool debugMode = false;
-
-        /// <summary>
         /// Event after updates SBE-data
         /// </summary>
-        public static event ConfigEventHandler Update = delegate { };
+        public event ConfigEventHandler Update = delegate { };
 
-        /// <summary>
-        /// SBE data at runtime
-        /// </summary>
-        public static SolutionEvents Data
-        {
-            get { return data; }
-        }
-        protected static SolutionEvents data = null;
-
-        protected struct Entity
+        public struct Entity
         {
             /// <summary>
             /// Current config version
             /// Notice: version of app is controlled by Package
             /// </summary>
-            public const string VERSION = "0.7";
+            public static readonly System.Version Version = new System.Version(0, 7);
 
             /// <summary>
-            /// into file system
+            /// To file system
             /// </summary>
-            public const string NAME    = ".vssbe";
+            public const string NAME = ".vssbe";
         }
 
         /// <summary>
-        /// Current location
+        /// SBE data at runtime
         /// </summary>
-        public static string WorkPath
+        public SolutionEvents Data
         {
-            get { return _path; }
+            get { return data; }
         }
-        private static string _path = "";
+        protected SolutionEvents data = null;
+        
+        /// <summary>
+        /// Getting the instance of Config class
+        /// </summary>
+        public static Config _
+        {
+            get { return _lazy.Value; }
+        }
+        private static readonly Lazy<Config> _lazy = new Lazy<Config>(() => new Config());
 
         /// <summary>
         /// identification with full path
         /// </summary>
-        private static string _Link
+        private string _Link
         {
-            get { return _path + Entity.NAME; }
+            get { return Settings.WorkingPath + Entity.NAME; }
         }
 
         /// <summary>
         /// Initialization settings
         /// </summary>
         /// <param name="path">path to configuration file</param>
-        public static void load(string path)
+        public void load(string path)
         {
-            _path = path;
+            Settings.setWorkPath(path);
             _xprojvsbeUpgrade();
 
             data = new SolutionEvents();
@@ -110,7 +106,7 @@ namespace net.r_eg.vsSBE
                     data                = (SolutionEvents)xml.Deserialize(stream);
                     compatibilityCheck(stream);
                 }
-                Log.nlog.Info("Loaded settings (v{0}): '{1}'\n\nReady:", data.settings.compatibility, _path);
+                Log.nlog.Info("Loaded settings (v{0}): '{1}'\n\nReady:", data.settings.compatibility, Settings.WorkingPath);
                 Update();
             }
             catch(FileNotFoundException)
@@ -124,20 +120,20 @@ namespace net.r_eg.vsSBE
             }
 
             // now compatibility should be updated to the latest
-            data.settings.compatibility = Entity.VERSION;
+            data.settings.compatibility = Entity.Version.ToString();
         }
 
         /// <summary>
         /// with changing path
         /// </summary>
         /// <param name="path">path to configuration file</param>
-        public static void save(string path)
+        public void save(string path)
         {
-            _path = path;
+            Settings.setWorkPath(path);
             save();
         }
 
-        public static void save()
+        public void save()
         {
             try {
                 using(TextWriter stream = new StreamWriter(_Link)) {
@@ -147,7 +143,7 @@ namespace net.r_eg.vsSBE
                     XmlSerializer xml = new XmlSerializer(typeof(SolutionEvents));
                     xml.Serialize(stream, data);
                 }
-                Log.nlog.Debug("Configuration saved: {0}", _path);
+                Log.nlog.Debug("Configuration saved: {0}", Settings.WorkingPath);
                 Update();
             }
             catch(Exception e) {
@@ -159,11 +155,18 @@ namespace net.r_eg.vsSBE
         /// Older versions support :: Check version and reorganize structure if needed..
         /// </summary>
         /// <param name="stream"></param>
-        protected static void compatibilityCheck(FileStream stream)
+        protected void compatibilityCheck(FileStream stream)
         {
-            System.Version ver = System.Version.Parse(data.settings.compatibility);
+            System.Version cfg = System.Version.Parse(data.settings.compatibility);
 
-            if(ver.Major == 0 && ver.Minor < 4)
+            if(cfg.Major > Entity.Version.Major || (cfg.Major == Entity.Version.Major && cfg.Minor > Entity.Version.Minor)) {
+                Log.nlog.Warn(
+                    "Version {0} of configuration file is higher supported version {1}. Please update application. Several settings may be not correctly loaded.",
+                    cfg.ToString(2), Entity.Version.ToString(2)
+                );
+            }
+
+            if(cfg.Major == 0 && cfg.Minor < 4)
             {
                 Log.show();
                 Log.nlog.Info("Start upgrade configuration 0.3 -> 0.4");
@@ -177,9 +180,9 @@ namespace net.r_eg.vsSBE
         /// Older versions support :: Change name settings
         /// </summary>
         /// <returns></returns>
-        private static void _xprojvsbeUpgrade()
+        private void _xprojvsbeUpgrade()
         {
-            string oldcfg = _path + ".xprojvsbe";
+            string oldcfg = Settings.WorkingPath + ".xprojvsbe";
             if(!(File.Exists(oldcfg) && !File.Exists(_Link))) {
                 return;
             }
@@ -194,6 +197,6 @@ namespace net.r_eg.vsSBE
         }
 
 
-        protected Config(){}
+        private Config(){}
     }
 }

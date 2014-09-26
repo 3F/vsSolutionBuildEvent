@@ -28,12 +28,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
-using System.Globalization;
+using net.r_eg.vsSBE.Exceptions;
 using NLog;
 
 namespace net.r_eg.vsSBE
@@ -43,7 +44,11 @@ namespace net.r_eg.vsSBE
     /// </summary>
     internal delegate void LogEventHandler();
 
-    internal class Log
+    /// <summary>
+    /// Main logger for Package
+    /// Uses the OutputWindowPanes as target
+    /// </summary>
+    internal static class Log
     {
         public const string OWP_ITEM_NAME = "Solution Build-Events";
 
@@ -60,9 +65,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// to display text output, represented by the OutputWindowPane
         /// </summary>
-        protected static OutputWindowPane pane = null;
-
-        private static DTE2 _dte;
+        private static OutputWindowPane _pane = null;
 
         /// <summary>
         /// NLog :: static "MethodCall"
@@ -74,73 +77,64 @@ namespace net.r_eg.vsSBE
             LogLevel oLevel = LogLevel.FromString(level);
 
 #if !DEBUG
-            if(oLevel < LogLevel.Info && !Config.debugMode) {
+            if(oLevel < LogLevel.Info && !Settings.debugMode) {
                 return;
             }
 #endif
 
-            notify(oLevel);
+            _notify(oLevel);
             string format = String.Format(
                                 "{0} [{1}]: {2}{3}",
                                 (new DateTime(long.Parse(stamp))).ToString(CultureInfo.CurrentCulture.DateTimeFormat),
                                 level,
                                 message,
-                                Environment.NewLine);
+                                System.Environment.NewLine);
             print(format);
         }
 
         public static void print(string message)
         {
-            if(pane == null) {
-                Console.WriteLine(message);
-                return;
+            if(_pane == null) {
+                init();
             }
-            pane.OutputString(message);
+            _pane.OutputString(message);
         }
 
-        /// <summary>
-        /// if you want to use OWP
-        /// </summary>
-        /// <param name="dte"></param>
-        public static void init(DTE2 dte)
+        public static void init()
         {
-            _dte = dte;
             try {
-                pane = _dte.ToolWindows.OutputWindow.OutputWindowPanes.Item(OWP_ITEM_NAME);
+                _pane = vsSolutionBuildEventPackage.Dte2.ToolWindows.OutputWindow.OutputWindowPanes.Item(OWP_ITEM_NAME);
             }
             catch(ArgumentException) {
-                pane = _dte.ToolWindows.OutputWindow.OutputWindowPanes.Add(OWP_ITEM_NAME);
+                _pane = vsSolutionBuildEventPackage.Dte2.ToolWindows.OutputWindow.OutputWindowPanes.Add(OWP_ITEM_NAME);
             }
-            catch(Exception e) {
-                throw new NotSupportedException("Log :: inner exception", e);
+            catch(Exception ex) {
+                throw new ComponentException("Log :: inner exception", ex);
             }
         }
 
         public static void show()
         {
-            if(pane == null) {
-                Log.nlog.Trace("Log::show() :: pane is null");
-                return;
+            if(_pane == null) {
+                init();
             }
 
             try {
-                _dte.ExecuteCommand("View.Output");
-                pane.Activate();
+                vsSolutionBuildEventPackage.Dte2.ExecuteCommand("View.Output");
+                _pane.Activate();
             }
-            catch(Exception e) {
+            catch(Exception ex) {
                 //not critical because that option for quick access
-                Log.nlog.Debug("DTE error 'View.Output' {0}", e.Message);
+                Log.nlog.Debug("DTE error 'View.Output' {0}", ex.Message);
             }
         }
 
-        protected static void notify(LogLevel level)
+        private static void _notify(LogLevel level)
         {
             if(level < LogLevel.Warn) {
                 return;
             }
             Receive();
         }
-
-        protected Log() { }
     }
 }

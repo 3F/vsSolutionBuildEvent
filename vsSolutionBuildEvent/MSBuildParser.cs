@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -28,84 +28,33 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using EnvDTE80;
-using Microsoft.Build.Evaluation;
-using Microsoft.Build.Collections;
-using Microsoft.VisualStudio.Shell.Interop;
-using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using EnvDTE80;
+using Microsoft.Build.Collections;
+using Microsoft.Build.Evaluation;
+using Microsoft.VisualStudio.Shell.Interop;
+using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.MSBuild;
 
 namespace net.r_eg.vsSBE
 {
-    public class MSBuildParser: IMSBuildProperty, ISBEParserScript
+    public class MSBuildParser: IMSBuildProperty, ISBEParser
     {
         /// <summary>
-        /// Work with DTE because the ProjectCollection.GlobalProjectCollection can be is empty
-        /// https://bitbucket.org/3F/vssolutionbuildevent/issue/8/
+        /// Provides operation with environment
         /// </summary>
-        public IEnumerable<EnvDTE.Project> DTEProjects
-        {
-            get
-            {
-                foreach(EnvDTE.Project project in DTEProjectsRaw)
-                {
-                    if(String.IsNullOrEmpty(project.FullName) || String.IsNullOrEmpty(project.Name)) {
-                        continue;
-                    }
-                    yield return project;
-                }
-            }
-        }
-
-        protected IEnumerable<EnvDTE.Project> DTEProjectsRaw
-        {
-            get
-            {
-                foreach(EnvDTE.Project project in dte2.Solution.Projects)
-                {
-                    if(project.Kind != ProjectKinds.vsProjectKindSolutionFolder) {
-                        yield return project;
-                        continue;
-                    }
-
-                    foreach(EnvDTE.Project subproject in listSubProjectsDTE(project)) {
-                        yield return subproject;
-                    }
-                }
-            }
-        }
+        protected IEnvironment env;
 
         /// <summary>
-        /// DTE context
+        /// Definitions of user scripts
         /// </summary>
-        protected DTE2 dte2 = null;
-
-        /// <summary>
-        /// Getting name from "Set as SturtUp Project"
-        /// </summary>
-        protected string StartupProjectString
-        {
-            get
-            {
-                foreach(string project in (Array)dte2.Solution.SolutionBuild.StartupProjects)
-                {
-                    if(String.IsNullOrEmpty(project)) {
-                        continue;
-                    }
-                    return project;
-                }
-                return null;
-            }
-        }
-
-        protected SolutionConfiguration2 SolutionActiveConfiguration
-        {
-            get { return (SolutionConfiguration2)dte2.Solution.SolutionBuild.ActiveConfiguration; }
-        }
+        protected ConcurrentDictionary<string, string> definitions = new ConcurrentDictionary<string, string>();
 
         /// <summary>
         /// object synch.
@@ -127,58 +76,48 @@ namespace net.r_eg.vsSBE
         /// </summary>
         /// <param name="name">key of property</param>
         /// <param name="projectName">Specific project</param>
-        /// <exception cref="MSBuildParserProjectPropertyNotFoundException">problem with getting property</exception>
+        /// <exception cref="MSBPropertyNotFoundException"></exception>
         /// <returns>Evaluated value of property</returns>
-        public string getProperty(string name, string projectName)
+        public virtual string getProperty(string name, string projectName)
         {
             if(projectName == null)
             {
-                string slnProp = _getSolutionGlobalProperty(name);
+                string slnProp = env.getSolutionGlobalProperty(name);
                 if(slnProp != null) {
                     Log.nlog.Debug("Solution-context for getProperty - '{0}' = '{1}'", name, slnProp);
                     return slnProp;
                 }
             }
-            
-            Project project         = getProject(projectName);
+
+            Project project         = env.getProject(projectName);
             ProjectProperty prop    = project.GetProperty(name);
 
             if(prop != null) {
                 return prop.EvaluatedValue;
             }
-            throw new MSBuildParserProjectPropertyNotFoundException(String.Format("variable - '{0}' : project - '{1}'", name, (projectName == null) ? "<default>" : projectName));
+            throw new MSBPropertyNotFoundException("variable - '{0}' : project - '{1}'", name, (projectName == null) ? "<default>" : projectName);
         }
 
-        public List<MSBuildPropertyItem> listProperties(string projectName = null)
+        public List<TMSBuildPropertyItem> listProperties(string projectName = null)
         {
-            List<MSBuildPropertyItem> properties = new List<MSBuildPropertyItem>();
+            List<TMSBuildPropertyItem> properties = new List<TMSBuildPropertyItem>();
 
-            Project project = getProject(projectName);
+            Project project = env.getProject(projectName);
             foreach(ProjectProperty property in project.Properties)
             {
                 string eValue = property.EvaluatedValue;
                 if(projectName == null)
                 {
-                    string slnProp = _getSolutionGlobalProperty(property.Name);
+                    string slnProp = env.getSolutionGlobalProperty(property.Name);
                     if(slnProp != null) {
                         Log.nlog.Debug("Solution-context for listProperties - '{0}' = '{1}'", property.Name, slnProp);
                         eValue = slnProp;
                     }
                 }
 
-                properties.Add(new MSBuildPropertyItem(property.Name, eValue));
+                properties.Add(new TMSBuildPropertyItem(property.Name, eValue));
             }
             return properties;
-        }
-
-        public List<string> listProjects()
-        {
-            List<string> projects = new List<string>();
-
-            foreach(EnvDTE.Project project in DTEProjects) {
-                projects.Add(project.Name);
-            }
-            return projects;
         }
 
         /// <summary>
@@ -191,12 +130,12 @@ namespace net.r_eg.vsSBE
         public virtual string evaluateVariable(string unevaluated, string projectName)
         {
             const string container  = "vsSBE_latestEvaluated";
-            Project project         = getProject(projectName);
+            Project project         = env.getProject(projectName);
 
             lock(_eLock)
             {
                 try {
-                    project.SetProperty(container, unevaluated);
+                    project.SetProperty(container, _wrapVariable(ref unevaluated));
                     return project.GetProperty(container).EvaluatedValue;
                 }
                 finally {
@@ -208,9 +147,9 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Simple handler properties of MSBuild environment
         /// </summary>
-        /// <remarks>deprecated</remarks>
         /// <param name="data">text with $(ident) data</param>
         /// <returns>text with evaluated properties</returns>
+        [Obsolete("Use the parseVariablesMSBuild", false)]
         public string parseVariablesMSBuildSimple(string data)
         {
             return Regex.Replace(data, @"
@@ -284,270 +223,378 @@ namespace net.r_eg.vsSBE
                     return m.Value.Substring(1);
                 }
 
-                string unevaluated  = m.Groups[2].Value;
-                string projectName  = _splitGeneralProjectAttr(ref unevaluated);
-
-                if(_isSimpleProperty(ref unevaluated)) {
-                    return getProperty(unevaluated, projectName);
-                }
-                return evaluateVariable(string.Format("$({0})", unevaluated), projectName);
-            }, RegexOptions.IgnorePatternWhitespace);
+                return evaluateVariable(prepareVariables(m.Groups[2].Value));
+            }, 
+            RegexOptions.IgnorePatternWhitespace);
         }
 
-
         /// <summary>
+        /// Internal processing.
+        /// 
         /// All variables which are not included in MSBuild environment.
-        /// Customization for our data
+        /// Customization for our data.
         /// </summary>
-        /// <param name="data">where to look</param>
-        /// <param name="name">we're looking for..</param>
-        /// <param name="value">replace with this value if found</param>
-        /// <returns></returns>
-        public string parseCustomVariable(string data, string name, string value)
+        /// <param name="raw">Where to look</param>
+        /// <param name="ident">Expected variable. What we're looking for..</param>
+        /// <param name="vTrue">Value if found</param>
+        /// <returns>String with evaluated data as vTrue value or unevaluated as is</returns>
+        public virtual string parseVariablesSBE(string raw, string ident, string vTrue)
         {
-            return Regex.Replace(data,  @"(
-                                            \${1,2}
-                                          )
-                                          \(
-                                            (
-                                              [^)]+?
-                                            )
-                                          \)", delegate(Match m)
+            return Regex.Replace(raw, @"(
+                                          \${1,2}     #1 -> $ or $$
+                                        )
+                                        \(
+                                           (
+                                             [^)]+?   #2 -> unevaluated data
+                                           )
+                                        \)", delegate(Match m)
             {
-                if(m.Groups[2].Value != name || m.Groups[1].Value.Length > 1) {
+                if(m.Groups[2].Value != ident || m.Groups[1].Value.Length > 1) {
                     return m.Value;
                 }
-                return (value == null)? "" : value;
+                return (vTrue == null)? "" : vTrue;
             }, RegexOptions.IgnorePatternWhitespace);
         }
 
-        /// <param name="dte2">DTE context</param>
-        public MSBuildParser(DTE2 dte2)
+        /// <param name="env">Used environment</param>
+        public MSBuildParser(IEnvironment env)
         {
-            this.dte2 = dte2;
+            this.env = env;
+        }
 
-#if DEBUG
-            string unevaluated = "(name:project)";
-            Debug.Assert(_splitGeneralProjectAttr(ref unevaluated).CompareTo("project") == 0);
-            Debug.Assert(unevaluated.CompareTo("name") == 0);
+        /// <param name="raw">raw data at format - '(..data..)'</param>
+        /// <exception cref="IncorrectSyntaxException"></exception>
+        protected TPreparedData prepareVariables(string raw)
+        {
+            TPreparedData ret = new TPreparedData();
 
-            unevaluated = "(name)";
-            Debug.Assert(_splitGeneralProjectAttr(ref unevaluated) == null);
-            Debug.Assert(unevaluated.CompareTo("name") == 0);
+            Match m = Regex.Match(raw.Trim(), @"^\(  
+                                                   (?:
+                                                     (\#)?           # 1 -> special char  (optional)
+                                                     ([A-z_0-9]+)    # 2 -> variable name (optional)
+                                                     \s*=\s*
+                                                   )?
+                                                   (?:
+                                                      (.+)           # 3 -> unevaluated data
+                                                      :([^)]+)       # 4 -> specific project for variable if 2 is present or for unevaluated data
+                                                    |                # or:
+                                                      (.+)           # 5 -> unevaluated data
+                                                   )
+                                               \)$", RegexOptions.IgnorePatternWhitespace);
 
-            unevaluated = "([class]::func($(path:project), $([class]::func2($(path2)):project)):project)";
-            Debug.Assert(_splitGeneralProjectAttr(ref unevaluated).CompareTo("project") == 0);
-            Debug.Assert(unevaluated.CompareTo("[class]::func($(path:project), $([class]::func2($(path2)):project))") == 0);
+            if(!m.Success) {
+                Log.nlog.Debug("impossible to prepare data '{0}'", raw);
+                throw new IncorrectSyntaxException("prepare failed - '{0}'", raw);
+            }
+            bool hasVar     = m.Groups[2].Success;
+            bool hasProject = m.Groups[3].Success ? true : false;
 
-            unevaluated = "([class]::func($(path:project), $([class]::func2($(path2)):project)):project))";
-            Debug.Assert(_splitGeneralProjectAttr(ref unevaluated) == null);
-            Debug.Assert(unevaluated.CompareTo("[class]::func($(path:project), $([class]::func2($(path2)):project)):project)") == 0);
-#endif
+            if(hasVar) {
+                ret.variable.name           = m.Groups[2].Value.Trim();
+                ret.variable.isPersistence  = (m.Groups[1].Success && m.Groups[1].Value == "#") ? true : false;
+            }
+
+            ret.property.raw = (hasProject ? m.Groups[3] : m.Groups[5]).Value.Trim();
+
+            bool composite          = (ret.property.raw[0] == '$') ? true : false;
+            ret.property.escaped    = (composite && ret.property.raw[1] == '$') ? true : false;
+
+            if(hasProject)
+            {
+                string project = m.Groups[4].Value.Trim();
+
+                if(!composite) {
+                    ret.property.project = project;
+                }
+                else if(hasVar) {
+                    ret.variable.project = project;
+                }
+                else {
+                    // should be variable of variable e.g.: ($(var:project):project)
+                    ret.property.project = project;
+                }
+            }
+
+            ret.property.complex = !_isPropertySimple(ref ret.property.raw) || composite;
+
+            if(!ret.property.complex) {
+                ret.property.unevaluated = ret.property.raw;
+                ret.property.completed   = true;
+                Log.nlog.Debug("Prepared: simple - '{0}'", ret.property.unevaluated);
+                return ret;
+            }
+            if(ret.property.escaped) {
+                ret.property.unevaluated = ret.property.raw.Substring(1);
+                ret.property.completed   = true;
+                Log.nlog.Debug("Prepared: complex escaped - '{0}'", ret.property.unevaluated);
+                return ret;
+            }
+            
+            // try to simplify
+            m = Regex.Match(ret.property.raw, @"^
+                                                  \$
+                                                  \(
+                                                     ([A-z_0-9]+)     # 1 - name
+                                                     (?::([^)]+))?    # 2 - project
+                                                  \)
+                                                $", RegexOptions.IgnorePatternWhitespace);
+
+            if(m.Success)
+            {
+                ret.property.complex        = false;
+                ret.property.unevaluated    = m.Groups[1].Value;
+                ret.property.completed      = true;
+                ret.property.project        = (m.Groups[2].Success) ?
+                                                           m.Groups[2].Value.Trim() : 
+                                                           (!String.IsNullOrEmpty(ret.property.project)) ? ret.property.project : null;
+                
+                Log.nlog.Debug("Prepared: found simple property '{0}' for '{1}'", ret.property.unevaluated, ret.property.project);
+                return ret;
+            }
+
+            ret.property.unevaluated = ret.property.raw;
+
+            // nested data
+            ret = prepareNested(ret);
+
+            ret.property.unevaluated = _wrapVariable(ref ret.property.unevaluated);
+            Log.nlog.Debug("Prepared: step out");
+            return ret;
+        }
+
+        protected string evaluateVariable(TPreparedData prepared)
+        {
+            string evaluated = String.Empty;
+            
+            if(prepared.property.completed && !prepared.property.complex)
+            {
+                string defindex = String.Format("{0}:{1}", prepared.property.unevaluated, prepared.property.project);
+
+                if(definitions.ContainsKey(defindex)) {
+                    Log.nlog.Debug("Evaluate: use the definitions");
+                    evaluated = definitions[defindex];
+                }
+                else {
+                    Log.nlog.Debug("Evaluate: use the getProperty");
+                    evaluated = getProperty(prepared.property.unevaluated, prepared.property.project);
+                }
+            }
+            else if(prepared.property.escaped){
+                Log.nlog.Debug("Evaluate: escaped value");
+                evaluated = prepared.property.unevaluated;
+            }
+            else
+            {
+                if(!prepared.property.completed) {
+                    Log.nlog.Debug("Evaluate: use the evaluateVariable for: '{0}' -> [{1}]", 
+                                                 prepared.property.nested.data, prepared.property.project);
+                    evaluated = evaluateVariable(prepared.property.nested.data, prepared.property.project);
+                }
+                else {
+                    Log.nlog.Debug("Evaluate: ready to '{0}'", prepared.property.nested.data);
+                    evaluated = prepared.property.nested.data;
+                }
+            }
+
+            if(!String.IsNullOrEmpty(prepared.variable.name))
+            {
+                //INFO: prepared.variable.isPersistence - [reserved]
+                string defindex = String.Format("{0}:{1}", prepared.variable.name, prepared.variable.project);
+                Log.nlog.Debug("Variable of user: set '{0}' = '{1}'", defindex, evaluated);
+                definitions[defindex] = evaluated;
+                evaluated = "";
+            }
+
+            Log.nlog.Debug("Evaluated: '{0}'", evaluated);
+            return evaluated;
         }
 
         /// <summary>
-        /// Getting the Build.Evaluation.Project for access to properties etc.
-        /// if the project as null then selected startup-project in the list or the first with the same Configuration & Platform
+        /// Work with nested complex data
         /// </summary>
-        /// <param name="project">Specific project</param>
-        /// <exception cref="MSBuildParserProjectNotFoundException">something wrong with loaded projects</exception>
-        /// <returns>Microsoft.Build.Evaluation.Project</returns>
-        protected virtual Project getProject(string project = null)
+        /// <param name="data"></param>
+        /// <param name="limit">Maximum of nesting level. Aborts if reached</param>
+        /// <exception cref="MSBPropertyParseException"></exception>
+        /// <exception cref="LimitException"></exception>
+        /// <returns></returns>
+        protected TPreparedData prepareNested(TPreparedData data, int limit = 50)
         {
-            EnvDTE.Project selected = null;
-            string sturtup          = StartupProjectString;
-
-            if(project == null) {
-                Log.nlog.Debug("default project is a '{0}'", sturtup);
+            if(String.IsNullOrEmpty(data.property.unevaluated)) {
+                throw new MSBPropertyParseException("the 'unevaluated' of TPreparedData is empty. raw == '{0}'", data.property.raw);
             }
 
-            foreach(EnvDTE.Project dteProject in DTEProjects)
-            {
-                if(project == null && !String.IsNullOrEmpty(sturtup) && !dteProject.UniqueName.Equals(sturtup)) {
-                    continue;
-                }
-                else if(project != null && !dteProject.Name.Equals(project)) {
-                    continue;
-                }
-                selected = dteProject;
-                Log.nlog.Trace("selected = dteProject: '{0}'", dteProject.FullName);
+            data.property.nested    = new TPreparedData.Nested();
+            string unevaluated      = data.property.unevaluated;   
+                     
+            Dictionary<uint, string> strings    = new Dictionary<uint, string>();
+            bool isWrapped                      = unevaluated.StartsWith("$(");
 
-                foreach(Project eProject in ProjectCollection.GlobalProjectCollection.LoadedProjects)
+            string patternS = @"(
+                                  (?:
+                                      ""          # note: "" - is a single double quote, i.e. escaped in @ mode
+                                       (?:
+                                          [^""\\]
+                                        |
+                                          \\""?
+                                       )*""
+                                   |
+                                     '(?:
+                                         [^'\\]
+                                       |
+                                         \\'?
+                                      )*'
+                                  )
+                                )            #1 - strings - "", ''
+                                ([\s,)])     #2 - limiter symbol";
+
+
+            string patternV = @"(?:
+                                  (\${1,2})                  #1 - $ or $$
+                                  \(
+                                     (?:
+                                        (
+                                          [^$:()]+
+                                          [^()]
+                                        )                    #2 - name [Simple]
+                                        (?:
+                                          :
+                                          (
+                                            [^:]
+                                            [^$()]+ [^()]
+                                          )                  #3 - project [Simple] (optional)
+                                        )?
+                                      |
+                                        (
+                                          [^$:]+? \)?        #4 - name [Complex]
+                                        )
+                                        (?:
+                                          :
+                                          (
+                                            [^:]
+                                            [^$()]+ [^()]
+                                           |
+                                            [^:$]+?
+                                            [^$)]+ \)?
+                                          )                  #5 - project [Complex] (optional)
+                                        )?
+                                     )
+                                  \)
+                                )";
+
+            Log.nlog.Debug("nested: started with '{0}'", unevaluated);
+
+            int level   = 0;
+            uint ident  = 0;
+
+            Func<bool> h = null;
+            h = delegate()
+            {
+                Log.nlog.Debug("nested: level {0}", level);
+
+                if(level > limit) {
+                    throw new LimitException("Nesting level of '{0}' reached. Aborted.", limit);
+                }
+
+                // string arguments
+                unevaluated = Regex.Replace(unevaluated, patternS, delegate(Match m)
                 {
-                    if(isEquals(dteProject, eProject)) {
-                        return eProject;
-                    }
+                    strings[ident] = m.Groups[1].Value;
+                    Log.nlog.Debug("nested: protect string '{0}'", strings[ident]);
+
+                    // no conflict, because all variants with '!' as argument is not possible without quotes.
+                    return String.Format("!p{0}!{1}", ident++, m.Groups[2].Value);
+                }, RegexOptions.IgnorePatternWhitespace);
+
+                Log.nlog.Debug("nested: strings '{0}'", unevaluated);
+
+                // complex-type arguments
+                unevaluated = _nestedComplex(ref patternV, ref unevaluated, strings);
+
+                if(Regex.Match(unevaluated, patternV, RegexOptions.IgnorePatternWhitespace).Success
+                    || Regex.Match(unevaluated, patternS, RegexOptions.IgnorePatternWhitespace).Success)
+                {
+                    Log.nlog.Debug("nested: step in");
+                    ++level;
+                    h();
                 }
-                break; // selected & LoadedProjects is empty
-            }
-
-            if(selected != null) {
-                Log.nlog.Debug("getProject->selected '{0}'", selected.FullName);
-                return tryLoadPCollection(selected);
-            }
-            throw new MSBuildParserProjectNotFoundException(String.Format("not found project: '{0}' [sturtup: '{1}']", project, sturtup));
-        }
-
-        protected bool isEquals(EnvDTE.Project dteProject, Project eProject)
-        {
-            string ePrgName         = eProject.GetPropertyValue("ProjectName");
-            string ePrgCfg          = eProject.GetPropertyValue("Configuration");
-            string ePrgPlatform     = eProject.GetPropertyValue("Platform");
-
-            string dtePrgName       = dteProject.Name;
-            string dtePrgCfg        = dteProject.ConfigurationManager.ActiveConfiguration.ConfigurationName;
-            string dtePrgPlatform   = dteProject.ConfigurationManager.ActiveConfiguration.PlatformName;
-
-            Log.nlog.Trace("isEquals for '{0}' : '{1}' [{2} = {3} ; {4} = {5}]",
-                            eProject.FullPath, dtePrgName, dtePrgCfg, ePrgCfg, dtePrgPlatform, ePrgPlatform);
-
-            if(dtePrgName.Equals(ePrgName) && dtePrgCfg.Equals(ePrgCfg) && dtePrgPlatform.Equals(ePrgPlatform))
-            {
-                Log.nlog.Trace("isEquals: matched");
                 return true;
-            }
-            return false;
+            };
+            h();
+
+            data.property.nested.data = Regex.Replace(unevaluated, @"!p(\d+)!", delegate(Match _m)
+            {
+                return strings[uint.Parse(_m.Groups[1].Value)];
+            });
+
+            data.property.completed = isWrapped;
+            data.property.complex   = true;
+
+            Log.nlog.Debug("nested: completed as '{0}'", data.property.completed);
+            return data;
         }
 
         /// <summary>
-        /// This solution for similar problems - MS Connect Issue #508628:
-        /// http://connect.microsoft.com/VisualStudio/feedback/details/508628/
+        /// Handler for complex-type arguments
         /// </summary>
-        protected Project tryLoadPCollection(EnvDTE.Project dteProject)
+        /// <param name="pattern"></param>
+        /// <param name="data">Unevaluated data</param>
+        /// <param name="strings">Protected strings</param>
+        /// <returns>prepared value for this step</returns>
+        private string _nestedComplex(ref string pattern, ref string data, Dictionary<uint, string> strings)
         {
-            Dictionary<string, string> prop = _getGlobalProperties(dteProject);
-
-            Log.nlog.Debug("tryLoadPCollection :: '{0}' [{1} ; {2}]", dteProject.FullName, prop["Configuration"], prop["Platform"]);
-            //ProjectCollection.GlobalProjectCollection.LoadProject(dteProject.FullName, prop, null);
-            return new Project(dteProject.FullName, prop, null, ProjectCollection.GlobalProjectCollection);
-        }
-
-        protected IEnumerable<EnvDTE.Project> listSubProjectsDTE(EnvDTE.Project project)
-        {
-            foreach(EnvDTE.ProjectItem item in project.ProjectItems)
+            return Regex.Replace(data, pattern, delegate(Match m)
             {
-                if(item.SubProject == null) {
-                    continue; //e.g. project is incompatible with used version of visual studio
+                Log.nlog.Debug("nested: complex in");
+                string evaluated = String.Empty;
+
+                if(m.Groups[1].Value.Length > 1) {
+                    evaluated = m.Value.Substring(1);
+                    Log.nlog.Debug("nested: escaped '{0}'", evaluated);
+                    return evaluated;
                 }
 
-                if(item.SubProject.Kind != ProjectKinds.vsProjectKindSolutionFolder) {
-                    yield return item.SubProject;
-                    continue;
+                string eData    = m.Groups[m.Groups[2].Success ? 2 : 4].Value.Trim();
+                string eProject = null;
+
+                if(m.Groups[3].Success) {
+                    eProject = m.Groups[3].Value.Trim();
+                }
+                else if(m.Groups[5].Success) {
+                    eProject = m.Groups[5].Value.Trim();
                 }
 
-                foreach(EnvDTE.Project subproject in listSubProjectsDTE(item.SubProject)) {
-                    yield return subproject;
-                }
-            }
+                // Evaluating for nested 'data:project' - to support variable of variable:
+
+                eData = Regex.Replace(eData, @"!p(\d+)!", delegate(Match _m)
+                {
+                    uint index      = uint.Parse(_m.Groups[1].Value);
+                    string str      = strings[index];
+                    strings.Remove(index); // deallocate protected string
+                    return str;
+                });
+
+                //if(!String.IsNullOrEmpty(eProject) && !_isPropertySimple(ref eProject)) {
+                //    //eProject = evaluateVariable(eProject, null); // should be set as part of eData, e.g.: $(project) if needed
+                //}
+                evaluated  = _isPropertySimple(ref eData) ? getProperty(eData, eProject) : evaluateVariable(eData, eProject);
+                Log.nlog.Debug("nested: evaluated '{0}':'{1}' == '{2}'", eData, eProject, evaluated);
+
+                return evaluated;
+            }, RegexOptions.IgnorePatternWhitespace);
         }
 
-        private Dictionary<string, string> _getGlobalProperties(EnvDTE.Project dteProject)
+        private string _wrapVariable(ref string var)
         {
-            Dictionary<string, string> prop = new Dictionary<string, string>(ProjectCollection.GlobalProjectCollection.GlobalProperties); // copy from ProjectCollection
-            
-            if(!prop.ContainsKey("Configuration")) {
-                prop["Configuration"] = dteProject.ConfigurationManager.ActiveConfiguration.ConfigurationName;
+            if(!var.StartsWith("$(")) {
+                Log.nlog.Debug("wrap: '{0}'", var);
+                return String.Format("$({0})", var);
             }
-
-            if(!prop.ContainsKey("Platform")) {
-                prop["Platform"] = dteProject.ConfigurationManager.ActiveConfiguration.PlatformName;
-            }
-            
-            if(!prop.ContainsKey("BuildingInsideVisualStudio")) {
-                // by default(can be changed in other components) set as "true" in Microsoft.VisualStudio.Project.ProjectNode :: DoMSBuildSubmission & SetupProjectGlobalPropertiesThatAllProjectSystemsMustSet
-                prop["BuildingInsideVisualStudio"] = "true";
-            }
-            if(!prop.ContainsKey("DevEnvDir"))
-            {
-                // http://technet.microsoft.com/en-us/microsoft.visualstudio.shell.interop.__vsspropid%28v=vs.71%29.aspx
-
-                object dirObject = null;
-                vsSolutionBuildEventPackage.Shell.GetProperty((int)__VSSPROPID.VSSPROPID_InstallDirectory, out dirObject);
-
-                string dir              = (string)dirObject;
-                const string vDefault   = "Undefined";
-
-                if(String.IsNullOrEmpty(dir)) {
-                    prop["DevEnvDir"] = vDefault;
-                }
-                else if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
-                    dir += Path.DirectorySeparatorChar;
-                }
-                prop["DevEnvDir"] = dir;
-            }
-
-            if(!prop.ContainsKey("SolutionDir")  
-               || !prop.ContainsKey("SolutionName")
-               || !prop.ContainsKey("SolutionFileName")
-               || !prop.ContainsKey("SolutionExt")
-               || !prop.ContainsKey("SolutionPath"))
-            {
-                string dir, file, opts;
-                vsSolutionBuildEventPackage.Solution.GetSolutionInfo(out dir, out file, out opts);
-
-                string fname                = Path.GetFileName(file);
-                string name                 = Path.GetFileNameWithoutExtension(file);
-                string ext                  = Path.GetExtension(file);
-                const string vDefault       = "Undefined";
-
-                prop["SolutionDir"]         = dir != null ? dir : vDefault;
-                prop["SolutionName"]        = name != null ? name : vDefault;
-                prop["SolutionFileName"]    = fname != null ? fname : vDefault;
-                prop["SolutionExt"]         = ext != null ? ext : vDefault;
-                prop["SolutionPath"]        = file != null ? file : vDefault;
-            }
-
-            if(!prop.ContainsKey("RunCodeAnalysisOnce")) {
-                // by default set as "false" in Microsoft.VisualStudio.Package.GlobalPropertyHandler
-                prop["RunCodeAnalysisOnce"] = "false";
-            }
-
-            return prop;
+            return var;
         }
 
-        private string _getSolutionGlobalProperty(string name)
+        private bool _isPropertySimple(ref string unevaluated)
         {
-            if(name.Equals("Configuration")) {
-                return SolutionActiveConfiguration.Name;
-            }
-
-            if(name.Equals("Platform")) {
-                return SolutionActiveConfiguration.PlatformName;
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Getting the project name and format unevaluated variable
-        /// ~ (variable:project) -> variable & project
-        /// </summary>
-        /// <param name="unevaluated">to be formatted after handling</param>
-        /// <returns>project name or null if not present</returns>
-        private string _splitGeneralProjectAttr(ref string unevaluated)
-        {
-            unevaluated = unevaluated.Substring(1, unevaluated.Length - 2);
-            int pos     = unevaluated.LastIndexOf(':');
-
-            if(pos == -1) {
-                return null; //(ProjectOutputFolder.Substring(0, 1)), (OS), (OS.Length)
-            }
-            if(unevaluated.ElementAt(pos - 1).CompareTo(':') == 0) {
-                return null; //([System.DateTime]::Now), ([System.Guid]::NewGuid())
-            }
-            if(unevaluated.IndexOf(')', pos) != -1) {
-                return null; // allow only for latest block (general option)  :project)) | :project) ... )-> :project)
-            }
-
-            string project  = unevaluated.Substring(pos + 1, unevaluated.Length - pos - 1);
-            unevaluated     = unevaluated.Substring(0, pos);
-
-            return project;
-        }
-
-        private bool _isSimpleProperty(ref string unevaluated)
-        {
-            if(unevaluated.IndexOfAny(new char[]{'.', ':', '(', ')', '\'', '"'}) != -1) {
+            if(unevaluated.IndexOfAny(new char[]{'.', ':', '(', ')', '\'', '"', '[', ']'}) != -1) {
                 return false;
             }
             return true;
@@ -557,12 +604,12 @@ namespace net.r_eg.vsSBE
     /// <summary>
     /// item of property: name = value
     /// </summary>
-    public sealed class MSBuildPropertyItem
+    public struct TMSBuildPropertyItem
     {
         public string name;
         public string value;
 
-        public MSBuildPropertyItem(string name, string value)
+        public TMSBuildPropertyItem(string name, string value)
         {
             this.name  = name;
             this.value = value;
@@ -570,7 +617,7 @@ namespace net.r_eg.vsSBE
     }
 
     //TODO:
-    public struct SBECustomVariable
+    internal struct SBECustomVariable
     {
         public const string OWP_BUILD           = "vsSBE_OWPBuild";
         public const string OWP_BUILD_WARNINGS  = "vsSBE_OWPBuildWarnings";

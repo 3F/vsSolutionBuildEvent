@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using net.r_eg.vsSBE.Events;
 
 namespace net.r_eg.vsSBE.UI
 {

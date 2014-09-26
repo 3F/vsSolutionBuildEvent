@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
 using System.IO;
+using net.r_eg.vsSBE.Events;
 
 namespace net.r_eg.vsSBE.Upgrade
 {
@@ -45,28 +46,28 @@ namespace net.r_eg.vsSBE.Upgrade
             // preBuild
 
             if(v03.preBuild.modeScript) {
-                Config.Data.preBuild.mode = TModeCommands.Interpreter;
+                Config._.Data.preBuild.mode = TModeCommands.Interpreter;
             }
             else {
-                Config.Data.preBuild.mode = TModeCommands.File;
+                Config._.Data.preBuild.mode = TModeCommands.File;
             }
 
             // postBuild
 
             if(v03.postBuild.modeScript) {
-                Config.Data.postBuild.mode = TModeCommands.Interpreter;
+                Config._.Data.postBuild.mode = TModeCommands.Interpreter;
             }
             else {
-                Config.Data.postBuild.mode = TModeCommands.File;
+                Config._.Data.postBuild.mode = TModeCommands.File;
             }
 
             // cancelBuild
 
             if(v03.cancelBuild.modeScript) {
-                Config.Data.cancelBuild.mode = TModeCommands.Interpreter;
+                Config._.Data.cancelBuild.mode = TModeCommands.Interpreter;
             }
             else {
-                Config.Data.cancelBuild.mode = TModeCommands.File;
+                Config._.Data.cancelBuild.mode = TModeCommands.File;
             }
         }
     }

@@ -34,22 +34,32 @@ using System.Diagnostics;
 using EnvDTE80;
 using System.Runtime.InteropServices;
 using System.Globalization;
+using net.r_eg.vsSBE.Events;
+using net.r_eg.vsSBE.Exceptions;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Actions
 {
     public class SBECommand
     {
         const string CMD_DEFAULT = "cmd";
 
-        public class SBEContext
+        public class ShellContext
         {
             public string path;
             public string disk;
 
-            public SBEContext(string path, string disk)
+            public ShellContext(string path)
             {
                 this.path = path;
-                this.disk = disk;
+                this.disk = getDisk(path);
+            }
+
+            protected string getDisk(string path)
+            {
+                if(String.IsNullOrEmpty(path)) {
+                    throw new SBEException("path is empty or null");
+                }
+                return path.Substring(0, 1);
             }
         }
 
@@ -68,47 +78,40 @@ namespace net.r_eg.vsSBE
         protected MSBuildParser parser;
 
         /// <summary>
-        /// DTE context
+        /// Used environment
         /// </summary>
-        protected DTE2 dte;
+        protected Environment env;
 
         /// <summary>
         /// Special raw data from the output window pane
         /// </summary>
-        protected string owpDataRaw = null;
+        protected string owpDataRaw;
 
         /// <summary>
-        /// Where to work..
+        /// Current working context for scripts or files
         /// </summary>
-        private SBEContext _context = null;
-
-        /// <summary>
-        /// type for recursive DTE commands
-        /// </summary>
-        private SBEQueueDTE.Type _queueType;
-        private SBEQueueDTE.Rec _QueueRec
-        {
-            get { return SBEQueueDTE.queue[_queueType]; }
-            set {
-                if(!SBEQueueDTE.queue.ContainsKey(_queueType)) {
-                    SBEQueueDTE.queue[_queueType] = value;
-                }
-            }
-        }
-
+        protected ShellContext context;
 
         /// <summary>
         /// basic implementation
         /// </summary>
         /// <param name="evt">provided sbe-events</param>
-        public bool basic(ISolutionEvent evt, SBEQueueDTE.Type type)
+        public bool basic(ISolutionEvent evt)
         {
             if(!evt.enabled){
                 return false;
             }
-            _queueType = type;
 
-            Log.nlog.Info("Launching '{0}'", evt.caption);
+            string cfg = env.SolutionConfigurationFormat(env.SolutionActiveConfiguration);
+
+            if(evt.toConfiguration != null 
+                && evt.toConfiguration.Length > 0 && evt.toConfiguration.Where(s => s == cfg).Count() < 1)
+            {
+                Log.nlog.Info("Action '{0}' is ignored for current configuration - '{1}'", evt.caption, cfg);
+                return false;
+            }
+
+            Log.nlog.Info("Launching action '{0}' :: Configuration - '{1}'", evt.caption, cfg);
             switch(evt.mode) {
                 case TModeCommands.Operation: {
                     Log.nlog.Info("Use Operation Mode");
@@ -129,18 +132,21 @@ namespace net.r_eg.vsSBE
         /// <param name="evt"></param>
         /// <param name="raw"></param>
         /// <returns></returns>
-        public bool supportOWP(ISolutionEvent evt, SBEQueueDTE.Type type, string raw)
+        public bool supportOWP(ISolutionEvent evt, string raw)
         {
             owpDataRaw = raw;
-            return basic(evt, type);
+            return basic(evt);
         }
 
-        public SBECommand(DTE2 dte, MSBuildParser parser)
+        public SBECommand(Environment env, MSBuildParser parser)
         {
-            _context    = new SBEContext(Config.WorkPath, letDisk(Config.WorkPath));
-            this.dte    = dte;
-            _QueueRec   = new SBEQueueDTE.Rec();
+            this.env    = env;
             this.parser = parser;
+        }
+
+        public void updateContext(ShellContext context)
+        {
+            this.context = context;
         }
 
         protected virtual bool hModeFile(ISolutionEvent evt)
@@ -155,44 +161,10 @@ namespace net.r_eg.vsSBE
 
         protected virtual bool hModeOperation(ISolutionEvent evt)
         {
-            if(_QueueRec.level == 0) {
-                _QueueRec.cmd = evt.dteExec.cmd;
+            if(evt.dteExec.cmd == null || evt.dteExec.cmd.Length < 1) {
+                return true;
             }
-
-            if(_QueueRec.cmd.Length < 1) {
-                return true; //all pushed
-            }
-
-            ++_QueueRec.level;
-
-            string[] newer = new string[_QueueRec.cmd.Length - 1];
-            for(int i = 1; i < _QueueRec.cmd.Length; ++i) {
-                newer[i - 1] = _QueueRec.cmd[i];
-            }
-            string current = _QueueRec.cmd[0];
-            _QueueRec.cmd = newer;
-
-            Exception terminated = null;
-            try {
-                // * error if command not available at current time
-                // * recursive to Debug.Start, Debug.StartWithoutDebugging, etc.,
-                dte.ExecuteCommand(current);
-            }
-            catch(Exception e) {
-                Log.nlog.Debug("DTE-ExecuteCommand '{0}' {1}", current, e.Message);
-                terminated = e;
-            }
-
-            if(_QueueRec.cmd.Length > 0) {
-                //other.. like a File.Print, etc.
-                hModeOperation(evt);
-            }
-
-            --_QueueRec.level;
-
-            if(terminated != null) {
-                throw new Exception(terminated.Message, terminated);
-            }
+            (new DTEOperation((EnvDTE.DTE)env.DTE2)).exec(evt.dteExec.cmd, evt.dteExec.abortOnFirstError);
             return true;
         }
 
@@ -237,18 +209,15 @@ namespace net.r_eg.vsSBE
             }
             //psi.StandardErrorEncoding = psi.StandardOutputEncoding = Encoding.GetEncoding(OEMCodePage);
 
-            string args = string.Format("/C cd {0}{1} & {2}",
-                                        _context.path,
-                                        (_context.disk != null) ? " & " + _context.disk + ":" : "", cmd);
+            string args = String.Format("/C cd {0}{1} & {2}",
+                                        context.path,
+                                        (context.disk != null) ? " & " + context.disk + ":" : "", cmd);
 
             if(!evt.processHide && evt.processKeep) {
                 args += " & pause";
             }
 
-            //TODO: verbose as option
-            //if() {
-                Log.nlog.Info(cmd);
-            //}
+            Log.nlog.Info(cmd);
 
             //TODO: stdout/stderr capture & add to OWP
 
@@ -264,48 +233,18 @@ namespace net.r_eg.vsSBE
 
         protected void parseVariables(ISolutionEvent evt, ref string data)
         {
-            data = parser.parseCustomVariable(data, SBECustomVariable.OWP_BUILD, owpDataRaw);
-            data = parser.parseCustomVariable(data, SBECustomVariable.OWP_BUILD_WARNINGS, null); // reserved
-            data = parser.parseCustomVariable(data, SBECustomVariable.OWP_BUILD_ERRORS, null);   // reserved
+            data = parser.parseVariablesSBE(data, SBECustomVariable.OWP_BUILD, owpDataRaw);
+            data = parser.parseVariablesSBE(data, SBECustomVariable.OWP_BUILD_WARNINGS, null); // reserved
+            data = parser.parseVariablesSBE(data, SBECustomVariable.OWP_BUILD_ERRORS, null);   // reserved
 
             if(evt.parseVariablesMSBuild) {
                 data = parser.parseVariablesMSBuild(data);
             }
         }
 
-        protected string letDisk(string path)
-        {
-            if(path.Length < 1) {
-                return null;
-            }
-            return path.Substring(0, 1);
-        }
-
         private string _treatNewlineAs(string str, string data)
         {
             return data.Trim(new char[]{'\r', '\n'}).Replace("\r", "").Replace("\n", str);
         }
-    }
-
-    /// <summary>
-    /// Support recursive DTE commands
-    /// e.g.:
-    ///   exec - "Debug.Start"
-    ///   exec - "Debug.Start"
-    ///   exec - "File.Print"
-    /// </summary>
-    public class SBEQueueDTE
-    {
-        public enum Type
-        {
-            PRE, POST, CANCEL, WARNINGS, ERRORS, OWP, TRANSMITTER
-        }
-
-        public class Rec
-        {
-            public int level = 0;
-            public string[] cmd;
-        }
-        public static Dictionary<Type, Rec> queue = new Dictionary<Type, Rec>();
     }
 }

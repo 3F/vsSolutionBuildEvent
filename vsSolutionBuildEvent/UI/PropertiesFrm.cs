@@ -16,12 +16,12 @@ using System.Windows.Forms;
 
 namespace net.r_eg.vsSBE.UI
 {
-    public partial class EnvironmentVariablesFrm: Form
+    public partial class PropertiesFrm: Form
     {
         /// <summary>
-        /// Support of output data
+        /// Transport support
         /// </summary>
-        private ITransferEnvironmentVariable _pin;
+        private ITransferDataProperty _pin;
 
         /// <summary>
         /// Work with properties
@@ -29,17 +29,23 @@ namespace net.r_eg.vsSBE.UI
         private MSBuildParser _msbuild;
 
         /// <summary>
+        /// 
+        /// </summary>
+        private Environment _env;
+
+        /// <summary>
         /// Caching of retrieved properties
         /// </summary>
-        private ConcurrentDictionary<string, List<MSBuildPropertyItem>> _cacheProperties;
+        private ConcurrentDictionary<string, List<TMSBuildPropertyItem>> _cacheProperties;
 
-        public EnvironmentVariablesFrm(ITransferEnvironmentVariable pin)
+        public PropertiesFrm(ITransferDataProperty pin)
         {
             InitializeComponent();
 
-            _msbuild            = new MSBuildParser(vsSolutionBuildEventPackage.Dte2);
+            _env                = new Environment(vsSolutionBuildEventPackage.Dte2);
+            _msbuild            = new MSBuildParser(_env);
             this._pin           = pin;
-            _cacheProperties    = new ConcurrentDictionary<string, List<MSBuildPropertyItem>>();
+            _cacheProperties    = new ConcurrentDictionary<string, List<TMSBuildPropertyItem>>();
         }
 
         protected void fillProjects()
@@ -48,7 +54,7 @@ namespace net.r_eg.vsSBE.UI
             comboBoxProjects.Items.Add("<default>");
 
             try {
-                comboBoxProjects.Items.AddRange(_msbuild.listProjects().ToArray());
+                comboBoxProjects.Items.AddRange(_env.DTEProjectsList.ToArray());
             }
             catch(Exception ex) {
                 Log.nlog.Error("Error with getting projects: " + ex.Message);
@@ -62,7 +68,7 @@ namespace net.r_eg.vsSBE.UI
             dataGridViewVariables.Rows.Clear();
             try
             {
-                foreach(MSBuildPropertyItem prop in _getProperties(project)) {
+                foreach(TMSBuildPropertyItem prop in _getProperties(project)) {
                     if(filter != null && !prop.name.ToLower().Contains(filter)) {
                         continue;
                     }
@@ -93,7 +99,7 @@ namespace net.r_eg.vsSBE.UI
 
             foreach(DataGridViewRow row in dataGridViewVariables.Rows) {
                 if(row.Selected) {
-                    _pin.outputName(row.Cells[0].Value.ToString(), getSelectedProject());
+                    _pin.property(row.Cells[0].Value.ToString(), getSelectedProject());
                     this.Dispose();
                     return;
                 }
@@ -101,7 +107,7 @@ namespace net.r_eg.vsSBE.UI
         }
 
         /// <exception cref="MSBuildParserProjectNotFoundException">if not found the specific project</exception>
-        private List<MSBuildPropertyItem> _getProperties(string project)
+        private List<TMSBuildPropertyItem> _getProperties(string project)
         {
             string key = project;
             if(String.IsNullOrEmpty(key)) {
@@ -172,7 +178,7 @@ namespace net.r_eg.vsSBE.UI
         private void dataGridViewVariables_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if(e.RowIndex >= 0) {
-                _pin.outputName(dataGridViewVariables[0, e.RowIndex].Value.ToString(), getSelectedProject());
+                _pin.property(dataGridViewVariables[0, e.RowIndex].Value.ToString(), getSelectedProject());
                 this.Dispose();
             }
         }

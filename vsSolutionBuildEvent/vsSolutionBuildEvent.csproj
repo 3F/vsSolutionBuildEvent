@@ -119,15 +119,22 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\Connection.cs" />
+    <Compile Include="DTEOperation.cs" />
+    <Compile Include="Environment.cs" />
+    <Compile Include="Exceptions\SBEException.cs" />
+    <Compile Include="IEnvironment.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="OWPMatcher.cs" />
-    <Compile Include="ISolutionEventOWP.cs" />
+    <Compile Include="Events\ISolutionEventOWP.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SBEEventOWP.cs" />
-    <Compile Include="ISolutionEventEW.cs" />
-    <Compile Include="SBEEventEW.cs" />
-    <Compile Include="SBETransmitter.cs" />
+    <Compile Include="Events\SBEEventOWP.cs" />
+    <Compile Include="Events\ISolutionEventEW.cs" />
+    <Compile Include="Events\SBEEventEW.cs" />
+    <Compile Include="Events\SBETransmitter.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="SynchSubscribers.cs" />
+    <Compile Include="TPreparedData.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
     <Compile Include="UI\DTECommandsFrm.cs">
       <SubType>Form</SubType>
@@ -135,19 +142,19 @@
     <Compile Include="UI\DTECommandsFrm.Designer.cs">
       <DependentUpon>DTECommandsFrm.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\EnvironmentVariablesFrm.cs">
+    <Compile Include="UI\PropertiesFrm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\EnvironmentVariablesFrm.Designer.cs">
-      <DependentUpon>EnvironmentVariablesFrm.cs</DependentUpon>
+    <Compile Include="UI\PropertiesFrm.Designer.cs">
+      <DependentUpon>PropertiesFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="IMSBuildProperty.cs" />
-    <Compile Include="ISBEParserScript.cs" />
+    <Compile Include="ISBEParser.cs" />
     <Compile Include="OutputWPListener.cs" />
     <Compile Include="OutputWPBuildParser.cs" />
     <Compile Include="MSBuildParser.cs" />
-    <Compile Include="MSBuildParserException.cs" />
-    <Compile Include="SBECommand.cs" />
+    <Compile Include="Exceptions\MSBuildParserException.cs" />
+    <Compile Include="Actions\SBECommand.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="UI\EventsFrm.cs">
       <SubType>Form</SubType>
@@ -157,11 +164,17 @@
     </Compile>
     <Compile Include="Guids.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="ISolutionEvent.cs" />
-    <Compile Include="SBEEvent.cs" />
-    <Compile Include="SBESettings.cs" />
-    <Compile Include="SolutionEvents.cs" />
-    <Compile Include="UI\ITransferEnvironmentVariable.cs" />
+    <Compile Include="Events\ISolutionEvent.cs" />
+    <Compile Include="Events\SBEEvent.cs" />
+    <Compile Include="Events\SBESettings.cs" />
+    <Compile Include="Events\SolutionEvents.cs" />
+    <Compile Include="UI\ITransferData.cs" />
+    <Compile Include="UI\PropertyCheckFrm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\PropertyCheckFrm.Designer.cs">
+      <DependentUpon>PropertyCheckFrm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\StatusControl.xaml.cs">
       <DependentUpon>StatusControl.xaml</DependentUpon>
     </Compile>
@@ -180,11 +193,14 @@
     <EmbeddedResource Include="UI\DTECommandsFrm.resx">
       <DependentUpon>DTECommandsFrm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\EnvironmentVariablesFrm.resx">
-      <DependentUpon>EnvironmentVariablesFrm.cs</DependentUpon>
+    <EmbeddedResource Include="UI\PropertiesFrm.resx">
+      <DependentUpon>PropertiesFrm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\EventsFrm.resx">
       <DependentUpon>EventsFrm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\PropertyCheckFrm.resx">
+      <DependentUpon>PropertyCheckFrm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="VSPackage.resx">
       <MergeWithCTO>true</MergeWithCTO>
@@ -228,6 +244,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
   </PropertyGroup>
