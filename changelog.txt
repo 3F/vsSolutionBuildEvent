@@ -1,3 +1,27 @@
+[v0.8]
+    * NEW: Actions only for a specific configuration.
+    * NEW: Arguments for DTE Commands. Sample: File.OpenProject("path to sln")
+    * NEW: Execution order or Events order (After/Before selected project). 
+           For example, if you need execute the any command until not completed assembly projectX
+           Supported the next events:
+           * POST/Cancel: Execution only if reached
+           * PRE: As deferred action for selected projects + implemented option "Ignore if the build failed"
+           * Erros/Warnings/Output/Transmitter: works with range - Before1 -> After1|Cancel & After1 -> POST/Cancel
+           
+    * NEW: Basic support variable of variable & nested variables with specific project e.g.: $($(var:project2):project)
+    * NEW: Added the "Abort operations on first error" for Operation Mode.
+    * NEW: Added testing tool - "Evaluating Property"
+    * NEW: Definition the dynamic variables:
+            * Temporary (at runtime):
+                $(var=value)
+                $(var=value:project)
+                Sample: $(prgDir=$(ProjectDir.Replace('\', '/'):client))
+        
+    * CHANGED: "Debug mode" as user option and other quick references.
+    * FIXED: Patch for "Any CPU" platform (possible bug "Empty property $(OutDir)") - https://connect.microsoft.com/VisualStudio/feedback/details/503935/ for more detail see also Issue #14
+    * FIXED: All Operations executed as "Error HRESULT E_FAIL has been returned from a call to a COM component."
+    * FIXED: Other minor UI/Core bugs
+
 [v0.7.2]
     * FIXED: Saving property into files(*.csproj, *.vcxproj,..) after evaluating.
     * CHANGED: List projects inside the solution - possible bug "Solution Subfolders not resolved"
