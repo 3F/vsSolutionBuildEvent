@@ -5,12 +5,14 @@
     <compatibility>0.7</compatibility>
   </settings>
   <preBuild>
-    <command>$(MSBuildBinPath)\MSBuild "$(ProjectPath:Version)" /t:Build /p:Configuration=Release
+    <command>$(sln = $(SolutionDir.Replace('\', '/')))
 
- &amp; 
-
-"$(TargetPath:Version)" "$(SolutionDir)_version" "$(SolutionDir).git" "$(ProjectDir:Version)Version.tpl" "$(ProjectDir:vsSolutionBuildEvent)Version.cs" "$(ProjectDir:vsSolutionBuildEvent)source.extension.vsixmanifest"</command>
-    <caption>Update version</caption>
+$(TargetPath:Version) 
+  "$(sln)" 
+  "Version/Version.tpl" 
+  "vsSolutionBuildEvent/Version.cs" 
+  "vsSolutionBuildEvent/source.extension.vsixmanifest"</command>
+    <caption>Updating version</caption>
     <enabled>true</enabled>
     <processHide>true</processHide>
     <mode>Interpreter</mode>
@@ -20,12 +22,20 @@
     <wrapper />
     <waitForExit>true</waitForExit>
     <parseVariablesMSBuild>true</parseVariablesMSBuild>
-    <buildFailedIgnore>false</buildFailedIgnore>
+    <buildFailedIgnore>true</buildFailedIgnore>
+    <toConfiguration />
+    <executionOrder>
+      <TExecutionOrder>
+        <project>Version</project>
+        <order>After</order>
+      </TExecutionOrder>
+    </executionOrder>
     <dteExec>
       <cmd>
         <string />
       </cmd>
       <caption />
+      <abortOnFirstError>true</abortOnFirstError>
     </dteExec>
   </preBuild>
   <postBuild>
@@ -46,6 +56,7 @@
         <string />
       </cmd>
       <caption />
+      <abortOnFirstError>true</abortOnFirstError>
     </dteExec>
   </postBuild>
   <cancelBuild>
@@ -66,6 +77,7 @@
         <string />
       </cmd>
       <caption />
+      <abortOnFirstError>true</abortOnFirstError>
     </dteExec>
   </cancelBuild>
   <warningsBuild>
@@ -86,6 +98,7 @@
         <string />
       </cmd>
       <caption />
+      <abortOnFirstError>true</abortOnFirstError>
     </dteExec>
     <codes />
     <isWhitelist>true</isWhitelist>
@@ -108,6 +121,7 @@
         <string />
       </cmd>
       <caption />
+      <abortOnFirstError>true</abortOnFirstError>
     </dteExec>
     <codes />
     <isWhitelist>true</isWhitelist>
@@ -130,6 +144,7 @@
         <string />
       </cmd>
       <caption />
+      <abortOnFirstError>true</abortOnFirstError>
     </dteExec>
     <eventsOWP />
   </outputCustomBuild>
@@ -151,6 +166,7 @@
         <string />
       </cmd>
       <caption />
+      <abortOnFirstError>true</abortOnFirstError>
     </dteExec>
   </transmitter>
 </SolutionEvents>

@@ -7,14 +7,20 @@ namespace net.r_eg.vsSBE.Version
         static void Main(string[] args)
         {
             //TODO:
-            if(args.Length < 5) {
-                Console.WriteLine("arguments required: '_version' '.git' 'Version.tpl' 'Version.cs' 'vsixmanifest'");
+            if(args.Length < 4) {
+                Console.WriteLine("arguments required: 'SolutionDir' 'Version.tpl' 'Version.cs' 'vsixmanifest'");
                 Console.ReadLine();
                 return;
             }
 
             try {
-                Update upd = new Update(args[0], args[1], args[2], args[3], args[4]);
+                string sln = args[0].Trim();
+                Update upd = new Update(sln + "_version", 
+                                        sln + ".git", 
+                                        sln + "Version/Version.tpl", 
+                                        sln + "vsSolutionBuildEvent/Version.cs", 
+                                        sln + "vsSolutionBuildEvent/source.extension.vsixmanifest");
+
                 Console.WriteLine("'{0}' successfully updated", upd.Version.ToString());
             }
             catch(Exception ex) {
