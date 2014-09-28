@@ -8,15 +8,16 @@
     <command>$(sln = $(SolutionDir.Replace('\', '/')))
 
 $(TargetPath:Version) 
+  $(Configuration) 
   "$(sln)" 
   "Version/Version.tpl" 
   "vsSolutionBuildEvent/Version.cs" 
   "vsSolutionBuildEvent/source.extension.vsixmanifest"</command>
     <caption>Updating version</caption>
     <enabled>true</enabled>
-    <processHide>true</processHide>
+    <processHide>false</processHide>
     <mode>Interpreter</mode>
-    <processKeep>true</processKeep>
+    <processKeep>false</processKeep>
     <interpreter>cmd.exe /C</interpreter>
     <newline />
     <wrapper />

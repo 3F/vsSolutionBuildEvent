@@ -19,23 +19,44 @@ namespace net.r_eg.vsSBE.Version
 {
     internal class Update
     {
+        public struct Data
+        {
+            /// <summary>
+            /// Version number(Major.Minor.Patch) for updates
+            /// </summary>
+            public string version;
+            /// <summary>
+            /// .git directory
+            /// </summary>
+            public string git;
+            /// <summary>
+            /// Template of Version.cs
+            /// </summary>
+            public string tpl;
+            /// <summary>
+            /// Original Version.cs
+            /// </summary>
+            public string cs;
+            /// <summary>
+            /// Original source.extension.vsixmanifest
+            /// </summary>
+            public string manifest;
+        }
+
         public System.Version Version
         {
             get { return version;  }
         }
         protected System.Version version;
 
-        /// <param name="from">Version number(Major.Minor.Patch) for updates</param>
-        /// <param name="gitDir">.git directory</param>
-        /// <param name="tpl">Template of Version.cs</param>
-        /// <param name="cs">Original Version.cs</param>
-        /// <param name="manifest">Original source.extension.vsixmanifest</param>
-        public Update(string from, string gitDir, string tpl, string cs, string manifest)
+        /// <param name="data"></param>
+        /// <param name="revForManifest">Write or not the revision number for vsixmanifest</param>
+        public Update(Data data, bool revForManifest)
         {
-            version = generateRevision(loadVersionFromFile(from));
+            version = generateRevision(loadVersionFromFile(data.version));
 
-            tVersion(gitDir, tpl, cs);
-            tVsixmanifest(manifest);
+            tVersion(data.git, data.tpl, data.cs);
+            tVsixmanifest(data.manifest, revForManifest);
         }
 
         protected void tVersion(string gitDir, string template, string original)
@@ -51,14 +72,18 @@ namespace net.r_eg.vsSBE.Version
             );
         }
 
-        protected void tVsixmanifest(string manifest)
+        protected void tVsixmanifest(string manifest, bool showRevision)
         {
+            string versionString = String.Format("{0}.{1}.{2}", version.Major, version.Minor, version.Build);
+            if(showRevision) {
+                versionString += String.Format(".{0}", version.Revision);
+            }
+
             _write(manifest, 
                 Regex.Replace(_read(manifest), 
-                                @"<Version>[0-9\.]+</Version>",
-                                string.Format("<Version>{0}.{1}.{2}</Version>", version.Major, version.Minor, version.Build), 
-                                RegexOptions.IgnoreCase
-                )
+                                @"<Version>[0-9\.]+</Version>", 
+                                String.Format("<Version>{0}</Version>", versionString), 
+                                RegexOptions.IgnoreCase)
             );
         }
 
@@ -75,6 +100,10 @@ namespace net.r_eg.vsSBE.Version
 
         private string _cmdGit(string command, string path)
         {
+            if(!Directory.Exists(path)) {
+                return "?";
+            }
+
             Process p = new Process();
             p.StartInfo.FileName = "git";
 
