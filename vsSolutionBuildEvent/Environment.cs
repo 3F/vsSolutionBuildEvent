@@ -49,8 +49,9 @@ namespace net.r_eg.vsSBE
             {
                 foreach(EnvDTE.Project project in DTEProjectsRaw)
                 {
-                    if(String.IsNullOrEmpty(project.FullName) || String.IsNullOrEmpty(project.Name)) {
-                        continue;
+                    if(project.Kind == "{67294A52-A4F0-11D2-AA88-00C04F688DDE}" || project.ConfigurationManager == null) {
+                        Log.nlog.Debug("Unloaded project '{0}' has ignored", project.Name);
+                        continue; // skip for all unloaded projects
                     }
                     yield return project;
                 }
@@ -65,8 +66,13 @@ namespace net.r_eg.vsSBE
             get {
                 List<string> projects = new List<string>();
 
-                foreach(EnvDTE.Project project in DTEProjects) {
-                    projects.Add(project.Name);
+                try {
+                    foreach(EnvDTE.Project project in DTEProjects) {
+                        projects.Add(project.Name);
+                    }
+                }
+                catch(Exception ex) {
+                    Log.nlog.Error("Failed getting project from EnvDTE: {0}", ex.Message);
                 }
                 return projects;
             }
