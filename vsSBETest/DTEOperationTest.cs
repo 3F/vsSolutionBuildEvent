@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using EnvDTE;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.vsSBE;
+using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
 
 namespace vsSBETest
@@ -38,10 +39,10 @@ namespace vsSBETest
         [TestMethod()]
         public void parseTest()
         {
-            DTEOperation target = new DTEOperation((DTE)null);
+            DTEOperation target = new DTEOperation((DTE)null, SolutionEventType.General);
 
             string line = "File.OpenProject(\"c:\\path\\app.sln\")";
-            DTEOperation.TPrepared actual = target.parse(line);
+            DTEOperation.DTEPrepared actual = target.parse(line);
 
             Assert.AreEqual("File.OpenProject", actual.name);
             Assert.AreEqual("\"c:\\path\\app.sln\"", actual.args);
@@ -53,10 +54,10 @@ namespace vsSBETest
         [TestMethod()]
         public void parseTest2()
         {
-            DTEOperation target = new DTEOperation((DTE)null);
+            DTEOperation target = new DTEOperation((DTE)null, SolutionEventType.General);
 
             string line = "Debug.StartWithoutDebugging";
-            DTEOperation.TPrepared actual = target.parse(line);
+            DTEOperation.DTEPrepared actual = target.parse(line);
 
             Assert.AreEqual("Debug.StartWithoutDebugging", actual.name);
             Assert.AreEqual("", actual.args);
@@ -69,10 +70,10 @@ namespace vsSBETest
         [ExpectedException(typeof(IncorrectSyntaxException))]
         public void parseTest3()
         {
-            DTEOperation target = new DTEOperation((DTE)null);
+            DTEOperation target = new DTEOperation((DTE)null, SolutionEventType.General);
 
             string line = "Debug StartWithoutDebugging";
-            DTEOperation.TPrepared actual = target.parse(line);
+            DTEOperation.DTEPrepared actual = target.parse(line);
         }
 
         /// <summary>
@@ -82,10 +83,10 @@ namespace vsSBETest
         [ExpectedException(typeof(IncorrectSyntaxException))]
         public void parseTest4()
         {
-            DTEOperation target = new DTEOperation((DTE)null);
+            DTEOperation target = new DTEOperation((DTE)null, SolutionEventType.General);
 
             string line = "";
-            DTEOperation.TPrepared actual = target.parse(line);
+            DTEOperation.DTEPrepared actual = target.parse(line);
         }
 
         /// <summary>
@@ -94,10 +95,10 @@ namespace vsSBETest
         [TestMethod()]
         public void parseTest5()
         {
-            DTEOperation target = new DTEOperation((DTE)null);
+            DTEOperation target = new DTEOperation((DTE)null, SolutionEventType.General);
 
             string line = "  OpenProject(arg)  ";
-            DTEOperation.TPrepared actual = target.parse(line);
+            DTEOperation.DTEPrepared actual = target.parse(line);
 
             Assert.AreEqual("OpenProject", actual.name);
             Assert.AreEqual("arg", actual.args);
@@ -111,20 +112,20 @@ namespace vsSBETest
         {
             DTEOperationAccessor.ToExec target = new DTEOperationAccessor.ToExec(-1);
 
-            Queue<DTEOperation.TPrepared> commands = new Queue<DTEOperation.TPrepared>();
-            commands.Enqueue(new DTEOperation.TPrepared("Build.Cancel", ""));
-            commands.Enqueue(new DTEOperation.TPrepared("File.OpenProject", "app.sln"));
-            commands.Enqueue(new DTEOperation.TPrepared("Debug.Start", ""));
+            Queue<DTEOperation.DTEPrepared> commands = new Queue<DTEOperation.DTEPrepared>();
+            commands.Enqueue(new DTEOperation.DTEPrepared("Build.Cancel", ""));
+            commands.Enqueue(new DTEOperation.DTEPrepared("File.OpenProject", "app.sln"));
+            commands.Enqueue(new DTEOperation.DTEPrepared("Debug.Start", ""));
 
-            DTEOperation.TPrepared[] expected = new DTEOperation.TPrepared[commands.Count];
+            DTEOperation.DTEPrepared[] expected = new DTEOperation.DTEPrepared[commands.Count];
             commands.CopyTo(expected, 0);
 
             target.exec(commands, false);
 
-            Queue<DTEOperation.TPrepared> actual = target.getExecuted();
+            Queue<DTEOperation.DTEPrepared> actual = target.getExecuted();
             Assert.IsTrue(actual.Count == expected.Length);
 
-            foreach(DTEOperation.TPrepared obj in expected) {
+            foreach(DTEOperation.DTEPrepared obj in expected) {
                 Assert.AreEqual(actual.Dequeue(), obj);                
             }
         }
@@ -137,12 +138,12 @@ namespace vsSBETest
         {
             DTEOperationAccessor.ToExec target = new DTEOperationAccessor.ToExec(1);
 
-            Queue<DTEOperation.TPrepared> commands = new Queue<DTEOperation.TPrepared>();
-            commands.Enqueue(new DTEOperation.TPrepared("Build.Cancel", ""));
-            commands.Enqueue(new DTEOperation.TPrepared("File.OpenProject", "app.sln"));
-            commands.Enqueue(new DTEOperation.TPrepared("Debug.Start", ""));
+            Queue<DTEOperation.DTEPrepared> commands = new Queue<DTEOperation.DTEPrepared>();
+            commands.Enqueue(new DTEOperation.DTEPrepared("Build.Cancel", ""));
+            commands.Enqueue(new DTEOperation.DTEPrepared("File.OpenProject", "app.sln"));
+            commands.Enqueue(new DTEOperation.DTEPrepared("Debug.Start", ""));
 
-            DTEOperation.TPrepared[] expected = new DTEOperation.TPrepared[commands.Count];
+            DTEOperation.DTEPrepared[] expected = new DTEOperation.DTEPrepared[commands.Count];
             commands.CopyTo(expected, 0);
 
             try {
@@ -152,10 +153,10 @@ namespace vsSBETest
                 // other type should fail the current test
             }
 
-            Queue<DTEOperation.TPrepared> actual = target.getExecuted();
+            Queue<DTEOperation.DTEPrepared> actual = target.getExecuted();
             Assert.IsTrue(actual.Count == expected.Length);
 
-            foreach(DTEOperation.TPrepared obj in expected) {
+            foreach(DTEOperation.DTEPrepared obj in expected) {
                 Assert.AreEqual(actual.Dequeue(), obj);
             }
         }
@@ -168,13 +169,13 @@ namespace vsSBETest
         {
             DTEOperationAccessor.ToExec target = new DTEOperationAccessor.ToExec(2);
 
-            Queue<DTEOperation.TPrepared> commands = new Queue<DTEOperation.TPrepared>();
-            commands.Enqueue(new DTEOperation.TPrepared("Build.Cancel", ""));
-            commands.Enqueue(new DTEOperation.TPrepared("File.OpenProject", "app.sln"));
-            commands.Enqueue(new DTEOperation.TPrepared("Debug.Start", ""));
-            commands.Enqueue(new DTEOperation.TPrepared("Debug.StartWithoutDebugging", ""));
+            Queue<DTEOperation.DTEPrepared> commands = new Queue<DTEOperation.DTEPrepared>();
+            commands.Enqueue(new DTEOperation.DTEPrepared("Build.Cancel", ""));
+            commands.Enqueue(new DTEOperation.DTEPrepared("File.OpenProject", "app.sln"));
+            commands.Enqueue(new DTEOperation.DTEPrepared("Debug.Start", ""));
+            commands.Enqueue(new DTEOperation.DTEPrepared("Debug.StartWithoutDebugging", ""));
 
-            DTEOperation.TPrepared[] expected = new DTEOperation.TPrepared[commands.Count];
+            DTEOperation.DTEPrepared[] expected = new DTEOperation.DTEPrepared[commands.Count];
             commands.CopyTo(expected, 0);
 
             try {
@@ -184,12 +185,12 @@ namespace vsSBETest
                 // other type should fail the current test
             }
 
-            Queue<DTEOperation.TPrepared> actual = target.getExecuted();
+            Queue<DTEOperation.DTEPrepared> actual = target.getExecuted();
             Assert.IsTrue(actual.Count != expected.Length);
             Assert.IsTrue(actual.Count == 2);
 
             int idx = 0;
-            foreach(DTEOperation.TPrepared obj in actual) {
+            foreach(DTEOperation.DTEPrepared obj in actual) {
                 Assert.AreEqual(expected[idx++], obj);
             }
         }
@@ -199,8 +200,8 @@ namespace vsSBETest
         {
             public class Accessor: DTEOperation
             {
-                public Accessor(): base((DTE)null) {}
-                public Accessor(DTE dte): base(dte) {}
+                public Accessor(): base((DTE)null, SolutionEventType.General) {}
+                public Accessor(DTE dte, SolutionEventType type): base(dte, type) {}
             }
 
             public class ToExec: Accessor
@@ -208,7 +209,7 @@ namespace vsSBETest
                 /// <summary>
                 /// Simulation of the executed commands
                 /// </summary>
-                protected Queue<TPrepared> executed = new Queue<TPrepared>();
+                protected Queue<DTEPrepared> executed = new Queue<DTEPrepared>();
                 /// <summary>
                 /// when to generate an error
                 /// -1 if never
@@ -217,13 +218,13 @@ namespace vsSBETest
 
                 public override void exec(string name, string args)
                 {
-                    executed.Enqueue(new TPrepared(name, args));
+                    executed.Enqueue(new DTEPrepared(name, args));
                     if(simulateFailAfter != -1 && executed.Count >= simulateFailAfter) {
                         throw new Exception("simulate DTE error");
                     }
                 }
 
-                public Queue<TPrepared> getExecuted()
+                public Queue<DTEPrepared> getExecuted()
                 {
                     return executed;
                 }
