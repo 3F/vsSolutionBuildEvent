@@ -125,4 +125,26 @@ namespace net.r_eg.vsSBE.Events
             set { _transmitter = value; }
         }
     }
+
+    public enum SolutionEventType
+    {
+        Pre, Post, Cancel, Warnings, Errors, OWP, Transmitter,
+        /// <summary>
+        /// Without identification - all ISolutionEvent
+        /// </summary>
+        General,
+        /// <summary>
+        /// Errors + Warnings
+        /// </summary>
+        EW,
+        /// <summary>
+        /// By individual projects
+        /// </summary>
+        ProjectPre,
+        ProjectPost,
+        /// <summary>
+        /// The 'PRE' as deferred action of existing projects
+        /// </summary>
+        DeferredPre,
+    }
 }

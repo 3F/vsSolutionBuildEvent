@@ -39,6 +39,12 @@ namespace net.r_eg.vsSBE.Actions
     public class Connection: IListenerOWPL
     {
         /// <summary>
+        /// Ignored all action if value as true
+        /// Support of cycle control, e.g.: PRE -> POST [recursive DTE: PRE -> POST] -> etc.
+        /// </summary>
+        public static volatile bool silent = false;
+
+        /// <summary>
         /// Execution order support.
         /// Contains the current states of all projects
         /// </summary>
@@ -55,10 +61,18 @@ namespace net.r_eg.vsSBE.Actions
         protected SBECommand sbe;
 
         /// <summary>
+        /// Checks the allow state for action
+        /// </summary>
+        protected bool IsAllowProcessing
+        {
+            get { return !silent; }
+        }
+
+        /// <summary>
         /// Support deferred 'PRE' of solution
         /// TODO: complex semaphore for all type
         /// </summary>
-        private bool _isExecutedPre = false;
+        private volatile bool _isExecutedPre = false;
 
         public Connection(SBECommand sbe)
         {
@@ -74,6 +88,10 @@ namespace net.r_eg.vsSBE.Actions
             _flushExecuted();
             if(!Config._.Data.preBuild.enabled) {
                 return VSConstants.S_OK;
+            }
+
+            if(!IsAllowProcessing) {
+                return _ignoredAction(SolutionEventType.Pre);
             }
 
             if(hasExecutionOrder(Config._.Data.preBuild))
@@ -95,6 +113,10 @@ namespace net.r_eg.vsSBE.Actions
                 return VSConstants.S_OK;
             }
 
+            if(!IsAllowProcessing) {
+                return _ignoredAction(SolutionEventType.Post);
+            }
+
             if(fSucceeded != 1 && evt.buildFailedIgnore) {
                 Log.nlog.Info("[Post] ignored action '{0}' :: Build FAILED. See option 'Ignore if the build failed'", evt.caption);
                 return VSConstants.S_OK;
@@ -106,7 +128,7 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             try {
-                if(sbe.basic(evt)) {
+                if(sbe.basic(evt, SolutionEventType.Post)) {
                     Log.nlog.Info("[Post] finished SBE: {0}", evt.caption);
                 }
                 return VSConstants.S_OK;
@@ -146,13 +168,17 @@ namespace net.r_eg.vsSBE.Actions
                 return VSConstants.S_OK;
             }
 
+            if(!IsAllowProcessing) {
+                return _ignoredAction(SolutionEventType.Cancel);
+            }
+
             if(!isReached(evt)) {
                 Log.nlog.Info("[Cancel] ignored action '{0}' :: not reached selected projects in execution order", evt.caption);
                 return VSConstants.S_OK;
             }
 
             try {
-                if(sbe.basic(evt)) {
+                if(sbe.basic(evt, SolutionEventType.Cancel)) {
                     Log.nlog.Info("[Cancel] finished SBE: {0}", evt.caption);
                 }
                 return VSConstants.S_OK;
@@ -179,13 +205,18 @@ namespace net.r_eg.vsSBE.Actions
                 return;
             }
 
+            if(!IsAllowProcessing) {
+                _ignoredAction(SolutionEventType.Transmitter);
+                return;
+            }
+
             if(!isExecute(evt, current)) {
                 Log.nlog.Info("[Transmitter] ignored action '{0}' :: by execution order", evt.caption);
                 return;
             }
 
             try {
-                if(sbe.supportOWP(evt, data)) {
+                if(sbe.supportOWP(evt, SolutionEventType.Transmitter, data)) {
                     //Log.nlog.Trace("[Transmitter]: " + Config._.Data.transmitter.caption);
                 }
             }
@@ -217,6 +248,11 @@ namespace net.r_eg.vsSBE.Actions
                 return;
             }
 
+            if(!IsAllowProcessing) {
+                _ignoredAction(SolutionEventType.EW);
+                return;
+            }
+
             // TODO: capture code####, message..
             if(!info.checkRule(type, evt.isWhitelist, evt.codes)) {
                 return;
@@ -228,7 +264,7 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             try {
-                if(sbe.basic(evt)) {
+                if(sbe.basic(evt, type == OutputWPBuildParser.Type.Warnings ? SolutionEventType.Warnings : SolutionEventType.Errors)) {
                     Log.nlog.Info("[{0}] finished SBE: {1}", type, evt.caption);
                 }
             }
@@ -246,6 +282,11 @@ namespace net.r_eg.vsSBE.Actions
                 return;
             }
 
+            if(!IsAllowProcessing) {
+                _ignoredAction(SolutionEventType.OWP);
+                return;
+            }
+
             if(!(new OWPMatcher()).match(evt.eventsOWP, raw)) {
                 return;
             }
@@ -256,7 +297,7 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             try {
-                if(sbe.basic(evt)) {
+                if(sbe.basic(evt, SolutionEventType.OWP)) {
                     Log.nlog.Info("[Output] finished SBE: {0}", evt.caption);
                 }
             }
@@ -271,7 +312,7 @@ namespace net.r_eg.vsSBE.Actions
         protected int execPre()
         {
             try {
-                if(sbe.basic(Config._.Data.preBuild)) {
+                if(sbe.basic(Config._.Data.preBuild, SolutionEventType.Pre)) {
                     Log.nlog.Info("[Pre] finished SBE: {0}", Config._.Data.preBuild.caption);
                 }
                 return VSConstants.S_OK;
@@ -363,7 +404,7 @@ namespace net.r_eg.vsSBE.Actions
             current.project = project;
             current.order   = type;
 
-            Log.nlog.Debug("onProject: '{0}':{1} == {2}", project, type, fSuccess);
+            Log.nlog.Trace("onProject: '{0}':{1} == {2}", project, type, fSuccess);
 
             if(!_isExecutedPre) {
                 monitoringPre(project, type, fSuccess);
@@ -384,13 +425,17 @@ namespace net.r_eg.vsSBE.Actions
                 return;
             }
 
+            if(!IsAllowProcessing) {
+                _ignoredAction(SolutionEventType.DeferredPre);
+            }
+
             if(!fSuccess && evt.buildFailedIgnore) {
                 Log.nlog.Info("[PRE] ignored action '{0}' :: Build FAILED. See option 'Ignore if the build failed'", evt.caption);
                 return;
             }
 
             if(!hasExecutionOrder(evt)) {
-                Log.nlog.Debug("[PRE] deferred: executionOrder is null or not contains elements");
+                Log.nlog.Trace("[PRE] deferred: executionOrder is null or not contains elements");
                 return;
             }
 
@@ -399,6 +444,12 @@ namespace net.r_eg.vsSBE.Actions
                 Log.nlog.Info("Incoming '{0}'({1}) :: Execute the deferred action: '{2}'", project, type, evt.caption);
                 execPre();
             }
+        }
+
+        private int _ignoredAction(SolutionEventType type)
+        {
+            Log.nlog.Trace("[{0}] ignored action. Is already started from another VSprocess.", type);
+            return VSConstants.S_OK;
         }
 
         private void _flushExecuted()

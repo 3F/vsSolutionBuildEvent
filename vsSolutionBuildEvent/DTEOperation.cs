@@ -27,11 +27,14 @@
 */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using EnvDTE;
+using net.r_eg.vsSBE.Actions;
+using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
 
 namespace net.r_eg.vsSBE
@@ -41,7 +44,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Aggregation of prepared data for DTE
         /// </summary>
-        public struct TPrepared
+        public struct DTEPrepared
         {
             /// <summary>
             /// The name of the command to invoke.
@@ -53,7 +56,7 @@ namespace net.r_eg.vsSBE
             /// </summary>
             public string args;
 
-            public TPrepared(string name, string args)
+            public DTEPrepared(string name, string args)
             {
                 this.name = name;
                 this.args = args;
@@ -67,12 +70,30 @@ namespace net.r_eg.vsSBE
         ///   exec - "Debug.Start"
         ///   exec - "File.Print"
         /// </summary>
-        protected struct TQueue
+        public sealed class TQueue
         {
-            public uint level;
-            public Queue<TPrepared> cmd;
+            public volatile uint level;
+            public Queue<DTEPrepared> cmd;
         }
-        protected TQueue queue;
+        /// <summary>
+        /// splitted by event type
+        /// </summary>
+        protected static ConcurrentDictionary<SolutionEventType, TQueue> queues = new ConcurrentDictionary<SolutionEventType, TQueue>();
+
+        /// <summary>
+        /// Current type for recursive DTE commands
+        /// </summary>
+        protected SolutionEventType type;
+        protected TQueue queue
+        {
+            get { return queues[type]; }
+            set
+            {
+                if(!queues.ContainsKey(type)) {
+                    queues[type] = value;
+                }
+            }
+        }
 
         /// <summary>
         /// DTE context
@@ -84,7 +105,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         private Object _eLock = new Object();
 
-        public virtual TPrepared parse(string line)
+        public virtual DTEPrepared parse(string line)
         {
             Match m = Regex.Match(line.Trim(), @"^
                                                    ([A-z_0-9.]+)    #1 - Command
@@ -101,12 +122,12 @@ namespace net.r_eg.vsSBE
                 Log.nlog.Debug("Operation '{0}' is not correct", line);
                 throw new IncorrectSyntaxException("prepare failed - '{0}'", line);
             }
-            return new TPrepared(m.Groups[1].Value, m.Groups[2].Success ? m.Groups[2].Value.Trim() : String.Empty);
+            return new DTEPrepared(m.Groups[1].Value, m.Groups[2].Success ? m.Groups[2].Value.Trim() : String.Empty);
         }
 
-        public Queue<TPrepared> parse(string[] raw)
+        public Queue<DTEPrepared> parse(string[] raw)
         {
-            Queue<TPrepared> pRaw = new Queue<TPrepared>();
+            Queue<DTEPrepared> pRaw = new Queue<DTEPrepared>();
 
             foreach(string rawLine in raw) {
                 pRaw.Enqueue(parse(rawLine));
@@ -114,7 +135,7 @@ namespace net.r_eg.vsSBE
             return pRaw;
         }
 
-        public void exec(TPrepared command)
+        public void exec(DTEPrepared command)
         {
             exec(command.name, command.args);
         }
@@ -124,7 +145,7 @@ namespace net.r_eg.vsSBE
             exec(parse(format(ref commands)), abortOnFirstError);
         }
 
-        public void exec(Queue<TPrepared> commands, bool abortOnFirstError)
+        public void exec(Queue<DTEPrepared> commands, bool abortOnFirstError)
         {
             if(queue.level < 1 && commands.Count < 1) {
                 return;
@@ -133,12 +154,18 @@ namespace net.r_eg.vsSBE
             lock(_eLock)
             {
                 if(queue.level == 0) {
+                    Log.nlog.Debug("DTE: init the queue");
                     queue.cmd = commands;
+                    Connection.silent = true;
                 }
 
+                if(queue.cmd.Count < 1) {
+                    Log.nlog.Debug("DTE recursion: all pushed :: level {0}", queue.level);
+                    return;
+                }
                 ++queue.level;
 
-                TPrepared current       = queue.cmd.Dequeue();
+                DTEPrepared current     = queue.cmd.Dequeue();
                 string progressCaption  = String.Format("({0}/{1})", queue.level, queue.level + queue.cmd.Count);
                 Exception terminated    = null;
                 try {
@@ -160,14 +187,18 @@ namespace net.r_eg.vsSBE
                     }
                     else {
                         Log.nlog.Debug("DTE {0}: step into", progressCaption);
-                        exec((Queue<TPrepared>)null, abortOnFirstError);
+                        exec((Queue<DTEPrepared>)null, abortOnFirstError);
                     }
                 }
 
                 --queue.level;
 
-                if(queue.level < 1 && terminated != null) {
-                    throw new ComponentException(terminated.Message, terminated);
+                if(queue.level < 1)
+                {
+                    Connection.silent = false;
+                    if(terminated != null) {
+                        throw new ComponentException(terminated.Message, terminated);
+                    }
                 }
             }
         }
@@ -177,10 +208,24 @@ namespace net.r_eg.vsSBE
             dte.ExecuteCommand(name, args);
         }
 
-        public DTEOperation(DTE dte)
+        public void flushQueue()
+        {
+            queue = new TQueue();
+        }
+
+        public void initQueue(SolutionEventType type)
+        {
+            if(queues.ContainsKey(type)) {
+                return;
+            }
+            queues[type] = new TQueue();
+        }
+
+        public DTEOperation(DTE dte, SolutionEventType type)
         {
             this.dte    = dte;
-            queue       = new TQueue();
+            this.type   = type;
+            initQueue(type);
         }
 
         protected virtual string[] format(ref string[] data)

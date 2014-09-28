@@ -88,6 +88,11 @@ namespace net.r_eg.vsSBE.Actions
         protected string owpDataRaw;
 
         /// <summary>
+        /// For additional handling
+        /// </summary>
+        protected SolutionEventType type = SolutionEventType.General;
+
+        /// <summary>
         /// Current working context for scripts or files
         /// </summary>
         protected ShellContext context;
@@ -96,11 +101,12 @@ namespace net.r_eg.vsSBE.Actions
         /// basic implementation
         /// </summary>
         /// <param name="evt">provided sbe-events</param>
-        public bool basic(ISolutionEvent evt)
+        public bool basic(ISolutionEvent evt, SolutionEventType type)
         {
             if(!evt.enabled){
                 return false;
             }
+            this.type = type;
 
             string cfg = env.SolutionConfigurationFormat(env.SolutionActiveConfiguration);
 
@@ -132,10 +138,10 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="evt"></param>
         /// <param name="raw"></param>
         /// <returns></returns>
-        public bool supportOWP(ISolutionEvent evt, string raw)
+        public bool supportOWP(ISolutionEvent evt, SolutionEventType type, string raw)
         {
             owpDataRaw = raw;
-            return basic(evt);
+            return basic(evt, type);
         }
 
         public SBECommand(Environment env, MSBuildParser parser)
@@ -164,7 +170,7 @@ namespace net.r_eg.vsSBE.Actions
             if(evt.dteExec.cmd == null || evt.dteExec.cmd.Length < 1) {
                 return true;
             }
-            (new DTEOperation((EnvDTE.DTE)env.DTE2)).exec(evt.dteExec.cmd, evt.dteExec.abortOnFirstError);
+            (new DTEOperation((EnvDTE.DTE)env.DTE2, type)).exec(evt.dteExec.cmd, evt.dteExec.abortOnFirstError);
             return true;
         }
 

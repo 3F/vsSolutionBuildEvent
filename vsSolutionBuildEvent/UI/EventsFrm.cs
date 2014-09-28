@@ -19,30 +19,21 @@ namespace net.r_eg.vsSBE.UI
 {
     public partial class EventsFrm: Form, ITransferDataProperty, ITransferDataCommand
     {
-        private class _SBEWrap
+        private struct _SBEWrap
         {
-            public enum UIType
-            {
-                General,
-                EW,
-                OWP,
-                Transmitter,
-                Post,
-                Pre
-            }
-
             public SBEEvent evt;
-            public UIType subtype = UIType.General;
+            public SolutionEventType type;
 
-            public _SBEWrap(SBEEvent evt, UIType subtype)
+            public _SBEWrap(SBEEvent evt, SolutionEventType type)
             {
-                this.evt = evt;
-                this.subtype = subtype;
+                this.evt    = evt;
+                this.type   = type;
             }
 
             public _SBEWrap(SBEEvent evt)
             {
-                this.evt = evt;
+                this.evt    = evt;
+                type        = SolutionEventType.General;
             }
         }
 
@@ -150,12 +141,12 @@ namespace net.r_eg.vsSBE.UI
             {
                 _saveData(_SBE.evt);
 
-                switch(_SBE.subtype) {
-                    case _SBEWrap.UIType.EW: {
+                switch(_SBE.type) {
+                    case SolutionEventType.EW: {
                         _saveData((SBEEventEW)_SBE.evt);
                         break;
                     }
-                    case _SBEWrap.UIType.OWP: {
+                    case SolutionEventType.OWP: {
                         _saveData((SBEEventOWP)_SBE.evt);
                         break;
                     }
@@ -238,25 +229,25 @@ namespace net.r_eg.vsSBE.UI
 
         private void EventsFrm_Load(object sender, EventArgs e)
         {
-            _solutionEvents.Add(new _SBEWrap(Config._.Data.preBuild, _SBEWrap.UIType.Pre));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.preBuild, SolutionEventType.Pre));
             comboBoxEvents.Items.Add(":: Pre-Build :: Before assembly");
 
-            _solutionEvents.Add(new _SBEWrap(Config._.Data.postBuild, _SBEWrap.UIType.Post));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.postBuild, SolutionEventType.Post));
             comboBoxEvents.Items.Add(":: Post-Build :: After assembly");
 
             _solutionEvents.Add(new _SBEWrap(Config._.Data.cancelBuild));
             comboBoxEvents.Items.Add(":: Cancel-Build :: by user or compilation errors");
 
-            _solutionEvents.Add(new _SBEWrap(Config._.Data.warningsBuild, _SBEWrap.UIType.EW));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.warningsBuild, SolutionEventType.EW));
             comboBoxEvents.Items.Add(":: Warnings-Build :: Warnings during assembly");
 
-            _solutionEvents.Add(new _SBEWrap(Config._.Data.errorsBuild, _SBEWrap.UIType.EW));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.errorsBuild, SolutionEventType.EW));
             comboBoxEvents.Items.Add(":: Errors-Build :: Errors during assembly");
 
-            _solutionEvents.Add(new _SBEWrap(Config._.Data.outputCustomBuild, _SBEWrap.UIType.OWP));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.outputCustomBuild, SolutionEventType.OWP));
             comboBoxEvents.Items.Add(":: Output-Build customization :: Full control");
 
-            _solutionEvents.Add(new _SBEWrap(Config._.Data.transmitter, _SBEWrap.UIType.Transmitter));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.transmitter, SolutionEventType.Transmitter));
             comboBoxEvents.Items.Add(":: Transmitter :: Transfer output data to outer handler");
 
             comboBoxEvents.SelectedIndex = 0;
@@ -339,22 +330,22 @@ namespace net.r_eg.vsSBE.UI
             groupBoxOutputControl.Enabled   = false;
             groupBoxEW.Enabled              = false;
 
-            switch(_SBE.subtype)
+            switch(_SBE.type)
             {
-                case _SBEWrap.UIType.EW:
+                case SolutionEventType.EW:
                 {
                     _renderData((SBEEventEW)_SBE.evt);
                     groupBoxEW.Enabled = true;
                     break;
                 }
-                case _SBEWrap.UIType.OWP:
+                case SolutionEventType.OWP:
                 {
-                    _renderData((SBEEventOWP)_SBE.evt);                    
+                    _renderData((SBEEventOWP)_SBE.evt);
                     groupBoxOutputControl.Enabled = true;
                     break;
                 }
-                case _SBEWrap.UIType.Pre:
-                case _SBEWrap.UIType.Post:
+                case SolutionEventType.Pre:
+                case SolutionEventType.Post:
                 {
                     checkBoxIgnoreIfFailed.Enabled = true;
                     break;
