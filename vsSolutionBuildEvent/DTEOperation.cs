@@ -171,8 +171,9 @@ namespace net.r_eg.vsSBE
                 try {
                     // also error if command not available at current time
                     // * +causes recursion with Debug.Start, Debug.StartWithoutDebugging, etc.,
-                    Log.nlog.Info("DTE exec {0}: '{1}'", progressCaption, current.name);
+                    Log.nlog.Info("DTE exec {0}: '{1}' [{2}]", progressCaption, current.name, current.args);
                     exec(current.name, current.args);
+                    Log.nlog.Debug("DTE exec {0}: done.", progressCaption);
                 }
                 catch(Exception ex) {
                     Log.nlog.Debug("DTE fail {0}: {1} :: '{2}'", progressCaption, ex.Message, current.name);
@@ -195,6 +196,7 @@ namespace net.r_eg.vsSBE
 
                 if(queue.level < 1)
                 {
+                    Log.nlog.Debug("DTE: all completed");
                     Connection.silent = false;
                     if(terminated != null) {
                         throw new ComponentException(terminated.Message, terminated);

@@ -150,7 +150,7 @@ namespace net.r_eg.vsSBE.Events
         /// <summary>
         /// Abort operations on first error
         /// </summary>
-        public bool abortOnFirstError = true;
+        public bool abortOnFirstError = false;
     }
 
     public struct TExecutionOrder

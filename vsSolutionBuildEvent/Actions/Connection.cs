@@ -427,6 +427,7 @@ namespace net.r_eg.vsSBE.Actions
 
             if(!IsAllowProcessing) {
                 _ignoredAction(SolutionEventType.DeferredPre);
+                return;
             }
 
             if(!fSuccess && evt.buildFailedIgnore) {

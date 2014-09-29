@@ -24,6 +24,8 @@ namespace net.r_eg.vsSBE.UI
 
             dte.Add(new TOperationQ(new string[]{"Build.Cancel"}, "Stop building"));
             dte.Add(new TOperationQ(new string[]{"Build.Cancel", "Build.RebuildSolution"}, "Rebuild Solution"));
+            dte.Add(new TOperationQ(new string[]{"Test.RunAllTestsInSolution"}, "Run all Unit-Tests"));
+            dte.Add(new TOperationQ(new string[]{"Test.DebugAllTestsInSolution"}, "Debug all Unit-Tests"));
             dte.Add(new TOperationQ(new string[]{"Debug.Start"}, "Run project"));
             dte.Add(new TOperationQ(new string[]{"Debug.StartWithoutDebugging"}, "Run Without Debugging"));
 
