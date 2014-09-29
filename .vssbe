@@ -41,22 +41,36 @@ $(TargetPath:Version)
   </preBuild>
   <postBuild>
     <command />
-    <caption />
-    <enabled>false</enabled>
+    <caption>Run all tests for release configurations</caption>
+    <enabled>true</enabled>
     <processHide>true</processHide>
-    <mode>Interpreter</mode>
+    <mode>Operation</mode>
     <processKeep>false</processKeep>
     <interpreter />
     <newline />
     <wrapper />
     <waitForExit>true</waitForExit>
     <parseVariablesMSBuild>true</parseVariablesMSBuild>
-    <buildFailedIgnore>false</buildFailedIgnore>
+    <buildFailedIgnore>true</buildFailedIgnore>
+    <toConfiguration>
+      <string>Release_with_revision|Any CPU</string>
+      <string>Release_with_revision|Mixed Platforms</string>
+      <string>Release_with_revision|x86</string>
+      <string>Release|Any CPU</string>
+      <string>Release|Mixed Platforms</string>
+      <string>Release|x86</string>
+    </toConfiguration>
+    <executionOrder>
+      <TExecutionOrder>
+        <project>vsSolutionBuildEvent</project>
+        <order>After</order>
+      </TExecutionOrder>
+    </executionOrder>
     <dteExec>
       <cmd>
-        <string />
+        <string>Test.RunAllTestsInSolution</string>
       </cmd>
-      <caption />
+      <caption>Run all Unit-Tests</caption>
       <abortOnFirstError>true</abortOnFirstError>
     </dteExec>
   </postBuild>
