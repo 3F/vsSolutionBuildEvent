@@ -69,6 +69,10 @@ namespace net.r_eg.vsSBE.UI
         /// Testing tool - Evaluating Property
         /// </summary>
         private PropertyCheckFrm _frmPropertyCheck;
+        /// <summary>
+        /// Testing tool - DTE Commands
+        /// </summary>
+        private DTECheckFrm _frmDTECheck;
 
         private Environment _env;
 
@@ -535,13 +539,7 @@ namespace net.r_eg.vsSBE.UI
 
         private void envVariablesUIHelper()
         {
-            if(_frmProperties != null && !_frmProperties.IsDisposed)
-            {
-                if(_frmProperties.WindowState != FormWindowState.Minimized) {
-                    _frmProperties.Dispose();
-                    _frmProperties = null;
-                    return;
-                }
+            if(_frmProperties != null && !_frmProperties.IsDisposed) {
                 _frmProperties.Focus();
                 return;
             }
@@ -739,19 +737,24 @@ namespace net.r_eg.vsSBE.UI
 
         private void btnDteCmd_Click(object sender, EventArgs e)
         {
-            IEnumerable<EnvDTE.Command> commands = _env.DTE2.Commands.Cast<EnvDTE.Command>();
             if(_frmDTECommands != null && !_frmDTECommands.IsDisposed) {
-                if(_frmDTECommands.WindowState != FormWindowState.Minimized) {
-                    _frmDTECommands.Dispose();
-                    _frmDTECommands = null;
-                    return;
-                }
                 _frmDTECommands.Focus();
                 return;
             }
-
+            IEnumerable<EnvDTE.Command> commands = _env.DTE2.Commands.Cast<EnvDTE.Command>();
             _frmDTECommands = new DTECommandsFrm(commands, this);
             _frmDTECommands.Show();
+        }
+
+        private void toolStripMenuDTECmdExec_Click(object sender, EventArgs e)
+        {
+            if(_frmDTECheck != null && !_frmDTECheck.IsDisposed) {
+                _frmDTECheck.WindowState = FormWindowState.Normal;
+                _frmDTECheck.Focus();
+                return;
+            }
+            _frmDTECheck = new DTECheckFrm(_env);
+            _frmDTECheck.Show();
         }
 
         private void checkedListBoxSpecCfg_Click(object sender, EventArgs e)
@@ -795,18 +798,28 @@ namespace net.r_eg.vsSBE.UI
 
         private void toolStripMenuEvaluatingProperty_Click(object sender, EventArgs e)
         {
-            if(_frmPropertyCheck != null && !_frmPropertyCheck.IsDisposed)
-            {
-                if(_frmPropertyCheck.WindowState != FormWindowState.Minimized) {
-                    _frmPropertyCheck.Dispose();
-                    _frmPropertyCheck = null;
-                    return;
-                }
+            if(_frmPropertyCheck != null && !_frmPropertyCheck.IsDisposed) {
+                _frmDTECheck.WindowState = FormWindowState.Normal;
                 _frmPropertyCheck.Focus();
                 return;
             }
             _frmPropertyCheck = new PropertyCheckFrm(_env);
             _frmPropertyCheck.Show();
+        }
+
+        private void EventsFrm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            _closeTool(_frmProperties);
+            _closeTool(_frmPropertyCheck);
+            _closeTool(_frmDTECommands);
+            _closeTool(_frmDTECheck);
+        }
+
+        private void _closeTool(Form frm)
+        {
+            if(frm != null && !frm.IsDisposed) {
+                frm.Close(); //+Dispose
+            }
         }
     }
 }

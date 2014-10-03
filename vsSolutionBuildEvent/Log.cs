@@ -45,6 +45,11 @@ namespace net.r_eg.vsSBE
     internal delegate void LogEventHandler();
 
     /// <summary>
+    /// Notifications with message
+    /// </summary>
+    internal delegate void LogMessageEvent(string message);
+
+    /// <summary>
     /// Main logger for Package
     /// Uses the OutputWindowPanes as target
     /// </summary>
@@ -58,9 +63,14 @@ namespace net.r_eg.vsSBE
         public static readonly Logger nlog = LogManager.GetCurrentClassLogger();
 
         /// <summary>
-        /// During message processing
+        /// Notify about received, only as signal
         /// </summary>
         public static event LogEventHandler Receive = delegate { };
+
+        /// <summary>
+        /// Notify about received with formatted message
+        /// </summary>
+        public static event LogMessageEvent ReceiveMessage = delegate(string message) { };
         
         /// <summary>
         /// to display text output, represented by the OutputWindowPane
@@ -83,13 +93,11 @@ namespace net.r_eg.vsSBE
 #endif
 
             _notify(oLevel);
-            string format = String.Format(
-                                "{0} [{1}]: {2}{3}",
-                                (new DateTime(long.Parse(stamp))).ToString(CultureInfo.CurrentCulture.DateTimeFormat),
-                                level,
-                                message,
-                                System.Environment.NewLine);
-            print(format);
+
+            string formatted = _format(level, message, stamp);
+            ReceiveMessage(formatted);
+
+            print(formatted);
         }
 
         public static void print(string message)
@@ -127,6 +135,15 @@ namespace net.r_eg.vsSBE
                 //not critical because that option for quick access
                 Log.nlog.Debug("DTE error 'View.Output' {0}", ex.Message);
             }
+        }
+
+        private static string _format(string level, string message, string stamp)
+        {
+            return String.Format("{0} [{1}]: {2}{3}",
+                                (new DateTime(long.Parse(stamp))).ToString(CultureInfo.CurrentCulture.DateTimeFormat),
+                                level,
+                                message,
+                                System.Environment.NewLine);
         }
 
         private static void _notify(LogLevel level)

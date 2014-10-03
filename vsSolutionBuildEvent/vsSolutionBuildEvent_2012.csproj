@@ -146,6 +146,12 @@
     <Compile Include="SynchSubscribers.cs" />
     <Compile Include="TPreparedData.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
+    <Compile Include="UI\DTECheckFrm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\DTECheckFrm.Designer.cs">
+      <DependentUpon>DTECheckFrm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\DTECommandsFrm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -195,11 +201,14 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>VSPackage.resx</DependentUpon>
-    </Compile>    
+    </Compile>
     <Compile Include="vsSolutionBuildEventPackage.cs" />
     <Compile Include="PkgCmdID.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="UI\DTECheckFrm.resx">
+      <DependentUpon>DTECheckFrm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\DTECommandsFrm.resx">
       <DependentUpon>DTECommandsFrm.cs</DependentUpon>
     </EmbeddedResource>
@@ -217,7 +226,7 @@
       <ManifestResourceName>VSPackage</ManifestResourceName>
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>VSPackage.Designer.cs</LastGenOutput>      
+      <LastGenOutput>VSPackage.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -286,7 +295,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-  </PropertyGroup>  
+  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v11.0\VSSDK\Microsoft.VsSDK.targets" Condition="false" />

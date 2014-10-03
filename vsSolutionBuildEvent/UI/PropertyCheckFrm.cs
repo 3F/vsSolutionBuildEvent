@@ -1,4 +1,10 @@
-﻿using System;
+﻿/*
+ * Copyright (c) 2013-2014 Developed by reg <entry.reg@gmail.com>
+ * Distributed under the Boost Software License, Version 1.0
+ * (See accompanying file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
+ */
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,8 +17,13 @@ namespace net.r_eg.vsSBE.UI
 {
     public partial class PropertyCheckFrm: Form
     {
+        /// <summary>
+        /// Work with MSBuild
+        /// </summary>
         private MSBuildParser _parser;
-
+        /// <summary>
+        /// Flag of sample
+        /// </summary>
         private bool _isHiddenSample = false;
 
         public PropertyCheckFrm(IEnvironment env)

@@ -89,8 +89,9 @@
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuTools = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuMSBuildProp = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuDTECmd = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuEvaluatingProperty = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuDTECmd = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuDTECmdExec = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuHelp = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripMenuDoc = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuChangelog = new System.Windows.Forms.ToolStripMenuItem();
@@ -701,9 +702,9 @@
             this.toolStripMenuHelp,
             this.toolStripMenuBug,
             this.toolStripMenuVersion});
-            this.statusStrip.Location = new System.Drawing.Point(583, 513);
+            this.statusStrip.Location = new System.Drawing.Point(614, 513);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(189, 22);
+            this.statusStrip.Size = new System.Drawing.Size(158, 22);
             this.statusStrip.TabIndex = 31;
             // 
             // toolStripMenuSpring
@@ -729,52 +730,60 @@
             // toolStripMenuApply
             // 
             this.toolStripMenuApply.Name = "toolStripMenuApply";
-            this.toolStripMenuApply.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuApply.Size = new System.Drawing.Size(105, 22);
             this.toolStripMenuApply.Text = "Apply";
             this.toolStripMenuApply.Click += new System.EventHandler(this.toolStripMenuApply_Click);
             // 
             // toolStripMenuReset
             // 
             this.toolStripMenuReset.Name = "toolStripMenuReset";
-            this.toolStripMenuReset.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuReset.Size = new System.Drawing.Size(105, 22);
             this.toolStripMenuReset.Text = "Reset";
             this.toolStripMenuReset.Click += new System.EventHandler(this.toolStripMenuReset_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(102, 6);
             // 
             // toolStripMenuTools
             // 
             this.toolStripMenuTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuMSBuildProp,
             this.toolStripMenuEvaluatingProperty,
-            this.toolStripMenuDTECmd});
+            this.toolStripMenuDTECmd,
+            this.toolStripMenuDTECmdExec});
             this.toolStripMenuTools.Name = "toolStripMenuTools";
-            this.toolStripMenuTools.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuTools.Size = new System.Drawing.Size(105, 22);
             this.toolStripMenuTools.Text = "Tools";
             // 
             // toolStripMenuMSBuildProp
             // 
             this.toolStripMenuMSBuildProp.Name = "toolStripMenuMSBuildProp";
-            this.toolStripMenuMSBuildProp.Size = new System.Drawing.Size(177, 22);
+            this.toolStripMenuMSBuildProp.Size = new System.Drawing.Size(203, 22);
             this.toolStripMenuMSBuildProp.Text = "MSBuild Properties";
             this.toolStripMenuMSBuildProp.Click += new System.EventHandler(this.toolStripMenuMSBuildProp_Click);
-            // 
-            // toolStripMenuDTECmd
-            // 
-            this.toolStripMenuDTECmd.Name = "toolStripMenuDTECmd";
-            this.toolStripMenuDTECmd.Size = new System.Drawing.Size(177, 22);
-            this.toolStripMenuDTECmd.Text = "DTE Commands";
-            this.toolStripMenuDTECmd.Click += new System.EventHandler(this.toolStripMenuDTECmd_Click);
             // 
             // toolStripMenuEvaluatingProperty
             // 
             this.toolStripMenuEvaluatingProperty.Name = "toolStripMenuEvaluatingProperty";
-            this.toolStripMenuEvaluatingProperty.Size = new System.Drawing.Size(177, 22);
+            this.toolStripMenuEvaluatingProperty.Size = new System.Drawing.Size(203, 22);
             this.toolStripMenuEvaluatingProperty.Text = "Evaluating Property";
             this.toolStripMenuEvaluatingProperty.Click += new System.EventHandler(this.toolStripMenuEvaluatingProperty_Click);
+            // 
+            // toolStripMenuDTECmd
+            // 
+            this.toolStripMenuDTECmd.Name = "toolStripMenuDTECmd";
+            this.toolStripMenuDTECmd.Size = new System.Drawing.Size(203, 22);
+            this.toolStripMenuDTECmd.Text = "DTE Commands";
+            this.toolStripMenuDTECmd.Click += new System.EventHandler(this.toolStripMenuDTECmd_Click);
+            // 
+            // toolStripMenuDTECmdExec
+            // 
+            this.toolStripMenuDTECmdExec.Name = "toolStripMenuDTECmdExec";
+            this.toolStripMenuDTECmdExec.Size = new System.Drawing.Size(203, 22);
+            this.toolStripMenuDTECmdExec.Text = "Execute DTE Commands";
+            this.toolStripMenuDTECmdExec.Click += new System.EventHandler(this.toolStripMenuDTECmdExec_Click);
             // 
             // toolStripMenuHelp
             // 
@@ -1064,6 +1073,7 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Solution Build-Events";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.EventsFrm_FormClosing);
             this.Load += new System.EventHandler(this.EventsFrm_Load);
             this.panelCommand.ResumeLayout(false);
             this.contextMenuEditor.ResumeLayout(false);
@@ -1177,5 +1187,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvOrderTextBoxProject;
         private System.Windows.Forms.DataGridViewComboBoxColumn dgvOrderComboBoxType;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuEvaluatingProperty;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuDTECmdExec;
     }
 }

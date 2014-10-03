@@ -99,12 +99,10 @@
             this.Controls.Add(this.btnEvaluate);
             this.Controls.Add(this.groupBoxUnevaluated);
             this.Controls.Add(this.groupBoxEvaluated);
-            this.MinimizeBox = false;
             this.Name = "PropertyCheckFrm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Testing Tool:  Evaluating Property";
-            this.TopMost = true;
             this.Load += new System.EventHandler(this.PropertyCheckFrm_Load);
             this.groupBoxUnevaluated.ResumeLayout(false);
             this.groupBoxUnevaluated.PerformLayout();

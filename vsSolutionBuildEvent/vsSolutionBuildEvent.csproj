@@ -136,6 +136,12 @@
     <Compile Include="SynchSubscribers.cs" />
     <Compile Include="TPreparedData.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
+    <Compile Include="UI\DTECheckFrm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\DTECheckFrm.Designer.cs">
+      <DependentUpon>DTECheckFrm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\DTECommandsFrm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -190,6 +196,9 @@
     <Compile Include="PkgCmdID.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="UI\DTECheckFrm.resx">
+      <DependentUpon>DTECheckFrm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\DTECommandsFrm.resx">
       <DependentUpon>DTECommandsFrm.cs</DependentUpon>
     </EmbeddedResource>
