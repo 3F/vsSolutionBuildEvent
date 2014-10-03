@@ -80,6 +80,13 @@ namespace net.r_eg.vsSBE
         /// <returns>Evaluated value of property</returns>
         public virtual string getProperty(string name, string projectName)
         {
+            string defindex = String.Format("{0}:{1}", name, projectName);
+
+            if(definitions.ContainsKey(defindex)) {
+                Log.nlog.Debug("Evaluate: use from definitions");
+                return definitions[defindex];
+            }
+
             if(projectName == null)
             {
                 string slnProp = env.getSolutionGlobalProperty(name);
@@ -368,16 +375,8 @@ namespace net.r_eg.vsSBE
             
             if(prepared.property.completed && !prepared.property.complex)
             {
-                string defindex = String.Format("{0}:{1}", prepared.property.unevaluated, prepared.property.project);
-
-                if(definitions.ContainsKey(defindex)) {
-                    Log.nlog.Debug("Evaluate: use the definitions");
-                    evaluated = definitions[defindex];
-                }
-                else {
-                    Log.nlog.Debug("Evaluate: use the getProperty");
-                    evaluated = getProperty(prepared.property.unevaluated, prepared.property.project);
-                }
+                Log.nlog.Debug("Evaluate: use the getProperty");
+                evaluated = getProperty(prepared.property.unevaluated, prepared.property.project);
             }
             else if(prepared.property.escaped){
                 Log.nlog.Debug("Evaluate: escaped value");
