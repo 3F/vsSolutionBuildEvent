@@ -1,3 +1,6 @@
+[v0.8.2]
+    * FIXED: Major bug with processing for next events - Output/Errors/Warnings, worked only if the transmitter activated before.
+
 [v0.8.1]
     * FIXED: Crashes, if solution contains the unloaded projects (Thanks for testing: Rafael Cossovan)
     * FIXED: Resolved the loop problem for recursive DTE-commands.
