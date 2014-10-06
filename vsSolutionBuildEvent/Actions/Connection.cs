@@ -199,29 +199,36 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         void IListenerOWPL.raw(string data)
         {
-            ISolutionEvent evt = Config._.Data.transmitter;
-
-            if(!evt.enabled) {
-                return;
-            }
-
-            if(!IsAllowProcessing) {
-                _ignoredAction(SolutionEventType.Transmitter);
-                return;
-            }
-
-            if(!isExecute(evt, current)) {
-                Log.nlog.Info("[Transmitter] ignored action '{0}' :: by execution order", evt.caption);
-                return;
-            }
-
-            try {
-                if(sbe.supportOWP(evt, SolutionEventType.Transmitter, data)) {
-                    //Log.nlog.Trace("[Transmitter]: " + Config._.Data.transmitter.caption);
+            if(!IsAllowProcessing)
+            {
+                if(!Config._.Data.transmitter.enabled) {
+                    _ignoredAction(SolutionEventType.Transmitter);
                 }
+                else if(!Config._.Data.warningsBuild.enabled) {
+                    _ignoredAction(SolutionEventType.Warnings);
+                }
+                else if(!Config._.Data.errorsBuild.enabled) {
+                    _ignoredAction(SolutionEventType.Errors);
+                }
+                else if(!Config._.Data.outputCustomBuild.enabled) {
+                    _ignoredAction(SolutionEventType.OWP);
+                }
+                return;
             }
-            catch(Exception ex) {
-                Log.nlog.Error("Transmitter error: {0}", ex.Message);
+
+            if(!isExecute(Config._.Data.transmitter, current)) {
+                Log.nlog.Info("[Transmitter] ignored action '{0}' :: by execution order", Config._.Data.transmitter.caption);
+            }
+            else
+            {
+                try {
+                    if(sbe.supportOWP(Config._.Data.transmitter, SolutionEventType.Transmitter, data)) {
+                        //Log.nlog.Trace("[Transmitter]: " + Config._.Data.transmitter.caption);
+                    }
+                }
+                catch(Exception ex) {
+                    Log.nlog.Error("Transmitter error: {0}", ex.Message);
+                }
             }
 
             OutputWPBuildParser res = new OutputWPBuildParser(ref data);
@@ -244,15 +251,6 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         protected void sbeEW(ISolutionEventEW evt, OutputWPBuildParser.Type type, OutputWPBuildParser info)
         {
-            if(!evt.enabled) {
-                return;
-            }
-
-            if(!IsAllowProcessing) {
-                _ignoredAction(SolutionEventType.EW);
-                return;
-            }
-
             // TODO: capture code####, message..
             if(!info.checkRule(type, evt.isWhitelist, evt.codes)) {
                 return;
@@ -278,15 +276,6 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         protected void sbeOutput(ISolutionEventOWP evt, ref string raw)
         {
-            if(!evt.enabled) {
-                return;
-            }
-
-            if(!IsAllowProcessing) {
-                _ignoredAction(SolutionEventType.OWP);
-                return;
-            }
-
             if(!(new OWPMatcher()).match(evt.eventsOWP, raw)) {
                 return;
             }
