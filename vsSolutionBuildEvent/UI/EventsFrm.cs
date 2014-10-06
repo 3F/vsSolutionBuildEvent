@@ -235,7 +235,7 @@ namespace net.r_eg.vsSBE.UI
             _solutionEvents.Add(new _SBEWrap(Config._.Data.postBuild, SolutionEventType.Post));
             comboBoxEvents.Items.Add(":: Post-Build :: After assembly");
 
-            _solutionEvents.Add(new _SBEWrap(Config._.Data.cancelBuild));
+            _solutionEvents.Add(new _SBEWrap(Config._.Data.cancelBuild, SolutionEventType.Cancel));
             comboBoxEvents.Items.Add(":: Cancel-Build :: by user or compilation errors");
 
             _solutionEvents.Add(new _SBEWrap(Config._.Data.warningsBuild, SolutionEventType.EW));
@@ -329,6 +329,7 @@ namespace net.r_eg.vsSBE.UI
             checkBoxIgnoreIfFailed.Enabled  = false;
             groupBoxOutputControl.Enabled   = false;
             groupBoxEW.Enabled              = false;
+            checkBoxWaitForExit.Enabled     = false;
 
             switch(_SBE.type)
             {
@@ -345,9 +346,11 @@ namespace net.r_eg.vsSBE.UI
                     break;
                 }
                 case SolutionEventType.Pre:
+                case SolutionEventType.Cancel:
                 case SolutionEventType.Post:
                 {
-                    checkBoxIgnoreIfFailed.Enabled = true;
+                    checkBoxIgnoreIfFailed.Enabled  = true;
+                    checkBoxWaitForExit.Enabled     = true;
                     break;
                 }
             }
