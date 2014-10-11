@@ -48,78 +48,78 @@ namespace net.r_eg.vsSBE.Events
         }
 
         [NonSerialized]
-        private SBEEvent _preBuild = new SBEEvent();
+        private SBEEvent[] _preBuild = new SBEEvent[]{ new SBEEvent() };
         /// <summary>
         /// Before building solution
         /// </summary>
-        public SBEEvent preBuild
+        public SBEEvent[] preBuild
         {
             get { return _preBuild; }
             set { _preBuild = value; }
         }
 
         [NonSerialized]
-        private SBEEvent _postBuild = new SBEEvent();
+        private SBEEvent[] _postBuild = new SBEEvent[]{ new SBEEvent() };
         /// <summary>
         /// After building solution
         /// </summary>
-        public SBEEvent postBuild
+        public SBEEvent[] postBuild
         {
             get { return _postBuild; }
             set { _postBuild = value; }
         }
 
         [NonSerialized]
-        private SBEEvent _cancelBuild = new SBEEvent();
+        private SBEEvent[] _cancelBuild = new SBEEvent[]{ new SBEEvent() };
         /// <summary>
         /// When cancel building solution
         /// e.g. fatal error of compilation or cancel of user
         /// </summary>
-        public SBEEvent cancelBuild
+        public SBEEvent[] cancelBuild
         {
             get { return _cancelBuild; }
             set { _cancelBuild = value; }
         }
 
         [NonSerialized]
-        private SBEEventEW _warningsBuild = new SBEEventEW();
+        private SBEEventEW[] _warningsBuild = new SBEEventEW[]{ new SBEEventEW() };
         /// <summary>
         /// Warnings during assembly
         /// </summary>
-        public SBEEventEW warningsBuild
+        public SBEEventEW[] warningsBuild
         {
             get { return _warningsBuild; }
             set { _warningsBuild = value; }
         }
 
         [NonSerialized]
-        private SBEEventEW _errorsBuild = new SBEEventEW();
+        private SBEEventEW[] _errorsBuild = new SBEEventEW[]{ new SBEEventEW() };
         /// <summary>
         /// Errors during assembly
         /// </summary>
-        public SBEEventEW errorsBuild
+        public SBEEventEW[] errorsBuild
         {
             get { return _errorsBuild; }
             set { _errorsBuild = value; }
         }
 
         [NonSerialized]
-        private SBEEventOWP _outputCustomBuild = new SBEEventOWP();
+        private SBEEventOWP[] _outputCustomBuild = new SBEEventOWP[]{ new SBEEventOWP() };
         /// <summary>
         /// Output-Build customization
         /// </summary>
-        public SBEEventOWP outputCustomBuild
+        public SBEEventOWP[] outputCustomBuild
         {
             get { return _outputCustomBuild; }
             set { _outputCustomBuild = value; }
         }
 
         [NonSerialized]
-        private SBETransmitter _transmitter = new SBETransmitter();
+        private SBETransmitter[] _transmitter = new SBETransmitter[]{ new SBETransmitter() };
         /// <summary>
         /// Transfer output data to outer handler
         /// </summary>
-        public SBETransmitter transmitter
+        public SBETransmitter[] transmitter
         {
             get { return _transmitter; }
             set { _transmitter = value; }

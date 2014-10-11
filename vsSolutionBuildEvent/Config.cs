@@ -166,6 +166,8 @@ namespace net.r_eg.vsSBE
                 );
             }
 
+            //TODO: v0.7 -> v0.9
+
             if(cfg.Major == 0 && cfg.Minor < 4)
             {
                 Log.show();

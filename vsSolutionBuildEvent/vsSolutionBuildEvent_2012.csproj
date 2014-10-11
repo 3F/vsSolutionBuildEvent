@@ -146,22 +146,27 @@
     <Compile Include="SynchSubscribers.cs" />
     <Compile Include="TPreparedData.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
-    <Compile Include="UI\DTECheckFrm.cs">
+    <Compile Include="UI\Util.cs" />
+    <Compile Include="UI\WForms\Components\DataGridViewExt.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\WForms\Logic\Events.cs" />
+    <Compile Include="UI\WForms\DTECheckFrm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\DTECheckFrm.Designer.cs">
+    <Compile Include="UI\WForms\DTECheckFrm.Designer.cs">
       <DependentUpon>DTECheckFrm.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\DTECommandsFrm.cs">
+    <Compile Include="UI\WForms\DTECommandsFrm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\DTECommandsFrm.Designer.cs">
+    <Compile Include="UI\WForms\DTECommandsFrm.Designer.cs">
       <DependentUpon>DTECommandsFrm.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\PropertiesFrm.cs">
+    <Compile Include="UI\WForms\PropertiesFrm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\PropertiesFrm.Designer.cs">
+    <Compile Include="UI\WForms\PropertiesFrm.Designer.cs">
       <DependentUpon>PropertiesFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="IMSBuildProperty.cs" />
@@ -172,10 +177,10 @@
     <Compile Include="Exceptions\MSBuildParserException.cs" />
     <Compile Include="Actions\SBECommand.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="UI\EventsFrm.cs">
+    <Compile Include="UI\WForms\EventsFrm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\EventsFrm.Designer.cs">
+    <Compile Include="UI\WForms\EventsFrm.Designer.cs">
       <DependentUpon>EventsFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="Guids.cs" />
@@ -185,16 +190,16 @@
     <Compile Include="Events\SBESettings.cs" />
     <Compile Include="Events\SolutionEvents.cs" />
     <Compile Include="UI\ITransferData.cs" />
-    <Compile Include="UI\PropertyCheckFrm.cs">
+    <Compile Include="UI\WForms\PropertyCheckFrm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\PropertyCheckFrm.Designer.cs">
+    <Compile Include="UI\WForms\PropertyCheckFrm.Designer.cs">
       <DependentUpon>PropertyCheckFrm.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\StatusControl.xaml.cs">
+    <Compile Include="UI\Xaml\StatusControl.xaml.cs">
       <DependentUpon>StatusControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\StatusToolWindow.cs" />
+    <Compile Include="UI\Xaml\Logic\StatusToolWindow.cs" />
     <Compile Include="Upgrade\0.3_0.4.cs" />
     <Compile Include="Version.cs" />
     <Compile Include="VSPackage.Designer.cs">
@@ -206,19 +211,19 @@
     <Compile Include="PkgCmdID.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UI\DTECheckFrm.resx">
+    <EmbeddedResource Include="UI\WForms\DTECheckFrm.resx">
       <DependentUpon>DTECheckFrm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\DTECommandsFrm.resx">
+    <EmbeddedResource Include="UI\WForms\DTECommandsFrm.resx">
       <DependentUpon>DTECommandsFrm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\PropertiesFrm.resx">
+    <EmbeddedResource Include="UI\WForms\PropertiesFrm.resx">
       <DependentUpon>PropertiesFrm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\EventsFrm.resx">
+    <EmbeddedResource Include="UI\WForms\EventsFrm.resx">
       <DependentUpon>EventsFrm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\PropertyCheckFrm.resx">
+    <EmbeddedResource Include="UI\WForms\PropertyCheckFrm.resx">
       <DependentUpon>PropertyCheckFrm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="VSPackage.resx">
@@ -258,15 +263,13 @@
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <Page Include="UI\Xaml\StatusControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="UI\StatusControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
+    <Folder Include="UI\WForms\Controls\" />
   </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>

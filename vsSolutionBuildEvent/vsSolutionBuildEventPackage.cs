@@ -219,14 +219,15 @@ namespace net.r_eg.vsSBE
                 return String.Format("\n\t* [{0}][{1}]: {2}", evt.enabled ? "!" : "X", caption, evt.caption);
             };
 
-            Log.print(String.Format("{0}{1}{2}{3}{4}{5}{6}\n---\n",
-                                    aboutEvent(Config._.Data.preBuild,           "Pre-Build"),
-                                    aboutEvent(Config._.Data.postBuild,          "Post-Build"),
-                                    aboutEvent(Config._.Data.cancelBuild,        "Cancel-Build"),
-                                    aboutEvent(Config._.Data.warningsBuild,      "Warnings-Build"),
-                                    aboutEvent(Config._.Data.errorsBuild,        "Errors-Build"),
-                                    aboutEvent(Config._.Data.outputCustomBuild,  "Output-Build"),
-                                    aboutEvent(Config._.Data.transmitter,        "Transmitter")));
+            // TODO:
+            //Log.print(String.Format("{0}{1}{2}{3}{4}{5}{6}\n---\n",
+            //                        aboutEvent(Config._.Data.preBuild,           "Pre-Build"),
+            //                        aboutEvent(Config._.Data.postBuild,          "Post-Build"),
+            //                        aboutEvent(Config._.Data.cancelBuild,        "Cancel-Build"),
+            //                        aboutEvent(Config._.Data.warningsBuild,      "Warnings-Build"),
+            //                        aboutEvent(Config._.Data.errorsBuild,        "Errors-Build"),
+            //                        aboutEvent(Config._.Data.outputCustomBuild,  "Output-Build"),
+            //                        aboutEvent(Config._.Data.transmitter,        "Transmitter")));
 
             Log.nlog.Info("Use vsSBE panel: View -> Other Windows -> Solution Build-Events");
         }

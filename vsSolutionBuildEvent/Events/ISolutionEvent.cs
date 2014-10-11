@@ -36,12 +36,17 @@ namespace net.r_eg.vsSBE.Events
     public interface ISolutionEvent
     {
         /// <summary>
-        /// execution of shell command
+        /// Unique name for manually identification
+        /// </summary>
+        string name { get; set; }
+
+        /// <summary>
+        /// Mixed command to handling
         /// </summary>
         string command { get; set; }
 
         /// <summary>
-        /// output information to "Output" window or something else...
+        /// Short header about this
         /// </summary>
         string caption { get; set; }
 
@@ -142,11 +147,11 @@ namespace net.r_eg.vsSBE.Events
         /// <summary>
         /// exec-command
         /// </summary>
-        public string[] cmd = new string[]{""};
+        public string[] cmd = null;
         /// <summary>
         /// optional ident
         /// </summary>
-        public string caption = "";
+        public string caption = String.Empty;
         /// <summary>
         /// Abort operations on first error
         /// </summary>

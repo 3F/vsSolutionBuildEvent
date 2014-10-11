@@ -35,9 +35,19 @@ namespace net.r_eg.vsSBE.Events
 {
     public class SBEEvent: ISolutionEvent
     {
+        private string _name = null;
+        /// <summary>
+        /// Unique name for manually identification
+        /// </summary>
+        public string name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
+
         private string _command = "";
         /// <summary>
-        /// execution of shell command
+        /// Mixed command to handling
         /// </summary>
         public string command
         {
@@ -45,9 +55,9 @@ namespace net.r_eg.vsSBE.Events
             set { _command = value; }
         }
 
-        private string _caption = "";
+        private string _caption = String.Empty;
         /// <summary>
-        /// output information to "Output" window or something else...
+        /// Short header about this
         /// </summary>
         public string caption
         {
