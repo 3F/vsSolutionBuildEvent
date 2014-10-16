@@ -26,39 +26,33 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using net.r_eg.vsSBE.Exceptions;
-
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Events
 {
-    internal static class Settings
+    /// <summary>
+    /// Declaring of the Execution order (or Events order)
+    /// </summary>
+    public interface IExecutionOrder
     {
         /// <summary>
-        /// Debug mode for current application
+        /// Project name
         /// </summary>
-        public static bool debugMode = false;
+        string Project { get; set; }
 
         /// <summary>
-        /// Current location
+        /// Range of execution
         /// </summary>
-        public static string WorkingPath
-        {
-            get {
-                if(String.IsNullOrEmpty(_workingPath)) {
-                    throw new SBEException("WorkingPath is empty or null");
-                }
-                return _workingPath;
-            }
-        }
+        ExecutionOrderType Order { get; set; }
+    }
 
-        public static void setWorkingPath(string path)
-        {
-            _workingPath = path;
-        }
-
-        private static string _workingPath = null;
+    public enum ExecutionOrderType
+    {
+        /// <summary>
+        /// Before1 -> After1|Cancel 
+        /// </summary>
+        Before,
+        /// <summary>
+        /// After1 -> POST/Cancel 
+        /// </summary>
+        After
     }
 }

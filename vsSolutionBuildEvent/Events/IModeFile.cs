@@ -26,39 +26,16 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using net.r_eg.vsSBE.Exceptions;
-
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Events
 {
-    internal static class Settings
+    /// <summary>
+    /// Processing with files
+    /// </summary>
+    public interface IModeFile
     {
         /// <summary>
-        /// Debug mode for current application
+        /// Command for handling
         /// </summary>
-        public static bool debugMode = false;
-
-        /// <summary>
-        /// Current location
-        /// </summary>
-        public static string WorkingPath
-        {
-            get {
-                if(String.IsNullOrEmpty(_workingPath)) {
-                    throw new SBEException("WorkingPath is empty or null");
-                }
-                return _workingPath;
-            }
-        }
-
-        public static void setWorkingPath(string path)
-        {
-            _workingPath = path;
-        }
-
-        private static string _workingPath = null;
+        string Command { get; set; }
     }
 }

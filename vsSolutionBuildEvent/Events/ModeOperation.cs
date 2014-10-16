@@ -26,39 +26,60 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using net.r_eg.vsSBE.Exceptions;
-
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Events
 {
-    internal static class Settings
+    /// <summary>
+    /// Processing with Environment of Visual Studio
+    /// </summary>
+    public class ModeOperation: IMode, IModeOperation
     {
         /// <summary>
-        /// Debug mode for current application
+        /// Type of implementation
         /// </summary>
-        public static bool debugMode = false;
+        public ModeType Type
+        {
+            get { return ModeType.Operation; }
+        }
 
         /// <summary>
-        /// Current location
+        /// Command (Atomic DTE operation) for handling
         /// </summary>
-        public static string WorkingPath
+        public string[] Command
         {
-            get {
-                if(String.IsNullOrEmpty(_workingPath)) {
-                    throw new SBEException("WorkingPath is empty or null");
-                }
-                return _workingPath;
-            }
+            get { return command; }
+            set { command = value; }
+        }
+        private string[] command = null;
+
+        /// <summary>
+        /// Single caption for atomic commands
+        /// </summary>
+        public string Caption
+        {
+            get { return caption; }
+            set { caption = value; }
+        }
+        private string caption = string.Empty;
+
+        /// <summary>
+        /// Abort operations on the first error
+        /// </summary>
+        public bool AbortOnFirstError
+        {
+            get { return abortOnFirstError; }
+            set { abortOnFirstError = value; }
+        }
+        private bool abortOnFirstError = false;
+
+        public ModeOperation()
+        {
+
         }
 
-        public static void setWorkingPath(string path)
+        public ModeOperation(string[] command, string caption)
         {
-            _workingPath = path;
+            this.command = command;
+            this.caption = caption;
         }
-
-        private static string _workingPath = null;
     }
 }

@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -26,34 +26,35 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace net.r_eg.vsSBE.Events
 {
+    /// <summary>
+    /// Support of the Errors & Warnings Event type
+    /// </summary>
     public class SBEEventEW: SBEEvent, ISolutionEventEW
-    {
-        private List<string> _codes = new List<string>();
+    {        
         /// <summary>
-        /// list of code####
-        /// ..and "for all" if empty
+        /// List of monitored codes
+        /// Format: [any text] {error | warning} code####: localizable string
+        /// http://msdn.microsoft.com/en-us/library/yxkt8b26%28v=vs.120%29.aspx
         /// </summary>
-        public List<string> codes
+        public List<string> Codes
         {
-            get { return _codes; }
-            set { _codes = value; }
+            get { return codes; }
+            set { codes = value; }
         }
+        private List<string> codes = new List<string>();
 
-        private bool _isWhitelist = true;
         /// <summary>
-        /// Whitelist or Blacklist codes
+        /// Whitelist or Blacklist for current codes
         /// </summary>
-        public bool isWhitelist
+        public bool IsWhitelist
         {
-            get { return _isWhitelist; }
-            set { _isWhitelist = value; }
+            get { return isWhitelist; }
+            set { isWhitelist = value; }
         }
+        private bool isWhitelist = true;
     }
 }

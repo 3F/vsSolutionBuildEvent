@@ -26,39 +26,25 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using net.r_eg.vsSBE.Exceptions;
-
 namespace net.r_eg.vsSBE
 {
-    internal static class Settings
+    public interface IMatchWords
     {
         /// <summary>
-        /// Debug mode for current application
+        /// Expression for comparison
         /// </summary>
-        public static bool debugMode = false;
+        string Condition { get; set; }
 
         /// <summary>
-        /// Current location
+        /// How to compare
         /// </summary>
-        public static string WorkingPath
-        {
-            get {
-                if(String.IsNullOrEmpty(_workingPath)) {
-                    throw new SBEException("WorkingPath is empty or null");
-                }
-                return _workingPath;
-            }
-        }
+        ComparisonType Type { get; set; }
+    }
 
-        public static void setWorkingPath(string path)
-        {
-            _workingPath = path;
-        }
-
-        private static string _workingPath = null;
+    public enum ComparisonType
+    {
+        Default,
+        Regexp,
+        Wildcards
     }
 }

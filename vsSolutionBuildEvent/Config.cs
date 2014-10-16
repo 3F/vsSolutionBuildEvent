@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -28,11 +28,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Xml.Serialization;
-using System.IO;
 using net.r_eg.vsSBE.Events;
+using net.r_eg.vsSBE.Exceptions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace net.r_eg.vsSBE
 {
@@ -94,33 +96,35 @@ namespace net.r_eg.vsSBE
         /// <param name="path">path to configuration file</param>
         public void load(string path)
         {
-            Settings.setWorkPath(path);
+            Settings.setWorkingPath(path);
             _xprojvsbeUpgrade();
 
-            data = new SolutionEvents();
             try
             {
-                using(FileStream stream = new FileStream(_Link, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using(StreamReader stream = new StreamReader(_Link, Encoding.UTF8, true))
                 {
-                    XmlSerializer xml   = new XmlSerializer(typeof(SolutionEvents));
-                    data                = (SolutionEvents)xml.Deserialize(stream);
-                    compatibilityCheck(stream);
+                    data = deserialize(stream);
+                    if(data == null) {
+                        throw new SBEException("empty or incorrect deserialized");
+                    }
+                    compatibility(stream);
                 }
-                Log.nlog.Info("Loaded settings (v{0}): '{1}'\n\nReady:", data.settings.compatibility, Settings.WorkingPath);
+                Log.nlog.Info("Loaded settings (v{0}): '{1}'\n\nReady:", data.Header.Compatibility, Settings.WorkingPath);
                 Update();
             }
             catch(FileNotFoundException)
             {
                 Log.nlog.Info("Initialize with new settings");
             }
-            catch(Exception e)
+            catch(Exception ex)
             {
-                Log.nlog.Fatal("Configuration file is corrupt {0}", e.Message);
-                //TODO: choice actions /UI
+                data = new SolutionEvents();
+                Log.nlog.Fatal("Configuration file is corrupt - '{0}'", ex.Message);
+                //TODO: provide actions with UI, e.g.: restore, new..
             }
 
             // now compatibility should be updated to the latest
-            data.settings.compatibility = Entity.Version.ToString();
+            data.Header.Compatibility = Entity.Version.ToString();
         }
 
         /// <summary>
@@ -129,35 +133,49 @@ namespace net.r_eg.vsSBE
         /// <param name="path">path to configuration file</param>
         public void save(string path)
         {
-            Settings.setWorkPath(path);
+            Settings.setWorkingPath(path);
             save();
         }
 
         public void save()
         {
             try {
-                using(TextWriter stream = new StreamWriter(_Link)) {
-                    if(data == null) {
-                        data = new SolutionEvents();
-                    }
-                    XmlSerializer xml = new XmlSerializer(typeof(SolutionEvents));
-                    xml.Serialize(stream, data);
+                using(TextWriter stream = new StreamWriter(_Link, false, Encoding.UTF8)) {
+                    serialize(stream, data);
                 }
                 Log.nlog.Debug("Configuration saved: {0}", Settings.WorkingPath);
                 Update();
             }
-            catch(Exception e) {
-                Log.nlog.Error("Cannot apply configuration {0}", e.Message);
+            catch(Exception ex) {
+                Log.nlog.Error("Cannot apply configuration {0}", ex.Message);
             }
+        }
+
+        protected SolutionEvents deserialize(StreamReader stream)
+        {
+            using(JsonTextReader reader = new JsonTextReader(stream)) {
+                return (new JsonSerializer()).Deserialize<SolutionEvents>(reader);
+            }
+        }
+
+        protected void serialize(TextWriter stream, SolutionEvents data)
+        {
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.Converters.Add(new StringEnumConverter{ 
+                AllowIntegerValues  = false,
+                CamelCaseText       = true
+            });
+            settings.NullValueHandling = NullValueHandling.Include;
+            stream.Write(JsonConvert.SerializeObject(data, Formatting.Indented, settings));
         }
 
         /// <summary>
         /// Older versions support :: Check version and reorganize structure if needed..
         /// </summary>
         /// <param name="stream"></param>
-        protected void compatibilityCheck(FileStream stream)
+        protected void compatibility(StreamReader stream)
         {
-            System.Version cfg = System.Version.Parse(data.settings.compatibility);
+            System.Version cfg = System.Version.Parse(data.Header.Compatibility);
 
             if(cfg.Major > Entity.Version.Major || (cfg.Major == Entity.Version.Major && cfg.Minor > Entity.Version.Minor)) {
                 Log.nlog.Warn(
@@ -172,7 +190,7 @@ namespace net.r_eg.vsSBE
             {
                 Log.show();
                 Log.nlog.Info("Start upgrade configuration 0.3 -> 0.4");
-                Upgrade.Migration03_04.migrate(stream);
+                //Upgrade.Migration03_04.migrate(stream);
                 //TODO: to ErrorList
                 Log.nlog.Warn("Successfully upgraded. *Please, save manually!");
             }

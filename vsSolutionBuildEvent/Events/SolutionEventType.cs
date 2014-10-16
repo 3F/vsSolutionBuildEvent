@@ -26,39 +26,30 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using net.r_eg.vsSBE.Exceptions;
-
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Events
 {
-    internal static class Settings
+    /// <summary>
+    /// General types of available events for all components
+    /// </summary>
+    public enum SolutionEventType
     {
+        Pre, Post, Cancel, Warnings, Errors, OWP, Transmitter,
         /// <summary>
-        /// Debug mode for current application
+        /// Without identification - all ISolutionEvent
         /// </summary>
-        public static bool debugMode = false;
-
+        General,
         /// <summary>
-        /// Current location
+        /// Errors + Warnings
         /// </summary>
-        public static string WorkingPath
-        {
-            get {
-                if(String.IsNullOrEmpty(_workingPath)) {
-                    throw new SBEException("WorkingPath is empty or null");
-                }
-                return _workingPath;
-            }
-        }
-
-        public static void setWorkingPath(string path)
-        {
-            _workingPath = path;
-        }
-
-        private static string _workingPath = null;
+        EW,
+        /// <summary>
+        /// By individual projects
+        /// </summary>
+        ProjectPre,
+        ProjectPost,
+        /// <summary>
+        /// The 'PRE' as deferred action of existing projects
+        /// </summary>
+        DeferredPre,
     }
 }

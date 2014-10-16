@@ -26,39 +26,27 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using net.r_eg.vsSBE.Exceptions;
-
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Events
 {
-    internal static class Settings
+    public class ConfigHeader
     {
         /// <summary>
-        /// Debug mode for current application
+        /// To identification of compatibility between versions
         /// </summary>
-        public static bool debugMode = false;
+        public string Compatibility
+        {
+            get { return compatibility; }
+            set { compatibility = value; }
+        }
+        /// <summary>
+        /// this value used by default if current attr not found after deserialize
+        /// :: v0.2.x/v0.1.x
+        /// </summary>
+        private string compatibility = "0.1";
 
         /// <summary>
-        /// Current location
+        /// What application is needed for work with the .vssbe if extension not installed
         /// </summary>
-        public static string WorkingPath
-        {
-            get {
-                if(String.IsNullOrEmpty(_workingPath)) {
-                    throw new SBEException("WorkingPath is empty or null");
-                }
-                return _workingPath;
-            }
-        }
-
-        public static void setWorkingPath(string path)
-        {
-            _workingPath = path;
-        }
-
-        private static string _workingPath = null;
+        public string application = "http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/";
     }
 }

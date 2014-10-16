@@ -85,14 +85,7 @@ namespace net.r_eg.vsSBE.UI
         public void property(string name, string project = null)
         {
             textBoxCommand.Select(textBoxCommand.SelectionStart, 0);
-
-            if(project == null) {
-                textBoxCommand.SelectedText = String.Format("$({0})", name);
-            }
-            else {
-                textBoxCommand.SelectedText = String.Format("$({0}:{1})", name, project);
-            }
-
+            textBoxCommand.SelectedText = logic.formatMSBuildProperty(name, project);
             this.Focus();
         }
 
@@ -132,65 +125,70 @@ namespace net.r_eg.vsSBE.UI
 
         protected void saveData(SBEEvent evt)
         {
-            evt.enabled                 = checkBoxStatus.Checked;
-            evt.caption                 = textBoxCaption.Text;
-            evt.interpreter             = comboBoxInterpreter.Text;
-            evt.processHide             = checkBoxProcessHide.Checked;
-            evt.waitForExit             = checkBoxWaitForExit.Checked;
-            evt.processKeep             = checkBoxProcessKeep.Checked;
-            evt.newline                 = comboBoxNewline.Text;
-            evt.wrapper                 = comboBoxWrapper.Text.Trim();
-            evt.parseVariablesMSBuild   = checkBoxParseVariables.Checked;
-            evt.buildFailedIgnore       = checkBoxIgnoreIfFailed.Checked;
+            evt.Enabled                 = checkBoxStatus.Checked;
+            evt.Caption                 = textBoxCaption.Text;
+            evt.SupportMSBuild          = checkBoxParseVariables.Checked;
+            evt.IgnoreIfBuildFailed     = checkBoxIgnoreIfFailed.Checked;
+            evt.Process.Waiting         = checkBoxWaitForExit.Checked;
+            evt.Process.Hidden          = checkBoxProcessHide.Checked;
+            evt.Process.KeepWindow      = checkBoxProcessKeep.Checked;
+            evt.ToConfiguration         = checkedListBoxSpecCfg.CheckedItems.OfType<string>().ToArray();
+            evt.ExecutionOrder          = getExecutionOrder();
 
-            if(radioModeScript.Checked) {
-                evt.mode = TModeCommands.Interpreter;
+            if(radioModeScript.Checked)
+            {
+                evt.Mode = new ModeInterpreter() {
+                    Command = textBoxCommand.Text,
+                    Handler = comboBoxInterpreter.Text,
+                    Newline = comboBoxNewline.Text,
+                    Wrapper = comboBoxWrapper.Text.Trim()
+                };
             }
-            else if(radioModeFiles.Checked) {
-                evt.mode = TModeCommands.File;
+            else if(radioModeFiles.Checked)
+            {
+                evt.Mode = new ModeFile() {
+                    Command = textBoxCommand.Text
+                };
             }
-            else if(radioModeOperation.Checked) {
-                evt.mode = TModeCommands.Operation;
-            }
-
-            // TODO: split the commands with ISolutionEvent
-            if(!radioModeOperation.Checked) {
-                evt.command = textBoxCommand.Text;
-            }
-            else {
-                if(isOperationCustom()) {
-                    evt.dteExec.cmd = textBoxCommand.Text.Split('\n');
+            else if(radioModeOperation.Checked)
+            {
+                string[] command;
+                if(isOperationCustom(listBoxOperation)) {
+                    command = logic.splitOperations(textBoxCommand.Text);
                 }
-                else{
-                    evt.dteExec.cmd = logic.DefOperations[listBoxOperation.SelectedIndex].cmd;
+                else {
+                    //TODO:
+                    command = logic.DefOperations[listBoxOperation.SelectedIndex].Command;
                 }
-                evt.dteExec.caption = listBoxOperation.Text;
-            }
 
-            evt.dteExec.abortOnFirstError   = checkBoxOperationsAbort.Checked;
-            evt.toConfiguration             = checkedListBoxSpecCfg.CheckedItems.OfType<string>().ToArray();
-            evt.executionOrder              = getExecutionOrder();
+                evt.Mode = new ModeOperation() {
+                    Command = command,
+                    Caption = listBoxOperation.Text,
+                    AbortOnFirstError = checkBoxOperationsAbort.Checked
+                };
+            }
         }
 
         protected void saveData(SBEEventEW evt)
         {
-            evt.codes       = listBoxEW.Items.Cast<string>().ToList();
-            evt.isWhitelist = radioCodesWhitelist.Checked;
+            evt.Codes       = listBoxEW.Items.Cast<string>().ToList();
+            evt.IsWhitelist = radioCodesWhitelist.Checked;
         }
 
         protected void saveData(SBEEventOWP evt)
         {
-            evt.eventsOWP = new List<TEventOWP>();
+            List<MatchWords> list = new List<MatchWords>();
             foreach(DataGridViewRow row in dataGridViewOutput.Rows)
             {
                 if(row.Cells["owpTerm"].Value == null || row.Cells["owpType"].Value == null) {
                     continue;
                 }
-                TEventOWP owp = new TEventOWP();
-                owp.term      = row.Cells["owpTerm"].Value.ToString();
-                owp.type      = (TEventOWPTerm)Enum.Parse(typeof(TEventOWPTerm), row.Cells["owpType"].Value.ToString());
-                evt.eventsOWP.Add(owp);
+                MatchWords m  = new MatchWords();
+                m.Condition   = row.Cells["owpTerm"].Value.ToString();
+                m.Type        = (ComparisonType)Enum.Parse(typeof(ComparisonType), row.Cells["owpType"].Value.ToString());
+                list.Add(m);
             }
+            evt.Match = list.ToArray();
         }
 
         protected void renderData()
@@ -233,31 +231,48 @@ namespace net.r_eg.vsSBE.UI
 
         protected void renderData(SBEEvent evt)
         {
-            checkBoxStatus.Checked          = evt.enabled;
-            textBoxCommand.Text             = evt.command.Replace("\n", "\r\n");
-            textBoxCaption.Text             = evt.caption;
-            comboBoxInterpreter.Text        = evt.interpreter;
-            checkBoxProcessHide.Checked     = evt.processHide;
-            checkBoxWaitForExit.Checked     = evt.waitForExit;
-            checkBoxProcessKeep.Checked     = evt.processKeep;
-            comboBoxNewline.Text            = evt.newline;
-            comboBoxWrapper.Text            = evt.wrapper;
-            checkBoxParseVariables.Checked  = evt.parseVariablesMSBuild;
-            checkBoxIgnoreIfFailed.Checked  = evt.buildFailedIgnore;
-            checkBoxOperationsAbort.Checked = evt.dteExec.abortOnFirstError;
+            checkBoxStatus.Checked          = evt.Enabled;
+            textBoxCaption.Text             = evt.Caption;
+            checkBoxParseVariables.Checked  = evt.SupportMSBuild;
+            checkBoxIgnoreIfFailed.Checked  = evt.IgnoreIfBuildFailed;
+            checkBoxWaitForExit.Checked     = evt.Process.Waiting;
+            checkBoxProcessHide.Checked     = evt.Process.Hidden;
+            checkBoxProcessKeep.Checked     = evt.Process.KeepWindow;
 
-            switch(evt.mode) {
-                case TModeCommands.Interpreter: {
+            if(evt.Mode == null) {
+                Log.nlog.Warn("The Mode is corrupt, reinitialized with default type");
+                evt.Mode = logic.DefaultMode;
+            }
+
+            switch(evt.Mode.Type) {
+                case ModeType.Interpreter:
+                {
                     radioModeScript.Checked = true;
-                    break;
+                    textBoxCommand.Text         = ((IModeInterpreter)evt.Mode).Command;
+                    comboBoxInterpreter.Text    = ((IModeInterpreter)evt.Mode).Handler;
+                    comboBoxNewline.Text        = ((IModeInterpreter)evt.Mode).Newline;
+                    comboBoxWrapper.Text        = ((IModeInterpreter)evt.Mode).Wrapper;
+                    return;
                 }
-                case TModeCommands.File: {
+                case ModeType.File:
+                {
                     radioModeFiles.Checked = true;
-                    break;
+                    textBoxCommand.Text = ((IModeFile)evt.Mode).Command;
+                    return;
                 }
-                case TModeCommands.Operation: {
-                    radioModeOperation.Checked = true;
-                    break;
+                case ModeType.Operation:
+                {
+                    radioModeOperation.Checked  = true;
+                    IModeOperation mode         = (IModeOperation)evt.Mode;
+
+                    if(logic.isDefOperation(mode.Caption)) {
+                        textBoxCommand.Text = "> " + mode.Caption;
+                    }
+                    else {
+                        textBoxCommand.Text = (mode.Command == null) ? "" : logic.joinOperations(mode.Command);
+                    }
+                    checkBoxOperationsAbort.Checked = mode.AbortOnFirstError;
+                    return;
                 }
             }
         }
@@ -265,9 +280,9 @@ namespace net.r_eg.vsSBE.UI
         protected void renderData(SBEEventEW evt)
         {
             listBoxEW.Items.Clear();
-            listBoxEW.Items.AddRange(evt.codes.ToArray());
+            listBoxEW.Items.AddRange(evt.Codes.ToArray());
 
-            if(evt.isWhitelist) {
+            if(evt.IsWhitelist) {
                 radioCodesWhitelist.Checked = true;
             }
             else {
@@ -278,8 +293,11 @@ namespace net.r_eg.vsSBE.UI
         protected void renderData(SBEEventOWP evt)
         {
             dataGridViewOutput.Rows.Clear();
-            foreach(TEventOWP owp in evt.eventsOWP) {
-                dataGridViewOutput.Rows.Add(owp.term, owp.type.ToString());
+            if(evt.Match == null) {
+                return;
+            }
+            foreach(MatchWords m in evt.Match) {
+                dataGridViewOutput.Rows.Add(m.Condition, m.Type.ToString());
             }
         }
 
@@ -288,14 +306,14 @@ namespace net.r_eg.vsSBE.UI
             dgvActions.Rows.Clear();
             logic.protectMinEventItems();
             foreach(SBEEvent item in logic.SBE.evt) {
-                dgvActions.Rows.Add(item.enabled, item.name, item.caption);
+                dgvActions.Rows.Add(item.Enabled, item.Name, item.Caption);
             }
         }
 
         protected void refreshSettings()
         {
             clearControls();
-            operationsSelect();
+            operationsSelect(listBoxOperation);
             renderData();
             onlyFor(false);
             executionOrder(false);
@@ -327,8 +345,6 @@ namespace net.r_eg.vsSBE.UI
             return (dgvActions.SelectedRows.Count < 1) ? 0 : dgvActions.SelectedRows[0].Index;
         }
 
-
-
         protected void refreshSettingsWithIndex(int index)
         {
             logic.setEventIndexes(comboBoxEvents.SelectedIndex, index);
@@ -338,7 +354,7 @@ namespace net.r_eg.vsSBE.UI
         protected void addAction(int copyFrom = -1)
         {
             SBEEvent evt = logic.addEventItem(copyFrom);
-            dgvActions.Rows.Add(evt.enabled, evt.name, evt.caption);
+            dgvActions.Rows.Add(evt.Enabled, evt.Name, evt.Caption);
             selectAction(dgvActions.Rows.Count - 1, true);
         }
 
@@ -357,68 +373,89 @@ namespace net.r_eg.vsSBE.UI
             btnApply.FlatAppearance.BorderColor = Color.FromArgb(0, 0, 0);
         }
 
-        // TODO: ~ DefCommandsDTE
-        protected void operationsInit()
-        {            
-            listBoxOperation.Items.Clear();
-            foreach(TOperation operation in logic.DefOperations) {
-                listBoxOperation.Items.Add(operation.caption);
+        protected void uiViewMode(ModeType type)
+        {
+            groupBoxInterpreter.Enabled     = false;
+            listBoxOperation.Enabled        = false;
+            textBoxCommand.Enabled          = true;
+            textBoxCommand.Text             = String.Empty;
+            panelControlByOperation.Enabled = true;
+            checkBoxOperationsAbort.Enabled = false;
 
+            if(type == ModeType.Interpreter)
+            {
+                labelToCommandBox.Text = "Command script:";
+                groupBoxInterpreter.Enabled = true;
+                return;
             }
-            listBoxOperation.Items.Add(">> User custom <<");
-            operationsSelect();
+            if(type == ModeType.File)
+            {
+                labelToCommandBox.Text = "Files to execute (separated by enter key):";
+                return;
+            }
+            if(type == ModeType.Operation)
+            {
+                operationsAction(listBoxOperation);
+                listBoxOperation.Enabled        = true;
+                panelControlByOperation.Enabled = false;
+                checkBoxOperationsAbort.Enabled = true;
+                return;
+            }
         }
 
-        protected void operationsSelect()
+        protected void operationsInit(ListBox list)
         {
+            list.Items.Clear();
+            foreach(ModeOperation operation in logic.DefOperations) {
+                list.Items.Add(operation.Caption);
+
+            }
+            list.Items.Add(">> User custom <<"); //TODO
+            operationsSelect(list);
+        }
+
+        protected void operationsSelect(ListBox list)
+        {
+            list.SelectedIndex = list.Items.Count - 1;
+            if(logic.SBEItem.Mode.Type != ModeType.Operation) {
+                return;
+            }
+
             int idx = 0;
-            foreach(string caption in listBoxOperation.Items) {
-                if(logic.SBEItem.dteExec.caption == caption) {
-                    listBoxOperation.SelectedIndex = idx;
+            foreach(string caption in list.Items) {
+                if(((IModeOperation)logic.SBEItem.Mode).Caption == caption) {
+                    list.SelectedIndex = idx;
                     return;
                 }
                 ++idx;
             }
-            listBoxOperation.SelectedIndex = idx - 1;
         }
 
-        protected void operationsAction()
+        protected void operationsAction(ListBox list)
         {
-            if(isOperationCustom()) {
-                labelToCommandBox.Text = "DTE execute (separated by enter key):";
-                textBoxCommand.Enabled = true;
-                renderDataStubCommand(true);
+            if(isOperationCustom(list)) {
+                labelToCommandBox.Text  = "DTE execute (separated by enter key):";
+                textBoxCommand.Enabled  = true;
+                textBoxCommand.Text     = String.Empty;
             }
             else {
-                labelToCommandBox.Text = "~";
-                textBoxCommand.Enabled = false;
-                textBoxCommand.Text    = "";
+                labelToCommandBox.Text  = "~";
+                textBoxCommand.Enabled  = false;
+                textBoxCommand.Text     = "> " + logic.DefOperations[list.SelectedIndex].Caption;
             }
         }
 
-        protected bool isOperationCustom()
+        protected bool isOperationCustom(ListBox list)
         {
-            if(listBoxOperation.SelectedIndex == listBoxOperation.Items.Count - 1) {
+            if(list.SelectedIndex == list.Items.Count - 1) {
                 return true;
             }
             return false;
         }
 
-        //TODO: additional component
-        protected void renderDataStubCommand(bool isOperation)
-        {
-            if(!isOperation) {
-                textBoxCommand.Text = logic.SBEItem.command;
-                return;
-            }
-            if(logic.SBEItem.dteExec.cmd != null) {
-                textBoxCommand.Text = String.Join("\n", logic.SBEItem.dteExec.cmd);
-            }
-        }
-
         protected void onlyFor(bool isNew)
         {
-            string[] toConf = logic.SBEItem.toConfiguration;
+            string[] toConf = logic.SBEItem.ToConfiguration;
 
             if(isNew) {
                 checkedListBoxSpecCfg.Items.Clear();
@@ -441,47 +478,47 @@ namespace net.r_eg.vsSBE.UI
 
         protected void executionOrder(bool isNew)
         {
-            TExecutionOrder[] list = logic.SBEItem.executionOrder;
+            IExecutionOrder[] list = logic.SBEItem.ExecutionOrder;
 
             if(isNew) {
                 dataGridViewOrder.Rows.Clear();
                 foreach(string name in logic.Env.DTEProjectsList)
                 {
-                    if(list == null) {
+                    if(list == null || list.Length < 1) {
                         dataGridViewOrder.Rows.Add(false, name, dgvOrderType.Items[0]);
                         continue;
                     }
-                    TExecutionOrder v = list.Where(s => s.project == name).FirstOrDefault();
-                    dataGridViewOrder.Rows.Add(!String.IsNullOrEmpty(v.project), name, v.order.ToString());
+                    IExecutionOrder v = list.Where(s => s.Project == name).FirstOrDefault();
+                    dataGridViewOrder.Rows.Add(!String.IsNullOrEmpty(v.Project), name, v.Order.ToString());
                 }
                 return;
             }
 
             foreach(DataGridViewRow row in dataGridViewOrder.Rows)
             {
-                if(list == null) {
+                if(list == null || list.Length < 1) {
                     row.Cells["dgvOrderEnabled"].Value  = false;
-                    row.Cells["dgvOrderType"].Value     = TExecutionOrder.Type.Before.ToString();
+                    row.Cells["dgvOrderType"].Value     = ExecutionOrderType.Before.ToString();
                     continue;
                 }
-                TExecutionOrder v = list.Where(s => s.project == row.Cells["dgvOrderProject"].Value.ToString()).FirstOrDefault();
+                IExecutionOrder v = list.Where(s => s.Project == row.Cells["dgvOrderProject"].Value.ToString()).FirstOrDefault();
 
-                row.Cells["dgvOrderEnabled"].Value  = !String.IsNullOrEmpty(v.project);
-                row.Cells["dgvOrderType"].Value     = v.order.ToString();
+                row.Cells["dgvOrderEnabled"].Value  = !String.IsNullOrEmpty(v.Project);
+                row.Cells["dgvOrderType"].Value     = v.Order.ToString();
             }
         }
 
-        protected TExecutionOrder[] getExecutionOrder()
+        protected ExecutionOrder[] getExecutionOrder()
         {
-            List<TExecutionOrder> ret = new List<TExecutionOrder>(dataGridViewOrder.Rows.Count);
+            List<ExecutionOrder> ret = new List<ExecutionOrder>(dataGridViewOrder.Rows.Count);
             foreach(DataGridViewRow row in dataGridViewOrder.Rows)
             {
                 if(!Convert.ToBoolean(row.Cells["dgvOrderEnabled"].Value)) {
                     continue;
                 }
-                TExecutionOrder order = new TExecutionOrder();
-                order.project   = row.Cells["dgvOrderProject"].Value.ToString();
-                order.order     = (TExecutionOrder.Type)Enum.Parse(typeof(TExecutionOrder.Type), row.Cells["dgvOrderType"].Value.ToString());
+                ExecutionOrder order = new ExecutionOrder();
+                order.Project   = row.Cells["dgvOrderProject"].Value.ToString();
+                order.Order     = (ExecutionOrderType)Enum.Parse(typeof(ExecutionOrderType), row.Cells["dgvOrderType"].Value.ToString());
                 ret.Add(order);
             }
             return ret.ToArray();
@@ -540,26 +577,36 @@ namespace net.r_eg.vsSBE.UI
             Util.noticeAboutChanges(typeof(CheckedListBox), this, call);
             Util.noticeAboutChanges(typeof(DataGridView), this, call);
 
-            expandActionsList(false);
-            logic.fillEvents(comboBoxEvents);
-            operationsInit();
-            renderData();
-            onlyFor(true);
-            executionOrder(true);
-            refreshActions();
-            notice(false);
+            try {
+                expandActionsList(false);
+                logic.fillEvents(comboBoxEvents);
+                operationsInit(listBoxOperation);
+                renderData();
+                onlyFor(true);
+                executionOrder(true);
+                refreshActions();
+                notice(false);
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Failed to load form: {0}", ex.Message);
+            }
         }
 
         private void comboBoxEvents_SelectedIndexChanged(object sender, EventArgs e)
         {
-            logic.setEventIndexes(comboBoxEvents.SelectedIndex, 0);
-            refreshActions(false);
-            refreshSettings();
+            try {
+                logic.setEventIndexes(comboBoxEvents.SelectedIndex, 0);
+                refreshActions(false);
+                refreshSettings();
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Failed to select event type: {0}", ex.Message);
+            }
         }
 
         private void listBoxOperation_SelectedIndexChanged(object sender, EventArgs e)
         {
-            operationsAction();
+            operationsAction(listBoxOperation);
         }
 
         private void checkBoxProcessHide_CheckedChanged(object sender, EventArgs e)
@@ -603,33 +650,17 @@ namespace net.r_eg.vsSBE.UI
 
         private void radioModeScript_CheckedChanged(object sender, EventArgs e)
         {
-            labelToCommandBox.Text      = "Command script:";
-            groupBoxInterpreter.Enabled = true;
-            listBoxOperation.Enabled    = false;
-            textBoxCommand.Enabled      = true;
-            renderDataStubCommand(false);
-            panelControlByOperation.Enabled = true;
-            checkBoxOperationsAbort.Enabled = false;
+            uiViewMode(ModeType.Interpreter);
         }
 
         private void radioModeFiles_CheckedChanged(object sender, EventArgs e)
         {
-            labelToCommandBox.Text      = "Files to execute (separated by enter key):";            
-            groupBoxInterpreter.Enabled = false;
-            listBoxOperation.Enabled    = false;
-            textBoxCommand.Enabled      = true;
-            renderDataStubCommand(false);
-            panelControlByOperation.Enabled = true;
-            checkBoxOperationsAbort.Enabled = false;
+            uiViewMode(ModeType.File);
         }
 
         private void radioModeOperation_CheckedChanged(object sender, EventArgs e)
         {
-            operationsAction();
-            groupBoxInterpreter.Enabled     = false;
-            listBoxOperation.Enabled        = true;
-            panelControlByOperation.Enabled = false;
-            checkBoxOperationsAbort.Enabled = true;
+            uiViewMode(ModeType.Operation);
         }
 
         private void dataGridViewOutput_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -707,14 +738,20 @@ namespace net.r_eg.vsSBE.UI
 
         private void toolStripMenuAbout_Click(object sender, EventArgs e)
         {
-            string inc = "This product includes:\n * NLog (nlog-project.org)\n\n All about graphical resources see /Resources/License";
-            MessageBox.Show(String.Format(
-                                    "Copyright (c) 2013-{0} Developed by reg < entry.reg@gmail.com >\n\n{1}",
-                                    DateTime.Now.Year, inc
-                            ),
-                            toolStripMenuAbout.Text,
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information
+            string inc       = "This product includes:{0}{1}\n{2}";
+            string nlog      = "\n * NLog (nlog-project.org)";
+            string json      = "\n * Json.NET (json.codeplex.com)";
+            string resources = "\n All about graphical resources see /Resources/License";
+
+            MessageBox.Show(
+                String.Format(
+                        "Copyright (c) 2013-{0} Developed by reg < entry.reg@gmail.com >\n\n{1}",
+                        DateTime.Now.Year, 
+                        String.Format(inc, nlog, json, resources)
+                ),
+                toolStripMenuAbout.Text,
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
             );
         }
 

@@ -26,39 +26,59 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using net.r_eg.vsSBE.Exceptions;
-
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Events
 {
-    internal static class Settings
+    /// <summary>
+    /// Processing with streaming tools
+    /// </summary>
+    public class ModeInterpreter: IMode, IModeInterpreter
     {
         /// <summary>
-        /// Debug mode for current application
+        /// Type of implementation
         /// </summary>
-        public static bool debugMode = false;
+        public ModeType Type
+        {
+            get { return ModeType.Interpreter; }
+        }
 
         /// <summary>
-        /// Current location
+        /// Command for handling
         /// </summary>
-        public static string WorkingPath
+        public string Command
         {
-            get {
-                if(String.IsNullOrEmpty(_workingPath)) {
-                    throw new SBEException("WorkingPath is empty or null");
-                }
-                return _workingPath;
-            }
+            get { return command; }
+            set { command = value; }
         }
+        private string command = string.Empty;
 
-        public static void setWorkingPath(string path)
+        /// <summary>
+        /// Stream handler
+        /// </summary>
+        public string Handler
         {
-            _workingPath = path;
+            get { return handler; }
+            set { handler = value; }
         }
+        private string handler = string.Empty;
 
-        private static string _workingPath = null;
+        /// <summary>
+        /// Treat newline as
+        /// </summary>
+        public string Newline
+        {
+            get { return newline; }
+            set { newline = value; }
+        }
+        private string newline = string.Empty;
+
+        /// <summary>
+        /// Symbol/s for wrapping of commands
+        /// </summary>
+        public string Wrapper
+        {
+            get { return wrapper; }
+            set { wrapper = value; }
+        }
+        private string wrapper = string.Empty;
     }
 }

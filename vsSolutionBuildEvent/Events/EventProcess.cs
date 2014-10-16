@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -26,30 +26,38 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace net.r_eg.vsSBE.Events
 {
-    public class SBESettings
+    public class EventProcess: IEventProcess
     {
         /// <summary>
-        /// this value used by default if current attr not found after deserialize
-        /// :: v0.2.x/v0.1.x
+        /// Waiting completion
         /// </summary>
-        private string _compatibility = "0.1";
-        /// <summary>
-        /// for identification of compatibility between versions
-        /// </summary>
-        public string compatibility
+        public bool Waiting
         {
-            get { return _compatibility; }
-            set { _compatibility = value; }
+            get { return waiting; }
+            set { waiting = value; }
         }
+        private bool waiting = true;
 
-        //TODO: direct..
-        public string application = "http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/";
+        /// <summary>
+        /// Hiding of processing or not
+        /// </summary>
+        public bool Hidden
+        {
+            get { return hidden; }
+            set { hidden = value; }
+        }
+        private bool hidden = true;
+
+        /// <summary>
+        /// Closing the window with result or not
+        /// </summary>
+        public bool KeepWindow
+        {
+            get { return keepWindow; }
+            set { keepWindow = value; }
+        }
+        private bool keepWindow = false;
     }
 }

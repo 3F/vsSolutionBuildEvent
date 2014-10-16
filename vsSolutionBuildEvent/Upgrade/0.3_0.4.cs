@@ -46,28 +46,28 @@ namespace net.r_eg.vsSBE.Upgrade
             // preBuild
 
             if(v03.preBuild.modeScript) {
-                Config._.Data.preBuild[0].mode = TModeCommands.Interpreter;
+                Config._.Data.PreBuild[0].Mode = new ModeInterpreter();
             }
             else {
-                Config._.Data.preBuild[0].mode = TModeCommands.File;
+                Config._.Data.PreBuild[0].Mode = new ModeFile();
             }
 
             // postBuild
 
             if(v03.postBuild.modeScript) {
-                Config._.Data.postBuild[0].mode = TModeCommands.Interpreter;
+                Config._.Data.PostBuild[0].Mode = new ModeInterpreter();
             }
             else {
-                Config._.Data.postBuild[0].mode = TModeCommands.File;
+                Config._.Data.PostBuild[0].Mode = new ModeFile();
             }
 
             // cancelBuild
 
             if(v03.cancelBuild.modeScript) {
-                Config._.Data.cancelBuild[0].mode = TModeCommands.Interpreter;
+                Config._.Data.CancelBuild[0].Mode = new ModeInterpreter();
             }
             else {
-                Config._.Data.cancelBuild[0].mode = TModeCommands.File;
+                Config._.Data.CancelBuild[0].Mode = new ModeFile();
             }
         }
     }

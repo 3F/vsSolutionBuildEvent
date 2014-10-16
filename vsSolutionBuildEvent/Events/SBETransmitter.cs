@@ -26,11 +26,6 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace net.r_eg.vsSBE.Events
 {
     public class SBETransmitter: SBEEvent

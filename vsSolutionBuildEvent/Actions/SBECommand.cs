@@ -103,27 +103,27 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="evt">provided sbe-events</param>
         public bool basic(ISolutionEvent evt, SolutionEventType type)
         {
-            if(!evt.enabled){
+            if(!evt.Enabled){
                 return false;
             }
             this.type = type;
 
             string cfg = env.SolutionConfigurationFormat(env.SolutionActiveConfiguration);
 
-            if(evt.toConfiguration != null 
-                && evt.toConfiguration.Length > 0 && evt.toConfiguration.Where(s => s == cfg).Count() < 1)
+            if(evt.ToConfiguration != null 
+                && evt.ToConfiguration.Length > 0 && evt.ToConfiguration.Where(s => s == cfg).Count() < 1)
             {
-                Log.nlog.Info("Action '{0}' is ignored for current configuration - '{1}'", evt.caption, cfg);
+                Log.nlog.Info("Action '{0}' is ignored for current configuration - '{1}'", evt.Caption, cfg);
                 return false;
             }
 
-            Log.nlog.Info("Launching action '{0}' :: Configuration - '{1}'", evt.caption, cfg);
-            switch(evt.mode) {
-                case TModeCommands.Operation: {
+            Log.nlog.Info("Launching action '{0}' :: Configuration - '{1}'", evt.Caption, cfg);
+            switch(evt.Mode.Type) {
+                case ModeType.Operation: {
                     Log.nlog.Info("Use Operation Mode");
                     return hModeOperation(evt);
                 }
-                case TModeCommands.Interpreter: {
+                case ModeType.Interpreter: {
                     Log.nlog.Info("Use Interpreter Mode");
                     return hModeScript(evt);
                 }
@@ -157,7 +157,7 @@ namespace net.r_eg.vsSBE.Actions
 
         protected virtual bool hModeFile(ISolutionEvent evt)
         {
-            string cFiles = evt.command;
+            string cFiles = ((IModeFile)evt.Mode).Command;
 
             parseVariables(evt, ref cFiles);
             useShell(evt, _treatNewlineAs(" & ", cFiles));
@@ -167,40 +167,42 @@ namespace net.r_eg.vsSBE.Actions
 
         protected virtual bool hModeOperation(ISolutionEvent evt)
         {
-            if(evt.dteExec.cmd == null || evt.dteExec.cmd.Length < 1) {
+            IModeOperation operation = (IModeOperation)evt.Mode;
+            if(operation.Command == null || operation.Command.Length < 1) {
                 return true;
             }
-            (new DTEOperation((EnvDTE.DTE)env.DTE2, type)).exec(evt.dteExec.cmd, evt.dteExec.abortOnFirstError);
+            (new DTEOperation((EnvDTE.DTE)env.DTE2, type)).exec(operation.Command, operation.AbortOnFirstError);
             return true;
         }
 
         protected virtual bool hModeScript(ISolutionEvent evt)
         {
-            if(evt.interpreter.Trim().Length < 1){
+            if(((IModeInterpreter)evt.Mode).Handler.Trim().Length < 1) {
                 Log.nlog.Warn("interpreter not selected");
                 return false;
             }
-            string script = evt.command;
+            string script   = ((IModeInterpreter)evt.Mode).Command;
+            string wrapper  = ((IModeInterpreter)evt.Mode).Wrapper;
 
             parseVariables(evt, ref script);
-            script = _treatNewlineAs(evt.newline, script);
+            script = _treatNewlineAs(((IModeInterpreter)evt.Mode).Newline, script);
 
-            switch(evt.wrapper.Length) {
+            switch(wrapper.Length) {
                 case 1: {
-                    script = string.Format("{0}{1}{0}", evt.wrapper, script.Replace(evt.wrapper, "\\" + evt.wrapper));
+                    script = string.Format("{0}{1}{0}", wrapper, script.Replace(wrapper, "\\" + wrapper));
                     break;
                 }
                 case 2: {
                     //pair as: (), {}, [] ...
                     //e.g.: (echo str&echo.&echo str) >> out
-                    string wL = evt.wrapper.ElementAt(0).ToString();
-                    string wR = evt.wrapper.ElementAt(1).ToString();
+                    string wL = wrapper.ElementAt(0).ToString();
+                    string wR = wrapper.ElementAt(1).ToString();
                     script = string.Format("{0}{1}{2}", wL, script.Replace(wL, "\\" + wL).Replace(wR, "\\" + wR), wR);
                     break;
                 }
             }
 
-            useShell(evt, string.Format("{0} {1}", evt.interpreter, script));
+            useShell(evt, string.Format("{0} {1}", ((IModeInterpreter)evt.Mode).Handler, script));
             return true;
         }
 
@@ -210,7 +212,7 @@ namespace net.r_eg.vsSBE.Actions
         protected void useShell(ISolutionEvent evt, string cmd)
         {
             ProcessStartInfo psi = new ProcessStartInfo(CMD_DEFAULT);
-            if(evt.processHide) {
+            if(evt.Process.Hidden) {
                 psi.WindowStyle = ProcessWindowStyle.Hidden;
             }
             //psi.StandardErrorEncoding = psi.StandardOutputEncoding = Encoding.GetEncoding(OEMCodePage);
@@ -219,7 +221,7 @@ namespace net.r_eg.vsSBE.Actions
                                         context.path,
                                         (context.disk != null) ? " & " + context.disk + ":" : "", cmd);
 
-            if(!evt.processHide && evt.processKeep) {
+            if(!evt.Process.Hidden && evt.Process.KeepWindow) {
                 args += " & pause";
             }
 
@@ -232,7 +234,7 @@ namespace net.r_eg.vsSBE.Actions
             process.StartInfo   = psi;
             process.Start();
 
-            if(evt.waitForExit) {
+            if(evt.Process.Waiting) {
                 process.WaitForExit();
             }
         }
@@ -243,7 +245,7 @@ namespace net.r_eg.vsSBE.Actions
             data = parser.parseVariablesSBE(data, SBECustomVariable.OWP_BUILD_WARNINGS, null); // reserved
             data = parser.parseVariablesSBE(data, SBECustomVariable.OWP_BUILD_ERRORS, null);   // reserved
 
-            if(evt.parseVariablesMSBuild) {
+            if(evt.SupportMSBuild) {
                 data = parser.parseVariablesMSBuild(data);
             }
         }

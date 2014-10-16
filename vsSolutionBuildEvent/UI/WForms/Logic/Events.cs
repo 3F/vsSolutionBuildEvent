@@ -42,6 +42,7 @@ namespace net.r_eg.vsSBE.UI
 
             protected void setEvent(SBEEvent[] evt)
             {
+                // Using as List with standard shallow copying!
                 this.evt = new List<SBEEvent>(evt);
             }
         }
@@ -78,14 +79,32 @@ namespace net.r_eg.vsSBE.UI
         }
 
         /// <summary>
+        /// Current Mode from SBE-item
+        /// </summary>
+        public IMode SBEItemMode
+        {
+            get {
+                return (SBEItem.Mode == null) ? DefaultMode : SBEItem.Mode;
+            }
+        }
+
+        /// <summary>
+        /// Initialize the mode with end-type
+        /// </summary>
+        public virtual IMode DefaultMode
+        {
+            get { return new ModeFile(); }
+        }
+
+        /// <summary>
         /// Predefined operations
         /// TODO:
         /// </summary>
-        public List<TOperation> DefOperations
+        public List<ModeOperation> DefOperations
         {
             get { return defOperations; }
         }
-        protected List<TOperation> defOperations = DefCommandsDTE.operations();
+        protected List<ModeOperation> defOperations = DefCommandsDTE.operations();
 
         /// <summary>
         /// Registered used SBE-events
@@ -115,13 +134,13 @@ namespace net.r_eg.vsSBE.UI
             if(copyFrom >= SBE.evt.Count || copyFrom < 0)
             {
                 evt = new SBEEvent();
-                evt.name = genUniqueName(ACTION_PREFIX, SBE.evt);
+                evt.Name = genUniqueName(ACTION_PREFIX, SBE.evt);
             }
             else
             {
                 evt         = deepCopyFrom(SBE.evt[copyFrom]);
-                evt.caption = String.Format("Copy of '{0}' - {1}", evt.name, evt.caption);
-                evt.name    = genUniqueName(ACTION_PREFIX_CLONE + evt.name, SBE.evt);
+                evt.Caption = String.Format("Copy of '{0}' - {1}", evt.Name, evt.Caption);
+                evt.Name    = genUniqueName(ACTION_PREFIX_CLONE + evt.Name, SBE.evt);
             }
 
             if(SBE.evt == null) {
@@ -159,13 +178,44 @@ namespace net.r_eg.vsSBE.UI
 
         public void updateInfo(int index, string name, bool enabled)
         {
-            SBE.evt[index].name = name;
-            SBE.evt[index].enabled = enabled;
+            SBE.evt[index].Name = name;
+            SBE.evt[index].Enabled = enabled;
         }
 
         public void updateInfo(int index, SBEEvent evt)
         {
             SBE.evt[index] = evt;
+        }
+
+        /// <summary>
+        /// Initialize the new Mode by type
+        /// </summary>
+        /// <param name="type">Available Modes</param>
+        /// <returns>Mode with default values</returns>
+        public IMode initMode(ModeType type)
+        {
+            switch(type) {
+                case ModeType.Interpreter: {
+                    return new ModeInterpreter();
+                }
+                case ModeType.File: {
+                    return new ModeFile();
+                }
+                case ModeType.Operation: {
+                    return new ModeOperation();
+                }
+            }
+            return DefaultMode;
+        }
+
+        public bool isDefOperation(string caption)
+        {
+            foreach(ModeOperation operation in DefOperations) {
+                if(operation.Caption == caption) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -181,6 +231,34 @@ namespace net.r_eg.vsSBE.UI
                 Log.nlog.Warn("Event-item < 1 for type '{0}'", SBE.type);
                 addEventItem(); // simply to work with new container
             }
+        }
+
+        /// <summary>
+        /// Getting the operations as array
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public string[] splitOperations(string data)
+        {
+            return data.Replace("\r\n", "\n").Split('\n');
+        }
+
+        /// <summary>
+        /// Getting the operations as string
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public string joinOperations(string[] data)
+        {
+            return String.Join("\n", data);
+        }
+
+        public virtual string formatMSBuildProperty(string name, string project = null)
+        {
+            if(project == null) {
+                return String.Format("$({0})", name);
+            }
+            return String.Format("$({0}:{1})", name, project);
         }
 
         public virtual string validateName(string name)
@@ -201,40 +279,7 @@ namespace net.r_eg.vsSBE.UI
 
         public void saveData()
         {
-            SBEEvent[] data = SBE.evt.ToArray();
-
-            switch(SBE.type) {
-                case SolutionEventType.Pre: { 
-                    Config._.Data.preBuild = data; 
-                    break; 
-                }
-                case SolutionEventType.Post: { 
-                    Config._.Data.postBuild = data; 
-                    break; 
-                }
-                case SolutionEventType.Cancel: { 
-                    Config._.Data.cancelBuild = data; 
-                    break; 
-                }
-                case SolutionEventType.Warnings: { 
-                    Config._.Data.warningsBuild = (SBEEventEW[])data; 
-                    break; 
-                }
-                case SolutionEventType.Errors: { 
-                    Config._.Data.errorsBuild = (SBEEventEW[])data; 
-                    break; 
-                }
-                case SolutionEventType.OWP: { 
-                    Config._.Data.outputCustomBuild = (SBEEventOWP[])data; 
-                    break; 
-                }
-                case SolutionEventType.Transmitter: { 
-                    Config._.Data.transmitter = (SBETransmitter[])data; 
-                    break; 
-                }
-            }
-
-            Config._.save();
+            Config._.save(); // all changes have been passed by reference
         }
 
         public void fillEvents(ComboBox combo)
@@ -242,25 +287,25 @@ namespace net.r_eg.vsSBE.UI
             events.Clear();
             combo.Items.Clear();
 
-            addEvent(new SBEWrap(Config._.Data.preBuild, SolutionEventType.Pre));
+            addEvent(new SBEWrap(Config._.Data.PreBuild, SolutionEventType.Pre));
             combo.Items.Add(":: Pre-Build :: Before assembling");
 
-            addEvent(new SBEWrap(Config._.Data.postBuild, SolutionEventType.Post));
+            addEvent(new SBEWrap(Config._.Data.PostBuild, SolutionEventType.Post));
             combo.Items.Add(":: Post-Build :: After assembling");
 
-            addEvent(new SBEWrap(Config._.Data.cancelBuild, SolutionEventType.Cancel));
+            addEvent(new SBEWrap(Config._.Data.CancelBuild, SolutionEventType.Cancel));
             combo.Items.Add(":: Cancel-Build :: by user or when an error occurs");
 
-            addEvent(new SBEWrap(Config._.Data.warningsBuild, SolutionEventType.Warnings));
+            addEvent(new SBEWrap(Config._.Data.WarningsBuild, SolutionEventType.Warnings));
             combo.Items.Add(":: Warnings-Build :: Warnings during assembly processing");
 
-            addEvent(new SBEWrap(Config._.Data.errorsBuild, SolutionEventType.Errors));
+            addEvent(new SBEWrap(Config._.Data.ErrorsBuild, SolutionEventType.Errors));
             combo.Items.Add(":: Errors-Build :: Errors during assembly processing");
 
-            addEvent(new SBEWrap(Config._.Data.outputCustomBuild, SolutionEventType.OWP));
+            addEvent(new SBEWrap(Config._.Data.OWPBuild, SolutionEventType.OWP));
             combo.Items.Add(":: Output-Build customization :: Full control");
 
-            addEvent(new SBEWrap(Config._.Data.transmitter, SolutionEventType.Transmitter));
+            addEvent(new SBEWrap(Config._.Data.Transmitter, SolutionEventType.Transmitter));
             combo.Items.Add(":: Transmitter :: Transmission building-data to outer handler");
 
             combo.SelectedIndex = 0;
@@ -282,12 +327,12 @@ namespace net.r_eg.vsSBE.UI
             int maxId = 0;
             foreach(SBEEvent item in scope)
             {
-                if(String.IsNullOrEmpty(item.name)) {
+                if(String.IsNullOrEmpty(item.Name)) {
                     continue;
                 }
 
                 try {
-                    Match m = Regex.Match(item.name, String.Format("^{0}(\\d+)", prefix), RegexOptions.IgnoreCase);
+                    Match m = Regex.Match(item.Name, String.Format("^{0}(\\d+)", prefix), RegexOptions.IgnoreCase);
                     if(m.Groups[1].Success) {
                         maxId = Math.Max(maxId, Int32.Parse(m.Groups[1].Value));
                     }

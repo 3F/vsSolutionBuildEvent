@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -26,79 +26,42 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace net.r_eg.vsSBE.Events
 {
+    /// <summary>
+    /// Main container of the Solution Events
+    /// </summary>
     public interface ISolutionEvent
     {
         /// <summary>
-        /// Unique name for manually identification
+        /// Status of activation
         /// </summary>
-        string name { get; set; }
+        bool Enabled { get; set; }
 
         /// <summary>
-        /// Mixed command to handling
+        /// Optional, unique name for manually identification
         /// </summary>
-        string command { get; set; }
+        string Name { get; set; }
 
         /// <summary>
         /// Short header about this
         /// </summary>
-        string caption { get; set; }
+        string Caption { get; set; }
 
         /// <summary>
-        /// status of activate
+        /// Support of MSBuild environment variables (properties)
         /// </summary>
-        bool enabled { get; set; }
+        bool SupportMSBuild { get; set; }
 
         /// <summary>
-        /// Hide Process
+        /// Support of SBE-Scripts
         /// </summary>
-        bool processHide { get; set; }
-
-        /// <summary>
-        /// not close after completion
-        /// </summary>
-        bool processKeep { get; set; }
-
-        /// <summary>
-        /// processing mode
-        /// </summary>
-        TModeCommands mode { get; set; }
-
-        /// <summary>
-        /// stream processor
-        /// </summary>
-        string interpreter { get; set; }
-
-        /// <summary>
-        /// treat newline as
-        /// </summary>
-        string newline { get; set; }
-
-        /// <summary>
-        /// symbol wrapper for commands or script
-        /// </summary>
-        string wrapper { get; set; }
-
-        /// <summary>
-        /// Wait until terminates script handling
-        /// </summary>
-        bool waitForExit { get; set; }
-
-        /// <summary>
-        /// support of MSBuild environment variables (properties)
-        /// </summary>
-        bool parseVariablesMSBuild { get; set; }
+        bool SupportSBEScripts { get; set; }
 
         /// <summary>
         /// Ignore all actions if the build failed
         /// </summary>
-        bool buildFailedIgnore { get; set; }
+        bool IgnoreIfBuildFailed { get; set; }
 
         /// <summary>
         /// Run only for a specific configuration of solution
@@ -106,24 +69,28 @@ namespace net.r_eg.vsSBE.Events
         ///   'configname'|'platformname'
         ///   Compatible with: http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivscfg.get_displayname.aspx
         /// </summary>
-        string[] toConfiguration { get; set; }
+        string[] ToConfiguration { get; set; }
 
         /// <summary>
-        /// Run for selected projects with execution order
+        /// Run for selected projects with the Execution-Order
         /// </summary>
-        TExecutionOrder[] executionOrder { get; set; }
+        IExecutionOrder[] ExecutionOrder { get; set; }
 
         /// <summary>
-        /// Common Environment Visual Studio. Executes the specified commands
-        /// TODO: custom list
+        /// Handling process
         /// </summary>
-        TOperation dteExec { get; set; }
+        IEventProcess Process { get; set; }
+
+        /// <summary>
+        /// Processing mode
+        /// </summary>
+        IMode Mode { get; set; }
     }
 
     /// <summary>
-    /// Processing mode
+    /// Type of available processing modes
     /// </summary>
-    public enum TModeCommands
+    public enum ModeType
     {
         /// <summary>
         /// external commands
@@ -137,36 +104,5 @@ namespace net.r_eg.vsSBE.Events
         /// DTE commands
         /// </summary>
         Operation,
-    }
-
-    /// <summary>
-    /// Atomic DTE operation
-    /// </summary>
-    public class TOperation
-    {
-        /// <summary>
-        /// exec-command
-        /// </summary>
-        public string[] cmd = null;
-        /// <summary>
-        /// optional ident
-        /// </summary>
-        public string caption = String.Empty;
-        /// <summary>
-        /// Abort operations on first error
-        /// </summary>
-        public bool abortOnFirstError = false;
-    }
-
-    public struct TExecutionOrder
-    {
-        public string project;
-        public Type order;
-
-        public enum Type
-        {
-            Before,
-            After
-        }
     }
 }

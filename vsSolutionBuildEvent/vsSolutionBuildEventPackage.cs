@@ -216,7 +216,7 @@ namespace net.r_eg.vsSBE
         private void _state()
         {
             Func<ISolutionEvent, string, string> aboutEvent = delegate(ISolutionEvent evt, string caption) {
-                return String.Format("\n\t* [{0}][{1}]: {2}", evt.enabled ? "!" : "X", caption, evt.caption);
+                return String.Format("\n\t* [{0}][{1}]: {2}", evt.Enabled ? "!" : "X", caption, evt.Caption);
             };
 
             // TODO:

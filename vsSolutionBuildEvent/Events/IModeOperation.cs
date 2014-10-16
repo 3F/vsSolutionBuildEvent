@@ -26,39 +26,26 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using net.r_eg.vsSBE.Exceptions;
-
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Events
 {
-    internal static class Settings
+    /// <summary>
+    /// Processing with Environment of Visual Studio
+    /// </summary>
+    public interface IModeOperation
     {
         /// <summary>
-        /// Debug mode for current application
+        /// Command (Atomic DTE operation) for handling
         /// </summary>
-        public static bool debugMode = false;
+        string[] Command { get; set; }
 
         /// <summary>
-        /// Current location
+        /// Single caption for atomic commands
         /// </summary>
-        public static string WorkingPath
-        {
-            get {
-                if(String.IsNullOrEmpty(_workingPath)) {
-                    throw new SBEException("WorkingPath is empty or null");
-                }
-                return _workingPath;
-            }
-        }
+        string Caption { get; set; }
 
-        public static void setWorkingPath(string path)
-        {
-            _workingPath = path;
-        }
-
-        private static string _workingPath = null;
+        /// <summary>
+        /// Abort operations on the first error
+        /// </summary>
+        bool AbortOnFirstError { get; set; }
     }
 }

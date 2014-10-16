@@ -26,39 +26,31 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using net.r_eg.vsSBE.Exceptions;
-
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Events
 {
-    internal static class Settings
+    /// <summary>
+    /// Processing with streaming tools
+    /// </summary>
+    public interface IModeInterpreter
     {
         /// <summary>
-        /// Debug mode for current application
+        /// Command for handling
         /// </summary>
-        public static bool debugMode = false;
+        string Command { get; set; }
 
         /// <summary>
-        /// Current location
+        /// Stream handler
         /// </summary>
-        public static string WorkingPath
-        {
-            get {
-                if(String.IsNullOrEmpty(_workingPath)) {
-                    throw new SBEException("WorkingPath is empty or null");
-                }
-                return _workingPath;
-            }
-        }
+        string Handler { get; set; }
 
-        public static void setWorkingPath(string path)
-        {
-            _workingPath = path;
-        }
+        /// <summary>
+        /// Treat newline as
+        /// </summary>
+        string Newline { get; set; }
 
-        private static string _workingPath = null;
+        /// <summary>
+        /// Symbol/s for wrapping of commands
+        /// </summary>
+        string Wrapper { get; set; }
     }
 }

@@ -18,31 +18,18 @@ namespace net.r_eg.vsSBE.UI
     /// </summary>
     internal class DefCommandsDTE
     {
-        public static List<TOperation> operations()
+        public static List<ModeOperation> operations()
         {
-            List<TOperation> dte = new List<TOperation>();
+            List<ModeOperation> dte = new List<ModeOperation>();
 
-            dte.Add(new TOperationQ(new string[]{"Build.Cancel"}, "Stop building"));
-            dte.Add(new TOperationQ(new string[]{"Build.Cancel", "Build.RebuildSolution"}, "Rebuild Solution"));
-            dte.Add(new TOperationQ(new string[]{"Test.RunAllTestsInSolution"}, "Run all Unit-Tests"));
-            dte.Add(new TOperationQ(new string[]{"Test.DebugAllTestsInSolution"}, "Debug all Unit-Tests"));
-            dte.Add(new TOperationQ(new string[]{"Debug.Start"}, "Run project"));
-            dte.Add(new TOperationQ(new string[]{"Debug.StartWithoutDebugging"}, "Run Without Debugging"));
+            dte.Add(new ModeOperation(new string[]{"Build.Cancel"}, "Stop building"));
+            dte.Add(new ModeOperation(new string[]{"Build.Cancel", "Build.RebuildSolution"}, "Rebuild Solution"));
+            dte.Add(new ModeOperation(new string[]{"Test.RunAllTestsInSolution"}, "Run all Unit-Tests"));
+            dte.Add(new ModeOperation(new string[]{"Test.DebugAllTestsInSolution"}, "Debug all Unit-Tests"));
+            dte.Add(new ModeOperation(new string[]{"Debug.Start"}, "Run project"));
+            dte.Add(new ModeOperation(new string[]{"Debug.StartWithoutDebugging"}, "Run Without Debugging"));
 
             return dte;
-        }
-
-        /// <summary>
-        /// TOperation cannot contain a constructor to serialize
-        /// .. benefits the principle LSP =_=
-        /// </summary>
-        private class TOperationQ: TOperation
-        {
-            public TOperationQ(string[] cmd, string caption)
-            {
-                this.cmd     = cmd;
-                this.caption = caption;
-            }
         }
     }
 }

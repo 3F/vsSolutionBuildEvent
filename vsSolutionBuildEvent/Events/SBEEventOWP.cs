@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -27,22 +27,24 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace net.r_eg.vsSBE.Events
 {
+    /// <summary>
+    /// Support the OutputWindowPane
+    /// </summary>
     public class SBEEventOWP: SBEEvent, ISolutionEventOWP
     {
-        private List<TEventOWP> _eventsOWP = new List<TEventOWP>();
         /// <summary>
-        /// List of term
+        /// List of statements
         /// </summary>
-        public List<TEventOWP> eventsOWP
+        [JsonProperty(TypeNameHandling = TypeNameHandling.All)]
+        public IMatchWords[] Match
         {
-            get { return _eventsOWP; }
-            set { _eventsOWP = value; }
+            get { return match; }
+            set { match = (MatchWords[])value; }
         }
+        private MatchWords[] match = null;
     }
 }

@@ -56,8 +56,12 @@
       <Private>false</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.10.0" />
-    <Reference Include="NLog">
-      <HintPath>..\external\NLog\net40\NLog.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=3.1.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NLog.3.1.0.0\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -132,6 +136,20 @@
     <Compile Include="Actions\Connection.cs" />
     <Compile Include="DTEOperation.cs" />
     <Compile Include="Environment.cs" />
+    <Compile Include="Events\IMode.cs" />
+    <Compile Include="Events\ExecutionOrder.cs" />
+    <Compile Include="Events\EventProcess.cs" />
+    <Compile Include="Events\IEventProcess.cs" />
+    <Compile Include="Events\IExecutionOrder.cs" />
+    <Compile Include="IMatchWords.cs" />
+    <Compile Include="Events\IModeFile.cs" />
+    <Compile Include="Events\IModeInterpreter.cs" />
+    <Compile Include="Events\IModeOperation.cs" />
+    <Compile Include="MatchWords.cs" />
+    <Compile Include="Events\ModeFile.cs" />
+    <Compile Include="Events\ModeInterpreter.cs" />
+    <Compile Include="Events\ModeOperation.cs" />
+    <Compile Include="Events\SolutionEventType.cs" />
     <Compile Include="Exceptions\SBEException.cs" />
     <Compile Include="IEnvironment.cs" />
     <Compile Include="Log.cs" />
@@ -187,8 +205,8 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Events\ISolutionEvent.cs" />
     <Compile Include="Events\SBEEvent.cs" />
-    <Compile Include="Events\SBESettings.cs" />
-    <Compile Include="Events\SolutionEvents.cs" />
+    <Compile Include="ConfigHeader.cs" />
+    <Compile Include="SolutionEvents.cs" />
     <Compile Include="UI\ITransferData.cs" />
     <Compile Include="UI\WForms\PropertyCheckFrm.cs">
       <SubType>Form</SubType>
@@ -239,6 +257,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <None Include="packages.config" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>

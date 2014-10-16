@@ -44,25 +44,29 @@ namespace net.r_eg.vsSBE
         /// <param name="filters">terms of user</param>
         /// <param name="raw"></param>
         /// <returns>matched if at least one of conditions are true</returns>
-        public bool match(List<TEventOWP> filters, string raw)
+        public bool match(IMatchWords[] filters, string raw)
         {
-            foreach(TEventOWP filter in filters)
+            if(filters == null) {
+                return false;
+            }
+
+            foreach(IMatchWords filter in filters)
             {
-                switch(filter.type) {
-                    case TEventOWPTerm.Default: {
-                        if(mDefault(filter.term, ref raw)) {
+                switch(filter.Type) {
+                    case ComparisonType.Default: {
+                        if(mDefault(filter.Condition, ref raw)) {
                             return true;
                         }
                         continue;
                     }
-                    case TEventOWPTerm.Regexp: {
-                        if(mRegexp(filter.term, ref raw)) {
+                    case ComparisonType.Regexp: {
+                        if(mRegexp(filter.Condition, ref raw)) {
                             return true;
                         }
                         continue;
                     }
-                    case TEventOWPTerm.Wildcards: {
-                        if(mWildcards(filter.term, ref raw)) {
+                    case ComparisonType.Wildcards: {
+                        if(mWildcards(filter.Condition, ref raw)) {
                             return true;
                         }
                         continue;
@@ -72,10 +76,10 @@ namespace net.r_eg.vsSBE
             return false;
         }
 
-        protected bool mRegexp(string term, ref string raw)
+        protected bool mRegexp(string pattern, ref string raw)
         {
             try {
-                return Regex.Match(raw, term/*, RegexOptions.IgnoreCase*/).Success;
+                return Regex.Match(raw, pattern/*, RegexOptions.IgnoreCase*/).Success;
             }
             catch(Exception ex) {
                 // all incorrect syntax should be simply false
@@ -84,17 +88,17 @@ namespace net.r_eg.vsSBE
             return false;
         }
 
-        protected bool mWildcards(string term, ref string raw)
+        protected bool mWildcards(string pattern, ref string raw)
         {
             //TODO: rapid alternative https://bitbucket.org/3F/sandbox/src/master-C%2B%2B/cpp/text/wildcards/wildcards/versions/essential/AlgorithmEss.h
             //_
-            string stub = Regex.Escape(term).Replace("\\*", ".*?").Replace("\\+", ".+?").Replace("\\?", ".");
+            string stub = Regex.Escape(pattern).Replace("\\*", ".*?").Replace("\\+", ".+?").Replace("\\?", ".");
             return mRegexp(stub, ref raw);
         }
 
-        protected bool mDefault(string term, ref string raw)
+        protected bool mDefault(string pattern, ref string raw)
         {
-            return raw.Contains(term);
+            return raw.Contains(pattern);
         }
     }
 }
