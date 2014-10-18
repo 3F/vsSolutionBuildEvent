@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013 Developed by reg [Denis Kuzmin] <entry.reg@gmail.com>
  * Distributed under the Boost Software License, Version 1.0
  * (See accompanying file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
  */

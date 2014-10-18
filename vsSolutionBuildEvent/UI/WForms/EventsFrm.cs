@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg [Denis Kuzmin] <entry.reg@gmail.com>
  * Distributed under the Boost Software License, Version 1.0
  * (See accompanying file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
@@ -745,7 +745,7 @@ namespace net.r_eg.vsSBE.UI
 
             MessageBox.Show(
                 String.Format(
-                        "Copyright (c) 2013-{0} Developed by reg < entry.reg@gmail.com >\n\n{1}",
+                        "Copyright (c) 2013-{0}\n Developed by reg [Denis Kuzmin] < entry.reg@gmail.com >\n\n{1}",
                         DateTime.Now.Year, 
                         String.Format(inc, nlog, json, resources)
                 ),
