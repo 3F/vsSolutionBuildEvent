@@ -108,7 +108,7 @@ namespace net.r_eg.vsSBE.Actions
         public virtual DTEPrepared parse(string line)
         {
             Match m = Regex.Match(line.Trim(), @"^
-                                                   ([A-z_0-9.]+)    #1 - Command
+                                                   ([A-Za-z_0-9.]+) #1 - Command
                                                    (?:
                                                        \s*
                                                        \(

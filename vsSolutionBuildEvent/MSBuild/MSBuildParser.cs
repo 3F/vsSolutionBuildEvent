@@ -294,7 +294,7 @@ namespace net.r_eg.vsSBE.MSBuild
             Match m = Regex.Match(raw.Trim(), @"^\(  
                                                    (?:
                                                      (\#)?           # 1 -> special char  (optional)
-                                                     ([A-z_0-9]+)    # 2 -> variable name (optional)
+                                                     ([A-Za-z_0-9]+) # 2 -> variable name (optional)
                                                      \s*=\s*
                                                    )?
                                                    (?:
@@ -357,7 +357,7 @@ namespace net.r_eg.vsSBE.MSBuild
             m = Regex.Match(ret.property.raw, @"^
                                                   \$
                                                   \(
-                                                     ([A-z_0-9]+)     # 1 - name
+                                                     ([A-Za-z_0-9]+)  # 1 - name
                                                      (?::([^)]+))?    # 2 - project
                                                   \)
                                                 $", RegexOptions.IgnorePatternWhitespace);
