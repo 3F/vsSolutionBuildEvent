@@ -26,51 +26,33 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.OWP
 {
-    public interface IEnvironment
+    /// <summary>
+    /// Provides the available items from OutputWindowPane
+    /// </summary>
+    public sealed class Items: IItems
     {
-        /// <summary>
-        /// Provides projects from EnvDTE
-        /// </summary>
-        IEnumerable<EnvDTE.Project> DTEProjects { get; }
+        public BuildItem Build
+        {
+            get { return build; }
+        }
+        private BuildItem build = new BuildItem();
 
         /// <summary>
-        /// Simple list of names from EnvDTE projects
+        /// Thread-safe getting the instance of Items
         /// </summary>
-        List<string> DTEProjectsList { get; }
+        public static Items _
+        {
+            get { return _lazy.Value; }
+        }
+        private static readonly Lazy<Items> _lazy = new Lazy<Items>(() => new Items());
 
-        /// <summary>
-        /// Should provide the Build.Evaluation.Project by project name
-        /// </summary>
-        Microsoft.Build.Evaluation.Project getProject(string project);
-
-        /// <summary>
-        /// Should provide active configuration for current solution
-        /// </summary>
-        EnvDTE80.SolutionConfiguration2 SolutionActiveConfiguration { get; }
-
-        /// <summary>
-        /// Should provide all configurations for current solution
-        /// </summary>
-        IEnumerable<EnvDTE80.SolutionConfiguration2> SolutionConfigurations { get; }
-
-        /// <summary>
-        /// Name from "Set as SturtUp Project"
-        /// </summary>
-        string StartupProjectString { get; }
-
-        /// <summary>
-        /// Provide global property for all existing projects
-        /// </summary>
-        /// <param name="name">Property name</param>
-        string getSolutionGlobalProperty(string name);
-
-        /// <summary>
-        /// DTE context
-        /// </summary>
-        EnvDTE80.DTE2 DTE2 { get; }
+        private Items(){}
     }
 }

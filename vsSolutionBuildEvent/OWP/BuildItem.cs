@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -32,13 +32,13 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.OWP
 {
     /// <summary>
-    /// Working with a "Build" format
-    /// http://msdn.microsoft.com/en-us/library/yxkt8b26%28v=vs.100%29.aspx
+    /// Working with the "Build"
+    /// http://msdn.microsoft.com/en-us/library/yxkt8b26%28v=vs.120%29.aspx
     /// </summary>
-    public class OutputWPBuildParser
+    public class BuildItem
     {
         public int ErrorsCount
         {
@@ -63,20 +63,20 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// all errors in partial data
         /// </summary>
-        protected List<string> errors   = new List<string>();
         public List<string> Errors
         {
             get { return errors; }
         }
+        protected List<string> errors = new List<string>();
 
         /// <summary>
         /// all warnings in partial data
         /// </summary>
-        protected List<string> warnings = new List<string>();
         public List<string> Warnings
         {
             get { return warnings; }
         }
+        protected List<string> warnings = new List<string>();
 
         public enum Type
         {
@@ -84,9 +84,16 @@ namespace net.r_eg.vsSBE
             Errors
         }
 
+        /// <summary>
+        /// Current raw
+        /// </summary>
         protected string rawdata;
 
-        public OutputWPBuildParser(ref string rawdata)
+        /// <summary>
+        /// Updating data and immediately extracting contents
+        /// </summary>
+        /// <param name="rawdata"></param>
+        public void updateRaw(string rawdata)
         {
             this.rawdata = rawdata;
             extract();

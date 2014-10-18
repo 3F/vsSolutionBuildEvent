@@ -21,6 +21,8 @@ using Microsoft.Win32;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.MSBuild;
+using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.UI;
 
 namespace net.r_eg.vsSBE
@@ -105,7 +107,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Working with the OutputWindowsPane -> "Build" pane
         /// </summary>
-        private OutputWPListener _owpBuild;
+        private OWP.Listener _owpBuild;
 
         public vsSolutionBuildEventPackage()
         {
@@ -113,12 +115,10 @@ namespace net.r_eg.vsSBE
             _env = new Environment(Dte2);
 
             _c = new Connection(
-                    new SBECommand(_env,
-                        new MSBuildParser(_env)
-                    )
+                    new SBECommand(_env, new Script(), new MSBuildParser(_env))
             );
 
-            _owpBuild = new OutputWPListener(Dte2, "Build");
+            _owpBuild = new OWP.Listener(_env, "Build");
             _owpBuild.attachEvents();
             _owpBuild.register(_c);
 
@@ -158,10 +158,8 @@ namespace net.r_eg.vsSBE
         {
             _menuItemMain.Visible = false;
             UI.StatusToolWindow.control.enabled(false);
+            UI.Util.closeTool(_configFrm);
 
-            if(_configFrm != null && !_configFrm.IsDisposed) {
-                _configFrm.Close();
-            }
             return VSConstants.S_OK;
         }
 
@@ -344,9 +342,7 @@ namespace net.r_eg.vsSBE
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            if(_configFrm != null && !_configFrm.IsDisposed) {
-                _configFrm.Close(); //+Dispose
-            }
+            UI.Util.closeTool(_configFrm);
 
             if(_solBuildManager != null && _cookieUpdateSEvents != 0) {
                 _solBuildManager.UnadviseUpdateSolutionEvents(_cookieUpdateSEvents);

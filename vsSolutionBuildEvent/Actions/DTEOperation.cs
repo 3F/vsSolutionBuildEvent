@@ -37,7 +37,7 @@ using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Actions
 {
     public class DTEOperation
     {

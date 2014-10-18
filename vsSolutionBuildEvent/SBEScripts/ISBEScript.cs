@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -26,38 +26,50 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.SBEScripts
 {
-    public interface IMSBuildProperty
+    public interface ISBEScript
     {
         /// <summary>
-        /// MSBuild Property from default Project
+        /// Getting user-defined variable
         /// </summary>
-        /// <param name="name">key property</param>
-        /// <returns>evaluated value</returns>
-        string getProperty(string name);
+        /// <param name="name">variable name</param>
+        /// <param name="project">project name</param>
+        /// <returns>evaluated value of variable</returns>
+        string getVariable(string name, string project);
 
         /// <summary>
-        /// MSBuild Property from specific project
+        /// Defines user-variable
         /// </summary>
-        /// <param name="name">key property</param>
-        /// <param name="projectName">project name</param>
-        /// <returns>evaluated value</returns>
-        string getProperty(string name, string projectName);
+        /// <param name="name">variable name</param>
+        /// <param name="project">project name</param>
+        /// <param name="value">mixed string</param>
+        void setVariable(string name, string project, string value);
 
         /// <summary>
-        /// Evaluate data with the MSBuild engine.
-        /// Property Function Syntax: 
-        ///   http://msdn.microsoft.com/en-us/library/vstudio/dd633440%28v=vs.120%29.aspx
+        /// Removes user-variable
         /// </summary>
-        /// <param name="unevaluated">raw string as $(..data..)</param>
-        /// <param name="projectName"></param>
-        /// <returns>evaluated value</returns>
-        string evaluateVariable(string unevaluated, string projectName);
+        /// <param name="name">variable name</param>
+        /// <param name="project">project name</param>
+        void unsetVariable(string name, string project);
+
+        /// <summary>
+        /// Removes all user-variables
+        /// </summary>
+        void unsetVariables();
+
+        /// <summary>
+        /// Exposes the enumerator for defined names of user-variables
+        /// </summary>
+        IEnumerable<string> Variables { get; }
+
+        /// <summary>
+        /// Handler of mixed data SBE-Scripts
+        /// </summary>
+        /// <param name="data">mixed data</param>
+        /// <returns>prepared and evaluated data</returns>
+        string parse(string data);
     }
 }

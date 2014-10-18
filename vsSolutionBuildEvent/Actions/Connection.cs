@@ -36,7 +36,7 @@ using net.r_eg.vsSBE.Events;
 
 namespace net.r_eg.vsSBE.Actions
 {
-    public class Connection: IListenerOWPL
+    public class Connection: OWP.IListenerOWPL
     {
         /// <summary>
         /// Ignored all action if value as true
@@ -225,7 +225,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// Listener of raw OWP
         /// </summary>
-        void IListenerOWPL.raw(string data)
+        void OWP.IListenerOWPL.raw(string data)
         {
             if(!IsAllowActions)
             {
@@ -244,6 +244,8 @@ namespace net.r_eg.vsSBE.Actions
                 return;
             }
 
+            OWP.Items._.Build.updateRaw(data);
+
             //states[SolutionEventType.Transmitter] = new ExecStateType[Config._.Data.transmitter.Length];
             int idx = 0;
             foreach(SBETransmitter evt in Config._.Data.Transmitter)
@@ -253,7 +255,7 @@ namespace net.r_eg.vsSBE.Actions
                 }
                 else {
                     try {
-                        if(sbe.supportOWP(evt, SolutionEventType.Transmitter, data)) {
+                        if(sbe.basic(evt, SolutionEventType.Transmitter)) {
                             //Log.nlog.Trace("[Transmitter]: " + Config._.Data.transmitter.caption);
                         }
                         //states[SolutionEventType.Transmitter][idx] = ExecStateType.Success;
@@ -266,19 +268,17 @@ namespace net.r_eg.vsSBE.Actions
                 ++idx;
             }
 
-            OutputWPBuildParser res = new OutputWPBuildParser(ref data);
-
             //TODO: ExecStateType
 
             foreach(SBEEventEW evt in Config._.Data.WarningsBuild) {
                 if(evt.Enabled) {
-                    sbeEW(evt, OutputWPBuildParser.Type.Warnings, res);
+                    sbeEW(evt, OWP.BuildItem.Type.Warnings);
                 }
             }
 
             foreach(SBEEventEW evt in Config._.Data.ErrorsBuild) {
                 if(evt.Enabled) {
-                    sbeEW(evt, OutputWPBuildParser.Type.Errors, res);
+                    sbeEW(evt, OWP.BuildItem.Type.Errors);
                 }
             }
 
@@ -292,8 +292,10 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// Entry point to Errors/Warnings
         /// </summary>
-        protected int sbeEW(ISolutionEventEW evt, OutputWPBuildParser.Type type, OutputWPBuildParser info)
+        protected int sbeEW(ISolutionEventEW evt, OWP.BuildItem.Type type)
         {
+            OWP.BuildItem info = OWP.Items._.Build;
+
             // TODO: capture code####, message..
             if(!info.checkRule(type, evt.IsWhitelist, evt.Codes)) {
                 return VSConstants.S_OK;
@@ -305,7 +307,7 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             try {
-                if(sbe.basic(evt, type == OutputWPBuildParser.Type.Warnings ? SolutionEventType.Warnings : SolutionEventType.Errors)) {
+                if(sbe.basic(evt, type == OWP.BuildItem.Type.Warnings ? SolutionEventType.Warnings : SolutionEventType.Errors)) {
                     Log.nlog.Info("[{0}] finished SBE: {1}", type, evt.Caption);
                 }
                 return VSConstants.S_OK;
@@ -321,7 +323,7 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         protected int sbeOutput(ISolutionEventOWP evt, ref string raw)
         {
-            if(!(new OWPMatcher()).match(evt.Match, raw)) {
+            if(!(new OWP.Matcher()).match(evt.Match, raw)) {
                 return VSConstants.S_OK;
             }
 

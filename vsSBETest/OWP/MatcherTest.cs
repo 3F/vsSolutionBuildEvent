@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.vsSBE;
+using net.r_eg.vsSBE.OWP;
 
-namespace vsSBETest
+namespace vsSBETest.OWP
 {
     /// <summary>
-    ///This is a test class for OWPMatcherTest and is intended
-    ///to contain all OWPMatcherTest Unit Tests
+    ///This is a test class for MatcherTest and is intended
+    ///to contain all MatcherTest Unit Tests
     ///</summary>
     [TestClass()]
-    public class OWPMatcherTest
+    public class MatcherTest
     {
         private TestContext testContextInstance;
 
@@ -37,7 +38,7 @@ namespace vsSBETest
         [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void mWildcardsTest()
         {
-            OWPMatcherAccessor.ToWildcards target = new OWPMatcherAccessor.ToWildcards();
+            MatcherAccessor.ToWildcards target = new MatcherAccessor.ToWildcards();
             
             string raw          = "new tes;ted project-12, and 75_protection of various systems.";
             string rawExpected  = raw;
@@ -54,7 +55,7 @@ namespace vsSBETest
         [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void mWildcardsTest1()
         {
-            OWPMatcherAccessor.ToWildcards target = new OWPMatcherAccessor.ToWildcards();
+            MatcherAccessor.ToWildcards target = new MatcherAccessor.ToWildcards();
 
             string raw = "new tes;ted project-12, and 75_protection of various systems";
             
@@ -73,9 +74,9 @@ namespace vsSBETest
             Assert.AreEqual(false, target.mWildcards("systems+", ref raw));
         }
 
-        internal class OWPMatcherAccessor
+        internal class MatcherAccessor
         {
-            public class Accessor: OWPMatcher {}
+            public class Accessor: Matcher {}
 
             public class ToWildcards: Accessor
             {

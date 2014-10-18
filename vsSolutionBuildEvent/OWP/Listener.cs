@@ -34,24 +34,13 @@ using EnvDTE;
 using EnvDTE80;
 using System.Threading;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.OWP
 {
-    public interface IListenerOWPL
-    {
-        /// <summary>
-        /// raw data
-        /// e.g. Formatting the Output of a Custom Build Step or Build Event:
-        /// http://msdn.microsoft.com/en-us/library/yxkt8b26%28v=vs.100%29.aspx
-        /// </summary>
-        /// <param name="data"></param>
-        void raw(string data);
-    }
-
     /// <summary>
     /// Working with the OutputWindowsPane
     /// Must receive and send different data for own subscribers
     /// </summary>
-    internal class OutputWPListener: SynchSubscribers<IListenerOWPL>
+    internal class Listener: SynchSubscribers<IListenerOWPL>
     {
         /// <summary>
         /// Keep events for any pane
@@ -95,9 +84,9 @@ namespace net.r_eg.vsSBE
             }
         }
 
-        public OutputWPListener(DTE2 dte, string pName)
+        public Listener(IEnvironment env, string pName)
         {
-            evtOWP      = dte.Events.get_OutputWindowEvents(pName);
+            evtOWP      = env.DTE2.Events.get_OutputWindowEvents(pName);
             _ePUpdated  = new _dispOutputWindowEvents_PaneUpdatedEventHandler(evtPaneUpdated);
             _ePAdded    = new _dispOutputWindowEvents_PaneAddedEventHandler(evtPaneAdded);
             _ePClearing = new _dispOutputWindowEvents_PaneClearingEventHandler(evtPaneClearing);

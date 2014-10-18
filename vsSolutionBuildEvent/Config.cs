@@ -56,7 +56,7 @@ namespace net.r_eg.vsSBE
             /// Current config version
             /// Notice: version of app is controlled by Package
             /// </summary>
-            public static readonly System.Version Version = new System.Version(0, 7);
+            public static readonly System.Version Version = new System.Version(0, 9);
 
             /// <summary>
             /// To file system
@@ -74,7 +74,7 @@ namespace net.r_eg.vsSBE
         protected SolutionEvents data = null;
         
         /// <summary>
-        /// Getting the instance of Config class
+        /// Thread-safe getting the instance of Config class
         /// </summary>
         public static Config _
         {

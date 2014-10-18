@@ -40,11 +40,11 @@ using Microsoft.Build.Collections;
 using Microsoft.Build.Evaluation;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Exceptions;
-using net.r_eg.vsSBE.MSBuild;
+using net.r_eg.vsSBE.SBEScripts;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.MSBuild
 {
-    public class MSBuildParser: IMSBuildProperty, ISBEParser
+    public class MSBuildParser: IMSBuild
     {
         /// <summary>
         /// Provides operation with environment
@@ -52,10 +52,9 @@ namespace net.r_eg.vsSBE
         protected IEnvironment env;
 
         /// <summary>
-        /// Definitions of user scripts
+        /// Work with SBE-Scripts
         /// </summary>
-        protected ConcurrentDictionary<string, string> definitions = new ConcurrentDictionary<string, string>();
-
+        protected ISBEScript script;
         /// <summary>
         /// object synch.
         /// </summary>
@@ -80,11 +79,10 @@ namespace net.r_eg.vsSBE
         /// <returns>Evaluated value of property</returns>
         public virtual string getProperty(string name, string projectName)
         {
-            string defindex = String.Format("{0}:{1}", name, projectName);
-
-            if(definitions.ContainsKey(defindex)) {
-                Log.nlog.Debug("Evaluate: use from definitions");
-                return definitions[defindex];
+            string defVariable = script.getVariable(name, projectName);
+            if(defVariable != null) {
+                Log.nlog.Debug("Evaluate: use the user-defined variable");
+                return defVariable;
             }
 
             if(projectName == null)
@@ -134,7 +132,7 @@ namespace net.r_eg.vsSBE
         /// <param name="unevaluated">raw string as $(..data..)</param>
         /// <param name="projectName">push null if default</param>
         /// <returns>evaluated value</returns>
-        public virtual string evaluateVariable(string unevaluated, string projectName)
+        public virtual string evaluate(string unevaluated, string projectName)
         {
             const string container  = "vsSBE_latestEvaluated";
             Project project         = env.getProject(projectName);
@@ -152,12 +150,12 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Simple handler properties of MSBuild environment
+        /// Simple handler for MSBuild environment
         /// </summary>
         /// <param name="data">text with $(ident) data</param>
         /// <returns>text with evaluated properties</returns>
-        [Obsolete("Use the parseVariablesMSBuild", false)]
-        public string parseVariablesMSBuildSimple(string data)
+        [Obsolete("Use parse()", false)]
+        public string parseVariable(string data)
         {
             return Regex.Replace(data, @"
                                          (?<!\$)\$
@@ -188,7 +186,12 @@ namespace net.r_eg.vsSBE
             }, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace).Replace("$$(", "$(");
         }
 
-        public virtual string parseVariablesMSBuild(string data)
+        /// <summary>
+        /// Handler of variables/properties MSBuild
+        /// </summary>
+        /// <param name="data">string with $(ident) data</param>
+        /// <returns>All evaluated values for data</returns>
+        public virtual string parse(string data)
         {
             /*
                     (
@@ -245,6 +248,7 @@ namespace net.r_eg.vsSBE
         /// <param name="ident">Expected variable. What we're looking for..</param>
         /// <param name="vTrue">Value if found</param>
         /// <returns>String with evaluated data as vTrue value or unevaluated as is</returns>
+        [Obsolete("Use the SBE-Scripts", false)]
         public virtual string parseVariablesSBE(string raw, string ident, string vTrue)
         {
             return Regex.Replace(raw, @"(
@@ -264,9 +268,21 @@ namespace net.r_eg.vsSBE
         }
 
         /// <param name="env">Used environment</param>
+        /// <param name="script">Used SBE-Scripts</param>
+        public MSBuildParser(IEnvironment env, ISBEScript script)
+        {
+            this.env    = env;
+            this.script = script;
+        }
+
+        /// <summary>
+        /// Instance with default SBE-Scripts
+        /// </summary>
+        /// <param name="env">Used environment</param>
         public MSBuildParser(IEnvironment env)
         {
-            this.env = env;
+            this.env    = env;
+            this.script = new Script();
         }
 
         /// <param name="raw">raw data at format - '(..data..)'</param>
@@ -387,7 +403,7 @@ namespace net.r_eg.vsSBE
                 if(!prepared.property.completed) {
                     Log.nlog.Debug("Evaluate: use the evaluateVariable for: '{0}' -> [{1}]", 
                                                  prepared.property.nested.data, prepared.property.project);
-                    evaluated = evaluateVariable(prepared.property.nested.data, prepared.property.project);
+                    evaluated = evaluate(prepared.property.nested.data, prepared.property.project);
                 }
                 else {
                     Log.nlog.Debug("Evaluate: ready to '{0}'", prepared.property.nested.data);
@@ -395,12 +411,12 @@ namespace net.r_eg.vsSBE
                 }
             }
 
+            //TODO: *!* Deprecated - use SBE-Scripts *!*
             if(!String.IsNullOrEmpty(prepared.variable.name))
             {
                 //INFO: prepared.variable.isPersistence - [reserved]
-                string defindex = String.Format("{0}:{1}", prepared.variable.name, prepared.variable.project);
-                Log.nlog.Debug("Variable of user: set '{0}' = '{1}'", defindex, evaluated);
-                definitions[defindex] = evaluated;
+                Log.nlog.Debug("Evaluate: found definition of user-variable");
+                script.setVariable(prepared.variable.name, prepared.variable.project, evaluated);
                 evaluated = "";
             }
 
@@ -575,7 +591,7 @@ namespace net.r_eg.vsSBE
                 //if(!String.IsNullOrEmpty(eProject) && !_isPropertySimple(ref eProject)) {
                 //    //eProject = evaluateVariable(eProject, null); // should be set as part of eData, e.g.: $(project) if needed
                 //}
-                evaluated  = _isPropertySimple(ref eData) ? getProperty(eData, eProject) : evaluateVariable(eData, eProject);
+                evaluated  = _isPropertySimple(ref eData) ? getProperty(eData, eProject) : evaluate(eData, eProject);
                 Log.nlog.Debug("nested: evaluated '{0}':'{1}' == '{2}'", eData, eProject, evaluated);
 
                 return evaluated;
@@ -613,13 +629,5 @@ namespace net.r_eg.vsSBE
             this.name  = name;
             this.value = value;
         }
-    }
-
-    //TODO:
-    internal struct SBECustomVariable
-    {
-        public const string OWP_BUILD           = "vsSBE_OWPBuild";
-        public const string OWP_BUILD_WARNINGS  = "vsSBE_OWPBuildWarnings";
-        public const string OWP_BUILD_ERRORS    = "vsSBE_OWPBuildErrors";
     }
 }

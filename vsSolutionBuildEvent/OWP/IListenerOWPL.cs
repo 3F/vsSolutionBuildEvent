@@ -26,51 +26,16 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System.Collections.Generic;
-
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.OWP
 {
-    public interface IEnvironment
+    public interface IListenerOWPL
     {
         /// <summary>
-        /// Provides projects from EnvDTE
+        /// raw data
+        /// e.g. Formatting the Output of a Custom Build Step or Build Event:
+        /// http://msdn.microsoft.com/en-us/library/yxkt8b26%28v=vs.100%29.aspx
         /// </summary>
-        IEnumerable<EnvDTE.Project> DTEProjects { get; }
-
-        /// <summary>
-        /// Simple list of names from EnvDTE projects
-        /// </summary>
-        List<string> DTEProjectsList { get; }
-
-        /// <summary>
-        /// Should provide the Build.Evaluation.Project by project name
-        /// </summary>
-        Microsoft.Build.Evaluation.Project getProject(string project);
-
-        /// <summary>
-        /// Should provide active configuration for current solution
-        /// </summary>
-        EnvDTE80.SolutionConfiguration2 SolutionActiveConfiguration { get; }
-
-        /// <summary>
-        /// Should provide all configurations for current solution
-        /// </summary>
-        IEnumerable<EnvDTE80.SolutionConfiguration2> SolutionConfigurations { get; }
-
-        /// <summary>
-        /// Name from "Set as SturtUp Project"
-        /// </summary>
-        string StartupProjectString { get; }
-
-        /// <summary>
-        /// Provide global property for all existing projects
-        /// </summary>
-        /// <param name="name">Property name</param>
-        string getSolutionGlobalProperty(string name);
-
-        /// <summary>
-        /// DTE context
-        /// </summary>
-        EnvDTE80.DTE2 DTE2 { get; }
+        /// <param name="data"></param>
+        void raw(string data);
     }
 }

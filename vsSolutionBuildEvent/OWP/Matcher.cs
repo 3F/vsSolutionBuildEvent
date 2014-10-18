@@ -33,9 +33,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Events;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.OWP
 {
-    public class OWPMatcher
+    public class Matcher
     {
 
         /// <summary>

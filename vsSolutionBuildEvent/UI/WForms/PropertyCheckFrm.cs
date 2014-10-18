@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using net.r_eg.vsSBE.MSBuild;
 
 namespace net.r_eg.vsSBE.UI
 {
@@ -37,7 +38,7 @@ namespace net.r_eg.vsSBE.UI
             string evaluated;
             try {
                 // for a specific project use like this: $($(var):project)
-                evaluated = _parser.parseVariablesMSBuild(textBoxUnevaluated.Text.Trim());
+                evaluated = _parser.parse(textBoxUnevaluated.Text.Trim());
             }
             catch(Exception ex) {
                 evaluated = ex.Message;

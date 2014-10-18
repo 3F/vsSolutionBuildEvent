@@ -26,37 +26,40 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.MSBuild
 {
-    public interface ISBEParser
+    public interface IMSBuild
     {
         /// <summary>
-        /// Handler of variables/properties
+        /// MSBuild Property from default Project
         /// </summary>
-        /// <param name="data">string with $(ident) data</param>
-        /// <returns>All evaluated values for data</returns>
-        string parseVariablesMSBuild(string data);
+        /// <param name="name">key property</param>
+        /// <returns>evaluated value</returns>
+        string getProperty(string name);
 
         /// <summary>
-        /// Handler of SBE-variables for internal processing
+        /// MSBuild Property from specific project
         /// </summary>
-        /// <param name="raw"></param>
-        /// <param name="ident">Expected variable</param>
-        /// <param name="vTrue">Value if found</param>
-        /// <returns>String with evaluated data as vTrue value or unevaluated as is</returns>
-        string parseVariablesSBE(string raw, string ident, string vTrue);
+        /// <param name="name">key property</param>
+        /// <param name="projectName">project name</param>
+        /// <returns>evaluated value</returns>
+        string getProperty(string name, string projectName);
 
         /// <summary>
-        /// Should evaluating property-data
+        /// Evaluate data with the MSBuild engine.
+        /// Property Function Syntax: 
+        ///   http://msdn.microsoft.com/en-us/library/vstudio/dd633440%28v=vs.120%29.aspx
         /// </summary>
         /// <param name="unevaluated">raw unevaluated data</param>
         /// <param name="projectName">Specific project for evaluating</param>
         /// <returns>Evaluated end value</returns>
-        string evaluateVariable(string unevaluated, string projectName);
+        string evaluate(string unevaluated, string projectName);
+
+        /// <summary>
+        /// Handler of variables/properties MSBuild
+        /// </summary>
+        /// <param name="data">string with $(ident) data</param>
+        /// <returns>All evaluated values for data</returns>
+        string parse(string data);
     }
 }

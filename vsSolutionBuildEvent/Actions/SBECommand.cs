@@ -28,14 +28,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Diagnostics;
-using EnvDTE80;
-using System.Runtime.InteropServices;
 using System.Globalization;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.MSBuild;
+using net.r_eg.vsSBE.SBEScripts;
 
 namespace net.r_eg.vsSBE.Actions
 {
@@ -75,17 +76,20 @@ namespace net.r_eg.vsSBE.Actions
             }
         }
 
-        protected MSBuildParser parser;
+        /// <summary>
+        /// Work with SBE-Scripts
+        /// </summary>
+        protected ISBEScript script;
+
+        /// <summary>
+        /// Work with MSBuild
+        /// </summary>
+        protected IMSBuild msbuild;
 
         /// <summary>
         /// Used environment
         /// </summary>
         protected Environment env;
-
-        /// <summary>
-        /// Special raw data from the output window pane
-        /// </summary>
-        protected string owpDataRaw;
 
         /// <summary>
         /// For additional handling
@@ -132,22 +136,14 @@ namespace net.r_eg.vsSBE.Actions
             return hModeFile(evt);
         }
 
-        /// <summary>
-        /// Addition accompanying information from assembly
-        /// </summary>
-        /// <param name="evt"></param>
-        /// <param name="raw"></param>
-        /// <returns></returns>
-        public bool supportOWP(ISolutionEvent evt, SolutionEventType type, string raw)
+        /// <param name="env">Used environment</param>
+        /// <param name="script">Used SBE-Scripts</param>
+        /// <param name="msbuild">Used MSBuild</param>
+        public SBECommand(Environment env, ISBEScript script, IMSBuild msbuild)
         {
-            owpDataRaw = raw;
-            return basic(evt, type);
-        }
-
-        public SBECommand(Environment env, MSBuildParser parser)
-        {
-            this.env    = env;
-            this.parser = parser;
+            this.env        = env;
+            this.script     = script;
+            this.msbuild    = msbuild;
         }
 
         public void updateContext(ShellContext context)
@@ -159,7 +155,7 @@ namespace net.r_eg.vsSBE.Actions
         {
             string cFiles = ((IModeFile)evt.Mode).Command;
 
-            parseVariables(evt, ref cFiles);
+            parseScript(evt, ref cFiles);
             useShell(evt, _treatNewlineAs(" & ", cFiles));
 
             return true;
@@ -184,7 +180,7 @@ namespace net.r_eg.vsSBE.Actions
             string script   = ((IModeInterpreter)evt.Mode).Command;
             string wrapper  = ((IModeInterpreter)evt.Mode).Wrapper;
 
-            parseVariables(evt, ref script);
+            parseScript(evt, ref script);
             script = _treatNewlineAs(((IModeInterpreter)evt.Mode).Newline, script);
 
             switch(wrapper.Length) {
@@ -239,14 +235,14 @@ namespace net.r_eg.vsSBE.Actions
             }
         }
 
-        protected void parseVariables(ISolutionEvent evt, ref string data)
+        protected void parseScript(ISolutionEvent evt, ref string data)
         {
-            data = parser.parseVariablesSBE(data, SBECustomVariable.OWP_BUILD, owpDataRaw);
-            data = parser.parseVariablesSBE(data, SBECustomVariable.OWP_BUILD_WARNINGS, null); // reserved
-            data = parser.parseVariablesSBE(data, SBECustomVariable.OWP_BUILD_ERRORS, null);   // reserved
+            if(evt.SupportSBEScripts) {
+                data = script.parse(data);
+            }
 
             if(evt.SupportMSBuild) {
-                data = parser.parseVariablesMSBuild(data);
+                data = msbuild.parse(data);
             }
         }
 

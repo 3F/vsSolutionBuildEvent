@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using EnvDTE;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.vsSBE;
+using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
 
-namespace vsSBETest
+namespace vsSBETest.Actions
 {
     /// <summary>
     ///This is a test class for DTEOperationTest and is intended
