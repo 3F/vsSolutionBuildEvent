@@ -55,6 +55,7 @@ namespace net.r_eg.vsSBE.MSBuild
         /// Work with SBE-Scripts
         /// </summary>
         protected ISBEScript script;
+
         /// <summary>
         /// object synch.
         /// </summary>
@@ -94,8 +95,8 @@ namespace net.r_eg.vsSBE.MSBuild
                 }
             }
 
-            Project project         = env.getProject(projectName);
-            ProjectProperty prop    = project.GetProperty(name);
+            Project project = env.getProject(projectName);
+            ProjectProperty prop = project.GetProperty(name);
 
             if(prop != null) {
                 return prop.EvaluatedValue;

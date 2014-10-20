@@ -68,22 +68,6 @@ namespace net.r_eg.vsSBE.Actions
             get { return !silent; }
         }
 
-        /// <summary>
-        /// TODO: *!* refact. & place to another component for work with scripts
-        /// see: https://bitbucket.org/3F/vssolutionbuildevent/issue/19/multi-actions#comment-12799056
-        /// </summary>
-        protected volatile Dictionary<SolutionEventType, ExecStateType[]> states = new Dictionary<SolutionEventType, ExecStateType[]>();
-
-        protected enum ExecStateType
-        {
-            Success,
-            Fail,
-            /// <summary>
-            ///  Support of deferred events
-            /// </summary>
-            Deferred
-        }
-
         public Connection(SBECommand sbe)
         {
             this.sbe = sbe;
@@ -104,20 +88,17 @@ namespace net.r_eg.vsSBE.Actions
                 return _ignoredAction(SolutionEventType.Pre);
             }
 
-            states[SolutionEventType.Pre] = new ExecStateType[Config._.Data.PreBuild.Length];
-            int idx = 0;
             foreach(SBEEvent item in Config._.Data.PreBuild)
             {
                 if(hasExecutionOrder(item)) {
                     Log.nlog.Info("[Pre] SBE has deferred action: '{0}' :: waiting... ", item.Caption);
-                    states[SolutionEventType.Pre][idx] = ExecStateType.Deferred;
+                    Status._.add(SolutionEventType.Pre, StatusType.Deferred);
                 }
                 else {
-                    states[SolutionEventType.Pre][idx] = (execPre(item) == VSConstants.S_OK)? ExecStateType.Success : ExecStateType.Fail;
+                    Status._.add(SolutionEventType.Pre, (execPre(item) == VSConstants.S_OK)? StatusType.Success : StatusType.Fail);
                 }
-                ++idx;
             }
-            return states[SolutionEventType.Pre].Contains(ExecStateType.Fail) ? VSConstants.E_FAIL : VSConstants.S_OK;
+            return Status._.get(SolutionEventType.Pre).Contains(StatusType.Fail)? VSConstants.E_FAIL : VSConstants.S_OK;
         }
 
         /// <summary>
@@ -135,31 +116,30 @@ namespace net.r_eg.vsSBE.Actions
                 return _ignoredAction(SolutionEventType.Post);
             }
 
-            states[SolutionEventType.Post] = new ExecStateType[evt.Length];
-            for(int i = 0; i < evt.Length; ++i)
+            foreach(SBEEvent item in evt)
             {
-                if(fSucceeded != 1 && evt[i].IgnoreIfBuildFailed) {
-                    Log.nlog.Info("[Post] ignored action '{0}' :: Build FAILED. See option 'Ignore if the build failed'", evt[i].Caption);
+                if(fSucceeded != 1 && item.IgnoreIfBuildFailed) {
+                    Log.nlog.Info("[Post] ignored action '{0}' :: Build FAILED. See option 'Ignore if the build failed'", item.Caption);
                     continue;
                 }
 
-                if(!isReached(evt[i])) {
-                    Log.nlog.Info("[Post] ignored action '{0}' ::  not reached selected projects in execution order", evt[i].Caption);
+                if(!isReached(item)) {
+                    Log.nlog.Info("[Post] ignored action '{0}' ::  not reached selected projects in execution order", item.Caption);
                     continue;
                 }
 
                 try {
-                    if(sbe.basic(evt[i], SolutionEventType.Post)) {
-                        Log.nlog.Info("[Post] finished SBE: {0}", evt[i].Caption);
+                    if(sbe.basic(item, SolutionEventType.Post)) {
+                        Log.nlog.Info("[Post] finished SBE: {0}", item.Caption);
                     }
-                    states[SolutionEventType.Post][i] = ExecStateType.Success;
+                    Status._.add(SolutionEventType.Post, StatusType.Success);
                 }
                 catch(Exception ex) {
                     Log.nlog.Error("Post-Build error: {0}", ex.Message);
-                    states[SolutionEventType.Post][i] = ExecStateType.Fail;
+                    Status._.add(SolutionEventType.Post, StatusType.Fail);
                 }
             }
-            return states[SolutionEventType.Post].Contains(ExecStateType.Fail) ? VSConstants.E_FAIL : VSConstants.S_OK;
+            return Status._.get(SolutionEventType.Post).Contains(StatusType.Fail)? VSConstants.E_FAIL : VSConstants.S_OK;
         }
 
         /// <summary>
@@ -195,26 +175,25 @@ namespace net.r_eg.vsSBE.Actions
                 return _ignoredAction(SolutionEventType.Cancel);
             }
 
-            states[SolutionEventType.Cancel] = new ExecStateType[evt.Length];
-            for(int i = 0; i < evt.Length; ++i)
+            foreach(SBEEvent item in evt)
             {
-                if(!isReached(evt[i])) {
-                    Log.nlog.Info("[Cancel] ignored action '{0}' :: not reached selected projects in execution order", evt[i].Caption);
+                if(!isReached(item)) {
+                    Log.nlog.Info("[Cancel] ignored action '{0}' :: not reached selected projects in execution order", item.Caption);
                     continue;
                 }
 
                 try {
-                    if(sbe.basic(evt[i], SolutionEventType.Cancel)) {
-                        Log.nlog.Info("[Cancel] finished SBE: {0}", evt[i].Caption);
+                    if(sbe.basic(item, SolutionEventType.Cancel)) {
+                        Log.nlog.Info("[Cancel] finished SBE: {0}", item.Caption);
                     }
-                    states[SolutionEventType.Cancel][i] = ExecStateType.Success;
+                    Status._.add(SolutionEventType.Cancel, StatusType.Success);
                 }
                 catch(Exception ex) {
                     Log.nlog.Error("Cancel-Build error: {0}", ex.Message);
-                    states[SolutionEventType.Cancel][i] = ExecStateType.Fail;
+                    Status._.add(SolutionEventType.Cancel, StatusType.Fail);
                 }
             }
-            return states[SolutionEventType.Cancel].Contains(ExecStateType.Fail) ? VSConstants.E_FAIL : VSConstants.S_OK;
+            return Status._.get(SolutionEventType.Cancel).Contains(StatusType.Fail)? VSConstants.E_FAIL : VSConstants.S_OK;
         }
 
         public void updateContext(SBECommand.ShellContext context)
@@ -244,10 +223,8 @@ namespace net.r_eg.vsSBE.Actions
                 return;
             }
 
-            OWP.Items._.Build.updateRaw(data);
-
-            //states[SolutionEventType.Transmitter] = new ExecStateType[Config._.Data.transmitter.Length];
-            int idx = 0;
+            //TODO: IStatus
+            
             foreach(SBETransmitter evt in Config._.Data.Transmitter)
             {
                 if(!isExecute(evt, current)) {
@@ -258,14 +235,11 @@ namespace net.r_eg.vsSBE.Actions
                         if(sbe.basic(evt, SolutionEventType.Transmitter)) {
                             //Log.nlog.Trace("[Transmitter]: " + Config._.Data.transmitter.caption);
                         }
-                        //states[SolutionEventType.Transmitter][idx] = ExecStateType.Success;
                     }
                     catch(Exception ex) {
                         Log.nlog.Error("Transmitter error: {0}", ex.Message);
-                        //states[SolutionEventType.Transmitter][idx] = ExecStateType.Fail;
                     }
                 }
-                ++idx;
             }
 
             //TODO: ExecStateType
@@ -307,7 +281,7 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             try {
-                if(sbe.basic(evt, type == OWP.BuildItem.Type.Warnings ? SolutionEventType.Warnings : SolutionEventType.Errors)) {
+                if(sbe.basic(evt, (type == OWP.BuildItem.Type.Warnings)? SolutionEventType.Warnings : SolutionEventType.Errors)) {
                     Log.nlog.Info("[{0}] finished SBE: {1}", type, evt.Caption);
                 }
                 return VSConstants.S_OK;
@@ -366,11 +340,11 @@ namespace net.r_eg.vsSBE.Actions
             int idx = 0;
             foreach(SBEEvent item in Config._.Data.PreBuild) {
                 if(hasExecutionOrder(item)) {
-                    states[SolutionEventType.Pre][idx] = execPre(item) == VSConstants.S_OK ? ExecStateType.Success : ExecStateType.Fail;
+                    Status._.update(SolutionEventType.Pre, idx, (execPre(item) == VSConstants.S_OK)? StatusType.Success : StatusType.Fail);
                 }
                 ++idx;
             }
-            return states[SolutionEventType.Pre].Contains(ExecStateType.Fail) ? VSConstants.E_FAIL : VSConstants.S_OK;
+            return Status._.get(SolutionEventType.Pre).Contains(StatusType.Fail)? VSConstants.E_FAIL : VSConstants.S_OK;
         }
 
         protected string getProjectName(IVsHierarchy pHierProj)
@@ -456,7 +430,7 @@ namespace net.r_eg.vsSBE.Actions
 
             Log.nlog.Trace("onProject: '{0}':{1} == {2}", project, type, fSuccess);
 
-            if(states[SolutionEventType.Pre].Contains(ExecStateType.Deferred)) {
+            if(Status._.get(SolutionEventType.Pre).Contains(StatusType.Deferred)) {
                 monitoringPre(project, type, fSuccess);
             }
         }
@@ -472,7 +446,7 @@ namespace net.r_eg.vsSBE.Actions
             SBEEvent[] evt = Config._.Data.PreBuild;
             for(int i = 0; i < evt.Length; ++i)
             {
-                if(!evt[i].Enabled || states[SolutionEventType.Pre][i] != ExecStateType.Deferred) {
+                if(!evt[i].Enabled || Status._.get(SolutionEventType.Pre, i) != StatusType.Deferred) {
                     continue;
                 }
 
@@ -493,7 +467,7 @@ namespace net.r_eg.vsSBE.Actions
 
                 if(evt[i].ExecutionOrder.Where(o => o.Project == project && o.Order == type).Count() > 0) {
                     Log.nlog.Info("Incoming '{0}'({1}) :: Execute the deferred action: '{2}'", project, type, evt[i].Caption);
-                    states[SolutionEventType.Pre][i] = (execPre(evt[i]) == VSConstants.S_OK) ? ExecStateType.Success : ExecStateType.Fail;
+                    Status._.update(SolutionEventType.Pre, i, (execPre(evt[i]) == VSConstants.S_OK)? StatusType.Success : StatusType.Fail);
                 }
             }
         }
@@ -527,7 +501,7 @@ namespace net.r_eg.vsSBE.Actions
         private void _flushExecuted()
         {
             projects.Clear();
-            states.Clear();
+            Status._.flush();
         }
     }
 }

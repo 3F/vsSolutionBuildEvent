@@ -52,6 +52,11 @@ namespace net.r_eg.vsSBE.OWP
         protected System.Threading.Thread tUpdated;
 
         /// <summary>
+        /// Used item by name
+        /// </summary>
+        protected string item;
+
+        /// <summary>
         /// previous count of lines for EditPoint::GetLines
         /// </summary>
         private int _prevCountLines = 1;
@@ -84,9 +89,10 @@ namespace net.r_eg.vsSBE.OWP
             }
         }
 
-        public Listener(IEnvironment env, string pName)
+        public Listener(IEnvironment env, string item)
         {
-            evtOWP      = env.DTE2.Events.get_OutputWindowEvents(pName);
+            this.item   = item;
+            evtOWP      = env.DTE2.Events.get_OutputWindowEvents(item);
             _ePUpdated  = new _dispOutputWindowEvents_PaneUpdatedEventHandler(evtPaneUpdated);
             _ePAdded    = new _dispOutputWindowEvents_PaneAddedEventHandler(evtPaneAdded);
             _ePClearing = new _dispOutputWindowEvents_PaneClearingEventHandler(evtPaneClearing);
@@ -109,7 +115,8 @@ namespace net.r_eg.vsSBE.OWP
                     envelope += dataList[0];
                     dataList.RemoveAt(0);
                 }
-            
+
+                updateComponent(envelope);
                 foreach(IListenerOWPL l in subscribers) {
                     l.raw(envelope);
                 }
@@ -158,6 +165,16 @@ namespace net.r_eg.vsSBE.OWP
         {
             _prevCountLines = 1;
             dataList.Clear();
+        }
+
+        protected void updateComponent(string data)
+        {
+            switch(item) {
+                case "Build": {
+                    Items._.Build.updateRaw(data);
+                    return;
+                }
+            }
         }
     }
 }

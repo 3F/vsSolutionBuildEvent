@@ -32,30 +32,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.SBEScripts.Components;
 
 namespace net.r_eg.vsSBE.SBEScripts
 {
     public class Script: ISBEScript
     {
         /// <summary>
-        /// Definitions of user-variable
+        /// Work with user-variables
         /// </summary>
-        protected ConcurrentDictionary<string, string> definitions = new ConcurrentDictionary<string, string>();
+        protected IUserVariable uvariable = new UserVariable();
 
         /// <summary>
-        /// Getting user-defined variable
+        /// Getting user-variable
         /// </summary>
         /// <param name="name">variable name</param>
         /// <param name="project">project name</param>
         /// <returns>evaluated value of variable or null if variable not defined</returns>
         public string getVariable(string name, string project = null)
         {
-            string defindex = String.Format("{0}:{1}", name, project);
-
-            if(!definitions.ContainsKey(defindex)) {
-                return null;
-            }
-            return definitions[defindex];
+            return uvariable.getVariable(name, project);
         }
 
         /// <summary>
@@ -66,13 +63,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <param name="value">mixed string. Converted to empty string if value is null</param>
         public void setVariable(string name, string project, string value)
         {
-            if(value == null) {
-                value = String.Empty;
-            }
-            string defindex = String.Format("{0}:{1}", name, project);
-
-            Log.nlog.Debug("User-variable: define '{0}' = '{1}'", defindex, value);
-            definitions[defindex] = value;
+            uvariable.setVariable(name, project, value);
         }
 
         /// <summary>
@@ -83,12 +74,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <exception cref="ArgumentNullException">key is null</exception>
         public void unsetVariable(string name, string project)
         {
-            string res;
-            if(!definitions.TryRemove(name, out res)) {
-                Log.nlog.Debug("Cannot unset the user-variable '{0}'", name);
-                return;
-            }
-            Log.nlog.Debug("User-variable is successfully unset '{0}'", name);
+            uvariable.unsetVariable(name, project);
         }
 
         /// <summary>
@@ -96,8 +82,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// </summary>
         public void unsetVariables()
         {
-            definitions.Clear();
-            Log.nlog.Debug("All User-variables is successfully reseted");
+            uvariable.unsetVariables();
         }
 
         /// <summary>
@@ -106,22 +91,87 @@ namespace net.r_eg.vsSBE.SBEScripts
         public IEnumerable<string> Variables
         {
             get {
-                foreach(KeyValuePair<string, string> def in definitions) {
-                    yield return def.Key;
-                }
+                return uvariable.Variables;
             }
         }
 
         /// <summary>
         /// Handler of mixed data SBE-Scripts
+        /// Format: https://bitbucket.org/3F/vssolutionbuildevent/issue/22/#comment-12739932
         /// </summary>
         /// <param name="data">mixed data</param>
         /// <returns>prepared & evaluated data</returns>
         public string parse(string data)
         {
-            //TODO:
-            throw new NotImplementedException();
+            /*
+                    (
+                      \#{1,2}
+                    )
+                    (?=
+                      (
+                        \[
+                          (?>
+                            [^\[\]]
+                            |
+                            (?2)
+                          )*
+                        \]
+                      )
+                    )            -> for .NET: v
+             */
+            return Regex.Replace(data, @"(
+                                            \#{1,2}   #1 - # or ##
+                                          )
+                                          (           #2 - mixed data of SBE-Script
+                                            \[
+                                              (?>
+                                                [^\[\]]
+                                                |
+                                                \[(?<R>)
+                                                |
+                                                \](?<-R>)
+                                              )*
+                                              (?(R)(?!))
+                                            \]
+                                          )", 
+            delegate(Match m)
+            {
+                if(m.Groups[1].Value.Length > 1) { //escape
+                    Log.nlog.Debug("SBEScripts: escape - '{0}'", m.Groups[1].Value);
+                    return m.Value.Substring(1);
+                }
+                Log.nlog.Debug("SBEScripts-data: '{0}'", data);
+                return selector(m.Groups[2].Value);
+            }, 
+            RegexOptions.IgnorePatternWhitespace);
         }
 
+        /// <summary>
+        /// Work with SBE-Script by components
+        /// </summary>
+        /// <param name="data">mixed data</param>
+        /// <returns>prepared & evaluated data</returns>
+        protected string selector(string data)
+        {
+            if(data.StartsWith("[var "))
+            {
+                Log.nlog.Debug("SBEScripts-selector: use UserVariableComponent");
+                UserVariableComponentResult res = (new UserVariableComponent()).parse(data);
+                uvariable.setVariable(res.name, res.project, res.value);
+                return String.Empty;
+            }
+
+            if(data.StartsWith("[OWP ")) {
+                Log.nlog.Debug("SBEScripts-selector: use OWPComponent");
+                return (new OWPComponent()).parse(data);
+            }
+
+            if(data.StartsWith("[File ")) {
+                Log.nlog.Debug("SBEScripts-selector: use FileComponent");
+                return (new FileComponent()).parse(data);
+            }
+
+            throw new SelectorMismatchException("input data: '{0}'", data);
+        }
     }
 }

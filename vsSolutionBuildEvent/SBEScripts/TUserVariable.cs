@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg [Denis Kuzmin] <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg [Denis Kuzmin] <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -26,28 +26,38 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace net.r_eg.vsSBE.Exceptions
+namespace net.r_eg.vsSBE.SBEScripts
 {
-    public class MSBProjectNotFoundException: SBEException
+    public struct TUserVariable
     {
-        public MSBProjectNotFoundException(string message): base(message) {}
-        public MSBProjectNotFoundException(string message, params object[] args): base(message, args) {}
-    }
+        /// <summary>
+        /// Contains the evaluated data or escaped variable/property (without escape symbol)
+        /// Using from current the unevaluated field
+        /// </summary>
+        public string evaluated;
 
-    public class MSBPropertyNotFoundException: MSBProjectNotFoundException
-    {
-        public MSBPropertyNotFoundException(string message): base(message) {}
-        public MSBPropertyNotFoundException(string message, params object[] args): base(message, args) {}
-    }
+        /// <summary>
+        /// Contains the unevaluated mixed data
+        /// May contain the another user-variable etc.
+        /// </summary>
+        public string unevaluated;
 
-    public class MSBPropertyParseException: MSBProjectNotFoundException
-    {
-        public MSBPropertyParseException(string message): base(message) {}
-        public MSBPropertyParseException(string message, params object[] args): base(message, args) {}
+        /// <summary>
+        /// Used name for this User-Variable
+        /// </summary>
+        //public string name;
+
+        /// <summary>
+        /// Specific project where use this variable.
+        /// null value - project by default
+        /// </summary>
+        //public string project;
+
+        /// <summary>
+        /// Storing in the projects files ~ .csproj, .vcxproj, .. 
+        /// or with the external containers
+        /// </summary>
+        /// <remarks>reserved</remarks>
+        public bool isPersistence;
     }
 }

@@ -141,6 +141,7 @@
     <Compile Include="Events\EventProcess.cs" />
     <Compile Include="Events\IEventProcess.cs" />
     <Compile Include="Events\IExecutionOrder.cs" />
+    <Compile Include="Exceptions\SBEScriptException.cs" />
     <Compile Include="IMatchWords.cs" />
     <Compile Include="Events\IModeFile.cs" />
     <Compile Include="Events\IModeInterpreter.cs" />
@@ -148,6 +149,19 @@
     <Compile Include="OWP\IItems.cs" />
     <Compile Include="OWP\IListenerOWPL.cs" />
     <Compile Include="OWP\Items.cs" />
+    <Compile Include="SBEScripts\Components\CommentComponent.cs" />
+    <Compile Include="SBEScripts\Components\ConditionComponent.cs" />
+    <Compile Include="SBEScripts\Components\FileComponent.cs" />
+    <Compile Include="SBEScripts\Components\FunctionComponent.cs" />
+    <Compile Include="SBEScripts\Components\OWPComponent.cs" />
+    <Compile Include="SBEScripts\Components\DTEComponent.cs" />
+    <Compile Include="SBEScripts\Components\BuildComponent.cs" />
+    <Compile Include="SBEScripts\Components\UserVariableComponent.cs" />
+    <Compile Include="SBEScripts\Components\IComponent.cs" />
+    <Compile Include="SBEScripts\Components\InternalComponent.cs" />
+    <Compile Include="Actions\IStatus.cs" />
+    <Compile Include="Actions\Status.cs" />
+    <Compile Include="SBEScripts\IUserVariable.cs" />
     <Compile Include="SBEScripts\ISBEScript.cs" />
     <Compile Include="MatchWords.cs" />
     <Compile Include="Events\ModeFile.cs" />
@@ -165,6 +179,8 @@
     <Compile Include="Events\SBEEventEW.cs" />
     <Compile Include="Events\SBETransmitter.cs" />
     <Compile Include="SBEScripts\Script.cs" />
+    <Compile Include="SBEScripts\TUserVariable.cs" />
+    <Compile Include="SBEScripts\UserVariable.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SynchSubscribers.cs" />
     <Compile Include="MSBuild\TPreparedData.cs" />

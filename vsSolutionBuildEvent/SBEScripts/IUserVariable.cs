@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg [Denis Kuzmin] <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg [Denis Kuzmin] <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -26,28 +26,43 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace net.r_eg.vsSBE.Exceptions
+namespace net.r_eg.vsSBE.SBEScripts
 {
-    public class MSBProjectNotFoundException: SBEException
+    public interface IUserVariable
     {
-        public MSBProjectNotFoundException(string message): base(message) {}
-        public MSBProjectNotFoundException(string message, params object[] args): base(message, args) {}
-    }
+        /// <summary>
+        /// Getting user-variable
+        /// </summary>
+        /// <param name="name">variable name</param>
+        /// <param name="project">project name</param>
+        /// <returns>evaluated value of variable</returns>
+        string getVariable(string name, string project);
 
-    public class MSBPropertyNotFoundException: MSBProjectNotFoundException
-    {
-        public MSBPropertyNotFoundException(string message): base(message) {}
-        public MSBPropertyNotFoundException(string message, params object[] args): base(message, args) {}
-    }
+        /// <summary>
+        /// Defines user-variable
+        /// </summary>
+        /// <param name="name">variable name</param>
+        /// <param name="project">project name</param>
+        /// <param name="value">mixed string</param>
+        void setVariable(string name, string project, string value);
 
-    public class MSBPropertyParseException: MSBProjectNotFoundException
-    {
-        public MSBPropertyParseException(string message): base(message) {}
-        public MSBPropertyParseException(string message, params object[] args): base(message, args) {}
+        /// <summary>
+        /// Removes user-variable
+        /// </summary>
+        /// <param name="name">variable name</param>
+        /// <param name="project">project name</param>
+        void unsetVariable(string name, string project);
+
+        /// <summary>
+        /// Removes all user-variables
+        /// </summary>
+        void unsetVariables();
+
+        /// <summary>
+        /// Exposes the enumerator for defined names of user-variables
+        /// </summary>
+        IEnumerable<string> Variables { get; }
     }
 }

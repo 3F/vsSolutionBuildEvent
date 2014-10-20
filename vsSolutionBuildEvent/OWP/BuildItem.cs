@@ -87,6 +87,15 @@ namespace net.r_eg.vsSBE.OWP
         /// <summary>
         /// Current raw
         /// </summary>
+        public string Raw
+        {
+            get { 
+                return (rawdata == null)? String.Empty : rawdata; 
+            }
+            set {
+                updateRaw(value);
+            }
+        }
         protected string rawdata;
 
         /// <summary>
@@ -120,6 +129,7 @@ namespace net.r_eg.vsSBE.OWP
 
         protected void extract()
         {
+            flushCodes();
             MatchCollection matches = Regex.Matches(rawdata, @":\s*?(error|warning)([^:]+):", RegexOptions.IgnoreCase);
             // 1  -> type
             // 2  -> code####
@@ -136,6 +146,12 @@ namespace net.r_eg.vsSBE.OWP
                     case "warning": { warnings.Add(code); break; }
                 }
             }
+        }
+
+        protected void flushCodes()
+        {
+            errors.Clear();
+            warnings.Clear();
         }
     }
 }

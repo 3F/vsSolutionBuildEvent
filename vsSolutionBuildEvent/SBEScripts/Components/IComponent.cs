@@ -26,15 +26,70 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-namespace net.r_eg.vsSBE.SBEScripts
+namespace net.r_eg.vsSBE.SBEScripts.Components
 {
-    public interface ISBEScript: IUserVariable
+    /// <typeparam name="T">result type for 'parse' method</typeparam>
+    public interface IComponent<T>
     {
         /// <summary>
-        /// Handler of mixed data SBE-Scripts
+        /// Used type from available components
+        /// </summary>
+        ComponentType Type { get; }
+
+        /// <summary>
+        /// Handling with current type
         /// </summary>
         /// <param name="data">mixed data</param>
         /// <returns>prepared and evaluated data</returns>
-        string parse(string data);
+        T parse(string data);
+    }
+    /// <summary>
+    /// IComponent&lt;T&gt; By default
+    /// </summary>
+    public interface IComponent: IComponent<string> { }
+
+
+    /// <summary>
+    /// Type of available components
+    /// </summary>
+    public enum ComponentType
+    {
+        /// <summary>
+        /// All internal operation with vsSBE
+        /// </summary>
+        Internal,
+        /// <summary>
+        /// For work with User-Variables
+        /// </summary>
+        UserVariable,
+        /// <summary>
+        /// Any supported comments with scripts
+        /// </summary>
+        Comment,
+        /// <summary>
+        /// Conditions in scripts
+        /// </summary>
+        Condition,
+        /// <summary>
+        /// Mixed supported functions
+        /// </summary>
+        Function,
+        /// <summary>
+        /// For work with OWP
+        /// </summary>
+        OWP,
+        /// <summary>
+        /// For work with DTE
+        /// </summary>
+        DTE,
+        /// <summary>
+        /// Support file operations
+        /// I/O, call, etc.
+        /// </summary>
+        File,
+        /// <summary>
+        /// Components of building
+        /// </summary>
+        Build,
     }
 }

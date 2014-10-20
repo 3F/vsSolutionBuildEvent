@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg [Denis Kuzmin] <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg [Denis Kuzmin] <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -33,21 +33,39 @@ using System.Text;
 
 namespace net.r_eg.vsSBE.Exceptions
 {
-    public class MSBProjectNotFoundException: SBEException
+    public class SBEScriptException: SBEException
     {
-        public MSBProjectNotFoundException(string message): base(message) {}
-        public MSBProjectNotFoundException(string message, params object[] args): base(message, args) {}
+        public SBEScriptException(string message): base(message) {}
+        public SBEScriptException(string message, params object[] args): base(message, args) {}
     }
 
-    public class MSBPropertyNotFoundException: MSBProjectNotFoundException
+    public class SelectorMismatchException: SBEScriptException
     {
-        public MSBPropertyNotFoundException(string message): base(message) {}
-        public MSBPropertyNotFoundException(string message, params object[] args): base(message, args) {}
+        public SelectorMismatchException(string message): base(message) {}
+        public SelectorMismatchException(string message, params object[] args): base(message, args) {}
     }
 
-    public class MSBPropertyParseException: MSBProjectNotFoundException
+    public class SyntaxIncorrectException: SBEScriptException
     {
-        public MSBPropertyParseException(string message): base(message) {}
-        public MSBPropertyParseException(string message, params object[] args): base(message, args) {}
+        public SyntaxIncorrectException(string message): base(message) {}
+        public SyntaxIncorrectException(string message, params object[] args): base(message, args) {}
+    }
+
+    public class SubtypeNotFoundException: SBEScriptException
+    {
+        public SubtypeNotFoundException(string message): base(message) {}
+        public SubtypeNotFoundException(string message, params object[] args): base(message, args) {}
+    }
+
+    public class TermNotFoundException: SBEScriptException
+    {
+        public TermNotFoundException(string message): base(message) {}
+        public TermNotFoundException(string message, params object[] args): base(message, args) {}
+    }
+
+    public class NotSupportedOperationException: SBEScriptException
+    {
+        public NotSupportedOperationException(string message): base(message) {}
+        public NotSupportedOperationException(string message, params object[] args): base(message, args) {}
     }
 }

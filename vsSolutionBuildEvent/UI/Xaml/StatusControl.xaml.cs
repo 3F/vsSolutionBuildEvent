@@ -53,7 +53,14 @@ namespace net.r_eg.vsSBE.UI
 
         public void notify()
         {
-            textInfo.Text = (++exclamationCounter).ToString();
+            try {
+                Application.Current.Dispatcher.BeginInvoke(new Action(() => {
+                    textInfo.Text = (++exclamationCounter).ToString();
+                }));
+            }
+            catch(Exception ex) {
+                Log.nlog.Debug(ex.Message);
+            }
         }
 
         public void enabled(bool flag)

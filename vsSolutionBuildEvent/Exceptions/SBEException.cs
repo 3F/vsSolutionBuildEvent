@@ -69,6 +69,12 @@ namespace net.r_eg.vsSBE.Exceptions
         public MismatchException(string message, params object[] args): base(message, args) {}
     }
 
+    public class InvalidArgumentException: SBEException
+    {
+        public InvalidArgumentException(string message): base(message) {}
+        public InvalidArgumentException(string message, params object[] args): base(message, args) {}
+    }
+
     public class LimitException: SBEException
     {
         public LimitException(string message): base(message) {}

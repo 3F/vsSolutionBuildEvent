@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg [Denis Kuzmin] <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg [Denis Kuzmin] <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -31,23 +31,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace net.r_eg.vsSBE.Exceptions
+namespace net.r_eg.vsSBE.SBEScripts.Components
 {
-    public class MSBProjectNotFoundException: SBEException
+    public class DTEComponent: IComponent
     {
-        public MSBProjectNotFoundException(string message): base(message) {}
-        public MSBProjectNotFoundException(string message, params object[] args): base(message, args) {}
-    }
+        /// <summary>
+        /// Type of implementation
+        /// </summary>
+        public ComponentType Type
+        {
+            get { return ComponentType.DTE; }
+        }
 
-    public class MSBPropertyNotFoundException: MSBProjectNotFoundException
-    {
-        public MSBPropertyNotFoundException(string message): base(message) {}
-        public MSBPropertyNotFoundException(string message, params object[] args): base(message, args) {}
-    }
-
-    public class MSBPropertyParseException: MSBProjectNotFoundException
-    {
-        public MSBPropertyParseException(string message): base(message) {}
-        public MSBPropertyParseException(string message, params object[] args): base(message, args) {}
+        /// <summary>
+        /// Handling with current type
+        /// </summary>
+        /// <param name="data">mixed data</param>
+        /// <returns>prepared and evaluated data</returns>
+        public string parse(string data)
+        {
+            return data;
+        }
     }
 }
