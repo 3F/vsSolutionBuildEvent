@@ -81,6 +81,12 @@ namespace net.r_eg.vsSBE.Exceptions
         public LimitException(string message, params object[] args): base(message, args) {}
     }
 
+    public class NotFoundException: SBEException
+    {
+        public NotFoundException(string message): base(message) {}
+        public NotFoundException(string message, params object[] args): base(message, args) {}
+    }
+
     public class ComponentException: SBEException
     {
         public ComponentException(string message): base(message) {}

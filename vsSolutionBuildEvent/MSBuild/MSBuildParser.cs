@@ -52,9 +52,9 @@ namespace net.r_eg.vsSBE.MSBuild
         protected IEnvironment env;
 
         /// <summary>
-        /// Work with SBE-Scripts
+        /// Used instance of user-variables
         /// </summary>
-        protected ISBEScript script;
+        protected IUserVariable uvariable;
 
         /// <summary>
         /// object synch.
@@ -80,10 +80,13 @@ namespace net.r_eg.vsSBE.MSBuild
         /// <returns>Evaluated value of property</returns>
         public virtual string getProperty(string name, string projectName)
         {
-            string defVariable = script.getVariable(name, projectName);
-            if(defVariable != null) {
-                Log.nlog.Debug("Evaluate: use the user-defined variable");
-                return defVariable;
+            if(uvariable.isExist(name, projectName))
+            {
+                Log.nlog.Debug("Evaluate: use '{0}:{1}' from user-variable", name, projectName);
+                if(!uvariable.isEvaluated(name, projectName)) {
+                    uvariable.evaluate(name, projectName, this);
+                }
+                return uvariable.get(name, projectName);
             }
 
             if(projectName == null)
@@ -269,21 +272,21 @@ namespace net.r_eg.vsSBE.MSBuild
         }
 
         /// <param name="env">Used environment</param>
-        /// <param name="script">Used SBE-Scripts</param>
-        public MSBuildParser(IEnvironment env, ISBEScript script)
+        /// <param name="uvariable">Used user-variables</param>
+        public MSBuildParser(IEnvironment env, IUserVariable uvariable)
         {
-            this.env    = env;
-            this.script = script;
+            this.env        = env;
+            this.uvariable  = uvariable;
         }
 
         /// <summary>
-        /// Instance with default SBE-Scripts
+        /// Instance with default UserVariable
         /// </summary>
         /// <param name="env">Used environment</param>
         public MSBuildParser(IEnvironment env)
         {
-            this.env    = env;
-            this.script = new Script();
+            this.env        = env;
+            this.uvariable  = new UserVariable();
         }
 
         /// <param name="raw">raw data at format - '(..data..)'</param>
@@ -417,7 +420,8 @@ namespace net.r_eg.vsSBE.MSBuild
             {
                 //INFO: prepared.variable.isPersistence - [reserved]
                 Log.nlog.Debug("Evaluate: found definition of user-variable");
-                script.setVariable(prepared.variable.name, prepared.variable.project, evaluated);
+                uvariable.set(prepared.variable.name, prepared.variable.project, evaluated);
+                uvariable.evaluate(prepared.variable.name, prepared.variable.project, this);
                 evaluated = "";
             }
 
@@ -532,6 +536,7 @@ namespace net.r_eg.vsSBE.MSBuild
                     Log.nlog.Debug("nested: step in");
                     ++level;
                     h();
+                    --level;
                 }
                 return true;
             };

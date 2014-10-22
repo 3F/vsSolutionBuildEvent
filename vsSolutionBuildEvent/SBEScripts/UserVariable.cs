@@ -56,12 +56,12 @@ namespace net.r_eg.vsSBE.SBEScripts
         private Object _lock = new Object();
 
         /// <summary>
-        /// Getting user-variable
+        /// Getting value of user-variable
         /// </summary>
         /// <param name="name">variable name</param>
         /// <param name="project">project name</param>
         /// <returns>evaluated value of variable or null if variable not defined</returns>
-        public string getVariable(string name, string project = null)
+        public string get(string name, string project = null)
         {
             string defindex = defIndex(name, project);
             lock(_lock)
@@ -69,36 +69,92 @@ namespace net.r_eg.vsSBE.SBEScripts
                 if(!definitions.ContainsKey(defindex)) {
                     return null;
                 }
-                Debug.Assert(definitions[defindex].evaluated != null);
-                return definitions[defindex].evaluated;
+                string evaluated = definitions[defindex].evaluated;
+
+                if(evaluated == null) {
+                    Log.nlog.Debug("getValue: evaluated value of '{0}' is null", defindex);
+                    evaluated = String.Empty;
+                }
+                return evaluated;
             }
         }
 
         /// <summary>
-        /// Define user-variable
+        /// Defines user-variable
+        /// Value setted as unevaluated
         /// </summary>
         /// <param name="name">variable name</param>
         /// <param name="project">project name or null if project is default</param>
-        /// <param name="value">mixed string. Converted to empty string if value is null</param>
-        public void setVariable(string name, string project, string value)
+        /// <param name="unevaluated">mixed string. Converted to empty string if value is null</param>
+        public void set(string name, string project, string unevaluated)
         {
             if(!isValidName(name) || !isValidProject(project)) {
                 throw new InvalidArgumentException("name - '{0}' or project - '{1}' is not valid for variable", name, project);
             }
             string defindex = defIndex(name, project);
 
-            if(value == null) {
-                value = String.Empty;
+            if(unevaluated == null) {
+                unevaluated = String.Empty;
             }
 
             lock(_lock)
             {
                 definitions[defindex] = new TUserVariable() {
-                    unevaluated = value,
-                    evaluated   = String.Empty
+                    unevaluated = unevaluated,
+                    evaluated   = null
                 };
-                Log.nlog.Debug("User-variable: defined '{0}' = '{1}'", defindex, value);
+                Log.nlog.Debug("User-variable: defined '{0}' = '{1}'", defindex, unevaluated);
             }
+        }
+
+        /// <summary>
+        /// Evaluation user-variable with IMSBuild.
+        /// Evaluated value should be updated for variable.
+        /// </summary>
+        /// <param name="name">Variable name for evaluating</param>
+        /// <param name="project">Project name</param>
+        /// <param name="msbuild">IMSBuild objects for evaluating</param>
+        public void evaluate(string name, string project, MSBuild.IMSBuild msbuild)
+        {
+            string defindex = defIndex(name, project);
+            lock(_lock)
+            {
+                if(!definitions.ContainsKey(defindex)) {
+                    throw new NotFoundException("Variable '{0}' not found", defindex);
+                }
+
+                if(msbuild == null) {
+                    throw new InvalidArgumentException("msbuild is null");
+                }
+
+                definitions[defindex] = new TUserVariable() {
+                    unevaluated = definitions[defindex].unevaluated,
+                    evaluated   = msbuild.parse(definitions[defindex].unevaluated)
+                };
+                Log.nlog.Debug("Completed evaluation variable :: '{0}'", defindex);
+            }
+        }
+
+        /// <summary>
+        /// Checking for variable - completed evaluation or not
+        /// </summary>
+        /// <param name="name">Variable name</param>
+        /// <param name="project">Project name</param>
+        /// <returns></returns>
+        public bool isEvaluated(string name, string project)
+        {
+            return (definitions[defIndex(name, project)].evaluated != null);
+        }
+
+        /// <summary>
+        /// Checking existence of variable
+        /// </summary>
+        /// <param name="name">Variable name</param>
+        /// <param name="project">Project name</param>
+        /// <returns></returns>
+        public bool isExist(string name, string project)
+        {
+            return definitions.ContainsKey(defIndex(name, project));
         }
 
         /// <summary>
@@ -134,7 +190,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <param name="name">variable name</param>
         /// <param name="project">project name</param>
         /// <exception cref="ArgumentNullException">key is null</exception>
-        public void unsetVariable(string name, string project)
+        public void unset(string name, string project)
         {
             lock(_lock)
             {
@@ -149,7 +205,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <summary>
         /// Remove all user-variables
         /// </summary>
-        public void unsetVariables()
+        public void unsetAll()
         {
             lock(_lock) {
                 definitions.Clear();

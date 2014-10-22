@@ -33,32 +33,58 @@ namespace net.r_eg.vsSBE.SBEScripts
     public interface IUserVariable
     {
         /// <summary>
-        /// Getting user-variable
+        /// Getting value of user-variable
         /// </summary>
         /// <param name="name">variable name</param>
         /// <param name="project">project name</param>
         /// <returns>evaluated value of variable</returns>
-        string getVariable(string name, string project);
+        string get(string name, string project);
 
         /// <summary>
         /// Defines user-variable
+        /// Value setted as unevaluated
         /// </summary>
         /// <param name="name">variable name</param>
         /// <param name="project">project name</param>
-        /// <param name="value">mixed string</param>
-        void setVariable(string name, string project, string value);
+        /// <param name="unevaluated">mixed string with unevaluated data</param>
+        void set(string name, string project, string unevaluated);
+
+        /// <summary>
+        /// Evaluation user-variable with IMSBuild.
+        /// Evaluated value should be updated for variable.
+        /// </summary>
+        /// <param name="name">Variable name for evaluating</param>
+        /// <param name="project">Project name</param>
+        /// <param name="msbuild">IMSBuild objects for evaluating</param>
+        void evaluate(string name, string project, MSBuild.IMSBuild msbuild);
+
+        /// <summary>
+        /// Checking for variable - completed evaluation or not
+        /// </summary>
+        /// <param name="name">Variable name</param>
+        /// <param name="project">Project name</param>
+        /// <returns></returns>
+        bool isEvaluated(string name, string project);
+
+        /// <summary>
+        /// Checking existence of variable
+        /// </summary>
+        /// <param name="name">Variable name</param>
+        /// <param name="project">Project name</param>
+        /// <returns></returns>
+        bool isExist(string name, string project);
 
         /// <summary>
         /// Removes user-variable
         /// </summary>
         /// <param name="name">variable name</param>
         /// <param name="project">project name</param>
-        void unsetVariable(string name, string project);
+        void unset(string name, string project);
 
         /// <summary>
         /// Removes all user-variables
         /// </summary>
-        void unsetVariables();
+        void unsetAll();
 
         /// <summary>
         /// Exposes the enumerator for defined names of user-variables

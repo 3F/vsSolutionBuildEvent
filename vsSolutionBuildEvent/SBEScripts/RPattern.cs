@@ -26,15 +26,52 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
+using System;
+using System.Text;
+using System.Text.RegularExpressions;
+
 namespace net.r_eg.vsSBE.SBEScripts
 {
-    public interface ISBEScript
+    public static class RPattern
     {
         /// <summary>
-        /// Handler of mixed data SBE-Scripts
+        /// Captures content from double quotes
         /// </summary>
-        /// <param name="data">mixed data</param>
-        /// <returns>prepared and evaluated data</returns>
-        string parse(string data);
+        public static string DoubleQuotesContent
+        {
+            get {
+                return quotesContent('"');
+            }
+        }
+
+        /// <summary>
+        /// Captures content from single quotes
+        /// </summary>
+        public static string SingleQuotesContent
+        {
+            get {
+                return quotesContent('\'');
+            }
+        }
+
+        /// <summary>
+        /// Captures content for present symbol of quotes
+        /// Escaping is a "\" for used symbol
+        /// e.g.: \', \"
+        /// </summary>
+        /// <param name="symbol">' or "</param>
+        private static string quotesContent(char symbol)
+        {
+            return String.Format(@"
+                                  {0}
+                                  (
+                                     (?:
+                                        [^{0}\\]
+                                      |
+                                        \\{0}?
+                                     )*
+                                  )
+                                  {0}", symbol);
+        }
     }
 }

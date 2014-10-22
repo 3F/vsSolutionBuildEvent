@@ -178,6 +178,7 @@
     <Compile Include="Events\ISolutionEventEW.cs" />
     <Compile Include="Events\SBEEventEW.cs" />
     <Compile Include="Events\SBETransmitter.cs" />
+    <Compile Include="SBEScripts\RPattern.cs" />
     <Compile Include="SBEScripts\Script.cs" />
     <Compile Include="SBEScripts\TUserVariable.cs" />
     <Compile Include="SBEScripts\UserVariable.cs" />

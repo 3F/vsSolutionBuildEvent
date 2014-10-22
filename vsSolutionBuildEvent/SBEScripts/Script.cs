@@ -40,60 +40,68 @@ namespace net.r_eg.vsSBE.SBEScripts
     public class Script: ISBEScript
     {
         /// <summary>
-        /// Work with user-variables
+        /// Maximum of nesting level
         /// </summary>
-        protected IUserVariable uvariable = new UserVariable();
+        const int DEPTH_LIMIT = 70;
 
         /// <summary>
-        /// Getting user-variable
+        /// General container of SBE-Script
         /// </summary>
-        /// <param name="name">variable name</param>
-        /// <param name="project">project name</param>
-        /// <returns>evaluated value of variable or null if variable not defined</returns>
-        public string getVariable(string name, string project = null)
+        public string ContainerPattern
         {
-            return uvariable.getVariable(name, project);
-        }
-
-        /// <summary>
-        /// Define user-variable
-        /// </summary>
-        /// <param name="name">variable name</param>
-        /// <param name="project">project name or null if project is default</param>
-        /// <param name="value">mixed string. Converted to empty string if value is null</param>
-        public void setVariable(string name, string project, string value)
-        {
-            uvariable.setVariable(name, project, value);
-        }
-
-        /// <summary>
-        /// Remove user-variable
-        /// </summary>
-        /// <param name="name">variable name</param>
-        /// <param name="project">project name</param>
-        /// <exception cref="ArgumentNullException">key is null</exception>
-        public void unsetVariable(string name, string project)
-        {
-            uvariable.unsetVariable(name, project);
-        }
-
-        /// <summary>
-        /// Remove all user-variables
-        /// </summary>
-        public void unsetVariables()
-        {
-            uvariable.unsetVariables();
-        }
-
-        /// <summary>
-        /// Exposes the enumerator for defined names of user-variables
-        /// </summary>
-        public IEnumerable<string> Variables
-        {
-            get {
-                return uvariable.Variables;
+            get
+            {
+                /*
+                     (
+                       \#{1,2}
+                     )
+                     (?=
+                       (
+                         \[
+                           (?>
+                             [^\[\]]
+                             |
+                             (?2)
+                           )*
+                         \]
+                       )
+                     )            -> for .NET: v
+                */
+                 return @"(
+                            \#{1,2}   #1 - # or ##
+                          )
+                          (           #2 - mixed data of SBE-Script
+                            \[
+                              (?>
+                                [^\[\]]
+                                |
+                                \[(?<R>)
+                                |
+                                \](?<-R>)
+                              )*
+                              (?(R)(?!))
+                            \]
+                          )";
             }
         }
+
+        /// <summary>
+        /// Used instance of user-variables
+        /// </summary>
+        protected IUserVariable uvariable;
+
+        /// <summary>
+        /// Current level of nesting data.
+        /// Aborting if reached limit
+        /// </summary>
+        private volatile int _depthLevel = 0;
+
+        /// <summary>
+        /// Used components
+        /// </summary>
+        private FileComponent _cFile;
+        private OWPComponent _cOWP;
+        private UserVariableComponent _cUVariable;
 
         /// <summary>
         /// Handler of mixed data SBE-Scripts
@@ -103,38 +111,23 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <returns>prepared & evaluated data</returns>
         public string parse(string data)
         {
-            /*
-                    (
-                      \#{1,2}
-                    )
-                    (?=
-                      (
-                        \[
-                          (?>
-                            [^\[\]]
-                            |
-                            (?2)
-                          )*
-                        \]
-                      )
-                    )            -> for .NET: v
-             */
-            return Regex.Replace(data, @"(
-                                            \#{1,2}   #1 - # or ##
-                                          )
-                                          (           #2 - mixed data of SBE-Script
-                                            \[
-                                              (?>
-                                                [^\[\]]
-                                                |
-                                                \[(?<R>)
-                                                |
-                                                \](?<-R>)
-                                              )*
-                                              (?(R)(?!))
-                                            \]
-                                          )", 
-            delegate(Match m)
+            _depthLevel = 0;
+            return parse(data, _depthLevel);
+        }
+
+        /// <param name="uvariable">Used instance of user-variable</param>
+        public Script(IUserVariable uvariable)
+        {
+            this.uvariable = uvariable;
+        }
+
+        protected string parse(string data, int level)
+        {
+            if(level >= DEPTH_LIMIT) {
+                throw new LimitException("Nesting level of '{0}' reached. Aborted.", level);
+            }
+
+            return Regex.Replace(data, ContainerPattern, delegate(Match m)
             {
                 if(m.Groups[1].Value.Length > 1) { //escape
                     Log.nlog.Debug("SBEScripts: escape - '{0}'", m.Groups[1].Value);
@@ -153,25 +146,47 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <returns>prepared & evaluated data</returns>
         protected string selector(string data)
         {
+            if(deepen(ref data)) {
+                ++_depthLevel;
+                data = parse(data, _depthLevel);
+                --_depthLevel;
+            }
+
             if(data.StartsWith("[var "))
             {
                 Log.nlog.Debug("SBEScripts-selector: use UserVariableComponent");
-                UserVariableComponentResult res = (new UserVariableComponent()).parse(data);
-                uvariable.setVariable(res.name, res.project, res.value);
+                if(_cUVariable == null) {
+                    _cUVariable = new UserVariableComponent();
+                }
+                UserVariableComponentResult res = _cUVariable.parse(data);
+                uvariable.set(res.name, res.project, res.value);
                 return String.Empty;
             }
 
-            if(data.StartsWith("[OWP ")) {
+            if(data.StartsWith("[OWP "))
+            {
                 Log.nlog.Debug("SBEScripts-selector: use OWPComponent");
-                return (new OWPComponent()).parse(data);
+                if(_cOWP == null) {
+                    _cOWP = new OWPComponent();
+                }
+                return _cOWP.parse(data);
             }
 
-            if(data.StartsWith("[File ")) {
+            if(data.StartsWith("[File "))
+            {
                 Log.nlog.Debug("SBEScripts-selector: use FileComponent");
-                return (new FileComponent()).parse(data);
+                if(_cFile == null) {
+                    _cFile = new FileComponent();
+                }
+                return _cFile.parse(data);
             }
 
             throw new SelectorMismatchException("input data: '{0}'", data);
+        }
+
+        protected bool deepen(ref string data)
+        {
+            return Regex.Match(data, ContainerPattern, RegexOptions.IgnorePatternWhitespace).Success;
         }
     }
 }

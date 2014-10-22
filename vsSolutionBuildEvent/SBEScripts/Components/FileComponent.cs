@@ -61,7 +61,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                 .*
                                               )
                                            \]$", 
-                                           RegexOptions.IgnorePatternWhitespace);
+                                           RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline);
 
             if(!m.Success) {
                 throw new SyntaxIncorrectException("Failed FileComponent - '{0}'", data);
@@ -107,16 +107,18 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         /// <summary>
         /// Work with:
-        /// * #[File get(name)]
+        /// * #[File get("name")]
         /// </summary>
         /// <param name="data">prepared data</param>
         /// <returns>Received data from  file</returns>
         protected string stGet(string data)
         {
-            Match m = Regex.Match(data, @"get
-                                          \s*
-                                          \((.+)\)   #1 - file", 
-                                          RegexOptions.IgnorePatternWhitespace);
+            Match m = Regex.Match(data, 
+                                    String.Format(@"get
+                                                    \s*
+                                                    \({0}\)   #1 - file", 
+                                                    RPattern.DoubleQuotesContent
+                                                  ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
                 throw new TermNotFoundException("Failed stGet - '{0}'", data);
@@ -141,21 +143,28 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         /// <summary>
         /// Work with:
-        /// * #[File call(name): args]
-        /// * #[File call(name)]
-        /// * #[File callOut(name): args]
-        /// * #[File callOut(name)]
+        /// * #[File call("name", "args")]
+        /// * #[File call("name")]
+        /// * #[File callOut("name", "args")]
+        /// * #[File callOut("name")]
         /// </summary>
         /// <param name="data">prepared data</param>
         /// <param name="stdOut">Use StandardOutput or not</param>
         /// <returns>Received data from StandardOutput</returns>
         protected string stCall(string data, bool stdOut)
         {
-            Match m = Regex.Match(data, @"
-                                          \s*
-                                          \((.+)\)   #1 - file
-                                          (?::(.*))? #2 - args (optional)", 
-                                          RegexOptions.IgnorePatternWhitespace);
+            Match m = Regex.Match(data, 
+                                    String.Format(@"
+                                                    \s*
+                                                    \(
+                                                        {0}           #1 - file
+                                                        (?:
+                                                            \s*,\s*
+                                                            {0}       #2 - args (optional)
+                                                        )?
+                                                    \)", 
+                                                    RPattern.DoubleQuotesContent
+                                                 ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
                 throw new TermNotFoundException("Failed stCall - '{0}'", data);
@@ -194,10 +203,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         /// <summary>
         /// Work with:
-        /// * #[File write(name): data]
-        /// * #[File append(name): data]
-        /// * #[File writeLine(name): data]
-        /// * #[File appendLine(name): data]
+        /// * #[File write("name"): "multiline data"]
+        /// * #[File append("name"): "multiline data"]
+        /// * #[File writeLine("name"): "multiline data"]
+        /// * #[File appendLine("name"): "multiline data"]
         /// </summary>
         /// <param name="data">prepared data</param>
         /// <param name="append">flag</param>
@@ -205,11 +214,14 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="enc">Used encoding</param>
         protected void stWrite(string data, bool append, bool writeLine, Encoding enc)
         {
-            Match m = Regex.Match(data, @"
-                                          \s*
-                                          \((.+)\)  #1 - path
-                                          :(.*)     #2 - data", 
-                                          RegexOptions.IgnorePatternWhitespace);
+            Match m = Regex.Match(data, 
+                                    String.Format(@"
+                                                    \s*
+                                                    \({0}\)  #1 - path
+                                                    \s*:\s*
+                                                    {0}      #2 - data", 
+                                                    RPattern.DoubleQuotesContent
+                                                 ), RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline);
 
             if(!m.Success) {
                 throw new TermNotFoundException("Failed stWrite - '{0}'", data);
@@ -218,6 +230,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string path     = m.Groups[1].Value.Trim();
             string fdata    = m.Groups[2].Value;
 
+            Log.nlog.Debug("FileComponent: stWrite started for path - '{0}'", path);
             try {
                 using(TextWriter stream = new StreamWriter(path, append, enc)) {
                     if(writeLine){

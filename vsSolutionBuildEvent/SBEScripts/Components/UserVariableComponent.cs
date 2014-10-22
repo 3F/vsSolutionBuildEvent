@@ -60,7 +60,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                               )?
                                               \s*=\s*
                                               (.+)             #3 - mixed data
-                                           \]$", 
+                                           \]$", // #3 - greedy, however it's controlled by main container of SBE-Script
                                            RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {

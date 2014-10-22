@@ -410,9 +410,9 @@ namespace vsSBETest.MSBuild
             prepared.property.complex       = true;
             prepared.property.unevaluated   = "$(Path:project2)";
 
-            Assert.IsTrue(target.script.Variables.Count() < 1);
+            Assert.IsTrue(target.uvariable.Variables.Count() < 1);
             Assert.AreEqual(String.Empty, target.evaluateVariable(prepared));
-            Assert.IsTrue(target.script.Variables.Count() == 1);
+            Assert.IsTrue(target.uvariable.Variables.Count() == 1);
         }
 
         /// <summary>
@@ -465,7 +465,7 @@ namespace vsSBETest.MSBuild
         {
             MSBuildParserAccessor.ToUserVariables target = new MSBuildParserAccessor.ToUserVariables();
 
-            target.script.setVariable("var", "project", "is a Windows_NT"); //"$(var.Replace('%OS%', $(OS)):project)";
+            target.uvariable.set("var", "project", "is a Windows_NT"); //"$(var.Replace('%OS%', $(OS)):project)";
 
             string actual   = target.parse("$(var:project)");
             Assert.AreEqual("is a Windows_NT", actual);
@@ -588,7 +588,7 @@ namespace vsSBETest.MSBuild
 
             public override string getProperty(string name, string project)
             {
-                string def = script.getVariable(name, project);
+                string def = uvariable.get(name, project);
                 return (def == null)? String.Format("[P~{0}~{1}]", name, project) : def;
             }
         }
@@ -600,10 +600,10 @@ namespace vsSBETest.MSBuild
 
         public class ToUserVariables: StubEvaluatingProperty
         {
-            public new net.r_eg.vsSBE.SBEScripts.ISBEScript script
+            public new net.r_eg.vsSBE.SBEScripts.IUserVariable uvariable
             {
-                get { return base.script; }
-                set { base.script = value; }
+                get { return base.uvariable; }
+                set { base.uvariable = value; }
             }
         }
 

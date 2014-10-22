@@ -75,20 +75,21 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
-        /// Any getting data
+        /// Getting any data
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
         protected string stOut(string data)
         {
-            Match m = Regex.Match(data, @"out
-                                          (?:
-                                            \s*
-                                            \((.+)\)  #1 - arguments (optional)
-                                          )?
-                                          (.*)        #2 - property
-                                          ", 
-                                          RegexOptions.IgnorePatternWhitespace);
+            Match m = Regex.Match(data, 
+                                    String.Format(@"out
+                                                   (?:
+                                                     \s*
+                                                     \({0}\)  #1 - arguments (optional)
+                                                   )?
+                                                   (.*)       #2 - property", // greedy, however it's controlled by main container of SBE-Script
+                                                   RPattern.DoubleQuotesContent
+                                                 ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
                 throw new TermNotFoundException("Failed stOut - '{0}'", data);
@@ -100,7 +101,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 Log.nlog.Debug("stOut: item = '{0}'", item);
 
                 if(item == "Build") {
-                    //used by default - #[OWP out(Build)] / #[OWP out]
+                    //used by default - #[OWP out("Build")] / #[OWP out]
                 }
                 else {
                     throw new NotSupportedOperationException("item - '{0}' not yet supported", item);
@@ -109,14 +110,17 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string property = m.Groups[2].Value.Trim();
             Log.nlog.Debug("stOut: property = '{0}'", property);
 
+            // (?<!\\)"
+            string raw = Regex.Replace(OWP.Items._.Build.Raw, "(?<!\\\\)\"", "\\\"");
+
             // #[OWP out.All] / #[OWP out]
             if(property == ".All" || property == String.Empty) {
-                return OWP.Items._.Build.Raw;
+                return raw;
             }
 
             // #[OWP out.Warnings.Raw] / #[OWP out.Warnings]
             if(property == ".Warnings" || property == ".Warnings.Raw") {
-                return (OWP.Items._.Build.IsWarnings)? OWP.Items._.Build.Raw : String.Empty;
+                return (OWP.Items._.Build.IsWarnings)? raw : String.Empty;
             }
 
             // #[OWP out.Warnings.Count]
@@ -131,7 +135,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             // #[OWP out.Errors.Raw] / #[OWP out.Errors]
             if(property == ".Errors" || property == ".Errors.Raw") {
-                return (OWP.Items._.Build.IsErrors)? OWP.Items._.Build.Raw : String.Empty;
+                return (OWP.Items._.Build.IsErrors)? raw : String.Empty;
             }
 
             // #[OWP out.Errors.Count]

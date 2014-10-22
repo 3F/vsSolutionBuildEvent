@@ -95,6 +95,11 @@ namespace net.r_eg.vsSBE
         private EventsFrm _configFrm;
 
         /// <summary>
+        /// Main container of user-variables
+        /// </summary>
+        private IUserVariable uvariable = new UserVariable();
+
+        /// <summary>
         /// SBE support
         /// </summary>
         private Connection _c;
@@ -115,7 +120,7 @@ namespace net.r_eg.vsSBE
             _env = new Environment(Dte2);
 
             _c = new Connection(
-                    new SBECommand(_env, new Script(), new MSBuildParser(_env))
+                    new SBECommand(_env, new Script(uvariable), new MSBuildParser(_env, uvariable))
             );
 
             _owpBuild = new OWP.Listener(_env, "Build");
