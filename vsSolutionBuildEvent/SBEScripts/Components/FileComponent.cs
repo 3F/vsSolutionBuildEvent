@@ -44,7 +44,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         public ComponentType Type
         {
-            get { return ComponentType.Internal; }
+            get { return ComponentType.File; }
         }
 
         /// <summary>

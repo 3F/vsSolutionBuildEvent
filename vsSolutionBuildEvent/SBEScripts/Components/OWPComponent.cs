@@ -87,7 +87,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                      \s*
                                                      \({0}\)  #1 - arguments (optional)
                                                    )?
-                                                   (.*)       #2 - property", // greedy, however it's controlled by main container of SBE-Script
+                                                   \s*(.*)    #2 - property", // greedy, however it's controlled by main container of SBE-Script
                                                    RPattern.DoubleQuotesContent
                                                  ), RegexOptions.IgnorePatternWhitespace);
 

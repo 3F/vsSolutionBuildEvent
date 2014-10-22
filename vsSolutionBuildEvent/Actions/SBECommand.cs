@@ -174,8 +174,7 @@ namespace net.r_eg.vsSBE.Actions
         protected virtual bool hModeScript(ISolutionEvent evt)
         {
             if(((IModeInterpreter)evt.Mode).Handler.Trim().Length < 1) {
-                Log.nlog.Warn("interpreter not selected");
-                return false;
+                throw new NotFoundException("Not selected interpreter");
             }
             string script   = ((IModeInterpreter)evt.Mode).Command;
             string wrapper  = ((IModeInterpreter)evt.Mode).Wrapper;

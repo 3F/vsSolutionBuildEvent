@@ -63,7 +63,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         private static string quotesContent(char symbol)
         {
             return String.Format(@"
-                                  {0}
+                                  \s*{0}
                                   (
                                      (?:
                                         [^{0}\\]
@@ -71,7 +71,7 @@ namespace net.r_eg.vsSBE.SBEScripts
                                         \\{0}?
                                      )*
                                   )
-                                  {0}", symbol);
+                                  {0}\s*", symbol);
         }
     }
 }

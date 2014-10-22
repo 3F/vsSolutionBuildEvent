@@ -101,6 +101,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// </summary>
         private FileComponent _cFile;
         private OWPComponent _cOWP;
+        private InternalComponent _cInternal;
         private UserVariableComponent _cUVariable;
 
         /// <summary>
@@ -170,6 +171,15 @@ namespace net.r_eg.vsSBE.SBEScripts
                     _cOWP = new OWPComponent();
                 }
                 return _cOWP.parse(data);
+            }
+
+            if(data.StartsWith("[vsSBE "))
+            {
+                Log.nlog.Debug("SBEScripts-selector: use InternalComponent");
+                if(_cInternal == null) {
+                    _cInternal = new InternalComponent();
+                }
+                return _cInternal.parse(data);
             }
 
             if(data.StartsWith("[File "))

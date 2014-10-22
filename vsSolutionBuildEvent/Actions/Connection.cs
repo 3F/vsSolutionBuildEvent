@@ -79,7 +79,6 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         public int bindPre(ref int pfCancelUpdate)
         {
-            _flushExecuted();
             if(isDisabledAll(Config._.Data.PreBuild)) {
                 return VSConstants.S_OK;
             }
@@ -199,6 +198,20 @@ namespace net.r_eg.vsSBE.Actions
         public void updateContext(SBECommand.ShellContext context)
         {
             sbe.updateContext(context);
+        }
+
+        /// <summary>
+        /// Resetting all progress of handling events
+        /// </summary>
+        /// <returns>true value if successful resetted</returns>
+        public bool reset()
+        {
+            if(!IsAllowActions) {
+                return false;
+            }
+            projects.Clear();
+            Status._.flush();
+            return true;
         }
 
         /// <summary>
@@ -496,12 +509,6 @@ namespace net.r_eg.vsSBE.Actions
         {
             Log.nlog.Trace("[{0}] ignored action. Is already started from another VSprocess.", type);
             return VSConstants.S_OK;
-        }
-
-        private void _flushExecuted()
-        {
-            projects.Clear();
-            Status._.flush();
         }
     }
 }

@@ -178,9 +178,19 @@ namespace net.r_eg.vsSBE
             return _c.bindCancel();
         }
 
+        /// <summary>
+        /// 
+        /// When it works:
+        ///    * Begin -> Done
+        ///    * Begin -> Cancel -> Done
+        /// </summary>
         public int UpdateSolution_Done(int fSucceeded, int fModified, int fCancelCommand)
         {
-            return _c.bindPost(fSucceeded, fModified, fCancelCommand);
+            int ret = _c.bindPost(fSucceeded, fModified, fCancelCommand);
+            if(_c.reset()) {
+                uvariable.unsetAll();
+            }
+            return ret;
         }
 
         public int UpdateProjectCfg_Begin(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel)
@@ -198,8 +208,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         private void _menuMainCallback(object sender, EventArgs e)
         {
-            if(_configFrm != null && !_configFrm.IsDisposed)
-            {
+            if(_configFrm != null && !_configFrm.IsDisposed) {
                 _configFrm.Focus();
                 return;
             }

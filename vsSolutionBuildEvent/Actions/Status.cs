@@ -59,7 +59,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="tstatus">Execution status</param>
         public void add(SolutionEventType tevent, StatusType tstatus)
         {
-            if(states[tevent] == null) {
+            if(!states.ContainsKey(tevent)) {
                 states[tevent] = new SynchronizedCollection<StatusType>();
             }
             states[tevent].Add(tstatus);
