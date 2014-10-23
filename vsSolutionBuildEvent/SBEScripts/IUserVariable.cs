@@ -33,12 +33,19 @@ namespace net.r_eg.vsSBE.SBEScripts
     public interface IUserVariable
     {
         /// <summary>
-        /// Getting value of user-variable
+        /// Getting value of user-variable by using scope of project
         /// </summary>
         /// <param name="name">variable name</param>
         /// <param name="project">project name</param>
         /// <returns>evaluated value of variable</returns>
         string get(string name, string project);
+
+        /// <summary>
+        /// Getting value of user-variable by using unique identification
+        /// </summary>
+        /// <param name="ident">Unique identificator</param>
+        /// <returns>Evaluated value of variable</returns>
+        string get(string ident);
 
         /// <summary>
         /// Defines user-variable
@@ -50,7 +57,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         void set(string name, string project, string unevaluated);
 
         /// <summary>
-        /// Evaluation user-variable with IMSBuild.
+        /// Evaluation user-variable with IMSBuild by using scope of project
         /// Evaluated value should be updated for variable.
         /// </summary>
         /// <param name="name">Variable name for evaluating</param>
@@ -59,7 +66,33 @@ namespace net.r_eg.vsSBE.SBEScripts
         void evaluate(string name, string project, MSBuild.IMSBuild msbuild);
 
         /// <summary>
+        /// Evaluation user-variable with IMSBuild by using unique identification
+        /// Evaluated value should be updated for variable.
+        /// </summary>
+        /// <param name="ident">Unique identificator</param>
+        /// <param name="msbuild">IMSBuild objects for evaluating</param>
+        void evaluate(string ident, MSBuild.IMSBuild msbuild);
+
+        /// <summary>
+        /// Evaluation user-variable with ISBEScript by using scope of project
+        /// Evaluated value should be updated for variable.
+        /// </summary>
+        /// <param name="name">Variable name for evaluating</param>
+        /// <param name="project">Project name</param>
+        /// <param name="msbuild">ISBEScript objects for evaluating</param>
+        void evaluate(string name, string project, ISBEScript script);
+
+        /// <summary>
+        /// Evaluation user-variable with ISBEScript by using unique identification
+        /// Evaluated value should be updated for variable.
+        /// </summary>
+        /// <param name="ident">Unique identificator</param>
+        /// <param name="msbuild">ISBEScript objects for evaluating</param>
+        void evaluate(string ident, ISBEScript script);
+
+        /// <summary>
         /// Checking for variable - completed evaluation or not
+        /// by using scope of project
         /// </summary>
         /// <param name="name">Variable name</param>
         /// <param name="project">Project name</param>
@@ -67,7 +100,16 @@ namespace net.r_eg.vsSBE.SBEScripts
         bool isEvaluated(string name, string project);
 
         /// <summary>
+        /// Checking for variable - completed evaluation or not
+        /// by using unique identification
+        /// </summary>
+        /// <param name="ident">Unique identificator</param>
+        /// <returns></returns>
+        bool isEvaluated(string ident);
+
+        /// <summary>
         /// Checking existence of variable
+        /// by using scope of project
         /// </summary>
         /// <param name="name">Variable name</param>
         /// <param name="project">Project name</param>
@@ -75,11 +117,27 @@ namespace net.r_eg.vsSBE.SBEScripts
         bool isExist(string name, string project);
 
         /// <summary>
+        /// Checking existence of variable 
+        /// by using unique identification
+        /// </summary>
+        /// <param name="ident">Unique identificator</param>
+        /// <returns></returns>
+        bool isExist(string ident);
+
+        /// <summary>
         /// Removes user-variable
+        /// by using scope of project
         /// </summary>
         /// <param name="name">variable name</param>
         /// <param name="project">project name</param>
         void unset(string name, string project);
+
+        /// <summary>
+        /// Removes user-variable
+        /// by using unique identification
+        /// </summary>
+        /// <param name="ident">Unique identificator</param>
+        void unset(string ident);
 
         /// <summary>
         /// Removes all user-variables

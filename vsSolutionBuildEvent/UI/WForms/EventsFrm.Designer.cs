@@ -115,6 +115,7 @@
             this.toolStripMenuEvaluatingProperty = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuDTECmd = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuDTECmdExec = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuSBEScript = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuHelp = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripMenuDoc = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuChangelog = new System.Windows.Forms.ToolStripMenuItem();
@@ -546,6 +547,7 @@
             // 
             this.listBoxOperation.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listBoxOperation.FormattingEnabled = true;
+            this.listBoxOperation.IntegralHeight = false;
             this.listBoxOperation.Location = new System.Drawing.Point(4, 16);
             this.listBoxOperation.Margin = new System.Windows.Forms.Padding(0);
             this.listBoxOperation.Name = "listBoxOperation";
@@ -600,6 +602,7 @@
             // 
             this.listBoxEW.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listBoxEW.FormattingEnabled = true;
+            this.listBoxEW.IntegralHeight = false;
             this.listBoxEW.Location = new System.Drawing.Point(0, 37);
             this.listBoxEW.Name = "listBoxEW";
             this.listBoxEW.Size = new System.Drawing.Size(108, 80);
@@ -731,6 +734,7 @@
             // 
             this.checkedListBoxSpecCfg.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.checkedListBoxSpecCfg.FormattingEnabled = true;
+            this.checkedListBoxSpecCfg.IntegralHeight = false;
             this.checkedListBoxSpecCfg.Location = new System.Drawing.Point(0, 18);
             this.checkedListBoxSpecCfg.Margin = new System.Windows.Forms.Padding(0);
             this.checkedListBoxSpecCfg.MinimumSize = new System.Drawing.Size(191, 77);
@@ -1036,7 +1040,8 @@
             this.toolStripMenuMSBuildProp,
             this.toolStripMenuEvaluatingProperty,
             this.toolStripMenuDTECmd,
-            this.toolStripMenuDTECmdExec});
+            this.toolStripMenuDTECmdExec,
+            this.menuSBEScript});
             this.toolStripMenuTools.Name = "toolStripMenuTools";
             this.toolStripMenuTools.Size = new System.Drawing.Size(105, 22);
             this.toolStripMenuTools.Text = "Tools";
@@ -1068,6 +1073,13 @@
             this.toolStripMenuDTECmdExec.Size = new System.Drawing.Size(203, 22);
             this.toolStripMenuDTECmdExec.Text = "Execute DTE Commands";
             this.toolStripMenuDTECmdExec.Click += new System.EventHandler(this.toolStripMenuDTECmdExec_Click);
+            // 
+            // menuSBEScript
+            // 
+            this.menuSBEScript.Name = "menuSBEScript";
+            this.menuSBEScript.Size = new System.Drawing.Size(203, 22);
+            this.menuSBEScript.Text = "SBE-Scripts";
+            this.menuSBEScript.Click += new System.EventHandler(this.menuSBEScript_Click);
             // 
             // toolStripMenuHelp
             // 
@@ -1528,6 +1540,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvActionCaption;
         private System.Windows.Forms.ToolStripMenuItem menuActionsTogglePanel;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+        private System.Windows.Forms.ToolStripMenuItem menuSBEScript;
 
     }
 }

@@ -160,8 +160,19 @@ namespace net.r_eg.vsSBE.SBEScripts
                     _cUVariable = new UserVariableComponent();
                 }
                 UserVariableComponentResult res = _cUVariable.parse(data);
-                uvariable.set(res.name, res.project, res.value);
-                return String.Empty;
+                if(res.value != null) {
+                    uvariable.set(res.name, res.project, res.value);
+                    return String.Empty;
+                }
+
+                if(uvariable.isExist(res.name, res.project))
+                {
+                    if(!uvariable.isEvaluated(res.name, res.project)) {
+                        uvariable.evaluate(res.name, res.project, this);
+                    }
+                    return uvariable.get(res.name, res.project);
+                }
+                throw new NotFoundException("Variable '{0}:{1}' not found", res.name, res.project);
             }
 
             if(data.StartsWith("[OWP "))

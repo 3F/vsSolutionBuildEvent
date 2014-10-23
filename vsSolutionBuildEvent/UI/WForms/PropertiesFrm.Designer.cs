@@ -115,8 +115,7 @@
             // 
             // labelPropCount
             // 
-            this.labelPropCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelPropCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.labelPropCount.Location = new System.Drawing.Point(444, 213);
             this.labelPropCount.Name = "labelPropCount";
             this.labelPropCount.Size = new System.Drawing.Size(116, 18);
@@ -135,6 +134,7 @@
             this.Controls.Add(this.comboBoxProjects);
             this.Controls.Add(this.dataGridViewVariables);
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(390, 170);
             this.Name = "PropertiesFrm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

@@ -157,6 +157,21 @@ namespace net.r_eg.vsSBE.UI
         }
 
         /// <summary>
+        /// Helper to focusing form
+        /// </summary>
+        /// <param name="frm"></param>
+        /// <returns>false value if form not created or already is disposed</returns>
+        public static bool focusForm(Form frm)
+        {
+            if(frm != null && !frm.IsDisposed) {
+                frm.WindowState = FormWindowState.Normal;
+                frm.Focus();
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Helper for closing tool
         /// </summary>
         /// <param name="frm"></param>

@@ -56,10 +56,13 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                               \s+
                                               ([A-Za-z_0-9]+)  #1 - name 
                                               (?:
-                                                :([^=]*)       #2 - project (optional)
+                                                :([^=\]]+)     #2 - project (optional)
                                               )?
-                                              \s*=\s*
-                                              (.+)             #3 - mixed data
+                                              \s*
+                                              (?:
+                                                =\s*
+                                                (.+)           #3 - mixed data for definition (optional)
+                                              )?
                                            \]$", // #3 - greedy, however it's controlled by main container of SBE-Script
                                            RegexOptions.IgnorePatternWhitespace);
 
@@ -79,7 +82,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             return new UserVariableComponentResult() {
                 name    = m.Groups[1].Value,
                 project = pname,
-                value   = m.Groups[3].Value
+                value   = (m.Groups[3].Success)? m.Groups[3].Value : null
             };
         }
     }

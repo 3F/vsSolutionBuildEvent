@@ -124,6 +124,7 @@
             this.Controls.Add(this.dataGridViewDTE);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(240, 110);
             this.Name = "DTECommandsFrm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

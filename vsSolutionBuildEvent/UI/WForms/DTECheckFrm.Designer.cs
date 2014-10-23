@@ -102,6 +102,7 @@
             this.Controls.Add(this.btnExecute);
             this.Controls.Add(this.groupBoxExecuted);
             this.Controls.Add(this.groupBoxCommand);
+            this.MinimumSize = new System.Drawing.Size(280, 210);
             this.Name = "DTECheckFrm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

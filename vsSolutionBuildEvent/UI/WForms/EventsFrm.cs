@@ -42,6 +42,10 @@ namespace net.r_eg.vsSBE.UI
         /// Testing tool - DTE Commands
         /// </summary>
         protected DTECheckFrm frmDTECheck;
+        /// <summary>
+        /// Testing tool - SBE-Scripts
+        /// </summary>
+        protected ScriptCheckFrm frmSBEScript;
 
         /// <summary>
         /// Default sizes for controls
@@ -360,6 +364,7 @@ namespace net.r_eg.vsSBE.UI
 
         protected void clearControls()
         {
+            textBoxEW.Text = String.Empty;
             listBoxEW.Items.Clear();
             dataGridViewOutput.Rows.Clear();
         }
@@ -526,8 +531,7 @@ namespace net.r_eg.vsSBE.UI
 
         protected void envVariablesUIHelper()
         {
-            if(frmProperties != null && !frmProperties.IsDisposed) {
-                frmProperties.Focus();
+            if(Util.focusForm(frmProperties)) {
                 return;
             }
             frmProperties = new PropertiesFrm(this);
@@ -788,8 +792,7 @@ namespace net.r_eg.vsSBE.UI
 
         private void btnDteCmd_Click(object sender, EventArgs e)
         {
-            if(frmDTECommands != null && !frmDTECommands.IsDisposed) {
-                frmDTECommands.Focus();
+            if(Util.focusForm(frmDTECommands)) {
                 return;
             }
             IEnumerable<EnvDTE.Command> commands = logic.Env.DTE2.Commands.Cast<EnvDTE.Command>();
@@ -799,9 +802,7 @@ namespace net.r_eg.vsSBE.UI
 
         private void toolStripMenuDTECmdExec_Click(object sender, EventArgs e)
         {
-            if(frmDTECheck != null && !frmDTECheck.IsDisposed) {
-                frmDTECheck.WindowState = FormWindowState.Normal;
-                frmDTECheck.Focus();
+            if(Util.focusForm(frmDTECheck)) {
                 return;
             }
             frmDTECheck = new DTECheckFrm(logic.Env);
@@ -836,13 +837,20 @@ namespace net.r_eg.vsSBE.UI
 
         private void toolStripMenuEvaluatingProperty_Click(object sender, EventArgs e)
         {
-            if(frmPropertyCheck != null && !frmPropertyCheck.IsDisposed) {
-                frmDTECheck.WindowState = FormWindowState.Normal;
-                frmPropertyCheck.Focus();
+            if(Util.focusForm(frmPropertyCheck)) {
                 return;
             }
             frmPropertyCheck = new PropertyCheckFrm(logic.Env);
             frmPropertyCheck.Show();
+        }
+
+        private void menuSBEScript_Click(object sender, EventArgs e)
+        {
+            if(Util.focusForm(frmSBEScript)) {
+                return;
+            }
+            frmSBEScript = new ScriptCheckFrm(logic.Env);
+            frmSBEScript.Show();
         }
 
         private void EventsFrm_FormClosing(object sender, FormClosingEventArgs e)
@@ -851,6 +859,7 @@ namespace net.r_eg.vsSBE.UI
             Util.closeTool(frmPropertyCheck);
             Util.closeTool(frmDTECommands);
             Util.closeTool(frmDTECheck);
+            Util.closeTool(frmSBEScript);
         }
 
         private void dgvActions_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)

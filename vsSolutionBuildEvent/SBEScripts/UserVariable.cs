@@ -56,23 +56,32 @@ namespace net.r_eg.vsSBE.SBEScripts
         private Object _lock = new Object();
 
         /// <summary>
-        /// Getting value of user-variable
+        /// Getting value of user-variable by using scope of project
         /// </summary>
         /// <param name="name">variable name</param>
         /// <param name="project">project name</param>
         /// <returns>evaluated value of variable or null if variable not defined</returns>
-        public string get(string name, string project = null)
+        public string get(string name, string project)
         {
-            string defindex = defIndex(name, project);
+            return get(defIndex(name, project));
+        }
+
+        /// <summary>
+        /// Getting value of user-variable by using unique identification
+        /// </summary>
+        /// <param name="ident">Unique identificator</param>
+        /// <returns>Evaluated value of variable</returns>
+        public string get(string ident)
+        {
             lock(_lock)
             {
-                if(!definitions.ContainsKey(defindex)) {
+                if(!definitions.ContainsKey(ident)) {
                     return null;
                 }
-                string evaluated = definitions[defindex].evaluated;
+                string evaluated = definitions[ident].evaluated;
 
                 if(evaluated == null) {
-                    Log.nlog.Debug("getValue: evaluated value of '{0}' is null", defindex);
+                    Log.nlog.Debug("getValue: evaluated value of '{0}' is null", ident);
                     evaluated = String.Empty;
                 }
                 return evaluated;
@@ -108,7 +117,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
-        /// Evaluation user-variable with IMSBuild.
+        /// Evaluation user-variable with IMSBuild by using scope of project
         /// Evaluated value should be updated for variable.
         /// </summary>
         /// <param name="name">Variable name for evaluating</param>
@@ -116,45 +125,117 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <param name="msbuild">IMSBuild objects for evaluating</param>
         public void evaluate(string name, string project, MSBuild.IMSBuild msbuild)
         {
-            string defindex = defIndex(name, project);
+            evaluate(defIndex(name, project), msbuild);
+        }
+
+        /// <summary>
+        /// Evaluation user-variable with IMSBuild by using unique identification
+        /// Evaluated value should be updated for variable.
+        /// </summary>
+        /// <param name="ident">Unique identificator</param>
+        /// <param name="msbuild">IMSBuild objects for evaluating</param>
+        public void evaluate(string ident, MSBuild.IMSBuild msbuild)
+        {
             lock(_lock)
             {
-                if(!definitions.ContainsKey(defindex)) {
-                    throw new NotFoundException("Variable '{0}' not found", defindex);
+                if(!definitions.ContainsKey(ident)) {
+                    throw new NotFoundException("Variable '{0}' not found", ident);
                 }
 
                 if(msbuild == null) {
-                    throw new InvalidArgumentException("msbuild is null");
+                    throw new InvalidArgumentException("evaluation of variable: msbuild is null");
                 }
 
-                definitions[defindex] = new TUserVariable() {
-                    unevaluated = definitions[defindex].unevaluated,
-                    evaluated   = msbuild.parse(definitions[defindex].unevaluated)
+                definitions[ident] = new TUserVariable() {
+                    unevaluated = definitions[ident].unevaluated,
+                    evaluated = msbuild.parse(definitions[ident].unevaluated)
                 };
-                Log.nlog.Debug("Completed evaluation variable :: '{0}'", defindex);
+                Log.nlog.Debug("Completed evaluation of variable with IMSBuild :: '{0}'", ident);
+            }
+        }
+
+        /// <summary>
+        /// Evaluation user-variable with ISBEScript by using scope of project
+        /// Evaluated value should be updated for variable.
+        /// </summary>
+        /// <param name="name">Variable name for evaluating</param>
+        /// <param name="project">Project name</param>
+        /// <param name="msbuild">ISBEScript objects for evaluating</param>
+        public void evaluate(string name, string project, ISBEScript script)
+        {
+            evaluate(defIndex(name, project), script);
+        }
+
+        /// <summary>
+        /// Evaluation user-variable with ISBEScript by using unique identification
+        /// Evaluated value should be updated for variable.
+        /// </summary>
+        /// <param name="ident">Unique identificator</param>
+        /// <param name="msbuild">ISBEScript objects for evaluating</param>
+        public void evaluate(string ident, ISBEScript script)
+        {
+            lock(_lock)
+            {
+                if(!definitions.ContainsKey(ident)) {
+                    throw new NotFoundException("Variable '{0}' not found", ident);
+                }
+
+                if(script == null) {
+                    throw new InvalidArgumentException("evaluation of variable: script is null");
+                }
+
+                definitions[ident] = new TUserVariable() {
+                    unevaluated = definitions[ident].unevaluated,
+                    evaluated   = script.parse(definitions[ident].unevaluated)
+                };
+                Log.nlog.Debug("Completed evaluation of variable with ISBEScript :: '{0}'", ident);
             }
         }
 
         /// <summary>
         /// Checking for variable - completed evaluation or not
+        /// by using scope of project
         /// </summary>
         /// <param name="name">Variable name</param>
         /// <param name="project">Project name</param>
         /// <returns></returns>
         public bool isEvaluated(string name, string project)
         {
-            return (definitions[defIndex(name, project)].evaluated != null);
+            return isEvaluated(defIndex(name, project));
+        }
+
+        /// <summary>
+        /// Checking for variable - completed evaluation or not
+        /// by using unique identification
+        /// </summary>
+        /// <param name="ident">Unique identificator</param>
+        /// <returns></returns>
+        public bool isEvaluated(string ident)
+        {
+            return (definitions[ident].evaluated != null);
         }
 
         /// <summary>
         /// Checking existence of variable
+        /// by using scope of project
         /// </summary>
         /// <param name="name">Variable name</param>
         /// <param name="project">Project name</param>
         /// <returns></returns>
         public bool isExist(string name, string project)
         {
-            return definitions.ContainsKey(defIndex(name, project));
+            return isExist(defIndex(name, project));
+        }
+
+        /// <summary>
+        /// Checking existence of variable 
+        /// by using unique identification
+        /// </summary>
+        /// <param name="ident">Unique identificator</param>
+        /// <returns></returns>
+        public bool isExist(string ident)
+        {
+            return definitions.ContainsKey(ident);
         }
 
         /// <summary>
@@ -186,20 +267,31 @@ namespace net.r_eg.vsSBE.SBEScripts
 
         /// <summary>
         /// Remove user-variable
+        /// by using scope of project
         /// </summary>
         /// <param name="name">variable name</param>
         /// <param name="project">project name</param>
         /// <exception cref="ArgumentNullException">key is null</exception>
         public void unset(string name, string project)
         {
+            unset(defIndex(name, project));
+        }
+
+        /// <summary>
+        /// Removes user-variable
+        /// by using unique identification
+        /// </summary>
+        /// <param name="ident">Unique identificator</param>
+        public void unset(string ident)
+        {
             lock(_lock)
             {
-                if(definitions.Remove(name)) {
-                    Log.nlog.Debug("User-variable is successfully unset '{0}'", name);
+                if(definitions.Remove(ident)) {
+                    Log.nlog.Debug("User-variable is successfully unset '{0}'", ident);
                     return;
                 }
             }
-            Log.nlog.Debug("Cannot unset the user-variable '{0}'", name);
+            Log.nlog.Debug("Cannot unset the user-variable '{0}'", ident);
         }
 
         /// <summary>
