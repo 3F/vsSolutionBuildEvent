@@ -41,7 +41,7 @@ namespace net.r_eg.vsSBE.UI
 
         public ScriptCheckFrm(IEnvironment env)
         {
-            script  = new Script(uvariable);
+            script  = new Script(env, uvariable);
             msbuild = new MSBuildParser(env, uvariable);
             InitializeComponent();
         }

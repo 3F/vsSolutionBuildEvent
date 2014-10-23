@@ -197,7 +197,7 @@
             this.checkBoxMSBuildSupport.Name = "checkBoxMSBuildSupport";
             this.checkBoxMSBuildSupport.Size = new System.Drawing.Size(103, 17);
             this.checkBoxMSBuildSupport.TabIndex = 8;
-            this.checkBoxMSBuildSupport.Text = "MSBuild support";
+            this.checkBoxMSBuildSupport.Text = "MSBuild core";
             this.checkBoxMSBuildSupport.UseVisualStyleBackColor = true;
             // 
             // ScriptCheckFrm

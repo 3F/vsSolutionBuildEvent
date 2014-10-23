@@ -35,6 +35,7 @@ using EnvDTE80;
 using Microsoft.Build.Evaluation;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.MSBuild.Exceptions;
 
 namespace net.r_eg.vsSBE
 {

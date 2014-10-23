@@ -30,40 +30,41 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using net.r_eg.vsSBE.Exceptions;
 
-namespace net.r_eg.vsSBE.Exceptions
+namespace net.r_eg.vsSBE.SBEScripts.Exceptions
 {
-    public class SBEScriptException: SBEException
+    public class ScriptException: SBEException
     {
-        public SBEScriptException(string message): base(message) {}
-        public SBEScriptException(string message, params object[] args): base(message, args) {}
+        public ScriptException(string message): base(message) {}
+        public ScriptException(string message, params object[] args): base(message, args) {}
     }
 
-    public class SelectorMismatchException: SBEScriptException
+    public class SelectorMismatchException: ScriptException
     {
         public SelectorMismatchException(string message): base(message) {}
         public SelectorMismatchException(string message, params object[] args): base(message, args) {}
     }
 
-    public class SyntaxIncorrectException: SBEScriptException
+    public class SyntaxIncorrectException: ScriptException
     {
         public SyntaxIncorrectException(string message): base(message) {}
         public SyntaxIncorrectException(string message, params object[] args): base(message, args) {}
     }
 
-    public class SubtypeNotFoundException: SBEScriptException
+    public class SubtypeNotFoundException: ScriptException
     {
         public SubtypeNotFoundException(string message): base(message) {}
         public SubtypeNotFoundException(string message, params object[] args): base(message, args) {}
     }
 
-    public class TermNotFoundException: SBEScriptException
+    public class TermNotFoundException: ScriptException
     {
         public TermNotFoundException(string message): base(message) {}
         public TermNotFoundException(string message, params object[] args): base(message, args) {}
     }
 
-    public class NotSupportedOperationException: SBEScriptException
+    public class NotSupportedOperationException: ScriptException
     {
         public NotSupportedOperationException(string message): base(message) {}
         public NotSupportedOperationException(string message, params object[] args): base(message, args) {}

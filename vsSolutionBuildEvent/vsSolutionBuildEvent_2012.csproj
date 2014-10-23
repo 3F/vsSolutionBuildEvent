@@ -141,7 +141,7 @@
     <Compile Include="Events\EventProcess.cs" />
     <Compile Include="Events\IEventProcess.cs" />
     <Compile Include="Events\IExecutionOrder.cs" />
-    <Compile Include="Exceptions\SBEScriptException.cs" />
+    <Compile Include="SBEScripts\Exceptions\ScriptException.cs" />
     <Compile Include="IMatchWords.cs" />
     <Compile Include="Events\IModeFile.cs" />
     <Compile Include="Events\IModeInterpreter.cs" />
@@ -219,7 +219,7 @@
     <Compile Include="OWP\Listener.cs" />
     <Compile Include="OWP\BuildItem.cs" />
     <Compile Include="MSBuild\MSBuildParser.cs" />
-    <Compile Include="Exceptions\MSBuildParserException.cs" />
+    <Compile Include="MSBuild\Exceptions\MSBuildParserException.cs" />
     <Compile Include="Actions\SBECommand.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="UI\WForms\EventsFrm.cs">

@@ -30,8 +30,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using net.r_eg.vsSBE.Exceptions;
 
-namespace net.r_eg.vsSBE.Exceptions
+namespace net.r_eg.vsSBE.MSBuild.Exceptions
 {
     public class MSBProjectNotFoundException: SBEException
     {

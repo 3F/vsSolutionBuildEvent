@@ -120,7 +120,9 @@ namespace net.r_eg.vsSBE
             _env = new Environment(Dte2);
 
             _c = new Connection(
-                    new SBECommand(_env, new Script(uvariable), new MSBuildParser(_env, uvariable))
+                    new SBECommand(_env, 
+                                    new Script(_env, uvariable), 
+                                    new MSBuildParser(_env, uvariable))
             );
 
             _owpBuild = new OWP.Listener(_env, "Build");

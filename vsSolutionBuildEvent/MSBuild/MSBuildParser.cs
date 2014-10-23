@@ -40,6 +40,7 @@ using Microsoft.Build.Collections;
 using Microsoft.Build.Evaluation;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.MSBuild.Exceptions;
 using net.r_eg.vsSBE.SBEScripts;
 
 namespace net.r_eg.vsSBE.MSBuild

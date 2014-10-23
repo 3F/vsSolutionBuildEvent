@@ -34,6 +34,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Components;
+using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts
 {
@@ -91,6 +92,11 @@ namespace net.r_eg.vsSBE.SBEScripts
         protected IUserVariable uvariable;
 
         /// <summary>
+        /// Provides operation with environment
+        /// </summary>
+        protected IEnvironment env;
+
+        /// <summary>
         /// Current level of nesting data.
         /// Aborting if reached limit
         /// </summary>
@@ -101,6 +107,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// </summary>
         private FileComponent _cFile;
         private OWPComponent _cOWP;
+        private DTEComponent _cDTE;
         private InternalComponent _cInternal;
         private UserVariableComponent _cUVariable;
 
@@ -116,9 +123,11 @@ namespace net.r_eg.vsSBE.SBEScripts
             return parse(data, _depthLevel);
         }
 
+        /// <param name="env">Used environment</param>
         /// <param name="uvariable">Used instance of user-variable</param>
-        public Script(IUserVariable uvariable)
+        public Script(IEnvironment env, IUserVariable uvariable)
         {
+            this.env = env;
             this.uvariable = uvariable;
         }
 
@@ -182,6 +191,15 @@ namespace net.r_eg.vsSBE.SBEScripts
                     _cOWP = new OWPComponent();
                 }
                 return _cOWP.parse(data);
+            }
+
+            if(data.StartsWith("[DTE "))
+            {
+                Log.nlog.Debug("SBEScripts-selector: use DTEComponent");
+                if(_cDTE == null) {
+                    _cDTE = new DTEComponent(env);
+                }
+                return _cDTE.parse(data);
             }
 
             if(data.StartsWith("[vsSBE "))
