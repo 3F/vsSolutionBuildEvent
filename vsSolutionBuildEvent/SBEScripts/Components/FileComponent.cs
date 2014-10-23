@@ -122,7 +122,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                   ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                throw new TermNotFoundException("Failed stGet - '{0}'", data);
+                throw new OperandNotFoundException("Failed stGet - '{0}'", data);
             }
 
             string file     = m.Groups[1].Value.Trim();
@@ -168,7 +168,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                  ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                throw new TermNotFoundException("Failed stCall - '{0}'", data);
+                throw new OperandNotFoundException("Failed stCall - '{0}'", data);
             }
 
             string file = m.Groups[1].Value.Trim();
@@ -225,7 +225,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                  ), RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline);
 
             if(!m.Success) {
-                throw new TermNotFoundException("Failed stWrite - '{0}'", data);
+                throw new OperandNotFoundException("Failed stWrite - '{0}'", data);
             }
 
             string path     = m.Groups[1].Value.Trim();

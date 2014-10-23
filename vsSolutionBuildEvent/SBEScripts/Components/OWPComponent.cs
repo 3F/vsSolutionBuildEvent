@@ -93,7 +93,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                  ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                throw new TermNotFoundException("Failed stOut - '{0}'", data);
+                throw new OperandNotFoundException("Failed stOut - '{0}'", data);
             }
             
             if(m.Groups[1].Success)

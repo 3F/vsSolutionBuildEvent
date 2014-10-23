@@ -28,8 +28,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+using net.r_eg.vsSBE.Actions;
+using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
@@ -44,13 +49,95 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
+        /// Work with DTE-Commands
+        /// </summary>
+        protected DTEOperation DTEO
+        {
+            get {
+                if(dteo == null) {
+                    Debug.Assert(env != null);
+                    dteo = new DTEOperation((EnvDTE.DTE)env.DTE2, Events.SolutionEventType.General);
+                }
+                return dteo;
+            }
+        }
+        protected DTEOperation dteo;
+
+        /// <summary>
+        /// Provides operation with environment
+        /// </summary>
+        protected IEnvironment env;
+
+        /// <param name="env">Used environment</param>
+        public BuildComponent(IEnvironment env)
+        {
+            this.env = env;
+        }
+
+        /// <summary>
         /// Handling with current type
         /// </summary>
         /// <param name="data">mixed data</param>
         /// <returns>prepared and evaluated data</returns>
         public string parse(string data)
         {
-            return data;
+            Match m = Regex.Match(data, @"^\[Build
+                                              \s+
+                                              (                  #1 - full ident
+                                                ([A-Za-z_0-9]+)  #2 - subtype
+                                                .*
+                                              )
+                                           \]$", 
+                                           RegexOptions.IgnorePatternWhitespace);
+
+            if(!m.Success) {
+                throw new SyntaxIncorrectException("Failed BuildComponent - '{0}'", data);
+            }
+            string ident    = m.Groups[1].Value;
+            string subtype  = m.Groups[2].Value;
+
+            switch(subtype) {
+                case "cancel": {
+                    Log.nlog.Debug("BuildComponent: use stCancel");
+                    return stCancel(ident);
+                }
+            }
+            throw new SubtypeNotFoundException("BuildComponent: not found subtype - '{0}'", subtype);
+        }
+
+        /// <summary>
+        /// The Cancel operation
+        /// e.g.: #[Build cancel = true]
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>found command</returns>
+        protected string stCancel(string data)
+        {
+            Match m = Regex.Match(data, @"cancel\s*=\s*(false|true|1|0)", RegexOptions.IgnoreCase);
+            if(!m.Success) {
+                throw new OperandNotFoundException("Failed stCancel - '{0}'", data);
+            }
+
+            string val = m.Groups[1].Value.Trim().ToLower();
+            switch(val) {
+                case "1":
+                case "true": {
+                    Log.nlog.Debug("stCancel: value is true");
+                    DTEO.exec(new string[] { "Build.Cancel" }, false);
+                    break;
+                }
+                case "0":
+                case "false": {
+                    Log.nlog.Debug("stCancel: value is false");
+                    //ignore
+                    break;
+                }
+                default: {
+                    throw new IncorrectSyntaxException("stCancel: incorrect value - '{0}'", val);
+                }
+            }
+            Log.nlog.Debug("stCancel: pushed '{0}'", val);
+            return String.Empty;
         }
     }
 }

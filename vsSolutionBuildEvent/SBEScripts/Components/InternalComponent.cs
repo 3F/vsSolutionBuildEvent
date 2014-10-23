@@ -108,7 +108,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                  ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                throw new TermNotFoundException("Failed stEvents - '{0}'", data);
+                throw new OperandNotFoundException("Failed stEvents - '{0}'", data);
             }
 
             string typeString   = m.Groups[1].Value;
@@ -155,7 +155,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                  ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                throw new TermNotFoundException("Failed stEventItem - '{0}'", data);
+                throw new OperandNotFoundException("Failed stEventItem - '{0}'", data);
             }
 
             string property     = m.Groups[1].Value;
@@ -192,7 +192,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                          RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                throw new TermNotFoundException("Failed pStatus - '{0}'", data);
+                throw new OperandNotFoundException("Failed pStatus - '{0}'", data);
             }
 
             string property = m.Groups[1].Value;
@@ -222,7 +222,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             Match m = Regex.Match(data, @"=\s*(false|true|1|0)", RegexOptions.IgnoreCase);
             if(!m.Success) {
-                throw new TermNotFoundException("Failed pEnabled - '{0}'", data);
+                throw new OperandNotFoundException("Failed pEnabled - '{0}'", data);
             }
 
             string val = m.Groups[1].Value.Trim().ToLower();

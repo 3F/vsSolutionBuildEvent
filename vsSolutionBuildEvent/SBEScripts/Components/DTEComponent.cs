@@ -94,7 +94,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
-        /// Getting the DTE-command to execution
+        /// DTE-command to execution
+        /// e.g: #[DTE exec: command(arg)]
         /// </summary>
         /// <param name="data"></param>
         /// <returns>found command</returns>
@@ -102,7 +103,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         {
             Match m = Regex.Match(data, @"exec\s*:(.+)");
             if(!m.Success) {
-                throw new TermNotFoundException("Failed stExec - '{0}'", data);
+                throw new OperandNotFoundException("Failed stExec - '{0}'", data);
             }
             string cmd = m.Groups[1].Value.Trim();
             Log.nlog.Debug("Found '{0}' to execution", cmd);
