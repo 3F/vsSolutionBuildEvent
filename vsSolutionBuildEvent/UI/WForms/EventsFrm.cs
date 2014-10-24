@@ -131,7 +131,8 @@ namespace net.r_eg.vsSBE.UI
         {
             evt.Enabled                 = checkBoxStatus.Checked;
             evt.Caption                 = textBoxCaption.Text;
-            evt.SupportMSBuild          = checkBoxParseVariables.Checked;
+            evt.SupportMSBuild          = checkBoxMSBuildSupport.Checked;
+            evt.SupportSBEScripts       = checkBoxSBEScriptSupport.Checked;
             evt.IgnoreIfBuildFailed     = checkBoxIgnoreIfFailed.Checked;
             evt.Process.Waiting         = checkBoxWaitForExit.Checked;
             evt.Process.Hidden          = checkBoxProcessHide.Checked;
@@ -235,13 +236,14 @@ namespace net.r_eg.vsSBE.UI
 
         protected void renderData(SBEEvent evt)
         {
-            checkBoxStatus.Checked          = evt.Enabled;
-            textBoxCaption.Text             = evt.Caption;
-            checkBoxParseVariables.Checked  = evt.SupportMSBuild;
-            checkBoxIgnoreIfFailed.Checked  = evt.IgnoreIfBuildFailed;
-            checkBoxWaitForExit.Checked     = evt.Process.Waiting;
-            checkBoxProcessHide.Checked     = evt.Process.Hidden;
-            checkBoxProcessKeep.Checked     = evt.Process.KeepWindow;
+            checkBoxStatus.Checked              = evt.Enabled;
+            textBoxCaption.Text                 = evt.Caption;
+            checkBoxMSBuildSupport.Checked      = evt.SupportMSBuild;
+            checkBoxSBEScriptSupport.Checked    = evt.SupportSBEScripts;
+            checkBoxIgnoreIfFailed.Checked      = evt.IgnoreIfBuildFailed;
+            checkBoxWaitForExit.Checked         = evt.Process.Waiting;
+            checkBoxProcessHide.Checked         = evt.Process.Hidden;
+            checkBoxProcessKeep.Checked         = evt.Process.KeepWindow;
 
             if(evt.Mode == null) {
                 Log.nlog.Warn("The Mode is corrupt, reinitialized with default type");

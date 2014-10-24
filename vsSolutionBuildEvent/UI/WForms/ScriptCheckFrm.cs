@@ -22,17 +22,25 @@ namespace net.r_eg.vsSBE.UI
         /// <summary>
         /// Clean container of user-variables
         /// </summary>
-        private IUserVariable uvariable = new UserVariable();
+        protected IUserVariable uvariable = new UserVariable();
 
         /// <summary>
         /// Work with MSBuild
         /// </summary>
-        private IMSBuild msbuild;
+        protected IMSBuild msbuild;
 
         /// <summary>
         /// Work with DTE-Commands
         /// </summary>
-        private Script script;
+        protected Script script;
+
+        /// <summary>
+        /// Flag of supporting MSBuild
+        /// </summary>
+        protected bool MSBuildSupport
+        {
+            get { return checkBoxMSBuildSupport.Checked; }
+        }
 
         /// <summary>
         /// Flag of sample
@@ -56,12 +64,10 @@ namespace net.r_eg.vsSBE.UI
             }
         }
 
-        protected void unsetVariable(string ident)
+        protected void getVariable(string ident)
         {
             try {
-                if(!uvariable.isEvaluated(ident)) {
-                    uvariable.evaluate(ident, msbuild);
-                }
+                evaluateVariable(ident);
                 richTextBoxUVariables.Text = uvariable.get(ident);
             }
             catch(Exception ex) {
@@ -69,10 +75,29 @@ namespace net.r_eg.vsSBE.UI
             }
         }
 
+        protected void evaluateVariable(string ident)
+        {
+            if(uvariable.isEvaluated(ident)) {
+                return;
+            }
+            if(MSBuildSupport) {
+                uvariable.evaluate(ident, msbuild);
+            }
+            else {
+                uvariable.evaluate(ident, script);
+            }
+        }
+
+        private void setCommand(string str, Color foreColor)
+        {
+            richTextBoxCommand.Text = str;
+            richTextBoxCommand.ForeColor = foreColor;
+        }
+
         private void btnExecute_Click(object sender, EventArgs e)
         {
             try {
-                if(checkBoxMSBuildSupport.Checked) {
+                if(MSBuildSupport) {
                     richTextBoxExecuted.Text = msbuild.parse(script.parse(richTextBoxCommand.Text));
                 }
                 else {
@@ -99,14 +124,9 @@ namespace net.r_eg.vsSBE.UI
             setCommand("#[var evtPre = #[vsSBE events.Pre.item(1).Enabled]] #[var evtPre]", Color.FromArgb(128, 128, 128));
         }
 
-        private void setCommand(string str, Color foreColor)
-        {
-            richTextBoxCommand.Text = str;
-            richTextBoxCommand.ForeColor = foreColor;
-        }
-
         private void menuItemUVarUnsetSel_Click(object sender, EventArgs e)
         {
+            richTextBoxUVariables.Text = String.Empty;
             if(listBoxUVariables.SelectedIndex == -1) {
                 return;
             }
@@ -118,6 +138,7 @@ namespace net.r_eg.vsSBE.UI
         {
             uvariable.unsetAll();
             listBoxUVariables.Items.Clear();
+            richTextBoxUVariables.Text = String.Empty;
         }
 
         private void listBoxUVariables_SelectedIndexChanged(object sender, EventArgs e)
@@ -125,7 +146,7 @@ namespace net.r_eg.vsSBE.UI
             if(listBoxUVariables.SelectedIndex == -1) {
                 return;
             }
-            unsetVariable(listBoxUVariables.Text);
+            getVariable(listBoxUVariables.Text);
         }
     }
 }

@@ -110,6 +110,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         private DTEComponent _cDTE;
         private BuildComponent _cBuild;
         private InternalComponent _cInternal;
+        private CommentComponent _cComment;
         private UserVariableComponent _cUVariable;
 
         /// <summary>
@@ -157,6 +158,14 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <returns>prepared & evaluated data</returns>
         protected string selector(string data)
         {
+            if(data.StartsWith("[\"")) {
+                Log.nlog.Debug("SBEScripts-selector: use CommentComponent");
+                if(_cComment == null) {
+                    _cComment = new CommentComponent();
+                }
+                return _cComment.parse(data);
+            }
+
             if(deepen(ref data)) {
                 ++_depthLevel;
                 data = parse(data, _depthLevel);
