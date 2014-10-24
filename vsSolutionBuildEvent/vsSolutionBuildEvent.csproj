@@ -172,6 +172,7 @@
     <Compile Include="SBEScripts\Script.cs" />
     <Compile Include="SBEScripts\TUserVariable.cs" />
     <Compile Include="SBEScripts\UserVariable.cs" />
+    <Compile Include="SBEScripts\Values.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SynchSubscribers.cs" />
     <Compile Include="MSBuild\TPreparedData.cs" />

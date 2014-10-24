@@ -126,12 +126,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             // #[OWP out.Warnings.Count]
             if(property == ".Warnings.Count") {
-                return OWP.Items._.Build.WarningsCount.ToString();
+                return Values.from(OWP.Items._.Build.WarningsCount);
             }
 
             // #[OWP out.Warnings.Codes]
             if(property == ".Warnings.Codes") {
-                return String.Join(",", OWP.Items._.Build.Warnings);
+                return Values.from(OWP.Items._.Build.Warnings);
             }
 
             // #[OWP out.Errors.Raw] / #[OWP out.Errors]
@@ -141,12 +141,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             // #[OWP out.Errors.Count]
             if(property == ".Errors.Count") {
-                return OWP.Items._.Build.ErrorsCount.ToString();
+                return Values.from(OWP.Items._.Build.ErrorsCount);
             }
 
             // #[OWP out.Errors.Codes]
             if(property == ".Errors.Codes") {
-                return String.Join(",", OWP.Items._.Build.Errors);
+                return Values.from(OWP.Items._.Build.Errors);
             }
 
             throw new NotSupportedOperationException("property - '{0}' not yet supported", property);

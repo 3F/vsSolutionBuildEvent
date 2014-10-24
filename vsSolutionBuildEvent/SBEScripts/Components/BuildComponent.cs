@@ -27,11 +27,13 @@
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using EnvDTE;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
@@ -101,13 +103,18 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     Log.nlog.Debug("BuildComponent: use stCancel");
                     return stCancel(ident);
                 }
+                case "projects": {
+                    // is meant the SolutionContexts !
+                    Log.nlog.Debug("BuildComponent: use stProjects");
+                    return stProjects(ident);
+                }
             }
             throw new SubtypeNotFoundException("BuildComponent: not found subtype - '{0}'", subtype);
         }
 
         /// <summary>
         /// The Cancel operation
-        /// e.g.: #[Build cancel = true]
+        /// Sample: #[Build cancel = true]
         /// </summary>
         /// <param name="data"></param>
         /// <returns>found command</returns>
@@ -138,6 +145,108 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
             Log.nlog.Debug("stCancel: pushed '{0}'", val);
             return String.Empty;
+        }
+
+        /// <summary>
+        /// Work with configuration manager of projects through the SolutionContexts
+        /// 
+        /// http://msdn.microsoft.com/en-us/library/EnvDTE.Configuration_properties.aspx
+        /// http://msdn.microsoft.com/en-us/library/envdte.solutioncontext.aspx
+        /// 
+        /// Therefore operand 'find' used for permanent getting as - contains or not ?
+        /// Values for example:
+        /// * "bzip2.vcxproj"
+        /// * "Zenlib\ZenLib.vcxproj"
+        /// 
+        /// Sample: 
+        ///  #[Build projects.find("name")]
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        protected string stProjects(string data)
+        {
+            Match m = Regex.Match(data,
+                                    String.Format(@"projects
+                                                    \s*\.\s*
+                                                    find
+                                                    \s*
+                                                    \({0}\)    #1 - project name
+                                                    \s*(.+)    #2 - operation
+                                                    ",
+                                                    RPattern.DoubleQuotesContent
+                                                 ), RegexOptions.IgnorePatternWhitespace);
+
+            if(!m.Success) {
+                throw new OperandNotFoundException("Failed stProjects - '{0}'", data);
+            }
+
+            string project      = m.Groups[1].Value;
+            string operation    = m.Groups[2].Value;
+
+            SolutionContext context = null;
+            IEnumerator slnc        = env.SolutionActiveConfiguration.SolutionContexts.GetEnumerator();
+
+            while(slnc.MoveNext()) {
+                SolutionContext item = (SolutionContext)slnc.Current;
+                if(((SolutionContext)slnc.Current).ProjectName.Contains(project)) {
+                    context = item;
+                    break;
+                }
+            }
+            if(context == null) {
+                throw new NotFoundException("Not found project - '{0}'", project);
+            }
+            return stProjectConf(context, operation);
+        }
+
+        /// <summary>
+        /// Work with item of SolutionContexts
+        /// 
+        /// Samples:
+        ///  #[Build projects.find("name").IsBuildable = true]
+        ///  #[Build projects.find("name").IsBuildable]
+        ///  #[Build projects.find("name").IsDeployable = true]
+        ///  #[Build projects.find("name").IsDeployable]
+        /// </summary>
+        /// <param name="context">Working SolutionContext</param>
+        /// <param name="data">String data with operations</param>
+        /// <returns></returns>
+        protected string stProjectConf(SolutionContext context, string data)
+        {
+            Debug.Assert(context != null);
+
+            Match m = Regex.Match(data, @"\.\s*
+                                          ([A-Za-z_0-9]+)            #1 - property
+                                          (?:
+                                            \s*=\s*(false|true|1|0)  #2 - value (optional)
+                                          )?", RegexOptions.IgnorePatternWhitespace);
+
+            if(!m.Success) {
+                throw new OperandNotFoundException("Failed stProjectConf - '{0}'", data);
+            }
+            string property = m.Groups[1].Value;
+            string value    = (m.Groups[2].Success)? m.Groups[2].Value : null;
+
+            Log.nlog.Debug("stProjectConf: property - '{0}', value - '{1}'", property, value);
+            switch(property) {
+                case "IsBuildable":
+                {
+                    if(value != null) {
+                        context.ShouldBuild = Values.toBoolean(value);
+                        return String.Empty;
+                    }
+                    return Values.from(context.ShouldBuild);
+                }
+                case "IsDeployable":
+                {
+                    if(value != null) {
+                        context.ShouldDeploy = Values.toBoolean(value);
+                        return String.Empty;
+                    }
+                    return Values.from(context.ShouldDeploy);
+                }
+            }
+            throw new NotFoundException("stProjectConf: not found property - '{0}'", property);
         }
     }
 }

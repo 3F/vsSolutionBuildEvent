@@ -224,23 +224,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(!m.Success) {
                 throw new OperandNotFoundException("Failed pEnabled - '{0}'", data);
             }
+            evt.Enabled = Values.toBoolean(m.Groups[1].Value);
 
-            string val = m.Groups[1].Value.Trim().ToLower();
-            switch(val) {
-                case "1":
-                case "true": {
-                    evt.Enabled = true;
-                    break;
-                }
-                case "0":
-                case "false": {
-                    evt.Enabled = false;
-                    break;
-                }
-                default: {
-                    throw new IncorrectSyntaxException("pEnabled: incorrect value - '{0}'", val);
-                }
-            }
             Log.nlog.Debug("pEnabled: setted as '{0}' for '{1}'", evt.Enabled, evt.Name);
             return String.Empty;
         }
