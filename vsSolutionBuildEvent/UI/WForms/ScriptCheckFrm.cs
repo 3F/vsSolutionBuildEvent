@@ -30,9 +30,9 @@ namespace net.r_eg.vsSBE.UI
         protected IMSBuild msbuild;
 
         /// <summary>
-        /// Work with DTE-Commands
+        /// Work with SBE-Scripts
         /// </summary>
-        protected Script script;
+        protected ISBEScript script;
 
         /// <summary>
         /// Flag of supporting MSBuild

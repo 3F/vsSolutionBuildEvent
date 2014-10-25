@@ -30,6 +30,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
@@ -44,13 +47,168 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
+        /// Work with SBE-Scripts
+        /// </summary>
+        protected ISBEScript script;
+
+        /// <summary>
         /// Handling with current type
         /// </summary>
         /// <param name="data">mixed data</param>
         /// <returns>prepared and evaluated data</returns>
         public string parse(string data)
         {
-            return data;
+            StringHandler hString = new StringHandler();
+
+            Match m = Regex.Match(hString.protect(data), 
+                                    String.Format(@"{0}            #1 - Condition
+                                                    \s*
+                                                    {1}            #2 - Body if true
+                                                    (?:
+                                                      \s*else\s*
+                                                      {1}          #3 - Body if false (optional)
+                                                    )?",
+                                                    RPattern.RoundBracketsContent,
+                                                    RPattern.CurlyBracketsContent
+                                                 ), RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline);
+
+            if(!m.Success) {
+                throw new SyntaxIncorrectException("Failed ConditionComponent - '{0}'", data);
+            }
+
+            string condition    = hString.recovery(m.Groups[1].Value);
+            string bodyIfTrue   = hString.recovery(m.Groups[2].Value);
+            string bodyIfFalse  = (m.Groups[3].Success)? hString.recovery(m.Groups[3].Value) : null;
+
+            return evaluate(condition, bodyIfTrue, bodyIfFalse);
         }
+
+        /// <param name="env">Used environment</param>
+        /// <param name="uvariable">Used instance of user-variables</param>
+        public ConditionComponent(IEnvironment env, IUserVariable uvariable)
+        {
+            this.script = new Script(env, uvariable);
+        }
+
+        protected string evaluate(string condition, string ifTrue, string ifFalse)
+        {
+            Log.nlog.Debug("Condition-evaluate: started with - '{0}' :: '{1}' :: '{2}'", condition, ifTrue, ifFalse);
+
+            Match m = Regex.Match(condition, @"^\s*
+                                               (!)?         #1 - flag of inversion (optional)
+                                               ([^=!~<>$]+) #2 - left operand - boolean type if as a single
+                                               (?:
+                                                   (
+                                                      ===
+                                                    |
+                                                      !==
+                                                    |
+                                                      ~=
+                                                    |
+                                                      ==
+                                                    |
+                                                      !=
+                                                    |
+                                                      >=
+                                                    |
+                                                      <=
+                                                    |
+                                                      >
+                                                    |
+                                                      <
+                                                   )        #3 - operator      (optional with #4)
+                                                   (.+)     #4 - right operand (optional with #3)
+                                               )?$", 
+                                               RegexOptions.IgnorePatternWhitespace);
+
+            if(!m.Success) {
+                throw new SyntaxIncorrectException("Failed ConditionComponent->evaluate - '{0}'", condition);
+            }
+
+            bool invert         = m.Groups[1].Success;
+            string left         = spaces(m.Groups[2].Value);
+            string coperator    = null;
+            string right        = null;
+            bool result         = false;
+
+            if(m.Groups[3].Success) {
+                coperator   = m.Groups[3].Value;
+                right       = spaces(m.Groups[4].Value);
+            }
+            Log.nlog.Debug("Condition-evaluate: left: '{0}', right: '{1}', operator: '{2}', invert: {3}", left, right, coperator, invert);
+
+            left = script.parse(left); // parsed only with SBE-Scripts, 
+                                       // therefore the nesting data is not possible and so not required control of level, 
+                                       // because currently variable of variable available only with MSBuild core
+            Log.nlog.Debug("Condition-evaluate: evaluated left: '{0}'", left);
+
+            if(right != null) {
+                right = script.parse(right);
+                Log.nlog.Debug("Condition-evaluate: evaluated right: '{0}'", right);
+                result = Values.cmp(left, right, coperator);
+            }
+            else {
+                result = Values.cmp((left == "1")? Values.VTRUE : (left == "0")? Values.VFALSE : left);
+            }
+            Log.nlog.Debug("Condition-evaluate: result is: '{0}'", result);
+            return ((invert)? !result : result)? ifTrue : ifFalse;
+        }
+
+        /// <summary>
+        /// Handling spaces
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        protected string spaces(string data)
+        {
+            Match m = Regex.Match(data.Trim(), // // ->" data  "<- or ->data<-
+                                    String.Format(@"(?:
+                                                      {0}   #1 - with space protection
+                                                    |
+                                                      (.*)  #2 - without
+                                                    )?",
+                                                    RPattern.DoubleQuotesContent
+                                                 ), RegexOptions.IgnorePatternWhitespace);
+
+            if(!m.Success) {
+                throw new SyntaxIncorrectException("Failed ConditionComponent->spaces - '{0}'", data);
+            }
+
+            if(m.Groups[1].Success) {
+                return m.Groups[1].Value;
+            }
+            return m.Groups[2].Value.Trim();
+        }
+    }
+
+    /// <summary>
+    /// Result type for ConditionComponent
+    /// </summary>
+    public struct ConditionComponentResult
+    {
+        /// <summary>
+        /// Left operand
+        /// </summary>
+        public string left;
+
+        /// <summary>
+        /// Right operand
+        /// </summary>
+        public string right;
+
+        /// <summary>
+        /// Operator of comparison
+        /// </summary>
+        public string coperator;
+
+        /// <summary>
+        /// Body if true
+        /// </summary>
+        public string ifTrue;
+
+        /// <summary>
+        /// Body if false
+        /// </summary>
+        public string ifFalse;
     }
 }

@@ -29,6 +29,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -97,6 +98,11 @@ namespace net.r_eg.vsSBE.SBEScripts
         protected IEnvironment env;
 
         /// <summary>
+        /// Basic operations with strings
+        /// </summary>
+        protected StringHandler hString;
+
+        /// <summary>
         /// Current level of nesting data.
         /// Aborting if reached limit
         /// </summary>
@@ -109,9 +115,15 @@ namespace net.r_eg.vsSBE.SBEScripts
         private OWPComponent _cOWP;
         private DTEComponent _cDTE;
         private BuildComponent _cBuild;
+        private ConditionComponent _cCondition;
         private InternalComponent _cInternal;
         private CommentComponent _cComment;
         private UserVariableComponent _cUVariable;
+
+        /// <summary>
+        /// object synch.
+        /// </summary>
+        private Object _lock = new Object();
 
         /// <summary>
         /// Handler of mixed data SBE-Scripts
@@ -121,8 +133,12 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <returns>prepared & evaluated data</returns>
         public string parse(string data)
         {
-            _depthLevel = 0;
-            return parse(data, _depthLevel);
+            lock(_lock)
+            {
+                _depthLevel = 0;
+                StringHandler hString = new StringHandler();
+                return parse(hString.protect(data), _depthLevel, hString);
+            }
         }
 
         /// <param name="env">Used environment</param>
@@ -133,7 +149,11 @@ namespace net.r_eg.vsSBE.SBEScripts
             this.uvariable = uvariable;
         }
 
-        protected string parse(string data, int level)
+        /// <param name="data">Mixed data</param>
+        /// <param name="level">Nesting level</param>
+        /// <param name="hString">Handler of strings if exist</param>
+        /// <returns>Prepared & evaluated data</returns>
+        protected string parse(string data, int level, StringHandler hString = null)
         {
             if(level >= DEPTH_LIMIT) {
                 throw new LimitException("Nesting level of '{0}' reached. Aborted.", level);
@@ -145,8 +165,13 @@ namespace net.r_eg.vsSBE.SBEScripts
                     Log.nlog.Debug("SBEScripts: escape - '{0}'", m.Groups[1].Value);
                     return m.Value.Substring(1);
                 }
-                Log.nlog.Debug("SBEScripts-data: '{0}'", data);
-                return selector(m.Groups[2].Value);
+                string raw = m.Groups[2].Value;
+
+                Log.nlog.Debug("SBEScripts-data: to parse '{0}'", raw);
+                if(hString != null) {
+                    return selector(hString.recovery(raw));
+                }
+                return selector(raw);
             }, 
             RegexOptions.IgnorePatternWhitespace);
         }
@@ -158,6 +183,8 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <returns>prepared & evaluated data</returns>
         protected string selector(string data)
         {
+            Log.nlog.Debug("SBEScripts-selector: started with '{0}'", data);
+
             if(data.StartsWith("[\"")) {
                 Log.nlog.Debug("SBEScripts-selector: use CommentComponent");
                 if(_cComment == null) {
@@ -166,10 +193,20 @@ namespace net.r_eg.vsSBE.SBEScripts
                 return _cComment.parse(data);
             }
 
+            if(data.StartsWith("[(")) {
+                Log.nlog.Debug("SBEScripts-selector: use ConditionComponent");
+                if(_cCondition == null) {
+                    _cCondition = new ConditionComponent(env, uvariable);
+                }
+                //return parse(_cCondition.parse(data));
+                data = _cCondition.parse(data);
+            }
+
             if(deepen(ref data)) {
                 ++_depthLevel;
                 data = parse(data, _depthLevel);
                 --_depthLevel;
+                return data;
             }
 
             if(data.StartsWith("[var "))
@@ -238,7 +275,7 @@ namespace net.r_eg.vsSBE.SBEScripts
                 return _cFile.parse(data);
             }
 
-            throw new SelectorMismatchException("input data: '{0}'", data);
+            throw new SelectorMismatchException("SBEScripts-selector: not found component for handling - '{0}'", data);
         }
 
         protected bool deepen(ref string data)

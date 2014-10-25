@@ -55,6 +55,33 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
+        /// Captures content from Square Brackets
+        /// [ ... ]
+        /// </summary>
+        public static string SquareBracketsContent
+        {
+            get { return bracketsContent('[', ']'); }
+        }
+
+        /// <summary>
+        /// Captures content from Parentheses (Round Brackets)
+        /// ( ... )
+        /// </summary>
+        public static string RoundBracketsContent
+        {
+            get { return bracketsContent('(', ')'); }
+        }
+
+        /// <summary>
+        /// Captures content from Curly Brackets
+        /// { ... }
+        /// </summary>
+        public static string CurlyBracketsContent
+        {
+            get { return bracketsContent('{', '}'); }
+        }
+
+        /// <summary>
         /// Captures content for present symbol of quotes
         /// Escaping is a "\" for used symbol
         /// e.g.: \', \"
@@ -72,6 +99,31 @@ namespace net.r_eg.vsSBE.SBEScripts
                                      )*
                                   )
                                   {0}\s*", symbol);
+        }
+
+
+        /// <summary>
+        /// Captures content for present symbol of brackets
+        /// 
+        /// Note: A balancing group definition deletes the definition of a previously defined group, 
+        ///       therefore allowed some intersection with name of the balancing group.. don't worry., be happy
+        /// </summary>
+        /// <param name="open">left symbol of bracket: [, {, ( etc.</param>
+        /// <param name="close">right symbol of bracket: ], }, ) etc.</param>
+        private static string bracketsContent(char open, char close)
+        {
+            return String.Format(@"\{0}
+                                   (
+                                     (?>
+                                       [^\{0}\{1}]
+                                       |
+                                       \{0}(?<R>)
+                                       |
+                                       \{1}(?<-R>)
+                                     )*
+                                     (?(R)(?!))
+                                   )
+                                   \{1}", open, close);
         }
     }
 }

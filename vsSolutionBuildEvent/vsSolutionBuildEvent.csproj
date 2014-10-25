@@ -170,6 +170,7 @@
     <Compile Include="Events\SBETransmitter.cs" />
     <Compile Include="SBEScripts\RPattern.cs" />
     <Compile Include="SBEScripts\Script.cs" />
+    <Compile Include="SBEScripts\StringHandler.cs" />
     <Compile Include="SBEScripts\TUserVariable.cs" />
     <Compile Include="SBEScripts\UserVariable.cs" />
     <Compile Include="SBEScripts\Values.cs" />

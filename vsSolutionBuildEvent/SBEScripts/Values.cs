@@ -40,6 +40,9 @@ namespace net.r_eg.vsSBE.SBEScripts
     /// </summary>
     public static class Values
     {
+        public const string VTRUE   = "true";
+        public const string VFALSE  = "false";
+
         /// <summary>
         /// Getting boolean value
         /// Boolean.Parse() - converts only true/false value from string
@@ -51,17 +54,25 @@ namespace net.r_eg.vsSBE.SBEScripts
             val = val.Trim().ToLower();
             switch(val) {
                 case "1":
-                case "true": {
+                case VTRUE: {
                     return true;
                 }
                 case "0":
-                case "false": {
+                case VFALSE: {
                     return false;
                 }
-                default: {
-                    throw new IncorrectSyntaxException("Values: incorrect boolean value - '{0}'", val);
-                }
             }
+            throw new IncorrectSyntaxException("Values: incorrect boolean value - '{0}'", val);
+        }
+
+        /// <summary>
+        /// Getting Int32 value
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        public static int toInt32(string val)
+        {
+            return Int32.Parse(val.Trim());
         }
 
         /// <param name="val"></param>
@@ -83,6 +94,58 @@ namespace net.r_eg.vsSBE.SBEScripts
         public static string from(int val)
         {
             return val.ToString();
+        }
+
+        /// <summary>
+        /// Comparing values
+        /// </summary>
+        /// <param name="left">Left operand</param>
+        /// <param name="right">Right operand</param>
+        /// <param name="coperator">Operator of comparison</param>
+        /// <returns>Result of comparison</returns>
+        public static bool cmp(string left, string right = VTRUE, string coperator = "===")
+        {
+            switch(coperator)
+            {
+                case "===": {
+                    return (left == right);
+                }
+                case "!==": {
+                    return (left != right);
+                }
+                case "~=": {
+                    return (left.Contains(right));
+                }
+                case "==":
+                {
+                    int lNumber, rNumber;
+                    if(Int32.TryParse(left, out lNumber) && Int32.TryParse(right, out rNumber)) {
+                        return lNumber == rNumber;
+                    }
+                    return (left == right);
+                }
+                case "!=":
+                {
+                    int lNumber, rNumber;
+                    if(Int32.TryParse(left, out lNumber) && Int32.TryParse(right, out rNumber)) {
+                        return lNumber != rNumber;
+                    }
+                    return (left != right);
+                }
+                case ">": {
+                    return (toInt32(left) > toInt32(right));
+                }
+                case ">=": {
+                    return (toInt32(left) >= toInt32(right));
+                }
+                case "<": {
+                    return (toInt32(left) < toInt32(right));
+                }
+                case "<=": {
+                    return (toInt32(left) <= toInt32(right));
+                }
+            }
+            throw new IncorrectSyntaxException("Values-comparison: incorrect operator - '{0}'", coperator);
         }
     }
 }
