@@ -14,7 +14,7 @@ using System.Text;
 using System.Windows.Forms;
 using net.r_eg.vsSBE.MSBuild;
 
-namespace net.r_eg.vsSBE.UI
+namespace net.r_eg.vsSBE.UI.WForms
 {
     public partial class PropertyCheckFrm: Form
     {
@@ -64,6 +64,11 @@ namespace net.r_eg.vsSBE.UI
         {
             textBoxUnevaluated.Text         = str;
             textBoxUnevaluated.ForeColor    = foreColor;
+        }
+
+        private void btnDoc_Click(object sender, EventArgs e)
+        {
+            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Scripts_&_Commands/MSBuild");
         }
     }
 }

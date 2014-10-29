@@ -40,7 +40,7 @@ namespace net.r_eg.vsSBE
     [ProvideAutoLoad(UIContextGuids80.SolutionExists)]
 
     // Registers the tool window
-    [ProvideToolWindow(typeof(UI.StatusToolWindow), Height=23, Style=VsDockStyle.Linked, Orientation=ToolWindowOrientation.Top, Window=ToolWindowGuids80.Outputwindow)]
+    [ProvideToolWindow(typeof(UI.Xaml.StatusToolWindow), Height=23, Style=VsDockStyle.Linked, Orientation=ToolWindowOrientation.Top, Window=ToolWindowGuids80.Outputwindow)]
 
     // Package Guid
     [Guid(GuidList.PACKAGE_STRING)]
@@ -92,7 +92,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// main form of settings
         /// </summary>
-        private EventsFrm _configFrm;
+        private UI.WForms.EventsFrm _configFrm;
 
         /// <summary>
         /// Main container of user-variables
@@ -129,14 +129,14 @@ namespace net.r_eg.vsSBE
             _owpBuild.attachEvents();
             _owpBuild.register(_c);
 
-            UI.StatusToolWindow.control.setDTE(Dte2);
+            UI.Xaml.StatusToolWindow.control.setDTE(Dte2);
         }
 
         int IVsSolutionEvents.OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
         {            
             try
             {
-                FindToolWindow(typeof(UI.StatusToolWindow), 0, true);
+                FindToolWindow(typeof(UI.Xaml.StatusToolWindow), 0, true);
 
                 string path = Dte2.Solution.FullName; // may be empty e.g. if fNewSolution == 1 etc.
                 if(string.IsNullOrEmpty(path)) {
@@ -157,14 +157,14 @@ namespace net.r_eg.vsSBE
             }
             _state();
             _menuItemMain.Visible = true;
-            UI.StatusToolWindow.control.enabled(true);
+            UI.Xaml.StatusToolWindow.control.enabledPanel(true);
             return VSConstants.S_OK;
         }
 
         int IVsSolutionEvents.OnAfterCloseSolution(object pUnkReserved)
         {
             _menuItemMain.Visible = false;
-            UI.StatusToolWindow.control.enabled(false);
+            UI.Xaml.StatusToolWindow.control.enabledPanel(false);
             UI.Util.closeTool(_configFrm);
 
             return VSConstants.S_OK;
@@ -214,13 +214,13 @@ namespace net.r_eg.vsSBE
                 _configFrm.Focus();
                 return;
             }
-            _configFrm = new UI.EventsFrm(_env);
+            _configFrm = new UI.WForms.EventsFrm(_env);
             _configFrm.Show();
         }
 
         private void _menuPanelCallback(object sender, EventArgs e)
         {
-            ToolWindowPane window = FindToolWindow(typeof(UI.StatusToolWindow), 0, true); // find or create
+            ToolWindowPane window = FindToolWindow(typeof(UI.Xaml.StatusToolWindow), 0, true); // find or create
             if(window == null || window.Frame == null) {
                 throw new ComponentException("Cannot create UI.StatusToolWindow");
             }
@@ -229,21 +229,31 @@ namespace net.r_eg.vsSBE
 
         private void _state()
         {
-            Func<ISolutionEvent, string, string> aboutEvent = delegate(ISolutionEvent evt, string caption) {
-                return String.Format("\n\t* [{0}][{1}]: {2}", evt.Enabled ? "!" : "X", caption, evt.Caption);
+            Func<ISolutionEvent[], string, string> about = delegate(ISolutionEvent[] evt, string caption)
+            {
+                if(evt == null) {
+                    return String.Format("\n\t-- /--] {0} :: Not Initialized", caption);
+                }
+
+                System.Text.StringBuilder info = new System.Text.StringBuilder();
+                info.Append(String.Format("\n\t{0,2} /{1,2}] {2} :: ", evt.Where(i => i.Enabled).Count(), evt.Length, caption));
+                foreach(ISolutionEvent item in evt) {
+                    info.Append(String.Format("[{0}]", (item.Enabled) ? "!" : "X"));
+                }
+                return info.ToString();
             };
 
-            // TODO:
-            //Log.print(String.Format("{0}{1}{2}{3}{4}{5}{6}\n---\n",
-            //                        aboutEvent(Config._.Data.preBuild,           "Pre-Build"),
-            //                        aboutEvent(Config._.Data.postBuild,          "Post-Build"),
-            //                        aboutEvent(Config._.Data.cancelBuild,        "Cancel-Build"),
-            //                        aboutEvent(Config._.Data.warningsBuild,      "Warnings-Build"),
-            //                        aboutEvent(Config._.Data.errorsBuild,        "Errors-Build"),
-            //                        aboutEvent(Config._.Data.outputCustomBuild,  "Output-Build"),
-            //                        aboutEvent(Config._.Data.transmitter,        "Transmitter")));
-
-            Log.nlog.Info("Use vsSBE panel: View -> Other Windows -> Solution Build-Events");
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.Append(about(Config._.Data.PreBuild,      "Pre-Build     "));
+            sb.Append(about(Config._.Data.PostBuild,     "Post-Build    "));
+            sb.Append(about(Config._.Data.CancelBuild,   "Cancel-Build  "));
+            sb.Append(about(Config._.Data.WarningsBuild, "Warnings-Build"));
+            sb.Append(about(Config._.Data.ErrorsBuild,   "Errors-Build  "));
+            sb.Append(about(Config._.Data.OWPBuild,      "Output-Build  "));
+            sb.Append(about(Config._.Data.Transmitter,   "Transmitter   "));
+            sb.Append("\n---\n");
+            Log.print(sb.ToString());
+            Log.nlog.Info("vsSBE tool pane: View -> Other Windows -> Solution Build-Events");
         }
 
         #region unused

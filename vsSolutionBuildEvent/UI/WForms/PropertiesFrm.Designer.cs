@@ -1,4 +1,4 @@
-﻿namespace net.r_eg.vsSBE.UI
+﻿namespace net.r_eg.vsSBE.UI.WForms
 {
     partial class PropertiesFrm
     {

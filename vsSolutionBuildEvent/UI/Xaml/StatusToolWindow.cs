@@ -14,12 +14,12 @@ using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell;
 
-namespace net.r_eg.vsSBE.UI
+namespace net.r_eg.vsSBE.UI.Xaml
 {
     [Guid(GuidList.PANEL_STRING)]
     internal class StatusToolWindow: ToolWindowPane
     {
-        public static readonly StatusControl control = new StatusControl();
+        public static readonly StatusToolControl control = new StatusToolControl();
 
         private Object _eLock = new Object();
         public StatusToolWindow(): base(null)

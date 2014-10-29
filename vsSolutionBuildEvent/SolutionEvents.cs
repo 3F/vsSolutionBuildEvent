@@ -28,6 +28,7 @@
 
 using System;
 using net.r_eg.vsSBE.Events;
+using net.r_eg.vsSBE.Exceptions;
 
 namespace net.r_eg.vsSBE
 {
@@ -121,5 +122,39 @@ namespace net.r_eg.vsSBE
         }
         [NonSerialized]
         private SBETransmitter[] transmitter = new SBETransmitter[] { new SBETransmitter() };
+
+
+        /// <summary>
+        /// Getting event by type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <exception cref="NotFoundException"></exception>
+        public ISolutionEvent[] getEvent(SolutionEventType type)
+        {
+            switch(type) {
+                case SolutionEventType.Pre: {
+                    return PreBuild;
+                }
+                case SolutionEventType.Post: {
+                    return PostBuild;
+                }
+                case SolutionEventType.Cancel: {
+                    return CancelBuild;
+                }
+                case SolutionEventType.Warnings: {
+                    return WarningsBuild;
+                }
+                case SolutionEventType.Errors: {
+                    return ErrorsBuild;
+                }
+                case SolutionEventType.OWP: {
+                    return OWPBuild;
+                }
+                case SolutionEventType.Transmitter: {
+                    return Transmitter;
+                }
+            }
+            throw new NotFoundException("getEvent: Not found event type - '{0}'", type);
+        }
     }
 }

@@ -136,11 +136,14 @@
     <Compile Include="Actions\Connection.cs" />
     <Compile Include="Actions\DTEOperation.cs" />
     <Compile Include="Environment.cs" />
+    <Compile Include="Events\ITransmitter.cs" />
     <Compile Include="Events\IMode.cs" />
     <Compile Include="Events\ExecutionOrder.cs" />
     <Compile Include="Events\EventProcess.cs" />
     <Compile Include="Events\IEventProcess.cs" />
     <Compile Include="Events\IExecutionOrder.cs" />
+    <Compile Include="Extensions\ArrayExtension.cs" />
+    <Compile Include="Extensions\ObjectExtension.cs" />
     <Compile Include="SBEScripts\Exceptions\ScriptException.cs" />
     <Compile Include="IMatchWords.cs" />
     <Compile Include="Events\IModeFile.cs" />
@@ -243,10 +246,11 @@
     <Compile Include="UI\WForms\PropertyCheckFrm.Designer.cs">
       <DependentUpon>PropertyCheckFrm.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\Xaml\StatusControl.xaml.cs">
-      <DependentUpon>StatusControl.xaml</DependentUpon>
+    <Compile Include="UI\Xaml\Logic\StatusTool.cs" />
+    <Compile Include="UI\Xaml\StatusToolControl.xaml.cs">
+      <DependentUpon>StatusToolControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\Xaml\Logic\StatusToolWindow.cs" />
+    <Compile Include="UI\Xaml\StatusToolWindow.cs" />
     <Compile Include="Upgrade\0.3_0.4.cs" />
     <Compile Include="Version.cs" />
     <Compile Include="VSPackage.Designer.cs">
@@ -314,7 +318,7 @@
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="UI\Xaml\StatusControl.xaml">
+    <Page Include="UI\Xaml\StatusToolControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

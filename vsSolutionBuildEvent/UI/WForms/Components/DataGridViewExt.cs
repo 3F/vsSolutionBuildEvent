@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace net.r_eg.vsSBE.UI.WForms
+namespace net.r_eg.vsSBE.UI.WForms.Components
 {
     /// <summary>
     /// hooking up notifications for moved rows

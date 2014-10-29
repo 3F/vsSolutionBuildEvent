@@ -91,7 +91,7 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Initialization settings
+        /// Initializing settings from file
         /// </summary>
         /// <param name="path">path to configuration file</param>
         public void load(string path)
@@ -128,6 +128,15 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
+        /// Initializing settings from object
+        /// </summary>
+        /// <param name="data"></param>
+        public void load(SolutionEvents data)
+        {
+            this.data = data;
+        }
+
+        /// <summary>
         /// with changing path
         /// </summary>
         /// <param name="path">path to configuration file</param>
@@ -151,6 +160,22 @@ namespace net.r_eg.vsSBE
             }
         }
 
+        public string serialize(SolutionEvents data)
+        {
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.Converters.Add(new StringEnumConverter{ 
+                AllowIntegerValues  = false,
+                CamelCaseText       = true
+            });
+            settings.NullValueHandling = NullValueHandling.Include;
+            return JsonConvert.SerializeObject(data, Formatting.Indented, settings);
+        }
+
+        public SolutionEvents deserialize(string data)
+        {
+            return JsonConvert.DeserializeObject<SolutionEvents>(data);
+        }
+
         protected SolutionEvents deserialize(StreamReader stream)
         {
             using(JsonTextReader reader = new JsonTextReader(stream)) {
@@ -160,13 +185,7 @@ namespace net.r_eg.vsSBE
 
         protected void serialize(TextWriter stream, SolutionEvents data)
         {
-            JsonSerializerSettings settings = new JsonSerializerSettings();
-            settings.Converters.Add(new StringEnumConverter{ 
-                AllowIntegerValues  = false,
-                CamelCaseText       = true
-            });
-            settings.NullValueHandling = NullValueHandling.Include;
-            stream.Write(JsonConvert.SerializeObject(data, Formatting.Indented, settings));
+            stream.Write(serialize(data));
         }
 
         /// <summary>

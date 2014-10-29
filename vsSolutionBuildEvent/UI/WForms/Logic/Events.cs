@@ -12,38 +12,45 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.Extensions;
 
-namespace net.r_eg.vsSBE.UI
+namespace net.r_eg.vsSBE.UI.WForms.Logic
 {
     public class Events
     {
         /// <summary>
-        /// Used for name of new action
+        /// For naming actions
         /// </summary>
         public const string ACTION_PREFIX       = "Act";
         public const string ACTION_PREFIX_CLONE = "CopyOf";
 
         public class SBEWrap
         {
-            public List<SBEEvent> evt;
+            /// <summary>
+            /// Wrapped event
+            /// </summary>
+            public List<ISolutionEvent> evt;
+            /// <summary>
+            /// Specific type
+            /// </summary>
             public SolutionEventType type;
 
-            public SBEWrap(SBEEvent[] evt, SolutionEventType type)
+            public SBEWrap(SolutionEventType type)
             {
-                setEvent(evt);
                 this.type = type;
+                update();
             }
 
-            public SBEWrap(SBEEvent[] evt)
+            /// <summary>
+            /// Updating list from used array data
+            /// </summary>
+            public void update()
             {
-                setEvent(evt);
-                type = SolutionEventType.General;
-            }
-
-            protected void setEvent(SBEEvent[] evt)
-            {
-                // Using as List with standard shallow copying!
-                this.evt = new List<SBEEvent>(evt);
+                evt = new List<ISolutionEvent>(Config._.Data.getEvent(type));
+                if(evt == null) {
+                    Log.nlog.Debug("SBEWrap: evt is null for type '{0}'", type);
+                    evt = new List<ISolutionEvent>();
+                }
             }
         }
 
@@ -68,7 +75,7 @@ namespace net.r_eg.vsSBE.UI
         /// <summary>
         /// Current item of SBE
         /// </summary>
-        public SBEEvent SBEItem
+        public ISolutionEvent SBEItem
         {
             get {
                 if(currentEventItem == -1) {
@@ -121,51 +128,14 @@ namespace net.r_eg.vsSBE.UI
         /// </summary>
         protected volatile int currentEventItem = 0;
 
+        /// <summary>
+        /// Used for restoring settings
+        /// </summary>
+        protected SolutionEvents toRestoring;
+
         public void addEvent(SBEWrap evt)
         {
             events.Add(evt);
-        }
-
-        /// <param name="copyFrom">Cloning the event-item from present index</param>
-        /// <returns>added item</returns>
-        public SBEEvent addEventItem(int copyFrom = -1)
-        {
-            SBEEvent evt;
-            if(copyFrom >= SBE.evt.Count || copyFrom < 0)
-            {
-                evt = new SBEEvent();
-                evt.Name = genUniqueName(ACTION_PREFIX, SBE.evt);
-            }
-            else
-            {
-                evt         = deepCopyFrom(SBE.evt[copyFrom]);
-                evt.Caption = String.Format("Copy of '{0}' - {1}", evt.Name, evt.Caption);
-                evt.Name    = genUniqueName(ACTION_PREFIX_CLONE + evt.Name, SBE.evt);
-            }
-
-            if(SBE.evt == null) {
-                Log.nlog.Debug("evt is null for type '{0}'", SBE.type);
-                SBE.evt = new List<SBEEvent>();
-            }
-            SBE.evt.Add(evt);
-            return evt;
-        }
-
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public void moveEventItem(int from, int to)
-        {
-            if(from == to) {
-                return;
-            }
-            SBEEvent moving = SBE.evt[from];
-            SBE.evt.RemoveAt(from);
-            SBE.evt.Insert(to, moving);
-        }
-
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public void removeEventItem(int index)
-        {
-            SBE.evt.RemoveAt(index);
         }
 
         /// <param name="index">Selected event</param>
@@ -280,6 +250,12 @@ namespace net.r_eg.vsSBE.UI
         public void saveData()
         {
             Config._.save(); // all changes have been passed by reference
+            toRestoring = Config._.Data.CloneBySerialization(); // update the deep copy
+        }
+
+        public void restoreData()
+        {
+            Config._.load(toRestoring.CloneBySerialization());
         }
 
         public void fillEvents(ComboBox combo)
@@ -287,33 +263,163 @@ namespace net.r_eg.vsSBE.UI
             events.Clear();
             combo.Items.Clear();
 
-            addEvent(new SBEWrap(Config._.Data.PreBuild, SolutionEventType.Pre));
+            addEvent(new SBEWrap(SolutionEventType.Pre));
             combo.Items.Add(":: Pre-Build :: Before assembling");
 
-            addEvent(new SBEWrap(Config._.Data.PostBuild, SolutionEventType.Post));
+            addEvent(new SBEWrap(SolutionEventType.Post));
             combo.Items.Add(":: Post-Build :: After assembling");
 
-            addEvent(new SBEWrap(Config._.Data.CancelBuild, SolutionEventType.Cancel));
+            addEvent(new SBEWrap(SolutionEventType.Cancel));
             combo.Items.Add(":: Cancel-Build :: by user or when an error occurs");
 
-            addEvent(new SBEWrap(Config._.Data.WarningsBuild, SolutionEventType.Warnings));
+            addEvent(new SBEWrap(SolutionEventType.Warnings));
             combo.Items.Add(":: Warnings-Build :: Warnings during assembly processing");
 
-            addEvent(new SBEWrap(Config._.Data.ErrorsBuild, SolutionEventType.Errors));
+            addEvent(new SBEWrap(SolutionEventType.Errors));
             combo.Items.Add(":: Errors-Build :: Errors during assembly processing");
 
-            addEvent(new SBEWrap(Config._.Data.OWPBuild, SolutionEventType.OWP));
+            addEvent(new SBEWrap(SolutionEventType.OWP));
             combo.Items.Add(":: Output-Build customization :: Full control");
 
-            addEvent(new SBEWrap(Config._.Data.Transmitter, SolutionEventType.Transmitter));
+            addEvent(new SBEWrap(SolutionEventType.Transmitter));
             combo.Items.Add(":: Transmitter :: Transmission building-data to outer handler");
 
             combo.SelectedIndex = 0;
         }
 
+        /// <param name="copyFrom">Cloning the event-item at the specified index</param>
+        /// <returns>added item</returns>
+        public ISolutionEvent addEventItem(int copyFrom = -1)
+        {
+            switch(SBE.type) {
+                case SolutionEventType.Pre: {
+                    Config._.Data.PreBuild = Config._.Data.PreBuild.GetWithAdded(new SBEEvent());
+                    break;
+                }
+                case SolutionEventType.Post: {
+                    Config._.Data.PostBuild = Config._.Data.PostBuild.GetWithAdded(new SBEEvent());
+                    break;
+                }
+                case SolutionEventType.Cancel: {
+                    Config._.Data.CancelBuild = Config._.Data.CancelBuild.GetWithAdded(new SBEEvent());
+                    break;
+                }
+                case SolutionEventType.OWP: {
+                    Config._.Data.OWPBuild = Config._.Data.OWPBuild.GetWithAdded(new SBEEventOWP());
+                    break;
+                }
+                case SolutionEventType.Warnings: {
+                    Config._.Data.WarningsBuild = Config._.Data.WarningsBuild.GetWithAdded(new SBEEventEW());
+                    break;
+                }
+                case SolutionEventType.Errors: {
+                    Config._.Data.ErrorsBuild = Config._.Data.ErrorsBuild.GetWithAdded(new SBEEventEW());
+                    break;
+                }
+                case SolutionEventType.Transmitter: {
+                    Config._.Data.Transmitter = Config._.Data.Transmitter.GetWithAdded(new SBETransmitter());
+                    break;
+                }
+            }
+            SBE.update();
+
+            // we already have added item in main storage, 
+            // and we can working with any updating by shallow copy
+
+            ISolutionEvent added = SBE.evt[SBE.evt.Count - 1];
+
+            if(copyFrom >= SBE.evt.Count || copyFrom < 0) {
+                added.Name = genUniqueName(ACTION_PREFIX, SBE.evt);
+            }
+            else {
+                SBE.evt[copyFrom].CloneByReflectionInto(added);
+                added.Caption   = String.Format("Copy of '{0}' - {1}", added.Name, added.Caption);
+                added.Name      = genUniqueName(ACTION_PREFIX_CLONE + added.Name, SBE.evt);
+            }
+            return added;
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public void moveEventItem(int from, int to)
+        {
+            if(from == to) {
+                return;
+            }
+
+            switch(SBE.type) {
+                case SolutionEventType.Pre: {
+                    Config._.Data.PreBuild = Config._.Data.PreBuild.GetWithMoved(from, to);
+                    break;
+                }
+                case SolutionEventType.Post: {
+                    Config._.Data.PostBuild = Config._.Data.PostBuild.GetWithMoved(from, to);
+                    break;
+                }
+                case SolutionEventType.Cancel: {
+                    Config._.Data.CancelBuild = Config._.Data.CancelBuild.GetWithMoved(from, to);
+                    break;
+                }
+                case SolutionEventType.OWP: {
+                    Config._.Data.OWPBuild = Config._.Data.OWPBuild.GetWithMoved(from, to);
+                    break;
+                }
+                case SolutionEventType.Warnings: {
+                    Config._.Data.WarningsBuild = Config._.Data.WarningsBuild.GetWithMoved(from, to);
+                    break;
+                }
+                case SolutionEventType.Errors: {
+                    Config._.Data.ErrorsBuild = Config._.Data.ErrorsBuild.GetWithMoved(from, to);
+                    break;
+                }
+                case SolutionEventType.Transmitter: {
+                    Config._.Data.Transmitter = Config._.Data.Transmitter.GetWithMoved(from, to);
+                    break;
+                }
+            }
+            SBE.update();
+            setEventIndexes(currentEventIndex, to);
+        }
+
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public void removeEventItem(int index)
+        {
+            switch(SBE.type) {
+                case SolutionEventType.Pre: {
+                    Config._.Data.PreBuild = Config._.Data.PreBuild.GetWithRemoved(index);
+                    break;
+                }
+                case SolutionEventType.Post: {
+                    Config._.Data.PostBuild = Config._.Data.PostBuild.GetWithRemoved(index);
+                    break;
+                }
+                case SolutionEventType.Cancel: {
+                    Config._.Data.CancelBuild = Config._.Data.CancelBuild.GetWithRemoved(index);
+                    break;
+                }
+                case SolutionEventType.OWP: {
+                    Config._.Data.OWPBuild = Config._.Data.OWPBuild.GetWithRemoved(index);
+                    break;
+                }
+                case SolutionEventType.Warnings: {
+                    Config._.Data.WarningsBuild = Config._.Data.WarningsBuild.GetWithRemoved(index);
+                    break;
+                }
+                case SolutionEventType.Errors: {
+                    Config._.Data.ErrorsBuild = Config._.Data.ErrorsBuild.GetWithRemoved(index);
+                    break;
+                }
+                case SolutionEventType.Transmitter: {
+                    Config._.Data.Transmitter = Config._.Data.Transmitter.GetWithRemoved(index);
+                    break;
+                }
+            }
+            SBE.update();
+        }
+
         public Events(Environment env)
         {
             this.env = env;
+            toRestoring = Config._.Data.CloneBySerialization();
         }
 
         /// <summary>
@@ -322,10 +428,10 @@ namespace net.r_eg.vsSBE.UI
         /// <param name="prefix">only for specific prefix</param>
         /// <param name="scope"></param>
         /// <returns></returns>
-        protected virtual int getUniqueId(string prefix, List<SBEEvent> scope)
+        protected virtual int getUniqueId(string prefix, List<ISolutionEvent> scope)
         {
             int maxId = 0;
-            foreach(SBEEvent item in scope)
+            foreach(ISolutionEvent item in scope)
             {
                 if(String.IsNullOrEmpty(item.Name)) {
                     continue;
@@ -344,20 +450,9 @@ namespace net.r_eg.vsSBE.UI
             return ++maxId;
         }
 
-        protected virtual string genUniqueName(string prefix, List<SBEEvent> scope)
+        protected virtual string genUniqueName(string prefix, List<ISolutionEvent> scope)
         {
             return String.Format("{0}{1}", prefix, getUniqueId(prefix, scope));
-        }
-
-        protected virtual SBEEvent deepCopyFrom(SBEEvent evt)
-        {
-            SBEEvent ret = new SBEEvent();
-            System.Reflection.PropertyInfo[] properties = evt.GetType().GetProperties();
-
-            foreach(System.Reflection.PropertyInfo property in properties) {
-                property.SetValue(ret, property.GetValue(evt, null), null);
-            }
-            return ret;
         }
     }
 }

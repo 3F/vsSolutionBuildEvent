@@ -14,7 +14,7 @@ using System.Text;
 using System.Windows.Forms;
 using net.r_eg.vsSBE.Actions;
 
-namespace net.r_eg.vsSBE.UI
+namespace net.r_eg.vsSBE.UI.WForms
 {
     public partial class DTECheckFrm: Form
     {
@@ -69,6 +69,11 @@ namespace net.r_eg.vsSBE.UI
         {
             richTextBoxCommand.Text = str;
             richTextBoxCommand.ForeColor = foreColor;
+        }
+
+        private void btnDoc_Click(object sender, EventArgs e)
+        {
+            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Scripts_&_Commands/DTE-Commands");
         }
     }
 }

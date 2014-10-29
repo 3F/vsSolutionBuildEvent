@@ -8,7 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using EnvDTE80;
 
-namespace net.r_eg.vsSBE.UI
+namespace net.r_eg.vsSBE.UI.WForms
 {
     public partial class DTECommandsFrm: Form
     {

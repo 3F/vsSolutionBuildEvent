@@ -15,7 +15,7 @@ using System.Windows.Forms;
 using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts;
 
-namespace net.r_eg.vsSBE.UI
+namespace net.r_eg.vsSBE.UI.WForms
 {
     public partial class ScriptCheckFrm: Form
     {
@@ -147,6 +147,11 @@ namespace net.r_eg.vsSBE.UI
                 return;
             }
             getVariable(listBoxUVariables.Text);
+        }
+
+        private void btnDoc_Click(object sender, EventArgs e)
+        {
+            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Scripts_&_Commands/SBE-Scripts");
         }
     }
 }

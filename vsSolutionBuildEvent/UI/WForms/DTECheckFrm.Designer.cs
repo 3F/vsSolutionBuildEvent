@@ -1,4 +1,4 @@
-﻿namespace net.r_eg.vsSBE.UI
+﻿namespace net.r_eg.vsSBE.UI.WForms
 {
     partial class DTECheckFrm
     {
@@ -27,11 +27,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DTECheckFrm));
             this.btnExecute = new System.Windows.Forms.Button();
             this.groupBoxExecuted = new System.Windows.Forms.GroupBox();
             this.richTextBoxExecuted = new System.Windows.Forms.RichTextBox();
             this.groupBoxCommand = new System.Windows.Forms.GroupBox();
             this.richTextBoxCommand = new System.Windows.Forms.RichTextBox();
+            this.btnDoc = new System.Windows.Forms.Button();
             this.groupBoxExecuted.SuspendLayout();
             this.groupBoxCommand.SuspendLayout();
             this.SuspendLayout();
@@ -94,11 +96,25 @@
             this.richTextBoxCommand.WordWrap = false;
             this.richTextBoxCommand.Click += new System.EventHandler(this.richTextBoxCommand_Click);
             // 
+            // btnDoc
+            // 
+            this.btnDoc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDoc.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnDoc.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnDoc.Image = ((System.Drawing.Image)(resources.GetObject("btnDoc.Image")));
+            this.btnDoc.Location = new System.Drawing.Point(454, 104);
+            this.btnDoc.Name = "btnDoc";
+            this.btnDoc.Size = new System.Drawing.Size(38, 23);
+            this.btnDoc.TabIndex = 6;
+            this.btnDoc.UseVisualStyleBackColor = true;
+            this.btnDoc.Click += new System.EventHandler(this.btnDoc_Click);
+            // 
             // DTECheckFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(497, 278);
+            this.Controls.Add(this.btnDoc);
             this.Controls.Add(this.btnExecute);
             this.Controls.Add(this.groupBoxExecuted);
             this.Controls.Add(this.groupBoxCommand);
@@ -121,5 +137,6 @@
         private System.Windows.Forms.RichTextBox richTextBoxExecuted;
         private System.Windows.Forms.GroupBox groupBoxCommand;
         private System.Windows.Forms.RichTextBox richTextBoxCommand;
+        private System.Windows.Forms.Button btnDoc;
     }
 }

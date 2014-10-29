@@ -10,9 +10,10 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using net.r_eg.vsSBE.Events;
-using net.r_eg.vsSBE.UI.WForms;
+using net.r_eg.vsSBE.UI.WForms.Components;
+using net.r_eg.vsSBE.UI.WForms.Logic;
 
-namespace net.r_eg.vsSBE.UI
+namespace net.r_eg.vsSBE.UI.WForms
 {
     public partial class EventsFrm: Form, ITransferDataProperty, ITransferDataCommand
     {
@@ -24,7 +25,7 @@ namespace net.r_eg.vsSBE.UI
         /// Logic for this UI
         /// Operations with events etc.,
         /// </summary>
-        protected Events logic;
+        protected Logic.Events logic;
 
         /// <summary>
         /// UI-helper for MSBuild Properties
@@ -60,7 +61,7 @@ namespace net.r_eg.vsSBE.UI
 
         public EventsFrm(Environment env)
         {
-            logic = new Events(env);
+            logic = new Logic.Events(env);
 
             InitializeComponent();
             defaultSizes();
@@ -127,7 +128,7 @@ namespace net.r_eg.vsSBE.UI
             }
         }
 
-        protected void saveData(SBEEvent evt)
+        protected void saveData(ISolutionEvent evt)
         {
             evt.Enabled                 = checkBoxStatus.Checked;
             evt.Caption                 = textBoxCaption.Text;
@@ -189,7 +190,7 @@ namespace net.r_eg.vsSBE.UI
                     continue;
                 }
                 MatchWords m  = new MatchWords();
-                m.Condition   = row.Cells["owpTerm"].Value.ToString();
+                m.Condition   = (row.Cells["owpTerm"].Value == null)? "" : row.Cells["owpTerm"].Value.ToString();
                 m.Type        = (ComparisonType)Enum.Parse(typeof(ComparisonType), row.Cells["owpType"].Value.ToString());
                 list.Add(m);
             }
@@ -198,9 +199,9 @@ namespace net.r_eg.vsSBE.UI
 
         protected void renderData()
         {
-            foreach(RadioButton rb in Util.getControls(groupBoxPMode, c => c.GetType() == typeof(RadioButton))) {
-                rb.Checked = false;
-            }
+            //foreach(RadioButton rb in Util.getControls(groupBoxPMode, c => c.GetType() == typeof(RadioButton))) {
+            //    rb.Checked = false; // see renderData(SBEEvent evt)
+            //}
             renderData(logic.SBEItem);
 
             checkBoxIgnoreIfFailed.Enabled  = false;
@@ -234,7 +235,7 @@ namespace net.r_eg.vsSBE.UI
             }
         }
 
-        protected void renderData(SBEEvent evt)
+        protected void renderData(ISolutionEvent evt)
         {
             checkBoxStatus.Checked              = evt.Enabled;
             textBoxCaption.Text                 = evt.Caption;
@@ -359,9 +360,14 @@ namespace net.r_eg.vsSBE.UI
 
         protected void addAction(int copyFrom = -1)
         {
-            SBEEvent evt = logic.addEventItem(copyFrom);
-            dgvActions.Rows.Add(evt.Enabled, evt.Name, evt.Caption);
-            selectAction(dgvActions.Rows.Count - 1, true);
+            try {
+                ISolutionEvent evt = logic.addEventItem(copyFrom);
+                dgvActions.Rows.Add(evt.Enabled, evt.Name, evt.Caption);
+                selectAction(dgvActions.Rows.Count - 1, true);
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Failed to add event-item: '{0}'", ex.Message);
+            }
         }
 
         protected void clearControls()
@@ -651,6 +657,9 @@ namespace net.r_eg.vsSBE.UI
 
         private void toolStripMenuReset_Click(object sender, EventArgs e)
         {
+            logic.restoreData();
+            logic.fillEvents(comboBoxEvents);
+            renderData();
             comboBoxEvents_SelectedIndexChanged(sender, e);
         }
 
@@ -695,16 +704,29 @@ namespace net.r_eg.vsSBE.UI
             listBoxEW.Items.RemoveAt(listBoxEW.SelectedIndex);
         }
 
-        private void toolStripMenuDoc_Click(object sender, EventArgs e)
+        private void toolStripMenuGalleryPage_Click(object sender, EventArgs e)
         {
-            DialogResult ret = MessageBox.Show("Help is contained on VS Gallery Page - scripts, solutions, etc.,\nClick 'Yes' to go to the page",
-                                                this.Text,
-                                                MessageBoxButtons.YesNo,
-                                                MessageBoxIcon.Information);
+            Util.openUrl("http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
+        }
 
-            if(ret == DialogResult.Yes) {
-                Util.openUrl("http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
-            }
+        private void toolStripMenuDocDte_Click(object sender, EventArgs e)
+        {
+            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Scripts_&_Commands/DTE-Commands");
+        }
+
+        private void toolStripMenuDocMSBuild_Click(object sender, EventArgs e)
+        {
+            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Scripts_&_Commands/MSBuild");
+        }
+
+        private void toolStripMenuDocSBE_Click(object sender, EventArgs e)
+        {
+            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Scripts_&_Commands/SBE-Scripts");
+        }
+
+        private void toolStripMenuDocDev_Click(object sender, EventArgs e)
+        {
+            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Developer%20Zone");
         }
 
         private void toolStripMenuChangelog_Click(object sender, EventArgs e)
@@ -862,6 +884,7 @@ namespace net.r_eg.vsSBE.UI
             Util.closeTool(frmDTECommands);
             Util.closeTool(frmDTECheck);
             Util.closeTool(frmSBEScript);
+            logic.restoreData();
         }
 
         private void dgvActions_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
@@ -893,6 +916,11 @@ namespace net.r_eg.vsSBE.UI
         private void menuActionsTogglePanel_Click(object sender, EventArgs e)
         {
             expandActionsList(splitContainer.SplitterDistance < metric.splitter);
+        }
+
+        private void menuActionsReset_Click(object sender, EventArgs e)
+        {
+            toolStripMenuReset_Click(sender, e);
         }
 
         private void menuActionsRemove_Click(object sender, EventArgs e)
@@ -936,7 +964,10 @@ namespace net.r_eg.vsSBE.UI
             if(e.Button == System.Windows.Forms.MouseButtons.Left) {
                 // MouseDown because the CellClick event may not be called for some rows
                 // the RowEnter called is too late..
-                refreshSettingsWithIndex(dgvActions.HitTest(e.X, e.Y).RowIndex);
+                int idx = dgvActions.HitTest(e.X, e.Y).RowIndex;
+                if(idx != -1) {
+                    refreshSettingsWithIndex(idx);
+                }
             }
         }
 
@@ -967,8 +998,9 @@ namespace net.r_eg.vsSBE.UI
                 return;
             }
             bool enabled = Boolean.Parse(dgvActions.Rows[e.RowIndex].Cells["dgvActionEnabled"].Value.ToString());
-            string name  = dgvActions.Rows[e.RowIndex].Cells["dgvActionName"].Value.ToString();
-            logic.updateInfo(e.RowIndex, name, enabled);
+            object oname = dgvActions.Rows[e.RowIndex].Cells["dgvActionName"].Value;
+
+            logic.updateInfo(e.RowIndex, (oname == null)? "" : oname.ToString(), enabled);
             refreshSettings();
         }
 
