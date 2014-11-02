@@ -91,8 +91,10 @@ namespace net.r_eg.vsSBE.Upgrade.v08
                 int len = evt.executionOrder.Length;
                 ret.ExecutionOrder = new ExecutionOrder[len];
                 for(int i = 0; i < len; ++i) {
-                    ret.ExecutionOrder[i].Project = evt.executionOrder[i].project;
-                    ret.ExecutionOrder[i].Order   = (ExecutionOrderType)evt.executionOrder[i].order;
+                    ret.ExecutionOrder[i] = new ExecutionOrder() {
+                        Project = evt.executionOrder[i].project,
+                        Order   = (ExecutionOrderType)evt.executionOrder[i].order
+                    };
                 }
             }
             return ret;
