@@ -226,6 +226,8 @@ namespace net.r_eg.vsSBE.SBEScripts
                 if(_cCondition == null) {
                     _cCondition = new ConditionComponent(env, uvariable);
                 }
+                _cCondition.PostProcessingMSBuild = postProcessingMSBuild;
+
                 ++_depthLevel;
                 data = parse(_cCondition.parse(data), _depthLevel);
                 --_depthLevel;

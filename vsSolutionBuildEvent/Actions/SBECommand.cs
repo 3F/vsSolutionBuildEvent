@@ -161,9 +161,6 @@ namespace net.r_eg.vsSBE.Actions
 
         protected virtual bool hModeScript(ISolutionEvent evt)
         {
-            if(((IModeInterpreter)evt.Mode).Handler.Trim().Length < 1) {
-                throw new NotFoundException("Not selected interpreter");
-            }
             string script   = ((IModeInterpreter)evt.Mode).Command;
             string wrapper  = ((IModeInterpreter)evt.Mode).Wrapper;
 
@@ -185,6 +182,10 @@ namespace net.r_eg.vsSBE.Actions
                 }
             }
 
+            if(((IModeInterpreter)evt.Mode).Handler.Trim().Length < 1) {
+                Log.nlog.Debug("Interpreter: ignoring useShell. Handler is not selected.");
+                return true;
+            }
             useShell(evt, string.Format("{0} {1}", ((IModeInterpreter)evt.Mode).Handler, script));
             return true;
         }

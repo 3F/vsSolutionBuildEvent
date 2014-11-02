@@ -32,6 +32,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
@@ -47,9 +48,24 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
-        /// Work with SBE-Scripts
+        /// Allows post-processing with MSBuild core
+        /// </summary>
+        public bool PostProcessingMSBuild
+        {
+            get { return postProcessingMSBuild; }
+            set { postProcessingMSBuild = value; }
+        }
+        protected bool postProcessingMSBuild = false;
+
+        /// <summary>
+        /// For evaluating with SBE-Script
         /// </summary>
         protected ISBEScript script;
+
+        /// <summary>
+        /// For evaluating with MSBuild
+        /// </summary>
+        protected IMSBuild msbuild;
 
         /// <summary>
         /// Handling with current type
@@ -80,23 +96,24 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string bodyIfTrue   = hString.recovery(m.Groups[2].Value);
             string bodyIfFalse  = (m.Groups[3].Success)? hString.recovery(m.Groups[3].Value) : String.Empty;
 
-            return evaluate(condition, bodyIfTrue, bodyIfFalse);
+            return parse(condition, bodyIfTrue, bodyIfFalse);
         }
 
         /// <param name="env">Used environment</param>
         /// <param name="uvariable">Used instance of user-variables</param>
         public ConditionComponent(IEnvironment env, IUserVariable uvariable)
         {
-            this.script = new Script(env, uvariable);
+            script  = new Script(env, uvariable);
+            msbuild = new MSBuildParser(env, uvariable);
         }
 
-        protected string evaluate(string condition, string ifTrue, string ifFalse)
+        protected string parse(string condition, string ifTrue, string ifFalse)
         {
-            Log.nlog.Debug("Condition-evaluate: started with - '{0}' :: '{1}' :: '{2}'", condition, ifTrue, ifFalse);
+            Log.nlog.Debug("Condition-parse: started with - '{0}' :: '{1}' :: '{2}'", condition, ifTrue, ifFalse);
 
             Match m = Regex.Match(condition, @"^\s*
                                                (!)?         #1 - flag of inversion (optional)
-                                               ([^=!~<>$]+) #2 - left operand - boolean type if as a single
+                                               ([^=!~<>]+) #2 - left operand - boolean type if as a single
                                                (?:
                                                    (
                                                       ===
@@ -122,7 +139,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed ConditionComponent->evaluate - '{0}'", condition);
+                throw new SyntaxIncorrectException("Failed ConditionComponent->parse - '{0}'", condition);
             }
 
             bool invert         = m.Groups[1].Success;
@@ -135,22 +152,17 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 coperator   = m.Groups[3].Value;
                 right       = spaces(m.Groups[4].Value);
             }
-            Log.nlog.Debug("Condition-evaluate: left: '{0}', right: '{1}', operator: '{2}', invert: {3}", left, right, coperator, invert);
+            Log.nlog.Debug("Condition-parse: left: '{0}', right: '{1}', operator: '{2}', invert: {3}", left, right, coperator, invert);
 
-            left = script.parse(left); // parsed only with SBE-Scripts, 
-                                       // therefore the nesting data is not possible and so not required control of level, 
-                                       // because currently variable of variable available only with MSBuild core
-            Log.nlog.Debug("Condition-evaluate: evaluated left: '{0}'", left);
+            left = evaluate(left);
 
             if(right != null) {
-                right = script.parse(right);
-                Log.nlog.Debug("Condition-evaluate: evaluated right: '{0}'", right);
-                result = Values.cmp(left, right, coperator);
+                result = Values.cmp(left, evaluate(right), coperator);
             }
             else {
                 result = Values.cmp((left == "1")? Values.VTRUE : (left == "0")? Values.VFALSE : left);
             }
-            Log.nlog.Debug("Condition-evaluate: result is: '{0}'", result);
+            Log.nlog.Debug("Condition-parse: result is: '{0}'", result);
             return ((invert)? !result : result)? ifTrue : ifFalse;
         }
 
@@ -178,6 +190,21 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return StringHandler.normalize(m.Groups[1].Value);
             }
             return m.Groups[2].Value.Trim();
+        }
+
+        /// <param name="data">mixed</param>
+        protected string evaluate(string data)
+        {
+            Log.nlog.Debug("Condition-evaluate: started with '{0}'", data);
+
+            data = script.parse(data);
+            Log.nlog.Debug("Condition-evaluate: evaluated data: '{0}' :: ISBEScript", data);
+
+            if(PostProcessingMSBuild) {
+                data = msbuild.parse(data);
+                Log.nlog.Debug("Condition-evaluate: evaluated data: '{0}' :: IMSBuild", data);
+            }
+            return data;
         }
     }
 
