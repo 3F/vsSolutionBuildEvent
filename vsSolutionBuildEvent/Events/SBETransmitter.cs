@@ -28,7 +28,7 @@
 
 namespace net.r_eg.vsSBE.Events
 {
-    public class SBETransmitter: SBEEvent, ITransmitter
+    public class SBETransmitter: SBEEvent, ISolutionEvent, ITransmitter
     {
 
     }

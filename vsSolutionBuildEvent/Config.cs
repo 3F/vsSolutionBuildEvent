@@ -97,24 +97,25 @@ namespace net.r_eg.vsSBE
         public void load(string path)
         {
             Settings.setWorkPath(path);
-            _xprojvsbeUpgrade();
-
             try
             {
                 using(StreamReader stream = new StreamReader(_Link, Encoding.UTF8, true))
                 {
                     data = deserialize(stream);
                     if(data == null) {
-                        throw new SBEException("empty or incorrect deserialized");
+                        throw new SBEException("Configuration file is empty");
                     }
                     compatibility(stream);
                 }
                 Log.nlog.Info("Loaded settings (v{0}): '{1}'\n\nReady:", data.Header.Compatibility, Settings.WorkPath);
                 Update();
             }
-            catch(FileNotFoundException)
-            {
-                Log.nlog.Info("Initialize with new settings");
+            catch(FileNotFoundException) {
+                Log.nlog.Info("Initializing new settings..");
+            }
+            catch(JsonException) {
+                //Log.nlog.Warn("Incorrect configuration type: '{0}'", ex.Message);
+                data = _xmlTryUpgrade(_Link);
             }
             catch(Exception ex)
             {
@@ -203,38 +204,32 @@ namespace net.r_eg.vsSBE
                 );
             }
 
-            //TODO: v0.7 -> v0.9
-
             if(cfg.Major == 0 && cfg.Minor < 4)
             {
                 Log.show();
-                Log.nlog.Info("Start upgrade configuration 0.3 -> 0.4");
+                Log.nlog.Info("Upgrading configuration for <= v0.3.x");
                 //Upgrade.Migration03_04.migrate(stream);
-                //TODO: to ErrorList
-                Log.nlog.Warn("Successfully upgraded. *Please, save manually!");
+                Log.nlog.Warn("[Obsolete] Not supported. Use of any v0.4.x - v0.8.x for upgrading <= v0.3.x");
             }
         }
 
         /// <summary>
-        /// Older versions support :: Change name settings
+        /// Support older versions
         /// </summary>
+        /// <param name="file">Configuration file</param>
         /// <returns></returns>
-        private void _xprojvsbeUpgrade()
+        private SolutionEvents _xmlTryUpgrade(string file)
         {
-            string oldcfg = Settings.WorkPath + ".xprojvsbe";
-            if(!(File.Exists(oldcfg) && !File.Exists(_Link))) {
-                return;
-            }
-
             try {
-                File.Move(oldcfg, _Link);
-                Log.nlog.Info("Successfully upgraded settings :: .xprojvsbe -> {0}", Entity.NAME);
+                SolutionEvents ret = Upgrade.v08.Migration08_09.migrate(file);
+                Log.nlog.Info("Successfully upgraded settings. *Save manually! :: -> {0}", Entity.NAME);
+                return ret;
             }
-            catch(Exception e) {
-                Log.nlog.Fatal("Failed upgrade .xprojvsbe\n\n-----\n{0}\n", e.Message);
+            catch(Exception ex) {
+                Log.nlog.Warn("Incorrect configuration type: '{0}'", ex.Message);
             }
+            return new SolutionEvents();
         }
-
 
         private Config(){}
     }

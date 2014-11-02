@@ -243,7 +243,16 @@
       <DependentUpon>StatusToolControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\Xaml\StatusToolWindow.cs" />
-    <Compile Include="Upgrade\0.3_0.4.cs" />
+    <Compile Include="Upgrade\v08\Events\ISolutionEvent.cs" />
+    <Compile Include="Upgrade\v08\Events\ISolutionEventEW.cs" />
+    <Compile Include="Upgrade\v08\Events\ISolutionEventOWP.cs" />
+    <Compile Include="Upgrade\v08\Events\SBEEvent.cs" />
+    <Compile Include="Upgrade\v08\Events\SBEEventEW.cs" />
+    <Compile Include="Upgrade\v08\Events\SBEEventOWP.cs" />
+    <Compile Include="Upgrade\v08\Events\SBESettings.cs" />
+    <Compile Include="Upgrade\v08\Events\SBETransmitter.cs" />
+    <Compile Include="Upgrade\v08\Events\SolutionEvents.cs" />
+    <Compile Include="Upgrade\v08\Migration08_09.cs" />
     <Compile Include="Version.cs" />
     <Compile Include="VSPackage.Designer.cs">
       <AutoGen>True</AutoGen>

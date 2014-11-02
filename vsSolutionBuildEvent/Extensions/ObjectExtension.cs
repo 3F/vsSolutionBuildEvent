@@ -83,5 +83,18 @@ namespace net.r_eg.vsSBE.Extensions
         {
             return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(obj));
         }
+
+        /// <summary>
+        /// Deep copy with changing type through serialization (text format)
+        /// Useful, if need to cast of objects - Parent to Child
+        /// </summary>
+        /// <typeparam name="T">Base type</typeparam>
+        /// <typeparam name="T2">Extended type</typeparam>
+        /// <param name="obj"></param>
+        /// <returns>Cloned with new type</returns>
+        public static T2 CloneBySerializationWithType<T, T2>(this T obj)
+        {
+            return JsonConvert.DeserializeObject<T2>(JsonConvert.SerializeObject(obj));
+        }
     }
 }

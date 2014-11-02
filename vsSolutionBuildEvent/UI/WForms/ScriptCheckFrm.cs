@@ -120,7 +120,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void DTECheckFrm_Load(object sender, EventArgs e)
         {
-            setCommand("#[var evtPre = #[vsSBE events.Pre.item(1).Enabled]] #[var evtPre]", Color.FromArgb(128, 128, 128));
+            setCommand(richTextBoxCommand.Text, Color.FromArgb(128, 128, 128));
         }
 
         private void menuItemUVarUnsetSel_Click(object sender, EventArgs e)

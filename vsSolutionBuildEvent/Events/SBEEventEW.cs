@@ -33,7 +33,7 @@ namespace net.r_eg.vsSBE.Events
     /// <summary>
     /// Support of the Errors & Warnings Event type
     /// </summary>
-    public class SBEEventEW: SBEEvent, ISolutionEventEW
+    public class SBEEventEW: SBEEvent, ISolutionEvent, ISolutionEventEW
     {        
         /// <summary>
         /// List of monitored codes

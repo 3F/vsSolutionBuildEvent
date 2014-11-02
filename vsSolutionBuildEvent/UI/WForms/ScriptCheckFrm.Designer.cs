@@ -38,6 +38,7 @@
             this.groupBoxCommand = new System.Windows.Forms.GroupBox();
             this.richTextBoxCommand = new System.Windows.Forms.RichTextBox();
             this.panelBottomMain = new System.Windows.Forms.Panel();
+            this.btnDoc = new System.Windows.Forms.Button();
             this.checkBoxMSBuildSupport = new System.Windows.Forms.CheckBox();
             this.button1 = new System.Windows.Forms.Button();
             this.richTextBoxExecuted = new System.Windows.Forms.RichTextBox();
@@ -45,7 +46,6 @@
             this.splitContainerUVariables = new System.Windows.Forms.SplitContainer();
             this.listBoxUVariables = new System.Windows.Forms.ListBox();
             this.richTextBoxUVariables = new System.Windows.Forms.RichTextBox();
-            this.btnDoc = new System.Windows.Forms.Button();
             this.contextMenuUVariables.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMVertical)).BeginInit();
             this.splitContainerMVertical.Panel1.SuspendLayout();
@@ -102,8 +102,8 @@
             // 
             this.splitContainerMVertical.Panel2.Controls.Add(this.groupBoxUVariables);
             this.splitContainerMVertical.Panel2MinSize = 50;
-            this.splitContainerMVertical.Size = new System.Drawing.Size(582, 267);
-            this.splitContainerMVertical.SplitterDistance = 427;
+            this.splitContainerMVertical.Size = new System.Drawing.Size(750, 360);
+            this.splitContainerMVertical.SplitterDistance = 550;
             this.splitContainerMVertical.TabIndex = 1;
             // 
             // splitContainerMHorizontal
@@ -123,8 +123,8 @@
             // 
             this.splitContainerMHorizontal.Panel2.Controls.Add(this.richTextBoxExecuted);
             this.splitContainerMHorizontal.Panel2MinSize = 40;
-            this.splitContainerMHorizontal.Size = new System.Drawing.Size(427, 267);
-            this.splitContainerMHorizontal.SplitterDistance = 142;
+            this.splitContainerMHorizontal.Size = new System.Drawing.Size(550, 360);
+            this.splitContainerMHorizontal.SplitterDistance = 191;
             this.splitContainerMHorizontal.TabIndex = 0;
             // 
             // panelTopMain
@@ -133,7 +133,7 @@
             this.panelTopMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelTopMain.Location = new System.Drawing.Point(0, 0);
             this.panelTopMain.Name = "panelTopMain";
-            this.panelTopMain.Size = new System.Drawing.Size(427, 117);
+            this.panelTopMain.Size = new System.Drawing.Size(550, 166);
             this.panelTopMain.TabIndex = 7;
             // 
             // groupBoxCommand
@@ -144,7 +144,7 @@
             this.groupBoxCommand.Margin = new System.Windows.Forms.Padding(0);
             this.groupBoxCommand.Name = "groupBoxCommand";
             this.groupBoxCommand.Padding = new System.Windows.Forms.Padding(0);
-            this.groupBoxCommand.Size = new System.Drawing.Size(427, 117);
+            this.groupBoxCommand.Size = new System.Drawing.Size(550, 166);
             this.groupBoxCommand.TabIndex = 6;
             this.groupBoxCommand.TabStop = false;
             this.groupBoxCommand.Text = "To execution:";
@@ -156,9 +156,9 @@
             this.richTextBoxCommand.Location = new System.Drawing.Point(0, 13);
             this.richTextBoxCommand.Margin = new System.Windows.Forms.Padding(0);
             this.richTextBoxCommand.Name = "richTextBoxCommand";
-            this.richTextBoxCommand.Size = new System.Drawing.Size(427, 104);
+            this.richTextBoxCommand.Size = new System.Drawing.Size(550, 153);
             this.richTextBoxCommand.TabIndex = 0;
-            this.richTextBoxCommand.Text = "";
+            this.richTextBoxCommand.Text = resources.GetString("richTextBoxCommand.Text");
             this.richTextBoxCommand.WordWrap = false;
             this.richTextBoxCommand.Click += new System.EventHandler(this.richTextBoxCommand_Click);
             // 
@@ -168,14 +168,29 @@
             this.panelBottomMain.Controls.Add(this.checkBoxMSBuildSupport);
             this.panelBottomMain.Controls.Add(this.button1);
             this.panelBottomMain.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelBottomMain.Location = new System.Drawing.Point(0, 117);
+            this.panelBottomMain.Location = new System.Drawing.Point(0, 166);
             this.panelBottomMain.Name = "panelBottomMain";
-            this.panelBottomMain.Size = new System.Drawing.Size(427, 25);
+            this.panelBottomMain.Size = new System.Drawing.Size(550, 25);
             this.panelBottomMain.TabIndex = 6;
+            // 
+            // btnDoc
+            // 
+            this.btnDoc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDoc.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnDoc.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnDoc.Image = ((System.Drawing.Image)(resources.GetObject("btnDoc.Image")));
+            this.btnDoc.Location = new System.Drawing.Point(509, 2);
+            this.btnDoc.Name = "btnDoc";
+            this.btnDoc.Size = new System.Drawing.Size(38, 23);
+            this.btnDoc.TabIndex = 10;
+            this.btnDoc.UseVisualStyleBackColor = true;
+            this.btnDoc.Click += new System.EventHandler(this.btnDoc_Click);
             // 
             // checkBoxMSBuildSupport
             // 
             this.checkBoxMSBuildSupport.AutoSize = true;
+            this.checkBoxMSBuildSupport.Checked = true;
+            this.checkBoxMSBuildSupport.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxMSBuildSupport.Location = new System.Drawing.Point(94, 6);
             this.checkBoxMSBuildSupport.Name = "checkBoxMSBuildSupport";
             this.checkBoxMSBuildSupport.Size = new System.Drawing.Size(89, 17);
@@ -201,7 +216,7 @@
             this.richTextBoxExecuted.Location = new System.Drawing.Point(0, 0);
             this.richTextBoxExecuted.Name = "richTextBoxExecuted";
             this.richTextBoxExecuted.ReadOnly = true;
-            this.richTextBoxExecuted.Size = new System.Drawing.Size(427, 121);
+            this.richTextBoxExecuted.Size = new System.Drawing.Size(550, 165);
             this.richTextBoxExecuted.TabIndex = 2;
             this.richTextBoxExecuted.Text = "";
             // 
@@ -213,7 +228,7 @@
             this.groupBoxUVariables.Margin = new System.Windows.Forms.Padding(0);
             this.groupBoxUVariables.Name = "groupBoxUVariables";
             this.groupBoxUVariables.Padding = new System.Windows.Forms.Padding(0);
-            this.groupBoxUVariables.Size = new System.Drawing.Size(151, 267);
+            this.groupBoxUVariables.Size = new System.Drawing.Size(196, 360);
             this.groupBoxUVariables.TabIndex = 12;
             this.groupBoxUVariables.TabStop = false;
             this.groupBoxUVariables.Text = "User-Variables:";
@@ -234,8 +249,8 @@
             // 
             this.splitContainerUVariables.Panel2.Controls.Add(this.richTextBoxUVariables);
             this.splitContainerUVariables.Panel2MinSize = 40;
-            this.splitContainerUVariables.Size = new System.Drawing.Size(151, 254);
-            this.splitContainerUVariables.SplitterDistance = 154;
+            this.splitContainerUVariables.Size = new System.Drawing.Size(196, 347);
+            this.splitContainerUVariables.SplitterDistance = 210;
             this.splitContainerUVariables.TabIndex = 0;
             // 
             // listBoxUVariables
@@ -247,7 +262,7 @@
             this.listBoxUVariables.Location = new System.Drawing.Point(0, 0);
             this.listBoxUVariables.Margin = new System.Windows.Forms.Padding(0);
             this.listBoxUVariables.Name = "listBoxUVariables";
-            this.listBoxUVariables.Size = new System.Drawing.Size(151, 154);
+            this.listBoxUVariables.Size = new System.Drawing.Size(196, 210);
             this.listBoxUVariables.TabIndex = 0;
             this.listBoxUVariables.SelectedIndexChanged += new System.EventHandler(this.listBoxUVariables_SelectedIndexChanged);
             // 
@@ -260,28 +275,15 @@
             this.richTextBoxUVariables.Margin = new System.Windows.Forms.Padding(0);
             this.richTextBoxUVariables.Name = "richTextBoxUVariables";
             this.richTextBoxUVariables.ReadOnly = true;
-            this.richTextBoxUVariables.Size = new System.Drawing.Size(151, 96);
+            this.richTextBoxUVariables.Size = new System.Drawing.Size(196, 133);
             this.richTextBoxUVariables.TabIndex = 1;
             this.richTextBoxUVariables.Text = "";
-            // 
-            // btnDoc
-            // 
-            this.btnDoc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDoc.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnDoc.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnDoc.Image = ((System.Drawing.Image)(resources.GetObject("btnDoc.Image")));
-            this.btnDoc.Location = new System.Drawing.Point(386, 2);
-            this.btnDoc.Name = "btnDoc";
-            this.btnDoc.Size = new System.Drawing.Size(38, 23);
-            this.btnDoc.TabIndex = 10;
-            this.btnDoc.UseVisualStyleBackColor = true;
-            this.btnDoc.Click += new System.EventHandler(this.btnDoc_Click);
             // 
             // ScriptCheckFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(582, 267);
+            this.ClientSize = new System.Drawing.Size(750, 360);
             this.Controls.Add(this.splitContainerMVertical);
             this.MinimumSize = new System.Drawing.Size(400, 210);
             this.Name = "ScriptCheckFrm";

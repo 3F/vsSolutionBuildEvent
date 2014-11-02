@@ -34,7 +34,7 @@ namespace net.r_eg.vsSBE.Events
     /// <summary>
     /// Support the OutputWindowPane
     /// </summary>
-    public class SBEEventOWP: SBEEvent, ISolutionEventOWP
+    public class SBEEventOWP: SBEEvent, ISolutionEvent, ISolutionEventOWP
     {
         /// <summary>
         /// List of statements

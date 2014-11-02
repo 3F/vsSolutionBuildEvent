@@ -265,7 +265,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             string file     = location(StringHandler.normalize(m.Groups[1].Value.Trim()));
-            string fdata    = m.Groups[2].Value;
+            string fdata    = hSymbols(m.Groups[2].Value);
 
             Log.nlog.Debug("FileComponent: stWrite started for '{0}'", file);
             try {
@@ -323,7 +323,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string type         = "Basic";
             string file         = location(StringHandler.normalize(m.Groups[2].Value.Trim()));
             string pattern      = StringHandler.normalize(m.Groups[3].Value);
-            string replacement  = StringHandler.normalize(m.Groups[4].Value);
+            string replacement  = hSymbols(StringHandler.normalize(m.Groups[4].Value));
 
             Log.nlog.Debug("stReplace: found file '{0}',  pattern '{1}',  replacement '{2}'", file, pattern, replacement);
 
@@ -359,6 +359,19 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 stream.Write(content);
             }
             Log.nlog.Debug("stReplace: successful :: {0}, Encoding '{1}'", content.Length, enc);
+        }
+
+        /// <summary>
+        /// Handler for special symbols
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        protected string hSymbols(string data)
+        {
+            if(String.IsNullOrEmpty(data)){
+                return String.Empty;
+            }
+            return data.Replace("\\r", "\r").Replace("\\n", "\n").Replace("\\t", "\t");
         }
 
         /// <summary>
