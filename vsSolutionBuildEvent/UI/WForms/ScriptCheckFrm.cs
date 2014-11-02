@@ -59,7 +59,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             listBoxUVariables.Items.Clear();
             richTextBoxUVariables.Text = String.Empty;
 
-            foreach(string var in uvariable.Variables) {
+            foreach(string var in uvariable.Definitions) {
                 listBoxUVariables.Items.Add(var);
             }
         }
@@ -71,20 +71,19 @@ namespace net.r_eg.vsSBE.UI.WForms
                 richTextBoxUVariables.Text = uvariable.get(ident);
             }
             catch(Exception ex) {
-                richTextBoxUVariables.Text = ex.Message;
+                richTextBoxUVariables.Text = String.Format("Fail: {0}", ex.Message);
             }
         }
 
         protected void evaluateVariable(string ident)
         {
-            if(uvariable.isEvaluated(ident)) {
+            if(!uvariable.isUnevaluated(ident)) {
                 return;
             }
+
+            uvariable.evaluate(ident, (IEvaluator)script, true);
             if(MSBuildSupport) {
-                uvariable.evaluate(ident, msbuild);
-            }
-            else {
-                uvariable.evaluate(ident, script);
+                uvariable.evaluate(ident, (IEvaluator)msbuild, false);
             }
         }
 
@@ -98,7 +97,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             try {
                 if(MSBuildSupport) {
-                    richTextBoxExecuted.Text = msbuild.parse(script.parse(richTextBoxCommand.Text));
+                    richTextBoxExecuted.Text = msbuild.parse(script.parse(richTextBoxCommand.Text, true));
                 }
                 else {
                     richTextBoxExecuted.Text = script.parse(richTextBoxCommand.Text);
@@ -106,7 +105,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                 updateVariableList();
             }
             catch(Exception ex) {
-                richTextBoxExecuted.Text = ex.Message;
+                richTextBoxExecuted.Text = String.Format("Fail: {0}", ex.Message);
             }
         }
 

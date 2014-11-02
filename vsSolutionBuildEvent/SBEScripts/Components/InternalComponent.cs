@@ -113,7 +113,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             string typeString   = m.Groups[1].Value;
             string index        = (m.Groups[2].Success)? m.Groups[2].Value : null;
-            string name         = (m.Groups[3].Success)? m.Groups[3].Value : null;
+            string name         = (m.Groups[3].Success)? StringHandler.normalize(m.Groups[3].Value) : null;
             string operation    = m.Groups[4].Value;
 
             SolutionEventType type;
@@ -264,30 +264,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         protected virtual ISolutionEvent[] getEvent(SolutionEventType type)
         {
-            switch(type) {
-                case SolutionEventType.Pre: {
-                    return Config._.Data.PreBuild;
-                }
-                case SolutionEventType.Post: {
-                    return Config._.Data.PostBuild;
-                }
-                case SolutionEventType.Cancel: {
-                    return Config._.Data.CancelBuild;
-                }
-                case SolutionEventType.Warnings: {
-                    return Config._.Data.WarningsBuild;
-                }
-                case SolutionEventType.Errors: {
-                    return Config._.Data.ErrorsBuild;
-                }
-                case SolutionEventType.OWP: {
-                    return Config._.Data.OWPBuild;
-                }
-                case SolutionEventType.Transmitter: {
-                    return Config._.Data.Transmitter;
-                }
+            try {
+                return Config._.Data.getEvent(type);
             }
-            throw new NotSupportedOperationException("getEvent: Not yet supported event type - '{0}'", type);
+            catch(Exception) {
+                throw new NotSupportedOperationException("getEvent: Not yet supported event type - '{0}'", type);
+            }
         }
     }
 }

@@ -45,7 +45,7 @@ using net.r_eg.vsSBE.SBEScripts;
 
 namespace net.r_eg.vsSBE.MSBuild
 {
-    public class MSBuildParser: IMSBuild
+    public class MSBuildParser: IMSBuild, IEvaluator
     {
         /// <summary>
         /// Provides operation with environment
@@ -81,13 +81,9 @@ namespace net.r_eg.vsSBE.MSBuild
         /// <returns>Evaluated value of property</returns>
         public virtual string getProperty(string name, string projectName)
         {
-            if(uvariable.isExist(name, projectName))
-            {
+            if(uvariable.isExist(name, projectName)) {
                 Log.nlog.Debug("Evaluate: use '{0}:{1}' from user-variable", name, projectName);
-                if(!uvariable.isEvaluated(name, projectName)) {
-                    uvariable.evaluate(name, projectName, this);
-                }
-                return uvariable.get(name, projectName);
+                return getUVariableValue(name, projectName);
             }
 
             if(projectName == null)
@@ -145,6 +141,7 @@ namespace net.r_eg.vsSBE.MSBuild
             lock(_eLock)
             {
                 try {
+                    defVariables(project);
                     project.SetProperty(container, _wrapVariable(ref unevaluated));
                     return project.GetProperty(container).EvaluatedValue;
                 }
@@ -272,6 +269,16 @@ namespace net.r_eg.vsSBE.MSBuild
             }, RegexOptions.IgnorePatternWhitespace);
         }
 
+        /// <summary>
+        /// Evaluating data with current object
+        /// </summary>
+        /// <param name="data">mixed data</param>
+        /// <returns>Evaluated end value</returns>
+        public string evaluate(string data)
+        {
+            return parse(data);
+        }
+
         /// <param name="env">Used environment</param>
         /// <param name="uvariable">Used user-variables</param>
         public MSBuildParser(IEnvironment env, IUserVariable uvariable)
@@ -303,8 +310,8 @@ namespace net.r_eg.vsSBE.MSBuild
                                                      \s*=\s*
                                                    )?
                                                    (?:
-                                                      (.+)           # 3 -> unevaluated data
-                                                      :([^)]+)       # 4 -> specific project for variable if 2 is present or for unevaluated data
+                                                      (.+[^:])       # 3 -> unevaluated data
+                                                      :([^:][^)]+)   # 4 -> specific project for variable if 2 is present or for unevaluated data
                                                     |                # or:
                                                       (.+)           # 5 -> unevaluated data
                                                    )
@@ -390,6 +397,58 @@ namespace net.r_eg.vsSBE.MSBuild
             return ret;
         }
 
+        /// <summary>
+        /// Getting value from User-Variable by using scope of project
+        /// </summary>
+        /// <param name="name">Variable name</param>
+        /// <param name="project">Project name</param>
+        /// <returns>Evaluated value of variable</returns>
+        protected string getUVariableValue(string name, string project)
+        {
+            if(uvariable.isUnevaluated(name, project)) {
+                uvariable.evaluate(name, project, this, true);
+            }
+            return uvariable.get(name, project);
+        }
+
+        /// <summary>
+        /// Getting value from User-Variable by using unique identification
+        /// </summary>
+        /// <param name="ident">Unique identificator</param>
+        /// <returns>Evaluated value of variable</returns>
+        protected string getUVariableValue(string ident)
+        {
+            if(uvariable.isUnevaluated(ident)) {
+                uvariable.evaluate(ident, this, true);
+            }
+            return uvariable.get(ident);
+        }
+
+        /// <summary>
+        /// Defining variables for project context from all defined user-variables
+        /// </summary>
+        /// <param name="project"></param>
+        protected void defVariables(Project project)
+        {
+            foreach(TUserVariable uvar in uvariable.Variables)
+            {
+                if(uvar.status != TUserVariable.StatusType.Started) {
+                    project.SetGlobalProperty(uvar.ident, getUVariableValue(uvar.ident));
+                    continue;
+                }
+
+                if(uvar.prev != null && ((TUserVariable)uvar.prev).unevaluated != null)
+                {
+                    TUserVariable prev = (TUserVariable)uvar.prev;
+                    project.SetGlobalProperty(uvar.ident, (prev.evaluated == null)? prev.unevaluated : prev.evaluated);
+                }
+            }
+        }
+
+        /// <summary>
+        /// End value from prepared information with TPreparedData
+        /// </summary>
+        /// <param name="prepared"></param>
         protected string evaluateVariable(TPreparedData prepared)
         {
             string evaluated = String.Empty;
@@ -416,13 +475,13 @@ namespace net.r_eg.vsSBE.MSBuild
                 }
             }
 
-            //TODO: *!* Deprecated - use SBE-Scripts *!*
+            // *!* Deprecated and used as alternative for SBE-Scripts
             if(!String.IsNullOrEmpty(prepared.variable.name))
             {
                 //INFO: prepared.variable.isPersistence - [reserved]
                 Log.nlog.Debug("Evaluate: found definition of user-variable");
                 uvariable.set(prepared.variable.name, prepared.variable.project, evaluated);
-                uvariable.evaluate(prepared.variable.name, prepared.variable.project, this);
+                uvariable.evaluate(prepared.variable.name, prepared.variable.project, this, true);
                 evaluated = "";
             }
 

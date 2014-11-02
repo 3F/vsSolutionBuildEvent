@@ -65,18 +65,6 @@ namespace net.r_eg.vsSBE.Actions
         }
 
         /// <summary>
-        /// The current OEM code page from the system locale
-        /// </summary>
-        protected int OEMCodePage
-        {
-            get
-            {
-                CultureInfo inf = CultureInfo.GetCultureInfo(GetSystemDefaultLCID());
-                return inf.TextInfo.OEMCodePage;
-            }
-        }
-
-        /// <summary>
         /// Work with SBE-Scripts
         /// </summary>
         protected ISBEScript script;
@@ -201,9 +189,6 @@ namespace net.r_eg.vsSBE.Actions
             return true;
         }
 
-        [DllImport("kernel32.dll")]
-        protected static extern int GetSystemDefaultLCID();
-
         protected void useShell(ISolutionEvent evt, string cmd)
         {
             ProcessStartInfo psi = new ProcessStartInfo(CMD_DEFAULT);
@@ -237,7 +222,7 @@ namespace net.r_eg.vsSBE.Actions
         protected void parseScript(ISolutionEvent evt, ref string data)
         {
             if(evt.SupportSBEScripts) {
-                data = script.parse(data);
+                data = script.parse(data, evt.SupportMSBuild);
             }
 
             if(evt.SupportMSBuild) {

@@ -62,7 +62,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                 .*
                                               )
                                            \]$", 
-                                           RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline);
+                                           RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
 
             if(!m.Success) {
                 throw new SyntaxIncorrectException("Failed FileComponent - '{0}'", data);
@@ -76,11 +76,19 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 }
                 case "call": {
                     Log.nlog.Debug("FileComponent: use stCall");
-                    return stCall(ident, false);
+                    return stCall(ident, false, false);
                 }
-                case "callOut": {
+                case "out": {
                     Log.nlog.Debug("FileComponent: use stCall");
-                    return stCall(ident, true);
+                    return stCall(ident, true, false);
+                }
+                case "scall": {
+                    Log.nlog.Debug("FileComponent: use stCall");
+                    return stCall(ident, false, true);
+                }
+                case "sout": {
+                    Log.nlog.Debug("FileComponent: use stCall");
+                    return stCall(ident, true, true);
                 }
                 case "write": {
                     Log.nlog.Debug("FileComponent: use stWrite");
@@ -100,6 +108,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 case "appendLine": {
                     Log.nlog.Debug("FileComponent: use stWrite + append + line");
                     stWrite(ident, true, true);
+                    return String.Empty;
+                }
+                case "replace": {
+                    Log.nlog.Debug("FileComponent: use stReplace");
+                    stReplace(ident);
                     return String.Empty;
                 }
             }
@@ -125,8 +138,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 throw new OperandNotFoundException("Failed stGet - '{0}'", data);
             }
 
-            string file     = m.Groups[1].Value.Trim();
-            string content  = "";
+            string file     = location(StringHandler.normalize(m.Groups[1].Value.Trim()));
+            string content  = String.Empty;
             try {
                 using(StreamReader stream = new StreamReader(file, Encoding.UTF8, true)) {
                     content = stream.ReadToEnd();
@@ -143,16 +156,20 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
+        /// 
         /// Work with:
         /// * #[File call("name", "args")]
         /// * #[File call("name")]
-        /// * #[File callOut("name", "args")]
-        /// * #[File callOut("name")]
+        /// * #[File out("name", "args")]
+        /// * #[File out("name")]
+        /// 
+        /// For silent mode use the scall(..) & sout(..)
         /// </summary>
         /// <param name="data">prepared data</param>
         /// <param name="stdOut">Use StandardOutput or not</param>
+        /// <param name="silent">Silent mode</param>
         /// <returns>Received data from StandardOutput</returns>
-        protected string stCall(string data, bool stdOut)
+        protected string stCall(string data, bool stdOut, bool silent)
         {
             Match m = Regex.Match(data, 
                                     String.Format(@"
@@ -160,7 +177,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                     \(
                                                         {0}           #1 - file
                                                         (?:
-                                                            \s*,\s*
+                                                            ,
                                                             {0}       #2 - args (optional)
                                                         )?
                                                     \)", 
@@ -171,30 +188,49 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 throw new OperandNotFoundException("Failed stCall - '{0}'", data);
             }
 
-            string file = m.Groups[1].Value.Trim();
-            string args = m.Groups[2].Value;
+            string file = StringHandler.normalize(m.Groups[1].Value.Trim());
+            string args = StringHandler.normalize(m.Groups[2].Value);
 
-            if(!Directory.Exists(file)) {
-                Log.nlog.Warn("stCall: not found - '{0}'", file);
-                return String.Empty;
-            }
-
+            Log.nlog.Debug("stCall: '{0}', '{1}' :: stdOut {2}, silent {3}", file, args, stdOut, silent);
             try {
                 Process p = new Process();
                 p.StartInfo.FileName = file;
 
                 p.StartInfo.Arguments               = args;
                 p.StartInfo.UseShellExecute         = false;
+                p.StartInfo.WorkingDirectory        = Settings.WorkPath;
                 p.StartInfo.RedirectStandardOutput  = true;
                 p.StartInfo.RedirectStandardError   = true;
+                p.StartInfo.StandardErrorEncoding   = p.StartInfo.StandardOutputEncoding 
+                                                    = Actions.HProcess.EncodingOEM;
+
+                if(silent) {
+                    p.StartInfo.WindowStyle     = ProcessWindowStyle.Hidden;
+                    p.StartInfo.CreateNoWindow  = true;
+                }
+                else {
+                    p.StartInfo.WindowStyle     = ProcessWindowStyle.Normal;
+                    p.StartInfo.CreateNoWindow  = false;
+                }
+
                 p.Start();
+                p.WaitForExit(); //TODO: protection in silent mode
 
                 string errors = p.StandardError.ReadToEnd();
                 if(errors.Length > 0) {
                     throw new Exception(errors);
                 }
                 Log.nlog.Debug("FileComponent: successful stCall - '{0}'", file);
-                return (stdOut)? p.StandardOutput.ReadLine() : String.Empty;
+
+                if(!stdOut) {
+                    return String.Empty;
+                }
+
+                string ret = String.Empty;
+                while(!p.StandardOutput.EndOfStream) {
+                    ret += p.StandardOutput.ReadLine() + System.Environment.NewLine;
+                }
+                return ret.TrimEnd(new char[]{ '\r', '\n' });
             }
             catch(Exception ex) {
                 Log.nlog.Warn("stCall: exception - '{0}'", ex.Message);
@@ -204,10 +240,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         /// <summary>
         /// Work with:
-        /// * #[File write("name"): "multiline data"]
-        /// * #[File append("name"): "multiline data"]
-        /// * #[File writeLine("name"): "multiline data"]
-        /// * #[File appendLine("name"): "multiline data"]
+        /// * #[File write("name"): multiline data]
+        /// * #[File append("name"): multiline data]
+        /// * #[File writeLine("name"): multiline data]
+        /// * #[File appendLine("name"): multiline data]
         /// </summary>
         /// <param name="data">prepared data</param>
         /// <param name="append">flag</param>
@@ -218,22 +254,22 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             Match m = Regex.Match(data, 
                                     String.Format(@"
                                                     \s*
-                                                    \({0}\)  #1 - path
-                                                    \s*:\s*
-                                                    {0}      #2 - data", 
+                                                    \({0}\)  #1 - file
+                                                    \s*:
+                                                    (.*)     #2 - data", 
                                                     RPattern.DoubleQuotesContent
-                                                 ), RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline);
+                                                 ), RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
 
             if(!m.Success) {
                 throw new OperandNotFoundException("Failed stWrite - '{0}'", data);
             }
 
-            string path     = m.Groups[1].Value.Trim();
+            string file     = location(StringHandler.normalize(m.Groups[1].Value.Trim()));
             string fdata    = m.Groups[2].Value;
 
-            Log.nlog.Debug("FileComponent: stWrite started for path - '{0}'", path);
+            Log.nlog.Debug("FileComponent: stWrite started for '{0}'", file);
             try {
-                using(TextWriter stream = new StreamWriter(path, append, enc)) {
+                using(TextWriter stream = new StreamWriter(file, append, enc)) {
                     if(writeLine){
                         stream.WriteLine(fdata);
                     }
@@ -241,7 +277,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                         stream.Write(fdata);
                     }
                 }
-                Log.nlog.Debug("FileComponent: successful stWrite - '{0}'", path);
+                Log.nlog.Debug("FileComponent: successful stWrite - '{0}'", file);
             }
             catch(Exception ex) {
                 Log.nlog.Warn("FileComponent: Cannot write {0}", ex.Message);
@@ -251,6 +287,87 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected void stWrite(string data, bool append, bool writeLine)
         {
             stWrite(data, append, writeLine, Encoding.UTF8);
+        }
+
+        /// <summary>
+        /// 
+        /// Work with:
+        /// * #[File replace.Regex("file", "pattern", "replacement")]
+        /// * #[File replace.Wildcards("file", "pattern", "replacement")]
+        /// * #[File replace("file", "pattern", "replacement")]
+        /// </summary>
+        /// <param name="data">prepared data</param>
+        protected void stReplace(string data)
+        {
+            Match m = Regex.Match(data, 
+                                    String.Format(@"replace
+                                                    (?:
+                                                    \s*\.\s*
+                                                      (Regexp|Wildcards)  #1 - Search with type (optional)
+                                                    \s*
+                                                    )?
+                                                    \(
+                                                        {0}               #2 - file
+                                                        ,                 
+                                                        {0}               #3 - pattern
+                                                        ,                 
+                                                        {0}               #4 - replacement
+                                                    \)", 
+                                                    RPattern.DoubleQuotesContent
+                                                  ), RegexOptions.IgnorePatternWhitespace);
+
+            if(!m.Success) {
+                throw new OperandNotFoundException("Failed stReplace - '{0}'", data);
+            }
+
+            string type         = "Basic";
+            string file         = location(StringHandler.normalize(m.Groups[2].Value.Trim()));
+            string pattern      = StringHandler.normalize(m.Groups[3].Value);
+            string replacement  = StringHandler.normalize(m.Groups[4].Value);
+
+            Log.nlog.Debug("stReplace: found file '{0}',  pattern '{1}',  replacement '{2}'", file, pattern, replacement);
+
+            string content;
+            Encoding enc = Encoding.UTF8;
+            using(StreamReader reader = new StreamReader(file, enc, true)) {
+                content = reader.ReadToEnd();
+                enc = reader.CurrentEncoding;
+            }
+
+            if(m.Groups[1].Success) {
+                type = m.Groups[1].Value;
+            }
+            Log.nlog.Debug("stReplace: type '{0}' :: received '{1}', Encoding '{2}'", type, content.Length, enc);
+
+            switch(type) {
+                case "Regexp": {
+                    content = Regex.Replace(content, pattern, replacement);
+                    break;
+                }
+                case "Wildcards": {
+                    string stub = Regex.Escape(pattern).Replace("\\*", ".*?").Replace("\\+", ".+?").Replace("\\?", ".");
+                    content     = Regex.Replace(content, stub, replacement);
+                    break;
+                }
+                default: {
+                    content = content.Replace(pattern, replacement);
+                    break;
+                }
+            }
+
+            using(TextWriter stream = new StreamWriter(file, false, enc)) {
+                stream.Write(content);
+            }
+            Log.nlog.Debug("stReplace: successful :: {0}, Encoding '{1}'", content.Length, enc);
+        }
+
+        /// <summary>
+        /// File location for current context
+        /// </summary>
+        /// <param name="file"></param>
+        protected string location(string file)
+        {
+            return Path.Combine(Settings.WorkPath, file);
         }
     }
 }

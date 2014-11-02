@@ -43,21 +43,56 @@ namespace net.r_eg.vsSBE.SBEScripts
         public string unevaluated;
 
         /// <summary>
-        /// Used name for this User-Variable
+        /// Identificator for current variable
         /// </summary>
-        //public string name;
+        public string ident;
 
         /// <summary>
-        /// Specific project where use this variable.
-        /// null value - project by default
+        /// Current status of evaluation
         /// </summary>
-        //public string project;
+        public StatusType status;
+
+        /// <summary>
+        /// Previous TUserVariable if exist.
+        /// This probably can be used for self redefinition varname = varname
+        /// e.g. for post-processing with MSBuild is required to evaluation of new value etc.
+        /// </summary>
+        public object prev;
 
         /// <summary>
         /// Storing in the projects files ~ .csproj, .vcxproj, .. 
         /// or with the external containers
         /// </summary>
         /// <remarks>reserved</remarks>
-        public bool isPersistence;
+        public bool persistence;
+
+        /// <summary>
+        /// Available states of evaluating
+        /// </summary>
+        public enum StatusType
+        {
+            /// <summary>
+            /// Stored 'as is'
+            /// </summary>
+            Unevaluated,
+            /// <summary>
+            /// Evaluation in progress
+            /// </summary>
+            Started,
+            /// <summary>
+            /// End value
+            /// </summary>
+            Evaluated
+        }
+
+        public TUserVariable(TUserVariable origin): this()
+        {
+            evaluated       = origin.evaluated;
+            unevaluated     = origin.unevaluated;
+            ident           = origin.ident;
+            status          = origin.status;
+            persistence     = origin.persistence;
+            prev            = origin.prev;
+        }
     }
 }

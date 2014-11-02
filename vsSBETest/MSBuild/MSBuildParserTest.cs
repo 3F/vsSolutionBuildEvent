@@ -569,6 +569,17 @@ namespace vsSBETest.MSBuild
             string actual   = (new MSBuildParserAccessor.ToParse()).parse(data);
             Assert.AreEqual("[P~Path~project]", actual);
         }
+
+        /// <summary>
+        ///A test for parse
+        ///</summary>
+        [TestMethod()]
+        public void parseTest14()
+        {
+            string data     = "$([System.DateTime]::Now)";
+            string actual   = (new MSBuildParserAccessor.ToParse()).parse(data);
+            Assert.AreEqual("[E~[System.DateTime]::Now~]", actual);
+        }
     }
 
     internal class MSBuildParserAccessor
@@ -588,8 +599,10 @@ namespace vsSBETest.MSBuild
 
             public override string getProperty(string name, string project)
             {
-                string def = uvariable.get(name, project);
-                return (def == null)? String.Format("[P~{0}~{1}]", name, project) : def;
+                if(uvariable.isExist(name, project)) {
+                    return getUVariableValue(name, project);
+                }
+                return String.Format("[P~{0}~{1}]", name, project);
             }
         }
 

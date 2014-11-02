@@ -36,5 +36,15 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <param name="data">mixed data</param>
         /// <returns>prepared and evaluated data</returns>
         string parse(string data);
+
+        /// <summary>
+        /// Handler of mixed data SBE-Scripts
+        /// </summary>
+        /// <param name="data">mixed data</param>
+        /// <param name="allowMSBuild">Allows post-processing with MSBuild or not. 
+        /// Some components can require immediate processing with evaluation, before passing control to next level.
+        /// </param>
+        /// <returns>prepared and evaluated data</returns>
+        string parse(string data, bool allowMSBuild);
     }
 }

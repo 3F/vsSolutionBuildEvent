@@ -149,7 +149,7 @@ namespace net.r_eg.vsSBE
                 }
 
                 Config._.load(dir);
-                _c.updateContext(new SBECommand.ShellContext(Settings.WorkingPath));
+                _c.updateContext(new SBECommand.ShellContext(Settings.WorkPath));
             }
             catch(Exception ex) {
                 Log.nlog.Fatal("Cannot load configuration: " + ex.Message);

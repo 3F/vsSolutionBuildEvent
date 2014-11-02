@@ -70,7 +70,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                     )?",
                                                     RPattern.RoundBracketsContent,
                                                     RPattern.CurlyBracketsContent
-                                                 ), RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline);
+                                                 ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
                 throw new SyntaxIncorrectException("Failed ConditionComponent - '{0}'", data);
@@ -78,7 +78,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             string condition    = hString.recovery(m.Groups[1].Value);
             string bodyIfTrue   = hString.recovery(m.Groups[2].Value);
-            string bodyIfFalse  = (m.Groups[3].Success)? hString.recovery(m.Groups[3].Value) : null;
+            string bodyIfFalse  = (m.Groups[3].Success)? hString.recovery(m.Groups[3].Value) : String.Empty;
 
             return evaluate(condition, bodyIfTrue, bodyIfFalse);
         }
@@ -175,7 +175,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             if(m.Groups[1].Success) {
-                return m.Groups[1].Value;
+                return StringHandler.normalize(m.Groups[1].Value);
             }
             return m.Groups[2].Value.Trim();
         }

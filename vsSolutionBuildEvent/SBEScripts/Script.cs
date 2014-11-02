@@ -39,7 +39,7 @@ using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts
 {
-    public class Script: ISBEScript
+    public class Script: ISBEScript, IEvaluator
     {
         /// <summary>
         /// Maximum of nesting level
@@ -88,7 +88,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
-        /// Used instance of user-variables
+        /// Work with user-variables
         /// </summary>
         protected IUserVariable uvariable;
 
@@ -101,6 +101,13 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// Basic operations with strings
         /// </summary>
         protected StringHandler hString;
+
+        /// <summary>
+        /// Flag of required post-processing with MSBuild core.
+        /// In general, some components can require immediate processing with evaluation, before passing control to next level
+        /// (e.g. FileComponent etc.) For such components need additional flag about allowed processing, if this used of course...
+        /// </summary>
+        protected bool postProcessingMSBuild;
 
         /// <summary>
         /// Current level of nesting data.
@@ -130,15 +137,34 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// Format: https://bitbucket.org/3F/vssolutionbuildevent/issue/22/#comment-12739932
         /// </summary>
         /// <param name="data">mixed data</param>
-        /// <returns>prepared & evaluated data</returns>
-        public string parse(string data)
+        /// <param name="allowMSBuild">Allows post-processing with MSBuild or not.
+        /// Some components can require immediate processing with evaluation, before passing control to next level.
+        /// </param>
+        /// <returns>prepared and evaluated data</returns>
+        public string parse(string data, bool allowMSBuild)
         {
             lock(_lock)
             {
                 _depthLevel = 0;
+                postProcessingMSBuild = allowMSBuild;
                 StringHandler hString = new StringHandler();
-                return parse(hString.protect(data), _depthLevel, hString);
+                return hString.recovery(parse(hString.protect(data), _depthLevel, hString));
             }
+        }
+
+        public string parse(string data)
+        {
+            return parse(data, false);
+        }
+
+        /// <summary>
+        /// Evaluating data with current object
+        /// </summary>
+        /// <param name="data">mixed data</param>
+        /// <returns>Evaluated end value</returns>
+        public string evaluate(string data)
+        {
+            return parse(data);
         }
 
         /// <param name="env">Used environment</param>
@@ -178,6 +204,7 @@ namespace net.r_eg.vsSBE.SBEScripts
 
         /// <summary>
         /// Work with SBE-Script by components
+        /// TODO: Decorator pattern or similar
         /// </summary>
         /// <param name="data">mixed data</param>
         /// <returns>prepared & evaluated data</returns>
@@ -193,44 +220,44 @@ namespace net.r_eg.vsSBE.SBEScripts
                 return _cComment.parse(data);
             }
 
-            if(data.StartsWith("[(")) {
+            if(data.StartsWith("[("))
+            {
                 Log.nlog.Debug("SBEScripts-selector: use ConditionComponent");
                 if(_cCondition == null) {
                     _cCondition = new ConditionComponent(env, uvariable);
                 }
-                //return parse(_cCondition.parse(data));
-                data = _cCondition.parse(data);
+                ++_depthLevel;
+                data = parse(_cCondition.parse(data), _depthLevel);
+                --_depthLevel;
+                return data;
             }
 
             if(deepen(ref data)) {
                 ++_depthLevel;
                 data = parse(data, _depthLevel);
                 --_depthLevel;
-                return data;
             }
 
             if(data.StartsWith("[var "))
             {
                 Log.nlog.Debug("SBEScripts-selector: use UserVariableComponent");
                 if(_cUVariable == null) {
-                    _cUVariable = new UserVariableComponent();
+                    _cUVariable = new UserVariableComponent(env, uvariable);
                 }
-                UserVariableComponentResult res = _cUVariable.parse(data);
-                if(res.value != null) {
-                    uvariable.set(res.name, res.project, res.value);
-                    return String.Empty;
-                }
-
-                if(uvariable.isExist(res.name, res.project))
-                {
-                    if(!uvariable.isEvaluated(res.name, res.project)) {
-                        uvariable.evaluate(res.name, res.project, this);
-                    }
-                    return uvariable.get(res.name, res.project);
-                }
-                throw new NotFoundException("Variable '{0}:{1}' not found", res.name, res.project);
+                _cUVariable.PostProcessingMSBuild = postProcessingMSBuild;
+                return _cUVariable.parse(data);
             }
 
+            return elements(ref data);
+        }
+
+        /// <summary>
+        /// TODO: Decorator pattern or similar
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        protected string elements(ref string data)
+        {
             if(data.StartsWith("[OWP "))
             {
                 Log.nlog.Debug("SBEScripts-selector: use OWPComponent");

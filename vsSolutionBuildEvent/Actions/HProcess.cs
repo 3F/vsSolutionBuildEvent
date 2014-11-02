@@ -28,40 +28,39 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.RegularExpressions;
-using net.r_eg.vsSBE.Exceptions;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
-namespace net.r_eg.vsSBE.SBEScripts.Components
+namespace net.r_eg.vsSBE.Actions
 {
-    public class CommentComponent: IComponent
+    public class HProcess
     {
-        /// <summary>
-        /// Type of implementation
-        /// </summary>
-        public ComponentType Type
-        {
-            get { return ComponentType.Comment; }
-        }
+        [DllImport("kernel32.dll")]
+        public static extern int GetSystemDefaultLCID();
 
         /// <summary>
-        /// Handling with current type
+        /// The current OEM code page from the system locale
         /// </summary>
-        /// <param name="data">mixed data</param>
-        /// <returns>prepared and evaluated data</returns>
-        public string parse(string data)
+        public static int OEMCodePage
         {
-            Match m = Regex.Match(data, 
-                                    String.Format(@"^\[{0}\]", RPattern.DoubleQuotesContent), 
-                                    RegexOptions.IgnorePatternWhitespace);
-
-            if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed CommentComponent - '{0}'", data);
+            get {
+                CultureInfo inf = CultureInfo.GetCultureInfo(GetSystemDefaultLCID());
+                return inf.TextInfo.OEMCodePage;
             }
-
-            return String.Empty; // silent
         }
+
+        /// <summary>
+        /// OEM Encoding from system locale
+        /// </summary>
+        public static Encoding EncodingOEM
+        {
+            get {
+                return Encoding.GetEncoding(OEMCodePage);
+            }
+        }
+
     }
 }

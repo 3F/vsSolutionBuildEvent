@@ -26,42 +26,18 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using net.r_eg.vsSBE.Exceptions;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
-
-namespace net.r_eg.vsSBE.SBEScripts.Components
+namespace net.r_eg.vsSBE.SBEScripts
 {
-    public class CommentComponent: IComponent
+    /// <summary>
+    /// Specification of the evaluation for different data
+    /// </summary>
+    public interface IEvaluator
     {
         /// <summary>
-        /// Type of implementation
-        /// </summary>
-        public ComponentType Type
-        {
-            get { return ComponentType.Comment; }
-        }
-
-        /// <summary>
-        /// Handling with current type
+        /// Entry point for some evaluation
         /// </summary>
         /// <param name="data">mixed data</param>
-        /// <returns>prepared and evaluated data</returns>
-        public string parse(string data)
-        {
-            Match m = Regex.Match(data, 
-                                    String.Format(@"^\[{0}\]", RPattern.DoubleQuotesContent), 
-                                    RegexOptions.IgnorePatternWhitespace);
-
-            if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed CommentComponent - '{0}'", data);
-            }
-
-            return String.Empty; // silent
-        }
+        /// <returns>Evaluated end value</returns>
+        string evaluate(string data);
     }
 }

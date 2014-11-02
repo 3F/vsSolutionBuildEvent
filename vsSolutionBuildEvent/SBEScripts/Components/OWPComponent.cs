@@ -88,7 +88,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                      \s*
                                                      \({0}\)  #1 - arguments (optional)
                                                    )?
-                                                   \s*(.*)    #2 - property", // greedy, however it's controlled by main container of SBE-Script
+                                                   \s*(.*)    #2 - property",
                                                    RPattern.DoubleQuotesContent
                                                  ), RegexOptions.IgnorePatternWhitespace);
 
@@ -98,7 +98,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             
             if(m.Groups[1].Success)
             {
-                string item = m.Groups[1].Value;
+                string item = StringHandler.normalize(m.Groups[1].Value);
                 Log.nlog.Debug("stOut: item = '{0}'", item);
 
                 if(item == "Build") {

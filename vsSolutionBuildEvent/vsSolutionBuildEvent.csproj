@@ -125,6 +125,7 @@
   <ItemGroup>
     <Compile Include="Actions\Connection.cs" />
     <Compile Include="Actions\DTEOperation.cs" />
+    <Compile Include="Actions\HProcess.cs" />
     <Compile Include="Environment.cs" />
     <Compile Include="Events\ITransmitter.cs" />
     <Compile Include="Events\IMode.cs" />
@@ -134,6 +135,7 @@
     <Compile Include="Events\IExecutionOrder.cs" />
     <Compile Include="Extensions\ArrayExtension.cs" />
     <Compile Include="Extensions\ObjectExtension.cs" />
+    <Compile Include="SBEScripts\IEvaluator.cs" />
     <Compile Include="SBEScripts\Exceptions\ScriptException.cs" />
     <Compile Include="IMatchWords.cs" />
     <Compile Include="Events\IModeFile.cs" />

@@ -57,38 +57,23 @@ namespace net.r_eg.vsSBE.SBEScripts
         void set(string name, string project, string unevaluated);
 
         /// <summary>
-        /// Evaluation user-variable with IMSBuild by using scope of project
+        /// Evaluation user-variable with IEvaluator by using scope of project
         /// Evaluated value should be updated for variable.
         /// </summary>
         /// <param name="name">Variable name for evaluating</param>
         /// <param name="project">Project name</param>
-        /// <param name="msbuild">IMSBuild objects for evaluating</param>
-        void evaluate(string name, string project, MSBuild.IMSBuild msbuild);
+        /// <param name="msbuild">IEvaluator objects for evaluating</param>
+        /// <param name="resetting">Evaluation can be in the chain of others IEvaluator's, this flag should reset this to initial state</param>
+        void evaluate(string name, string project, IEvaluator evaluator, bool resetting);
 
         /// <summary>
-        /// Evaluation user-variable with IMSBuild by using unique identification
+        /// Evaluation user-variable with IEvaluator by using unique identification
         /// Evaluated value should be updated for variable.
         /// </summary>
         /// <param name="ident">Unique identificator</param>
-        /// <param name="msbuild">IMSBuild objects for evaluating</param>
-        void evaluate(string ident, MSBuild.IMSBuild msbuild);
-
-        /// <summary>
-        /// Evaluation user-variable with ISBEScript by using scope of project
-        /// Evaluated value should be updated for variable.
-        /// </summary>
-        /// <param name="name">Variable name for evaluating</param>
-        /// <param name="project">Project name</param>
-        /// <param name="msbuild">ISBEScript objects for evaluating</param>
-        void evaluate(string name, string project, ISBEScript script);
-
-        /// <summary>
-        /// Evaluation user-variable with ISBEScript by using unique identification
-        /// Evaluated value should be updated for variable.
-        /// </summary>
-        /// <param name="ident">Unique identificator</param>
-        /// <param name="msbuild">ISBEScript objects for evaluating</param>
-        void evaluate(string ident, ISBEScript script);
+        /// <param name="msbuild">IEvaluator objects for evaluating</param>
+        /// <param name="resetting">Evaluation can be in the chain of others IEvaluator's, this flag should reset this to initial state</param>
+        void evaluate(string ident, IEvaluator evaluator, bool resetting);
 
         /// <summary>
         /// Checking for variable - completed evaluation or not
@@ -97,7 +82,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <param name="name">Variable name</param>
         /// <param name="project">Project name</param>
         /// <returns></returns>
-        bool isEvaluated(string name, string project);
+        bool isUnevaluated(string name, string project);
 
         /// <summary>
         /// Checking for variable - completed evaluation or not
@@ -105,7 +90,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// </summary>
         /// <param name="ident">Unique identificator</param>
         /// <returns></returns>
-        bool isEvaluated(string ident);
+        bool isUnevaluated(string ident);
 
         /// <summary>
         /// Checking existence of variable
@@ -145,8 +130,13 @@ namespace net.r_eg.vsSBE.SBEScripts
         void unsetAll();
 
         /// <summary>
-        /// Exposes the enumerator for defined names of user-variables
+        /// Exposes the enumerable for defined names of user-variables
         /// </summary>
-        IEnumerable<string> Variables { get; }
+        IEnumerable<string> Definitions { get; }
+
+        /// <summary>
+        /// Exposes the enumerable for defined user-variables
+        /// </summary>
+        IEnumerable<TUserVariable> Variables { get; }
     }
 }

@@ -73,7 +73,7 @@ namespace net.r_eg.vsSBE.SBEScripts
                     // no conflict, because all variants with '!' as argument is not possible without quotes.
                     return String.Format("!s{0}!", ident++);
                 },
-                RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline);
+                RegexOptions.IgnorePatternWhitespace);
             }
         }
 
@@ -98,6 +98,16 @@ namespace net.r_eg.vsSBE.SBEScripts
                     return removed;
                 });
             }
+        }
+
+        /// <summary>
+        /// Normalization data of strings with escaped double quotes etc.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static string normalize(string data)
+        {
+            return data.Replace("\\\"", "\"");
         }
     }
 }

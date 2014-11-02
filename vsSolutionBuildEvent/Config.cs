@@ -87,7 +87,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         private string _Link
         {
-            get { return Settings.WorkingPath + Entity.NAME; }
+            get { return Settings.WorkPath + Entity.NAME; }
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace net.r_eg.vsSBE
         /// <param name="path">path to configuration file</param>
         public void load(string path)
         {
-            Settings.setWorkingPath(path);
+            Settings.setWorkPath(path);
             _xprojvsbeUpgrade();
 
             try
@@ -109,7 +109,7 @@ namespace net.r_eg.vsSBE
                     }
                     compatibility(stream);
                 }
-                Log.nlog.Info("Loaded settings (v{0}): '{1}'\n\nReady:", data.Header.Compatibility, Settings.WorkingPath);
+                Log.nlog.Info("Loaded settings (v{0}): '{1}'\n\nReady:", data.Header.Compatibility, Settings.WorkPath);
                 Update();
             }
             catch(FileNotFoundException)
@@ -142,7 +142,7 @@ namespace net.r_eg.vsSBE
         /// <param name="path">path to configuration file</param>
         public void save(string path)
         {
-            Settings.setWorkingPath(path);
+            Settings.setWorkPath(path);
             save();
         }
 
@@ -152,7 +152,7 @@ namespace net.r_eg.vsSBE
                 using(TextWriter stream = new StreamWriter(_Link, false, Encoding.UTF8)) {
                     serialize(stream, data);
                 }
-                Log.nlog.Debug("Configuration saved: {0}", Settings.WorkingPath);
+                Log.nlog.Debug("Configuration saved: {0}", Settings.WorkPath);
                 Update();
             }
             catch(Exception ex) {
@@ -221,7 +221,7 @@ namespace net.r_eg.vsSBE
         /// <returns></returns>
         private void _xprojvsbeUpgrade()
         {
-            string oldcfg = Settings.WorkingPath + ".xprojvsbe";
+            string oldcfg = Settings.WorkPath + ".xprojvsbe";
             if(!(File.Exists(oldcfg) && !File.Exists(_Link))) {
                 return;
             }

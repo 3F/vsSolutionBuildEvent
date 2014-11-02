@@ -110,6 +110,9 @@ namespace net.r_eg.vsSBE.SBEScripts
             {
                 definitions[defindex] = new TUserVariable() {
                     unevaluated = unevaluated,
+                    ident       = defindex,
+                    status      = TUserVariable.StatusType.Unevaluated,
+                    prev        = (definitions.ContainsKey(defindex))? definitions[defindex] : new TUserVariable(),
                     evaluated   = null
                 };
                 Log.nlog.Debug("User-variable: defined '{0}' = '{1}'", defindex, unevaluated);
@@ -117,24 +120,26 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
-        /// Evaluation user-variable with IMSBuild by using scope of project
+        /// Evaluation user-variable with IEvaluator by using scope of project
         /// Evaluated value should be updated for variable.
         /// </summary>
         /// <param name="name">Variable name for evaluating</param>
         /// <param name="project">Project name</param>
-        /// <param name="msbuild">IMSBuild objects for evaluating</param>
-        public void evaluate(string name, string project, MSBuild.IMSBuild msbuild)
+        /// <param name="msbuild">IEvaluator objects for evaluating</param>
+        /// <param name="resetting">Evaluating from the unevaluated data if true, otherwise evaluation in the chain of others IEvaluator's</param>
+        public void evaluate(string name, string project, IEvaluator evaluator, bool resetting)
         {
-            evaluate(defIndex(name, project), msbuild);
+            evaluate(defIndex(name, project), evaluator, resetting);
         }
 
         /// <summary>
-        /// Evaluation user-variable with IMSBuild by using unique identification
+        /// Evaluation user-variable with IEvaluator by using unique identification
         /// Evaluated value should be updated for variable.
         /// </summary>
         /// <param name="ident">Unique identificator</param>
-        /// <param name="msbuild">IMSBuild objects for evaluating</param>
-        public void evaluate(string ident, MSBuild.IMSBuild msbuild)
+        /// <param name="msbuild">IEvaluator objects for evaluating</param>
+        /// <param name="resetting">Evaluating from the unevaluated data if true, otherwise evaluation in the chain of others IEvaluator's</param>
+        public void evaluate(string ident, IEvaluator evaluator, bool resetting)
         {
             lock(_lock)
             {
@@ -142,53 +147,24 @@ namespace net.r_eg.vsSBE.SBEScripts
                     throw new NotFoundException("Variable '{0}' not found", ident);
                 }
 
-                if(msbuild == null) {
-                    throw new InvalidArgumentException("evaluation of variable: msbuild is null");
+                if(evaluator == null) {
+                    throw new InvalidArgumentException("evaluation of variable: evaluator is null");
                 }
 
-                definitions[ident] = new TUserVariable() {
-                    unevaluated = definitions[ident].unevaluated,
-                    evaluated = msbuild.parse(definitions[ident].unevaluated)
+                TUserVariable var = new TUserVariable(definitions[ident]) {
+                    status = TUserVariable.StatusType.Started
                 };
-                Log.nlog.Debug("Completed evaluation of variable with IMSBuild :: '{0}'", ident);
-            }
-        }
+                definitions[ident] = var;
 
-        /// <summary>
-        /// Evaluation user-variable with ISBEScript by using scope of project
-        /// Evaluated value should be updated for variable.
-        /// </summary>
-        /// <param name="name">Variable name for evaluating</param>
-        /// <param name="project">Project name</param>
-        /// <param name="msbuild">ISBEScript objects for evaluating</param>
-        public void evaluate(string name, string project, ISBEScript script)
-        {
-            evaluate(defIndex(name, project), script);
-        }
-
-        /// <summary>
-        /// Evaluation user-variable with ISBEScript by using unique identification
-        /// Evaluated value should be updated for variable.
-        /// </summary>
-        /// <param name="ident">Unique identificator</param>
-        /// <param name="msbuild">ISBEScript objects for evaluating</param>
-        public void evaluate(string ident, ISBEScript script)
-        {
-            lock(_lock)
-            {
-                if(!definitions.ContainsKey(ident)) {
-                    throw new NotFoundException("Variable '{0}' not found", ident);
+                if(resetting) {
+                    var.evaluated = evaluator.evaluate(var.unevaluated);
                 }
-
-                if(script == null) {
-                    throw new InvalidArgumentException("evaluation of variable: script is null");
+                else {
+                    var.evaluated = evaluator.evaluate(var.evaluated);
                 }
-
-                definitions[ident] = new TUserVariable() {
-                    unevaluated = definitions[ident].unevaluated,
-                    evaluated   = script.parse(definitions[ident].unevaluated)
-                };
-                Log.nlog.Debug("Completed evaluation of variable with ISBEScript :: '{0}'", ident);
+                var.status          = TUserVariable.StatusType.Evaluated;
+                definitions[ident]  = var;
+                Log.nlog.Debug("Completed evaluation of variable with IEvaluator :: '{0}'", ident);
             }
         }
 
@@ -199,9 +175,9 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <param name="name">Variable name</param>
         /// <param name="project">Project name</param>
         /// <returns></returns>
-        public bool isEvaluated(string name, string project)
+        public bool isUnevaluated(string name, string project)
         {
-            return isEvaluated(defIndex(name, project));
+            return isUnevaluated(defIndex(name, project));
         }
 
         /// <summary>
@@ -210,9 +186,9 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// </summary>
         /// <param name="ident">Unique identificator</param>
         /// <returns></returns>
-        public bool isEvaluated(string ident)
+        public bool isUnevaluated(string ident)
         {
-            return (definitions[ident].evaluated != null);
+            return (definitions[ident].status == TUserVariable.StatusType.Unevaluated);
         }
 
         /// <summary>
@@ -306,13 +282,25 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
-        /// Exposes the enumerator for defined names of user-variables
+        /// Exposes the enumerable for defined names of user-variables
         /// </summary>
-        public IEnumerable<string> Variables
+        public IEnumerable<string> Definitions
         {
             get {
-                foreach(KeyValuePair<string, TUserVariable> def in definitions) {
+                foreach(KeyValuePair<string, TUserVariable> def in definitions.ToArray()) {
                     yield return def.Key;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Exposes the enumerable for defined user-variables
+        /// </summary>
+        public IEnumerable<TUserVariable> Variables
+        {
+            get {
+                foreach(KeyValuePair<string, TUserVariable> def in definitions.ToArray()) {
+                    yield return def.Value;
                 }
             }
         }
@@ -322,7 +310,10 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// </summary>
         protected string defIndex(string name, string project)
         {
-            return String.Format("{0}:{1}", name, project);
+            if(String.IsNullOrEmpty(project)) {
+                return name;
+            }
+            return String.Format("{0}_{1}", name, project);
         }
     }
 }

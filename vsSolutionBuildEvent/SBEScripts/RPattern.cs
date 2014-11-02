@@ -90,7 +90,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         private static string quotesContent(char symbol)
         {
             return String.Format(@"
-                                  \s*{0}
+                                  \s*(?<!\\){0}
                                   (
                                      (?:
                                         [^{0}\\]

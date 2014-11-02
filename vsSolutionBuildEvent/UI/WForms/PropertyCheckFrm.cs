@@ -41,7 +41,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                 evaluated = _parser.parse(textBoxUnevaluated.Text.Trim());
             }
             catch(Exception ex) {
-                evaluated = ex.Message;
+                evaluated = String.Format("Fail: {0}", ex.Message);
             }
             richTextBoxEvaluated.Text = evaluated;
         }

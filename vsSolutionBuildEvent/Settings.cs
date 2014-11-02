@@ -44,21 +44,21 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Current location
         /// </summary>
-        public static string WorkingPath
+        public static string WorkPath
         {
             get {
-                if(String.IsNullOrEmpty(_workingPath)) {
+                if(String.IsNullOrEmpty(_workPath)) {
                     throw new SBEException("WorkingPath is empty or null");
                 }
-                return _workingPath;
+                return _workPath;
             }
         }
 
-        public static void setWorkingPath(string path)
+        public static void setWorkPath(string path)
         {
-            _workingPath = path;
+            _workPath = path;
         }
 
-        private static string _workingPath = null;
+        private static string _workPath = null;
     }
 }
