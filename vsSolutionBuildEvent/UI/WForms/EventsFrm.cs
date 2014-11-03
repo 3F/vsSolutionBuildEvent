@@ -320,10 +320,10 @@ namespace net.r_eg.vsSBE.UI.WForms
         protected void refreshSettings()
         {
             clearControls();
-            operationsSelect(listBoxOperation);
+            operationsList(listBoxOperation);
             renderData();
-            onlyFor(false);
-            executionOrder(false);
+            onlyFor();
+            executionOrder();
             notice(false);
         }
 
@@ -416,19 +416,16 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
-        protected void operationsInit(ListBox list)
+        protected void operationsList(ListBox list)
         {
-            list.Items.Clear();
-            foreach(ModeOperation operation in logic.DefOperations) {
-                list.Items.Add(operation.Caption);
+            if(list.Items.Count < 1) {
+                foreach(ModeOperation operation in logic.DefOperations) {
+                    list.Items.Add(operation.Caption);
 
+                }
+                list.Items.Add(">> User custom <<"); //TODO
             }
-            list.Items.Add(">> User custom <<"); //TODO
-            operationsSelect(list);
-        }
 
-        protected void operationsSelect(ListBox list)
-        {
             list.SelectedIndex = list.Items.Count - 1;
             if(logic.SBEItem.Mode.Type != ModeType.Operation) {
                 return;
@@ -466,47 +463,32 @@ namespace net.r_eg.vsSBE.UI.WForms
             return false;
         }
 
-        protected void onlyFor(bool isNew)
+        protected void onlyFor()
         {
-            string[] toConf = logic.SBEItem.ToConfiguration;
-
-            if(isNew) {
-                checkedListBoxSpecCfg.Items.Clear();
-                foreach(EnvDTE80.SolutionConfiguration2 cfg in logic.Env.SolutionConfigurations)
-                {
-                    string name = logic.Env.SolutionConfigurationFormat(cfg);
-                    bool state  = toConf == null ? false : toConf.Where(s => s == name).Count() > 0;
-                    checkedListBoxSpecCfg.Items.Add(name, state);
+            if(checkedListBoxSpecCfg.Items.Count < 1) {
+                foreach(EnvDTE80.SolutionConfiguration2 cfg in logic.Env.SolutionConfigurations) {
+                    checkedListBoxSpecCfg.Items.Add(logic.Env.SolutionConfigurationFormat(cfg), false);
                 }
-                return;
             }
 
+            string[] toConf = logic.SBEItem.ToConfiguration;
             for(int i = 0; i < checkedListBoxSpecCfg.Items.Count; ++i)
             {
                 string name = checkedListBoxSpecCfg.Items[i].ToString();
-                bool state  = toConf == null ? false : toConf.Where(s => s == name).Count() > 0;
+                bool state  = (toConf == null)? false : toConf.Where(s => s == name).Count() > 0;
                 checkedListBoxSpecCfg.SetItemChecked(i, state);
             }
         }
 
-        protected void executionOrder(bool isNew)
+        protected void executionOrder()
         {
-            IExecutionOrder[] list = logic.SBEItem.ExecutionOrder;
-
-            if(isNew) {
-                dataGridViewOrder.Rows.Clear();
-                foreach(string name in logic.Env.DTEProjectsList)
-                {
-                    if(list == null || list.Length < 1) {
-                        dataGridViewOrder.Rows.Add(false, name, dgvOrderType.Items[0]);
-                        continue;
-                    }
-                    IExecutionOrder v = list.Where(s => s.Project == name).FirstOrDefault();
-                    dataGridViewOrder.Rows.Add(!String.IsNullOrEmpty(v.Project), name, v.Order.ToString());
+            if(dataGridViewOrder.Rows.Count < 1) {
+                foreach(string name in logic.Env.DTEProjectsList) {
+                    dataGridViewOrder.Rows.Add(false, name, dgvOrderType.Items[0]);
                 }
-                return;
             }
 
+            IExecutionOrder[] list = logic.SBEItem.ExecutionOrder;
             foreach(DataGridViewRow row in dataGridViewOrder.Rows)
             {
                 if(list == null || list.Length < 1) {
@@ -514,8 +496,11 @@ namespace net.r_eg.vsSBE.UI.WForms
                     row.Cells["dgvOrderType"].Value     = ExecutionOrderType.Before.ToString();
                     continue;
                 }
-                IExecutionOrder v = list.Where(s => s.Project == row.Cells["dgvOrderProject"].Value.ToString()).FirstOrDefault();
 
+                IExecutionOrder v = list.Where(s => s.Project == row.Cells["dgvOrderProject"].Value.ToString()).FirstOrDefault();
+                if(v == null) {
+                    continue;
+                }
                 row.Cells["dgvOrderEnabled"].Value  = !String.IsNullOrEmpty(v.Project);
                 row.Cells["dgvOrderType"].Value     = v.Order.ToString();
             }
@@ -529,10 +514,11 @@ namespace net.r_eg.vsSBE.UI.WForms
                 if(!Convert.ToBoolean(row.Cells["dgvOrderEnabled"].Value)) {
                     continue;
                 }
-                ExecutionOrder order = new ExecutionOrder();
-                order.Project   = row.Cells["dgvOrderProject"].Value.ToString();
-                order.Order     = (ExecutionOrderType)Enum.Parse(typeof(ExecutionOrderType), row.Cells["dgvOrderType"].Value.ToString());
-                ret.Add(order);
+
+                ret.Add(new ExecutionOrder() {
+                    Project = row.Cells["dgvOrderProject"].Value.ToString(),
+                    Order   = (ExecutionOrderType)Enum.Parse(typeof(ExecutionOrderType), row.Cells["dgvOrderType"].Value.ToString())
+                });
             }
             return ret.ToArray();
         }
@@ -592,12 +578,6 @@ namespace net.r_eg.vsSBE.UI.WForms
             try {
                 expandActionsList(false);
                 logic.fillEvents(comboBoxEvents);
-                operationsInit(listBoxOperation);
-                renderData();
-                onlyFor(true);
-                executionOrder(true);
-                refreshActions();
-                notice(false);
             }
             catch(Exception ex) {
                 Log.nlog.Error("Failed to load form: {0}", ex.Message);

@@ -108,7 +108,6 @@ namespace net.r_eg.vsSBE
                     compatibility(stream);
                 }
                 Log.nlog.Info("Loaded settings (v{0}): '{1}'\n\nReady:", data.Header.Compatibility, Settings.WorkPath);
-                Update();
             }
             catch(FileNotFoundException) {
                 Log.nlog.Info("Initializing new settings..");
@@ -126,6 +125,7 @@ namespace net.r_eg.vsSBE
 
             // now compatibility should be updated to the latest
             data.Header.Compatibility = Entity.Version.ToString();
+            Update();
         }
 
         /// <summary>

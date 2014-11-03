@@ -120,8 +120,10 @@ namespace net.r_eg.vsSBE.Upgrade.v08
             ret.Match = new MatchWords[count];
 
             for(int i = 0; i < count; ++i) {
-                ret.Match[i].Condition = evt.eventsOWP[i].term;
-                ret.Match[i].Type = (ComparisonType)evt.eventsOWP[i].type;
+                ret.Match[i] = new MatchWords() { 
+                    Condition = evt.eventsOWP[i].term,
+                    Type      = (ComparisonType)evt.eventsOWP[i].type
+                };
             }
             return ret;
         }
