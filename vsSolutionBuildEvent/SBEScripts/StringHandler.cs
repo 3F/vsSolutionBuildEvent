@@ -101,12 +101,26 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
+        /// Escaping quotes in data
+        /// </summary>
+        /// <param name="data">mixed string</param>
+        /// <returns>data with escaped quotes</returns>
+        public static string escapeQuotes(string data)
+        {
+            // (?<!\\)"
+            return Regex.Replace(data, "(?<!\\\\)\"", "\\\"");
+        }
+
+        /// <summary>
         /// Normalization data of strings with escaped double quotes etc.
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
         public static string normalize(string data)
         {
+            if(String.IsNullOrEmpty(data)) {
+                return String.Empty;
+            }
             return data.Replace("\\\"", "\"");
         }
     }

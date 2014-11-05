@@ -40,6 +40,30 @@ namespace net.r_eg.vsSBE.SBEScripts
     public class UserVariable: IUserVariable
     {
         /// <summary>
+        /// Exposes the enumerable for defined names of user-variables
+        /// </summary>
+        public IEnumerable<string> Definitions
+        {
+            get {
+                foreach(KeyValuePair<string, TUserVariable> def in definitions.ToArray()) {
+                    yield return def.Key;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Exposes the enumerable for defined user-variables
+        /// </summary>
+        public IEnumerable<TUserVariable> Variables
+        {
+            get {
+                foreach(KeyValuePair<string, TUserVariable> def in definitions.ToArray()) {
+                    yield return def.Value;
+                }
+            }
+        }
+
+        /// <summary>
         /// Contains the all defined user-variables.
         /// 
         /// Note: ConcurrentDictionary used Nodes! order is unpredictable - see m_tables & internal adding
@@ -279,30 +303,6 @@ namespace net.r_eg.vsSBE.SBEScripts
                 definitions.Clear();
             }
             Log.nlog.Debug("All User-variables is successfully reseted");
-        }
-
-        /// <summary>
-        /// Exposes the enumerable for defined names of user-variables
-        /// </summary>
-        public IEnumerable<string> Definitions
-        {
-            get {
-                foreach(KeyValuePair<string, TUserVariable> def in definitions.ToArray()) {
-                    yield return def.Key;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Exposes the enumerable for defined user-variables
-        /// </summary>
-        public IEnumerable<TUserVariable> Variables
-        {
-            get {
-                foreach(KeyValuePair<string, TUserVariable> def in definitions.ToArray()) {
-                    yield return def.Value;
-                }
-            }
         }
 
         /// <summary>

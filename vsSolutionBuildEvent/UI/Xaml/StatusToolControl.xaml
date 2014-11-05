@@ -3,9 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="23" d:DesignWidth="568">
-    <Grid Name="grid" Width="565">
+             mc:Ignorable="d" d:DesignHeight="23" d:DesignWidth="568">
+    <Grid Name="grid" Width="565" HorizontalAlignment="Left" VerticalAlignment="Top">
         <ToggleButton Content="Pre" Height="23" HorizontalAlignment="Left" Margin="84,0,0,0" Name="btnPre" VerticalAlignment="Top" Width="47" Click="btnPre_Click" MouseEnter="btnPre_MouseEnter" MouseLeave="btnPre_MouseLeave" MouseUp="btnPre_MouseUp" />
         <ToggleButton Content="Post" Height="23" HorizontalAlignment="Left" Margin="134,0,0,0" Name="btnPost" VerticalAlignment="Top" Width="53" Click="btnPost_Click" MouseEnter="btnPost_MouseEnter" MouseLeave="btnPost_MouseLeave" MouseUp="btnPost_MouseUp" />
         <ToggleButton Content="Cancel" Height="23" HorizontalAlignment="Left" Margin="190,0,0,0" Name="btnCancel" VerticalAlignment="Top" Width="64" Click="btnCancel_Click" MouseEnter="btnCancel_MouseEnter" MouseLeave="btnCancel_MouseLeave" MouseUp="btnCancel_MouseUp" />

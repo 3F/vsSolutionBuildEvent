@@ -49,7 +49,6 @@ namespace vsSBETest.OWP
         ///A test for extract
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void extractTest()
         {
             string rawdata = String.Empty;
@@ -69,7 +68,6 @@ namespace vsSBETest.OWP
         ///A test for extract
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void extractTest2()
         {
             string rawdata = @"9>C:\VC\atlmfc\include\atlhost.h(422): warning C4505: 'ATL::CAxHostWindow::AddRef' : unreferenced local function has been removed";
@@ -83,7 +81,6 @@ namespace vsSBETest.OWP
         ///A test for extract
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void extractTest3()
         {
             string rawdata = @"11>windows\Search.cpp(2246): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int";
@@ -209,7 +206,7 @@ namespace vsSBETest.OWP
             target.errors.Clear();
         }
 
-        internal class BuildItemAccessor
+        private class BuildItemAccessor
         {
             public class Accessor: BuildItem
             {

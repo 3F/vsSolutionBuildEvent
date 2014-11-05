@@ -83,14 +83,14 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns>prepared and evaluated data</returns>
         public string parse(string data)
         {
-            Match m = Regex.Match(data, @"^\[Build
-                                              \s+
-                                              (                  #1 - full ident
-                                                ([A-Za-z_0-9]+)  #2 - subtype
-                                                .*
-                                              )
-                                           \]$", 
-                                           RegexOptions.IgnorePatternWhitespace);
+            Match m = Regex.Match(data.Trim(), @"^\[Build
+                                                    \s+
+                                                    (                  #1 - full ident
+                                                      ([A-Za-z_0-9]+)  #2 - subtype
+                                                      .*
+                                                    )
+                                                 \]$", 
+                                                 RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
                 throw new SyntaxIncorrectException("Failed BuildComponent - '{0}'", data);
@@ -120,9 +120,9 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns>found command</returns>
         protected string stCancel(string data)
         {
-            Match m = Regex.Match(data, @"cancel\s*=\s*(false|true|1|0)", RegexOptions.IgnoreCase);
+            Match m = Regex.Match(data, @"cancel\s*=\s*(false|true|1|0)\s*$", RegexOptions.IgnoreCase);
             if(!m.Success) {
-                throw new OperandNotFoundException("Failed stCancel - '{0}'", data);
+                throw new OperationNotFoundException("Failed stCancel - '{0}'", data);
             }
 
             string val = m.Groups[1].Value.Trim().ToLower();
@@ -140,7 +140,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     break;
                 }
                 default: {
-                    throw new IncorrectSyntaxException("stCancel: incorrect value - '{0}'", val);
+                    throw new OperandNotFoundException("stCancel: incorrect value - '{0}'", val);
                 }
             }
             Log.nlog.Debug("stCancel: pushed '{0}'", val);
@@ -177,7 +177,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                  ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                throw new OperandNotFoundException("Failed stProjects - '{0}'", data);
+                throw new SyntaxIncorrectException("Failed stProjects - '{0}'", data);
             }
 
             string project      = m.Groups[1].Value;
@@ -219,10 +219,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                           ([A-Za-z_0-9]+)            #1 - property
                                           (?:
                                             \s*=\s*(false|true|1|0)  #2 - value (optional)
-                                          )?", RegexOptions.IgnorePatternWhitespace);
+                                           |
+                                            \s*$
+                                          )", RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                throw new OperandNotFoundException("Failed stProjectConf - '{0}'", data);
+                throw new SyntaxIncorrectException("Failed stProjectConf - '{0}'", data);
             }
             string property = m.Groups[1].Value;
             string value    = (m.Groups[2].Success)? m.Groups[2].Value : null;
@@ -246,7 +248,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     return Values.from(context.ShouldDeploy);
                 }
             }
-            throw new NotFoundException("stProjectConf: not found property - '{0}'", property);
+            throw new OperationNotFoundException("stProjectConf: not found property - '{0}'", property);
         }
     }
 }

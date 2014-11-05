@@ -108,7 +108,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                  ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                throw new OperandNotFoundException("Failed stEvents - '{0}'", data);
+                throw new SyntaxIncorrectException("Failed stEvents - '{0}'", data);
             }
 
             string typeString   = m.Groups[1].Value;
@@ -121,7 +121,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 type = (SolutionEventType)Enum.Parse(typeof(SolutionEventType), typeString);
             }
             catch(Exception ex) {
-                throw new NotFoundException("Event type not found - '{0}' :: ", typeString, ex.Message);
+                throw new OperandNotFoundException("Event type not found - '{0}' :: ", typeString, ex.Message);
             }
 
             Log.nlog.Debug("stEvents: type - '{0}', index - '{1}', name - '{2}'", type, index, name);
@@ -155,7 +155,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                  ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                throw new OperandNotFoundException("Failed stEventItem - '{0}'", data);
+                throw new SyntaxIncorrectException("Failed stEventItem - '{0}'", data);
             }
 
             string property     = m.Groups[1].Value;
@@ -188,7 +188,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected string pStatus(SolutionEventType type, int index, string data)
         {
             Match m = Regex.Match(data, @"\.\s*
-                                         ([A-Za-z_0-9]+)  #1 - property", 
+                                         ([A-Za-z_0-9]+)  #1 - property
+                                         \s*$", 
                                          RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
@@ -220,7 +221,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return evt.Enabled.ToString().ToLower();
             }
 
-            Match m = Regex.Match(data, @"=\s*(false|true|1|0)", RegexOptions.IgnoreCase);
+            Match m = Regex.Match(data, @"=\s*(false|true|1|0)\s*$", RegexOptions.IgnoreCase);
             if(!m.Success) {
                 throw new OperandNotFoundException("Failed pEnabled - '{0}'", data);
             }

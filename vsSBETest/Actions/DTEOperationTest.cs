@@ -196,8 +196,7 @@ namespace vsSBETest.Actions
             }
         }
 
-
-        internal class DTEOperationAccessor
+        private class DTEOperationAccessor
         {
             public class Accessor: DTEOperation
             {

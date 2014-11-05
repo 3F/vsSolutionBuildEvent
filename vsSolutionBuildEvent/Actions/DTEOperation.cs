@@ -140,7 +140,7 @@ namespace net.r_eg.vsSBE.Actions
             exec(command.name, command.args);
         }
 
-        public void exec(string[] commands, bool abortOnFirstError)
+        public virtual void exec(string[] commands, bool abortOnFirstError)
         {
             exec(parse(format(ref commands)), abortOnFirstError);
         }

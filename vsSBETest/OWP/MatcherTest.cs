@@ -35,7 +35,6 @@ namespace vsSBETest.OWP
         ///A test for mWildcards
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void mWildcardsTest()
         {
             MatcherAccessor.ToWildcards target = new MatcherAccessor.ToWildcards();
@@ -52,7 +51,6 @@ namespace vsSBETest.OWP
         ///A test for mWildcards
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void mWildcardsTest1()
         {
             MatcherAccessor.ToWildcards target = new MatcherAccessor.ToWildcards();
@@ -74,7 +72,7 @@ namespace vsSBETest.OWP
             Assert.AreEqual(false, target.mWildcards("systems+", ref raw));
         }
 
-        internal class MatcherAccessor
+        private class MatcherAccessor
         {
             public class Accessor: Matcher {}
 

@@ -93,7 +93,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                  ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                throw new OperandNotFoundException("Failed stOut - '{0}'", data);
+                throw new OperationNotFoundException("Failed stOut - '{0}'", data);
             }
             
             if(m.Groups[1].Success)
@@ -111,8 +111,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string property = m.Groups[2].Value.Trim();
             Log.nlog.Debug("stOut: property = '{0}'", property);
 
-            // (?<!\\)"
-            string raw = Regex.Replace(OWP.Items._.Build.Raw, "(?<!\\\\)\"", "\\\"");
+            string raw = StringHandler.escapeQuotes(OWP.Items._.Build.Raw);
 
             // #[OWP out.All] / #[OWP out]
             if(property == ".All" || property == String.Empty) {

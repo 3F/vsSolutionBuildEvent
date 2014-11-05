@@ -106,11 +106,11 @@ namespace net.r_eg.vsSBE.Actions
         /// <returns>Executed status</returns>
         public StatusType get(SolutionEventType tevent, int index)
         {
-            Debug.Assert(states != null && states[tevent] != null);
+            Debug.Assert(states != null);
             try {
                 return states[tevent][index];
             }
-            catch(IndexOutOfRangeException) {
+            catch(Exception) {
                 return StatusType.NotFound;
             }
         }

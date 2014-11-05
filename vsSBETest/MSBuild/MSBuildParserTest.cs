@@ -41,7 +41,6 @@ namespace vsSBETest.MSBuild
         ///A test for getProperty
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void getPropertyTest()
         {
             var mockDte2                    = new Mock<EnvDTE80.DTE2>();
@@ -117,7 +116,6 @@ namespace vsSBETest.MSBuild
         ///A test for prepareVariables
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
         [ExpectedException(typeof(IncorrectSyntaxException))]
         public void prepareVariablesTest()
         {
@@ -128,7 +126,6 @@ namespace vsSBETest.MSBuild
         ///A test for prepareVariables
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
         [ExpectedException(typeof(IncorrectSyntaxException))]
         public void prepareVariablesTest2()
         {
@@ -139,7 +136,6 @@ namespace vsSBETest.MSBuild
         ///A test for prepareVariables
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest3()
         {
             MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
@@ -165,7 +161,6 @@ namespace vsSBETest.MSBuild
         ///A test for prepareVariables
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest4()
         {
             MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
@@ -191,7 +186,6 @@ namespace vsSBETest.MSBuild
         ///A test for prepareVariables
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest5()
         {
             MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
@@ -217,7 +211,6 @@ namespace vsSBETest.MSBuild
         ///A test for prepareVariables
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest6()
         {
             MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
@@ -244,7 +237,6 @@ namespace vsSBETest.MSBuild
         ///A test for prepareVariables
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest7()
         {
             MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
@@ -270,7 +262,6 @@ namespace vsSBETest.MSBuild
         ///A test for prepareVariables
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest8()
         {
             MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
@@ -293,7 +284,6 @@ namespace vsSBETest.MSBuild
         ///A test for prepareVariables
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest9()
         {
             MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
@@ -316,7 +306,6 @@ namespace vsSBETest.MSBuild
         ///A test for prepareVariables
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest10()
         {
             MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
@@ -342,7 +331,6 @@ namespace vsSBETest.MSBuild
         ///A test for prepareVariables
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest11()
         {
             MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
@@ -368,7 +356,6 @@ namespace vsSBETest.MSBuild
         ///A test for prepareVariables
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void prepareVariablesTest12()
         {
             MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
@@ -394,7 +381,6 @@ namespace vsSBETest.MSBuild
         ///A test for evaluateVariable
         ///</summary>
         [TestMethod()]
-        [DeploymentItem("vsSolutionBuildEvent.dll")]
         public void evaluateVariableTest()
         {
             MSBuildParserAccessor.ToEvaluateVariable target = new MSBuildParserAccessor.ToEvaluateVariable();
@@ -580,59 +566,59 @@ namespace vsSBETest.MSBuild
             string actual   = (new MSBuildParserAccessor.ToParse()).parse(data);
             Assert.AreEqual("[E~[System.DateTime]::Now~]", actual);
         }
-    }
 
-    internal class MSBuildParserAccessor
-    {
-        public class Accessor: MSBuildParser
+        private class MSBuildParserAccessor
         {
-            public Accessor(): base(new net.r_eg.vsSBE.Environment((DTE2)null)) {}
-            public Accessor(net.r_eg.vsSBE.Environment env): base(env) { }
-        }
-
-        public class StubEvaluatingProperty: Accessor
-        {
-            public override string evaluate(string unevaluated, string project)
+            public class Accessor: MSBuildParser
             {
-                return String.Format("[E~{0}~{1}]", unevaluated, project);
+                public Accessor(): base(new net.r_eg.vsSBE.Environment((DTE2)null)) {}
+                public Accessor(net.r_eg.vsSBE.Environment env): base(env) { }
             }
 
-            public override string getProperty(string name, string project)
+            public class StubEvaluatingProperty: Accessor
             {
-                if(uvariable.isExist(name, project)) {
-                    return getUVariableValue(name, project);
+                public override string evaluate(string unevaluated, string project)
+                {
+                    return String.Format("[E~{0}~{1}]", unevaluated, project);
                 }
-                return String.Format("[P~{0}~{1}]", name, project);
+
+                public override string getProperty(string name, string project)
+                {
+                    if(uvariable.isExist(name, project)) {
+                        return getUVariableValue(name, project);
+                    }
+                    return String.Format("[P~{0}~{1}]", name, project);
+                }
             }
-        }
 
-        public class ToParse: StubEvaluatingProperty
-        {
-
-        }
-
-        public class ToUserVariables: StubEvaluatingProperty
-        {
-            public new net.r_eg.vsSBE.SBEScripts.IUserVariable uvariable
+            public class ToParse: StubEvaluatingProperty
             {
-                get { return base.uvariable; }
-                set { base.uvariable = value; }
+
             }
-        }
 
-        public class ToPrepareVariables: StubEvaluatingProperty
-        {
-            public new TPreparedData prepareVariables(string raw)
+            public class ToUserVariables: StubEvaluatingProperty
             {
-                return base.prepareVariables(raw);
+                public new net.r_eg.vsSBE.SBEScripts.IUserVariable uvariable
+                {
+                    get { return base.uvariable; }
+                    set { base.uvariable = value; }
+                }
             }
-        }
 
-        public class ToEvaluateVariable: ToUserVariables
-        {
-            public new string evaluateVariable(TPreparedData prepared)
+            public class ToPrepareVariables: StubEvaluatingProperty
             {
-                return base.evaluateVariable(prepared);
+                public new TPreparedData prepareVariables(string raw)
+                {
+                    return base.prepareVariables(raw);
+                }
+            }
+
+            public class ToEvaluateVariable: ToUserVariables
+            {
+                public new string evaluateVariable(TPreparedData prepared)
+                {
+                    return base.evaluateVariable(prepared);
+                }
             }
         }
     }

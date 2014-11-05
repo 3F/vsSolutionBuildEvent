@@ -135,22 +135,20 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                   ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                throw new OperandNotFoundException("Failed stGet - '{0}'", data);
+                throw new SyntaxIncorrectException("Failed stGet - '{0}'", data);
             }
 
             string file     = location(StringHandler.normalize(m.Groups[1].Value.Trim()));
             string content  = String.Empty;
             try {
-                using(StreamReader stream = new StreamReader(file, Encoding.UTF8, true)) {
-                    content = stream.ReadToEnd();
-                }
+                content = readToEnd(file, Encoding.UTF8, true);
                 Log.nlog.Debug("FileComponent: successful stGet- '{0}'", file);
             }
-            catch(FileNotFoundException exNotFound) {
-                Log.nlog.Warn("stGet: not found - '{0}' :: {1}", file, exNotFound.Message);
+            catch(FileNotFoundException ex) {
+                throw new ScriptException("stGet: not found - '{0}' :: {1}", file, ex.Message);
             }
             catch(Exception ex) {
-                Log.nlog.Warn("stGet: exception - '{0}'", ex.Message);
+                throw new ScriptException("stGet: exception - '{0}'", ex.Message);
             }
             return content;
         }
@@ -185,7 +183,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                  ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                throw new OperandNotFoundException("Failed stCall - '{0}'", data);
+                throw new SyntaxIncorrectException("Failed stCall - '{0}'", data);
             }
 
             string file = StringHandler.normalize(m.Groups[1].Value.Trim());
@@ -193,49 +191,13 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             Log.nlog.Debug("stCall: '{0}', '{1}' :: stdOut {2}, silent {3}", file, args, stdOut, silent);
             try {
-                Process p = new Process();
-                p.StartInfo.FileName = file;
-
-                p.StartInfo.Arguments               = args;
-                p.StartInfo.UseShellExecute         = false;
-                p.StartInfo.WorkingDirectory        = Settings.WorkPath;
-                p.StartInfo.RedirectStandardOutput  = true;
-                p.StartInfo.RedirectStandardError   = true;
-                p.StartInfo.StandardErrorEncoding   = p.StartInfo.StandardOutputEncoding 
-                                                    = Actions.HProcess.EncodingOEM;
-
-                if(silent) {
-                    p.StartInfo.WindowStyle     = ProcessWindowStyle.Hidden;
-                    p.StartInfo.CreateNoWindow  = true;
-                }
-                else {
-                    p.StartInfo.WindowStyle     = ProcessWindowStyle.Normal;
-                    p.StartInfo.CreateNoWindow  = false;
-                }
-
-                p.Start();
-                p.WaitForExit(); //TODO: protection in silent mode
-
-                string errors = p.StandardError.ReadToEnd();
-                if(errors.Length > 0) {
-                    throw new Exception(errors);
-                }
+                string ret = run(file, args, silent, stdOut);
                 Log.nlog.Debug("FileComponent: successful stCall - '{0}'", file);
-
-                if(!stdOut) {
-                    return String.Empty;
-                }
-
-                string ret = String.Empty;
-                while(!p.StandardOutput.EndOfStream) {
-                    ret += p.StandardOutput.ReadLine() + System.Environment.NewLine;
-                }
-                return ret.TrimEnd(new char[]{ '\r', '\n' });
+                return ret;
             }
             catch(Exception ex) {
-                Log.nlog.Warn("stCall: exception - '{0}'", ex.Message);
+                throw new ScriptException("stCall: exception - '{0}'", ex.Message);
             }
-            return String.Empty;
         }
 
         /// <summary>
@@ -261,7 +223,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                  ), RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
 
             if(!m.Success) {
-                throw new OperandNotFoundException("Failed stWrite - '{0}'", data);
+                throw new SyntaxIncorrectException("Failed stWrite - '{0}'", data);
             }
 
             string file     = location(StringHandler.normalize(m.Groups[1].Value.Trim()));
@@ -269,18 +231,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             Log.nlog.Debug("FileComponent: stWrite started for '{0}'", file);
             try {
-                using(TextWriter stream = new StreamWriter(file, append, enc)) {
-                    if(writeLine){
-                        stream.WriteLine(fdata);
-                    }
-                    else{
-                        stream.Write(fdata);
-                    }
-                }
+                writeToFile(file, fdata, append, writeLine, enc);
                 Log.nlog.Debug("FileComponent: successful stWrite - '{0}'", file);
             }
             catch(Exception ex) {
-                Log.nlog.Warn("FileComponent: Cannot write {0}", ex.Message);
+                throw new ScriptException("FileComponent: Cannot write {0}", ex.Message);
             }
         }
 
@@ -317,7 +272,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                   ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                throw new OperandNotFoundException("Failed stReplace - '{0}'", data);
+                throw new SyntaxIncorrectException("Failed stReplace - '{0}'", data);
             }
 
             string type         = "Basic";
@@ -326,13 +281,9 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string replacement  = hSymbols(StringHandler.normalize(m.Groups[4].Value));
 
             Log.nlog.Debug("stReplace: found file '{0}',  pattern '{1}',  replacement '{2}'", file, pattern, replacement);
-
-            string content;
+                        
             Encoding enc = Encoding.UTF8;
-            using(StreamReader reader = new StreamReader(file, enc, true)) {
-                content = reader.ReadToEnd();
-                enc = reader.CurrentEncoding;
-            }
+            string content = readToEnd(file, out enc);
 
             if(m.Groups[1].Success) {
                 type = m.Groups[1].Value;
@@ -355,10 +306,118 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 }
             }
 
-            using(TextWriter stream = new StreamWriter(file, false, enc)) {
-                stream.Write(content);
-            }
+            writeToFile(file, content, false, enc);
             Log.nlog.Debug("stReplace: successful :: {0}, Encoding '{1}'", content.Length, enc);
+        }
+
+        /// <summary>
+        /// Reads the entire file
+        /// </summary>
+        /// <param name="file">The file to be read</param>
+        /// <param name="enc">The character encoding to use</param>
+        /// <param name="detectEncoding">Indicates whether to look for byte order marks at the beginning of the file</param>
+        /// <param name="current">Gets the current character encoding</param>
+        /// <returns></returns>
+        protected virtual string readToEnd(string file, Encoding enc, bool detectEncoding, out Encoding current)
+        {
+            using(StreamReader stream = new StreamReader(file, enc, detectEncoding)) {
+                current = stream.CurrentEncoding;
+                return stream.ReadToEnd();
+            }
+        }
+
+        protected string readToEnd(string file)
+        {
+            Encoding current;
+            return readToEnd(file, Encoding.UTF8, true, out current);
+        }
+
+        protected string readToEnd(string file, Encoding enc, bool detectEncoding = true)
+        {
+            Encoding current;
+            return readToEnd(file, enc, detectEncoding, out current);
+        }
+
+        protected string readToEnd(string file, out Encoding enc)
+        {
+            return readToEnd(file, Encoding.UTF8, true, out enc);
+        }
+
+        /// <param name="file">File path to write</param>
+        /// <param name="data">The string to write</param>
+        /// <param name="append">Determines whether data is to be appended to the file</param>
+        /// <param name="writeLine">Writes a string followed by a line terminator if true</param>
+        /// <param name="enc">The character encoding to use</param>
+        protected virtual void writeToFile(string file, string data, bool append, bool writeLine, Encoding enc)
+        {
+            using(TextWriter stream = new StreamWriter(file, append, enc)) {
+                if(writeLine) {
+                    stream.WriteLine(data);
+                }
+                else {
+                    stream.Write(data);
+                }
+            }
+        }
+
+        protected void writeToFile(string file, string data, bool append, bool writeLine)
+        {
+            writeToFile(file, data, append, writeLine, Encoding.UTF8);
+        }
+
+        protected void writeToFile(string file, string data, bool append, Encoding enc)
+        {
+            writeToFile(file, data, append, false, enc);
+        }
+
+        /// <summary>
+        /// Execution file with arguments
+        /// TODO: move to HProcess
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="args"></param>
+        /// <param name="silent">Hide process if true</param>
+        /// <param name="stdOut">Reads from StandardOutput if true</param>
+        /// <returns></returns>
+        protected virtual string run(string file, string args, bool silent, bool stdOut)
+        {
+            Process p = new Process();
+            p.StartInfo.FileName = file;
+
+            p.StartInfo.Arguments               = args;
+            p.StartInfo.UseShellExecute         = false;
+            p.StartInfo.WorkingDirectory        = Settings.WorkPath;
+            p.StartInfo.RedirectStandardOutput  = true;
+            p.StartInfo.RedirectStandardError   = true;
+            p.StartInfo.StandardErrorEncoding   = p.StartInfo.StandardOutputEncoding 
+                                                = Actions.HProcess.EncodingOEM;
+
+            if(silent) {
+                p.StartInfo.WindowStyle     = ProcessWindowStyle.Hidden;
+                p.StartInfo.CreateNoWindow  = true;
+            }
+            else {
+                p.StartInfo.WindowStyle     = ProcessWindowStyle.Normal;
+                p.StartInfo.CreateNoWindow  = false;
+            }
+
+            p.Start();
+            p.WaitForExit(); //TODO: protection in silent mode
+
+            string errors = p.StandardError.ReadToEnd();
+            if(errors.Length > 0) {
+                throw new ComponentException(errors);
+            }
+
+            if(!stdOut) {
+                return String.Empty;
+            }
+
+            string ret = String.Empty;
+            while(!p.StandardOutput.EndOfStream) {
+                ret += p.StandardOutput.ReadLine() + System.Environment.NewLine;
+            }
+            return ret.TrimEnd(new char[]{ '\r', '\n' });
         }
 
         /// <summary>

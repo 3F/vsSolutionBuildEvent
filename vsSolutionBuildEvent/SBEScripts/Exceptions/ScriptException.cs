@@ -58,10 +58,16 @@ namespace net.r_eg.vsSBE.SBEScripts.Exceptions
         public SubtypeNotFoundException(string message, params object[] args): base(message, args) {}
     }
 
-    public class OperandNotFoundException: ScriptException
+    public class OperandNotFoundException: NotFoundException
     {
         public OperandNotFoundException(string message): base(message) {}
         public OperandNotFoundException(string message, params object[] args): base(message, args) {}
+    }
+
+    public class OperationNotFoundException: NotFoundException
+    {
+        public OperationNotFoundException(string message) : base(message) { }
+        public OperationNotFoundException(string message, params object[] args): base(message, args) {}
     }
 
     public class NotSupportedOperationException: ScriptException

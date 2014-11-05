@@ -76,14 +76,15 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         {
             StringHandler hString = new StringHandler();
 
-            Match m = Regex.Match(hString.protect(data), 
-                                    String.Format(@"{0}            #1 - Condition
+            Match m = Regex.Match(hString.protect(data.Trim()),
+                                    String.Format(@"^\[\s*
+                                                    {0}            #1 - Condition
                                                     \s*
                                                     {1}            #2 - Body if true
                                                     (?:
                                                       \s*else\s*
                                                       {1}          #3 - Body if false (optional)
-                                                    )?",
+                                                    )?\s*\]",
                                                     RPattern.RoundBracketsContent,
                                                     RPattern.CurlyBracketsContent
                                                  ), RegexOptions.IgnorePatternWhitespace);
@@ -111,7 +112,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         {
             Log.nlog.Debug("Condition-parse: started with - '{0}' :: '{1}' :: '{2}'", condition, ifTrue, ifFalse);
 
-            Match m = Regex.Match(condition, @"^\s*
+            Match m = Regex.Match(condition.Trim(), 
+                                              @"^\s*
                                                (!)?         #1 - flag of inversion (optional)
                                                ([^=!~<>]+) #2 - left operand - boolean type if as a single
                                                (?:
@@ -150,7 +152,17 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             if(m.Groups[3].Success) {
                 coperator   = m.Groups[3].Value;
-                right       = spaces(m.Groups[4].Value);
+                right       = m.Groups[4].Value;
+
+                switch(coperator + right) {
+                    case "===":
+                    case "!==":
+                    case ">=":
+                    case "<=": {
+                        throw new SyntaxIncorrectException("Failed ConditionComponent: reserved combination- '{0}'", condition);
+                    }
+                }
+                right = spaces(right);
             }
             Log.nlog.Debug("Condition-parse: left: '{0}', right: '{1}', operator: '{2}', invert: {3}", left, right, coperator, invert);
 
@@ -195,14 +207,14 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="data">mixed</param>
         protected string evaluate(string data)
         {
-            Log.nlog.Debug("Condition-evaluate: started with '{0}'", data);
+            Log.nlog.Trace("Condition-evaluate: started with '{0}'", data);
 
             data = script.parse(data);
-            Log.nlog.Debug("Condition-evaluate: evaluated data: '{0}' :: ISBEScript", data);
+            Log.nlog.Trace("Condition-evaluate: evaluated data: '{0}' :: ISBEScript", data);
 
             if(PostProcessingMSBuild) {
                 data = msbuild.parse(data);
-                Log.nlog.Debug("Condition-evaluate: evaluated data: '{0}' :: IMSBuild", data);
+                Log.nlog.Trace("Condition-evaluate: evaluated data: '{0}' :: IMSBuild", data);
             }
             return data;
         }

@@ -116,21 +116,11 @@ namespace net.r_eg.vsSBE.SBEScripts
                 case "~=": {
                     return (left.Contains(right));
                 }
-                case "==":
-                {
-                    int lNumber, rNumber;
-                    if(Int32.TryParse(left, out lNumber) && Int32.TryParse(right, out rNumber)) {
-                        return lNumber == rNumber;
-                    }
-                    return (left == right);
+                case "==": {
+                    return isEqual(left, right);
                 }
-                case "!=":
-                {
-                    int lNumber, rNumber;
-                    if(Int32.TryParse(left, out lNumber) && Int32.TryParse(right, out rNumber)) {
-                        return lNumber != rNumber;
-                    }
-                    return (left != right);
+                case "!=": {
+                    return !isEqual(left, right);
                 }
                 case ">": {
                     return (toInt32(left) > toInt32(right));
@@ -146,6 +136,31 @@ namespace net.r_eg.vsSBE.SBEScripts
                 }
             }
             throw new IncorrectSyntaxException("Values-comparison: incorrect operator - '{0}'", coperator);
+        }
+
+        /// <summary>
+        /// Comparing values by chain: Int32 -> Boolean -> String
+        /// </summary>
+        /// <param name="left">left operand</param>
+        /// <param name="right">right operand</param>
+        /// <returns></returns>
+        private static bool isEqual(string left, string right)
+        {
+            int lNumber, rNumber;
+            if(Int32.TryParse(left, out lNumber) && Int32.TryParse(right, out rNumber)) {
+                Log.nlog.Trace("Values-isEqual: as numeric '{0}' == '{1}'", left, right);
+                return (lNumber == rNumber);
+            }
+
+            try {
+                bool ret = (toBoolean(left) == toBoolean(right));
+                Log.nlog.Trace("Values-isEqual: as boolean '{0}' == '{1}'", left, right);
+                return ret;
+            }
+            catch(IncorrectSyntaxException) {
+                Log.nlog.Trace("Values-isEqual: as string '{0}' == '{1}'", left, right);
+            }
+            return (left == right);
         }
     }
 }

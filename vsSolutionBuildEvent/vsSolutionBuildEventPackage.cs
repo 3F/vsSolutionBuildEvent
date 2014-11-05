@@ -1,29 +1,24 @@
 ﻿/*
- * Copyright (c) 2013 Developed by reg [Denis Kuzmin] <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg [Denis Kuzmin] <entry.reg@gmail.com>
  * Distributed under the Boost Software License, Version 1.0
  * (See accompanying file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
 using System;
 using System.ComponentModel.Design;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.Win32;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts;
-using net.r_eg.vsSBE.UI;
 
 namespace net.r_eg.vsSBE
 {

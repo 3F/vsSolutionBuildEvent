@@ -158,7 +158,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             return uvariable.get(name, project);
         }
 
-        protected void evaluate(string name, string project = null)
+        protected virtual void evaluate(string name, string project = null)
         {
             uvariable.evaluate(name, project, (IEvaluator)script, true);
             if(postProcessingMSBuild) {

@@ -34,7 +34,7 @@ using net.r_eg.vsSBE.Exceptions;
 
 namespace net.r_eg.vsSBE
 {
-    internal static class Settings
+    public static class Settings
     {
         /// <summary>
         /// Debug mode for current application
