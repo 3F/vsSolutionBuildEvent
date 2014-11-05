@@ -1,3 +1,53 @@
+[v0.9]
+    * NEW: Multi-Actions. Unlimited actions for single event type.
+    * NEW: SBE-Scripts - internal specification for additional work over MSBuild - conditions, subcommands, files, etc.
+    * NEW: Excluding projects from build - proposal #24 ("Exclude projects from build on pre-build event"). 
+           Now available the IsBuildable & IsDeployable for get/set.
+            Sample: #[Build projects.find("name").IsBuildable = false]
+            
+    * NEW: Conditional statements: #[(cond){ body1 }else{ body2 }] and similar. 
+           Available operators: * ===, !==, ~=, ==, !=, >=, <=, !, >, < 
+           Sample:
+            #[(#[vsSBE events.Pre.item(1).Enabled]){
+                #[Build projects.find("name").IsBuildable = false]
+            }else{
+                #[var branchSha1 = #[File out("git", "rev-parse --short HEAD")]]
+                ...
+            }]
+
+    * NEW: Added testing tool - "SBE-Scripts" & User-Variables
+    * NEW: Capturing data from external utilities. Sample: 
+           #[File out("name", "args")] or simple caller: #[File call("name", "args")]
+           
+    * NEW: I/O operations with files. Sample: #[File write("name"): multiline data] and other
+    * NEW: Replacing strings in files with scripts. Samples:
+           #[File replace("file", "pattern", "replacement")]
+           #[File replace.Regex("file", "pattern", "replacement")]
+
+    * NEW: DTE-Subcommands. Sample: #[DTE exec: <cmd>(<args>)]
+    * NEW: Added testing tool - "DTE Commands"
+    * NEW: Cancellation of the build projects with scripts. Sample: #[Build cancel = true|false|1|0]
+    * CHANGED: Configuration file format. Old settings should be automatically upgraded.
+    * CHANGED: Disabled $(vsSBE_OWPBuild). Now available with the OWP-Component (part of SBE-Scripts).
+               Samples: 
+                 #[OWP out] - full raw data from the Output-Build pane. Use the #[File ..] component for writing anywhere..
+                 #[OWP out.Warnings.Codes]
+                 #[OWP out.Warnings.Count]
+                 etc.
+                 
+    * CHANGED: New format for work with variables. Sample: 
+                * #[var name] / #[var name = mixed data] - SBE-Scripts core
+                * $(name) / $(name = data) - MSBuild core
+                
+    * CHANGED: Extending scope of using variables in other variables.
+    * CHANGED: Allowed the empty handler for interpreter mode.
+    * FIXED: Not reinitialized codes for Errors/Warnings.
+    * FIXED: Fixes with notifying to UI tool pane - possible bug when logger not printing message with level greater Info
+    * FIXED: MSBuildParser - captures some static properties as project.
+    * FIXED/CHANGED: Other minor or trivial changed with the UI, Transmitter, Errors/Warnings events, MSBuild core.
+    * NOTE: All available components of the SBE-Scripts and all available commands, you can see with our documentation or sources. 
+            Use project page, wiki, etc.
+
 [v0.8.2]
     * FIXED: Major bug with processing for next events - Output/Errors/Warnings, worked only if the transmitter activated before.
 
