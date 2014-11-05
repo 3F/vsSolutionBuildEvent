@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg [Denis Kuzmin] <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -26,44 +26,16 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
-    /// Errors & Warnings
+    /// Support the OutputWindowPane
     /// </summary>
     public interface ISolutionEventOWP: ISolutionEvent
     {
         /// <summary>
-        /// List of term
+        /// List of statements
         /// </summary>
-        List<TEventOWP> eventsOWP { get; set; }
-    }
-
-    public enum TEventOWPTerm
-    {
-        Default,
-        Regexp,
-        Wildcards
-    }
-
-    /// <summary>
-    /// Customization of OutputWindowPane
-    /// </summary>
-    public struct TEventOWP
-    {
-        /// <summary>
-        /// various condition
-        /// </summary>
-        public string term { get; set; }
-
-        /// <summary>
-        /// type of recognition
-        /// </summary>
-        public TEventOWPTerm type { get; set; }
+        IMatchWords[] Match { get; set; }
     }
 }

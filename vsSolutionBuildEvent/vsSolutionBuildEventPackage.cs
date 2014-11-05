@@ -1,27 +1,24 @@
 ﻿/*
- * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg [Denis Kuzmin] <entry.reg@gmail.com>
  * Distributed under the Boost Software License, Version 1.0
  * (See accompanying file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
 using System;
 using System.ComponentModel.Design;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.Win32;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
-using net.r_eg.vsSBE.UI;
+using net.r_eg.vsSBE.MSBuild;
+using net.r_eg.vsSBE.SBEScripts;
 
 namespace net.r_eg.vsSBE
 {
@@ -38,7 +35,7 @@ namespace net.r_eg.vsSBE
     [ProvideAutoLoad(UIContextGuids80.SolutionExists)]
 
     // Registers the tool window
-    [ProvideToolWindow(typeof(UI.StatusToolWindow), Height=23, Style=VsDockStyle.Linked, Orientation=ToolWindowOrientation.Top, Window=ToolWindowGuids80.Outputwindow)]
+    [ProvideToolWindow(typeof(UI.Xaml.StatusToolWindow), Height=23, Style=VsDockStyle.Linked, Orientation=ToolWindowOrientation.Top, Window=ToolWindowGuids80.Outputwindow)]
 
     // Package Guid
     [Guid(GuidList.PACKAGE_STRING)]
@@ -90,7 +87,12 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// main form of settings
         /// </summary>
-        private EventsFrm _configFrm;
+        private UI.WForms.EventsFrm _configFrm;
+
+        /// <summary>
+        /// Main container of user-variables
+        /// </summary>
+        private IUserVariable uvariable = new UserVariable();
 
         /// <summary>
         /// SBE support
@@ -105,89 +107,135 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Working with the OutputWindowsPane -> "Build" pane
         /// </summary>
-        private OutputWPListener _owpBuild;
+        private OWP.Listener _owpBuild;
 
-        public vsSolutionBuildEventPackage()
+        int IVsSolutionEvents.OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
+        {
+            try {
+                FindToolWindow(typeof(UI.Xaml.StatusToolWindow), 0, true);
+
+                Config._.load(extractPath(Dte2));
+                _c.updateContext(new SBECommand.ShellContext(Settings.WorkPath));
+
+                _state();
+                _menuItemMain.Visible = true;
+                UI.Xaml.StatusToolWindow.control.enabledPanel(true);
+                return VSConstants.S_OK;
+            }
+            catch(Exception ex) {
+                Log.nlog.Fatal("Cannot load configuration: " + ex.Message);
+            }
+            return VSConstants.S_FALSE;
+        }
+
+        int IVsSolutionEvents.OnAfterCloseSolution(object pUnkReserved)
+        {
+            _menuItemMain.Visible = false;
+            UI.Xaml.StatusToolWindow.control.enabledPanel(false);
+            UI.Util.closeTool(_configFrm);
+
+            return VSConstants.S_OK;
+        }
+
+        public int UpdateSolution_Begin(ref int pfCancelUpdate)
+        {
+            try {
+                return _c.bindPre(ref pfCancelUpdate);
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Failed Solution.Pre-binding: '{0}'", ex.Message);
+            }
+            return VSConstants.S_FALSE;
+        }
+
+        public int UpdateSolution_Cancel()
+        {
+            try {
+                return _c.bindCancel();
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Failed Solution.Cancel-binding: '{0}'", ex.Message);
+            }
+            return VSConstants.S_FALSE;
+        }
+
+        /// <summary>
+        /// 
+        /// When it works:
+        ///    * Begin -> Done
+        ///    * Begin -> Cancel -> Done
+        /// </summary>
+        public int UpdateSolution_Done(int fSucceeded, int fModified, int fCancelCommand)
+        {
+            try {
+                int ret = _c.bindPost(fSucceeded, fModified, fCancelCommand);
+                if(_c.reset()) {
+                    uvariable.unsetAll();
+                }
+                return ret;
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Failed Solution.Post-binding: '{0}'", ex.Message);
+            }
+            return VSConstants.S_FALSE;
+        }
+
+        public int UpdateProjectCfg_Begin(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel)
+        {
+            try {
+                return _c.bindProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel);
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Failed Project.Pre-binding: '{0}'", ex.Message);
+            }
+            return VSConstants.S_FALSE;
+        }
+
+        public int UpdateProjectCfg_Done(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
+        {
+            try {
+                return _c.bindProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Failed Project.Post-binding: '{0}'", ex.Message);
+            }
+            return VSConstants.S_FALSE;
+        }
+
+        private void init()
         {
             Log.show();
             _env = new Environment(Dte2);
 
             _c = new Connection(
                     new SBECommand(_env,
-                        new MSBuildParser(_env)
-                    )
+                                    new Script(_env, uvariable),
+                                    new MSBuildParser(_env, uvariable))
             );
 
-            _owpBuild = new OutputWPListener(Dte2, "Build");
+            _owpBuild = new OWP.Listener(_env, "Build");
             _owpBuild.attachEvents();
             _owpBuild.register(_c);
 
-            UI.StatusToolWindow.control.setDTE(Dte2);
+            UI.Xaml.StatusToolWindow.control.setDTE(Dte2);
         }
 
-        int IVsSolutionEvents.OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
-        {            
-            try
-            {
-                FindToolWindow(typeof(UI.StatusToolWindow), 0, true);
-
-                string path = Dte2.Solution.FullName; // may be empty e.g. if fNewSolution == 1 etc.
-                if(string.IsNullOrEmpty(path)) {
-                    path = Dte2.Solution.Properties.Item("Path").Value.ToString();
-                }
-                string dir = Path.GetDirectoryName(path);
-
-                if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
-                    dir += Path.DirectorySeparatorChar;
-                }
-
-                Config._.load(dir);
-                _c.updateContext(new SBECommand.ShellContext(Settings.WorkingPath));
+        /// <summary>
+        /// Getting work path from DTE-context of current solution
+        /// </summary>
+        /// <param name="dte2">DTE context</param>
+        private string extractPath(DTE2 dte2)
+        {
+            string path = dte2.Solution.FullName; // empty if used the new solution 
+            if(string.IsNullOrEmpty(path)) {
+                path = dte2.Solution.Properties.Item("Path").Value.ToString();
             }
-            catch(Exception ex) {
-                Log.nlog.Fatal("Cannot load configuration: " + ex.Message);
-                return VSConstants.E_FAIL;
+            string dir = Path.GetDirectoryName(path);
+
+            if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
+                dir += Path.DirectorySeparatorChar;
             }
-            _state();
-            _menuItemMain.Visible = true;
-            UI.StatusToolWindow.control.enabled(true);
-            return VSConstants.S_OK;
-        }
-
-        int IVsSolutionEvents.OnAfterCloseSolution(object pUnkReserved)
-        {
-            _menuItemMain.Visible = false;
-            UI.StatusToolWindow.control.enabled(false);
-
-            if(_configFrm != null && !_configFrm.IsDisposed) {
-                _configFrm.Close();
-            }
-            return VSConstants.S_OK;
-        }
-
-        public int UpdateSolution_Begin(ref int pfCancelUpdate)
-        {
-            return _c.bindPre(ref pfCancelUpdate);
-        }
-
-        public int UpdateSolution_Cancel()
-        {
-            return _c.bindCancel();
-        }
-
-        public int UpdateSolution_Done(int fSucceeded, int fModified, int fCancelCommand)
-        {
-            return _c.bindPost(fSucceeded, fModified, fCancelCommand);
-        }
-
-        public int UpdateProjectCfg_Begin(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel)
-        {
-            return _c.bindProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel);
-        }
-
-        public int UpdateProjectCfg_Done(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
-        {
-            return _c.bindProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
+            return dir;
         }
 
         /// <summary>
@@ -195,18 +243,16 @@ namespace net.r_eg.vsSBE
         /// </summary>
         private void _menuMainCallback(object sender, EventArgs e)
         {
-            if(_configFrm != null && !_configFrm.IsDisposed)
-            {
-                _configFrm.Focus();
+            if(UI.Util.focusForm(_configFrm)) {
                 return;
             }
-            _configFrm = new UI.EventsFrm(_env);
+            _configFrm = new UI.WForms.EventsFrm(_env);
             _configFrm.Show();
         }
 
         private void _menuPanelCallback(object sender, EventArgs e)
         {
-            ToolWindowPane window = FindToolWindow(typeof(UI.StatusToolWindow), 0, true); // find or create
+            ToolWindowPane window = FindToolWindow(typeof(UI.Xaml.StatusToolWindow), 0, true); // find or create
             if(window == null || window.Frame == null) {
                 throw new ComponentException("Cannot create UI.StatusToolWindow");
             }
@@ -215,20 +261,31 @@ namespace net.r_eg.vsSBE
 
         private void _state()
         {
-            Func<ISolutionEvent, string, string> aboutEvent = delegate(ISolutionEvent evt, string caption) {
-                return String.Format("\n\t* [{0}][{1}]: {2}", evt.enabled ? "!" : "X", caption, evt.caption);
+            Func<ISolutionEvent[], string, string> about = delegate(ISolutionEvent[] evt, string caption)
+            {
+                if(evt == null) {
+                    return String.Format("\n\t-- /--] {0} :: Not Initialized", caption);
+                }
+
+                System.Text.StringBuilder info = new System.Text.StringBuilder();
+                info.Append(String.Format("\n\t{0,2} /{1,2}] {2} :: ", evt.Where(i => i.Enabled).Count(), evt.Length, caption));
+                foreach(ISolutionEvent item in evt) {
+                    info.Append(String.Format("[{0}]", (item.Enabled) ? "!" : "X"));
+                }
+                return info.ToString();
             };
 
-            Log.print(String.Format("{0}{1}{2}{3}{4}{5}{6}\n---\n",
-                                    aboutEvent(Config._.Data.preBuild,           "Pre-Build"),
-                                    aboutEvent(Config._.Data.postBuild,          "Post-Build"),
-                                    aboutEvent(Config._.Data.cancelBuild,        "Cancel-Build"),
-                                    aboutEvent(Config._.Data.warningsBuild,      "Warnings-Build"),
-                                    aboutEvent(Config._.Data.errorsBuild,        "Errors-Build"),
-                                    aboutEvent(Config._.Data.outputCustomBuild,  "Output-Build"),
-                                    aboutEvent(Config._.Data.transmitter,        "Transmitter")));
-
-            Log.nlog.Info("Use vsSBE panel: View -> Other Windows -> Solution Build-Events");
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.Append(about(Config._.Data.PreBuild,      "Pre-Build     "));
+            sb.Append(about(Config._.Data.PostBuild,     "Post-Build    "));
+            sb.Append(about(Config._.Data.CancelBuild,   "Cancel-Build  "));
+            sb.Append(about(Config._.Data.WarningsBuild, "Warnings-Build"));
+            sb.Append(about(Config._.Data.ErrorsBuild,   "Errors-Build  "));
+            sb.Append(about(Config._.Data.OWPBuild,      "Output-Build  "));
+            sb.Append(about(Config._.Data.Transmitter,   "Transmitter   "));
+            sb.Append("\n---\n");
+            Log.print(sb.ToString());
+            Log.nlog.Info("vsSBE tool pane: View -> Other Windows -> Solution Build-Events");
         }
 
         #region unused
@@ -291,8 +348,8 @@ namespace net.r_eg.vsSBE
             Log.nlog.Trace(string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
             base.Initialize();
 
-            try
-            {
+            try {
+                init();
                 OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
 
                 // Build / <Main App>
@@ -303,11 +360,11 @@ namespace net.r_eg.vsSBE
                 // View / Other Windows / <Status Panel>
                 mcs.AddCommand(new MenuCommand(_menuPanelCallback, new CommandID(GuidList.PANEL_CMD_SET, (int)PkgCmdIDList.CMD_PANEL)));
 
-                // register events - IVsSolutionEvents
+                // registering events - IVsSolutionEvents
                 _solution = ServiceProvider.GlobalProvider.GetService(typeof(SVsSolution)) as IVsSolution;
                 _solution.AdviseSolutionEvents(this, out _cookieSEvents);
 
-                // register events - IVsUpdateSolutionEvents
+                // registering events - IVsUpdateSolutionEvents
                 _solBuildManager = ServiceProvider.GlobalProvider.GetService(typeof(SVsSolutionBuildManager)) as IVsSolutionBuildManager;
                 _solBuildManager.AdviseUpdateSolutionEvents(this, out _cookieUpdateSEvents);
             }
@@ -315,7 +372,7 @@ namespace net.r_eg.vsSBE
             {
                 string msg = string.Format("{0}\n{1}\n\n-----\n{2}", 
                                 "Something went wrong -_-", 
-                                "Try to restart a VS IDE or reinstall current plugin in the Extension Manager...", 
+                                "Try also to restart a VS IDE or reinstall current plugin in the Extension Manager...", 
                                 ex.StackTrace);
 
                 Log.nlog.Fatal(msg);
@@ -342,10 +399,7 @@ namespace net.r_eg.vsSBE
 
         protected override void Dispose(bool disposing)
         {
-            base.Dispose(disposing);
-            if(_configFrm != null && !_configFrm.IsDisposed) {
-                _configFrm.Close(); //+Dispose
-            }
+            UI.Util.closeTool(_configFrm);
 
             if(_solBuildManager != null && _cookieUpdateSEvents != 0) {
                 _solBuildManager.UnadviseUpdateSolutionEvents(_cookieUpdateSEvents);
@@ -354,6 +408,7 @@ namespace net.r_eg.vsSBE
             if(_solution != null && _cookieSEvents != 0) {
                 _solution.UnadviseSolutionEvents(_cookieSEvents);
             }
+            base.Dispose(disposing);
         }
         #endregion
     }

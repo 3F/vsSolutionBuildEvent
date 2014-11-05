@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013-2014 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg [Denis Kuzmin] <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -34,7 +34,7 @@ using net.r_eg.vsSBE.Exceptions;
 
 namespace net.r_eg.vsSBE
 {
-    internal static class Settings
+    public static class Settings
     {
         /// <summary>
         /// Debug mode for current application
@@ -44,21 +44,21 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Current location
         /// </summary>
-        public static string WorkingPath
+        public static string WorkPath
         {
             get {
-                if(String.IsNullOrEmpty(_workingPath)) {
+                if(String.IsNullOrEmpty(_workPath)) {
                     throw new SBEException("WorkingPath is empty or null");
                 }
-                return _workingPath;
+                return _workPath;
             }
         }
 
         public static void setWorkPath(string path)
         {
-            _workingPath = path;
+            _workPath = path;
         }
 
-        private static string _workingPath = null;
+        private static string _workPath = null;
     }
 }

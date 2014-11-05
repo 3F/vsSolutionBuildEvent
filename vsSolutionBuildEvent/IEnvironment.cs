@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013-2014 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg [Denis Kuzmin] <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -26,10 +26,7 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace net.r_eg.vsSBE
 {
@@ -70,5 +67,10 @@ namespace net.r_eg.vsSBE
         /// </summary>
         /// <param name="name">Property name</param>
         string getSolutionGlobalProperty(string name);
+
+        /// <summary>
+        /// DTE context
+        /// </summary>
+        EnvDTE80.DTE2 DTE2 { get; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013-2014 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg [Denis Kuzmin] <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -69,10 +69,22 @@ namespace net.r_eg.vsSBE.Exceptions
         public MismatchException(string message, params object[] args): base(message, args) {}
     }
 
+    public class InvalidArgumentException: SBEException
+    {
+        public InvalidArgumentException(string message): base(message) {}
+        public InvalidArgumentException(string message, params object[] args): base(message, args) {}
+    }
+
     public class LimitException: SBEException
     {
         public LimitException(string message): base(message) {}
         public LimitException(string message, params object[] args): base(message, args) {}
+    }
+
+    public class NotFoundException: SBEException
+    {
+        public NotFoundException(string message): base(message) {}
+        public NotFoundException(string message, params object[] args): base(message, args) {}
     }
 
     public class ComponentException: SBEException

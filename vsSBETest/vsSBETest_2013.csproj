@@ -25,6 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <NoWarn>618</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,6 +35,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <NoWarn>618</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -62,12 +64,12 @@
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.8.0, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.9.0, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="Microsoft.VisualStudio.TextManager.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <Reference Include="Moq">
-      <HintPath>..\packages\Moq.4.2.1408.0717\lib\net40\Moq.dll</HintPath>
+    <Reference Include="Moq, Version=4.2.1409.1722, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Moq.4.2.1409.1722\lib\net40\Moq.dll</HintPath>
     </Reference>
-    <Reference Include="NLog">
-      <HintPath>..\external\NLog\net40\NLog.dll</HintPath>
-    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
+    <Reference Include="NLog, Version=3.1.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="stdole, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -91,11 +93,24 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DTEOperationTest.cs" />
-    <Compile Include="MSBuildParserTest.cs" />
-    <Compile Include="OutputWPBuildParserTest.cs" />
-    <Compile Include="OWPMatcherTest.cs" />
+    <Compile Include="Actions\DTEOperationTest.cs" />
+    <Compile Include="SBEScripts\Components\BuildComponentTest.cs" />
+    <Compile Include="SBEScripts\Components\CommentComponentTest.cs" />
+    <Compile Include="SBEScripts\Components\ConditionComponentTest.cs" />
+    <Compile Include="SBEScripts\Components\DTEComponentTest.cs" />
+    <Compile Include="SBEScripts\Components\FileComponentTest.cs" />
+    <Compile Include="SBEScripts\Components\InternalComponentTest.cs" />
+    <Compile Include="MSBuild\MSBuildParserTest.cs" />
+    <Compile Include="SBEScripts\Components\OWPComponentTest.cs" />
+    <Compile Include="OWP\BuildItemTest.cs" />
+    <Compile Include="OWP\MatcherTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SBEScripts\RPatternTest.cs" />
+    <Compile Include="SBEScripts\ScriptTest.cs" />
+    <Compile Include="SBEScripts\StringHandlerTest.cs" />
+    <Compile Include="SBEScripts\Components\UserVariableComponentTest.cs" />
+    <Compile Include="SBEScripts\UserVariableTest.cs" />
+    <Compile Include="SBEScripts\ValuesTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\vsSolutionBuildEvent\vsSolutionBuildEvent_2013.csproj">

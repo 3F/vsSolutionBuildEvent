@@ -1,7 +1,7 @@
 ﻿/* 
  * Boost Software License - Version 1.0 - August 17th, 2003
  * 
- * Copyright (c) 2013 Developed by reg <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014 Developed by reg [Denis Kuzmin] <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person or organization
  * obtaining a copy of the software and accompanying documentation covered by
@@ -27,163 +27,116 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Newtonsoft.Json;
 
 namespace net.r_eg.vsSBE.Events
 {
     public class SBEEvent: ISolutionEvent
     {
-        private string _command = "";
         /// <summary>
-        /// execution of shell command
+        /// Status of activation
         /// </summary>
-        public string command
+        public bool Enabled
         {
-            get { return _command; }
-            set { _command = value; }
+            get { return enabled; }
+            set { enabled = value; }
         }
+        private bool enabled = false;
 
-        private string _caption = "";
         /// <summary>
-        /// output information to "Output" window or something else...
+        /// Optional, unique name for manually identification
         /// </summary>
-        public string caption
+        public string Name
         {
-            get { return _caption; }
-            set { _caption = value; }
+            get { return name; }
+            set { name = value; }
         }
+        private string name = null;
 
-        private bool _enabled = false;
         /// <summary>
-        /// status of activate
+        /// Short header about this
         /// </summary>
-        public bool enabled
+        public string Caption
         {
-            get { return _enabled; }
-            set { _enabled = value; }
+            get { return caption; }
+            set { caption = value; }
         }
-
-        private bool _processHide = true;
-        public bool processHide
-        {
-            get { return _processHide; }
-            set { _processHide = value; }
-        }
-
-        private TModeCommands _mode = TModeCommands.Interpreter;
+        private string caption = String.Empty;
+        
         /// <summary>
-        /// processing mode
+        /// Support of MSBuild environment variables (properties)
         /// </summary>
-        public TModeCommands mode
+        public bool SupportMSBuild
         {
-            get { return _mode; }
-            set { _mode = value; }
+            get { return supportMSBuild; }
+            set { supportMSBuild = value; }
         }
+        private bool supportMSBuild = true;
 
-        private bool _processKeep = false;
         /// <summary>
-        /// not close after completion
+        /// Support of SBE-Scripts
         /// </summary>
-        public bool processKeep
+        public bool SupportSBEScripts
         {
-            get { return _processKeep; }
-            set { _processKeep = value; }
+            get { return supportSBEScripts; }
+            set { supportSBEScripts = value; }
         }
+        private bool supportSBEScripts = true;
 
-        private string _interpreter = "";
-        /// <summary>
-        /// stream processor
-        /// </summary>
-        public string interpreter
-        {
-            get { return _interpreter; }
-            set { _interpreter = value; }
-        }
-
-        private string _newline = "";
-        /// <summary>
-        /// treat newline as
-        /// </summary>
-        public string newline
-        {
-            get { return _newline; }
-            set { _newline = value; }
-        }
-
-        private string _wrapper = "";
-        /// <summary>
-        /// symbol wrapper for commands or script
-        /// </summary>
-        public string wrapper
-        {
-            get { return _wrapper; }
-            set { _wrapper = value; }
-        }
-
-        private bool _waitForExit = true;
-        /// <summary>
-        /// Wait until terminates script handling
-        /// </summary>
-        public bool waitForExit
-        {
-            get { return _waitForExit; }
-            set { _waitForExit = value; }
-        }
-
-        private bool _parseVariablesMSBuild = true;
-        /// <summary>
-        /// support of MSBuild environment variables (properties)
-        /// </summary>
-        public bool parseVariablesMSBuild
-        {
-            get { return _parseVariablesMSBuild; }
-            set { _parseVariablesMSBuild = value; }
-        }
-
-        private bool _buildFailedIgnore = false;
         /// <summary>
         /// Ignore all actions if the build failed
         /// </summary>
-        public bool buildFailedIgnore
+        public bool IgnoreIfBuildFailed
         {
-            get { return _buildFailedIgnore; }
-            set { _buildFailedIgnore = value; }
+            get { return ignoreIfBuildFailed; }
+            set { ignoreIfBuildFailed = value; }
         }
+        private bool ignoreIfBuildFailed = false;
 
-        private string[] _toConfiguration = null;
         /// <summary>
         /// Run only for a specific configuration of solution
         /// strings format as:
         ///   'configname'|'platformname'
         ///   Compatible with: http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivscfg.get_displayname.aspx
         /// </summary>
-        public string[] toConfiguration
+        public string[] ToConfiguration
         {
-            get { return _toConfiguration; }
-            set { _toConfiguration = value; }
+            get { return toConfiguration; }
+            set { toConfiguration = value; }
         }
-
-        private TExecutionOrder[] _executionOrder;
+        private string[] toConfiguration = null;
+        
         /// <summary>
-        /// Run for selected projects with execution order
+        /// Run for selected projects with the Execution-Order
         /// </summary>
-        public TExecutionOrder[] executionOrder
+        [JsonProperty(TypeNameHandling = TypeNameHandling.All)]
+        public IExecutionOrder[] ExecutionOrder
         {
-            get { return _executionOrder; }
-            set { _executionOrder = value; }
+            get { return executionOrder; }
+            set { executionOrder = (ExecutionOrder[])value; }
         }
+        private ExecutionOrder[] executionOrder = null;
 
-        private TOperation _dteExec = new TOperation();
         /// <summary>
-        /// Common Environment Visual Studio. Executes the specified commands
-        /// TODO: custom list
+        /// Handling process
         /// </summary>
-        public TOperation dteExec
+        [JsonProperty(TypeNameHandling = TypeNameHandling.All)]
+        public IEventProcess Process
         {
-            get { return _dteExec; }
-            set { _dteExec = value; }
+            get { return process; }
+            set { process = (EventProcess)value; }
         }
+        private EventProcess process = new EventProcess();
+
+        /// <summary>
+        /// Available mode
+        /// </summary>
+        [JsonProperty(TypeNameHandling = TypeNameHandling.All)]
+        public IMode Mode
+        {
+            get { return mode; }
+            set { mode = value; }
+        }
+        private IMode mode = new ModeFile();
     }
 }

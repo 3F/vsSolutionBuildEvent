@@ -56,8 +56,12 @@
       <Private>false</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.10.0" />
-    <Reference Include="NLog">
-      <HintPath>..\external\NLog\net40\NLog.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=3.1.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\NLog.3.1.0.0\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -130,66 +134,135 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\Connection.cs" />
-    <Compile Include="DTEOperation.cs" />
+    <Compile Include="Actions\DTEOperation.cs" />
+    <Compile Include="Actions\HProcess.cs" />
     <Compile Include="Environment.cs" />
+    <Compile Include="Events\ITransmitter.cs" />
+    <Compile Include="Events\IMode.cs" />
+    <Compile Include="Events\ExecutionOrder.cs" />
+    <Compile Include="Events\EventProcess.cs" />
+    <Compile Include="Events\IEventProcess.cs" />
+    <Compile Include="Events\IExecutionOrder.cs" />
+    <Compile Include="Extensions\ArrayExtension.cs" />
+    <Compile Include="Extensions\ObjectExtension.cs" />
+    <Compile Include="SBEScripts\IEvaluator.cs" />
+    <Compile Include="SBEScripts\Exceptions\ScriptException.cs" />
+    <Compile Include="IMatchWords.cs" />
+    <Compile Include="Events\IModeFile.cs" />
+    <Compile Include="Events\IModeInterpreter.cs" />
+    <Compile Include="Events\IModeOperation.cs" />
+    <Compile Include="OWP\IItems.cs" />
+    <Compile Include="OWP\IListenerOWPL.cs" />
+    <Compile Include="OWP\Items.cs" />
+    <Compile Include="SBEScripts\Components\CommentComponent.cs" />
+    <Compile Include="SBEScripts\Components\ConditionComponent.cs" />
+    <Compile Include="SBEScripts\Components\FileComponent.cs" />
+    <Compile Include="SBEScripts\Components\FunctionComponent.cs" />
+    <Compile Include="SBEScripts\Components\OWPComponent.cs" />
+    <Compile Include="SBEScripts\Components\DTEComponent.cs" />
+    <Compile Include="SBEScripts\Components\BuildComponent.cs" />
+    <Compile Include="SBEScripts\Components\UserVariableComponent.cs" />
+    <Compile Include="SBEScripts\Components\IComponent.cs" />
+    <Compile Include="SBEScripts\Components\InternalComponent.cs" />
+    <Compile Include="Actions\IStatus.cs" />
+    <Compile Include="Actions\Status.cs" />
+    <Compile Include="SBEScripts\IUserVariable.cs" />
+    <Compile Include="SBEScripts\ISBEScript.cs" />
+    <Compile Include="MatchWords.cs" />
+    <Compile Include="Events\ModeFile.cs" />
+    <Compile Include="Events\ModeInterpreter.cs" />
+    <Compile Include="Events\ModeOperation.cs" />
+    <Compile Include="Events\SolutionEventType.cs" />
     <Compile Include="Exceptions\SBEException.cs" />
     <Compile Include="IEnvironment.cs" />
     <Compile Include="Log.cs" />
-    <Compile Include="OWPMatcher.cs" />
+    <Compile Include="OWP\Matcher.cs" />
     <Compile Include="Events\ISolutionEventOWP.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Events\SBEEventOWP.cs" />
     <Compile Include="Events\ISolutionEventEW.cs" />
     <Compile Include="Events\SBEEventEW.cs" />
     <Compile Include="Events\SBETransmitter.cs" />
+    <Compile Include="SBEScripts\RPattern.cs" />
+    <Compile Include="SBEScripts\Script.cs" />
+    <Compile Include="SBEScripts\StringHandler.cs" />
+    <Compile Include="SBEScripts\TUserVariable.cs" />
+    <Compile Include="SBEScripts\UserVariable.cs" />
+    <Compile Include="SBEScripts\Values.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SynchSubscribers.cs" />
-    <Compile Include="TPreparedData.cs" />
+    <Compile Include="MSBuild\TPreparedData.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
-    <Compile Include="UI\DTECommandsFrm.cs">
+    <Compile Include="UI\Util.cs" />
+    <Compile Include="UI\WForms\Components\DataGridViewExt.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\WForms\ScriptCheckFrm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\DTECommandsFrm.Designer.cs">
+    <Compile Include="UI\WForms\ScriptCheckFrm.Designer.cs">
+      <DependentUpon>ScriptCheckFrm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\WForms\Logic\Events.cs" />
+    <Compile Include="UI\WForms\DTECheckFrm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\WForms\DTECheckFrm.Designer.cs">
+      <DependentUpon>DTECheckFrm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\WForms\DTECommandsFrm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\WForms\DTECommandsFrm.Designer.cs">
       <DependentUpon>DTECommandsFrm.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\PropertiesFrm.cs">
+    <Compile Include="UI\WForms\PropertiesFrm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\PropertiesFrm.Designer.cs">
+    <Compile Include="UI\WForms\PropertiesFrm.Designer.cs">
       <DependentUpon>PropertiesFrm.cs</DependentUpon>
     </Compile>
-    <Compile Include="IMSBuildProperty.cs" />
-    <Compile Include="ISBEParser.cs" />
-    <Compile Include="OutputWPListener.cs" />
-    <Compile Include="OutputWPBuildParser.cs" />
-    <Compile Include="MSBuildParser.cs" />
-    <Compile Include="Exceptions\MSBuildParserException.cs" />
+    <Compile Include="MSBuild\IMSBuild.cs" />
+    <Compile Include="OWP\Listener.cs" />
+    <Compile Include="OWP\BuildItem.cs" />
+    <Compile Include="MSBuild\MSBuildParser.cs" />
+    <Compile Include="MSBuild\Exceptions\MSBuildParserException.cs" />
     <Compile Include="Actions\SBECommand.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="UI\EventsFrm.cs">
+    <Compile Include="UI\WForms\EventsFrm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\EventsFrm.Designer.cs">
+    <Compile Include="UI\WForms\EventsFrm.Designer.cs">
       <DependentUpon>EventsFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="Guids.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Events\ISolutionEvent.cs" />
     <Compile Include="Events\SBEEvent.cs" />
-    <Compile Include="Events\SBESettings.cs" />
-    <Compile Include="Events\SolutionEvents.cs" />
+    <Compile Include="ConfigHeader.cs" />
+    <Compile Include="SolutionEvents.cs" />
     <Compile Include="UI\ITransferData.cs" />
-    <Compile Include="UI\PropertyCheckFrm.cs">
+    <Compile Include="UI\WForms\PropertyCheckFrm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\PropertyCheckFrm.Designer.cs">
+    <Compile Include="UI\WForms\PropertyCheckFrm.Designer.cs">
       <DependentUpon>PropertyCheckFrm.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\StatusControl.xaml.cs">
-      <DependentUpon>StatusControl.xaml</DependentUpon>
+    <Compile Include="UI\Xaml\Logic\StatusTool.cs" />
+    <Compile Include="UI\Xaml\StatusToolControl.xaml.cs">
+      <DependentUpon>StatusToolControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\StatusToolWindow.cs" />
-    <Compile Include="Upgrade\0.3_0.4.cs" />
+    <Compile Include="UI\Xaml\StatusToolWindow.cs" />
+    <Compile Include="Upgrade\v08\Events\ISolutionEvent.cs" />
+    <Compile Include="Upgrade\v08\Events\ISolutionEventEW.cs" />
+    <Compile Include="Upgrade\v08\Events\ISolutionEventOWP.cs" />
+    <Compile Include="Upgrade\v08\Events\SBEEvent.cs" />
+    <Compile Include="Upgrade\v08\Events\SBEEventEW.cs" />
+    <Compile Include="Upgrade\v08\Events\SBEEventOWP.cs" />
+    <Compile Include="Upgrade\v08\Events\SBESettings.cs" />
+    <Compile Include="Upgrade\v08\Events\SBETransmitter.cs" />
+    <Compile Include="Upgrade\v08\Events\SolutionEvents.cs" />
+    <Compile Include="Upgrade\v08\Migration08_09.cs" />
     <Compile Include="Version.cs" />
     <Compile Include="VSPackage.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -200,16 +273,22 @@
     <Compile Include="PkgCmdID.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UI\DTECommandsFrm.resx">
+    <EmbeddedResource Include="UI\WForms\ScriptCheckFrm.resx">
+      <DependentUpon>ScriptCheckFrm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\WForms\DTECheckFrm.resx">
+      <DependentUpon>DTECheckFrm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\WForms\DTECommandsFrm.resx">
       <DependentUpon>DTECommandsFrm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\PropertiesFrm.resx">
+    <EmbeddedResource Include="UI\WForms\PropertiesFrm.resx">
       <DependentUpon>PropertiesFrm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\EventsFrm.resx">
+    <EmbeddedResource Include="UI\WForms\EventsFrm.resx">
       <DependentUpon>EventsFrm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\PropertyCheckFrm.resx">
+    <EmbeddedResource Include="UI\WForms\PropertyCheckFrm.resx">
       <DependentUpon>PropertyCheckFrm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="VSPackage.resx">
@@ -225,6 +304,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <None Include="packages.config" />
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
@@ -248,14 +328,14 @@
   <ItemGroup>
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Page Include="UI\StatusControl.xaml">
+    <Page Include="UI\Xaml\StatusToolControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="UI\WForms\Controls\" />
   </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
@@ -284,7 +364,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
-  </PropertyGroup>  
+  </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v12.0\VSSDK\Microsoft.VsSDK.targets" Condition="false" />
