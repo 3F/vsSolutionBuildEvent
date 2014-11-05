@@ -116,13 +116,18 @@ namespace net.r_eg.vsSBE.Actions
         }
 
         /// <summary>
-        /// Getting the Execution statuses by Event type
+        /// Checking existence of StatusType in the current statuses
         /// </summary>
         /// <param name="tevent">Event type</param>
-        /// <returns>List of Executed statuses</returns>
-        public SynchronizedCollection<StatusType> get(SolutionEventType tevent)
+        /// <param name="type"></param>
+        /// <returns>true value if contains</returns>
+        public bool contains(SolutionEventType tevent, StatusType type)
         {
-            return states[tevent];
+            Debug.Assert(states != null);
+            if(!states.ContainsKey(tevent)) {
+                return false;
+            }
+            return states[tevent].Contains(type);
         }
 
         private Status()

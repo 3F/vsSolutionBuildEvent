@@ -53,7 +53,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// Contains the current incoming project
         /// </summary>
-        protected IExecutionOrder current;
+        protected IExecutionOrder current = new ExecutionOrder();
 
         /// <summary>
         /// Connection handler
@@ -97,7 +97,7 @@ namespace net.r_eg.vsSBE.Actions
                     Status._.add(SolutionEventType.Pre, (execPre(item) == VSConstants.S_OK)? StatusType.Success : StatusType.Fail);
                 }
             }
-            return Status._.get(SolutionEventType.Pre).Contains(StatusType.Fail)? VSConstants.E_FAIL : VSConstants.S_OK;
+            return Status._.contains(SolutionEventType.Pre, StatusType.Fail)? VSConstants.S_FALSE : VSConstants.S_OK;
         }
 
         /// <summary>
@@ -138,7 +138,7 @@ namespace net.r_eg.vsSBE.Actions
                     Status._.add(SolutionEventType.Post, StatusType.Fail);
                 }
             }
-            return Status._.get(SolutionEventType.Post).Contains(StatusType.Fail)? VSConstants.E_FAIL : VSConstants.S_OK;
+            return Status._.contains(SolutionEventType.Post, StatusType.Fail)? VSConstants.S_FALSE : VSConstants.S_OK;
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace net.r_eg.vsSBE.Actions
                     Status._.add(SolutionEventType.Cancel, StatusType.Fail);
                 }
             }
-            return Status._.get(SolutionEventType.Cancel).Contains(StatusType.Fail)? VSConstants.E_FAIL : VSConstants.S_OK;
+            return Status._.contains(SolutionEventType.Cancel, StatusType.Fail)? VSConstants.S_FALSE : VSConstants.S_OK;
         }
 
         public void updateContext(SBECommand.ShellContext context)
@@ -210,6 +210,7 @@ namespace net.r_eg.vsSBE.Actions
                 return false;
             }
             projects.Clear();
+            current = new ExecutionOrder();
             Status._.flush();
             return true;
         }
@@ -302,7 +303,7 @@ namespace net.r_eg.vsSBE.Actions
             catch(Exception ex) {
                 Log.nlog.Error("SBE '{0}' error: {1}", type, ex.Message);
             }
-            return VSConstants.E_FAIL;
+            return VSConstants.S_FALSE;
         }
 
         /// <summary>
@@ -328,7 +329,7 @@ namespace net.r_eg.vsSBE.Actions
             catch(Exception ex) {
                 Log.nlog.Error("SBE 'Output' error: {0}", ex.Message);
             }
-            return VSConstants.E_FAIL;
+            return VSConstants.S_FALSE;
         }
 
         /// <summary>
@@ -345,7 +346,7 @@ namespace net.r_eg.vsSBE.Actions
             catch(Exception ex) {
                 Log.nlog.Error("Pre-Build error: {0}", ex.Message);
             }
-            return VSConstants.E_FAIL;
+            return VSConstants.S_FALSE;
         }
 
         protected int execPre()
@@ -357,7 +358,7 @@ namespace net.r_eg.vsSBE.Actions
                 }
                 ++idx;
             }
-            return Status._.get(SolutionEventType.Pre).Contains(StatusType.Fail)? VSConstants.E_FAIL : VSConstants.S_OK;
+            return Status._.contains(SolutionEventType.Pre, StatusType.Fail)? VSConstants.S_FALSE : VSConstants.S_OK;
         }
 
         protected string getProjectName(IVsHierarchy pHierProj)
@@ -443,7 +444,7 @@ namespace net.r_eg.vsSBE.Actions
 
             Log.nlog.Trace("onProject: '{0}':{1} == {2}", project, type, fSuccess);
 
-            if(Status._.get(SolutionEventType.Pre).Contains(StatusType.Deferred)) {
+            if(Status._.contains(SolutionEventType.Pre, StatusType.Deferred)) {
                 monitoringPre(project, type, fSuccess);
             }
         }

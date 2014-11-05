@@ -109,51 +109,23 @@ namespace net.r_eg.vsSBE
         /// </summary>
         private OWP.Listener _owpBuild;
 
-        public vsSolutionBuildEventPackage()
-        {
-            Log.show();
-            _env = new Environment(Dte2);
-
-            _c = new Connection(
-                    new SBECommand(_env, 
-                                    new Script(_env, uvariable), 
-                                    new MSBuildParser(_env, uvariable))
-            );
-
-            _owpBuild = new OWP.Listener(_env, "Build");
-            _owpBuild.attachEvents();
-            _owpBuild.register(_c);
-
-            UI.Xaml.StatusToolWindow.control.setDTE(Dte2);
-        }
-
         int IVsSolutionEvents.OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
-        {            
-            try
-            {
+        {
+            try {
                 FindToolWindow(typeof(UI.Xaml.StatusToolWindow), 0, true);
 
-                string path = Dte2.Solution.FullName; // may be empty e.g. if fNewSolution == 1 etc.
-                if(string.IsNullOrEmpty(path)) {
-                    path = Dte2.Solution.Properties.Item("Path").Value.ToString();
-                }
-                string dir = Path.GetDirectoryName(path);
-
-                if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
-                    dir += Path.DirectorySeparatorChar;
-                }
-
-                Config._.load(dir);
+                Config._.load(extractPath(Dte2));
                 _c.updateContext(new SBECommand.ShellContext(Settings.WorkPath));
+
+                _state();
+                _menuItemMain.Visible = true;
+                UI.Xaml.StatusToolWindow.control.enabledPanel(true);
+                return VSConstants.S_OK;
             }
             catch(Exception ex) {
                 Log.nlog.Fatal("Cannot load configuration: " + ex.Message);
-                return VSConstants.E_FAIL;
             }
-            _state();
-            _menuItemMain.Visible = true;
-            UI.Xaml.StatusToolWindow.control.enabledPanel(true);
-            return VSConstants.S_OK;
+            return VSConstants.S_FALSE;
         }
 
         int IVsSolutionEvents.OnAfterCloseSolution(object pUnkReserved)
@@ -167,12 +139,24 @@ namespace net.r_eg.vsSBE
 
         public int UpdateSolution_Begin(ref int pfCancelUpdate)
         {
-            return _c.bindPre(ref pfCancelUpdate);
+            try {
+                return _c.bindPre(ref pfCancelUpdate);
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Failed Solution.Pre-binding: '{0}'", ex.Message);
+            }
+            return VSConstants.S_FALSE;
         }
 
         public int UpdateSolution_Cancel()
         {
-            return _c.bindCancel();
+            try {
+                return _c.bindCancel();
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Failed Solution.Cancel-binding: '{0}'", ex.Message);
+            }
+            return VSConstants.S_FALSE;
         }
 
         /// <summary>
@@ -183,21 +167,75 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public int UpdateSolution_Done(int fSucceeded, int fModified, int fCancelCommand)
         {
-            int ret = _c.bindPost(fSucceeded, fModified, fCancelCommand);
-            if(_c.reset()) {
-                uvariable.unsetAll();
+            try {
+                int ret = _c.bindPost(fSucceeded, fModified, fCancelCommand);
+                if(_c.reset()) {
+                    uvariable.unsetAll();
+                }
+                return ret;
             }
-            return ret;
+            catch(Exception ex) {
+                Log.nlog.Error("Failed Solution.Post-binding: '{0}'", ex.Message);
+            }
+            return VSConstants.S_FALSE;
         }
 
         public int UpdateProjectCfg_Begin(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel)
         {
-            return _c.bindProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel);
+            try {
+                return _c.bindProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel);
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Failed Project.Pre-binding: '{0}'", ex.Message);
+            }
+            return VSConstants.S_FALSE;
         }
 
         public int UpdateProjectCfg_Done(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
         {
-            return _c.bindProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
+            try {
+                return _c.bindProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Failed Project.Post-binding: '{0}'", ex.Message);
+            }
+            return VSConstants.S_FALSE;
+        }
+
+        private void init()
+        {
+            Log.show();
+            _env = new Environment(Dte2);
+
+            _c = new Connection(
+                    new SBECommand(_env,
+                                    new Script(_env, uvariable),
+                                    new MSBuildParser(_env, uvariable))
+            );
+
+            _owpBuild = new OWP.Listener(_env, "Build");
+            _owpBuild.attachEvents();
+            _owpBuild.register(_c);
+
+            UI.Xaml.StatusToolWindow.control.setDTE(Dte2);
+        }
+
+        /// <summary>
+        /// Getting work path from DTE-context of current solution
+        /// </summary>
+        /// <param name="dte2">DTE context</param>
+        private string extractPath(DTE2 dte2)
+        {
+            string path = dte2.Solution.FullName; // empty if used the new solution 
+            if(string.IsNullOrEmpty(path)) {
+                path = dte2.Solution.Properties.Item("Path").Value.ToString();
+            }
+            string dir = Path.GetDirectoryName(path);
+
+            if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
+                dir += Path.DirectorySeparatorChar;
+            }
+            return dir;
         }
 
         /// <summary>
@@ -205,8 +243,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         private void _menuMainCallback(object sender, EventArgs e)
         {
-            if(_configFrm != null && !_configFrm.IsDisposed) {
-                _configFrm.Focus();
+            if(UI.Util.focusForm(_configFrm)) {
                 return;
             }
             _configFrm = new UI.WForms.EventsFrm(_env);
@@ -311,8 +348,8 @@ namespace net.r_eg.vsSBE
             Log.nlog.Trace(string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
             base.Initialize();
 
-            try
-            {
+            try {
+                init();
                 OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
 
                 // Build / <Main App>
@@ -323,11 +360,11 @@ namespace net.r_eg.vsSBE
                 // View / Other Windows / <Status Panel>
                 mcs.AddCommand(new MenuCommand(_menuPanelCallback, new CommandID(GuidList.PANEL_CMD_SET, (int)PkgCmdIDList.CMD_PANEL)));
 
-                // register events - IVsSolutionEvents
+                // registering events - IVsSolutionEvents
                 _solution = ServiceProvider.GlobalProvider.GetService(typeof(SVsSolution)) as IVsSolution;
                 _solution.AdviseSolutionEvents(this, out _cookieSEvents);
 
-                // register events - IVsUpdateSolutionEvents
+                // registering events - IVsUpdateSolutionEvents
                 _solBuildManager = ServiceProvider.GlobalProvider.GetService(typeof(SVsSolutionBuildManager)) as IVsSolutionBuildManager;
                 _solBuildManager.AdviseUpdateSolutionEvents(this, out _cookieUpdateSEvents);
             }
@@ -335,7 +372,7 @@ namespace net.r_eg.vsSBE
             {
                 string msg = string.Format("{0}\n{1}\n\n-----\n{2}", 
                                 "Something went wrong -_-", 
-                                "Try to restart a VS IDE or reinstall current plugin in the Extension Manager...", 
+                                "Try also to restart a VS IDE or reinstall current plugin in the Extension Manager...", 
                                 ex.StackTrace);
 
                 Log.nlog.Fatal(msg);
@@ -362,7 +399,6 @@ namespace net.r_eg.vsSBE
 
         protected override void Dispose(bool disposing)
         {
-            base.Dispose(disposing);
             UI.Util.closeTool(_configFrm);
 
             if(_solBuildManager != null && _cookieUpdateSEvents != 0) {
@@ -372,6 +408,7 @@ namespace net.r_eg.vsSBE
             if(_solution != null && _cookieSEvents != 0) {
                 _solution.UnadviseSolutionEvents(_cookieSEvents);
             }
+            base.Dispose(disposing);
         }
         #endregion
     }

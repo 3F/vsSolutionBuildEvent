@@ -69,7 +69,15 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         /// <param name="tevent">Event type</param>
         /// <returns>List of Execution statuses</returns>
-        SynchronizedCollection<StatusType> get(SolutionEventType tevent);
+        //SynchronizedCollection<StatusType> get(SolutionEventType tevent);
+
+        /// <summary>
+        /// Checking existence of StatusType in the current statuses
+        /// </summary>
+        /// <param name="tevent">Event type</param>
+        /// <param name="type"></param>
+        /// <returns>true value if contains</returns>
+        bool contains(SolutionEventType tevent, StatusType type);
 
         /// <summary>
         /// Updating status for Event type

@@ -103,14 +103,15 @@ namespace net.r_eg.vsSBE
                 {
                     data = deserialize(stream);
                     if(data == null) {
-                        throw new SBEException("Configuration file is empty");
+                        throw new SBEException("file is empty");
                     }
                     compatibility(stream);
                 }
                 Log.nlog.Info("Loaded settings (v{0}): '{1}'\n\nReady:", data.Header.Compatibility, Settings.WorkPath);
             }
             catch(FileNotFoundException) {
-                Log.nlog.Info("Initializing new settings..");
+                data = new SolutionEvents();
+                Log.nlog.Info("Initialized with the new settings");
             }
             catch(JsonException) {
                 //Log.nlog.Warn("Incorrect configuration type: '{0}'", ex.Message);
@@ -226,7 +227,7 @@ namespace net.r_eg.vsSBE
                 return ret;
             }
             catch(Exception ex) {
-                Log.nlog.Warn("Incorrect configuration type: '{0}'", ex.Message);
+                Log.nlog.Warn("Failed upgrade: Incorrect configuration type: '{0}'", ex.Message);
             }
             return new SolutionEvents();
         }
