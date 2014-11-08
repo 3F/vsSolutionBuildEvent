@@ -1,187 +1,212 @@
-<?xml version="1.0" encoding="utf-8"?>
-<SolutionEvents xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <settings>
-    <application>http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/</application>
-    <compatibility>0.7</compatibility>
-  </settings>
-  <preBuild>
-    <command>$(sln = $(SolutionDir.Replace('\', '/')))
-
-$(TargetPath:Version) 
-  $(Configuration) 
-  "$(sln)" 
-  "Version/Version.tpl" 
-  "vsSolutionBuildEvent/Version.cs" 
-  "vsSolutionBuildEvent/source.extension.vsixmanifest"</command>
-    <caption>Updating version</caption>
-    <enabled>true</enabled>
-    <processHide>false</processHide>
-    <mode>Interpreter</mode>
-    <processKeep>false</processKeep>
-    <interpreter>cmd.exe /C</interpreter>
-    <newline />
-    <wrapper />
-    <waitForExit>true</waitForExit>
-    <parseVariablesMSBuild>true</parseVariablesMSBuild>
-    <buildFailedIgnore>true</buildFailedIgnore>
-    <toConfiguration />
-    <executionOrder>
-      <TExecutionOrder>
-        <project>Version</project>
-        <order>After</order>
-      </TExecutionOrder>
-    </executionOrder>
-    <dteExec>
-      <cmd>
-        <string />
-      </cmd>
-      <caption />
-      <abortOnFirstError>true</abortOnFirstError>
-    </dteExec>
-  </preBuild>
-  <postBuild>
-    <command />
-    <caption>Run all tests for release configurations</caption>
-    <enabled>true</enabled>
-    <processHide>true</processHide>
-    <mode>Operation</mode>
-    <processKeep>false</processKeep>
-    <interpreter />
-    <newline />
-    <wrapper />
-    <waitForExit>true</waitForExit>
-    <parseVariablesMSBuild>true</parseVariablesMSBuild>
-    <buildFailedIgnore>true</buildFailedIgnore>
-    <toConfiguration>
-      <string>Release_with_revision|Any CPU</string>
-      <string>Release_with_revision|Mixed Platforms</string>
-      <string>Release_with_revision|x86</string>
-      <string>Release|Any CPU</string>
-      <string>Release|Mixed Platforms</string>
-      <string>Release|x86</string>
-    </toConfiguration>
-    <executionOrder>
-      <TExecutionOrder>
-        <project>vsSolutionBuildEvent</project>
-        <order>After</order>
-      </TExecutionOrder>
-    </executionOrder>
-    <dteExec>
-      <cmd>
-        <string>Test.RunAllTestsInSolution</string>
-      </cmd>
-      <caption>Run all Unit-Tests</caption>
-      <abortOnFirstError>true</abortOnFirstError>
-    </dteExec>
-  </postBuild>
-  <cancelBuild>
-    <command />
-    <caption />
-    <enabled>false</enabled>
-    <processHide>true</processHide>
-    <mode>Interpreter</mode>
-    <processKeep>false</processKeep>
-    <interpreter />
-    <newline />
-    <wrapper />
-    <waitForExit>true</waitForExit>
-    <parseVariablesMSBuild>true</parseVariablesMSBuild>
-    <buildFailedIgnore>false</buildFailedIgnore>
-    <dteExec>
-      <cmd>
-        <string />
-      </cmd>
-      <caption />
-      <abortOnFirstError>true</abortOnFirstError>
-    </dteExec>
-  </cancelBuild>
-  <warningsBuild>
-    <command />
-    <caption />
-    <enabled>false</enabled>
-    <processHide>true</processHide>
-    <mode>Interpreter</mode>
-    <processKeep>false</processKeep>
-    <interpreter />
-    <newline />
-    <wrapper />
-    <waitForExit>true</waitForExit>
-    <parseVariablesMSBuild>true</parseVariablesMSBuild>
-    <buildFailedIgnore>false</buildFailedIgnore>
-    <dteExec>
-      <cmd>
-        <string />
-      </cmd>
-      <caption />
-      <abortOnFirstError>true</abortOnFirstError>
-    </dteExec>
-    <codes />
-    <isWhitelist>true</isWhitelist>
-  </warningsBuild>
-  <errorsBuild>
-    <command />
-    <caption />
-    <enabled>false</enabled>
-    <processHide>true</processHide>
-    <mode>Interpreter</mode>
-    <processKeep>false</processKeep>
-    <interpreter />
-    <newline />
-    <wrapper />
-    <waitForExit>true</waitForExit>
-    <parseVariablesMSBuild>true</parseVariablesMSBuild>
-    <buildFailedIgnore>false</buildFailedIgnore>
-    <dteExec>
-      <cmd>
-        <string />
-      </cmd>
-      <caption />
-      <abortOnFirstError>true</abortOnFirstError>
-    </dteExec>
-    <codes />
-    <isWhitelist>true</isWhitelist>
-  </errorsBuild>
-  <outputCustomBuild>
-    <command />
-    <caption />
-    <enabled>false</enabled>
-    <processHide>true</processHide>
-    <mode>Interpreter</mode>
-    <processKeep>false</processKeep>
-    <interpreter />
-    <newline />
-    <wrapper />
-    <waitForExit>true</waitForExit>
-    <parseVariablesMSBuild>true</parseVariablesMSBuild>
-    <buildFailedIgnore>false</buildFailedIgnore>
-    <dteExec>
-      <cmd>
-        <string />
-      </cmd>
-      <caption />
-      <abortOnFirstError>true</abortOnFirstError>
-    </dteExec>
-    <eventsOWP />
-  </outputCustomBuild>
-  <transmitter>
-    <command />
-    <caption />
-    <enabled>false</enabled>
-    <processHide>true</processHide>
-    <mode>Interpreter</mode>
-    <processKeep>false</processKeep>
-    <interpreter />
-    <newline />
-    <wrapper />
-    <waitForExit>true</waitForExit>
-    <parseVariablesMSBuild>true</parseVariablesMSBuild>
-    <buildFailedIgnore>false</buildFailedIgnore>
-    <dteExec>
-      <cmd>
-        <string />
-      </cmd>
-      <caption />
-      <abortOnFirstError>true</abortOnFirstError>
-    </dteExec>
-  </transmitter>
-</SolutionEvents>
+﻿{
+  "Header": {
+    "application": "http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/",
+    "Compatibility": "0.9"
+  },
+  "PreBuild": [
+    {
+      "Enabled": true,
+      "Name": "Act1",
+      "Caption": "Updating version",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": true,
+      "ToConfiguration": [],
+      "ExecutionOrder": {
+        "$type": "net.r_eg.vsSBE.Events.ExecutionOrder[], vsSolutionBuildEvent",
+        "$values": []
+      },
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true,
+        "KeepWindow": false
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
+        "Type": "interpreter",
+        "Command": "#[\" \n     Updating version\n\"]\n\n#[var ver = #[File get(\"_version\")]]\n#[var tpl = #[File get(\"Version.tpl\")]]\n#[var vsSBEDir = $(ProjectName)/]\n\n#[var tStart = $([System.DateTime]::Parse(\"07.07.2014\").ToBinary())]\n#[var tNow   = $([System.DateTime]::UtcNow.Ticks)]\n#[var revBuild = $([System.TimeSpan]::FromTicks($([MSBuild]::Subtract(#[var tNow], #[var tStart]))).TotalMinutes.ToString(\"0\"))]\n\n#[var branchSha1 = #[File sout(\"git\", \"rev-parse --short HEAD\")]]\n#[var branchName = #[File sout(\"git\", \"rev-parse --abbrev-ref HEAD\")]]\n#[var branchRevCount = #[File sout(\"git\", \"rev-list HEAD --count\")]]\n\n#[var cs = $(tpl.Replace(%Version%, \"$(ver.Replace(\".\", \", \")), #[var revBuild]\"))]\n\n#[var cs = $(cs.Replace(%VersionRevString%, \"$(ver).#[var revBuild]\").Replace(%VersionString%, \"$(ver)\"))]\n#[var cs = $(cs.Replace(%branchName%, \"#[var branchName]\").Replace(%branchSha1%, \"#[var branchSha1]\").Replace(%branchRevCount%, \"#[var branchRevCount]\"))]\n\n#[File write(\"#[var vsSBEDir]Version.cs\"):#[var cs]]\n\n#[\" \n    .vsixmanifest\n\"]\n\n#[($(Configuration) ~= _with_revision){\n    #[var ver = #[var ver].#[var revBuild]]\n}]\n\n#[File replace.Regexp(\"#[var vsSBEDir]/source.extension.vsixmanifest\", \"<Version>[0-9\\.]+</Version>\", \"<Version>#[var ver]</Version>\")]",
+        "Handler": "",
+        "Newline": "",
+        "Wrapper": ""
+      }
+    }
+  ],
+  "PostBuild": [
+    {
+      "Enabled": true,
+      "Name": "Act1",
+      "Caption": "Run all tests for release configurations",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": true,
+      "ToConfiguration": [
+        "Release_with_revision|Any CPU",
+        "Release_with_revision|Mixed Platforms",
+        "Release_with_revision|x86",
+        "Release|Any CPU",
+        "Release|Mixed Platforms",
+        "Release|x86"
+      ],
+      "ExecutionOrder": {
+        "$type": "net.r_eg.vsSBE.Events.ExecutionOrder[], vsSolutionBuildEvent",
+        "$values": [
+          {
+            "Project": "vsSolutionBuildEvent",
+            "Order": "after"
+          }
+        ]
+      },
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true,
+        "KeepWindow": false
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeOperation, vsSolutionBuildEvent",
+        "Type": "operation",
+        "Command": [
+          "Test.RunAllTestsInSolution"
+        ],
+        "Caption": "Run all Unit-Tests",
+        "AbortOnFirstError": true
+      }
+    }
+  ],
+  "CancelBuild": [
+    {
+      "Enabled": false,
+      "Name": "Act1",
+      "Caption": "",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": false,
+      "ToConfiguration": null,
+      "ExecutionOrder": null,
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true,
+        "KeepWindow": false
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
+        "Type": "interpreter",
+        "Command": "",
+        "Handler": "",
+        "Newline": "",
+        "Wrapper": ""
+      }
+    }
+  ],
+  "WarningsBuild": [
+    {
+      "Codes": [],
+      "IsWhitelist": true,
+      "Enabled": false,
+      "Name": "Act1",
+      "Caption": "",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": false,
+      "ToConfiguration": null,
+      "ExecutionOrder": null,
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true,
+        "KeepWindow": false
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
+        "Type": "interpreter",
+        "Command": "",
+        "Handler": "",
+        "Newline": "",
+        "Wrapper": ""
+      }
+    }
+  ],
+  "ErrorsBuild": [
+    {
+      "Codes": [],
+      "IsWhitelist": true,
+      "Enabled": false,
+      "Name": "Act1",
+      "Caption": "",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": false,
+      "ToConfiguration": null,
+      "ExecutionOrder": null,
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true,
+        "KeepWindow": false
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
+        "Type": "interpreter",
+        "Command": "",
+        "Handler": "",
+        "Newline": "",
+        "Wrapper": ""
+      }
+    }
+  ],
+  "OWPBuild": [
+    {
+      "Match": null,
+      "Enabled": false,
+      "Name": "Act1",
+      "Caption": "",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": false,
+      "ToConfiguration": null,
+      "ExecutionOrder": null,
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true,
+        "KeepWindow": false
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
+        "Type": "interpreter",
+        "Command": "",
+        "Handler": "",
+        "Newline": "",
+        "Wrapper": ""
+      }
+    }
+  ],
+  "Transmitter": [
+    {
+      "Enabled": false,
+      "Name": "Act1",
+      "Caption": "",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": false,
+      "ToConfiguration": null,
+      "ExecutionOrder": null,
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true,
+        "KeepWindow": false
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
+        "Type": "interpreter",
+        "Command": "",
+        "Handler": "",
+        "Newline": "",
+        "Wrapper": ""
+      }
+    }
+  ]
+}
