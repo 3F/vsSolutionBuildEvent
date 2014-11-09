@@ -34,6 +34,19 @@ namespace vsSBETest
             }
         }
 
+        private static IEnvironment env         = new net.r_eg.vsSBE.Environment((EnvDTE80.DTE2)null);
+        private static IUserVariable uvariable  = new UserVariable();
+
+        /// <summary>
+        /// Use ClassInitialize to run code before running the first test in the class
+        /// </summary>
+        /// <param name="testContext"></param>
+        [ClassInitialize()]
+        public static void ScriptTestInitialize(TestContext testContext)
+        {
+            Bootloader.init(env, uvariable);
+        }
+
         /// <summary>
         ///A test for parse
         ///</summary>
@@ -89,8 +102,7 @@ namespace vsSBETest
         [TestMethod()]
         public void parseTest5()
         {
-            IEnvironment env = new net.r_eg.vsSBE.Environment((EnvDTE80.DTE2)null);
-            IUserVariable uvariable = new UserVariable();
+            uvariable.unsetAll();
             Script target = new Script(env, uvariable);
 
             target.parse("#[( 2 < 1) { #[var name = value] } else { #[var name = value2] }]");
@@ -107,8 +119,7 @@ namespace vsSBETest
         [TestMethod()]
         public void parseTest6()
         {
-            IEnvironment env = new net.r_eg.vsSBE.Environment((EnvDTE80.DTE2)null);
-            IUserVariable uvariable = new UserVariable();
+            uvariable.unsetAll();
             Script target = new Script(env, uvariable);
 
             Assert.AreEqual(String.Empty, target.parse("#[\" #[var name = value] \"]"));

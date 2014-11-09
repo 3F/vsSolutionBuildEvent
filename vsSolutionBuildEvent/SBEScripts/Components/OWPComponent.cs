@@ -36,22 +36,25 @@ using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
-    public class OWPComponent: IComponent
+    /// <summary>
+    /// For work with OWP
+    /// </summary>
+    public class OWPComponent: Component, IComponent
     {
         /// <summary>
-        /// Type of implementation
+        /// Ability to work with data for current component
         /// </summary>
-        public ComponentType Type
+        public override string Condition
         {
-            get { return ComponentType.OWP; }
+            get { return "[OWP "; }
         }
 
         /// <summary>
-        /// Handling with current type
+        /// Handler for current data
         /// </summary>
         /// <param name="data">mixed data</param>
         /// <returns>prepared and evaluated data</returns>
-        public string parse(string data)
+        public override string parse(string data)
         {
             Match m = Regex.Match(data, @"^\[OWP
                                               \s+

@@ -116,18 +116,6 @@ namespace net.r_eg.vsSBE.SBEScripts
         private volatile int _depthLevel = 0;
 
         /// <summary>
-        /// Used components
-        /// </summary>
-        private FileComponent _cFile;
-        private OWPComponent _cOWP;
-        private DTEComponent _cDTE;
-        private BuildComponent _cBuild;
-        private ConditionComponent _cCondition;
-        private InternalComponent _cInternal;
-        private CommentComponent _cComment;
-        private UserVariableComponent _cUVariable;
-
-        /// <summary>
         /// object synch.
         /// </summary>
         private Object _lock = new Object();
@@ -203,8 +191,40 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
+        /// Parse data for concrete component
+        /// </summary>
+        /// <param name="data">Mixed data</param>
+        /// <param name="c">Component</param>
+        /// <returns>Prepared & evaluated data by component</returns>
+        protected string parse(string data, IComponent c)
+        {
+            string ret = c.parse(data);
+
+            if(c.PostParse)
+            {
+                ++_depthLevel;
+                ret = parse(ret, _depthLevel);
+                --_depthLevel;
+            }
+            return ret;
+        }
+
+        /// <summary>
+        /// Checking ability to parse the data for specific component
+        /// </summary>
+        /// <param name="data">Mixed data</param>
+        /// <param name="c">Component</param>
+        /// <returns>ready to parse or not</returns>
+        protected bool isReadyToParse(string data, IComponent c)
+        {
+            if(!c.CRegex) {
+                return data.StartsWith(c.Condition);
+            }
+            return Regex.IsMatch(data, c.Condition, RegexOptions.IgnorePatternWhitespace);
+        }
+
+        /// <summary>
         /// Work with SBE-Script by components
-        /// TODO: Decorator pattern or similar
         /// </summary>
         /// <param name="data">mixed data</param>
         /// <returns>prepared & evaluated data</returns>
@@ -212,26 +232,17 @@ namespace net.r_eg.vsSBE.SBEScripts
         {
             Log.nlog.Debug("SBEScripts-selector: started with '{0}'", data);
 
-            if(data.StartsWith("[\"")) {
-                Log.nlog.Debug("SBEScripts-selector: use CommentComponent");
-                if(_cComment == null) {
-                    _cComment = new CommentComponent();
-                }
-                return _cComment.parse(data);
-            }
-
-            if(data.StartsWith("[("))
+            foreach(IComponent c in Bootloader.Components)
             {
-                Log.nlog.Debug("SBEScripts-selector: use ConditionComponent");
-                if(_cCondition == null) {
-                    _cCondition = new ConditionComponent(env, uvariable);
-                }
-                _cCondition.PostProcessingMSBuild = postProcessingMSBuild;
+                c.PostProcessingMSBuild = postProcessingMSBuild;
 
-                ++_depthLevel;
-                data = parse(_cCondition.parse(data), _depthLevel);
-                --_depthLevel;
-                return data;
+                if(!c.BeforeDeepen) {
+                    continue;
+                }
+
+                if(isReadyToParse(data, c)) {
+                    return parse(data, c);
+                }
             }
 
             if(deepen(ref data)) {
@@ -240,68 +251,15 @@ namespace net.r_eg.vsSBE.SBEScripts
                 --_depthLevel;
             }
 
-            if(data.StartsWith("[var "))
+            foreach(IComponent c in Bootloader.Components)
             {
-                Log.nlog.Debug("SBEScripts-selector: use UserVariableComponent");
-                if(_cUVariable == null) {
-                    _cUVariable = new UserVariableComponent(env, uvariable);
+                if(c.BeforeDeepen) {
+                    continue; // should already parsed above
                 }
-                _cUVariable.PostProcessingMSBuild = postProcessingMSBuild;
-                return _cUVariable.parse(data);
-            }
 
-            return elements(ref data);
-        }
-
-        /// <summary>
-        /// TODO: Decorator pattern or similar
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        protected string elements(ref string data)
-        {
-            if(data.StartsWith("[OWP "))
-            {
-                Log.nlog.Debug("SBEScripts-selector: use OWPComponent");
-                if(_cOWP == null) {
-                    _cOWP = new OWPComponent();
+                if(isReadyToParse(data, c)) {
+                    return parse(data, c);
                 }
-                return _cOWP.parse(data);
-            }
-
-            if(data.StartsWith("[DTE "))
-            {
-                Log.nlog.Debug("SBEScripts-selector: use DTEComponent");
-                if(_cDTE == null) {
-                    _cDTE = new DTEComponent(env);
-                }
-                return _cDTE.parse(data);
-            }
-
-            if(data.StartsWith("[vsSBE "))
-            {
-                Log.nlog.Debug("SBEScripts-selector: use InternalComponent");
-                if(_cInternal == null) {
-                    _cInternal = new InternalComponent();
-                }
-                return _cInternal.parse(data);
-            }
-
-            if(data.StartsWith("[Build ")) {
-                Log.nlog.Debug("SBEScripts-selector: use BuildComponent");
-                if(_cBuild == null) {
-                    _cBuild = new BuildComponent(env);
-                }
-                return _cBuild.parse(data);
-            }
-
-            if(data.StartsWith("[File "))
-            {
-                Log.nlog.Debug("SBEScripts-selector: use FileComponent");
-                if(_cFile == null) {
-                    _cFile = new FileComponent();
-                }
-                return _cFile.parse(data);
             }
 
             throw new SelectorMismatchException("SBEScripts-selector: not found component for handling - '{0}'", data);
@@ -309,7 +267,7 @@ namespace net.r_eg.vsSBE.SBEScripts
 
         protected bool deepen(ref string data)
         {
-            return Regex.Match(data, ContainerPattern, RegexOptions.IgnorePatternWhitespace).Success;
+            return Regex.IsMatch(data, ContainerPattern, RegexOptions.IgnorePatternWhitespace);
         }
     }
 }

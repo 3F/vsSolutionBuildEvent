@@ -26,47 +26,51 @@
  * DEALINGS IN THE SOFTWARE. 
 */
 
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using net.r_eg.vsSBE.Exceptions;
+
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
-    public interface IComponent
+    public static class Bootloader
     {
         /// <summary>
-        /// Ability to work with data for component
+        /// All registered components
         /// </summary>
-        string Condition { get; }
+        public static IEnumerable<IComponent> Components
+        {
+            get {
+                foreach(KeyValuePair<string, IComponent> component in components) {
+                    yield return component.Value;
+                }
+            }
+        }
+        private static ConcurrentDictionary<string, IComponent> components = new ConcurrentDictionary<string, IComponent>();
 
-        /// <summary>
-        /// Using regex engine for property - condition
-        /// </summary>
-        bool CRegex { get; }
+        /// <param name="env">Used environment</param>
+        /// <param name="uvariable">Used instance of user-variable</param>
+        public static void init(IEnvironment env, IUserVariable uvariable)
+        {
+            register(new CommentComponent());
+            register(new ConditionComponent(env, uvariable));
+            register(new UserVariableComponent(env, uvariable));
+            register(new OWPComponent());
+            register(new DTEComponent(env));
+            register(new InternalComponent());
+            register(new BuildComponent(env));
+            register(new FileComponent());
+        }
 
-        /// <summary>
-        /// Activation status
-        /// </summary>
-        bool Enabled { get; set; }
-
-        /// <summary>
-        /// Flag of required post-processing with MSBuild core.
-        /// In general, some components can require immediate processing with evaluation, before passing control to next level
-        /// (e.g. FileComponent etc.) For such components need additional flag about allowed processing, if this used of course...
-        /// </summary>
-        bool PostProcessingMSBuild { get; set; }
-
-        /// <summary>
-        /// Should be located before deepening or not
-        /// </summary>
-        bool BeforeDeepen { get; }
-
-        /// <summary>
-        /// Forced post analysis or not
-        /// </summary>
-        bool PostParse { get; }
-
-        /// <summary>
-        /// Handler for current data
-        /// </summary>
-        /// <param name="data">mixed data</param>
-        /// <returns>prepared and evaluated data</returns>
-        string parse(string data);
+        private static void register(IComponent c)
+        {
+            string ident = c.Condition;
+            if(String.IsNullOrEmpty(ident) || components.ContainsKey(ident)) {
+                throw new ComponentException("IComponent '{0}:{1}' is empty or is already registered", ident, c.ToString());
+            }
+            components[ident] = c;
+        }
     }
 }

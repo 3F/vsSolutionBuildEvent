@@ -33,22 +33,25 @@ using System.Text;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
-    public class FunctionComponent: IComponent
+    /// <summary>
+    /// Mixed supported functions
+    /// </summary>
+    public class FunctionComponent: Component, IComponent
     {
         /// <summary>
-        /// Type of implementation
+        /// Ability to work with data for current component
         /// </summary>
-        public ComponentType Type
+        public override string Condition
         {
-            get { return ComponentType.Function; }
+            get { return "[Func "; }
         }
 
         /// <summary>
-        /// Handling with current type
+        /// Handler for current data
         /// </summary>
         /// <param name="data">mixed data</param>
         /// <returns>prepared and evaluated data</returns>
-        public string parse(string data)
+        public override string parse(string data)
         {
             return data;
         }

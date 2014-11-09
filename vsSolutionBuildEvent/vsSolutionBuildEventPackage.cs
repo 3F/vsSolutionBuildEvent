@@ -207,6 +207,7 @@ namespace net.r_eg.vsSBE
             Log.show();
             _env = new Environment(Dte2);
 
+            SBEScripts.Components.Bootloader.init(_env, uvariable);
             _c = new Connection(
                     new SBECommand(_env,
                                     new Script(_env, uvariable),
@@ -373,7 +374,7 @@ namespace net.r_eg.vsSBE
                 string msg = string.Format("{0}\n{1}\n\n-----\n{2}", 
                                 "Something went wrong -_-", 
                                 "Try also to restart a VS IDE or reinstall current plugin in the Extension Manager...", 
-                                ex.StackTrace);
+                                ex.ToString());
 
                 Log.nlog.Fatal(msg);
                 

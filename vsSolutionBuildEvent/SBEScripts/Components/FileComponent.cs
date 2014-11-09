@@ -38,22 +38,26 @@ using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
-    public class FileComponent: IComponent
+    /// <summary>
+    /// Support file operations
+    /// I/O, call, etc.
+    /// </summary>
+    public class FileComponent: Component, IComponent
     {
         /// <summary>
-        /// Type of implementation
+        /// Ability to work with data for current component
         /// </summary>
-        public ComponentType Type
+        public override string Condition
         {
-            get { return ComponentType.File; }
+            get { return "[File "; }
         }
 
         /// <summary>
-        /// Handling with current type
+        /// Handler for current data
         /// </summary>
         /// <param name="data">mixed data</param>
         /// <returns>prepared and evaluated data</returns>
-        public string parse(string data)
+        public override string parse(string data)
         {
             Match m = Regex.Match(data, @"^\[File
                                               \s+
