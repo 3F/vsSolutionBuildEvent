@@ -37,47 +37,32 @@ using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
-    public class UserVariableComponent: IComponent
+    /// <summary>
+    /// For work with User-Variables
+    /// </summary>
+    public class UserVariableComponent: Component, IComponent
     {
         /// <summary>
-        /// Type of implementation
+        /// Ability to work with data for current component
         /// </summary>
-        public ComponentType Type
+        public override string Condition
         {
-            get { return ComponentType.UserVariable; }
+            get { return "[var "; }
+        }
+
+        /// <param name="env">Used environment</param>
+        /// <param name="uvariable">Instance of used user-variables</param>
+        public UserVariableComponent(IEnvironment env, IUserVariable uvariable): base(env, uvariable)
+        {
+
         }
 
         /// <summary>
-        /// Allows post-processing with MSBuild core
-        /// </summary>
-        public bool PostProcessingMSBuild
-        {
-            get { return postProcessingMSBuild; }
-            set { postProcessingMSBuild = value; }
-        }
-        protected bool postProcessingMSBuild = false;
-
-        /// <summary>
-        /// For evaluating with SBE-Script
-        /// </summary>
-        protected ISBEScript script;
-
-        /// <summary>
-        /// For evaluating with MSBuild
-        /// </summary>
-        protected IMSBuild msbuild;
-
-        /// <summary>
-        /// Current user-variables
-        /// </summary>
-        protected IUserVariable uvariable;
-
-        /// <summary>
-        /// Handling with current type
+        /// Handler for current data
         /// </summary>
         /// <param name="data">mixed data</param>
         /// <returns>prepared and evaluated data</returns>
-        public string parse(string data)
+        public override string parse(string data)
         {
             Match m = Regex.Match(data, @"^\[var
                                               \s+
@@ -106,15 +91,6 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return String.Empty;
             }
             return get(name, project);
-        }
-
-        /// <param name="env">Used environment</param>
-        /// <param name="uvariable">Instance of used user-variables</param>
-        public UserVariableComponent(IEnvironment env, IUserVariable uvariable)
-        {
-            this.uvariable  = uvariable;
-            script          = new Script(env, uvariable);
-            msbuild         = new MSBuildParser(env, uvariable);
         }
 
         /// <summary>

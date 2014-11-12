@@ -40,14 +40,17 @@ using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
-    public class BuildComponent: IComponent
+    /// <summary>
+    /// Components of building
+    /// </summary>
+    public class BuildComponent: Component, IComponent
     {
         /// <summary>
-        /// Type of implementation
+        /// Ability to work with data for current component
         /// </summary>
-        public ComponentType Type
+        public override string Condition
         {
-            get { return ComponentType.Build; }
+            get { return "[Build "; }
         }
 
         /// <summary>
@@ -65,15 +68,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
         protected DTEOperation dteo;
 
-        /// <summary>
-        /// Provides operation with environment
-        /// </summary>
-        protected IEnvironment env;
-
         /// <param name="env">Used environment</param>
-        public BuildComponent(IEnvironment env)
+        public BuildComponent(IEnvironment env): base(env)
         {
-            this.env = env;
+
         }
 
         /// <summary>
@@ -81,7 +79,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         /// <param name="data">mixed data</param>
         /// <returns>prepared and evaluated data</returns>
-        public string parse(string data)
+        public override string parse(string data)
         {
             Match m = Regex.Match(data.Trim(), @"^\[Build
                                                     \s+
@@ -124,26 +122,14 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(!m.Success) {
                 throw new OperationNotFoundException("Failed stCancel - '{0}'", data);
             }
+            string val = m.Groups[1].Value;
+            Log.nlog.Debug("stCancel: value is {0}", val);
 
-            string val = m.Groups[1].Value.Trim().ToLower();
-            switch(val) {
-                case "1":
-                case "true": {
-                    Log.nlog.Debug("stCancel: value is true");
-                    DTEO.exec(new string[] { "Build.Cancel" }, false);
-                    break;
-                }
-                case "0":
-                case "false": {
-                    Log.nlog.Debug("stCancel: value is false");
-                    //ignore
-                    break;
-                }
-                default: {
-                    throw new OperandNotFoundException("stCancel: incorrect value - '{0}'", val);
-                }
+            if(Values.toBoolean(val))
+            {
+                Log.nlog.Debug("stCancel: pushed true");
+                DTEO.exec(new string[]{ "Build.Cancel" }, false);
             }
-            Log.nlog.Debug("stCancel: pushed '{0}'", val);
             return String.Empty;
         }
 

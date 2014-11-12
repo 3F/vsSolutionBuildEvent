@@ -37,42 +37,33 @@ using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
-    public class ConditionComponent: IComponent
+    /// <summary>
+    /// Conditions in scripts
+    /// </summary>
+    public class ConditionComponent: Component, IComponent
     {
         /// <summary>
-        /// Type of implementation
+        /// Ability to work with data for current component
         /// </summary>
-        public ComponentType Type
+        public override string Condition
         {
-            get { return ComponentType.Condition; }
+            get { return "[("; }
+        }
+
+        /// <param name="env">Used environment</param>
+        /// <param name="uvariable">Used instance of user-variables</param>
+        public ConditionComponent(IEnvironment env, IUserVariable uvariable): base(env, uvariable)
+        {
+            beforeDeepen    = true; // Should be located before deepening
+            postParse       = true; // Forced post analysis
         }
 
         /// <summary>
-        /// Allows post-processing with MSBuild core
-        /// </summary>
-        public bool PostProcessingMSBuild
-        {
-            get { return postProcessingMSBuild; }
-            set { postProcessingMSBuild = value; }
-        }
-        protected bool postProcessingMSBuild = false;
-
-        /// <summary>
-        /// For evaluating with SBE-Script
-        /// </summary>
-        protected ISBEScript script;
-
-        /// <summary>
-        /// For evaluating with MSBuild
-        /// </summary>
-        protected IMSBuild msbuild;
-
-        /// <summary>
-        /// Handling with current type
+        /// Handler for current data
         /// </summary>
         /// <param name="data">mixed data</param>
         /// <returns>prepared and evaluated data</returns>
-        public string parse(string data)
+        public override string parse(string data)
         {
             StringHandler hString = new StringHandler();
 
@@ -98,14 +89,6 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string bodyIfFalse  = (m.Groups[3].Success)? hString.recovery(m.Groups[3].Value) : String.Empty;
 
             return parse(condition, bodyIfTrue, bodyIfFalse);
-        }
-
-        /// <param name="env">Used environment</param>
-        /// <param name="uvariable">Used instance of user-variables</param>
-        public ConditionComponent(IEnvironment env, IUserVariable uvariable)
-        {
-            script  = new Script(env, uvariable);
-            msbuild = new MSBuildParser(env, uvariable);
         }
 
         protected string parse(string condition, string ifTrue, string ifFalse)
