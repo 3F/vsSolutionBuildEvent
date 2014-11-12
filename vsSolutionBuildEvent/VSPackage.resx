@@ -121,15 +121,7 @@
     <value>vsSolutionBuildEvent</value>
   </data>
   <data name="112" xml:space="preserve">
-    <value>Solution Build-Events
-
-Extended event handling in Visual Studio. Events for all Solution or Projects a singly.
-Ability to handle: Warnings-Build, Errors-Build, Output-Build, Pre-Build, Post-Build, Cancel-Build.
-And different flexible actions for all events..
-
-Sources: bitbucket.org/3F
-
-Distributed under the Boost Software License, Version 1.0</value>
+    <value>Flexible actions for all events of the MS Visual Studio.</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="400" type="System.Resources.ResXFileRef, System.Windows.Forms">

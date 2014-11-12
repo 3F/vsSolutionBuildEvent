@@ -70,15 +70,7 @@ namespace net.r_eg.vsSBE {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Solution Build-Events
-        ///
-        ///Extended event handling in Visual Studio. Events for all Solution or Projects a singly.
-        ///Ability to handle: Warnings-Build, Errors-Build, Output-Build, Pre-Build, Post-Build, Cancel-Build.
-        ///And different flexible actions for all events..
-        ///
-        ///Sources: bitbucket.org/3F
-        ///
-        ///Distributed under the Boost Software License, Version 1.0.
+        ///   Looks up a localized string similar to Flexible actions for all events of the MS Visual Studio..
         /// </summary>
         internal static string _112 {
             get {
