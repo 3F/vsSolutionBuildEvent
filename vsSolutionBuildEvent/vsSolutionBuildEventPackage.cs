@@ -218,10 +218,9 @@ namespace net.r_eg.vsSBE
             Log.show();
             _env = new Environment(Dte2);
 
-            SBEScripts.Components.Bootloader.init(_env, uvariable);
             _c = new Connection(
                     new SBECommand(_env,
-                                    new Script(_env, uvariable),
+                                    new Script(new Bootloader(_env, uvariable)),
                                     new MSBuildParser(_env, uvariable))
             );
 

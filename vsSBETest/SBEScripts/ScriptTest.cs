@@ -44,7 +44,7 @@ namespace vsSBETest
         [ClassInitialize()]
         public static void ScriptTestInitialize(TestContext testContext)
         {
-            Bootloader.init(env, uvariable);
+
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace vsSBETest
         [ExpectedException(typeof(SelectorMismatchException))]
         public void parseTest2()
         {
-            Script target = new Script((IEnvironment)null, (IUserVariable)null);
+            Script target = new Script(env, new UserVariable());
             target.parse("#[NotRealComponent prop.Test]");
         }
 
@@ -78,7 +78,7 @@ namespace vsSBETest
         [TestMethod()]
         public void parseTest3()
         {
-            Script target = new Script((IEnvironment)null, (IUserVariable)null);
+            Script target = new Script(env, new UserVariable());
             Assert.AreEqual("[( 2 > 1) { body }]", target.parse("[( 2 > 1) { body }]"));
             Assert.AreEqual("( 2 > 1) { body }", target.parse("( 2 > 1) { body }"));
             Assert.AreEqual(" test ", target.parse(" test "));
@@ -92,7 +92,7 @@ namespace vsSBETest
         [TestMethod()]
         public void parseTest4()
         {
-            Script target = new Script((IEnvironment)null, (IUserVariable)null);
+            Script target = new Script(env, new UserVariable());
             Assert.AreEqual("\n B4 ", target.parse("#[(true) {\n #[(1 > 2){ B3 } \n else {B4} ] } else {\n B2 }]"));
         }
 

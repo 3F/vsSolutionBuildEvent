@@ -64,7 +64,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
-        /// Handling with current type
+        /// Handler for current data
         /// </summary>
         /// <param name="data">mixed data</param>
         /// <returns>prepared and evaluated data</returns>

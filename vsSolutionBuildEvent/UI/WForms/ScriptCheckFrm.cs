@@ -31,21 +31,6 @@ namespace net.r_eg.vsSBE.UI.WForms
     public partial class ScriptCheckFrm: Form
     {
         /// <summary>
-        /// Clean container of user-variables
-        /// </summary>
-        protected IUserVariable uvariable = new UserVariable();
-
-        /// <summary>
-        /// Work with MSBuild
-        /// </summary>
-        protected IMSBuild msbuild;
-
-        /// <summary>
-        /// Work with SBE-Scripts
-        /// </summary>
-        protected ISBEScript script;
-
-        /// <summary>
         /// Flag of supporting MSBuild
         /// </summary>
         protected bool MSBuildSupport
@@ -54,15 +39,49 @@ namespace net.r_eg.vsSBE.UI.WForms
         }
 
         /// <summary>
+        /// Clean context for testing
+        /// </summary>
+        protected sealed class ToolContext
+        {
+            /// <summary>
+            /// Container of user-variables
+            /// </summary>
+            public IUserVariable uvariable = new UserVariable();
+
+            /// <summary>
+            /// Work with MSBuild
+            /// </summary>
+            public IMSBuild msbuild;
+
+            /// <summary>
+            /// Work with SBE-Scripts
+            /// </summary>
+            public ISBEScript script;
+
+            public ToolContext(IEnvironment env)
+            {
+                Log.nlog.Debug("Initialize the clean context for testing.");
+                script  = new Script(new Bootloader(env, uvariable));
+                msbuild = new MSBuildParser(env, uvariable);
+            }
+        }
+        private static ToolContext context;
+
+        /// <summary>
         /// Flag of sample
         /// </summary>
         private bool _isHiddenSample = false;
 
         public ScriptCheckFrm(IEnvironment env)
         {
-            script  = new Script(env, uvariable);
-            msbuild = new MSBuildParser(env, uvariable);
             InitializeComponent();
+
+            if(context == null) {
+                context = new ToolContext(env);
+            }
+            else {
+                updateVariableList();
+            }
         }
 
         protected void updateVariableList()
@@ -70,31 +89,49 @@ namespace net.r_eg.vsSBE.UI.WForms
             listBoxUVariables.Items.Clear();
             richTextBoxUVariables.Text = String.Empty;
 
-            foreach(string var in uvariable.Definitions) {
+            foreach(string var in context.uvariable.Definitions) {
                 listBoxUVariables.Items.Add(var);
             }
         }
 
-        protected void getVariable(string ident)
+        protected string getVariable(string ident)
         {
             try {
                 evaluateVariable(ident);
-                richTextBoxUVariables.Text = uvariable.get(ident);
+                return context.uvariable.get(ident);
             }
             catch(Exception ex) {
-                richTextBoxUVariables.Text = String.Format("Fail: {0}", ex.Message);
+                return String.Format("Fail: {0}", ex.Message);
             }
         }
 
         protected void evaluateVariable(string ident)
         {
-            if(!uvariable.isUnevaluated(ident)) {
+            if(!context.uvariable.isUnevaluated(ident)) {
                 return;
             }
 
-            uvariable.evaluate(ident, (IEvaluator)script, true);
+            context.uvariable.evaluate(ident, (IEvaluator)context.script, true);
             if(MSBuildSupport) {
-                uvariable.evaluate(ident, (IEvaluator)msbuild, false);
+                context.uvariable.evaluate(ident, (IEvaluator)context.msbuild, false);
+            }
+        }
+
+        protected string execute(string data)
+        {
+            try {
+                string ret;
+                if(MSBuildSupport) {
+                    ret = context.msbuild.parse(context.script.parse(data, true));
+                }
+                else {
+                    ret = context.script.parse(data);
+                }
+                updateVariableList();
+                return ret;
+            }
+            catch(Exception ex) {
+                return String.Format("Fail: {0}", ex.Message);
             }
         }
 
@@ -106,18 +143,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void btnExecute_Click(object sender, EventArgs e)
         {
-            try {
-                if(MSBuildSupport) {
-                    richTextBoxExecuted.Text = msbuild.parse(script.parse(richTextBoxCommand.Text, true));
-                }
-                else {
-                    richTextBoxExecuted.Text = script.parse(richTextBoxCommand.Text);
-                }
-                updateVariableList();
-            }
-            catch(Exception ex) {
-                richTextBoxExecuted.Text = String.Format("Fail: {0}", ex.Message);
-            }
+            richTextBoxExecuted.Text = execute(richTextBoxCommand.Text);
         }
 
         private void richTextBoxCommand_Click(object sender, EventArgs e)
@@ -140,13 +166,13 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(listBoxUVariables.SelectedIndex == -1) {
                 return;
             }
-            uvariable.unset(listBoxUVariables.Text);
+            context.uvariable.unset(listBoxUVariables.Text);
             listBoxUVariables.Items.RemoveAt(listBoxUVariables.SelectedIndex);
         }
 
         private void menuItemUVarUnsetAll_Click(object sender, EventArgs e)
         {
-            uvariable.unsetAll();
+            context.uvariable.unsetAll();
             listBoxUVariables.Items.Clear();
             richTextBoxUVariables.Text = String.Empty;
         }
@@ -156,7 +182,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(listBoxUVariables.SelectedIndex == -1) {
                 return;
             }
-            getVariable(listBoxUVariables.Text);
+            richTextBoxUVariables.Text = getVariable(listBoxUVariables.Text);
         }
 
         private void btnDoc_Click(object sender, EventArgs e)

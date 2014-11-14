@@ -21,15 +21,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.SBEScripts.Components;
 
-namespace net.r_eg.vsSBE.SBEScripts.Components
+namespace net.r_eg.vsSBE.SBEScripts
 {
-    public static class Bootloader
+    public class Bootloader: IBootloader
     {
         /// <summary>
         /// All registered components
         /// </summary>
-        public static IEnumerable<IComponent> Components
+        public IEnumerable<IComponent> Components
         {
             get {
                 foreach(KeyValuePair<string, IComponent> component in components) {
@@ -37,11 +38,36 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 }
             }
         }
-        private static ConcurrentDictionary<string, IComponent> components = new ConcurrentDictionary<string, IComponent>();
+        protected ConcurrentDictionary<string, IComponent> components = new ConcurrentDictionary<string, IComponent>();
+
+        /// <summary>
+        /// Provides operations with environment
+        /// </summary>
+        public IEnvironment Env
+        {
+            get { return env; }
+        }
+        protected IEnvironment env;
+
+        /// <summary>
+        /// Current container of user-variables
+        /// </summary>
+        public IUserVariable UVariable
+        {
+            get { return uvariable; }
+        }
+        protected IUserVariable uvariable;
 
         /// <param name="env">Used environment</param>
         /// <param name="uvariable">Used instance of user-variable</param>
-        public static void init(IEnvironment env, IUserVariable uvariable)
+        public Bootloader(IEnvironment env, IUserVariable uvariable)
+        {
+            this.env = env;
+            this.uvariable = uvariable;
+            init();
+        }
+
+        protected virtual void init()
         {
             register(new CommentComponent());
             register(new ConditionComponent(env, uvariable));
@@ -53,7 +79,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             register(new FileComponent());
         }
 
-        private static void register(IComponent c)
+        protected void register(IComponent c)
         {
             string ident = c.Condition;
             if(String.IsNullOrEmpty(ident) || components.ContainsKey(ident)) {

@@ -135,8 +135,9 @@
     <Compile Include="Events\IExecutionOrder.cs" />
     <Compile Include="Extensions\ArrayExtension.cs" />
     <Compile Include="Extensions\ObjectExtension.cs" />
-    <Compile Include="SBEScripts\Components\Bootloader.cs" />
+    <Compile Include="SBEScripts\Bootloader.cs" />
     <Compile Include="SBEScripts\Components\Component.cs" />
+    <Compile Include="SBEScripts\IBootloader.cs" />
     <Compile Include="SBEScripts\IEvaluator.cs" />
     <Compile Include="SBEScripts\Exceptions\ScriptException.cs" />
     <Compile Include="IMatchWords.cs" />
