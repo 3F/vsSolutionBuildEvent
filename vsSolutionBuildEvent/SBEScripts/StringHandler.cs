@@ -112,5 +112,18 @@ namespace net.r_eg.vsSBE.SBEScripts
             }
             return data.Replace("\\\"", "\"");
         }
+
+        /// <summary>
+        /// Handler for special symbols
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static string hSymbols(string data)
+        {
+            if(String.IsNullOrEmpty(data)) {
+                return String.Empty;
+            }
+            return data.Replace("\\r", "\r").Replace("\\n", "\n").Replace("\\t", "\t");
+        }
     }
 }

@@ -102,19 +102,19 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// Getting the instance of used loader
         /// Initialized by default if loader not exist
         /// </summary>
-        protected IBootloader BootLoader
+        protected IBootloader Bootloader
         {
             get
             {
-                if(bootLoader == null) {
+                if(bootloader == null) {
                     Debug.Assert(env != null);
                     Debug.Assert(uvariable != null);
-                    bootLoader = new Bootloader(env, uvariable);
+                    bootloader = new Bootloader(env, uvariable);
                 }
-                return bootLoader;
+                return bootloader;
             }
         }
-        protected IBootloader bootLoader;
+        protected IBootloader bootloader;
 
         /// <summary>
         /// Current level of nesting data.
@@ -173,7 +173,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <param name="loader">Initialization with IBootloader</param>
         public Script(IBootloader loader)
         {
-            bootLoader  = loader;
+            bootloader  = loader;
             env         = loader.Env;
             uvariable   = loader.UVariable;
         }
@@ -247,7 +247,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         {
             Log.nlog.Debug("SBEScripts-selector: started with '{0}'", data);
 
-            foreach(IComponent c in BootLoader.Components)
+            foreach(IComponent c in Bootloader.Components)
             {
                 c.PostProcessingMSBuild = postProcessingMSBuild;
 
@@ -266,7 +266,7 @@ namespace net.r_eg.vsSBE.SBEScripts
                 --_depthLevel;
             }
 
-            foreach(IComponent c in BootLoader.Components)
+            foreach(IComponent c in Bootloader.Components)
             {
                 if(c.BeforeDeepen) {
                     continue; // should already parsed above

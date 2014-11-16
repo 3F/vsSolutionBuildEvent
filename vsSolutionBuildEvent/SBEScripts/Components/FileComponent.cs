@@ -220,7 +220,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             string file     = location(StringHandler.normalize(m.Groups[1].Value.Trim()));
-            string fdata    = hSymbols(m.Groups[2].Value);
+            string fdata    = StringHandler.hSymbols(m.Groups[2].Value);
 
             Log.nlog.Debug("FileComponent: stWrite started for '{0}'", file);
             try {
@@ -271,7 +271,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string type         = "Basic";
             string file         = location(StringHandler.normalize(m.Groups[2].Value.Trim()));
             string pattern      = StringHandler.normalize(m.Groups[3].Value);
-            string replacement  = hSymbols(StringHandler.normalize(m.Groups[4].Value));
+            string replacement  = StringHandler.hSymbols(StringHandler.normalize(m.Groups[4].Value));
 
             Log.nlog.Debug("stReplace: found file '{0}',  pattern '{1}',  replacement '{2}'", file, pattern, replacement);
                         
@@ -364,8 +364,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
-        /// Execution file with arguments
-        /// TODO: move to HProcess
+        /// Execute file with arguments
         /// </summary>
         /// <param name="file"></param>
         /// <param name="args"></param>
@@ -374,56 +373,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns></returns>
         protected virtual string run(string file, string args, bool silent, bool stdOut)
         {
-            Process p = new Process();
-            p.StartInfo.FileName = file;
-
-            p.StartInfo.Arguments               = args;
-            p.StartInfo.UseShellExecute         = false;
-            p.StartInfo.WorkingDirectory        = Settings.WorkPath;
-            p.StartInfo.RedirectStandardOutput  = true;
-            p.StartInfo.RedirectStandardError   = true;
-            p.StartInfo.StandardErrorEncoding   = p.StartInfo.StandardOutputEncoding 
-                                                = Actions.HProcess.EncodingOEM;
-
-            if(silent) {
-                p.StartInfo.WindowStyle     = ProcessWindowStyle.Hidden;
-                p.StartInfo.CreateNoWindow  = true;
-            }
-            else {
-                p.StartInfo.WindowStyle     = ProcessWindowStyle.Normal;
-                p.StartInfo.CreateNoWindow  = false;
-            }
-
-            p.Start();
-            p.WaitForExit(); //TODO: protection in silent mode
-
-            string errors = p.StandardError.ReadToEnd();
-            if(errors.Length > 0) {
-                throw new ComponentException(errors);
-            }
-
-            if(!stdOut) {
-                return String.Empty;
-            }
-
-            string ret = String.Empty;
-            while(!p.StandardOutput.EndOfStream) {
-                ret += p.StandardOutput.ReadLine() + System.Environment.NewLine;
-            }
-            return ret.TrimEnd(new char[]{ '\r', '\n' });
-        }
-
-        /// <summary>
-        /// Handler for special symbols
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        protected string hSymbols(string data)
-        {
-            if(String.IsNullOrEmpty(data)){
-                return String.Empty;
-            }
-            return data.Replace("\\r", "\r").Replace("\\n", "\n").Replace("\\t", "\t");
+            string ret = (new Actions.HProcess(Settings.WorkPath)).run(file, args, silent, null);
+            return (stdOut)? ret : String.Empty;
         }
 
         /// <summary>

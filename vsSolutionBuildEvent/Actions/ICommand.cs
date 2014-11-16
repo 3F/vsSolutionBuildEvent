@@ -15,21 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace net.r_eg.vsSBE.Events
+using net.r_eg.vsSBE.Events;
+
+namespace net.r_eg.vsSBE.Actions
 {
-    /// <summary>
-    /// Declaring of handling process
-    /// </summary>
-    public interface IEventProcess
+    public interface ICommand
     {
         /// <summary>
-        /// Waiting completion
+        /// Entry point for execution
         /// </summary>
-        bool Waiting { get; set; }
+        /// <param name="evt">Configured event</param>
+        /// <param name="type">Type of event</param>
+        /// <returns>true value if has been processed</returns>
+        bool exec(ISolutionEvent evt, SolutionEventType type);
 
         /// <summary>
-        /// Hiding of processing or not
+        /// Entry point for execution
         /// </summary>
-        bool Hidden { get; set; }
+        /// <param name="evt">Configured event</param>
+        /// <returns>true value if has been processed</returns>
+        bool exec(ISolutionEvent evt);
     }
 }

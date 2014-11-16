@@ -47,6 +47,12 @@ namespace net.r_eg.vsSBE
         IEnumerable<EnvDTE80.SolutionConfiguration2> SolutionConfigurations { get; }
 
         /// <summary>
+        /// Gets configuration for specific format
+        /// e.g.: http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivscfg.get_displayname.aspx
+        /// </summary>
+        string SolutionConfigurationFormat(EnvDTE80.SolutionConfiguration2 cfg);
+
+        /// <summary>
         /// Name from "Set as SturtUp Project"
         /// </summary>
         string StartupProjectString { get; }

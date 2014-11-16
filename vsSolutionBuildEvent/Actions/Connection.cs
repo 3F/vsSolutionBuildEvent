@@ -47,7 +47,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// Connection handler
         /// </summary>
-        protected SBECommand sbe;
+        protected ICommand sbe;
 
         /// <summary>
         /// Checks the allow state for action
@@ -57,7 +57,7 @@ namespace net.r_eg.vsSBE.Actions
             get { return !silent; }
         }
 
-        public Connection(SBECommand sbe)
+        public Connection(ICommand sbe)
         {
             this.sbe = sbe;
             projects = new Dictionary<string, ExecutionOrderType>();
@@ -117,7 +117,7 @@ namespace net.r_eg.vsSBE.Actions
                 }
 
                 try {
-                    if(sbe.basic(item, SolutionEventType.Post)) {
+                    if(sbe.exec(item, SolutionEventType.Post)) {
                         Log.nlog.Info("[Post] finished SBE: {0}", item.Caption);
                     }
                     Status._.add(SolutionEventType.Post, StatusType.Success);
@@ -171,7 +171,7 @@ namespace net.r_eg.vsSBE.Actions
                 }
 
                 try {
-                    if(sbe.basic(item, SolutionEventType.Cancel)) {
+                    if(sbe.exec(item, SolutionEventType.Cancel)) {
                         Log.nlog.Info("[Cancel] finished SBE: {0}", item.Caption);
                     }
                     Status._.add(SolutionEventType.Cancel, StatusType.Success);
@@ -182,11 +182,6 @@ namespace net.r_eg.vsSBE.Actions
                 }
             }
             return Status._.contains(SolutionEventType.Cancel, StatusType.Fail)? VSConstants.S_FALSE : VSConstants.S_OK;
-        }
-
-        public void updateContext(SBECommand.ShellContext context)
-        {
-            sbe.updateContext(context);
         }
 
         /// <summary>
@@ -235,7 +230,7 @@ namespace net.r_eg.vsSBE.Actions
                 }
                 else {
                     try {
-                        if(sbe.basic(evt, SolutionEventType.Transmitter)) {
+                        if(sbe.exec(evt, SolutionEventType.Transmitter)) {
                             //Log.nlog.Trace("[Transmitter]: " + Config._.Data.transmitter.caption);
                         }
                     }
@@ -284,7 +279,7 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             try {
-                if(sbe.basic(evt, (type == OWP.BuildItem.Type.Warnings)? SolutionEventType.Warnings : SolutionEventType.Errors)) {
+                if(sbe.exec(evt, (type == OWP.BuildItem.Type.Warnings)? SolutionEventType.Warnings : SolutionEventType.Errors)) {
                     Log.nlog.Info("[{0}] finished SBE: {1}", type, evt.Caption);
                 }
                 return VSConstants.S_OK;
@@ -310,7 +305,7 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             try {
-                if(sbe.basic(evt, SolutionEventType.OWP)) {
+                if(sbe.exec(evt, SolutionEventType.OWP)) {
                     Log.nlog.Info("[Output] finished SBE: {0}", evt.Caption);
                 }
                 return VSConstants.S_OK;
@@ -327,7 +322,7 @@ namespace net.r_eg.vsSBE.Actions
         protected int execPre(SBEEvent evt)
         {
             try {
-                if(sbe.basic(evt, SolutionEventType.Pre)) {
+                if(sbe.exec(evt, SolutionEventType.Pre)) {
                     Log.nlog.Info("[Pre] finished SBE: {0}", evt.Caption);
                 }
                 return VSConstants.S_OK;

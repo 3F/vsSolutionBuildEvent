@@ -44,7 +44,6 @@
             this.checkBoxIgnoreIfFailed = new System.Windows.Forms.CheckBox();
             this.checkBoxMSBuildSupport = new System.Windows.Forms.CheckBox();
             this.panelControlByOperation = new System.Windows.Forms.Panel();
-            this.checkBoxProcessKeep = new System.Windows.Forms.CheckBox();
             this.checkBoxWaitForExit = new System.Windows.Forms.CheckBox();
             this.checkBoxProcessHide = new System.Windows.Forms.CheckBox();
             this.checkBoxStatus = new System.Windows.Forms.CheckBox();
@@ -127,6 +126,8 @@
             this.toolStripMenuDocDte = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuDocMSBuild = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuDocSBE = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuDocDev = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuChangelog = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuIssue = new System.Windows.Forms.ToolStripMenuItem();
@@ -151,8 +152,6 @@
             this.panelLineForSplit = new System.Windows.Forms.Panel();
             this.panelEventType = new System.Windows.Forms.Panel();
             this.comboBoxEvents = new System.Windows.Forms.ComboBox();
-            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuDocDev = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl.SuspendLayout();
             this.tabPageSettings.SuspendLayout();
             this.panelSettingsMain.SuspendLayout();
@@ -253,7 +252,9 @@
             // checkBoxSBEScriptSupport
             // 
             this.checkBoxSBEScriptSupport.AutoSize = true;
-            this.checkBoxSBEScriptSupport.Location = new System.Drawing.Point(8, 126);
+            this.checkBoxSBEScriptSupport.Checked = true;
+            this.checkBoxSBEScriptSupport.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxSBEScriptSupport.Location = new System.Drawing.Point(8, 105);
             this.checkBoxSBEScriptSupport.Name = "checkBoxSBEScriptSupport";
             this.checkBoxSBEScriptSupport.Size = new System.Drawing.Size(120, 17);
             this.checkBoxSBEScriptSupport.TabIndex = 21;
@@ -265,7 +266,7 @@
             this.checkBoxOperationsAbort.AutoSize = true;
             this.checkBoxOperationsAbort.Checked = true;
             this.checkBoxOperationsAbort.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxOperationsAbort.Location = new System.Drawing.Point(8, 147);
+            this.checkBoxOperationsAbort.Location = new System.Drawing.Point(8, 126);
             this.checkBoxOperationsAbort.Name = "checkBoxOperationsAbort";
             this.checkBoxOperationsAbort.Size = new System.Drawing.Size(161, 17);
             this.checkBoxOperationsAbort.TabIndex = 20;
@@ -277,11 +278,11 @@
             this.checkBoxIgnoreIfFailed.AutoSize = true;
             this.checkBoxIgnoreIfFailed.Checked = true;
             this.checkBoxIgnoreIfFailed.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxIgnoreIfFailed.Location = new System.Drawing.Point(8, 84);
+            this.checkBoxIgnoreIfFailed.Location = new System.Drawing.Point(8, 63);
             this.checkBoxIgnoreIfFailed.Name = "checkBoxIgnoreIfFailed";
-            this.checkBoxIgnoreIfFailed.Size = new System.Drawing.Size(135, 17);
+            this.checkBoxIgnoreIfFailed.Size = new System.Drawing.Size(117, 17);
             this.checkBoxIgnoreIfFailed.TabIndex = 19;
-            this.checkBoxIgnoreIfFailed.Text = "Ignore if the build failed";
+            this.checkBoxIgnoreIfFailed.Text = "Ignore if build failed";
             this.checkBoxIgnoreIfFailed.UseVisualStyleBackColor = true;
             // 
             // checkBoxMSBuildSupport
@@ -289,7 +290,7 @@
             this.checkBoxMSBuildSupport.AutoSize = true;
             this.checkBoxMSBuildSupport.Checked = true;
             this.checkBoxMSBuildSupport.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxMSBuildSupport.Location = new System.Drawing.Point(8, 105);
+            this.checkBoxMSBuildSupport.Location = new System.Drawing.Point(8, 84);
             this.checkBoxMSBuildSupport.Name = "checkBoxMSBuildSupport";
             this.checkBoxMSBuildSupport.Size = new System.Drawing.Size(103, 17);
             this.checkBoxMSBuildSupport.TabIndex = 17;
@@ -298,27 +299,13 @@
             // 
             // panelControlByOperation
             // 
-            this.panelControlByOperation.Controls.Add(this.checkBoxProcessKeep);
             this.panelControlByOperation.Controls.Add(this.checkBoxWaitForExit);
             this.panelControlByOperation.Controls.Add(this.checkBoxProcessHide);
             this.panelControlByOperation.Location = new System.Drawing.Point(0, 21);
             this.panelControlByOperation.Margin = new System.Windows.Forms.Padding(0);
             this.panelControlByOperation.Name = "panelControlByOperation";
-            this.panelControlByOperation.Size = new System.Drawing.Size(171, 63);
+            this.panelControlByOperation.Size = new System.Drawing.Size(171, 38);
             this.panelControlByOperation.TabIndex = 18;
-            // 
-            // checkBoxProcessKeep
-            // 
-            this.checkBoxProcessKeep.AutoSize = true;
-            this.checkBoxProcessKeep.Checked = true;
-            this.checkBoxProcessKeep.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxProcessKeep.Enabled = false;
-            this.checkBoxProcessKeep.Location = new System.Drawing.Point(8, 42);
-            this.checkBoxProcessKeep.Name = "checkBoxProcessKeep";
-            this.checkBoxProcessKeep.Size = new System.Drawing.Size(140, 17);
-            this.checkBoxProcessKeep.TabIndex = 18;
-            this.checkBoxProcessKeep.Text = "Keep window with result";
-            this.checkBoxProcessKeep.UseVisualStyleBackColor = true;
             // 
             // checkBoxWaitForExit
             // 
@@ -343,7 +330,6 @@
             this.checkBoxProcessHide.TabIndex = 17;
             this.checkBoxProcessHide.Text = "Hide process";
             this.checkBoxProcessHide.UseVisualStyleBackColor = true;
-            this.checkBoxProcessHide.CheckedChanged += new System.EventHandler(this.checkBoxProcessHide_CheckedChanged);
             // 
             // checkBoxStatus
             // 
@@ -1025,9 +1011,9 @@
             this.toolStripMenuHelp,
             this.toolStripMenuBug,
             this.toolStripMenuVersion});
-            this.statusStrip.Location = new System.Drawing.Point(111, 7);
+            this.statusStrip.Location = new System.Drawing.Point(142, 7);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(189, 22);
+            this.statusStrip.Size = new System.Drawing.Size(158, 22);
             this.statusStrip.TabIndex = 81;
             // 
             // toolStripMenuSpring
@@ -1053,21 +1039,21 @@
             // toolStripMenuApply
             // 
             this.toolStripMenuApply.Name = "toolStripMenuApply";
-            this.toolStripMenuApply.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuApply.Size = new System.Drawing.Size(105, 22);
             this.toolStripMenuApply.Text = "Apply";
             this.toolStripMenuApply.Click += new System.EventHandler(this.toolStripMenuApply_Click);
             // 
             // toolStripMenuReset
             // 
             this.toolStripMenuReset.Name = "toolStripMenuReset";
-            this.toolStripMenuReset.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuReset.Size = new System.Drawing.Size(105, 22);
             this.toolStripMenuReset.Text = "Reset";
             this.toolStripMenuReset.Click += new System.EventHandler(this.toolStripMenuReset_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(102, 6);
             // 
             // toolStripMenuTools
             // 
@@ -1078,7 +1064,7 @@
             this.toolStripMenuDTECmdExec,
             this.menuSBEScript});
             this.toolStripMenuTools.Name = "toolStripMenuTools";
-            this.toolStripMenuTools.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuTools.Size = new System.Drawing.Size(105, 22);
             this.toolStripMenuTools.Text = "Tools";
             // 
             // toolStripMenuMSBuildProp
@@ -1191,6 +1177,18 @@
             this.toolStripMenuDocSBE.Size = new System.Drawing.Size(162, 22);
             this.toolStripMenuDocSBE.Text = "SBE-Scripts";
             this.toolStripMenuDocSBE.Click += new System.EventHandler(this.toolStripMenuDocSBE_Click);
+            // 
+            // toolStripSeparator10
+            // 
+            this.toolStripSeparator10.Name = "toolStripSeparator10";
+            this.toolStripSeparator10.Size = new System.Drawing.Size(159, 6);
+            // 
+            // toolStripMenuDocDev
+            // 
+            this.toolStripMenuDocDev.Name = "toolStripMenuDocDev";
+            this.toolStripMenuDocDev.Size = new System.Drawing.Size(162, 22);
+            this.toolStripMenuDocDev.Text = "For developers";
+            this.toolStripMenuDocDev.Click += new System.EventHandler(this.toolStripMenuDocDev_Click);
             // 
             // toolStripMenuChangelog
             // 
@@ -1447,18 +1445,6 @@
             this.comboBoxEvents.TabIndex = 42;
             this.comboBoxEvents.SelectedIndexChanged += new System.EventHandler(this.comboBoxEvents_SelectedIndexChanged);
             // 
-            // toolStripSeparator10
-            // 
-            this.toolStripSeparator10.Name = "toolStripSeparator10";
-            this.toolStripSeparator10.Size = new System.Drawing.Size(159, 6);
-            // 
-            // toolStripMenuDocDev
-            // 
-            this.toolStripMenuDocDev.Name = "toolStripMenuDocDev";
-            this.toolStripMenuDocDev.Size = new System.Drawing.Size(162, 22);
-            this.toolStripMenuDocDev.Text = "For developers";
-            this.toolStripMenuDocDev.Click += new System.EventHandler(this.toolStripMenuDocDev_Click);
-            // 
             // EventsFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1528,7 +1514,6 @@
         private System.Windows.Forms.CheckBox checkBoxIgnoreIfFailed;
         private System.Windows.Forms.CheckBox checkBoxMSBuildSupport;
         private System.Windows.Forms.Panel panelControlByOperation;
-        private System.Windows.Forms.CheckBox checkBoxProcessKeep;
         private System.Windows.Forms.CheckBox checkBoxWaitForExit;
         private System.Windows.Forms.CheckBox checkBoxProcessHide;
         private System.Windows.Forms.CheckBox checkBoxStatus;

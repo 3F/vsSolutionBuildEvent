@@ -148,7 +148,6 @@ namespace net.r_eg.vsSBE.UI.WForms
             evt.IgnoreIfBuildFailed     = checkBoxIgnoreIfFailed.Checked;
             evt.Process.Waiting         = checkBoxWaitForExit.Checked;
             evt.Process.Hidden          = checkBoxProcessHide.Checked;
-            evt.Process.KeepWindow      = checkBoxProcessKeep.Checked;
             evt.ToConfiguration         = checkedListBoxSpecCfg.CheckedItems.OfType<string>().ToArray();
             evt.ExecutionOrder          = getExecutionOrder();
 
@@ -255,7 +254,6 @@ namespace net.r_eg.vsSBE.UI.WForms
             checkBoxIgnoreIfFailed.Checked      = evt.IgnoreIfBuildFailed;
             checkBoxWaitForExit.Checked         = evt.Process.Waiting;
             checkBoxProcessHide.Checked         = evt.Process.Hidden;
-            checkBoxProcessKeep.Checked         = evt.Process.KeepWindow;
 
             if(evt.Mode == null) {
                 Log.nlog.Warn("The Mode is corrupt, reinitialized with default type");
@@ -610,11 +608,6 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void listBoxOperation_SelectedIndexChanged(object sender, EventArgs e)
         {
             operationsAction(listBoxOperation);
-        }
-
-        private void checkBoxProcessHide_CheckedChanged(object sender, EventArgs e)
-        {
-            checkBoxProcessKeep.Enabled = !checkBoxProcessHide.Checked;
         }
 
         private void buttonEnvVariables_Click(object sender, EventArgs e)

@@ -59,7 +59,6 @@ namespace net.r_eg.vsSBE.Upgrade.v08
             ret.IgnoreIfBuildFailed = evt.buildFailedIgnore;
             ret.Name                = "Act1";
             ret.Process.Hidden      = evt.processHide;
-            ret.Process.KeepWindow  = evt.processKeep;
             ret.Process.Waiting     = evt.waitForExit;
             ret.SupportMSBuild      = evt.parseVariablesMSBuild;
             ret.SupportSBEScripts   = true;

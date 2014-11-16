@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,43 +16,15 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using net.r_eg.vsSBE.Events;
-using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts;
 
 namespace net.r_eg.vsSBE.Actions
 {
-    public class SBECommand
+    public class Command: ICommand
     {
-        const string CMD_DEFAULT = "cmd";
-
-        public class ShellContext
-        {
-            public string path;
-            public string disk;
-
-            public ShellContext(string path)
-            {
-                this.path = path;
-                this.disk = getDisk(path);
-            }
-
-            protected string getDisk(string path)
-            {
-                if(String.IsNullOrEmpty(path)) {
-                    throw new SBEException("path is empty or null");
-                }
-                return path.Substring(0, 1);
-            }
-        }
-
         /// <summary>
         /// Work with SBE-Scripts
         /// </summary>
@@ -66,7 +38,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// Used environment
         /// </summary>
-        protected Environment env;
+        protected IEnvironment env;
 
         /// <summary>
         /// For additional handling
@@ -74,15 +46,12 @@ namespace net.r_eg.vsSBE.Actions
         protected SolutionEventType type = SolutionEventType.General;
 
         /// <summary>
-        /// Current working context for scripts or files
+        /// Entry point for execution
         /// </summary>
-        protected ShellContext context;
-
-        /// <summary>
-        /// basic implementation
-        /// </summary>
-        /// <param name="evt">provided sbe-events</param>
-        public bool basic(ISolutionEvent evt, SolutionEventType type)
+        /// <param name="evt">Configured event</param>
+        /// <param name="type">Type of event</param>
+        /// <returns>true value if has been processed</returns>
+        public bool exec(ISolutionEvent evt, SolutionEventType type)
         {
             if(!evt.Enabled){
                 return false;
@@ -99,7 +68,8 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             Log.nlog.Info("Launching action '{0}' :: Configuration - '{1}'", evt.Caption, cfg);
-            switch(evt.Mode.Type) {
+            switch(evt.Mode.Type)
+            {
                 case ModeType.Operation: {
                     Log.nlog.Info("Use Operation Mode");
                     return hModeOperation(evt);
@@ -113,32 +83,37 @@ namespace net.r_eg.vsSBE.Actions
             return hModeFile(evt);
         }
 
+        /// <summary>
+        /// Entry point for execution
+        /// </summary>
+        /// <param name="evt">Configured event</param>
+        /// <returns>true value if has been processed</returns>
+        public bool exec(ISolutionEvent evt)
+        {
+            return exec(evt, SolutionEventType.General);
+        }
+
         /// <param name="env">Used environment</param>
         /// <param name="script">Used SBE-Scripts</param>
         /// <param name="msbuild">Used MSBuild</param>
-        public SBECommand(Environment env, ISBEScript script, IMSBuild msbuild)
+        public Command(IEnvironment env, ISBEScript script, IMSBuild msbuild)
         {
             this.env        = env;
             this.script     = script;
             this.msbuild    = msbuild;
         }
 
-        public void updateContext(ShellContext context)
-        {
-            this.context = context;
-        }
-
-        protected virtual bool hModeFile(ISolutionEvent evt)
+        protected bool hModeFile(ISolutionEvent evt)
         {
             string cFiles = ((IModeFile)evt.Mode).Command;
 
-            parseScript(evt, ref cFiles);
-            useShell(evt, _treatNewlineAs(" & ", cFiles));
+            parse(evt, ref cFiles);
+            useShell(evt, treatNewlineAs(" & ", cFiles));
 
             return true;
         }
 
-        protected virtual bool hModeOperation(ISolutionEvent evt)
+        protected bool hModeOperation(ISolutionEvent evt)
         {
             IModeOperation operation = (IModeOperation)evt.Mode;
             if(operation.Command == null || operation.Command.Length < 1) {
@@ -148,13 +123,13 @@ namespace net.r_eg.vsSBE.Actions
             return true;
         }
 
-        protected virtual bool hModeScript(ISolutionEvent evt)
+        protected bool hModeScript(ISolutionEvent evt)
         {
             string script   = ((IModeInterpreter)evt.Mode).Command;
             string wrapper  = ((IModeInterpreter)evt.Mode).Wrapper;
 
-            parseScript(evt, ref script);
-            script = _treatNewlineAs(((IModeInterpreter)evt.Mode).Newline, script);
+            parse(evt, ref script);
+            script = treatNewlineAs(((IModeInterpreter)evt.Mode).Newline, script);
 
             switch(wrapper.Length) {
                 case 1: {
@@ -179,37 +154,15 @@ namespace net.r_eg.vsSBE.Actions
             return true;
         }
 
-        protected void useShell(ISolutionEvent evt, string cmd)
+        protected virtual void useShell(ISolutionEvent evt, string cmd)
         {
-            ProcessStartInfo psi = new ProcessStartInfo(CMD_DEFAULT);
-            if(evt.Process.Hidden) {
-                psi.WindowStyle = ProcessWindowStyle.Hidden;
-            }
-            //psi.StandardErrorEncoding = psi.StandardOutputEncoding = Encoding.GetEncoding(OEMCodePage);
+            Log.nlog.Info("Prepared command: '{0}'",  cmd);
 
-            string args = String.Format("/C cd {0}{1} & {2}",
-                                        context.path,
-                                        (context.disk != null) ? " & " + context.disk + ":" : "", cmd);
-
-            if(!evt.Process.Hidden && evt.Process.KeepWindow) {
-                args += " & pause";
-            }
-
-            Log.nlog.Info(cmd);
-
-            //TODO: stdout/stderr capture & add to OWP
-
-            psi.Arguments       = args;
-            Process process     = new Process();
-            process.StartInfo   = psi;
-            process.Start();
-
-            if(evt.Process.Waiting) {
-                process.WaitForExit();
-            }
+            HProcess p = new HProcess(Settings.WorkPath);
+            p.useShell(cmd, evt.Process.Waiting, evt.Process.Hidden);
         }
 
-        protected void parseScript(ISolutionEvent evt, ref string data)
+        protected virtual void parse(ISolutionEvent evt, ref string data)
         {
             if(evt.SupportSBEScripts) {
                 data = script.parse(data, evt.SupportMSBuild);
@@ -220,8 +173,11 @@ namespace net.r_eg.vsSBE.Actions
             }
         }
 
-        private string _treatNewlineAs(string str, string data)
+        protected string treatNewlineAs(string str, string data)
         {
+            if(String.IsNullOrEmpty(data)) {
+                return String.Empty;
+            }
             return data.Trim(new char[]{'\r', '\n'}).Replace("\r", "").Replace("\n", str);
         }
     }

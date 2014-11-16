@@ -38,15 +38,5 @@ namespace net.r_eg.vsSBE.Events
             set { hidden = value; }
         }
         private bool hidden = true;
-
-        /// <summary>
-        /// Closing the window with result or not
-        /// </summary>
-        public bool KeepWindow
-        {
-            get { return keepWindow; }
-            set { keepWindow = value; }
-        }
-        private bool keepWindow = false;
     }
 }

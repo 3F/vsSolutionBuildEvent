@@ -126,7 +126,6 @@ namespace net.r_eg.vsSBE
                 FindToolWindow(typeof(UI.Xaml.StatusToolWindow), 0, true);
 
                 Config._.load(extractPath(Dte2));
-                _c.updateContext(new SBECommand.ShellContext(Settings.WorkPath));
 
                 _state();
                 _menuItemMain.Visible = true;
@@ -219,9 +218,9 @@ namespace net.r_eg.vsSBE
             _env = new Environment(Dte2);
 
             _c = new Connection(
-                    new SBECommand(_env,
-                                    new Script(new Bootloader(_env, uvariable)),
-                                    new MSBuildParser(_env, uvariable))
+                    new Command(_env,
+                                new Script(new Bootloader(_env, uvariable)),
+                                new MSBuildParser(_env, uvariable))
             );
 
             _owpBuild = new OWP.Listener(_env, "Build");
