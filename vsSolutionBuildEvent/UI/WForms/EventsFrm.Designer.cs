@@ -48,8 +48,9 @@
             this.checkBoxProcessHide = new System.Windows.Forms.CheckBox();
             this.checkBoxStatus = new System.Windows.Forms.CheckBox();
             this.groupBoxPMode = new System.Windows.Forms.GroupBox();
-            this.radioModeOperation = new System.Windows.Forms.RadioButton();
             this.radioModeScript = new System.Windows.Forms.RadioButton();
+            this.radioModeOperation = new System.Windows.Forms.RadioButton();
+            this.radioModeInterpreter = new System.Windows.Forms.RadioButton();
             this.radioModeFiles = new System.Windows.Forms.RadioButton();
             this.panelCommand = new System.Windows.Forms.Panel();
             this.textBoxCommand = new System.Windows.Forms.RichTextBox();
@@ -344,8 +345,9 @@
             // 
             // groupBoxPMode
             // 
-            this.groupBoxPMode.Controls.Add(this.radioModeOperation);
             this.groupBoxPMode.Controls.Add(this.radioModeScript);
+            this.groupBoxPMode.Controls.Add(this.radioModeOperation);
+            this.groupBoxPMode.Controls.Add(this.radioModeInterpreter);
             this.groupBoxPMode.Controls.Add(this.radioModeFiles);
             this.groupBoxPMode.Location = new System.Drawing.Point(206, 5);
             this.groupBoxPMode.Name = "groupBoxPMode";
@@ -353,6 +355,17 @@
             this.groupBoxPMode.TabIndex = 67;
             this.groupBoxPMode.TabStop = false;
             this.groupBoxPMode.Text = "Processing mode";
+            // 
+            // radioModeScript
+            // 
+            this.radioModeScript.AutoSize = true;
+            this.radioModeScript.Location = new System.Drawing.Point(6, 90);
+            this.radioModeScript.Name = "radioModeScript";
+            this.radioModeScript.Size = new System.Drawing.Size(82, 17);
+            this.radioModeScript.TabIndex = 26;
+            this.radioModeScript.Text = "Script Mode";
+            this.radioModeScript.UseVisualStyleBackColor = true;
+            this.radioModeScript.CheckedChanged += new System.EventHandler(this.radioModeScript_CheckedChanged);
             // 
             // radioModeOperation
             // 
@@ -366,16 +379,16 @@
             this.radioModeOperation.UseVisualStyleBackColor = true;
             this.radioModeOperation.CheckedChanged += new System.EventHandler(this.radioModeOperation_CheckedChanged);
             // 
-            // radioModeScript
+            // radioModeInterpreter
             // 
-            this.radioModeScript.AutoSize = true;
-            this.radioModeScript.Location = new System.Drawing.Point(6, 67);
-            this.radioModeScript.Name = "radioModeScript";
-            this.radioModeScript.Size = new System.Drawing.Size(103, 17);
-            this.radioModeScript.TabIndex = 23;
-            this.radioModeScript.Text = "Interpreter Mode";
-            this.radioModeScript.UseVisualStyleBackColor = true;
-            this.radioModeScript.CheckedChanged += new System.EventHandler(this.radioModeScript_CheckedChanged);
+            this.radioModeInterpreter.AutoSize = true;
+            this.radioModeInterpreter.Location = new System.Drawing.Point(6, 67);
+            this.radioModeInterpreter.Name = "radioModeInterpreter";
+            this.radioModeInterpreter.Size = new System.Drawing.Size(103, 17);
+            this.radioModeInterpreter.TabIndex = 23;
+            this.radioModeInterpreter.Text = "Interpreter Mode";
+            this.radioModeInterpreter.UseVisualStyleBackColor = true;
+            this.radioModeInterpreter.CheckedChanged += new System.EventHandler(this.radioModeInterpreter_CheckedChanged);
             // 
             // radioModeFiles
             // 
@@ -1519,7 +1532,7 @@
         private System.Windows.Forms.CheckBox checkBoxStatus;
         private System.Windows.Forms.GroupBox groupBoxPMode;
         private System.Windows.Forms.RadioButton radioModeOperation;
-        private System.Windows.Forms.RadioButton radioModeScript;
+        private System.Windows.Forms.RadioButton radioModeInterpreter;
         private System.Windows.Forms.RadioButton radioModeFiles;
         private System.Windows.Forms.Panel panelCommand;
         private System.Windows.Forms.RichTextBox textBoxCommand;
@@ -1623,6 +1636,7 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuDocSBE;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuDocDev;
+        private System.Windows.Forms.RadioButton radioModeScript;
 
     }
 }

@@ -82,16 +82,22 @@ namespace net.r_eg.vsSBE.Events
     public enum ModeType
     {
         /// <summary>
-        /// external commands
+        /// External handling with files.
         /// </summary>
         File,
         /// <summary>
-        /// command script
+        /// Processing with external interpreter.
+        /// generally, it's a stream processor etc.
         /// </summary>
         Interpreter,
         /// <summary>
-        /// DTE commands
+        /// DTE-commands - operations with EnvDTE.
         /// </summary>
         Operation,
+        /// <summary>
+        /// Script processing.
+        /// generally, it's internal handling with MSBuild / SBE-Scripts cores, and similar
+        /// </summary>
+        Script,
     }
 }

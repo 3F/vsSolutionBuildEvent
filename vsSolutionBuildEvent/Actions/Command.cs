@@ -18,6 +18,7 @@
 using System;
 using System.Linq;
 using net.r_eg.vsSBE.Events;
+using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts;
 
@@ -76,6 +77,10 @@ namespace net.r_eg.vsSBE.Actions
                 }
                 case ModeType.Interpreter: {
                     Log.nlog.Info("Use Interpreter Mode");
+                    return hModeInterpreter(evt);
+                }
+                case ModeType.Script: {
+                    Log.nlog.Info("Use Script Mode");
                     return hModeScript(evt);
                 }
             }
@@ -123,8 +128,12 @@ namespace net.r_eg.vsSBE.Actions
             return true;
         }
 
-        protected bool hModeScript(ISolutionEvent evt)
+        protected bool hModeInterpreter(ISolutionEvent evt)
         {
+            if(((IModeInterpreter)evt.Mode).Handler.Trim().Length < 1) {
+                throw new NotFoundException("Interpreter: Handler is empty or not selected.");
+            }
+
             string script   = ((IModeInterpreter)evt.Mode).Command;
             string wrapper  = ((IModeInterpreter)evt.Mode).Wrapper;
 
@@ -145,12 +154,14 @@ namespace net.r_eg.vsSBE.Actions
                     break;
                 }
             }
-
-            if(((IModeInterpreter)evt.Mode).Handler.Trim().Length < 1) {
-                Log.nlog.Debug("Interpreter: ignoring useShell. Handler is not selected.");
-                return true;
-            }
             useShell(evt, string.Format("{0} {1}", ((IModeInterpreter)evt.Mode).Handler, script));
+            return true;
+        }
+
+        protected bool hModeScript(ISolutionEvent evt)
+        {
+            string script = ((IModeScript)evt.Mode).Command;
+            parse(evt, ref script);
             return true;
         }
 

@@ -151,7 +151,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             evt.ToConfiguration         = checkedListBoxSpecCfg.CheckedItems.OfType<string>().ToArray();
             evt.ExecutionOrder          = getExecutionOrder();
 
-            if(radioModeScript.Checked)
+            if(radioModeInterpreter.Checked)
             {
                 evt.Mode = new ModeInterpreter() {
                     Command = textBoxCommand.Text,
@@ -163,6 +163,12 @@ namespace net.r_eg.vsSBE.UI.WForms
             else if(radioModeFiles.Checked)
             {
                 evt.Mode = new ModeFile() {
+                    Command = textBoxCommand.Text
+                };
+            }
+            else if(radioModeScript.Checked)
+            {
+                evt.Mode = new ModeScript() {
                     Command = textBoxCommand.Text
                 };
             }
@@ -263,17 +269,22 @@ namespace net.r_eg.vsSBE.UI.WForms
             switch(evt.Mode.Type) {
                 case ModeType.Interpreter:
                 {
-                    radioModeScript.Checked = true;
-                    textBoxCommand.Text         = ((IModeInterpreter)evt.Mode).Command;
-                    comboBoxInterpreter.Text    = ((IModeInterpreter)evt.Mode).Handler;
-                    comboBoxNewline.Text        = ((IModeInterpreter)evt.Mode).Newline;
-                    comboBoxWrapper.Text        = ((IModeInterpreter)evt.Mode).Wrapper;
+                    radioModeInterpreter.Checked    = true;
+                    textBoxCommand.Text             = ((IModeInterpreter)evt.Mode).Command;
+                    comboBoxInterpreter.Text        = ((IModeInterpreter)evt.Mode).Handler;
+                    comboBoxNewline.Text            = ((IModeInterpreter)evt.Mode).Newline;
+                    comboBoxWrapper.Text            = ((IModeInterpreter)evt.Mode).Wrapper;
                     return;
                 }
                 case ModeType.File:
                 {
                     radioModeFiles.Checked = true;
                     textBoxCommand.Text = ((IModeFile)evt.Mode).Command;
+                    return;
+                }
+                case ModeType.Script: {
+                    radioModeScript.Checked = true;
+                    textBoxCommand.Text = ((IModeScript)evt.Mode).Command;
                     return;
                 }
                 case ModeType.Operation:
@@ -285,7 +296,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                         textBoxCommand.Text = "> " + mode.Caption;
                     }
                     else {
-                        textBoxCommand.Text = (mode.Command == null) ? "" : logic.joinOperations(mode.Command);
+                        textBoxCommand.Text = (mode.Command == null)? "" : logic.joinOperations(mode.Command);
                     }
                     checkBoxOperationsAbort.Checked = mode.AbortOnFirstError;
                     return;
@@ -397,22 +408,29 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         protected void uiViewMode(ModeType type)
         {
-            groupBoxInterpreter.Enabled     = false;
-            listBoxOperation.Enabled        = false;
-            textBoxCommand.Enabled          = true;
-            textBoxCommand.Text             = String.Empty;
-            panelControlByOperation.Enabled = true;
-            checkBoxOperationsAbort.Enabled = false;
+            groupBoxInterpreter.Enabled         = false;
+            listBoxOperation.Enabled            = false;
+            textBoxCommand.Enabled              = true;
+            textBoxCommand.Text                 = String.Empty;
+            panelControlByOperation.Enabled     = true;
+            checkBoxOperationsAbort.Enabled     = false;
+            checkBoxSBEScriptSupport.Enabled    = true;
 
             if(type == ModeType.Interpreter)
             {
-                labelToCommandBox.Text = "Command script:";
+                labelToCommandBox.Text = "Command script for stream processor:";
                 groupBoxInterpreter.Enabled = true;
                 return;
             }
             if(type == ModeType.File)
             {
                 labelToCommandBox.Text = "Files to execute (separated by enter key):";
+                return;
+            }
+            if(type == ModeType.Script) {
+                labelToCommandBox.Text = "Script:";
+                checkBoxSBEScriptSupport.Enabled = false;
+                checkBoxSBEScriptSupport.Checked = true;
                 return;
             }
             if(type == ModeType.Operation)
@@ -647,11 +665,6 @@ namespace net.r_eg.vsSBE.UI.WForms
             comboBoxEvents_SelectedIndexChanged(sender, e);
         }
 
-        private void radioModeScript_CheckedChanged(object sender, EventArgs e)
-        {
-            uiViewMode(ModeType.Interpreter);
-        }
-
         private void radioModeFiles_CheckedChanged(object sender, EventArgs e)
         {
             uiViewMode(ModeType.File);
@@ -660,6 +673,16 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void radioModeOperation_CheckedChanged(object sender, EventArgs e)
         {
             uiViewMode(ModeType.Operation);
+        }
+
+        private void radioModeInterpreter_CheckedChanged(object sender, EventArgs e)
+        {
+            uiViewMode(ModeType.Interpreter);
+        }
+
+        private void radioModeScript_CheckedChanged(object sender, EventArgs e)
+        {
+            uiViewMode(ModeType.Script);
         }
 
         private void dataGridViewOutput_CellClick(object sender, DataGridViewCellEventArgs e)
