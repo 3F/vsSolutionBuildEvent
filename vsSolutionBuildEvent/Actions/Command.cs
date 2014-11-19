@@ -17,6 +17,7 @@
 
 using System;
 using System.Linq;
+using EnvDTE;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild;
@@ -47,6 +48,16 @@ namespace net.r_eg.vsSBE.Actions
         protected SolutionEventType type = SolutionEventType.General;
 
         /// <summary>
+        /// Type of build action
+        /// </summary>
+        protected BuildType buildType;
+
+        /// <summary>
+        /// Provides a list of events for solution builds
+        /// </summary>
+        private BuildEvents _buildEvents;
+
+        /// <summary>
         /// Entry point for execution
         /// </summary>
         /// <param name="evt">Configured event</param>
@@ -55,6 +66,10 @@ namespace net.r_eg.vsSBE.Actions
         public bool exec(ISolutionEvent evt, SolutionEventType type)
         {
             if(!evt.Enabled){
+                return false;
+            }
+            if(evt.BuildType != BuildType.Common && evt.BuildType != buildType) {
+                Log.nlog.Debug("Ignored context. Build type '{0}'", buildType);
                 return false;
             }
             this.type = type;
@@ -106,6 +121,14 @@ namespace net.r_eg.vsSBE.Actions
             this.env        = env;
             this.script     = script;
             this.msbuild    = msbuild;
+
+            _buildEvents = this.env.DTE2.Events.BuildEvents; // protection from garbage collector
+
+            // VSSOLNBUILDUPDATEFLAGS with IVsUpdateSolutionEvents4 only for VS2012 and higher
+            // http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivsupdatesolutionevents4.updatesolution_beginupdateaction.aspx
+            _buildEvents.OnBuildBegin += new _dispBuildEvents_OnBuildBeginEventHandler((vsBuildScope Scope, vsBuildAction Action) => {
+                buildType = (BuildType)Action;
+            });
         }
 
         protected bool hModeFile(ISolutionEvent evt)

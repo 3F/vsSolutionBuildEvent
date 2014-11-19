@@ -150,6 +150,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             evt.Process.Hidden          = checkBoxProcessHide.Checked;
             evt.ToConfiguration         = checkedListBoxSpecCfg.CheckedItems.OfType<string>().ToArray();
             evt.ExecutionOrder          = getExecutionOrder();
+            evt.BuildType               = (chkBuildContext.Checked)? logic.getBuildTypeBy(comboBoxBuildContext.SelectedIndex) : BuildType.Common;
 
             if(radioModeInterpreter.Checked)
             {
@@ -260,6 +261,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             checkBoxIgnoreIfFailed.Checked      = evt.IgnoreIfBuildFailed;
             checkBoxWaitForExit.Checked         = evt.Process.Waiting;
             checkBoxProcessHide.Checked         = evt.Process.Hidden;
+            buildTypeSelect(evt.BuildType);
 
             if(evt.Mode == null) {
                 Log.nlog.Warn("The Mode is corrupt, reinitialized with default type");
@@ -550,6 +552,17 @@ namespace net.r_eg.vsSBE.UI.WForms
             return ret.ToArray();
         }
 
+        protected void buildTypeSelect(BuildType type)
+        {
+            chkBuildContext.Checked         = type != BuildType.Common;
+            comboBoxBuildContext.Enabled    = chkBuildContext.Checked;
+
+            int index = logic.getBuildTypeIndex(type);
+            if(index >= 0) {
+                comboBoxBuildContext.SelectedIndex = index;
+            }
+        }
+
         protected void envVariablesUIHelper()
         {
             if(Util.focusForm(frmProperties)) {
@@ -604,6 +617,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
             try {
                 expandActionsList(false);
+                logic.fillBuildTypes(comboBoxBuildContext);
                 logic.fillEvents(comboBoxEvents);
             }
             catch(Exception ex) {
@@ -683,6 +697,11 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void radioModeScript_CheckedChanged(object sender, EventArgs e)
         {
             uiViewMode(ModeType.Script);
+        }
+
+        private void chkBuildContext_CheckedChanged(object sender, EventArgs e)
+        {
+            comboBoxBuildContext.Enabled = chkBuildContext.Checked;
         }
 
         private void dataGridViewOutput_CellClick(object sender, DataGridViewCellEventArgs e)

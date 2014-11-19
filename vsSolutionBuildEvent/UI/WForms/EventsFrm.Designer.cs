@@ -39,6 +39,8 @@
             this.panelSettingsMain = new System.Windows.Forms.Panel();
             this.groupBoxSettings = new System.Windows.Forms.GroupBox();
             this.panelControl = new System.Windows.Forms.Panel();
+            this.comboBoxBuildContext = new System.Windows.Forms.ComboBox();
+            this.chkBuildContext = new System.Windows.Forms.CheckBox();
             this.checkBoxSBEScriptSupport = new System.Windows.Forms.CheckBox();
             this.checkBoxOperationsAbort = new System.Windows.Forms.CheckBox();
             this.checkBoxIgnoreIfFailed = new System.Windows.Forms.CheckBox();
@@ -237,6 +239,8 @@
             // panelControl
             // 
             this.panelControl.AutoScroll = true;
+            this.panelControl.Controls.Add(this.comboBoxBuildContext);
+            this.panelControl.Controls.Add(this.chkBuildContext);
             this.panelControl.Controls.Add(this.checkBoxSBEScriptSupport);
             this.panelControl.Controls.Add(this.checkBoxOperationsAbort);
             this.panelControl.Controls.Add(this.checkBoxIgnoreIfFailed);
@@ -249,6 +253,25 @@
             this.panelControl.Name = "panelControl";
             this.panelControl.Size = new System.Drawing.Size(191, 123);
             this.panelControl.TabIndex = 32;
+            // 
+            // comboBoxBuildContext
+            // 
+            this.comboBoxBuildContext.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxBuildContext.FormattingEnabled = true;
+            this.comboBoxBuildContext.Location = new System.Drawing.Point(68, 143);
+            this.comboBoxBuildContext.Name = "comboBoxBuildContext";
+            this.comboBoxBuildContext.Size = new System.Drawing.Size(85, 21);
+            this.comboBoxBuildContext.TabIndex = 24;
+            // 
+            // chkBuildContext
+            // 
+            this.chkBuildContext.Location = new System.Drawing.Point(8, 147);
+            this.chkBuildContext.Name = "chkBuildContext";
+            this.chkBuildContext.Size = new System.Drawing.Size(65, 17);
+            this.chkBuildContext.TabIndex = 23;
+            this.chkBuildContext.Text = "Context:";
+            this.chkBuildContext.UseVisualStyleBackColor = true;
+            this.chkBuildContext.CheckedChanged += new System.EventHandler(this.chkBuildContext_CheckedChanged);
             // 
             // checkBoxSBEScriptSupport
             // 
@@ -1024,9 +1047,9 @@
             this.toolStripMenuHelp,
             this.toolStripMenuBug,
             this.toolStripMenuVersion});
-            this.statusStrip.Location = new System.Drawing.Point(142, 7);
+            this.statusStrip.Location = new System.Drawing.Point(111, 7);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(158, 22);
+            this.statusStrip.Size = new System.Drawing.Size(189, 22);
             this.statusStrip.TabIndex = 81;
             // 
             // toolStripMenuSpring
@@ -1148,7 +1171,7 @@
             this.toolStripSeparator10,
             this.toolStripMenuDocDev});
             this.toolStripMenuDocItem.Name = "toolStripMenuDocItem";
-            this.toolStripMenuDocItem.Size = new System.Drawing.Size(178, 22);
+            this.toolStripMenuDocItem.Size = new System.Drawing.Size(187, 22);
             this.toolStripMenuDocItem.Text = "Documentation";
             // 
             // toolStripMenuGalleryPage
@@ -1206,64 +1229,64 @@
             // toolStripMenuChangelog
             // 
             this.toolStripMenuChangelog.Name = "toolStripMenuChangelog";
-            this.toolStripMenuChangelog.Size = new System.Drawing.Size(178, 22);
+            this.toolStripMenuChangelog.Size = new System.Drawing.Size(187, 22);
             this.toolStripMenuChangelog.Text = "Change List";
             this.toolStripMenuChangelog.Click += new System.EventHandler(this.toolStripMenuChangelog_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(175, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(184, 6);
             // 
             // toolStripMenuIssue
             // 
             this.toolStripMenuIssue.Name = "toolStripMenuIssue";
-            this.toolStripMenuIssue.Size = new System.Drawing.Size(178, 22);
+            this.toolStripMenuIssue.Size = new System.Drawing.Size(187, 22);
             this.toolStripMenuIssue.Text = "Public Issue Tracker";
             this.toolStripMenuIssue.Click += new System.EventHandler(this.toolStripMenuIssue_Click);
             // 
             // toolStripMenuSources
             // 
             this.toolStripMenuSources.Name = "toolStripMenuSources";
-            this.toolStripMenuSources.Size = new System.Drawing.Size(178, 22);
+            this.toolStripMenuSources.Size = new System.Drawing.Size(187, 22);
             this.toolStripMenuSources.Text = "Sources";
             this.toolStripMenuSources.Click += new System.EventHandler(this.toolStripMenuSources_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(175, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(184, 6);
             // 
             // toolStripMenuForkGithub
             // 
             this.toolStripMenuForkGithub.Name = "toolStripMenuForkGithub";
-            this.toolStripMenuForkGithub.Size = new System.Drawing.Size(178, 22);
-            this.toolStripMenuForkGithub.Text = "Fork on GitHub";
+            this.toolStripMenuForkGithub.Size = new System.Drawing.Size(187, 22);
+            this.toolStripMenuForkGithub.Text = "Fork me on GitHub";
             this.toolStripMenuForkGithub.Click += new System.EventHandler(this.toolStripMenuForkGithub_Click);
             // 
             // toolStripMenuForkBitbucket
             // 
             this.toolStripMenuForkBitbucket.Name = "toolStripMenuForkBitbucket";
-            this.toolStripMenuForkBitbucket.Size = new System.Drawing.Size(178, 22);
-            this.toolStripMenuForkBitbucket.Text = "Fork on Bitbucket";
+            this.toolStripMenuForkBitbucket.Size = new System.Drawing.Size(187, 22);
+            this.toolStripMenuForkBitbucket.Text = "Fork me on Bitbucket";
             this.toolStripMenuForkBitbucket.Click += new System.EventHandler(this.toolStripMenuForkBitbucket_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(175, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(184, 6);
             // 
             // toolStripMenuLicense
             // 
             this.toolStripMenuLicense.Name = "toolStripMenuLicense";
-            this.toolStripMenuLicense.Size = new System.Drawing.Size(178, 22);
+            this.toolStripMenuLicense.Size = new System.Drawing.Size(187, 22);
             this.toolStripMenuLicense.Text = "License";
             this.toolStripMenuLicense.Click += new System.EventHandler(this.toolStripMenuLicense_Click);
             // 
             // toolStripMenuAbout
             // 
             this.toolStripMenuAbout.Name = "toolStripMenuAbout";
-            this.toolStripMenuAbout.Size = new System.Drawing.Size(178, 22);
+            this.toolStripMenuAbout.Size = new System.Drawing.Size(187, 22);
             this.toolStripMenuAbout.Text = "About";
             this.toolStripMenuAbout.Click += new System.EventHandler(this.toolStripMenuAbout_Click);
             // 
@@ -1637,6 +1660,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuDocDev;
         private System.Windows.Forms.RadioButton radioModeScript;
+        private System.Windows.Forms.ComboBox comboBoxBuildContext;
+        private System.Windows.Forms.CheckBox chkBuildContext;
 
     }
 }

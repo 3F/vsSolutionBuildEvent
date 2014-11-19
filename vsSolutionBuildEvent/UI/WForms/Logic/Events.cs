@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -138,6 +139,11 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         /// Selected item of event
         /// </summary>
         protected volatile int currentEventItem = 0;
+
+        /// <summary>
+        /// List of available types of the build
+        /// </summary>
+        protected List<BuildType> buildType = new List<BuildType>();
 
         /// <summary>
         /// Used for restoring settings
@@ -299,6 +305,40 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             combo.Items.Add(":: Transmitter :: Transmission building-data to outer handler");
 
             combo.SelectedIndex = 0;
+        }
+
+        public void fillBuildTypes(ComboBox combo)
+        {
+            buildType.Clear();
+            combo.Items.Clear();
+
+            buildType.Add(BuildType.Common);
+            combo.Items.Add("");
+
+            buildType.Add(BuildType.Build);
+            combo.Items.Add("Build");
+
+            buildType.Add(BuildType.RebuildAll);
+            combo.Items.Add("Rebuild");
+
+            buildType.Add(BuildType.Clean);
+            combo.Items.Add("Clean");
+
+            buildType.Add(BuildType.Deploy);
+            combo.Items.Add("Deploy");
+
+            combo.SelectedIndex = 0;
+        }
+
+        public int getBuildTypeIndex(BuildType type)
+        {
+            return buildType.IndexOf(type);
+        }
+
+        public BuildType getBuildTypeBy(int index)
+        {
+            Debug.Assert(index != -1);
+            return buildType[index];
         }
 
         /// <param name="copyFrom">Cloning the event-item at the specified index</param>

@@ -79,16 +79,28 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// for register events -> _cookieSEvents
+        /// For IVsSolutionEvents events
+        /// http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivssolution.aspx
         /// </summary>
-        private IVsSolution _solution;
-        private uint _cookieSEvents;
+        private IVsSolution spSolution;
 
         /// <summary>
-        /// for register events -> _cookieUpdateSEvents
+        /// Contains the cookie for advising IVsSolution
+        /// http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivssolution.advisesolutionevents.aspx
         /// </summary>
-        private IVsSolutionBuildManager _solBuildManager;
-        private uint _cookieUpdateSEvents;
+        private uint _pdwCookieSolution;
+
+        /// <summary>
+        /// For IVsUpdateSolutionEvents2 events
+        /// http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivssolutionbuildmanager2.aspx
+        /// </summary>
+        private IVsSolutionBuildManager2 spSolutionBM;
+
+        /// <summary>
+        /// Contains the cookie for advising IVsSolutionBuildManager2 / IVsSolutionBuildManager
+        /// http://msdn.microsoft.com/en-us/library/bb141335.aspx
+        /// </summary>
+        private uint _pdwCookieSolutionBM;
 
         /// <summary>
         /// VS IDE menu - Build / <Main App>
@@ -360,7 +372,7 @@ namespace net.r_eg.vsSBE
 
             try {
                 init();
-                OleMenuCommandService mcs = GetService(typeof(IMenuCommandService)) as OleMenuCommandService;
+                OleMenuCommandService mcs = (OleMenuCommandService)GetService(typeof(IMenuCommandService));
 
                 // Build / <Main App>
                 _menuItemMain = new MenuCommand(_menuMainCallback, new CommandID(GuidList.MAIN_CMD_SET, (int)PkgCmdIDList.CMD_MAIN));
@@ -370,13 +382,13 @@ namespace net.r_eg.vsSBE
                 // View / Other Windows / <Status Panel>
                 mcs.AddCommand(new MenuCommand(_menuPanelCallback, new CommandID(GuidList.PANEL_CMD_SET, (int)PkgCmdIDList.CMD_PANEL)));
 
-                // registering events - IVsSolutionEvents
-                _solution = ServiceProvider.GlobalProvider.GetService(typeof(SVsSolution)) as IVsSolution;
-                _solution.AdviseSolutionEvents(this, out _cookieSEvents);
+                // To listen events fires from IVsSolutionEvents
+                spSolution = (IVsSolution)ServiceProvider.GlobalProvider.GetService(typeof(SVsSolution));
+                spSolution.AdviseSolutionEvents(this, out _pdwCookieSolution);
 
-                // registering events - IVsUpdateSolutionEvents
-                _solBuildManager = ServiceProvider.GlobalProvider.GetService(typeof(SVsSolutionBuildManager)) as IVsSolutionBuildManager;
-                _solBuildManager.AdviseUpdateSolutionEvents(this, out _cookieUpdateSEvents);
+                // To listen events fires from IVsUpdateSolutionEvents2
+                spSolutionBM = (IVsSolutionBuildManager2)ServiceProvider.GlobalProvider.GetService(typeof(SVsSolutionBuildManager));
+                spSolutionBM.AdviseUpdateSolutionEvents(this, out _pdwCookieSolutionBM);
             }
             catch(Exception ex)
             {
@@ -411,12 +423,12 @@ namespace net.r_eg.vsSBE
         {
             UI.Util.closeTool(_configFrm);
 
-            if(_solBuildManager != null && _cookieUpdateSEvents != 0) {
-                _solBuildManager.UnadviseUpdateSolutionEvents(_cookieUpdateSEvents);
+            if(spSolutionBM != null && _pdwCookieSolutionBM != 0) {
+                spSolutionBM.UnadviseUpdateSolutionEvents(_pdwCookieSolutionBM);
             }
 
-            if(_solution != null && _cookieSEvents != 0) {
-                _solution.UnadviseSolutionEvents(_cookieSEvents);
+            if(spSolution != null && _pdwCookieSolution != 0) {
+                spSolution.UnadviseSolutionEvents(_pdwCookieSolution);
             }
             base.Dispose(disposing);
         }

@@ -53,6 +53,11 @@ namespace net.r_eg.vsSBE.Events
         bool IgnoreIfBuildFailed { get; set; }
 
         /// <summary>
+        /// Type of build action
+        /// </summary>
+        BuildType BuildType { get; set; }
+
+        /// <summary>
         /// Run only for a specific configuration of solution
         /// strings format as:
         ///   'configname'|'platformname'

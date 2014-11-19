@@ -138,6 +138,7 @@
     <Compile Include="Actions\HProcess.cs" />
     <Compile Include="Actions\ICommand.cs" />
     <Compile Include="Environment.cs" />
+    <Compile Include="Events\BuildType.cs" />
     <Compile Include="Events\ModeScript.cs" />
     <Compile Include="Events\IModeScript.cs" />
     <Compile Include="Events\ITransmitter.cs" />

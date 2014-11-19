@@ -83,6 +83,16 @@ namespace net.r_eg.vsSBE.Events
         private bool ignoreIfBuildFailed = false;
 
         /// <summary>
+        /// Type of build action
+        /// </summary>
+        public BuildType BuildType
+        {
+            get { return buildType; }
+            set { buildType = value; }
+        }
+        private BuildType buildType = BuildType.Common;
+
+        /// <summary>
         /// Run only for a specific configuration of solution
         /// strings format as:
         ///   'configname'|'platformname'
