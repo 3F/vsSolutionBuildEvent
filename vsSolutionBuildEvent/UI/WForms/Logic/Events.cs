@@ -318,7 +318,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             buildType.Add(BuildType.Build);
             combo.Items.Add("Build");
 
-            buildType.Add(BuildType.RebuildAll);
+            buildType.Add(BuildType.Rebuild);
             combo.Items.Add("Rebuild");
 
             buildType.Add(BuildType.Clean);
@@ -326,6 +326,36 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
 
             buildType.Add(BuildType.Deploy);
             combo.Items.Add("Deploy");
+
+            buildType.Add(BuildType.BuildSelection);
+            combo.Items.Add("Build Selection");
+
+            buildType.Add(BuildType.RebuildSelection);
+            combo.Items.Add("Rebuild Selection");
+
+            buildType.Add(BuildType.CleanSelection);
+            combo.Items.Add("Clean Selection");
+
+            buildType.Add(BuildType.DeploySelection);
+            combo.Items.Add("Deploy Selection");
+
+            buildType.Add(BuildType.BuildOnlyProject);
+            combo.Items.Add("Build Project");
+
+            buildType.Add(BuildType.RebuildOnlyProject);
+            combo.Items.Add("Rebuild Project");
+
+            buildType.Add(BuildType.CleanOnlyProject);
+            combo.Items.Add("Clean Project");
+
+            buildType.Add(BuildType.Compile);
+            combo.Items.Add("Compile");
+
+            buildType.Add(BuildType.LinkOnly);
+            combo.Items.Add("Link Only");
+
+            buildType.Add(BuildType.PublishSelection);
+            combo.Items.Add("Publish Selection");
 
             combo.SelectedIndex = 0;
         }

@@ -35,5 +35,11 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="evt">Configured event</param>
         /// <returns>true value if has been processed</returns>
         bool exec(ISolutionEvent evt);
+
+        /// <summary>
+        /// Updating context with the BuildType
+        /// </summary>
+        /// <param name="buildType">Type of build action</param>
+        void updateContext(BuildType buildType);
     }
 }

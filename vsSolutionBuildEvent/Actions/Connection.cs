@@ -47,7 +47,12 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// Connection handler
         /// </summary>
-        protected ICommand sbe;
+        protected ICommand cmd;
+
+        /// <summary>
+        /// Type of build action
+        /// </summary>
+        protected BuildType buildType;
 
         /// <summary>
         /// Checks the allow state for action
@@ -57,10 +62,20 @@ namespace net.r_eg.vsSBE.Actions
             get { return !silent; }
         }
 
-        public Connection(ICommand sbe)
+        public Connection(ICommand cmd)
         {
-            this.sbe = sbe;
+            this.cmd = cmd;
             projects = new Dictionary<string, ExecutionOrderType>();
+        }
+
+        /// <summary>
+        /// Updating context with the BuildType
+        /// </summary>
+        /// <param name="buildType">Type of build action</param>
+        public void updateContext(BuildType buildType)
+        {
+            this.buildType = buildType;
+            cmd.updateContext(buildType);
         }
 
         /// <summary>
@@ -117,7 +132,7 @@ namespace net.r_eg.vsSBE.Actions
                 }
 
                 try {
-                    if(sbe.exec(item, SolutionEventType.Post)) {
+                    if(cmd.exec(item, SolutionEventType.Post)) {
                         Log.nlog.Info("[Post] finished SBE: {0}", item.Caption);
                     }
                     Status._.add(SolutionEventType.Post, StatusType.Success);
@@ -171,7 +186,7 @@ namespace net.r_eg.vsSBE.Actions
                 }
 
                 try {
-                    if(sbe.exec(item, SolutionEventType.Cancel)) {
+                    if(cmd.exec(item, SolutionEventType.Cancel)) {
                         Log.nlog.Info("[Cancel] finished SBE: {0}", item.Caption);
                     }
                     Status._.add(SolutionEventType.Cancel, StatusType.Success);
@@ -230,7 +245,7 @@ namespace net.r_eg.vsSBE.Actions
                 }
                 else {
                     try {
-                        if(sbe.exec(evt, SolutionEventType.Transmitter)) {
+                        if(cmd.exec(evt, SolutionEventType.Transmitter)) {
                             //Log.nlog.Trace("[Transmitter]: " + Config._.Data.transmitter.caption);
                         }
                     }
@@ -279,7 +294,7 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             try {
-                if(sbe.exec(evt, (type == OWP.BuildItem.Type.Warnings)? SolutionEventType.Warnings : SolutionEventType.Errors)) {
+                if(cmd.exec(evt, (type == OWP.BuildItem.Type.Warnings)? SolutionEventType.Warnings : SolutionEventType.Errors)) {
                     Log.nlog.Info("[{0}] finished SBE: {1}", type, evt.Caption);
                 }
                 return VSConstants.S_OK;
@@ -305,7 +320,7 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             try {
-                if(sbe.exec(evt, SolutionEventType.OWP)) {
+                if(cmd.exec(evt, SolutionEventType.OWP)) {
                     Log.nlog.Info("[Output] finished SBE: {0}", evt.Caption);
                 }
                 return VSConstants.S_OK;
@@ -322,7 +337,7 @@ namespace net.r_eg.vsSBE.Actions
         protected int execPre(SBEEvent evt)
         {
             try {
-                if(sbe.exec(evt, SolutionEventType.Pre)) {
+                if(cmd.exec(evt, SolutionEventType.Pre)) {
                     Log.nlog.Info("[Pre] finished SBE: {0}", evt.Caption);
                 }
                 return VSConstants.S_OK;

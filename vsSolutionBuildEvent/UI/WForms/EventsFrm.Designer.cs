@@ -257,10 +257,11 @@
             // comboBoxBuildContext
             // 
             this.comboBoxBuildContext.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxBuildContext.DropDownWidth = 110;
             this.comboBoxBuildContext.FormattingEnabled = true;
             this.comboBoxBuildContext.Location = new System.Drawing.Point(68, 143);
             this.comboBoxBuildContext.Name = "comboBoxBuildContext";
-            this.comboBoxBuildContext.Size = new System.Drawing.Size(85, 21);
+            this.comboBoxBuildContext.Size = new System.Drawing.Size(101, 21);
             this.comboBoxBuildContext.TabIndex = 24;
             // 
             // chkBuildContext
@@ -1047,9 +1048,9 @@
             this.toolStripMenuHelp,
             this.toolStripMenuBug,
             this.toolStripMenuVersion});
-            this.statusStrip.Location = new System.Drawing.Point(111, 7);
+            this.statusStrip.Location = new System.Drawing.Point(142, 7);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(189, 22);
+            this.statusStrip.Size = new System.Drawing.Size(158, 22);
             this.statusStrip.TabIndex = 81;
             // 
             // toolStripMenuSpring

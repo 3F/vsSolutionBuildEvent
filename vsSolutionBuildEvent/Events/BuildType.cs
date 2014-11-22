@@ -16,7 +16,7 @@
 */
 
 using System;
-using EnvDTE;
+using Microsoft.VisualStudio;
 
 namespace net.r_eg.vsSBE.Events
 {
@@ -26,21 +26,64 @@ namespace net.r_eg.vsSBE.Events
     public enum BuildType
     {
         /// <summary>
-        /// A 'build' action is occurring.
+        /// 'build' action
         /// </summary>
-        Build = vsBuildAction.vsBuildActionBuild,
+        Build = VSConstants.VSStd97CmdID.BuildSln,
         /// <summary>
-        /// A 'rebuild all' action is occurring.
+        /// 'rebuild' action
         /// </summary>
-        RebuildAll = vsBuildAction.vsBuildActionRebuildAll,
+        Rebuild = VSConstants.VSStd97CmdID.RebuildSln,
         /// <summary>
-        /// A 'clean' action is occurring.
+        /// 'clean' action
         /// </summary>
-        Clean = vsBuildAction.vsBuildActionClean,
+        Clean = VSConstants.VSStd97CmdID.CleanSln,
         /// <summary>
-        /// A 'deploy' action is occurring.
+        /// 'deploy' action
         /// </summary>
-        Deploy = vsBuildAction.vsBuildActionDeploy,
+        Deploy = VSConstants.VSStd97CmdID.DeploySln,
+
+        /// <summary>
+        /// 'build' action for selection
+        /// </summary>
+        BuildSelection = VSConstants.VSStd97CmdID.BuildSel,
+        /// <summary>
+        /// 'rebuild' action for selection
+        /// </summary>
+        RebuildSelection = VSConstants.VSStd97CmdID.RebuildSel,
+        /// <summary>
+        /// 'clean' action for selection
+        /// </summary>
+        CleanSelection = VSConstants.VSStd97CmdID.CleanSel,
+        /// <summary>
+        /// 'deploy' action for selection
+        /// </summary>
+        DeploySelection = VSConstants.VSStd97CmdID.DeploySel,
+
+        /// <summary>
+        /// 'build' action for project
+        /// </summary>
+        BuildOnlyProject = VSConstants.VSStd2KCmdID.BuildOnlyProject,
+        /// <summary>
+        /// 'rebuild' action for project
+        /// </summary>
+        RebuildOnlyProject = VSConstants.VSStd2KCmdID.RebuildOnlyProject,
+        /// <summary>
+        /// 'clean' action for project
+        /// </summary>
+        CleanOnlyProject = VSConstants.VSStd2KCmdID.CleanOnlyProject,
+        /// <summary>
+        /// 'Compile' action
+        /// </summary>
+        Compile = VSConstants.VSStd2KCmdID.COMPILE,
+        /// <summary>
+        /// 'Link only' action
+        /// </summary>
+        LinkOnly = VSConstants.VSStd2KCmdID.LINKONLY,
+        /// <summary>
+        /// 'Publish' action for selection
+        /// </summary>
+        PublishSelection = VSConstants.VSStd2KCmdID.ECMD_PUBLISHSELECTION,
+
         /// <summary>
         /// Common context
         /// </summary>

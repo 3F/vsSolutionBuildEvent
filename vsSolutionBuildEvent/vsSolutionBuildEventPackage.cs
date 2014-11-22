@@ -132,6 +132,16 @@ namespace net.r_eg.vsSBE
         /// </summary>
         private OWP.Listener _owpBuild;
 
+        /// <summary>
+        /// Provides command events for automation clients
+        /// </summary>
+        private EnvDTE.CommandEvents _cmdEvents;
+
+        /// <summary>
+        /// object synch.
+        /// </summary>
+        private Object _lock = new Object();
+
         int IVsSolutionEvents.OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
         {
             try {
@@ -227,6 +237,7 @@ namespace net.r_eg.vsSBE
         private void init()
         {
             Log.show();
+            attachCommandEvents();
             _env = new Environment(Dte2);
 
             _c = new Connection(
@@ -258,6 +269,37 @@ namespace net.r_eg.vsSBE
                 dir += Path.DirectorySeparatorChar;
             }
             return dir;
+        }
+
+        private void attachCommandEvents()
+        {
+            _cmdEvents = Dte2.Events.CommandEvents; // protection from garbage collector
+            lock(_lock) {
+                _cmdEvents.BeforeExecute -= new EnvDTE._dispCommandEvents_BeforeExecuteEventHandler(_cmdBeforeExecute);
+                _cmdEvents.BeforeExecute += new EnvDTE._dispCommandEvents_BeforeExecuteEventHandler(_cmdBeforeExecute);
+            }
+        }
+
+        private void detachCommandEvents()
+        {
+            lock(_lock) {
+                Dte2.Events.CommandEvents.BeforeExecute -= new EnvDTE._dispCommandEvents_BeforeExecuteEventHandler(_cmdBeforeExecute);
+            }
+        }
+
+        /// <summary>
+        /// Provides the BuildAction
+        /// Note: VSSOLNBUILDUPDATEFLAGS with IVsUpdateSolutionEvents4 exist only for VS2012 and higher
+        /// http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivsupdatesolutionevents4.updatesolution_beginupdateaction.aspx
+        /// See for details: http://stackoverflow.com/q/27018762
+        /// </summary>
+        private void _cmdBeforeExecute(string guidString, int id, object customIn, object customOut, ref bool cancelDefault)
+        {
+            Guid guid = new Guid(guidString);
+
+            if(GuidList.VSStd97CmdID == guid || GuidList.VSStd2KCmdID == guid) {
+                _c.updateContext((BuildType)id);
+            }
         }
 
         /// <summary>
@@ -364,7 +406,7 @@ namespace net.r_eg.vsSBE
 
         #endregion
 
-        #region cookies
+        #region maintenance
         protected override void Initialize()
         {
             Log.nlog.Trace(string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
@@ -430,6 +472,8 @@ namespace net.r_eg.vsSBE
             if(spSolution != null && _pdwCookieSolution != 0) {
                 spSolution.UnadviseSolutionEvents(_pdwCookieSolution);
             }
+
+            detachCommandEvents();
             base.Dispose(disposing);
         }
         #endregion
