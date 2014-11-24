@@ -22,6 +22,11 @@ namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
     /// Represents available types of the build for any actions
+    /// 
+    /// *!* be careful with intersection
+    ///     Scope of:
+    ///      * {5EFC7975-14BC-11CF-9B2B-00AA00573819}
+    ///      * {1496A755-94DE-11D0-8C3F-00C04FC2AAE2}
     /// </summary>
     public enum BuildType
     {
@@ -41,6 +46,14 @@ namespace net.r_eg.vsSBE.Events
         /// 'deploy' action
         /// </summary>
         Deploy = VSConstants.VSStd97CmdID.DeploySln,
+        /// <summary>
+        /// 'Start Debugging' action
+        /// </summary>
+        Start = VSConstants.VSStd97CmdID.Start,
+        /// <summary>
+        /// 'Start Without Debugging' action
+        /// </summary>
+        StartNoDebug = VSConstants.VSStd97CmdID.StartNoDebug,
 
         /// <summary>
         /// 'build' action for selection

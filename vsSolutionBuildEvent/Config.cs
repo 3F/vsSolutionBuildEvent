@@ -102,9 +102,9 @@ namespace net.r_eg.vsSBE
                 data = new SolutionEvents();
                 Log.nlog.Info("Initialized with the new settings");
             }
-            catch(JsonException) {
+            catch(JsonException ex) {
                 //Log.nlog.Warn("Incorrect configuration type: '{0}'", ex.Message);
-                data = _xmlTryUpgrade(_Link);
+                data = _xmlTryUpgrade(_Link, ex);
             }
             catch(Exception ex)
             {
@@ -207,8 +207,9 @@ namespace net.r_eg.vsSBE
         /// Support older versions
         /// </summary>
         /// <param name="file">Configuration file</param>
+        /// <param name="innerException"></param>
         /// <returns></returns>
-        private SolutionEvents _xmlTryUpgrade(string file)
+        private SolutionEvents _xmlTryUpgrade(string file, JsonException innerException)
         {
             try {
                 SolutionEvents ret = Upgrade.v08.Migration08_09.migrate(file);
@@ -216,7 +217,7 @@ namespace net.r_eg.vsSBE
                 return ret;
             }
             catch(Exception ex) {
-                Log.nlog.Warn("Failed upgrade: Incorrect configuration type: '{0}'", ex.Message);
+                Log.nlog.Error("Incorrect configuration type: '{0}' -> '{1}'", innerException.Message, ex.Message);
             }
             return new SolutionEvents();
         }

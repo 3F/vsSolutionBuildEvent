@@ -93,6 +93,17 @@ namespace net.r_eg.vsSBE.Events
         private BuildType buildType = BuildType.Common;
 
         /// <summary>
+        /// User interaction.
+        /// Waiting until user presses yes/no etc,
+        /// </summary>
+        public bool Confirmation
+        {
+            get { return confirmation; }
+            set { confirmation = value; }
+        }
+        private bool confirmation = false;
+
+        /// <summary>
         /// Run only for a specific configuration of solution
         /// strings format as:
         ///   'configname'|'platformname'

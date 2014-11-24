@@ -155,6 +155,7 @@
             this.panelLineForSplit = new System.Windows.Forms.Panel();
             this.panelEventType = new System.Windows.Forms.Panel();
             this.comboBoxEvents = new System.Windows.Forms.ComboBox();
+            this.chkConfirmation = new System.Windows.Forms.CheckBox();
             this.tabControl.SuspendLayout();
             this.tabPageSettings.SuspendLayout();
             this.panelSettingsMain.SuspendLayout();
@@ -239,6 +240,7 @@
             // panelControl
             // 
             this.panelControl.AutoScroll = true;
+            this.panelControl.Controls.Add(this.chkConfirmation);
             this.panelControl.Controls.Add(this.comboBoxBuildContext);
             this.panelControl.Controls.Add(this.chkBuildContext);
             this.panelControl.Controls.Add(this.checkBoxSBEScriptSupport);
@@ -257,16 +259,16 @@
             // comboBoxBuildContext
             // 
             this.comboBoxBuildContext.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxBuildContext.DropDownWidth = 110;
+            this.comboBoxBuildContext.DropDownWidth = 130;
             this.comboBoxBuildContext.FormattingEnabled = true;
-            this.comboBoxBuildContext.Location = new System.Drawing.Point(68, 143);
+            this.comboBoxBuildContext.Location = new System.Drawing.Point(68, 164);
             this.comboBoxBuildContext.Name = "comboBoxBuildContext";
             this.comboBoxBuildContext.Size = new System.Drawing.Size(101, 21);
             this.comboBoxBuildContext.TabIndex = 24;
             // 
             // chkBuildContext
             // 
-            this.chkBuildContext.Location = new System.Drawing.Point(8, 147);
+            this.chkBuildContext.Location = new System.Drawing.Point(8, 168);
             this.chkBuildContext.Name = "chkBuildContext";
             this.chkBuildContext.Size = new System.Drawing.Size(65, 17);
             this.chkBuildContext.TabIndex = 23;
@@ -291,7 +293,7 @@
             this.checkBoxOperationsAbort.AutoSize = true;
             this.checkBoxOperationsAbort.Checked = true;
             this.checkBoxOperationsAbort.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxOperationsAbort.Location = new System.Drawing.Point(8, 126);
+            this.checkBoxOperationsAbort.Location = new System.Drawing.Point(8, 147);
             this.checkBoxOperationsAbort.Name = "checkBoxOperationsAbort";
             this.checkBoxOperationsAbort.Size = new System.Drawing.Size(161, 17);
             this.checkBoxOperationsAbort.TabIndex = 20;
@@ -1482,6 +1484,15 @@
             this.comboBoxEvents.TabIndex = 42;
             this.comboBoxEvents.SelectedIndexChanged += new System.EventHandler(this.comboBoxEvents_SelectedIndexChanged);
             // 
+            // chkConfirmation
+            // 
+            this.chkConfirmation.Location = new System.Drawing.Point(8, 126);
+            this.chkConfirmation.Name = "chkConfirmation";
+            this.chkConfirmation.Size = new System.Drawing.Size(103, 17);
+            this.chkConfirmation.TabIndex = 25;
+            this.chkConfirmation.Text = "Confirmation";
+            this.chkConfirmation.UseVisualStyleBackColor = true;
+            // 
             // EventsFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1663,6 +1674,7 @@
         private System.Windows.Forms.RadioButton radioModeScript;
         private System.Windows.Forms.ComboBox comboBoxBuildContext;
         private System.Windows.Forms.CheckBox chkBuildContext;
+        private System.Windows.Forms.CheckBox chkConfirmation;
 
     }
 }

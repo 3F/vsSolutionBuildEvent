@@ -21,6 +21,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using EnvDTE80;
 using net.r_eg.vsSBE.Events;
 
@@ -65,33 +66,13 @@ namespace net.r_eg.vsSBE.UI.Xaml
         /// </summary>
         public void updateData()
         {
-            update(SolutionEventType.Pre);
-            btnPre.Content = caption(SolutionEventType.Pre, false);
-            btnPre.IsChecked = !isDisabledAll(SolutionEventType.Pre);
-
-            update(SolutionEventType.Post);
-            btnPost.Content = caption(SolutionEventType.Post, false);
-            btnPost.IsChecked = !isDisabledAll(SolutionEventType.Post);
-
-            update(SolutionEventType.Cancel);
-            btnCancel.Content = caption(SolutionEventType.Cancel, false);
-            btnCancel.IsChecked = !isDisabledAll(SolutionEventType.Cancel);
-
-            update(SolutionEventType.Warnings);
-            btnWarnings.Content = caption(SolutionEventType.Warnings, false);
-            btnWarnings.IsChecked = !isDisabledAll(SolutionEventType.Warnings);
-
-            update(SolutionEventType.Errors);
-            btnErrors.Content = caption(SolutionEventType.Errors, false);
-            btnErrors.IsChecked = !isDisabledAll(SolutionEventType.Errors);
-
-            update(SolutionEventType.OWP);
-            btnOutput.Content = caption(SolutionEventType.OWP, false);
-            btnOutput.IsChecked = !isDisabledAll(SolutionEventType.OWP);
-
-            update(SolutionEventType.Transmitter);
-            btnTransmitter.Content = caption(SolutionEventType.Transmitter, false);
-            btnTransmitter.IsChecked = !isDisabledAll(SolutionEventType.Transmitter);
+            update(btnPre, SolutionEventType.Pre);
+            update(btnPost, SolutionEventType.Post);
+            update(btnCancel, SolutionEventType.Cancel);
+            update(btnWarnings, SolutionEventType.Warnings);
+            update(btnErrors, SolutionEventType.Errors);
+            update(btnOutput, SolutionEventType.OWP);
+            update(btnTransmitter, SolutionEventType.Transmitter);
         }
 
         /// <summary>
@@ -129,11 +110,16 @@ namespace net.r_eg.vsSBE.UI.Xaml
         /// <summary>
         /// Updating status for used event type
         /// </summary>
+        /// <param name="btn"></param>
         /// <param name="type"></param>
-        protected void update(SolutionEventType type)
+        protected void update(ToggleButton btn, SolutionEventType type)
         {
             try {
                 logic.update(type);
+                Application.Current.Dispatcher.BeginInvoke(new Action(() => {
+                    btn.Content = caption(type, false);
+                    btn.IsChecked = !isDisabledAll(type);
+                }));
             }
             catch(Exception ex) {
                 Log.nlog.Warn("StatusToolControl: Failed update for type - '{0}' :: '{1}'", type, ex.Message);

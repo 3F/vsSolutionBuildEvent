@@ -327,6 +327,12 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             buildType.Add(BuildType.Deploy);
             combo.Items.Add("Deploy");
 
+            buildType.Add(BuildType.Start);
+            combo.Items.Add("Start Debugging");
+
+            buildType.Add(BuildType.StartNoDebug);
+            combo.Items.Add("Start Without Debugging");
+
             buildType.Add(BuildType.BuildSelection);
             combo.Items.Add("Build Selection");
 

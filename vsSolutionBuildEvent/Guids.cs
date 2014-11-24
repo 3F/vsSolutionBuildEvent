@@ -1,6 +1,7 @@
 ﻿// Guids.cs
 // MUST match guids.h
 using System;
+using Microsoft.VisualStudio;
 
 namespace net.r_eg.vsSBE
 {
@@ -13,7 +14,7 @@ namespace net.r_eg.vsSBE
 
         public static readonly Guid MAIN_CMD_SET    = new Guid(MAIN_CMD_STRING);
         public static readonly Guid PANEL_CMD_SET   = new Guid(PANEL_CMD_STRING);
-        public static readonly Guid VSStd97CmdID    = new Guid("5EFC7975-14BC-11CF-9B2B-00AA00573819");
-        public static readonly Guid VSStd2KCmdID    = new Guid("1496A755-94DE-11D0-8C3F-00C04FC2AAE2");
+        public static readonly Guid VSStd97CmdID    = VSConstants.CMDSETID.StandardCommandSet97_guid;
+        public static readonly Guid VSStd2KCmdID    = VSConstants.CMDSETID.StandardCommandSet2K_guid;
     };
 }

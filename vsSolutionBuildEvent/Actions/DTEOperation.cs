@@ -196,7 +196,7 @@ namespace net.r_eg.vsSBE.Actions
 
         public virtual void exec(string name, string args)
         {
-            dte.ExecuteCommand(name, args);
+            dte.ExecuteCommand(name, (args == null)? String.Empty : args);
         }
 
         public void flushQueue()

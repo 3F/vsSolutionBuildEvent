@@ -58,6 +58,12 @@ namespace net.r_eg.vsSBE.Events
         BuildType BuildType { get; set; }
 
         /// <summary>
+        /// User interaction.
+        /// Waiting until user presses yes/no etc,
+        /// </summary>
+        bool Confirmation { get; set; }
+
+        /// <summary>
         /// Run only for a specific configuration of solution
         /// strings format as:
         ///   'configname'|'platformname'

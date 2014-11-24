@@ -68,6 +68,11 @@ namespace net.r_eg.vsSBE.Actions
             }
             this.type = type;
 
+            if(!confirm(evt)) {
+                Log.nlog.Debug("Skipped action by user");
+                return false;
+            }
+
             string cfg = env.SolutionConfigurationFormat(env.SolutionActiveConfiguration);
 
             if(evt.ToConfiguration != null 
@@ -200,6 +205,40 @@ namespace net.r_eg.vsSBE.Actions
             if(evt.SupportMSBuild) {
                 data = msbuild.parse(data);
             }
+        }
+
+        /// <summary>
+        /// Supports the user interaction.
+        /// Waiting until user presses yes/no or cancel
+        /// </summary>
+        /// <param name="evt"></param>
+        /// <returns>true value if need to execute</returns>
+        protected bool confirm(ISolutionEvent evt)
+        {
+            if(!evt.Confirmation) {
+                return true;
+            }
+            Log.nlog.Debug("Ask the user about action [{0}]:{1} '{2}'", type, evt.Name, evt.Caption);
+
+            string msg = String.Format("Execute the next action ?\n  [{0}]:{1} '{2}'\n\n* Cancel - to disable current action", 
+                                        type, evt.Name, evt.Caption);
+
+            System.Windows.Forms.DialogResult ret = System.Windows.Forms.MessageBox.Show(msg,
+                                                                                        "Confirm the action", 
+                                                                                        System.Windows.Forms.MessageBoxButtons.YesNoCancel, 
+                                                                                        System.Windows.Forms.MessageBoxIcon.Question);
+
+            switch(ret) {
+                case System.Windows.Forms.DialogResult.Yes: {
+                    return true;
+                }
+                case System.Windows.Forms.DialogResult.Cancel: {
+                    evt.Enabled = false;
+                    Config._.save();
+                    throw new SBEException("Aborted by user");
+                }
+            }
+            return false;
         }
 
         protected string treatNewlineAs(string str, string data)

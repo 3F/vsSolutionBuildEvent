@@ -148,6 +148,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             evt.IgnoreIfBuildFailed     = checkBoxIgnoreIfFailed.Checked;
             evt.Process.Waiting         = checkBoxWaitForExit.Checked;
             evt.Process.Hidden          = checkBoxProcessHide.Checked;
+            evt.Confirmation            = chkConfirmation.Checked;
             evt.ToConfiguration         = checkedListBoxSpecCfg.CheckedItems.OfType<string>().ToArray();
             evt.ExecutionOrder          = getExecutionOrder();
             evt.BuildType               = (chkBuildContext.Checked)? logic.getBuildTypeBy(comboBoxBuildContext.SelectedIndex) : BuildType.Common;
@@ -261,6 +262,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             checkBoxIgnoreIfFailed.Checked      = evt.IgnoreIfBuildFailed;
             checkBoxWaitForExit.Checked         = evt.Process.Waiting;
             checkBoxProcessHide.Checked         = evt.Process.Hidden;
+            chkConfirmation.Checked             = evt.Confirmation;
             buildTypeSelect(evt.BuildType);
 
             if(evt.Mode == null) {
