@@ -15,36 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using net.r_eg.vsSBE.SBEScripts.Dom;
-
-namespace net.r_eg.vsSBE.SBEScripts.Components
+namespace net.r_eg.vsSBE.SBEScripts.Dom
 {
     /// <summary>
-    /// Mixed supported functions
+    /// Type of used element in node
     /// </summary>
-    [Definition("Func", "Mixed functions")]
-    public class FunctionComponent: Component, IComponent
+    public enum InfoType
     {
         /// <summary>
-        /// Ability to work with data for current component
+        /// Basic type
         /// </summary>
-        public override string Condition
-        {
-            get { return "Func "; }
-        }
-
+        Unspecified,
         /// <summary>
-        /// Handler for current data
+        /// Default for DefinitionAttribute
         /// </summary>
-        /// <param name="data">mixed data</param>
-        /// <returns>prepared and evaluated data</returns>
-        public override string parse(string data)
-        {
-            return data;
-        }
+        Component,
+        /// <summary>
+        /// Default for MethodAttribute
+        /// </summary>
+        Method,
+        /// <summary>
+        /// Default for PropertyAttribute
+        /// </summary>
+        Property
     }
 }

@@ -23,6 +23,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
@@ -31,6 +32,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// Support file operations
     /// I/O, call, etc.
     /// </summary>
+    [Definition("File", "I/O operations")]
     public class FileComponent: Component, IComponent
     {
         /// <summary>
@@ -38,7 +40,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         public override string Condition
         {
-            get { return "[File "; }
+            get { return "File "; }
         }
 
         /// <summary>
@@ -117,7 +119,18 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// * #[File get("name")]
         /// </summary>
         /// <param name="data">prepared data</param>
-        /// <returns>Received data from  file</returns>
+        /// <returns>Received data from file</returns>
+        [
+            Method
+            (
+                "get", 
+                "Receiving data from file.", 
+                new string[] { "name" }, 
+                new string[] { "File name" }, 
+                CValueType.String, 
+                CValueType.String
+            )
+        ]
         protected string stGet(string data)
         {
             Match m = Regex.Match(data, 
@@ -160,6 +173,94 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="stdOut">Use StandardOutput or not</param>
         /// <param name="silent">Silent mode</param>
         /// <returns>Received data from StandardOutput</returns>
+        [
+            Method
+            (
+                "call", 
+                "Caller of executable files.", 
+                new string[] { "name" }, 
+                new string[] { "Executable file" }, 
+                CValueType.Void, 
+                CValueType.String
+            )
+        ]
+        [
+            Method
+            (
+                "call", 
+                "Caller of executable files with arguments.", 
+                new string[] { "name", "args" }, 
+                new string[] { "Executable file", "Arguments" }, 
+                CValueType.Void, 
+                CValueType.String, CValueType.String
+            )
+        ]
+        [
+            Method
+            (
+                "scall", 
+                "Caller of executable files in silent mode.", 
+                new string[] { "name" }, 
+                new string[] { "Executable file" }, 
+                CValueType.Void, 
+                CValueType.String
+            )
+        ]
+        [
+            Method
+            (
+                "scall", 
+                "Caller of executable files in silent mode with arguments.", 
+                new string[] { "name", "args" }, 
+                new string[] { "Executable file", "Arguments" }, 
+                CValueType.Void, 
+                CValueType.String, CValueType.String
+            )
+        ]
+        [
+            Method
+            (
+                "out", 
+                "Receiving data from stdout of executed file.", 
+                new string[] { "name" }, 
+                new string[] { "Executable file" }, 
+                CValueType.Void, 
+                CValueType.String
+            )
+        ]
+        [
+            Method
+            (
+                "out", 
+                "Receiving data from stdout of executed file with arguments.", 
+                new string[] { "name", "args" }, 
+                new string[] { "Executable file", "Arguments" }, 
+                CValueType.Void, 
+                CValueType.String, CValueType.String
+            )
+        ]
+        [
+            Method
+            (
+                "sout", 
+                "Receiving data from stdout of executed file in silent mode.", 
+                new string[] { "name" }, 
+                new string[] { "Executable file" }, 
+                CValueType.Void, 
+                CValueType.String
+            )
+        ]
+        [
+            Method
+            (
+                "sout", 
+                "Receiving data from stdout of executed file in silent mode with arguments.", 
+                new string[] { "name", "args" }, 
+                new string[] { "Executable file", "Arguments" }, 
+                CValueType.Void, 
+                CValueType.String, CValueType.String
+            )
+        ]
         protected string stCall(string data, bool stdOut, bool silent)
         {
             Match m = Regex.Match(data, 
@@ -204,6 +305,50 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="append">flag</param>
         /// <param name="writeLine">writes with CR?/LF</param>
         /// <param name="enc">Used encoding</param>
+        [
+            Method
+            (
+                "write", 
+                "Writes text data in file.\n * Creates if the file does not exist.\n * Overwrites content if already exist.",
+                new string[] { "name", "In" }, 
+                new string[] { "File name", "multiline data" },
+                CValueType.Void, 
+                CValueType.String, CValueType.Input
+            )
+        ]
+        [
+            Method
+            (
+                "append",
+                "Writes text data in file.\n * Creates if the file does not exist.\n * Adds data to the end file if it already exist.",
+                new string[] { "name", "In" }, 
+                new string[] { "File name", "multiline data" },
+                CValueType.Void, 
+                CValueType.String, CValueType.Input
+            )
+        ]
+        [
+            Method
+            (
+                "writeLine", 
+                "Writes text data with CR/LF in file.\n * Creates if the file does not exist.\n * Overwrites content if already exist.", 
+                new string[] { "name", "In" }, 
+                new string[] { "File name", "multiline data" },
+                CValueType.Void, 
+                CValueType.String, CValueType.Input
+            )
+        ]
+        [
+            Method
+            (
+                "appendLine", 
+                "Writes text data with CR/LF in file.\n * Creates if the file does not exist.\n * Adds data to the end file if it already exist.", 
+                new string[] { "name", "In" }, 
+                new string[] { "File name", "multiline data" },
+                CValueType.Void, 
+                CValueType.String, CValueType.Input
+            )
+        ]
         protected void stWrite(string data, bool append, bool writeLine, Encoding enc)
         {
             Match m = Regex.Match(data, 
@@ -245,6 +390,56 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// * #[File replace("file", "pattern", "replacement")]
         /// </summary>
         /// <param name="data">prepared data</param>
+        [
+            Method
+            (
+                "replace", 
+                "Replacing the strings in files.", 
+                new string[] { "file", "pattern", "replacement" },
+                new string[] { "Input file", "String to comparison", "Replacement string" },
+                CValueType.Void, 
+                CValueType.String, CValueType.String, CValueType.String
+            )
+        ]
+        [
+            Method
+            (
+                "Regex", 
+                "Replacing the strings in files with Regular expression.", 
+                "replace", 
+                "stReplace", 
+                new string[] { "file", "pattern", "replacement" },
+                new string[] { "Input file", "Regular expression pattern", "Replacement string" },
+                CValueType.Void, 
+                CValueType.String, CValueType.String, CValueType.String
+            )
+        ]
+        [
+            Method
+            (
+                "Regexp",
+                "Replacing the strings in files with Regular expression.",
+                "replace",
+                "stReplace",
+                new string[] { "file", "pattern", "replacement" },
+                new string[] { "Input file", "Regular expression pattern", "Replacement string" },
+                CValueType.Void, 
+                CValueType.String, CValueType.String, CValueType.String
+            )
+        ]
+        [
+            Method
+            (
+                "Wildcards",
+                "Replacing the strings in files with Wildcards.",
+                "replace",
+                "stReplace",
+                new string[] { "file", "pattern", "replacement" },
+                new string[] { "Input file", "Pattern with wildcards", "Replacement string" },
+                CValueType.Void, 
+                CValueType.String, CValueType.String, CValueType.String
+            )
+        ]
         protected void stReplace(string data)
         {
             Match m = Regex.Match(data, 
@@ -284,6 +479,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             Log.nlog.Debug("stReplace: type '{0}' :: received '{1}', Encoding '{2}'", type, content.Length, enc);
 
             switch(type) {
+                case "Regex":
                 case "Regexp": {
                     content = Regex.Replace(content, pattern, replacement);
                     break;

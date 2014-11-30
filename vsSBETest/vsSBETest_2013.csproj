@@ -110,7 +110,7 @@
     <Compile Include="SBEScripts\StringHandlerTest.cs" />
     <Compile Include="SBEScripts\Components\UserVariableComponentTest.cs" />
     <Compile Include="SBEScripts\UserVariableTest.cs" />
-    <Compile Include="SBEScripts\ValuesTest.cs" />
+    <Compile Include="SBEScripts\ValueTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\vsSolutionBuildEvent\vsSolutionBuildEvent_2013.csproj">

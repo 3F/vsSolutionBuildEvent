@@ -24,13 +24,15 @@ using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
     /// <summary>
-    /// All internal operation with vsSBE
+    /// All internal operations with vsSBE
     /// </summary>
+    [Definition("vsSBE", "All internal operations with vsSBE")]
     public class InternalComponent: Component, IComponent
     {
         /// <summary>
@@ -38,7 +40,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         public override string Condition
         {
-            get { return "[vsSBE "; }
+            get { return "vsSBE "; }
         }
 
         /// <summary>
@@ -79,6 +81,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
+        [Property("events", "Work with events")]
+        [Property("<<Type>>", "events", "stEvents", "Available events: Pre, Post, ..")]
         protected string stEvents(string data)
         {
             Match m = Regex.Match(data,
@@ -130,6 +134,31 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="name">access by name if used or null value</param>
         /// <param name="data">Operation with event-item</param>
         /// <returns>evaluated data</returns>
+        [
+            Method
+            (
+                "item", 
+                "Event item by name", 
+                "<<Type>>", "stEvents", 
+                new string[] { "name" }, 
+                new string[] { "Name of the event" }, 
+                CValueType.Void, 
+                CValueType.String
+            )
+        ]
+        [
+            Method
+            (
+                "item", 
+                "Event item by index", 
+                "<<Type>>", 
+                "stEvents", 
+                new string[] { "index" }, 
+                new string[] { "Index of the event" },
+                CValueType.Void, 
+                CValueType.Integer
+            )
+        ]
         protected string stEventItem(SolutionEventType type, string index, string name, string data)
         {
             Debug.Assert((index == null && name != null) || (index != null && name == null));
@@ -177,6 +206,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="index">access by index</param>
         /// <param name="data">String data with operations</param>
         /// <returns></returns>
+        [Property("Status", "Available statuses for selected event-item.", "item", "stEventItem")]
+        [Property("HasErrors", "Checking existence of errors after executed action for selected event-item.", "Status", "pStatus", CValueType.Boolean)]
         protected string pStatus(SolutionEventType type, int index, string data)
         {
             Match m = Regex.Match(data, @"\.\s*
@@ -207,6 +238,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="evt">Selected event</param>
         /// <param name="data">String data with operations</param>
         /// <returns></returns>
+        [Property("Enabled", "Gets or Sets Enabled status for selected event-item", "item", "stEventItem", CValueType.Boolean, CValueType.Boolean)]
         protected string pEnabled(ISolutionEvent evt, string data)
         {
             if(data.Trim().Length < 1) {
@@ -217,7 +249,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(!m.Success) {
                 throw new OperandNotFoundException("Failed pEnabled - '{0}'", data);
             }
-            evt.Enabled = Values.toBoolean(m.Groups[1].Value);
+            evt.Enabled = Value.toBoolean(m.Groups[1].Value);
 
             Log.nlog.Debug("pEnabled: setted as '{0}' for '{1}'", evt.Enabled, evt.Name);
             return String.Empty;

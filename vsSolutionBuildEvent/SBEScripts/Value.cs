@@ -27,7 +27,7 @@ namespace net.r_eg.vsSBE.SBEScripts
     /// <summary>
     /// TODO: specification for SBE-Script
     /// </summary>
-    public static class Values
+    public static class Value
     {
         public const string VTRUE   = "true";
         public const string VFALSE  = "false";

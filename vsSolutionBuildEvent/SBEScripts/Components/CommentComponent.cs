@@ -21,13 +21,15 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
     /// <summary>
-    /// Any supported comments with scripts
+    /// Any supported comments for scripts
     /// </summary>
+    [Definition("\"\"", "Multiline comment")]
     public class CommentComponent: Component, IComponent
     {
         /// <summary>
@@ -35,7 +37,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         public override string Condition
         {
-            get { return "[\""; }
+            get { return "\""; }
         }
 
         public CommentComponent(): base()

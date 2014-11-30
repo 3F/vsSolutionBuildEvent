@@ -19,32 +19,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using net.r_eg.vsSBE.SBEScripts.Dom;
 
-namespace net.r_eg.vsSBE.SBEScripts.Components
+namespace net.r_eg.vsSBE.SBEScripts.Dom
 {
-    /// <summary>
-    /// Mixed supported functions
-    /// </summary>
-    [Definition("Func", "Mixed functions")]
-    public class FunctionComponent: Component, IComponent
+    public interface IAttrDomLevelB
     {
         /// <summary>
-        /// Ability to work with data for current component
+        /// Name of the parent specification
         /// </summary>
-        public override string Condition
-        {
-            get { return "Func "; }
-        }
-
+        string Parent { get; }
         /// <summary>
-        /// Handler for current data
+        /// Actual/real method name of the parent specification
         /// </summary>
-        /// <param name="data">mixed data</param>
-        /// <returns>prepared and evaluated data</returns>
-        public override string parse(string data)
-        {
-            return data;
-        }
+        string Method { get; }
     }
 }

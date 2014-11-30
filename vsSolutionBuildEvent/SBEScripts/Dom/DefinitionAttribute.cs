@@ -16,35 +16,36 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using net.r_eg.vsSBE.SBEScripts.Dom;
 
-namespace net.r_eg.vsSBE.SBEScripts.Components
+namespace net.r_eg.vsSBE.SBEScripts.Dom
 {
-    /// <summary>
-    /// Mixed supported functions
-    /// </summary>
-    [Definition("Func", "Mixed functions")]
-    public class FunctionComponent: Component, IComponent
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true)]
+    public class DefinitionAttribute: Attribute, IAttrDomLevelA
     {
         /// <summary>
-        /// Ability to work with data for current component
+        /// Definition name
         /// </summary>
-        public override string Condition
+        public string Name
         {
-            get { return "Func "; }
+            get { return name; }
         }
+        protected string name;
 
         /// <summary>
-        /// Handler for current data
+        /// About of the definition
         /// </summary>
-        /// <param name="data">mixed data</param>
-        /// <returns>prepared and evaluated data</returns>
-        public override string parse(string data)
+        public string Description
         {
-            return data;
+            get { return description; }
+        }
+        protected string description;
+
+        /// <param name="name">Definition name</param>
+        /// <param name="description">About of the definition</param>
+        public DefinitionAttribute(string name, string description)
+        {
+            this.name           = name;
+            this.description    = description;
         }
     }
 }

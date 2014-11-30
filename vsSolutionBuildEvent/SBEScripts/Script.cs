@@ -233,9 +233,9 @@ namespace net.r_eg.vsSBE.SBEScripts
         protected bool isReadyToParse(string data, IComponent c)
         {
             if(!c.CRegex) {
-                return data.StartsWith(c.Condition);
+                return data.StartsWith(String.Format("[{0}", c.Condition));
             }
-            return Regex.IsMatch(data, c.Condition, RegexOptions.IgnorePatternWhitespace);
+            return Regex.IsMatch(data, String.Format("^\\[{0}", c.Condition), RegexOptions.IgnorePatternWhitespace);
         }
 
         /// <summary>

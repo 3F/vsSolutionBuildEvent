@@ -25,13 +25,15 @@ using System.Text.RegularExpressions;
 using EnvDTE;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
     /// <summary>
-    /// Components of building
+    /// Component of operations with the build
     /// </summary>
+    [Definition("Build", "Operations with the build")]
     public class BuildComponent: Component, IComponent
     {
         /// <summary>
@@ -39,7 +41,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         public override string Condition
         {
-            get { return "[Build "; }
+            get { return "Build "; }
         }
 
         /// <summary>
@@ -105,6 +107,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         /// <param name="data"></param>
         /// <returns>found command</returns>
+        [Property("cancel", "Immediately cancellation of the build projects.", CValueType.Boolean, CValueType.Boolean)]
         protected string stCancel(string data)
         {
             Match m = Regex.Match(data, @"cancel\s*=\s*(false|true|1|0)\s*$", RegexOptions.IgnoreCase);
@@ -114,10 +117,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string val = m.Groups[1].Value;
             Log.nlog.Debug("stCancel: value is {0}", val);
 
-            if(Values.toBoolean(val))
+            if(Value.toBoolean(val))
             {
                 Log.nlog.Debug("stCancel: pushed true");
-                DTEO.exec(new string[]{ "Build.Cancel" }, false);
+                DTEO.exec("Build.Cancel");
             }
             return String.Empty;
         }
@@ -138,6 +141,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
+        [Property("projects", "Work with configuration manager of projects through the SolutionContexts.")]
         protected string stProjects(string data)
         {
             Match m = Regex.Match(data,
@@ -186,6 +190,35 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="context">Working SolutionContext</param>
         /// <param name="data">String data with operations</param>
         /// <returns></returns>
+        [
+            Method
+            (
+                "find", 
+                "The find() method compares as part of the name, and you can use simply like a find(\"ZenLib\") or for unique identification full \"Zenlib\\ZenLib.vcxproj\" etc.",
+                "projects",
+                "stProjects",
+                new string[] { "name" }, 
+                new string[] { "Project name" },
+                CValueType.Void,
+                CValueType.String
+            ),
+        ]
+        [Property(
+            "IsBuildable", 
+            "Gets or Sets whether the project or project item configuration can be built.", 
+            "find", 
+            "stProjectConf", 
+            CValueType.Boolean, 
+            CValueType.Boolean
+        )]
+        [Property(
+            "IsDeployable", 
+            "Gets or Sets whether the current project is built when the solution configuration associated with this SolutionContext is selected.", 
+            "find", 
+            "stProjectConf", 
+            CValueType.Boolean, 
+            CValueType.Boolean
+        )]
         protected string stProjectConf(SolutionContext context, string data)
         {
             Debug.Assert(context != null);
@@ -209,18 +242,18 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 case "IsBuildable":
                 {
                     if(value != null) {
-                        context.ShouldBuild = Values.toBoolean(value);
+                        context.ShouldBuild = Value.toBoolean(value);
                         return String.Empty;
                     }
-                    return Values.from(context.ShouldBuild);
+                    return Value.from(context.ShouldBuild);
                 }
                 case "IsDeployable":
                 {
                     if(value != null) {
-                        context.ShouldDeploy = Values.toBoolean(value);
+                        context.ShouldDeploy = Value.toBoolean(value);
                         return String.Empty;
                     }
-                    return Values.from(context.ShouldDeploy);
+                    return Value.from(context.ShouldDeploy);
                 }
             }
             throw new OperationNotFoundException("stProjectConf: not found property - '{0}'", property);

@@ -30,6 +30,7 @@ using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts;
+using net.r_eg.vsSBE.SBEScripts.Dom;
 
 namespace net.r_eg.vsSBE
 {
@@ -240,9 +241,12 @@ namespace net.r_eg.vsSBE
             attachCommandEvents();
             _env = new Environment(Dte2);
 
+            IBootloader bootloader = new Bootloader(_env, uvariable);
+            Inspector._.extract(bootloader);
+
             _c = new Connection(
                     new Command(_env,
-                                new Script(new Bootloader(_env, uvariable)),
+                                new Script(bootloader),
                                 new MSBuildParser(_env, uvariable))
             );
 

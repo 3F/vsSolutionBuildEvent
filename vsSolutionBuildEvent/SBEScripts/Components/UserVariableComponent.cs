@@ -22,6 +22,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild;
+using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
@@ -29,6 +30,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// <summary>
     /// For work with User-Variables
     /// </summary>
+    [Definition("var name", "Get data from variable the 'name'")]
+    [Definition("var name = data", "Set the 'data' for variable the 'name'")]
     public class UserVariableComponent: Component, IComponent
     {
         /// <summary>
@@ -36,7 +39,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         public override string Condition
         {
-            get { return "[var "; }
+            get { return "var "; }
         }
 
         /// <param name="env">Used environment</param>

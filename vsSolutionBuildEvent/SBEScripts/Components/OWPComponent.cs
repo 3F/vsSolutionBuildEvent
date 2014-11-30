@@ -21,6 +21,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
@@ -28,6 +29,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// <summary>
     /// For work with OWP
     /// </summary>
+    [Definition("OWP", "For work with OWP (Output Window Pane)")]
     public class OWPComponent: Component, IComponent
     {
         /// <summary>
@@ -35,7 +37,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         public override string Condition
         {
-            get { return "[OWP "; }
+            get { return "OWP "; }
         }
 
         /// <summary>
@@ -72,6 +74,27 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
+        [
+            Method
+            (
+                "out", 
+                "For getting mixed data from the OWP. Returns the partial raw from all build log", 
+                new string[] { "name" }, 
+                new string[] { "Name of item.\n Note: The 'Build' item used by default." }, 
+                CValueType.String, 
+                CValueType.String
+            )
+        ]
+        [Property("out", "Alias for: out(\"Build\").", CValueType.String)]
+        [Property("All", "Alias for: out", "out", "stOut", CValueType.String)]
+        [Property("Warnings", "Partial raw with warning/s:", "out", "stOut", CValueType.String)]
+        [Property("Raw", "Alias for: Warnings", "Warnings", "stOut", CValueType.String)]
+        [Property("Count", "Count of warnings", "Warnings", "stOut", CValueType.Integer)]
+        [Property("Codes", "List of warnings as C4702,4505 ...", "Warnings", "stOut", CValueType.List)]
+        [Property("Errors", "Partial raw with error/s:", "out", "stOut", CValueType.String)]
+        [Property("Raw", "Alias for: Errors", "Errors", "stOut", CValueType.String)]
+        [Property("Count", "Count of Errors", "Errors", "stOut", CValueType.Integer)]
+        [Property("Codes", "List of Errors as C4702,4505 ...", "Errors", "stOut", CValueType.List)]
         protected string stOut(string data)
         {
             Match m = Regex.Match(data, 
@@ -117,12 +140,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             // #[OWP out.Warnings.Count]
             if(property == ".Warnings.Count") {
-                return Values.from(OWP.Items._.Build.WarningsCount);
+                return Value.from(OWP.Items._.Build.WarningsCount);
             }
 
             // #[OWP out.Warnings.Codes]
             if(property == ".Warnings.Codes") {
-                return Values.from(OWP.Items._.Build.Warnings);
+                return Value.from(OWP.Items._.Build.Warnings);
             }
 
             // #[OWP out.Errors.Raw] / #[OWP out.Errors]
@@ -132,12 +155,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             // #[OWP out.Errors.Count]
             if(property == ".Errors.Count") {
-                return Values.from(OWP.Items._.Build.ErrorsCount);
+                return Value.from(OWP.Items._.Build.ErrorsCount);
             }
 
             // #[OWP out.Errors.Codes]
             if(property == ".Errors.Codes") {
-                return Values.from(OWP.Items._.Build.Errors);
+                return Value.from(OWP.Items._.Build.Errors);
             }
 
             throw new NotSupportedOperationException("property - '{0}' not yet supported", property);

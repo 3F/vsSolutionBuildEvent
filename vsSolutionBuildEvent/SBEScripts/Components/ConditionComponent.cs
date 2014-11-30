@@ -22,6 +22,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild;
+using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
@@ -29,6 +30,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// <summary>
     /// Conditions in scripts
     /// </summary>
+    [Definition("(){}", "Conditionals statements")]
     public class ConditionComponent: Component, IComponent
     {
         /// <summary>
@@ -36,7 +38,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         public override string Condition
         {
-            get { return "[("; }
+            get { return "("; }
         }
 
         /// <param name="env">Used environment</param>
@@ -141,10 +143,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             left = evaluate(left);
 
             if(right != null) {
-                result = Values.cmp(left, evaluate(right), coperator);
+                result = Value.cmp(left, evaluate(right), coperator);
             }
             else {
-                result = Values.cmp((left == "1")? Values.VTRUE : (left == "0")? Values.VFALSE : left);
+                result = Value.cmp((left == "1")? Value.VTRUE : (left == "0")? Value.VFALSE : left);
             }
             Log.nlog.Debug("Condition-parse: result is: '{0}'", result);
             return ((invert)? !result : result)? ifTrue : ifFalse;

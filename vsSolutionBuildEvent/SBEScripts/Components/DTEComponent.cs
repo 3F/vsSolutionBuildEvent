@@ -22,6 +22,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
@@ -29,6 +30,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// <summary>
     /// For work with DTE
     /// </summary>
+    [Definition("DTE", "For work with EnvDTE (is an assembly-wrapped COM library containing the objects and members for Visual Studio core automation http://msdn.microsoft.com/en-us/library/EnvDTE.aspx)")]
     public class DTEComponent: Component, IComponent
     {
         /// <summary>
@@ -36,7 +38,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         public override string Condition
         {
-            get { return "[DTE "; }
+            get { return "DTE "; }
         }
 
         /// <summary>
@@ -85,6 +87,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         /// <param name="data"></param>
         /// <returns>found command</returns>
+        [Property("exec", "DTE-command to execution, e.g.: command(arg)", CValueType.Void, CValueType.Input)]
         protected string stExec(string data)
         {
             Match m = Regex.Match(data, @"exec\s*:(.+)");
