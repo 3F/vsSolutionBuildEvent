@@ -32,7 +32,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// <summary>
     /// All internal operations with vsSBE
     /// </summary>
-    [Definition("vsSBE", "All internal operations with vsSBE")]
+    [Component("vsSBE", "All internal operations with vsSBE")]
     public class InternalComponent: Component, IComponent
     {
         /// <summary>
@@ -82,7 +82,13 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="data"></param>
         /// <returns></returns>
         [Property("events", "Work with events")]
-        [Property("<<Type>>", "events", "stEvents", "Available events: Pre, Post, ..")]
+        [Property("Pre", "Pre-Build\nBefore assembling", "events", "stEvents"), Property("", "Pre", "stEvents")]
+        [Property("Post", "Post-Build\nAfter assembling", "events", "stEvents"), Property("", "Post", "stEvents")]
+        [Property("Cancel", "Cancel-Build\nby user or when an error occurs", "events", "stEvents"), Property("", "Cancel", "stEvents")]
+        [Property("Warnings", "Warnings-Build\nWarnings during assembly processing", "events", "stEvents"), Property("", "Warnings", "stEvents")]
+        [Property("Errors", "Errors-Build\nErrors during assembly processing", "events", "stEvents"), Property("", "Errors", "stEvents")]
+        [Property("OWP", "Output-Build customization\nFull control", "events", "stEvents"), Property("", "OWP", "stEvents")]
+        [Property("Transmitter", "Transmitter\nTransmission of the build-data to outer handler", "events", "stEvents"), Property("", "Transmitter", "stEvents")]
         protected string stEvents(string data)
         {
             Match m = Regex.Match(data,
@@ -139,7 +145,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             (
                 "item", 
                 "Event item by name", 
-                "<<Type>>", "stEvents", 
+                "", "stEvents", 
                 new string[] { "name" }, 
                 new string[] { "Name of the event" }, 
                 CValueType.Void, 
@@ -151,7 +157,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             (
                 "item", 
                 "Event item by index", 
-                "<<Type>>", 
+                "", 
                 "stEvents", 
                 new string[] { "index" }, 
                 new string[] { "Index of the event" },

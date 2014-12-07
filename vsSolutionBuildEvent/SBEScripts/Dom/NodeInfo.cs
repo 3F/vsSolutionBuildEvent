@@ -27,27 +27,38 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// </summary>
         public string Name
         {
-            get { return name; }
+            get;
+            protected set;
         }
-        protected string name;
 
         /// <summary>
         /// Description for current element
         /// </summary>
         public string Description
         {
-            get { return description; }
+            get;
+            protected set;
         }
-        protected string description;
 
         /// <summary>
         /// Technical description of the method/property
         /// </summary>
         public string Signature
         {
-            get { return signature; }
+            get;
+            protected set;
         }
-        protected string signature;
+
+        /// <summary>
+        /// Displays element over the 'Name' property.
+        /// In general this useful for code completion 
+        /// (Can be the same as 'Name' property)
+        /// </summary>
+        public string Displaying
+        {
+            get { return (displaying)?? Name; }
+        }
+        protected string displaying;
 
         /// <summary>
         /// Element type
@@ -63,77 +74,132 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// </summary>
         public NodeIdent Link
         {
-            get { return link; }
+            get;
+            protected set;
         }
-        protected NodeIdent link;
 
         /// <param name="name">Element name</param>
         /// <param name="description">Description for current element</param>
-        public NodeInfo(string name, string description)
+        /// <param name="type">Element type</param>
+        /// <param name="displaying">Displays element over the 'Name' property</param>
+        public NodeInfo(string name, string description, InfoType type = InfoType.Unspecified, string displaying = null)
         {
-            this.name           = name;
-            this.description    = description;
+            Name            = name;
+            Description     = description;
+            this.type       = type;
+            this.displaying = displaying;
         }
 
         /// <param name="name">Element name</param>
         /// <param name="description">Description for current element</param>
         /// <param name="method">Link to the binding with other node</param>
-        public NodeInfo(string name, string description, NodeIdent ident)
-            : this(name, description)
+        /// <param name="type">Element type</param>
+        /// <param name="displaying">Displays element over the 'Name' property</param>
+        public NodeInfo(string name, string description, NodeIdent ident, InfoType type = InfoType.Unspecified, string displaying = null)
+            : this(name, description, type, displaying)
         {
-            this.link = ident;
+            Link = ident;
         }
 
         /// <param name="attr">Attribute of property</param>
         /// <param name="method">Current actual/real method name</param>
         public NodeInfo(PropertyAttribute attr, string method)
-            : this(attr.Name, attr.Description, new NodeIdent(attr.Name, method))
+            : this(attr.Name, attr.Description, new NodeIdent(attr.Name, method), InfoType.Property)
         {
-            signature   = aboutProperty(attr.Get, attr.Set);
-            type        = InfoType.Property;
+            Signature       = aboutProperty(attr.Get, attr.Set);
+            this.displaying = displayProperty(attr.Get, attr.Set);
         }
 
         /// <param name="attr">Attribute of property</param>
-        /// <param name="method">Current actual/real method name</param>
-        public NodeInfo(DefinitionAttribute attr)
-            : this(attr.Name, attr.Description)
+        /// <param name="displaying">Displays element over the 'Name' property</param>
+        public NodeInfo(DefinitionAttribute attr, string displaying = null)
+            : this(attr.Name, attr.Description, InfoType.Definition, displaying)
         {
-            type = InfoType.Component;
+
+        }
+
+        /// <param name="attr">Attribute of property</param>
+        /// <param name="displaying">Displays element over the 'Name' property</param>
+        public NodeInfo(ComponentAttribute attr, string displaying = null)
+            : this(attr.Name, attr.Description, InfoType.Component, displaying)
+        {
+
         }
 
         /// <param name="attr">Attribute of method</param>
         /// <param name="method">Current actual/real method name</param>
         public NodeInfo(MethodAttribute attr, string method)
-            : this(attr.Name, attr.Description, new NodeIdent(attr.Name, method))
+            : this(attr.Name, attr.Description, new NodeIdent(attr.Name, method), InfoType.Method)
         {
-            signature   = aboutMethod(attr.Return, attr.Arguments);
-            type        = InfoType.Method;
+            Signature           = aboutMethod(attr.Return, attr.Arguments);
+            this.displaying     = displayMethod(attr.Return, attr.Arguments);
+            Name                = this.displaying;
         }
 
+        /// <summary>
+        /// Builds the technical description of the property
+        /// </summary>
+        /// <param name="get">Value type for getting</param>
+        /// <param name="set">Value type for setting</param>
+        /// <returns></returns>
         protected virtual string aboutProperty(CValueType get, CValueType set)
         {
-            return String.Format("{0} - Get: {1} / Set: {2}\n  ({1}){0}\n  {0} = {2}", name, get, set);
+            return String.Format("Get: {0}\nSet: {1}", _type(get), _type(set));
         }
 
+        /// <summary>
+        /// Formatting of the property for displaying
+        /// </summary>
+        /// <param name="get">Value type for getting</param>
+        /// <param name="set">Value type for setting</param>
+        /// <returns></returns>
+        protected virtual string displayProperty(CValueType get, CValueType set)
+        {
+            return Name;
+        }
+
+        /// <summary>
+        /// Builds the technical description of the method
+        /// </summary>
+        /// <param name="ret">Return value</param>
+        /// <param name="args">Arguments of method</param>
+        /// <returns></returns>
         protected virtual string aboutMethod(CValueType ret, MethodAttribute.TArguments[] args)
         {
-            string retString = _printType(ret);
+            string retString = _type(ret);
 
             if(args == null || args.Length < 1) {
-                return String.Format("{0} {1}({2})\n", retString, name, _printType(CValueType.Void));
+                return String.Format("{0} {1}({2})\n", retString, Name, _type(CValueType.Void));
             }
 
             if(args[0].name == null) {
-                return String.Format("{0} {1}({2})", retString, name, String.Join(", ", args.Select(arg => _printType(arg.type))));
+                return String.Format("{0} {1}({2})", retString, Name, String.Join(", ", args.Select(p => _type(p.type))));
             }
 
-            string argsString       = String.Join(", ", args.Select((arg) => String.Format("{0} {1}", _printType(arg.type), arg.name)));
-            string argsDescription  = String.Join("\n* ", args.Select((arg) => String.Format("{0} - {1}", arg.name, arg.description)));
+            string argsString       = String.Join(", ", args.Select(p => String.Format("{0} {1}", _type(p.type), p.name)));
+            string argsDescription  = String.Join("\n* ", args.Select(p => String.Format("{0} - {1}", p.name, p.description)));
 
-            return String.Format("{0} {1}({2})\n* {3}", retString, name, argsString, argsDescription);
+            return String.Format("{0} {1}({2})\n* {3}", retString, Name, argsString, argsDescription);
         }
 
-        private string _printType(CValueType type)
+        /// <summary>
+        /// Formatting of the method for displaying
+        /// </summary>
+        /// <param name="ret">Return value</param>
+        /// <param name="args">Arguments of method</param>
+        /// <returns></returns>
+        protected virtual string displayMethod(CValueType ret, MethodAttribute.TArguments[] args)
+        {
+            string aStr = (args != null && args.Length > 0)? String.Join(", ", args.Select(p => p.name)) : _type(CValueType.Void);
+            return String.Format("{0}({1})", Name, aStr);
+        }
+
+        /// <summary>
+        /// Formatting the type for displaying
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private string _type(CValueType type)
         {
             return type.ToString().ToLower();
         }

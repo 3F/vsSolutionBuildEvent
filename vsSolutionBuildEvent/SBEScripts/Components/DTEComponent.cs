@@ -30,7 +30,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// <summary>
     /// For work with DTE
     /// </summary>
-    [Definition("DTE", "For work with EnvDTE (is an assembly-wrapped COM library containing the objects and members for Visual Studio core automation http://msdn.microsoft.com/en-us/library/EnvDTE.aspx)")]
+    [Component("DTE", "For work with EnvDTE (is an assembly-wrapped COM library containing the objects and members for Visual Studio core automation http://msdn.microsoft.com/en-us/library/EnvDTE.aspx)")]
     public class DTEComponent: Component, IComponent
     {
         /// <summary>
@@ -87,7 +87,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         /// <param name="data"></param>
         /// <returns>found command</returns>
-        [Property("exec", "DTE-command to execution, e.g.: command(arg)", CValueType.Void, CValueType.Input)]
+        [Property("exec", "DTE-command to execution, e.g.: exec: command(arg)", CValueType.Void, CValueType.Input)]
         protected string stExec(string data)
         {
             Match m = Regex.Match(data, @"exec\s*:(.+)");

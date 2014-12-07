@@ -27,25 +27,25 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// </summary>
         public string Name
         {
-            get { return name; }
+            get;
+            protected set;
         }
-        protected string name;
 
         /// <summary>
         /// About of the definition
         /// </summary>
         public string Description
         {
-            get { return description; }
+            get;
+            protected set;
         }
-        protected string description;
 
         /// <param name="name">Definition name</param>
         /// <param name="description">About of the definition</param>
         public DefinitionAttribute(string name, string description)
         {
-            this.name           = name;
-            this.description    = description;
+            Name        = name;
+            Description = description;
         }
     }
 }

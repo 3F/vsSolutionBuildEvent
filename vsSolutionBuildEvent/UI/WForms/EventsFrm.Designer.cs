@@ -39,6 +39,7 @@
             this.panelSettingsMain = new System.Windows.Forms.Panel();
             this.groupBoxSettings = new System.Windows.Forms.GroupBox();
             this.panelControl = new System.Windows.Forms.Panel();
+            this.chkConfirmation = new System.Windows.Forms.CheckBox();
             this.comboBoxBuildContext = new System.Windows.Forms.ComboBox();
             this.chkBuildContext = new System.Windows.Forms.CheckBox();
             this.checkBoxSBEScriptSupport = new System.Windows.Forms.CheckBox();
@@ -55,12 +56,7 @@
             this.radioModeInterpreter = new System.Windows.Forms.RadioButton();
             this.radioModeFiles = new System.Windows.Forms.RadioButton();
             this.panelCommand = new System.Windows.Forms.Panel();
-            this.textBoxCommand = new System.Windows.Forms.RichTextBox();
-            this.contextMenuEditor = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.menuItemEditorCut = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuItemEditorCopy = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.menuItemEditorPaste = new System.Windows.Forms.ToolStripMenuItem();
+            this.textEditor = new net.r_eg.vsSBE.UI.WForms.Controls.TextEditor();
             this.labelToCommandBox = new System.Windows.Forms.Label();
             this.groupBoxInterpreter = new System.Windows.Forms.GroupBox();
             this.comboBoxWrapper = new System.Windows.Forms.ComboBox();
@@ -155,7 +151,6 @@
             this.panelLineForSplit = new System.Windows.Forms.Panel();
             this.panelEventType = new System.Windows.Forms.Panel();
             this.comboBoxEvents = new System.Windows.Forms.ComboBox();
-            this.chkConfirmation = new System.Windows.Forms.CheckBox();
             this.tabControl.SuspendLayout();
             this.tabPageSettings.SuspendLayout();
             this.panelSettingsMain.SuspendLayout();
@@ -164,7 +159,6 @@
             this.panelControlByOperation.SuspendLayout();
             this.groupBoxPMode.SuspendLayout();
             this.panelCommand.SuspendLayout();
-            this.contextMenuEditor.SuspendLayout();
             this.groupBoxInterpreter.SuspendLayout();
             this.groupBoxVariants.SuspendLayout();
             this.groupBoxEW.SuspendLayout();
@@ -255,6 +249,15 @@
             this.panelControl.Name = "panelControl";
             this.panelControl.Size = new System.Drawing.Size(191, 123);
             this.panelControl.TabIndex = 32;
+            // 
+            // chkConfirmation
+            // 
+            this.chkConfirmation.Location = new System.Drawing.Point(8, 126);
+            this.chkConfirmation.Name = "chkConfirmation";
+            this.chkConfirmation.Size = new System.Drawing.Size(103, 17);
+            this.chkConfirmation.TabIndex = 25;
+            this.chkConfirmation.Text = "Confirmation";
+            this.chkConfirmation.UseVisualStyleBackColor = true;
             // 
             // comboBoxBuildContext
             // 
@@ -433,61 +436,20 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelCommand.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelCommand.Controls.Add(this.textBoxCommand);
+            this.panelCommand.Controls.Add(this.textEditor);
             this.panelCommand.Location = new System.Drawing.Point(6, 261);
             this.panelCommand.Name = "panelCommand";
             this.panelCommand.Size = new System.Drawing.Size(767, 118);
             this.panelCommand.TabIndex = 62;
             // 
-            // textBoxCommand
+            // textEditor
             // 
-            this.textBoxCommand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(243)))), ((int)(((byte)(243)))));
-            this.textBoxCommand.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBoxCommand.ContextMenuStrip = this.contextMenuEditor;
-            this.textBoxCommand.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBoxCommand.Location = new System.Drawing.Point(0, 0);
-            this.textBoxCommand.Name = "textBoxCommand";
-            this.textBoxCommand.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.textBoxCommand.Size = new System.Drawing.Size(765, 116);
-            this.textBoxCommand.TabIndex = 4;
-            this.textBoxCommand.Text = "";
-            this.textBoxCommand.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxCommand_KeyDown);
-            // 
-            // contextMenuEditor
-            // 
-            this.contextMenuEditor.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuItemEditorCut,
-            this.menuItemEditorCopy,
-            this.toolStripSeparator1,
-            this.menuItemEditorPaste});
-            this.contextMenuEditor.Name = "contextMenuEditor";
-            this.contextMenuEditor.Size = new System.Drawing.Size(103, 76);
-            // 
-            // menuItemEditorCut
-            // 
-            this.menuItemEditorCut.Name = "menuItemEditorCut";
-            this.menuItemEditorCut.Size = new System.Drawing.Size(102, 22);
-            this.menuItemEditorCut.Text = "Cut";
-            this.menuItemEditorCut.Click += new System.EventHandler(this.menuItemEditorCut_Click);
-            // 
-            // menuItemEditorCopy
-            // 
-            this.menuItemEditorCopy.Name = "menuItemEditorCopy";
-            this.menuItemEditorCopy.Size = new System.Drawing.Size(102, 22);
-            this.menuItemEditorCopy.Text = "Copy";
-            this.menuItemEditorCopy.Click += new System.EventHandler(this.menuItemEditorCopy_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(99, 6);
-            // 
-            // menuItemEditorPaste
-            // 
-            this.menuItemEditorPaste.Name = "menuItemEditorPaste";
-            this.menuItemEditorPaste.Size = new System.Drawing.Size(102, 22);
-            this.menuItemEditorPaste.Text = "Paste";
-            this.menuItemEditorPaste.Click += new System.EventHandler(this.menuItemEditorPaste_Click);
+            this.textEditor.CodeCompletionEnabled = false;
+            this.textEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textEditor.Location = new System.Drawing.Point(0, 0);
+            this.textEditor.Name = "textEditor";
+            this.textEditor.Size = new System.Drawing.Size(765, 116);
+            this.textEditor.TabIndex = 0;
             // 
             // labelToCommandBox
             // 
@@ -1484,15 +1446,6 @@
             this.comboBoxEvents.TabIndex = 42;
             this.comboBoxEvents.SelectedIndexChanged += new System.EventHandler(this.comboBoxEvents_SelectedIndexChanged);
             // 
-            // chkConfirmation
-            // 
-            this.chkConfirmation.Location = new System.Drawing.Point(8, 126);
-            this.chkConfirmation.Name = "chkConfirmation";
-            this.chkConfirmation.Size = new System.Drawing.Size(103, 17);
-            this.chkConfirmation.TabIndex = 25;
-            this.chkConfirmation.Text = "Confirmation";
-            this.chkConfirmation.UseVisualStyleBackColor = true;
-            // 
             // EventsFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1522,7 +1475,6 @@
             this.groupBoxPMode.ResumeLayout(false);
             this.groupBoxPMode.PerformLayout();
             this.panelCommand.ResumeLayout(false);
-            this.contextMenuEditor.ResumeLayout(false);
             this.groupBoxInterpreter.ResumeLayout(false);
             this.groupBoxInterpreter.PerformLayout();
             this.groupBoxVariants.ResumeLayout(false);
@@ -1570,7 +1522,6 @@
         private System.Windows.Forms.RadioButton radioModeInterpreter;
         private System.Windows.Forms.RadioButton radioModeFiles;
         private System.Windows.Forms.Panel panelCommand;
-        private System.Windows.Forms.RichTextBox textBoxCommand;
         private System.Windows.Forms.Label labelToCommandBox;
         private System.Windows.Forms.GroupBox groupBoxInterpreter;
         private System.Windows.Forms.ComboBox comboBoxWrapper;
@@ -1588,11 +1539,6 @@
         private System.Windows.Forms.RadioButton radioCodesBlacklist;
         private System.Windows.Forms.RadioButton radioCodesWhitelist;
         private System.Windows.Forms.GroupBox groupBoxOutputControl;
-        private System.Windows.Forms.ContextMenuStrip contextMenuEditor;
-        private System.Windows.Forms.ToolStripMenuItem menuItemEditorCut;
-        private System.Windows.Forms.ToolStripMenuItem menuItemEditorCopy;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem menuItemEditorPaste;
         private System.Windows.Forms.Panel panelStatusBR;
         private System.Windows.Forms.Panel panelLineBottom2;
         private System.Windows.Forms.Panel panelLineBottom;
@@ -1675,6 +1621,7 @@
         private System.Windows.Forms.ComboBox comboBoxBuildContext;
         private System.Windows.Forms.CheckBox chkBuildContext;
         private System.Windows.Forms.CheckBox chkConfirmation;
+        private Controls.TextEditor textEditor;
 
     }
 }

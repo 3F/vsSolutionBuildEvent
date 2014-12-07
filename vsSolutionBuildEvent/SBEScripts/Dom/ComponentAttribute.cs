@@ -15,18 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace net.r_eg.vsSBE.SBEScripts.Dom
 {
-    public interface IAttrDomLevelB
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false)]
+    public class ComponentAttribute: Attribute, IAttrDomLevelA
     {
         /// <summary>
-        /// Name of the parent specification
+        /// Component name
         /// </summary>
-        string Parent { get; }
+        public string Name
+        {
+            get;
+            protected set;
+        }
 
         /// <summary>
-        /// Actual/real method name of the parent specification
+        /// About component
         /// </summary>
-        string Method { get; }
+        public string Description
+        {
+            get;
+            protected set;
+        }
+
+        /// <param name="name">Componen name</param>
+        /// <param name="description">About component</param>
+        public ComponentAttribute(string name, string description)
+        {
+            Name        = name;
+            Description = description;
+        }
     }
 }

@@ -302,7 +302,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             combo.Items.Add(":: Output-Build customization :: Full control");
 
             addEvent(new SBEWrap(SolutionEventType.Transmitter));
-            combo.Items.Add(":: Transmitter :: Transmission building-data to outer handler");
+            combo.Items.Add(":: Transmitter :: Transmission of the build-data to outer handler");
 
             combo.SelectedIndex = 0;
         }

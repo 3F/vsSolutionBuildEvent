@@ -26,16 +26,24 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// Basic type
         /// </summary>
         Unspecified,
+
         /// <summary>
-        /// Default for DefinitionAttribute
+        /// Defaults for DefinitionAttribute
         /// </summary>
         Component,
+
         /// <summary>
-        /// Default for MethodAttribute
+        /// Unspecified complex expression/construction
+        /// </summary>
+        Definition,
+
+        /// <summary>
+        /// Defaults for MethodAttribute
         /// </summary>
         Method,
+
         /// <summary>
-        /// Default for PropertyAttribute
+        /// Defaults for PropertyAttribute
         /// </summary>
         Property
     }

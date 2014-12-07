@@ -30,7 +30,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// <summary>
     /// Conditions in scripts
     /// </summary>
-    [Definition("(){}", "Conditionals statements")]
+    [Definition("(true) { }", "Conditionals statements\n\n(1 > 2) {\n ... \n}")]
     public class ConditionComponent: Component, IComponent
     {
         /// <summary>

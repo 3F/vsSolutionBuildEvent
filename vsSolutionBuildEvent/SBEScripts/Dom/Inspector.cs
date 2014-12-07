@@ -27,24 +27,15 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
 {
     using LInfo = ConcurrentDictionary<NodeIdent, List<INodeInfo>>;
 
-    public class Inspector
+    public class Inspector: IInspector
     {
         /// <summary>
-        /// List of root constructed data
+        /// List of the constructed root-data
         /// </summary>
         public IEnumerable<INodeInfo> Root
         {
             get { return getBy(); }
         }
-
-        /// <summary>
-        /// Thread-safe getting the instance of Inspector class
-        /// </summary>
-        public static Inspector _
-        {
-            get { return _lazy.Value; }
-        }
-        private static readonly Lazy<Inspector> _lazy = new Lazy<Inspector>(() => new Inspector());
 
         /// <summary>
         /// Main storage
@@ -55,22 +46,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// Construct data from used components with IBootloader
         /// </summary>
         /// <param name="bootloader"></param>
-        public void extract(IBootloader bootloader)
+        public Inspector(IBootloader bootloader)
         {
-            data.Clear();
-            foreach(IComponent c in bootloader.Components)
-            {
-                Type type = c.GetType();
-
-                foreach(Attribute attr in type.GetCustomAttributes(true)) {
-                    inspectLevelA(type, attr, data);
-                }
-
-                foreach(MethodInfo minf in type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)) {
-                    foreach(Attribute attr in Attribute.GetCustomAttributes(minf)) {
-                        inspectLevelB(type, attr, minf, data);
-                    }
-                }
+            foreach(IComponent c in bootloader.Components) {
+                Log.nlog.Trace("Inspector: extracting from '{0}'", c.GetType().Name);
+                extract(c, data);
             }
         }
 
@@ -83,7 +63,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         {
             if(data.ContainsKey(ident))
             {
-                foreach(INodeInfo elem in data[ident]) {
+                foreach(INodeInfo elem in data[ident].OrderBy(p => p.Name)) {
                     yield return elem;
                 }
             }
@@ -99,48 +79,104 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
             return getBy(new NodeIdent(type.Name, null));
         }
 
-        /// <param name="type">Type of component</param>
+        /// <param name="c">From</param>
+        /// <param name="data">To</param>
+        protected void extract(IComponent c, LInfo data)
+        {
+            Type type = c.GetType();
+
+            foreach(Attribute attr in type.GetCustomAttributes(true)) {
+                inspectLevelA(type, attr, data);
+            }
+
+            foreach(MethodInfo minf in type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)) {
+                foreach(Attribute attr in Attribute.GetCustomAttributes(minf)) {
+                    inspectLevelB(type, attr, minf, data);
+                }
+            }
+        }
+
+        /// <param name="type">Type of element</param>
         /// <param name="attr">Found attribute</param>
         /// <param name="method">Found method</param>
         /// <param name="data"></param>
         protected void inspectLevelB(Type type, Attribute attr, MethodInfo method, LInfo data)
         {
-            if(attr.GetType() != typeof(MethodAttribute) && attr.GetType() != typeof(PropertyAttribute)) {
+            if(!isComponent(type)
+                || (attr.GetType() != typeof(MethodAttribute) && attr.GetType() != typeof(PropertyAttribute)))
+            {
                 return;
             }
             
             IAttrDomLevelB levB = (IAttrDomLevelB)attr;
-            NodeIdent ident     = new NodeIdent((levB.Parent)?? type.Name, levB.Method);
+            NodeIdent ident     = new NodeIdent((levB.Parent)?? getComponentName(type), levB.Method);
 
             if(!data.ContainsKey(ident)) {
                 data[ident] = new List<INodeInfo>();
             }
 
             if(attr.GetType() == typeof(PropertyAttribute)) {
-                data[ident].Add(new NodeInfo((PropertyAttribute)levB, method.Name));
+                data[ident].Add(new NodeInfo((PropertyAttribute)attr, method.Name));
+                return;
             }
-            else if(attr.GetType() == typeof(MethodAttribute)) {
-                data[ident].Add(new NodeInfo((MethodAttribute)levB, method.Name));
+
+            if(attr.GetType() == typeof(MethodAttribute)) {
+                data[ident].Add(new NodeInfo((MethodAttribute)attr, method.Name));
+                return;
             }
         }
 
-        /// <param name="type">Type of component</param>
+        /// <param name="type">Type of element</param>
         /// <param name="attr">Found attribute</param>
         /// <param name="data"></param>
         protected void inspectLevelA(Type type, Attribute attr, LInfo data)
         {
-            if(attr.GetType() != typeof(DefinitionAttribute)) {
+            if(!isComponent(type) 
+                || (attr.GetType() != typeof(DefinitionAttribute) && attr.GetType() != typeof(ComponentAttribute)))
+            {
                 return;
             }
-            IAttrDomLevelA levA = (IAttrDomLevelA)attr;
-            NodeIdent ident     = new NodeIdent(null, null);
+
+            //IAttrDomLevelA levA = (IAttrDomLevelA)attr;
+            NodeIdent ident = new NodeIdent(null, null);
 
             if(!data.ContainsKey(ident)) {
                 data[ident] = new List<INodeInfo>();
             }
-            data[ident].Add(new NodeInfo((DefinitionAttribute)levA));
+
+            if(attr.GetType() == typeof(DefinitionAttribute)) {
+                data[ident].Add(new NodeInfo((DefinitionAttribute)attr));
+                return;
+            }
+
+            if(attr.GetType() == typeof(ComponentAttribute)) {
+                data[ident].Add(new NodeInfo((ComponentAttribute)attr));
+                return;
+            }
         }
 
-        private Inspector() { }
+        /// <summary>
+        /// Getting component name
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns>Original name by class name or what is specified with the ComponentAttribute</returns>
+        protected string getComponentName(Type type)
+        {
+            object[] attr = type.GetCustomAttributes(typeof(ComponentAttribute), false);
+            if(attr != null && attr.Length > 0) {
+                return ((ComponentAttribute)attr[0]).Name;
+            }
+            return type.Name;
+        }
+
+        protected bool isComponent(Type type)
+        {
+            if(type.IsClass && type.GetInterfaces().Contains(typeof(IComponent)) 
+                && type.Name.EndsWith("Component")) //TODO:
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

@@ -90,6 +90,8 @@ namespace net.r_eg.vsSBE.UI.WForms
             Util.fixDGVRowHeight(dataGridViewOutput);
             Util.fixDGVRowHeight(dataGridViewOrder);
             Util.fixDGVRowHeight(dgvActions);
+
+            initEditor();
         }
 
         /// <summary>
@@ -100,9 +102,8 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// <param name="project"></param>
         public void property(string name, string project = null)
         {
-            textBoxCommand.Select(textBoxCommand.SelectionStart, 0);
-            textBoxCommand.SelectedText = logic.formatMSBuildProperty(name, project);
-            this.Focus();
+            textEditor.insertToSelection(logic.formatMSBuildProperty(name, project));
+            Focus();
         }
 
         /// <summary>
@@ -111,9 +112,20 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// <param name="name"></param>
         public void command(string name)
         {
-            textBoxCommand.Select(textBoxCommand.SelectionStart, 0);
-            textBoxCommand.SelectedText = name;
-            this.Focus();
+            if(radioModeOperation.Checked) {
+                textEditor.insertToSelection(name + System.Environment.NewLine, false);
+            }
+            else {
+                textEditor.insertToSelection(name);
+            }
+            Focus();
+        }
+
+        protected void initEditor()
+        {
+            //TODO:
+            textEditor.setBackgroundFromString("#F8F3F3");
+            textEditor._.ShowLineNumbers = false;
         }
 
         protected void saveData()
@@ -156,7 +168,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(radioModeInterpreter.Checked)
             {
                 evt.Mode = new ModeInterpreter() {
-                    Command = textBoxCommand.Text,
+                    Command = textEditor.Text,
                     Handler = comboBoxInterpreter.Text,
                     Newline = comboBoxNewline.Text,
                     Wrapper = comboBoxWrapper.Text.Trim()
@@ -165,20 +177,20 @@ namespace net.r_eg.vsSBE.UI.WForms
             else if(radioModeFiles.Checked)
             {
                 evt.Mode = new ModeFile() {
-                    Command = textBoxCommand.Text
+                    Command = textEditor.Text
                 };
             }
             else if(radioModeScript.Checked)
             {
                 evt.Mode = new ModeScript() {
-                    Command = textBoxCommand.Text
+                    Command = textEditor.Text
                 };
             }
             else if(radioModeOperation.Checked)
             {
                 string[] command;
                 if(isOperationCustom(listBoxOperation)) {
-                    command = logic.splitOperations(textBoxCommand.Text);
+                    command = logic.splitOperations(textEditor.Text);
                 }
                 else {
                     //TODO:
@@ -274,7 +286,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                 case ModeType.Interpreter:
                 {
                     radioModeInterpreter.Checked    = true;
-                    textBoxCommand.Text             = ((IModeInterpreter)evt.Mode).Command;
+                    textEditor.Text                 = ((IModeInterpreter)evt.Mode).Command;
                     comboBoxInterpreter.Text        = ((IModeInterpreter)evt.Mode).Handler;
                     comboBoxNewline.Text            = ((IModeInterpreter)evt.Mode).Newline;
                     comboBoxWrapper.Text            = ((IModeInterpreter)evt.Mode).Wrapper;
@@ -283,12 +295,12 @@ namespace net.r_eg.vsSBE.UI.WForms
                 case ModeType.File:
                 {
                     radioModeFiles.Checked = true;
-                    textBoxCommand.Text = ((IModeFile)evt.Mode).Command;
+                    textEditor.Text = ((IModeFile)evt.Mode).Command;
                     return;
                 }
                 case ModeType.Script: {
                     radioModeScript.Checked = true;
-                    textBoxCommand.Text = ((IModeScript)evt.Mode).Command;
+                    textEditor.Text = ((IModeScript)evt.Mode).Command;
                     return;
                 }
                 case ModeType.Operation:
@@ -297,10 +309,10 @@ namespace net.r_eg.vsSBE.UI.WForms
                     IModeOperation mode         = (IModeOperation)evt.Mode;
 
                     if(logic.isDefOperation(mode.Caption)) {
-                        textBoxCommand.Text = "> " + mode.Caption;
+                        textEditor.Text = "> " + mode.Caption;
                     }
                     else {
-                        textBoxCommand.Text = (mode.Command == null)? "" : logic.joinOperations(mode.Command);
+                        textEditor.Text = (mode.Command == null)? "" : logic.joinOperations(mode.Command);
                     }
                     checkBoxOperationsAbort.Checked = mode.AbortOnFirstError;
                     return;
@@ -414,8 +426,8 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             groupBoxInterpreter.Enabled         = false;
             listBoxOperation.Enabled            = false;
-            textBoxCommand.Enabled              = true;
-            textBoxCommand.Text                 = String.Empty;
+            textEditor.Enabled                  = true;
+            textEditor.Text                     = String.Empty;
             panelControlByOperation.Enabled     = true;
             checkBoxOperationsAbort.Enabled     = false;
             checkBoxSBEScriptSupport.Enabled    = true;
@@ -476,13 +488,13 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             if(isOperationCustom(list)) {
                 labelToCommandBox.Text  = "DTE execute (separated by enter key):";
-                textBoxCommand.Enabled  = true;
-                textBoxCommand.Text     = String.Empty;
+                textEditor.Enabled      = true;
+                textEditor.Text         = String.Empty;
             }
             else {
                 labelToCommandBox.Text  = "~";
-                textBoxCommand.Enabled  = false;
-                textBoxCommand.Text     = "> " + logic.DefOperations[list.SelectedIndex].Caption;
+                textEditor.Enabled      = false;
+                textEditor.Text         = "> " + logic.DefOperations[list.SelectedIndex].Caption;
             }
         }
 
@@ -660,10 +672,12 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void checkBoxStatus_CheckedChanged(object sender, EventArgs e)
         {
             if(checkBoxStatus.Checked) {
-                checkBoxStatus.BackColor = textBoxCommand.BackColor = System.Drawing.Color.FromArgb(242, 250, 241);
+                checkBoxStatus.BackColor = System.Drawing.Color.FromArgb(242, 250, 241);
+                textEditor.setBackgroundFromString("#F2FAF1");
                 return;
             }
-            checkBoxStatus.BackColor = textBoxCommand.BackColor = System.Drawing.Color.FromArgb(248, 243, 243);
+            checkBoxStatus.BackColor = System.Drawing.Color.FromArgb(248, 243, 243);
+            textEditor.setBackgroundFromString("#F8F3F3");
         }
 
         private void btnApply_Click(object sender, EventArgs e)
@@ -794,16 +808,17 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void toolStripMenuAbout_Click(object sender, EventArgs e)
         {
-            string inc       = "This product includes:{0}{1}\n{2}";
+            string inc       = "This product includes:{0}{1}{2}\n{3}";
             string nlog      = "\n * NLog (nlog-project.org)";
             string json      = "\n * Json.NET (json.codeplex.com)";
+            string editor    = "\n * AvalonEdit (avalonedit.net)";
             string resources = "\n All about graphical resources see /Resources/License";
 
             MessageBox.Show(
                 String.Format(
                         "Copyright (c) 2013-{0}\n Developed by reg [Denis Kuzmin] < entry.reg@gmail.com >\n\n{1}",
-                        DateTime.Now.Year, 
-                        String.Format(inc, nlog, json, resources)
+                        DateTime.Now.Year,
+                        String.Format(inc, editor, json, nlog, resources)
                 ),
                 toolStripMenuAbout.Text,
                 MessageBoxButtons.OK,
@@ -818,21 +833,6 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(ret == DialogResult.Yes) {
                 Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/issues/new");
             }
-        }
-
-        private void menuItemEditorCut_Click(object sender, EventArgs e)
-        {
-            textBoxCommand.Cut();
-        }
-
-        private void menuItemEditorCopy_Click(object sender, EventArgs e)
-        {
-            textBoxCommand.Copy();
-        }
-
-        private void menuItemEditorPaste_Click(object sender, EventArgs e)
-        {
-            textBoxCommand.Paste();
         }
 
         private void toolStripMenuDebugMode_Click(object sender, EventArgs e)

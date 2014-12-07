@@ -29,7 +29,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// <summary>
     /// For work with OWP
     /// </summary>
-    [Definition("OWP", "For work with OWP (Output Window Pane)")]
+    [Component("OWP", "For work with OWP (Output Window Pane)")]
     public class OWPComponent: Component, IComponent
     {
         /// <summary>

@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="" extensions=".js" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+    <Color name="Punctuation" foreground="DarkSlateGray" />
+	<Color name="Digits" foreground="DarkBlue" />
+	<Color name="String" foreground="Sienna" />
+	<Color name="Literals" foreground="Blue" />
+    
+	<RuleSet ignoreCase="false"> 
+        
+		<Rule color="Punctuation">
+			[?,.;()\[\]{}+\-/%*&lt;&gt;^+~!|&amp;]+
+		</Rule>
+                
+		<Rule color="Digits">
+			[0-9]+
+		</Rule>
+        
+		<Span color="String" multiline="true">
+			<Begin>"</Begin>
+			<End>"</End>
+			<RuleSet>
+				<Span begin="\\" end="." />
+			</RuleSet>
+		</Span>        
+        
+		<Keywords color="Literals">
+			<Word>false</Word>
+			<Word>null</Word>
+			<Word>true</Word>
+		</Keywords>
+        
+	</RuleSet>
+</SyntaxDefinition>

@@ -35,6 +35,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         string Signature { get; }
 
         /// <summary>
+        /// Displays element over the 'Name' property.
+        /// In general this useful for code completion
+        /// </summary>
+        string Displaying { get; }
+
+        /// <summary>
         /// Element type
         /// </summary>
         InfoType Type { get; }

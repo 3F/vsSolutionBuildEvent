@@ -16,15 +16,14 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts;
+using net.r_eg.vsSBE.SBEScripts.Dom;
+using net.r_eg.vsSBE.UI.WForms.Controls;
+using AvalonEditWPF = ICSharpCode.AvalonEdit.TextEditor;
 
 namespace net.r_eg.vsSBE.UI.WForms
 {
@@ -58,19 +57,34 @@ namespace net.r_eg.vsSBE.UI.WForms
             /// </summary>
             public ISBEScript script;
 
+            /// <summary>
+            /// Loader of the IComponent's
+            /// </summary>
+            public IBootloader bootloader;
+
+            /// <summary>
+            /// Mapper of the available components
+            /// </summary>
+            public IInspector inspector;
+
             public ToolContext(IEnvironment env)
             {
                 Log.nlog.Debug("Initialize the clean context for testing.");
-                script  = new Script(new Bootloader(env, uvariable));
-                msbuild = new MSBuildParser(env, uvariable);
+                bootloader  = new Bootloader(env, uvariable);
+                inspector   = new Inspector(bootloader);
+                script      = new Script(bootloader);
+                msbuild     = new MSBuildParser(env, uvariable);
             }
         }
         private static ToolContext context;
 
         /// <summary>
-        /// Flag of sample
+        /// Alias to AvalonEdit
         /// </summary>
-        private bool _isHiddenSample = false;
+        private AvalonEditWPF _editor
+        {
+            get { return textEditor._; }
+        }
 
         public ScriptCheckFrm(IEnvironment env)
         {
@@ -82,6 +96,15 @@ namespace net.r_eg.vsSBE.UI.WForms
             else {
                 updateVariableList();
             }
+
+            initEditor();
+        }
+
+        protected void initEditor()
+        {
+            _editor.Text = Resource.StringScriptExampleSBE;
+            textEditor.colorize(TextEditor.ColorSchema.SBEScript);
+            textEditor.codeCompletionInit(context.inspector);
         }
 
         protected void updateVariableList()
@@ -135,29 +158,9 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
-        private void setCommand(string str, Color foreColor)
-        {
-            richTextBoxCommand.Text = str;
-            richTextBoxCommand.ForeColor = foreColor;
-        }
-
         private void btnExecute_Click(object sender, EventArgs e)
         {
-            richTextBoxExecuted.Text = execute(richTextBoxCommand.Text);
-        }
-
-        private void richTextBoxCommand_Click(object sender, EventArgs e)
-        {
-            if(_isHiddenSample) {
-                return;
-            }
-            _isHiddenSample = true;
-            setCommand("", Color.FromArgb(0, 0, 0));
-        }
-
-        private void DTECheckFrm_Load(object sender, EventArgs e)
-        {
-            setCommand(richTextBoxCommand.Text, Color.FromArgb(128, 128, 128));
+            richTextBoxExecuted.Text = execute(textEditor.Text);
         }
 
         private void menuItemUVarUnsetSel_Click(object sender, EventArgs e)

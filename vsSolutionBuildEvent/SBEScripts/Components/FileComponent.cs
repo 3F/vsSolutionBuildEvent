@@ -32,7 +32,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// Support file operations
     /// I/O, call, etc.
     /// </summary>
-    [Definition("File", "I/O operations")]
+    [Component("File", "I/O operations")]
     public class FileComponent: Component, IComponent
     {
         /// <summary>
@@ -404,8 +404,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         [
             Method
             (
-                "Regex", 
-                "Replacing the strings in files with Regular expression.", 
+                "Regex",
+                "Alias for Regexp", 
                 "replace", 
                 "stReplace", 
                 new string[] { "file", "pattern", "replacement" },

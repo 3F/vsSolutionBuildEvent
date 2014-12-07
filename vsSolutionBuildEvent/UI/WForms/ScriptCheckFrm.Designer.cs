@@ -36,7 +36,7 @@
             this.splitContainerMHorizontal = new System.Windows.Forms.SplitContainer();
             this.panelTopMain = new System.Windows.Forms.Panel();
             this.groupBoxCommand = new System.Windows.Forms.GroupBox();
-            this.richTextBoxCommand = new System.Windows.Forms.RichTextBox();
+            this.textEditor = new net.r_eg.vsSBE.UI.WForms.Controls.TextEditor();
             this.panelBottomMain = new System.Windows.Forms.Panel();
             this.btnDoc = new System.Windows.Forms.Button();
             this.checkBoxMSBuildSupport = new System.Windows.Forms.CheckBox();
@@ -138,7 +138,7 @@
             // 
             // groupBoxCommand
             // 
-            this.groupBoxCommand.Controls.Add(this.richTextBoxCommand);
+            this.groupBoxCommand.Controls.Add(this.textEditor);
             this.groupBoxCommand.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBoxCommand.Location = new System.Drawing.Point(0, 0);
             this.groupBoxCommand.Margin = new System.Windows.Forms.Padding(0);
@@ -149,18 +149,15 @@
             this.groupBoxCommand.TabStop = false;
             this.groupBoxCommand.Text = "To execution:";
             // 
-            // richTextBoxCommand
+            // textEditor
             // 
-            this.richTextBoxCommand.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.richTextBoxCommand.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBoxCommand.Location = new System.Drawing.Point(0, 13);
-            this.richTextBoxCommand.Margin = new System.Windows.Forms.Padding(0);
-            this.richTextBoxCommand.Name = "richTextBoxCommand";
-            this.richTextBoxCommand.Size = new System.Drawing.Size(550, 153);
-            this.richTextBoxCommand.TabIndex = 0;
-            this.richTextBoxCommand.Text = resources.GetString("richTextBoxCommand.Text");
-            this.richTextBoxCommand.WordWrap = false;
-            this.richTextBoxCommand.Click += new System.EventHandler(this.richTextBoxCommand_Click);
+            this.textEditor.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.textEditor.CodeCompletionEnabled = true;
+            this.textEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textEditor.Location = new System.Drawing.Point(0, 13);
+            this.textEditor.Name = "textEditor";
+            this.textEditor.Size = new System.Drawing.Size(550, 153);
+            this.textEditor.TabIndex = 3;
             // 
             // panelBottomMain
             // 
@@ -290,7 +287,6 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Testing Tool:  SBE-Scripts";
-            this.Load += new System.EventHandler(this.DTECheckFrm_Load);
             this.contextMenuUVariables.ResumeLayout(false);
             this.splitContainerMVertical.Panel1.ResumeLayout(false);
             this.splitContainerMVertical.Panel2.ResumeLayout(false);
@@ -326,11 +322,11 @@
         private System.Windows.Forms.SplitContainer splitContainerMHorizontal;
         private System.Windows.Forms.Panel panelTopMain;
         private System.Windows.Forms.GroupBox groupBoxCommand;
-        private System.Windows.Forms.RichTextBox richTextBoxCommand;
         private System.Windows.Forms.Panel panelBottomMain;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox checkBoxMSBuildSupport;
         private System.Windows.Forms.RichTextBox richTextBoxExecuted;
         private System.Windows.Forms.Button btnDoc;
+        private Controls.TextEditor textEditor;
     }
 }

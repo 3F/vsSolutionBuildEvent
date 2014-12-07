@@ -29,7 +29,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// <summary>
     /// Any supported comments for scripts
     /// </summary>
-    [Definition("\"\"", "Multiline comment")]
+    [Definition("\" \"", "Multiline comment")]
     public class CommentComponent: Component, IComponent
     {
         /// <summary>

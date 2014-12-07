@@ -242,7 +242,6 @@ namespace net.r_eg.vsSBE
             _env = new Environment(Dte2);
 
             IBootloader bootloader = new Bootloader(_env, uvariable);
-            Inspector._.extract(bootloader);
 
             _c = new Connection(
                     new Command(_env,

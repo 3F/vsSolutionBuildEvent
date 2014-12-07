@@ -34,6 +34,9 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.AvalonEdit">
+      <HintPath>..\packages\AvalonEdit.5.0.2\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.OLE.Interop" />
@@ -65,6 +68,7 @@
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="EnvDTE">
@@ -141,15 +145,24 @@
     <Compile Include="Extensions\ObjectExtension.cs" />
     <Compile Include="SBEScripts\Bootloader.cs" />
     <Compile Include="SBEScripts\Components\Component.cs" />
+    <Compile Include="SBEScripts\Dom\CompletionData.cs" />
+    <Compile Include="SBEScripts\Dom\ComponentAttribute.cs" />
     <Compile Include="SBEScripts\Dom\IAttrDomLevelA.cs" />
     <Compile Include="SBEScripts\Dom\DefinitionAttribute.cs" />
     <Compile Include="SBEScripts\CValueType.cs" />
     <Compile Include="SBEScripts\Dom\IAttrDomLevelB.cs" />
+    <Compile Include="SBEScripts\Dom\Icon.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Icon.resx</DependentUpon>
+    </Compile>
+    <Compile Include="SBEScripts\Dom\IInspector.cs" />
     <Compile Include="SBEScripts\Dom\InfoType.cs" />
     <Compile Include="SBEScripts\Dom\INodeInfo.cs" />
     <Compile Include="SBEScripts\Dom\Inspector.cs" />
     <Compile Include="SBEScripts\Dom\NodeIdent.cs" />
     <Compile Include="SBEScripts\Dom\NodeInfo.cs" />
+    <Compile Include="SBEScripts\Dom\DomParser.cs" />
     <Compile Include="SBEScripts\IBootloader.cs" />
     <Compile Include="SBEScripts\IEvaluator.cs" />
     <Compile Include="SBEScripts\Exceptions\ScriptException.cs" />
@@ -201,9 +214,20 @@
     <Compile Include="SynchSubscribers.cs" />
     <Compile Include="MSBuild\TPreparedData.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
+    <Compile Include="UI\Resource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
     <Compile Include="UI\Util.cs" />
     <Compile Include="UI\WForms\Components\DataGridViewExt.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UI\WForms\Controls\TextEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\WForms\Controls\TextEditor.Designer.cs">
+      <DependentUpon>TextEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="UI\WForms\ScriptCheckFrm.cs">
       <SubType>Form</SubType>
@@ -279,8 +303,24 @@
     </Compile>
     <Compile Include="vsSolutionBuildEventPackage.cs" />
     <Compile Include="PkgCmdID.cs" />
+    <Compile Include="xshd\XshdResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>XshdResource.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="SBEScripts\Dom\Icon.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Icon.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\WForms\Controls\TextEditor.resx">
+      <DependentUpon>TextEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\WForms\ScriptCheckFrm.resx">
       <DependentUpon>ScriptCheckFrm.cs</DependentUpon>
     </EmbeddedResource>
@@ -306,6 +346,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>VSPackage.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="xshd\XshdResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>XshdResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Content Include="NLog.dll.nlog">
@@ -317,7 +361,15 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="$(SolutionDir)_version" />
+    <None Include="xshd\FilesMode.xshd" />
+    <None Include="xshd\InterpreterMode.xshd" />
+    <None Include="xshd\OperationMode.xshd" />
+    <None Include="xshd\SBEScripts.xshd" />
     <Resource Include="Resources\Exclamation_16.png" />
+    <None Include="Resources\components\package.png" />
+    <None Include="Resources\components\property.png" />
+    <None Include="Resources\components\function.png" />
+    <None Include="Resources\components\definition.png" />
     <Content Include="Resources\preview.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -342,9 +394,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UI\WForms\Controls\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
   </PropertyGroup>

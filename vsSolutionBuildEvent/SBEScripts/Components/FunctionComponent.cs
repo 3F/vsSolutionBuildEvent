@@ -26,7 +26,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// <summary>
     /// Mixed supported functions
     /// </summary>
-    [Definition("Func", "Mixed functions")]
+    [Component("Func", "Mixed functions")]
     public class FunctionComponent: Component, IComponent
     {
         /// <summary>

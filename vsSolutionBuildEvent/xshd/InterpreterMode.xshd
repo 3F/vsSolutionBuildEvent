@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<SyntaxDefinition name="" extensions=".js" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+    <Color name="KeyWords" foreground="	DarkBlue" />
+    <Color name="Punctuation" foreground="DarkSlateGray" />
+    <Color name="MSBuildPunctuation" foreground="Indigo" />
+	<Color name="Digits" foreground="DarkBlue" />
+	<Color name="String" foreground="Sienna" />
+	<Color name="Literals" foreground="Blue" />
+    
+	<RuleSet ignoreCase="false">    
+		<Keywords color="KeyWords">
+			<Word>break</Word>
+			<Word>continue</Word>
+			<Word>goto</Word>
+			<Word>return</Word>
+			<Word>try</Word>
+			<Word>throw</Word>
+			<Word>catch</Word>
+			<Word>finally</Word>
+			<Word>class</Word>
+			<Word>interface</Word>
+			<Word>delegate</Word>
+			<Word>object</Word>
+			<Word>string</Word>
+			<Word>void</Word>            
+			<Word>else</Word>
+			<Word>if</Word>
+			<Word>switch</Word>
+			<Word>case</Word>
+			<Word>default</Word>
+			<Word>do</Word>
+			<Word>for</Word>
+			<Word>foreach</Word>
+			<Word>in</Word>
+			<Word>while</Word>
+			<Word>lock</Word>        
+			<Word>Array</Word>
+			<Word>Boolean</Word>
+			<Word>Date</Word>
+			<Word>Function</Word>
+			<Word>Global</Word>
+			<Word>Math</Word>
+			<Word>Number</Word>
+			<Word>Object</Word>
+			<Word>RegExp</Word>
+			<Word>String</Word>        
+			<Word>break</Word>
+			<Word>continue</Word>
+			<Word>delete</Word>
+			<Word>else</Word>
+			<Word>for</Word>
+			<Word>function</Word>
+			<Word>if</Word>
+			<Word>in</Word>
+			<Word>new</Word>
+			<Word>return</Word>
+			<Word>this</Word>
+			<Word>typeof</Word>
+			<Word>void</Word>
+			<Word>while</Word>
+			<Word>with</Word>
+			<Word>abstract</Word>
+			<Word>boolean</Word>
+			<Word>byte</Word>
+			<Word>case</Word>
+			<Word>catch</Word>
+			<Word>char</Word>
+			<Word>class</Word>
+			<Word>const</Word>
+			<Word>debugger</Word>
+			<Word>default</Word>
+			<Word>do</Word>
+			<Word>double</Word>
+			<Word>enum</Word>
+			<Word>export</Word>
+			<Word>extends</Word>
+			<Word>final</Word>
+			<Word>finally</Word>
+			<Word>float</Word>
+			<Word>goto</Word>
+			<Word>implements</Word>
+			<Word>import</Word>
+			<Word>instanceof</Word>
+			<Word>int</Word>
+			<Word>interface</Word>
+			<Word>long</Word>
+			<Word>native</Word>
+			<Word>package</Word>
+			<Word>private</Word>
+			<Word>protected</Word>
+			<Word>public</Word>
+			<Word>short</Word>
+			<Word>static</Word>
+			<Word>super</Word>
+			<Word>switch</Word>
+			<Word>synchronized</Word>
+			<Word>throws</Word>
+			<Word>transient</Word>
+		</Keywords>    
+        
+		<Rule color="Punctuation">
+			[?,.;()\[\]{}+\-/%*&lt;&gt;^+~!|&amp;]+
+		</Rule>
+        
+		<Rule color="MSBuildPunctuation">
+			(\$|::)
+		</Rule>
+        
+		<Rule color="Digits">
+			[0-9]+
+		</Rule>
+        
+		<Span color="String" multiline="true">
+			<Begin>"</Begin>
+			<End>"</End>
+			<RuleSet>
+				<Span begin="\\" end="." />
+			</RuleSet>
+		</Span>
+        
+		<Keywords color="Literals">
+			<Word>false</Word>
+			<Word>null</Word>
+			<Word>true</Word>
+		</Keywords>
+        
+	</RuleSet>
+</SyntaxDefinition>

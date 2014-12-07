@@ -15,18 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Collections.Generic;
+
 namespace net.r_eg.vsSBE.SBEScripts.Dom
 {
-    public interface IAttrDomLevelB
+    public interface IInspector
     {
         /// <summary>
-        /// Name of the parent specification
+        /// List of the constructed root-data
         /// </summary>
-        string Parent { get; }
+        IEnumerable<INodeInfo> Root { get; }
 
         /// <summary>
-        /// Actual/real method name of the parent specification
+        /// List of constructed data by identification of node
         /// </summary>
-        string Method { get; }
+        /// <param name="ident"></param>
+        /// <returns></returns>
+        IEnumerable<INodeInfo> getBy(NodeIdent ident);
+
+        /// <summary>
+        /// List of constructed data by type of component
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        IEnumerable<INodeInfo> getBy(Type type);
     }
 }

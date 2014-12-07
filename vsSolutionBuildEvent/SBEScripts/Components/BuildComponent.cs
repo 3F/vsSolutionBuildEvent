@@ -33,7 +33,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// <summary>
     /// Component of operations with the build
     /// </summary>
-    [Definition("Build", "Operations with the build")]
+    [Component("Build", "Operations with the build")]
     public class BuildComponent: Component, IComponent
     {
         /// <summary>
