@@ -435,10 +435,11 @@
             this.panelCommand.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelCommand.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelCommand.BackColor = System.Drawing.Color.Black;
             this.panelCommand.Controls.Add(this.textEditor);
             this.panelCommand.Location = new System.Drawing.Point(6, 261);
             this.panelCommand.Name = "panelCommand";
+            this.panelCommand.Padding = new System.Windows.Forms.Padding(1);
             this.panelCommand.Size = new System.Drawing.Size(767, 118);
             this.panelCommand.TabIndex = 62;
             // 
@@ -446,7 +447,7 @@
             // 
             this.textEditor.CodeCompletionEnabled = false;
             this.textEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textEditor.Location = new System.Drawing.Point(0, 0);
+            this.textEditor.Location = new System.Drawing.Point(1, 1);
             this.textEditor.Name = "textEditor";
             this.textEditor.Size = new System.Drawing.Size(765, 116);
             this.textEditor.TabIndex = 0;

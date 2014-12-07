@@ -69,11 +69,11 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         /// <summary>
         /// Provides operations with environment
         /// </summary>
-        public Environment Env
+        public IEnvironment Env
         {
             get { return env; }
         }
-        protected Environment env;
+        protected IEnvironment env;
 
         /// <summary>
         /// Current SBE-event
@@ -506,7 +506,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             SBE.update();
         }
 
-        public Events(Environment env)
+        public Events(IEnvironment env)
         {
             this.env = env;
             toRestoring = Config._.Data.CloneBySerialization();

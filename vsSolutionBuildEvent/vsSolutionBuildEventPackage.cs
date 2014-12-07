@@ -124,9 +124,9 @@ namespace net.r_eg.vsSBE
         private Connection _c;
 
         /// <summary>
-        /// Used environment
+        /// Main loader
         /// </summary>
-        private Environment _env;
+        private IBootloader bootloader;
 
         /// <summary>
         /// Working with the OutputWindowsPane -> "Build" pane
@@ -239,17 +239,17 @@ namespace net.r_eg.vsSBE
         {
             Log.show();
             attachCommandEvents();
-            _env = new Environment(Dte2);
+            IEnvironment env = new Environment(Dte2);
 
-            IBootloader bootloader = new Bootloader(_env, uvariable);
+            bootloader = new Bootloader(env, uvariable);
 
             _c = new Connection(
-                    new Command(_env,
+                    new Command(env,
                                 new Script(bootloader),
-                                new MSBuildParser(_env, uvariable))
+                                new MSBuildParser(env, uvariable))
             );
 
-            _owpBuild = new OWP.Listener(_env, "Build");
+            _owpBuild = new OWP.Listener(env, "Build");
             _owpBuild.attachEvents();
             _owpBuild.register(_c);
 
@@ -313,7 +313,7 @@ namespace net.r_eg.vsSBE
             if(UI.Util.focusForm(_configFrm)) {
                 return;
             }
-            _configFrm = new UI.WForms.EventsFrm(_env);
+            _configFrm = new UI.WForms.EventsFrm(bootloader);
             _configFrm.Show();
         }
 

@@ -38,7 +38,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// </summary>
         private bool _isHiddenSample = false;
 
-        public DTECheckFrm(Environment env)
+        public DTECheckFrm(IEnvironment env)
         {
             _dteo = new DTEOperation((EnvDTE.DTE)env.DTE2, vsSBE.Events.SolutionEventType.General);
             InitializeComponent();

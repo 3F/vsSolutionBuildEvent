@@ -21,7 +21,10 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using net.r_eg.vsSBE.Events;
+using net.r_eg.vsSBE.SBEScripts;
+using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.UI.WForms.Components;
+using net.r_eg.vsSBE.UI.WForms.Controls;
 using net.r_eg.vsSBE.UI.WForms.Logic;
 
 namespace net.r_eg.vsSBE.UI.WForms
@@ -37,6 +40,11 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// Operations with events etc.,
         /// </summary>
         protected Logic.Events logic;
+
+        /// <summary>
+        /// Mapper of the available components
+        /// </summary>
+        protected IInspector inspector;
 
         /// <summary>
         /// UI-helper for MSBuild Properties
@@ -70,11 +78,14 @@ namespace net.r_eg.vsSBE.UI.WForms
         }
         protected MetricDefault metric;
 
-        public EventsFrm(Environment env)
+        public EventsFrm(IBootloader bootloader)
         {
-            logic = new Logic.Events(env);
+            logic       = new Logic.Events(bootloader.Env);
+            inspector   = new Inspector(bootloader);
 
             InitializeComponent();
+            textEditor.codeCompletionInit(inspector);
+            updateColors();
             defaultSizes();
 
 #if DEBUG
@@ -90,8 +101,6 @@ namespace net.r_eg.vsSBE.UI.WForms
             Util.fixDGVRowHeight(dataGridViewOutput);
             Util.fixDGVRowHeight(dataGridViewOrder);
             Util.fixDGVRowHeight(dgvActions);
-
-            initEditor();
         }
 
         /// <summary>
@@ -119,13 +128,6 @@ namespace net.r_eg.vsSBE.UI.WForms
                 textEditor.insertToSelection(name);
             }
             Focus();
-        }
-
-        protected void initEditor()
-        {
-            //TODO:
-            textEditor.setBackgroundFromString("#F8F3F3");
-            textEditor._.ShowLineNumbers = false;
         }
 
         protected void saveData()
@@ -424,6 +426,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         protected void uiViewMode(ModeType type)
         {
+            updateColors();
             groupBoxInterpreter.Enabled         = false;
             listBoxOperation.Enabled            = false;
             textEditor.Enabled                  = true;
@@ -586,6 +589,24 @@ namespace net.r_eg.vsSBE.UI.WForms
             frmProperties.Show();
         }
 
+        protected void updateColors()
+        {
+            checkBoxStatus.BackColor = (checkBoxStatus.Checked)? Color.FromArgb(242, 250, 241) : Color.FromArgb(248, 243, 243);
+            panelCommand.BackColor   = (checkBoxStatus.Checked)? Color.FromArgb(111, 145, 6) : Color.FromArgb(168, 47, 17);
+
+            if(radioModeScript.Checked) {
+                textEditor.setBackgroundFromString("#FFFFFF");
+                return;
+            }
+
+            if(checkBoxStatus.Checked) {
+                textEditor.setBackgroundFromString("#F2FAF1");
+            }
+            else {
+                textEditor.setBackgroundFromString("#F8F3F3");
+            }
+        }
+
         protected void expandActionsList(bool flag)
         {
             if(!flag) {
@@ -671,13 +692,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void checkBoxStatus_CheckedChanged(object sender, EventArgs e)
         {
-            if(checkBoxStatus.Checked) {
-                checkBoxStatus.BackColor = System.Drawing.Color.FromArgb(242, 250, 241);
-                textEditor.setBackgroundFromString("#F2FAF1");
-                return;
-            }
-            checkBoxStatus.BackColor = System.Drawing.Color.FromArgb(248, 243, 243);
-            textEditor.setBackgroundFromString("#F8F3F3");
+            updateColors();
         }
 
         private void btnApply_Click(object sender, EventArgs e)
@@ -698,21 +713,33 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void radioModeFiles_CheckedChanged(object sender, EventArgs e)
         {
             uiViewMode(ModeType.File);
+            textEditor.colorize(TextEditor.ColorSchema.FilesMode);
+            textEditor._.ShowLineNumbers        = false;
+            textEditor.CodeCompletionEnabled    = false;
         }
 
         private void radioModeOperation_CheckedChanged(object sender, EventArgs e)
         {
             uiViewMode(ModeType.Operation);
+            textEditor.colorize(TextEditor.ColorSchema.OperationMode);
+            textEditor._.ShowLineNumbers        = false;
+            textEditor.CodeCompletionEnabled    = false;
         }
 
         private void radioModeInterpreter_CheckedChanged(object sender, EventArgs e)
         {
             uiViewMode(ModeType.Interpreter);
+            textEditor.colorize(TextEditor.ColorSchema.InterpreterMode);
+            textEditor._.ShowLineNumbers        = false;
+            textEditor.CodeCompletionEnabled    = false;
         }
 
         private void radioModeScript_CheckedChanged(object sender, EventArgs e)
         {
             uiViewMode(ModeType.Script);
+            textEditor.colorize(TextEditor.ColorSchema.SBEScript);
+            textEditor._.ShowLineNumbers        = true;
+            textEditor.CodeCompletionEnabled    = true;
         }
 
         private void chkBuildContext_CheckedChanged(object sender, EventArgs e)
