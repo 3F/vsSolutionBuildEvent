@@ -29,69 +29,13 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventsFrm));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventsFrm));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.tabControl = new System.Windows.Forms.TabControl();
-            this.tabPageSettings = new System.Windows.Forms.TabPage();
-            this.panelSettingsMain = new System.Windows.Forms.Panel();
-            this.groupBoxSettings = new System.Windows.Forms.GroupBox();
-            this.panelControl = new System.Windows.Forms.Panel();
-            this.chkConfirmation = new System.Windows.Forms.CheckBox();
-            this.comboBoxBuildContext = new System.Windows.Forms.ComboBox();
-            this.chkBuildContext = new System.Windows.Forms.CheckBox();
-            this.checkBoxSBEScriptSupport = new System.Windows.Forms.CheckBox();
-            this.checkBoxOperationsAbort = new System.Windows.Forms.CheckBox();
-            this.checkBoxIgnoreIfFailed = new System.Windows.Forms.CheckBox();
-            this.checkBoxMSBuildSupport = new System.Windows.Forms.CheckBox();
-            this.panelControlByOperation = new System.Windows.Forms.Panel();
-            this.checkBoxWaitForExit = new System.Windows.Forms.CheckBox();
-            this.checkBoxProcessHide = new System.Windows.Forms.CheckBox();
-            this.checkBoxStatus = new System.Windows.Forms.CheckBox();
-            this.groupBoxPMode = new System.Windows.Forms.GroupBox();
-            this.radioModeScript = new System.Windows.Forms.RadioButton();
-            this.radioModeOperation = new System.Windows.Forms.RadioButton();
-            this.radioModeInterpreter = new System.Windows.Forms.RadioButton();
-            this.radioModeFiles = new System.Windows.Forms.RadioButton();
-            this.panelCommand = new System.Windows.Forms.Panel();
-            this.textEditor = new net.r_eg.vsSBE.UI.WForms.Controls.TextEditor();
-            this.labelToCommandBox = new System.Windows.Forms.Label();
-            this.groupBoxInterpreter = new System.Windows.Forms.GroupBox();
-            this.comboBoxWrapper = new System.Windows.Forms.ComboBox();
-            this.labelWrapper = new System.Windows.Forms.Label();
-            this.labelTreatNewline = new System.Windows.Forms.Label();
-            this.comboBoxNewline = new System.Windows.Forms.ComboBox();
-            this.comboBoxInterpreter = new System.Windows.Forms.ComboBox();
-            this.groupBoxVariants = new System.Windows.Forms.GroupBox();
-            this.listBoxOperation = new System.Windows.Forms.ListBox();
-            this.groupBoxEW = new System.Windows.Forms.GroupBox();
-            this.textBoxEW = new System.Windows.Forms.TextBox();
-            this.btnEWRemove = new System.Windows.Forms.Button();
-            this.btnEWAdd = new System.Windows.Forms.Button();
-            this.listBoxEW = new System.Windows.Forms.ListBox();
-            this.radioCodesBlacklist = new System.Windows.Forms.RadioButton();
-            this.radioCodesWhitelist = new System.Windows.Forms.RadioButton();
-            this.groupBoxOutputControl = new System.Windows.Forms.GroupBox();
-            this.dataGridViewOutput = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
-            this.owpTerm = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.owpType = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.owpRemove = new System.Windows.Forms.DataGridViewButtonColumn();
-            this.panelSettingsBottom = new System.Windows.Forms.Panel();
-            this.checkedListBoxSpecCfg = new System.Windows.Forms.CheckedListBox();
-            this.labelCaption = new System.Windows.Forms.Label();
-            this.textBoxCaption = new System.Windows.Forms.TextBox();
-            this.btnApply = new System.Windows.Forms.Button();
-            this.dataGridViewOrder = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
-            this.dgvOrderEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.dgvOrderProject = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvOrderType = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.labelOnlyFor = new System.Windows.Forms.Label();
-            this.labelOrder = new System.Windows.Forms.Label();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.buttonEnvVariables = new System.Windows.Forms.Button();
-            this.btnDteCmd = new System.Windows.Forms.Button();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.contextMenuActions = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuActionsTogglePanel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
@@ -141,16 +85,103 @@
             this.toolStripMenuReport = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuDebugMode = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuVersion = new System.Windows.Forms.ToolStripStatusLabel();
+            this.panelEventType = new System.Windows.Forms.Panel();
+            this.comboBoxEvents = new System.Windows.Forms.ComboBox();
+            this.contextMenuComponents = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.menuItemCompDoc = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuItemCompNew = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.panelManagerMain = new System.Windows.Forms.Panel();
             this.pictureBoxToggle = new System.Windows.Forms.PictureBox();
+            this.panelLineForSplit = new System.Windows.Forms.Panel();
+            this.tabControl = new System.Windows.Forms.TabControl();
+            this.tabPageSettings = new System.Windows.Forms.TabPage();
+            this.panelSettingsMain = new System.Windows.Forms.Panel();
+            this.groupBoxSettings = new System.Windows.Forms.GroupBox();
+            this.panelControl = new System.Windows.Forms.Panel();
+            this.chkConfirmation = new System.Windows.Forms.CheckBox();
+            this.comboBoxBuildContext = new System.Windows.Forms.ComboBox();
+            this.chkBuildContext = new System.Windows.Forms.CheckBox();
+            this.checkBoxSBEScriptSupport = new System.Windows.Forms.CheckBox();
+            this.checkBoxOperationsAbort = new System.Windows.Forms.CheckBox();
+            this.checkBoxIgnoreIfFailed = new System.Windows.Forms.CheckBox();
+            this.checkBoxMSBuildSupport = new System.Windows.Forms.CheckBox();
+            this.panelControlByOperation = new System.Windows.Forms.Panel();
+            this.checkBoxWaitForExit = new System.Windows.Forms.CheckBox();
+            this.checkBoxProcessHide = new System.Windows.Forms.CheckBox();
+            this.checkBoxStatus = new System.Windows.Forms.CheckBox();
+            this.groupBoxPMode = new System.Windows.Forms.GroupBox();
+            this.radioModeScript = new System.Windows.Forms.RadioButton();
+            this.radioModeOperation = new System.Windows.Forms.RadioButton();
+            this.radioModeInterpreter = new System.Windows.Forms.RadioButton();
+            this.radioModeFiles = new System.Windows.Forms.RadioButton();
+            this.panelCommand = new System.Windows.Forms.Panel();
+            this.labelToCommandBox = new System.Windows.Forms.Label();
+            this.groupBoxInterpreter = new System.Windows.Forms.GroupBox();
+            this.comboBoxWrapper = new System.Windows.Forms.ComboBox();
+            this.labelWrapper = new System.Windows.Forms.Label();
+            this.labelTreatNewline = new System.Windows.Forms.Label();
+            this.comboBoxNewline = new System.Windows.Forms.ComboBox();
+            this.comboBoxInterpreter = new System.Windows.Forms.ComboBox();
+            this.groupBoxVariants = new System.Windows.Forms.GroupBox();
+            this.listBoxOperation = new System.Windows.Forms.ListBox();
+            this.groupBoxEW = new System.Windows.Forms.GroupBox();
+            this.textBoxEW = new System.Windows.Forms.TextBox();
+            this.btnEWRemove = new System.Windows.Forms.Button();
+            this.btnEWAdd = new System.Windows.Forms.Button();
+            this.listBoxEW = new System.Windows.Forms.ListBox();
+            this.radioCodesBlacklist = new System.Windows.Forms.RadioButton();
+            this.radioCodesWhitelist = new System.Windows.Forms.RadioButton();
+            this.groupBoxOutputControl = new System.Windows.Forms.GroupBox();
+            this.panelSettingsBottom = new System.Windows.Forms.Panel();
+            this.checkedListBoxSpecCfg = new System.Windows.Forms.CheckedListBox();
+            this.labelCaption = new System.Windows.Forms.Label();
+            this.textBoxCaption = new System.Windows.Forms.TextBox();
+            this.btnApply = new System.Windows.Forms.Button();
+            this.labelOnlyFor = new System.Windows.Forms.Label();
+            this.labelOrder = new System.Windows.Forms.Label();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.buttonEnvVariables = new System.Windows.Forms.Button();
+            this.btnDteCmd = new System.Windows.Forms.Button();
+            this.tabPageComponents = new System.Windows.Forms.TabPage();
             this.dgvActions = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
             this.dgvActionEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dgvActionName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvActionCaption = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.panelLineForSplit = new System.Windows.Forms.Panel();
-            this.panelEventType = new System.Windows.Forms.Panel();
-            this.comboBoxEvents = new System.Windows.Forms.ComboBox();
+            this.textEditor = new net.r_eg.vsSBE.UI.WForms.Controls.TextEditor();
+            this.dataGridViewOutput = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
+            this.owpTerm = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.owpType = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.owpRemove = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.dataGridViewOrder = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
+            this.dgvOrderEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.dgvOrderProject = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvOrderType = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.splitContainerComponents = new System.Windows.Forms.SplitContainer();
+            this.dgvComponents = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
+            this.dgvComponentsIcon = new System.Windows.Forms.DataGridViewImageColumn();
+            this.dgvComponentsEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.dgvComponentsName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvComponentsClass = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvComponentsDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnCompNew = new System.Windows.Forms.Button();
+            this.dgvComponentInfo = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
+            this.dgvCompInfoType = new System.Windows.Forms.DataGridViewImageColumn();
+            this.dgvCompInfoName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvCompInfoSignature = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvCompInfoDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.contextMenuActions.SuspendLayout();
+            this.panelStatusBR.SuspendLayout();
+            this.statusStrip.SuspendLayout();
+            this.panelEventType.SuspendLayout();
+            this.contextMenuComponents.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
+            this.splitContainer.Panel1.SuspendLayout();
+            this.splitContainer.Panel2.SuspendLayout();
+            this.splitContainer.SuspendLayout();
+            this.panelManagerMain.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxToggle)).BeginInit();
             this.tabControl.SuspendLayout();
             this.tabPageSettings.SuspendLayout();
             this.panelSettingsMain.SuspendLayout();
@@ -163,743 +194,19 @@
             this.groupBoxVariants.SuspendLayout();
             this.groupBoxEW.SuspendLayout();
             this.groupBoxOutputControl.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOutput)).BeginInit();
             this.panelSettingsBottom.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrder)).BeginInit();
             this.panel2.SuspendLayout();
-            this.contextMenuActions.SuspendLayout();
-            this.panelStatusBR.SuspendLayout();
-            this.statusStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
-            this.splitContainer.Panel1.SuspendLayout();
-            this.splitContainer.Panel2.SuspendLayout();
-            this.splitContainer.SuspendLayout();
-            this.panelManagerMain.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxToggle)).BeginInit();
+            this.tabPageComponents.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvActions)).BeginInit();
-            this.panelEventType.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOutput)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrder)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerComponents)).BeginInit();
+            this.splitContainerComponents.Panel1.SuspendLayout();
+            this.splitContainerComponents.Panel2.SuspendLayout();
+            this.splitContainerComponents.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvComponents)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvComponentInfo)).BeginInit();
             this.SuspendLayout();
-            // 
-            // tabControl
-            // 
-            this.tabControl.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
-            this.tabControl.Controls.Add(this.tabPageSettings);
-            this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl.Location = new System.Drawing.Point(0, 0);
-            this.tabControl.Margin = new System.Windows.Forms.Padding(0);
-            this.tabControl.Name = "tabControl";
-            this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(784, 500);
-            this.tabControl.TabIndex = 0;
-            // 
-            // tabPageSettings
-            // 
-            this.tabPageSettings.BackColor = System.Drawing.SystemColors.Control;
-            this.tabPageSettings.Controls.Add(this.panelSettingsMain);
-            this.tabPageSettings.Location = new System.Drawing.Point(4, 25);
-            this.tabPageSettings.Margin = new System.Windows.Forms.Padding(0);
-            this.tabPageSettings.Name = "tabPageSettings";
-            this.tabPageSettings.Size = new System.Drawing.Size(776, 471);
-            this.tabPageSettings.TabIndex = 1;
-            this.tabPageSettings.Text = "Settings";
-            // 
-            // panelSettingsMain
-            // 
-            this.panelSettingsMain.Controls.Add(this.groupBoxSettings);
-            this.panelSettingsMain.Controls.Add(this.groupBoxPMode);
-            this.panelSettingsMain.Controls.Add(this.panelCommand);
-            this.panelSettingsMain.Controls.Add(this.labelToCommandBox);
-            this.panelSettingsMain.Controls.Add(this.groupBoxInterpreter);
-            this.panelSettingsMain.Controls.Add(this.groupBoxVariants);
-            this.panelSettingsMain.Controls.Add(this.groupBoxEW);
-            this.panelSettingsMain.Controls.Add(this.groupBoxOutputControl);
-            this.panelSettingsMain.Controls.Add(this.panelSettingsBottom);
-            this.panelSettingsMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelSettingsMain.Location = new System.Drawing.Point(0, 0);
-            this.panelSettingsMain.Margin = new System.Windows.Forms.Padding(0);
-            this.panelSettingsMain.Name = "panelSettingsMain";
-            this.panelSettingsMain.Size = new System.Drawing.Size(776, 471);
-            this.panelSettingsMain.TabIndex = 44;
-            // 
-            // groupBoxSettings
-            // 
-            this.groupBoxSettings.Controls.Add(this.panelControl);
-            this.groupBoxSettings.Location = new System.Drawing.Point(3, 5);
-            this.groupBoxSettings.Name = "groupBoxSettings";
-            this.groupBoxSettings.Size = new System.Drawing.Size(197, 142);
-            this.groupBoxSettings.TabIndex = 66;
-            this.groupBoxSettings.TabStop = false;
-            this.groupBoxSettings.Text = "Control";
-            // 
-            // panelControl
-            // 
-            this.panelControl.AutoScroll = true;
-            this.panelControl.Controls.Add(this.chkConfirmation);
-            this.panelControl.Controls.Add(this.comboBoxBuildContext);
-            this.panelControl.Controls.Add(this.chkBuildContext);
-            this.panelControl.Controls.Add(this.checkBoxSBEScriptSupport);
-            this.panelControl.Controls.Add(this.checkBoxOperationsAbort);
-            this.panelControl.Controls.Add(this.checkBoxIgnoreIfFailed);
-            this.panelControl.Controls.Add(this.checkBoxMSBuildSupport);
-            this.panelControl.Controls.Add(this.panelControlByOperation);
-            this.panelControl.Controls.Add(this.checkBoxStatus);
-            this.panelControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelControl.Location = new System.Drawing.Point(3, 16);
-            this.panelControl.Margin = new System.Windows.Forms.Padding(0);
-            this.panelControl.Name = "panelControl";
-            this.panelControl.Size = new System.Drawing.Size(191, 123);
-            this.panelControl.TabIndex = 32;
-            // 
-            // chkConfirmation
-            // 
-            this.chkConfirmation.Location = new System.Drawing.Point(8, 126);
-            this.chkConfirmation.Name = "chkConfirmation";
-            this.chkConfirmation.Size = new System.Drawing.Size(103, 17);
-            this.chkConfirmation.TabIndex = 25;
-            this.chkConfirmation.Text = "Confirmation";
-            this.chkConfirmation.UseVisualStyleBackColor = true;
-            // 
-            // comboBoxBuildContext
-            // 
-            this.comboBoxBuildContext.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxBuildContext.DropDownWidth = 130;
-            this.comboBoxBuildContext.FormattingEnabled = true;
-            this.comboBoxBuildContext.Location = new System.Drawing.Point(68, 164);
-            this.comboBoxBuildContext.Name = "comboBoxBuildContext";
-            this.comboBoxBuildContext.Size = new System.Drawing.Size(101, 21);
-            this.comboBoxBuildContext.TabIndex = 24;
-            // 
-            // chkBuildContext
-            // 
-            this.chkBuildContext.Location = new System.Drawing.Point(8, 168);
-            this.chkBuildContext.Name = "chkBuildContext";
-            this.chkBuildContext.Size = new System.Drawing.Size(65, 17);
-            this.chkBuildContext.TabIndex = 23;
-            this.chkBuildContext.Text = "Context:";
-            this.chkBuildContext.UseVisualStyleBackColor = true;
-            this.chkBuildContext.CheckedChanged += new System.EventHandler(this.chkBuildContext_CheckedChanged);
-            // 
-            // checkBoxSBEScriptSupport
-            // 
-            this.checkBoxSBEScriptSupport.AutoSize = true;
-            this.checkBoxSBEScriptSupport.Checked = true;
-            this.checkBoxSBEScriptSupport.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxSBEScriptSupport.Location = new System.Drawing.Point(8, 105);
-            this.checkBoxSBEScriptSupport.Name = "checkBoxSBEScriptSupport";
-            this.checkBoxSBEScriptSupport.Size = new System.Drawing.Size(120, 17);
-            this.checkBoxSBEScriptSupport.TabIndex = 21;
-            this.checkBoxSBEScriptSupport.Text = "SBE-Scripts support";
-            this.checkBoxSBEScriptSupport.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxOperationsAbort
-            // 
-            this.checkBoxOperationsAbort.AutoSize = true;
-            this.checkBoxOperationsAbort.Checked = true;
-            this.checkBoxOperationsAbort.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxOperationsAbort.Location = new System.Drawing.Point(8, 147);
-            this.checkBoxOperationsAbort.Name = "checkBoxOperationsAbort";
-            this.checkBoxOperationsAbort.Size = new System.Drawing.Size(161, 17);
-            this.checkBoxOperationsAbort.TabIndex = 20;
-            this.checkBoxOperationsAbort.Text = "Abort operations on first error";
-            this.checkBoxOperationsAbort.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxIgnoreIfFailed
-            // 
-            this.checkBoxIgnoreIfFailed.AutoSize = true;
-            this.checkBoxIgnoreIfFailed.Checked = true;
-            this.checkBoxIgnoreIfFailed.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxIgnoreIfFailed.Location = new System.Drawing.Point(8, 63);
-            this.checkBoxIgnoreIfFailed.Name = "checkBoxIgnoreIfFailed";
-            this.checkBoxIgnoreIfFailed.Size = new System.Drawing.Size(117, 17);
-            this.checkBoxIgnoreIfFailed.TabIndex = 19;
-            this.checkBoxIgnoreIfFailed.Text = "Ignore if build failed";
-            this.checkBoxIgnoreIfFailed.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxMSBuildSupport
-            // 
-            this.checkBoxMSBuildSupport.AutoSize = true;
-            this.checkBoxMSBuildSupport.Checked = true;
-            this.checkBoxMSBuildSupport.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxMSBuildSupport.Location = new System.Drawing.Point(8, 84);
-            this.checkBoxMSBuildSupport.Name = "checkBoxMSBuildSupport";
-            this.checkBoxMSBuildSupport.Size = new System.Drawing.Size(103, 17);
-            this.checkBoxMSBuildSupport.TabIndex = 17;
-            this.checkBoxMSBuildSupport.Text = "MSBuild support";
-            this.checkBoxMSBuildSupport.UseVisualStyleBackColor = true;
-            // 
-            // panelControlByOperation
-            // 
-            this.panelControlByOperation.Controls.Add(this.checkBoxWaitForExit);
-            this.panelControlByOperation.Controls.Add(this.checkBoxProcessHide);
-            this.panelControlByOperation.Location = new System.Drawing.Point(0, 21);
-            this.panelControlByOperation.Margin = new System.Windows.Forms.Padding(0);
-            this.panelControlByOperation.Name = "panelControlByOperation";
-            this.panelControlByOperation.Size = new System.Drawing.Size(171, 38);
-            this.panelControlByOperation.TabIndex = 18;
-            // 
-            // checkBoxWaitForExit
-            // 
-            this.checkBoxWaitForExit.AutoSize = true;
-            this.checkBoxWaitForExit.Checked = true;
-            this.checkBoxWaitForExit.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxWaitForExit.Location = new System.Drawing.Point(8, 0);
-            this.checkBoxWaitForExit.Name = "checkBoxWaitForExit";
-            this.checkBoxWaitForExit.Size = new System.Drawing.Size(131, 17);
-            this.checkBoxWaitForExit.TabIndex = 16;
-            this.checkBoxWaitForExit.Text = "Waiting for completion";
-            this.checkBoxWaitForExit.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxProcessHide
-            // 
-            this.checkBoxProcessHide.AutoSize = true;
-            this.checkBoxProcessHide.Checked = true;
-            this.checkBoxProcessHide.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxProcessHide.Location = new System.Drawing.Point(8, 21);
-            this.checkBoxProcessHide.Name = "checkBoxProcessHide";
-            this.checkBoxProcessHide.Size = new System.Drawing.Size(88, 17);
-            this.checkBoxProcessHide.TabIndex = 17;
-            this.checkBoxProcessHide.Text = "Hide process";
-            this.checkBoxProcessHide.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxStatus
-            // 
-            this.checkBoxStatus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(243)))), ((int)(((byte)(243)))));
-            this.checkBoxStatus.Location = new System.Drawing.Point(8, 0);
-            this.checkBoxStatus.Name = "checkBoxStatus";
-            this.checkBoxStatus.Size = new System.Drawing.Size(145, 17);
-            this.checkBoxStatus.TabIndex = 0;
-            this.checkBoxStatus.Text = "Enabled";
-            this.checkBoxStatus.UseVisualStyleBackColor = false;
-            this.checkBoxStatus.CheckedChanged += new System.EventHandler(this.checkBoxStatus_CheckedChanged);
-            // 
-            // groupBoxPMode
-            // 
-            this.groupBoxPMode.Controls.Add(this.radioModeScript);
-            this.groupBoxPMode.Controls.Add(this.radioModeOperation);
-            this.groupBoxPMode.Controls.Add(this.radioModeInterpreter);
-            this.groupBoxPMode.Controls.Add(this.radioModeFiles);
-            this.groupBoxPMode.Location = new System.Drawing.Point(206, 5);
-            this.groupBoxPMode.Name = "groupBoxPMode";
-            this.groupBoxPMode.Size = new System.Drawing.Size(124, 142);
-            this.groupBoxPMode.TabIndex = 67;
-            this.groupBoxPMode.TabStop = false;
-            this.groupBoxPMode.Text = "Processing mode";
-            // 
-            // radioModeScript
-            // 
-            this.radioModeScript.AutoSize = true;
-            this.radioModeScript.Location = new System.Drawing.Point(6, 90);
-            this.radioModeScript.Name = "radioModeScript";
-            this.radioModeScript.Size = new System.Drawing.Size(82, 17);
-            this.radioModeScript.TabIndex = 26;
-            this.radioModeScript.Text = "Script Mode";
-            this.radioModeScript.UseVisualStyleBackColor = true;
-            this.radioModeScript.CheckedChanged += new System.EventHandler(this.radioModeScript_CheckedChanged);
-            // 
-            // radioModeOperation
-            // 
-            this.radioModeOperation.AutoSize = true;
-            this.radioModeOperation.Location = new System.Drawing.Point(6, 43);
-            this.radioModeOperation.Name = "radioModeOperation";
-            this.radioModeOperation.Size = new System.Drawing.Size(101, 17);
-            this.radioModeOperation.TabIndex = 25;
-            this.radioModeOperation.TabStop = true;
-            this.radioModeOperation.Text = "Operation Mode";
-            this.radioModeOperation.UseVisualStyleBackColor = true;
-            this.radioModeOperation.CheckedChanged += new System.EventHandler(this.radioModeOperation_CheckedChanged);
-            // 
-            // radioModeInterpreter
-            // 
-            this.radioModeInterpreter.AutoSize = true;
-            this.radioModeInterpreter.Location = new System.Drawing.Point(6, 67);
-            this.radioModeInterpreter.Name = "radioModeInterpreter";
-            this.radioModeInterpreter.Size = new System.Drawing.Size(103, 17);
-            this.radioModeInterpreter.TabIndex = 23;
-            this.radioModeInterpreter.Text = "Interpreter Mode";
-            this.radioModeInterpreter.UseVisualStyleBackColor = true;
-            this.radioModeInterpreter.CheckedChanged += new System.EventHandler(this.radioModeInterpreter_CheckedChanged);
-            // 
-            // radioModeFiles
-            // 
-            this.radioModeFiles.AutoSize = true;
-            this.radioModeFiles.Location = new System.Drawing.Point(6, 19);
-            this.radioModeFiles.Name = "radioModeFiles";
-            this.radioModeFiles.Size = new System.Drawing.Size(76, 17);
-            this.radioModeFiles.TabIndex = 24;
-            this.radioModeFiles.Text = "Files Mode";
-            this.radioModeFiles.UseVisualStyleBackColor = true;
-            this.radioModeFiles.CheckedChanged += new System.EventHandler(this.radioModeFiles_CheckedChanged);
-            // 
-            // panelCommand
-            // 
-            this.panelCommand.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelCommand.BackColor = System.Drawing.Color.Black;
-            this.panelCommand.Controls.Add(this.textEditor);
-            this.panelCommand.Location = new System.Drawing.Point(6, 261);
-            this.panelCommand.Name = "panelCommand";
-            this.panelCommand.Padding = new System.Windows.Forms.Padding(1);
-            this.panelCommand.Size = new System.Drawing.Size(767, 118);
-            this.panelCommand.TabIndex = 62;
-            // 
-            // textEditor
-            // 
-            this.textEditor.CodeCompletionEnabled = false;
-            this.textEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textEditor.Location = new System.Drawing.Point(1, 1);
-            this.textEditor.Name = "textEditor";
-            this.textEditor.Size = new System.Drawing.Size(765, 116);
-            this.textEditor.TabIndex = 0;
-            // 
-            // labelToCommandBox
-            // 
-            this.labelToCommandBox.AutoSize = true;
-            this.labelToCommandBox.Location = new System.Drawing.Point(4, 242);
-            this.labelToCommandBox.Name = "labelToCommandBox";
-            this.labelToCommandBox.Size = new System.Drawing.Size(22, 13);
-            this.labelToCommandBox.TabIndex = 61;
-            this.labelToCommandBox.Text = "-----";
-            // 
-            // groupBoxInterpreter
-            // 
-            this.groupBoxInterpreter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxInterpreter.Controls.Add(this.comboBoxWrapper);
-            this.groupBoxInterpreter.Controls.Add(this.labelWrapper);
-            this.groupBoxInterpreter.Controls.Add(this.labelTreatNewline);
-            this.groupBoxInterpreter.Controls.Add(this.comboBoxNewline);
-            this.groupBoxInterpreter.Controls.Add(this.comboBoxInterpreter);
-            this.groupBoxInterpreter.Location = new System.Drawing.Point(206, 153);
-            this.groupBoxInterpreter.Name = "groupBoxInterpreter";
-            this.groupBoxInterpreter.Size = new System.Drawing.Size(570, 102);
-            this.groupBoxInterpreter.TabIndex = 69;
-            this.groupBoxInterpreter.TabStop = false;
-            this.groupBoxInterpreter.Text = "Interpreter settings:";
-            // 
-            // comboBoxWrapper
-            // 
-            this.comboBoxWrapper.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxWrapper.FormattingEnabled = true;
-            this.comboBoxWrapper.Items.AddRange(new object[] {
-            "\"",
-            "",
-            "\'",
-            "`",
-            "()",
-            "{}",
-            "[]"});
-            this.comboBoxWrapper.Location = new System.Drawing.Point(104, 69);
-            this.comboBoxWrapper.Name = "comboBoxWrapper";
-            this.comboBoxWrapper.Size = new System.Drawing.Size(463, 21);
-            this.comboBoxWrapper.TabIndex = 28;
-            // 
-            // labelWrapper
-            // 
-            this.labelWrapper.AutoSize = true;
-            this.labelWrapper.Location = new System.Drawing.Point(14, 69);
-            this.labelWrapper.Name = "labelWrapper";
-            this.labelWrapper.Size = new System.Drawing.Size(48, 13);
-            this.labelWrapper.TabIndex = 27;
-            this.labelWrapper.Text = "wrapper:";
-            // 
-            // labelTreatNewline
-            // 
-            this.labelTreatNewline.AutoSize = true;
-            this.labelTreatNewline.Location = new System.Drawing.Point(14, 47);
-            this.labelTreatNewline.Name = "labelTreatNewline";
-            this.labelTreatNewline.Size = new System.Drawing.Size(84, 13);
-            this.labelTreatNewline.TabIndex = 26;
-            this.labelTreatNewline.Text = "treat newline as:";
-            // 
-            // comboBoxNewline
-            // 
-            this.comboBoxNewline.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxNewline.FormattingEnabled = true;
-            this.comboBoxNewline.Items.AddRange(new object[] {
-            "&",
-            "",
-            "\\",
-            "&echo.&echo "});
-            this.comboBoxNewline.Location = new System.Drawing.Point(104, 44);
-            this.comboBoxNewline.Name = "comboBoxNewline";
-            this.comboBoxNewline.Size = new System.Drawing.Size(463, 21);
-            this.comboBoxNewline.TabIndex = 25;
-            // 
-            // comboBoxInterpreter
-            // 
-            this.comboBoxInterpreter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxInterpreter.FormattingEnabled = true;
-            this.comboBoxInterpreter.Items.AddRange(new object[] {
-            "cmd.exe /C",
-            "php -r"});
-            this.comboBoxInterpreter.Location = new System.Drawing.Point(3, 19);
-            this.comboBoxInterpreter.Name = "comboBoxInterpreter";
-            this.comboBoxInterpreter.Size = new System.Drawing.Size(564, 21);
-            this.comboBoxInterpreter.TabIndex = 24;
-            // 
-            // groupBoxVariants
-            // 
-            this.groupBoxVariants.Controls.Add(this.listBoxOperation);
-            this.groupBoxVariants.Location = new System.Drawing.Point(3, 153);
-            this.groupBoxVariants.Margin = new System.Windows.Forms.Padding(0);
-            this.groupBoxVariants.Name = "groupBoxVariants";
-            this.groupBoxVariants.Size = new System.Drawing.Size(197, 87);
-            this.groupBoxVariants.TabIndex = 70;
-            this.groupBoxVariants.TabStop = false;
-            this.groupBoxVariants.Text = "Operation variants:";
-            // 
-            // listBoxOperation
-            // 
-            this.listBoxOperation.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.listBoxOperation.FormattingEnabled = true;
-            this.listBoxOperation.IntegralHeight = false;
-            this.listBoxOperation.Location = new System.Drawing.Point(4, 16);
-            this.listBoxOperation.Margin = new System.Windows.Forms.Padding(0);
-            this.listBoxOperation.Name = "listBoxOperation";
-            this.listBoxOperation.Size = new System.Drawing.Size(190, 67);
-            this.listBoxOperation.TabIndex = 31;
-            this.listBoxOperation.SelectedIndexChanged += new System.EventHandler(this.listBoxOperation_SelectedIndexChanged);
-            // 
-            // groupBoxEW
-            // 
-            this.groupBoxEW.Controls.Add(this.textBoxEW);
-            this.groupBoxEW.Controls.Add(this.btnEWRemove);
-            this.groupBoxEW.Controls.Add(this.btnEWAdd);
-            this.groupBoxEW.Controls.Add(this.listBoxEW);
-            this.groupBoxEW.Controls.Add(this.radioCodesBlacklist);
-            this.groupBoxEW.Controls.Add(this.radioCodesWhitelist);
-            this.groupBoxEW.Location = new System.Drawing.Point(336, 5);
-            this.groupBoxEW.Name = "groupBoxEW";
-            this.groupBoxEW.Size = new System.Drawing.Size(138, 142);
-            this.groupBoxEW.TabIndex = 68;
-            this.groupBoxEW.TabStop = false;
-            this.groupBoxEW.Text = "Errors / Warnings";
-            // 
-            // textBoxEW
-            // 
-            this.textBoxEW.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxEW.Location = new System.Drawing.Point(0, 15);
-            this.textBoxEW.Name = "textBoxEW";
-            this.textBoxEW.Size = new System.Drawing.Size(108, 20);
-            this.textBoxEW.TabIndex = 5;
-            // 
-            // btnEWRemove
-            // 
-            this.btnEWRemove.Location = new System.Drawing.Point(112, 37);
-            this.btnEWRemove.Name = "btnEWRemove";
-            this.btnEWRemove.Size = new System.Drawing.Size(24, 20);
-            this.btnEWRemove.TabIndex = 4;
-            this.btnEWRemove.Text = "-";
-            this.btnEWRemove.UseVisualStyleBackColor = true;
-            this.btnEWRemove.Click += new System.EventHandler(this.btnEWRemove_Click);
-            // 
-            // btnEWAdd
-            // 
-            this.btnEWAdd.Location = new System.Drawing.Point(112, 15);
-            this.btnEWAdd.Name = "btnEWAdd";
-            this.btnEWAdd.Size = new System.Drawing.Size(24, 21);
-            this.btnEWAdd.TabIndex = 3;
-            this.btnEWAdd.Text = "+";
-            this.btnEWAdd.UseVisualStyleBackColor = true;
-            this.btnEWAdd.Click += new System.EventHandler(this.btnEWAdd_Click);
-            // 
-            // listBoxEW
-            // 
-            this.listBoxEW.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.listBoxEW.FormattingEnabled = true;
-            this.listBoxEW.IntegralHeight = false;
-            this.listBoxEW.Location = new System.Drawing.Point(0, 37);
-            this.listBoxEW.Name = "listBoxEW";
-            this.listBoxEW.Size = new System.Drawing.Size(108, 80);
-            this.listBoxEW.TabIndex = 2;
-            // 
-            // radioCodesBlacklist
-            // 
-            this.radioCodesBlacklist.AutoSize = true;
-            this.radioCodesBlacklist.Location = new System.Drawing.Point(74, 119);
-            this.radioCodesBlacklist.Name = "radioCodesBlacklist";
-            this.radioCodesBlacklist.Size = new System.Drawing.Size(64, 17);
-            this.radioCodesBlacklist.TabIndex = 1;
-            this.radioCodesBlacklist.TabStop = true;
-            this.radioCodesBlacklist.Text = "Blacklist";
-            this.radioCodesBlacklist.UseVisualStyleBackColor = true;
-            // 
-            // radioCodesWhitelist
-            // 
-            this.radioCodesWhitelist.AutoSize = true;
-            this.radioCodesWhitelist.Location = new System.Drawing.Point(0, 119);
-            this.radioCodesWhitelist.Name = "radioCodesWhitelist";
-            this.radioCodesWhitelist.Size = new System.Drawing.Size(73, 17);
-            this.radioCodesWhitelist.TabIndex = 0;
-            this.radioCodesWhitelist.Text = "Whitelist /";
-            this.radioCodesWhitelist.UseVisualStyleBackColor = true;
-            // 
-            // groupBoxOutputControl
-            // 
-            this.groupBoxOutputControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxOutputControl.Controls.Add(this.dataGridViewOutput);
-            this.groupBoxOutputControl.Location = new System.Drawing.Point(480, 5);
-            this.groupBoxOutputControl.Margin = new System.Windows.Forms.Padding(0);
-            this.groupBoxOutputControl.Name = "groupBoxOutputControl";
-            this.groupBoxOutputControl.Padding = new System.Windows.Forms.Padding(0);
-            this.groupBoxOutputControl.Size = new System.Drawing.Size(296, 147);
-            this.groupBoxOutputControl.TabIndex = 60;
-            this.groupBoxOutputControl.TabStop = false;
-            this.groupBoxOutputControl.Text = "Output customization";
-            // 
-            // dataGridViewOutput
-            // 
-            this.dataGridViewOutput.AllowUserToResizeColumns = false;
-            this.dataGridViewOutput.AllowUserToResizeRows = false;
-            this.dataGridViewOutput.AlwaysSelected = false;
-            this.dataGridViewOutput.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.dataGridViewOutput.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewOutput.ColumnHeadersVisible = false;
-            this.dataGridViewOutput.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.owpTerm,
-            this.owpType,
-            this.owpRemove});
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridViewOutput.DefaultCellStyle = dataGridViewCellStyle2;
-            this.dataGridViewOutput.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridViewOutput.DragDropSortable = false;
-            this.dataGridViewOutput.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.dataGridViewOutput.Location = new System.Drawing.Point(0, 13);
-            this.dataGridViewOutput.MultiSelect = false;
-            this.dataGridViewOutput.Name = "dataGridViewOutput";
-            this.dataGridViewOutput.NumberingForRowsHeader = false;
-            this.dataGridViewOutput.RowHeadersVisible = false;
-            this.dataGridViewOutput.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
-            this.dataGridViewOutput.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.dataGridViewOutput.RowTemplate.Height = 17;
-            this.dataGridViewOutput.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridViewOutput.Size = new System.Drawing.Size(296, 134);
-            this.dataGridViewOutput.TabIndex = 7;
-            this.dataGridViewOutput.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewOutput_CellClick);
-            // 
-            // owpTerm
-            // 
-            this.owpTerm.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.owpTerm.HeaderText = "term";
-            this.owpTerm.Name = "owpTerm";
-            // 
-            // owpType
-            // 
-            this.owpType.HeaderText = "type";
-            this.owpType.Items.AddRange(new object[] {
-            "Default",
-            "Regexp",
-            "Wildcards"});
-            this.owpType.MinimumWidth = 76;
-            this.owpType.Name = "owpType";
-            this.owpType.Width = 76;
-            // 
-            // owpRemove
-            // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Maroon;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Maroon;
-            this.owpRemove.DefaultCellStyle = dataGridViewCellStyle1;
-            this.owpRemove.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.owpRemove.HeaderText = "remove";
-            this.owpRemove.MinimumWidth = 16;
-            this.owpRemove.Name = "owpRemove";
-            this.owpRemove.Text = "-";
-            this.owpRemove.UseColumnTextForButtonValue = true;
-            this.owpRemove.Width = 16;
-            // 
-            // panelSettingsBottom
-            // 
-            this.panelSettingsBottom.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelSettingsBottom.Controls.Add(this.checkedListBoxSpecCfg);
-            this.panelSettingsBottom.Controls.Add(this.labelCaption);
-            this.panelSettingsBottom.Controls.Add(this.textBoxCaption);
-            this.panelSettingsBottom.Controls.Add(this.btnApply);
-            this.panelSettingsBottom.Controls.Add(this.dataGridViewOrder);
-            this.panelSettingsBottom.Controls.Add(this.labelOnlyFor);
-            this.panelSettingsBottom.Controls.Add(this.labelOrder);
-            this.panelSettingsBottom.Controls.Add(this.panel2);
-            this.panelSettingsBottom.Location = new System.Drawing.Point(6, 376);
-            this.panelSettingsBottom.Margin = new System.Windows.Forms.Padding(0);
-            this.panelSettingsBottom.Name = "panelSettingsBottom";
-            this.panelSettingsBottom.Size = new System.Drawing.Size(770, 99);
-            this.panelSettingsBottom.TabIndex = 71;
-            // 
-            // checkedListBoxSpecCfg
-            // 
-            this.checkedListBoxSpecCfg.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.checkedListBoxSpecCfg.FormattingEnabled = true;
-            this.checkedListBoxSpecCfg.IntegralHeight = false;
-            this.checkedListBoxSpecCfg.Location = new System.Drawing.Point(0, 18);
-            this.checkedListBoxSpecCfg.Margin = new System.Windows.Forms.Padding(0);
-            this.checkedListBoxSpecCfg.MinimumSize = new System.Drawing.Size(191, 77);
-            this.checkedListBoxSpecCfg.Name = "checkedListBoxSpecCfg";
-            this.checkedListBoxSpecCfg.ScrollAlwaysVisible = true;
-            this.checkedListBoxSpecCfg.Size = new System.Drawing.Size(191, 77);
-            this.checkedListBoxSpecCfg.TabIndex = 78;
-            this.checkedListBoxSpecCfg.Click += new System.EventHandler(this.checkedListBoxSpecCfg_Click);
-            this.checkedListBoxSpecCfg.MouseLeave += new System.EventHandler(this.checkedListBoxSpecCfg_MouseLeave);
-            // 
-            // labelCaption
-            // 
-            this.labelCaption.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelCaption.AutoSize = true;
-            this.labelCaption.Location = new System.Drawing.Point(464, 26);
-            this.labelCaption.Name = "labelCaption";
-            this.labelCaption.Size = new System.Drawing.Size(46, 13);
-            this.labelCaption.TabIndex = 81;
-            this.labelCaption.Text = "Caption:";
-            // 
-            // textBoxCaption
-            // 
-            this.textBoxCaption.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxCaption.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxCaption.Location = new System.Drawing.Point(464, 42);
-            this.textBoxCaption.Name = "textBoxCaption";
-            this.textBoxCaption.Size = new System.Drawing.Size(221, 20);
-            this.textBoxCaption.TabIndex = 80;
-            // 
-            // btnApply
-            // 
-            this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApply.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnApply.Location = new System.Drawing.Point(692, 42);
-            this.btnApply.Name = "btnApply";
-            this.btnApply.Size = new System.Drawing.Size(75, 23);
-            this.btnApply.TabIndex = 79;
-            this.btnApply.Text = "Apply";
-            this.btnApply.UseVisualStyleBackColor = true;
-            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
-            // 
-            // dataGridViewOrder
-            // 
-            this.dataGridViewOrder.AllowUserToAddRows = false;
-            this.dataGridViewOrder.AllowUserToDeleteRows = false;
-            this.dataGridViewOrder.AllowUserToResizeColumns = false;
-            this.dataGridViewOrder.AllowUserToResizeRows = false;
-            this.dataGridViewOrder.AlwaysSelected = false;
-            this.dataGridViewOrder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridViewOrder.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.dataGridViewOrder.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewOrder.ColumnHeadersVisible = false;
-            this.dataGridViewOrder.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dgvOrderEnabled,
-            this.dgvOrderProject,
-            this.dgvOrderType});
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dataGridViewOrder.DefaultCellStyle = dataGridViewCellStyle3;
-            this.dataGridViewOrder.DragDropSortable = false;
-            this.dataGridViewOrder.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.dataGridViewOrder.Location = new System.Drawing.Point(194, 18);
-            this.dataGridViewOrder.MultiSelect = false;
-            this.dataGridViewOrder.Name = "dataGridViewOrder";
-            this.dataGridViewOrder.NumberingForRowsHeader = false;
-            this.dataGridViewOrder.RowHeadersVisible = false;
-            this.dataGridViewOrder.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
-            this.dataGridViewOrder.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.dataGridViewOrder.RowTemplate.Height = 17;
-            this.dataGridViewOrder.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.dataGridViewOrder.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridViewOrder.Size = new System.Drawing.Size(264, 77);
-            this.dataGridViewOrder.TabIndex = 83;
-            // 
-            // dgvOrderEnabled
-            // 
-            this.dgvOrderEnabled.FillWeight = 21F;
-            this.dgvOrderEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.dgvOrderEnabled.HeaderText = "";
-            this.dgvOrderEnabled.MinimumWidth = 16;
-            this.dgvOrderEnabled.Name = "dgvOrderEnabled";
-            this.dgvOrderEnabled.Width = 21;
-            // 
-            // dgvOrderProject
-            // 
-            this.dgvOrderProject.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dgvOrderProject.HeaderText = "project";
-            this.dgvOrderProject.Name = "dgvOrderProject";
-            this.dgvOrderProject.ReadOnly = true;
-            // 
-            // dgvOrderType
-            // 
-            this.dgvOrderType.HeaderText = "type";
-            this.dgvOrderType.Items.AddRange(new object[] {
-            "Before",
-            "After"});
-            this.dgvOrderType.MinimumWidth = 76;
-            this.dgvOrderType.Name = "dgvOrderType";
-            this.dgvOrderType.Width = 76;
-            // 
-            // labelOnlyFor
-            // 
-            this.labelOnlyFor.AutoSize = true;
-            this.labelOnlyFor.Location = new System.Drawing.Point(-2, 4);
-            this.labelOnlyFor.Name = "labelOnlyFor";
-            this.labelOnlyFor.Size = new System.Drawing.Size(46, 13);
-            this.labelOnlyFor.TabIndex = 82;
-            this.labelOnlyFor.Text = "Only for:";
-            // 
-            // labelOrder
-            // 
-            this.labelOrder.AutoSize = true;
-            this.labelOrder.Location = new System.Drawing.Point(194, 5);
-            this.labelOrder.Name = "labelOrder";
-            this.labelOrder.Size = new System.Drawing.Size(84, 13);
-            this.labelOrder.TabIndex = 84;
-            this.labelOrder.Text = "Execution order:";
-            // 
-            // panel2
-            // 
-            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel2.Controls.Add(this.buttonEnvVariables);
-            this.panel2.Controls.Add(this.btnDteCmd);
-            this.panel2.Location = new System.Drawing.Point(543, 0);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(223, 32);
-            this.panel2.TabIndex = 85;
-            // 
-            // buttonEnvVariables
-            // 
-            this.buttonEnvVariables.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.buttonEnvVariables.Location = new System.Drawing.Point(3, 6);
-            this.buttonEnvVariables.Name = "buttonEnvVariables";
-            this.buttonEnvVariables.Size = new System.Drawing.Size(106, 20);
-            this.buttonEnvVariables.TabIndex = 24;
-            this.buttonEnvVariables.Text = "MSBuild Properties";
-            this.buttonEnvVariables.UseVisualStyleBackColor = true;
-            this.buttonEnvVariables.Click += new System.EventHandler(this.buttonEnvVariables_Click);
-            // 
-            // btnDteCmd
-            // 
-            this.btnDteCmd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnDteCmd.Location = new System.Drawing.Point(115, 7);
-            this.btnDteCmd.Name = "btnDteCmd";
-            this.btnDteCmd.Size = new System.Drawing.Size(102, 20);
-            this.btnDteCmd.TabIndex = 25;
-            this.btnDteCmd.Text = "DTE Commands";
-            this.btnDteCmd.UseVisualStyleBackColor = true;
-            this.btnDteCmd.Click += new System.EventHandler(this.btnDteCmd_Click);
             // 
             // contextMenuActions
             // 
@@ -1287,6 +594,55 @@
             this.toolStripMenuVersion.Size = new System.Drawing.Size(45, 17);
             this.toolStripMenuVersion.Text = "version";
             // 
+            // panelEventType
+            // 
+            this.panelEventType.Controls.Add(this.comboBoxEvents);
+            this.panelEventType.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelEventType.Location = new System.Drawing.Point(0, 0);
+            this.panelEventType.Margin = new System.Windows.Forms.Padding(0);
+            this.panelEventType.Name = "panelEventType";
+            this.panelEventType.Size = new System.Drawing.Size(987, 22);
+            this.panelEventType.TabIndex = 44;
+            // 
+            // comboBoxEvents
+            // 
+            this.comboBoxEvents.Dock = System.Windows.Forms.DockStyle.Top;
+            this.comboBoxEvents.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxEvents.FormattingEnabled = true;
+            this.comboBoxEvents.Location = new System.Drawing.Point(0, 0);
+            this.comboBoxEvents.Name = "comboBoxEvents";
+            this.comboBoxEvents.Size = new System.Drawing.Size(987, 21);
+            this.comboBoxEvents.TabIndex = 42;
+            this.comboBoxEvents.SelectedIndexChanged += new System.EventHandler(this.comboBoxEvents_SelectedIndexChanged);
+            // 
+            // contextMenuComponents
+            // 
+            this.contextMenuComponents.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuItemCompDoc,
+            this.toolStripSeparator1,
+            this.menuItemCompNew});
+            this.contextMenuComponents.Name = "contextMenuComponents";
+            this.contextMenuComponents.Size = new System.Drawing.Size(199, 54);
+            // 
+            // menuItemCompDoc
+            // 
+            this.menuItemCompDoc.Name = "menuItemCompDoc";
+            this.menuItemCompDoc.Size = new System.Drawing.Size(198, 22);
+            this.menuItemCompDoc.Text = "About component";
+            this.menuItemCompDoc.Click += new System.EventHandler(this.menuItemCompDoc_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(195, 6);
+            // 
+            // menuItemCompNew
+            // 
+            this.menuItemCompNew.Name = "menuItemCompNew";
+            this.menuItemCompNew.Size = new System.Drawing.Size(198, 22);
+            this.menuItemCompNew.Text = "Create new component";
+            this.menuItemCompNew.Click += new System.EventHandler(this.menuItemCompNew_Click);
+            // 
             // splitContainer
             // 
             this.splitContainer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -1334,6 +690,607 @@
             this.pictureBoxToggle.TabStop = false;
             this.pictureBoxToggle.Click += new System.EventHandler(this.pictureBoxToggle_Click);
             // 
+            // panelLineForSplit
+            // 
+            this.panelLineForSplit.BackColor = System.Drawing.Color.Transparent;
+            this.panelLineForSplit.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panelLineForSplit.BackgroundImage")));
+            this.panelLineForSplit.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panelLineForSplit.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panelLineForSplit.Location = new System.Drawing.Point(0, 0);
+            this.panelLineForSplit.Margin = new System.Windows.Forms.Padding(0);
+            this.panelLineForSplit.Name = "panelLineForSplit";
+            this.panelLineForSplit.Size = new System.Drawing.Size(1, 500);
+            this.panelLineForSplit.TabIndex = 1;
+            // 
+            // tabControl
+            // 
+            this.tabControl.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
+            this.tabControl.Controls.Add(this.tabPageSettings);
+            this.tabControl.Controls.Add(this.tabPageComponents);
+            this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl.Location = new System.Drawing.Point(0, 0);
+            this.tabControl.Margin = new System.Windows.Forms.Padding(0);
+            this.tabControl.Name = "tabControl";
+            this.tabControl.SelectedIndex = 0;
+            this.tabControl.Size = new System.Drawing.Size(784, 500);
+            this.tabControl.TabIndex = 0;
+            // 
+            // tabPageSettings
+            // 
+            this.tabPageSettings.BackColor = System.Drawing.SystemColors.Control;
+            this.tabPageSettings.Controls.Add(this.panelSettingsMain);
+            this.tabPageSettings.Location = new System.Drawing.Point(4, 25);
+            this.tabPageSettings.Margin = new System.Windows.Forms.Padding(0);
+            this.tabPageSettings.Name = "tabPageSettings";
+            this.tabPageSettings.Size = new System.Drawing.Size(776, 471);
+            this.tabPageSettings.TabIndex = 1;
+            this.tabPageSettings.Text = "Settings";
+            // 
+            // panelSettingsMain
+            // 
+            this.panelSettingsMain.Controls.Add(this.groupBoxSettings);
+            this.panelSettingsMain.Controls.Add(this.groupBoxPMode);
+            this.panelSettingsMain.Controls.Add(this.panelCommand);
+            this.panelSettingsMain.Controls.Add(this.labelToCommandBox);
+            this.panelSettingsMain.Controls.Add(this.groupBoxInterpreter);
+            this.panelSettingsMain.Controls.Add(this.groupBoxVariants);
+            this.panelSettingsMain.Controls.Add(this.groupBoxEW);
+            this.panelSettingsMain.Controls.Add(this.groupBoxOutputControl);
+            this.panelSettingsMain.Controls.Add(this.panelSettingsBottom);
+            this.panelSettingsMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelSettingsMain.Location = new System.Drawing.Point(0, 0);
+            this.panelSettingsMain.Margin = new System.Windows.Forms.Padding(0);
+            this.panelSettingsMain.Name = "panelSettingsMain";
+            this.panelSettingsMain.Size = new System.Drawing.Size(776, 471);
+            this.panelSettingsMain.TabIndex = 44;
+            // 
+            // groupBoxSettings
+            // 
+            this.groupBoxSettings.Controls.Add(this.panelControl);
+            this.groupBoxSettings.Location = new System.Drawing.Point(3, 5);
+            this.groupBoxSettings.Name = "groupBoxSettings";
+            this.groupBoxSettings.Size = new System.Drawing.Size(197, 142);
+            this.groupBoxSettings.TabIndex = 66;
+            this.groupBoxSettings.TabStop = false;
+            this.groupBoxSettings.Text = "Control";
+            // 
+            // panelControl
+            // 
+            this.panelControl.AutoScroll = true;
+            this.panelControl.Controls.Add(this.chkConfirmation);
+            this.panelControl.Controls.Add(this.comboBoxBuildContext);
+            this.panelControl.Controls.Add(this.chkBuildContext);
+            this.panelControl.Controls.Add(this.checkBoxSBEScriptSupport);
+            this.panelControl.Controls.Add(this.checkBoxOperationsAbort);
+            this.panelControl.Controls.Add(this.checkBoxIgnoreIfFailed);
+            this.panelControl.Controls.Add(this.checkBoxMSBuildSupport);
+            this.panelControl.Controls.Add(this.panelControlByOperation);
+            this.panelControl.Controls.Add(this.checkBoxStatus);
+            this.panelControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelControl.Location = new System.Drawing.Point(3, 16);
+            this.panelControl.Margin = new System.Windows.Forms.Padding(0);
+            this.panelControl.Name = "panelControl";
+            this.panelControl.Size = new System.Drawing.Size(191, 123);
+            this.panelControl.TabIndex = 32;
+            // 
+            // chkConfirmation
+            // 
+            this.chkConfirmation.Location = new System.Drawing.Point(8, 126);
+            this.chkConfirmation.Name = "chkConfirmation";
+            this.chkConfirmation.Size = new System.Drawing.Size(103, 17);
+            this.chkConfirmation.TabIndex = 25;
+            this.chkConfirmation.Text = "Confirmation";
+            this.chkConfirmation.UseVisualStyleBackColor = true;
+            // 
+            // comboBoxBuildContext
+            // 
+            this.comboBoxBuildContext.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxBuildContext.DropDownWidth = 130;
+            this.comboBoxBuildContext.FormattingEnabled = true;
+            this.comboBoxBuildContext.Location = new System.Drawing.Point(68, 164);
+            this.comboBoxBuildContext.Name = "comboBoxBuildContext";
+            this.comboBoxBuildContext.Size = new System.Drawing.Size(101, 21);
+            this.comboBoxBuildContext.TabIndex = 24;
+            // 
+            // chkBuildContext
+            // 
+            this.chkBuildContext.Location = new System.Drawing.Point(8, 168);
+            this.chkBuildContext.Name = "chkBuildContext";
+            this.chkBuildContext.Size = new System.Drawing.Size(65, 17);
+            this.chkBuildContext.TabIndex = 23;
+            this.chkBuildContext.Text = "Context:";
+            this.chkBuildContext.UseVisualStyleBackColor = true;
+            this.chkBuildContext.CheckedChanged += new System.EventHandler(this.chkBuildContext_CheckedChanged);
+            // 
+            // checkBoxSBEScriptSupport
+            // 
+            this.checkBoxSBEScriptSupport.AutoSize = true;
+            this.checkBoxSBEScriptSupport.Checked = true;
+            this.checkBoxSBEScriptSupport.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxSBEScriptSupport.Location = new System.Drawing.Point(8, 105);
+            this.checkBoxSBEScriptSupport.Name = "checkBoxSBEScriptSupport";
+            this.checkBoxSBEScriptSupport.Size = new System.Drawing.Size(120, 17);
+            this.checkBoxSBEScriptSupport.TabIndex = 21;
+            this.checkBoxSBEScriptSupport.Text = "SBE-Scripts support";
+            this.checkBoxSBEScriptSupport.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxOperationsAbort
+            // 
+            this.checkBoxOperationsAbort.AutoSize = true;
+            this.checkBoxOperationsAbort.Checked = true;
+            this.checkBoxOperationsAbort.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxOperationsAbort.Location = new System.Drawing.Point(8, 147);
+            this.checkBoxOperationsAbort.Name = "checkBoxOperationsAbort";
+            this.checkBoxOperationsAbort.Size = new System.Drawing.Size(161, 17);
+            this.checkBoxOperationsAbort.TabIndex = 20;
+            this.checkBoxOperationsAbort.Text = "Abort operations on first error";
+            this.checkBoxOperationsAbort.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxIgnoreIfFailed
+            // 
+            this.checkBoxIgnoreIfFailed.AutoSize = true;
+            this.checkBoxIgnoreIfFailed.Checked = true;
+            this.checkBoxIgnoreIfFailed.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxIgnoreIfFailed.Location = new System.Drawing.Point(8, 63);
+            this.checkBoxIgnoreIfFailed.Name = "checkBoxIgnoreIfFailed";
+            this.checkBoxIgnoreIfFailed.Size = new System.Drawing.Size(117, 17);
+            this.checkBoxIgnoreIfFailed.TabIndex = 19;
+            this.checkBoxIgnoreIfFailed.Text = "Ignore if build failed";
+            this.checkBoxIgnoreIfFailed.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxMSBuildSupport
+            // 
+            this.checkBoxMSBuildSupport.AutoSize = true;
+            this.checkBoxMSBuildSupport.Checked = true;
+            this.checkBoxMSBuildSupport.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxMSBuildSupport.Location = new System.Drawing.Point(8, 84);
+            this.checkBoxMSBuildSupport.Name = "checkBoxMSBuildSupport";
+            this.checkBoxMSBuildSupport.Size = new System.Drawing.Size(103, 17);
+            this.checkBoxMSBuildSupport.TabIndex = 17;
+            this.checkBoxMSBuildSupport.Text = "MSBuild support";
+            this.checkBoxMSBuildSupport.UseVisualStyleBackColor = true;
+            // 
+            // panelControlByOperation
+            // 
+            this.panelControlByOperation.Controls.Add(this.checkBoxWaitForExit);
+            this.panelControlByOperation.Controls.Add(this.checkBoxProcessHide);
+            this.panelControlByOperation.Location = new System.Drawing.Point(0, 21);
+            this.panelControlByOperation.Margin = new System.Windows.Forms.Padding(0);
+            this.panelControlByOperation.Name = "panelControlByOperation";
+            this.panelControlByOperation.Size = new System.Drawing.Size(171, 38);
+            this.panelControlByOperation.TabIndex = 18;
+            // 
+            // checkBoxWaitForExit
+            // 
+            this.checkBoxWaitForExit.AutoSize = true;
+            this.checkBoxWaitForExit.Checked = true;
+            this.checkBoxWaitForExit.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxWaitForExit.Location = new System.Drawing.Point(8, 0);
+            this.checkBoxWaitForExit.Name = "checkBoxWaitForExit";
+            this.checkBoxWaitForExit.Size = new System.Drawing.Size(131, 17);
+            this.checkBoxWaitForExit.TabIndex = 16;
+            this.checkBoxWaitForExit.Text = "Waiting for completion";
+            this.checkBoxWaitForExit.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxProcessHide
+            // 
+            this.checkBoxProcessHide.AutoSize = true;
+            this.checkBoxProcessHide.Checked = true;
+            this.checkBoxProcessHide.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxProcessHide.Location = new System.Drawing.Point(8, 21);
+            this.checkBoxProcessHide.Name = "checkBoxProcessHide";
+            this.checkBoxProcessHide.Size = new System.Drawing.Size(88, 17);
+            this.checkBoxProcessHide.TabIndex = 17;
+            this.checkBoxProcessHide.Text = "Hide process";
+            this.checkBoxProcessHide.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxStatus
+            // 
+            this.checkBoxStatus.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(243)))), ((int)(((byte)(243)))));
+            this.checkBoxStatus.Location = new System.Drawing.Point(8, 0);
+            this.checkBoxStatus.Name = "checkBoxStatus";
+            this.checkBoxStatus.Size = new System.Drawing.Size(145, 17);
+            this.checkBoxStatus.TabIndex = 0;
+            this.checkBoxStatus.Text = "Enabled";
+            this.checkBoxStatus.UseVisualStyleBackColor = false;
+            this.checkBoxStatus.CheckedChanged += new System.EventHandler(this.checkBoxStatus_CheckedChanged);
+            // 
+            // groupBoxPMode
+            // 
+            this.groupBoxPMode.Controls.Add(this.radioModeScript);
+            this.groupBoxPMode.Controls.Add(this.radioModeOperation);
+            this.groupBoxPMode.Controls.Add(this.radioModeInterpreter);
+            this.groupBoxPMode.Controls.Add(this.radioModeFiles);
+            this.groupBoxPMode.Location = new System.Drawing.Point(206, 5);
+            this.groupBoxPMode.Name = "groupBoxPMode";
+            this.groupBoxPMode.Size = new System.Drawing.Size(124, 142);
+            this.groupBoxPMode.TabIndex = 67;
+            this.groupBoxPMode.TabStop = false;
+            this.groupBoxPMode.Text = "Processing mode";
+            // 
+            // radioModeScript
+            // 
+            this.radioModeScript.AutoSize = true;
+            this.radioModeScript.Location = new System.Drawing.Point(6, 90);
+            this.radioModeScript.Name = "radioModeScript";
+            this.radioModeScript.Size = new System.Drawing.Size(82, 17);
+            this.radioModeScript.TabIndex = 26;
+            this.radioModeScript.Text = "Script Mode";
+            this.radioModeScript.UseVisualStyleBackColor = true;
+            this.radioModeScript.CheckedChanged += new System.EventHandler(this.radioModeScript_CheckedChanged);
+            // 
+            // radioModeOperation
+            // 
+            this.radioModeOperation.AutoSize = true;
+            this.radioModeOperation.Location = new System.Drawing.Point(6, 43);
+            this.radioModeOperation.Name = "radioModeOperation";
+            this.radioModeOperation.Size = new System.Drawing.Size(101, 17);
+            this.radioModeOperation.TabIndex = 25;
+            this.radioModeOperation.TabStop = true;
+            this.radioModeOperation.Text = "Operation Mode";
+            this.radioModeOperation.UseVisualStyleBackColor = true;
+            this.radioModeOperation.CheckedChanged += new System.EventHandler(this.radioModeOperation_CheckedChanged);
+            // 
+            // radioModeInterpreter
+            // 
+            this.radioModeInterpreter.AutoSize = true;
+            this.radioModeInterpreter.Location = new System.Drawing.Point(6, 67);
+            this.radioModeInterpreter.Name = "radioModeInterpreter";
+            this.radioModeInterpreter.Size = new System.Drawing.Size(103, 17);
+            this.radioModeInterpreter.TabIndex = 23;
+            this.radioModeInterpreter.Text = "Interpreter Mode";
+            this.radioModeInterpreter.UseVisualStyleBackColor = true;
+            this.radioModeInterpreter.CheckedChanged += new System.EventHandler(this.radioModeInterpreter_CheckedChanged);
+            // 
+            // radioModeFiles
+            // 
+            this.radioModeFiles.AutoSize = true;
+            this.radioModeFiles.Location = new System.Drawing.Point(6, 19);
+            this.radioModeFiles.Name = "radioModeFiles";
+            this.radioModeFiles.Size = new System.Drawing.Size(76, 17);
+            this.radioModeFiles.TabIndex = 24;
+            this.radioModeFiles.Text = "Files Mode";
+            this.radioModeFiles.UseVisualStyleBackColor = true;
+            this.radioModeFiles.CheckedChanged += new System.EventHandler(this.radioModeFiles_CheckedChanged);
+            // 
+            // panelCommand
+            // 
+            this.panelCommand.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelCommand.BackColor = System.Drawing.Color.Black;
+            this.panelCommand.Controls.Add(this.textEditor);
+            this.panelCommand.Location = new System.Drawing.Point(6, 261);
+            this.panelCommand.Name = "panelCommand";
+            this.panelCommand.Padding = new System.Windows.Forms.Padding(1);
+            this.panelCommand.Size = new System.Drawing.Size(767, 118);
+            this.panelCommand.TabIndex = 62;
+            // 
+            // labelToCommandBox
+            // 
+            this.labelToCommandBox.AutoSize = true;
+            this.labelToCommandBox.Location = new System.Drawing.Point(4, 242);
+            this.labelToCommandBox.Name = "labelToCommandBox";
+            this.labelToCommandBox.Size = new System.Drawing.Size(22, 13);
+            this.labelToCommandBox.TabIndex = 61;
+            this.labelToCommandBox.Text = "-----";
+            // 
+            // groupBoxInterpreter
+            // 
+            this.groupBoxInterpreter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxInterpreter.Controls.Add(this.comboBoxWrapper);
+            this.groupBoxInterpreter.Controls.Add(this.labelWrapper);
+            this.groupBoxInterpreter.Controls.Add(this.labelTreatNewline);
+            this.groupBoxInterpreter.Controls.Add(this.comboBoxNewline);
+            this.groupBoxInterpreter.Controls.Add(this.comboBoxInterpreter);
+            this.groupBoxInterpreter.Location = new System.Drawing.Point(206, 153);
+            this.groupBoxInterpreter.Name = "groupBoxInterpreter";
+            this.groupBoxInterpreter.Size = new System.Drawing.Size(570, 102);
+            this.groupBoxInterpreter.TabIndex = 69;
+            this.groupBoxInterpreter.TabStop = false;
+            this.groupBoxInterpreter.Text = "Interpreter settings:";
+            // 
+            // comboBoxWrapper
+            // 
+            this.comboBoxWrapper.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxWrapper.FormattingEnabled = true;
+            this.comboBoxWrapper.Items.AddRange(new object[] {
+            "\"",
+            "",
+            "\'",
+            "`",
+            "()",
+            "{}",
+            "[]"});
+            this.comboBoxWrapper.Location = new System.Drawing.Point(104, 69);
+            this.comboBoxWrapper.Name = "comboBoxWrapper";
+            this.comboBoxWrapper.Size = new System.Drawing.Size(463, 21);
+            this.comboBoxWrapper.TabIndex = 28;
+            // 
+            // labelWrapper
+            // 
+            this.labelWrapper.AutoSize = true;
+            this.labelWrapper.Location = new System.Drawing.Point(14, 69);
+            this.labelWrapper.Name = "labelWrapper";
+            this.labelWrapper.Size = new System.Drawing.Size(48, 13);
+            this.labelWrapper.TabIndex = 27;
+            this.labelWrapper.Text = "wrapper:";
+            // 
+            // labelTreatNewline
+            // 
+            this.labelTreatNewline.AutoSize = true;
+            this.labelTreatNewline.Location = new System.Drawing.Point(14, 47);
+            this.labelTreatNewline.Name = "labelTreatNewline";
+            this.labelTreatNewline.Size = new System.Drawing.Size(84, 13);
+            this.labelTreatNewline.TabIndex = 26;
+            this.labelTreatNewline.Text = "treat newline as:";
+            // 
+            // comboBoxNewline
+            // 
+            this.comboBoxNewline.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxNewline.FormattingEnabled = true;
+            this.comboBoxNewline.Items.AddRange(new object[] {
+            "&",
+            "",
+            "\\",
+            "&echo.&echo "});
+            this.comboBoxNewline.Location = new System.Drawing.Point(104, 44);
+            this.comboBoxNewline.Name = "comboBoxNewline";
+            this.comboBoxNewline.Size = new System.Drawing.Size(463, 21);
+            this.comboBoxNewline.TabIndex = 25;
+            // 
+            // comboBoxInterpreter
+            // 
+            this.comboBoxInterpreter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBoxInterpreter.FormattingEnabled = true;
+            this.comboBoxInterpreter.Items.AddRange(new object[] {
+            "cmd.exe /C",
+            "php -r"});
+            this.comboBoxInterpreter.Location = new System.Drawing.Point(3, 19);
+            this.comboBoxInterpreter.Name = "comboBoxInterpreter";
+            this.comboBoxInterpreter.Size = new System.Drawing.Size(564, 21);
+            this.comboBoxInterpreter.TabIndex = 24;
+            // 
+            // groupBoxVariants
+            // 
+            this.groupBoxVariants.Controls.Add(this.listBoxOperation);
+            this.groupBoxVariants.Location = new System.Drawing.Point(3, 153);
+            this.groupBoxVariants.Margin = new System.Windows.Forms.Padding(0);
+            this.groupBoxVariants.Name = "groupBoxVariants";
+            this.groupBoxVariants.Size = new System.Drawing.Size(197, 87);
+            this.groupBoxVariants.TabIndex = 70;
+            this.groupBoxVariants.TabStop = false;
+            this.groupBoxVariants.Text = "Operation variants:";
+            // 
+            // listBoxOperation
+            // 
+            this.listBoxOperation.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.listBoxOperation.FormattingEnabled = true;
+            this.listBoxOperation.IntegralHeight = false;
+            this.listBoxOperation.Location = new System.Drawing.Point(4, 16);
+            this.listBoxOperation.Margin = new System.Windows.Forms.Padding(0);
+            this.listBoxOperation.Name = "listBoxOperation";
+            this.listBoxOperation.Size = new System.Drawing.Size(190, 67);
+            this.listBoxOperation.TabIndex = 31;
+            this.listBoxOperation.SelectedIndexChanged += new System.EventHandler(this.listBoxOperation_SelectedIndexChanged);
+            // 
+            // groupBoxEW
+            // 
+            this.groupBoxEW.Controls.Add(this.textBoxEW);
+            this.groupBoxEW.Controls.Add(this.btnEWRemove);
+            this.groupBoxEW.Controls.Add(this.btnEWAdd);
+            this.groupBoxEW.Controls.Add(this.listBoxEW);
+            this.groupBoxEW.Controls.Add(this.radioCodesBlacklist);
+            this.groupBoxEW.Controls.Add(this.radioCodesWhitelist);
+            this.groupBoxEW.Location = new System.Drawing.Point(336, 5);
+            this.groupBoxEW.Name = "groupBoxEW";
+            this.groupBoxEW.Size = new System.Drawing.Size(138, 142);
+            this.groupBoxEW.TabIndex = 68;
+            this.groupBoxEW.TabStop = false;
+            this.groupBoxEW.Text = "Errors / Warnings";
+            // 
+            // textBoxEW
+            // 
+            this.textBoxEW.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBoxEW.Location = new System.Drawing.Point(0, 15);
+            this.textBoxEW.Name = "textBoxEW";
+            this.textBoxEW.Size = new System.Drawing.Size(108, 20);
+            this.textBoxEW.TabIndex = 5;
+            // 
+            // btnEWRemove
+            // 
+            this.btnEWRemove.Location = new System.Drawing.Point(112, 37);
+            this.btnEWRemove.Name = "btnEWRemove";
+            this.btnEWRemove.Size = new System.Drawing.Size(24, 20);
+            this.btnEWRemove.TabIndex = 4;
+            this.btnEWRemove.Text = "-";
+            this.btnEWRemove.UseVisualStyleBackColor = true;
+            this.btnEWRemove.Click += new System.EventHandler(this.btnEWRemove_Click);
+            // 
+            // btnEWAdd
+            // 
+            this.btnEWAdd.Location = new System.Drawing.Point(112, 15);
+            this.btnEWAdd.Name = "btnEWAdd";
+            this.btnEWAdd.Size = new System.Drawing.Size(24, 21);
+            this.btnEWAdd.TabIndex = 3;
+            this.btnEWAdd.Text = "+";
+            this.btnEWAdd.UseVisualStyleBackColor = true;
+            this.btnEWAdd.Click += new System.EventHandler(this.btnEWAdd_Click);
+            // 
+            // listBoxEW
+            // 
+            this.listBoxEW.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.listBoxEW.FormattingEnabled = true;
+            this.listBoxEW.IntegralHeight = false;
+            this.listBoxEW.Location = new System.Drawing.Point(0, 37);
+            this.listBoxEW.Name = "listBoxEW";
+            this.listBoxEW.Size = new System.Drawing.Size(108, 80);
+            this.listBoxEW.TabIndex = 2;
+            // 
+            // radioCodesBlacklist
+            // 
+            this.radioCodesBlacklist.AutoSize = true;
+            this.radioCodesBlacklist.Location = new System.Drawing.Point(74, 119);
+            this.radioCodesBlacklist.Name = "radioCodesBlacklist";
+            this.radioCodesBlacklist.Size = new System.Drawing.Size(64, 17);
+            this.radioCodesBlacklist.TabIndex = 1;
+            this.radioCodesBlacklist.TabStop = true;
+            this.radioCodesBlacklist.Text = "Blacklist";
+            this.radioCodesBlacklist.UseVisualStyleBackColor = true;
+            // 
+            // radioCodesWhitelist
+            // 
+            this.radioCodesWhitelist.AutoSize = true;
+            this.radioCodesWhitelist.Location = new System.Drawing.Point(0, 119);
+            this.radioCodesWhitelist.Name = "radioCodesWhitelist";
+            this.radioCodesWhitelist.Size = new System.Drawing.Size(73, 17);
+            this.radioCodesWhitelist.TabIndex = 0;
+            this.radioCodesWhitelist.Text = "Whitelist /";
+            this.radioCodesWhitelist.UseVisualStyleBackColor = true;
+            // 
+            // groupBoxOutputControl
+            // 
+            this.groupBoxOutputControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxOutputControl.Controls.Add(this.dataGridViewOutput);
+            this.groupBoxOutputControl.Location = new System.Drawing.Point(480, 5);
+            this.groupBoxOutputControl.Margin = new System.Windows.Forms.Padding(0);
+            this.groupBoxOutputControl.Name = "groupBoxOutputControl";
+            this.groupBoxOutputControl.Padding = new System.Windows.Forms.Padding(0);
+            this.groupBoxOutputControl.Size = new System.Drawing.Size(296, 147);
+            this.groupBoxOutputControl.TabIndex = 60;
+            this.groupBoxOutputControl.TabStop = false;
+            this.groupBoxOutputControl.Text = "Output customization";
+            // 
+            // panelSettingsBottom
+            // 
+            this.panelSettingsBottom.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelSettingsBottom.Controls.Add(this.checkedListBoxSpecCfg);
+            this.panelSettingsBottom.Controls.Add(this.labelCaption);
+            this.panelSettingsBottom.Controls.Add(this.textBoxCaption);
+            this.panelSettingsBottom.Controls.Add(this.btnApply);
+            this.panelSettingsBottom.Controls.Add(this.dataGridViewOrder);
+            this.panelSettingsBottom.Controls.Add(this.labelOnlyFor);
+            this.panelSettingsBottom.Controls.Add(this.labelOrder);
+            this.panelSettingsBottom.Controls.Add(this.panel2);
+            this.panelSettingsBottom.Location = new System.Drawing.Point(6, 376);
+            this.panelSettingsBottom.Margin = new System.Windows.Forms.Padding(0);
+            this.panelSettingsBottom.Name = "panelSettingsBottom";
+            this.panelSettingsBottom.Size = new System.Drawing.Size(770, 99);
+            this.panelSettingsBottom.TabIndex = 71;
+            // 
+            // checkedListBoxSpecCfg
+            // 
+            this.checkedListBoxSpecCfg.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.checkedListBoxSpecCfg.FormattingEnabled = true;
+            this.checkedListBoxSpecCfg.IntegralHeight = false;
+            this.checkedListBoxSpecCfg.Location = new System.Drawing.Point(0, 18);
+            this.checkedListBoxSpecCfg.Margin = new System.Windows.Forms.Padding(0);
+            this.checkedListBoxSpecCfg.MinimumSize = new System.Drawing.Size(191, 77);
+            this.checkedListBoxSpecCfg.Name = "checkedListBoxSpecCfg";
+            this.checkedListBoxSpecCfg.ScrollAlwaysVisible = true;
+            this.checkedListBoxSpecCfg.Size = new System.Drawing.Size(191, 77);
+            this.checkedListBoxSpecCfg.TabIndex = 78;
+            this.checkedListBoxSpecCfg.Click += new System.EventHandler(this.checkedListBoxSpecCfg_Click);
+            this.checkedListBoxSpecCfg.MouseLeave += new System.EventHandler(this.checkedListBoxSpecCfg_MouseLeave);
+            // 
+            // labelCaption
+            // 
+            this.labelCaption.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelCaption.AutoSize = true;
+            this.labelCaption.Location = new System.Drawing.Point(464, 26);
+            this.labelCaption.Name = "labelCaption";
+            this.labelCaption.Size = new System.Drawing.Size(46, 13);
+            this.labelCaption.TabIndex = 81;
+            this.labelCaption.Text = "Caption:";
+            // 
+            // textBoxCaption
+            // 
+            this.textBoxCaption.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxCaption.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBoxCaption.Location = new System.Drawing.Point(464, 42);
+            this.textBoxCaption.Name = "textBoxCaption";
+            this.textBoxCaption.Size = new System.Drawing.Size(221, 20);
+            this.textBoxCaption.TabIndex = 80;
+            // 
+            // btnApply
+            // 
+            this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnApply.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnApply.Location = new System.Drawing.Point(692, 42);
+            this.btnApply.Name = "btnApply";
+            this.btnApply.Size = new System.Drawing.Size(75, 23);
+            this.btnApply.TabIndex = 79;
+            this.btnApply.Text = "Apply";
+            this.btnApply.UseVisualStyleBackColor = true;
+            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
+            // 
+            // labelOnlyFor
+            // 
+            this.labelOnlyFor.AutoSize = true;
+            this.labelOnlyFor.Location = new System.Drawing.Point(-2, 4);
+            this.labelOnlyFor.Name = "labelOnlyFor";
+            this.labelOnlyFor.Size = new System.Drawing.Size(46, 13);
+            this.labelOnlyFor.TabIndex = 82;
+            this.labelOnlyFor.Text = "Only for:";
+            // 
+            // labelOrder
+            // 
+            this.labelOrder.AutoSize = true;
+            this.labelOrder.Location = new System.Drawing.Point(194, 5);
+            this.labelOrder.Name = "labelOrder";
+            this.labelOrder.Size = new System.Drawing.Size(84, 13);
+            this.labelOrder.TabIndex = 84;
+            this.labelOrder.Text = "Execution order:";
+            // 
+            // panel2
+            // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.buttonEnvVariables);
+            this.panel2.Controls.Add(this.btnDteCmd);
+            this.panel2.Location = new System.Drawing.Point(543, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(223, 32);
+            this.panel2.TabIndex = 85;
+            // 
+            // buttonEnvVariables
+            // 
+            this.buttonEnvVariables.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.buttonEnvVariables.Location = new System.Drawing.Point(3, 6);
+            this.buttonEnvVariables.Name = "buttonEnvVariables";
+            this.buttonEnvVariables.Size = new System.Drawing.Size(106, 20);
+            this.buttonEnvVariables.TabIndex = 24;
+            this.buttonEnvVariables.Text = "MSBuild Properties";
+            this.buttonEnvVariables.UseVisualStyleBackColor = true;
+            this.buttonEnvVariables.Click += new System.EventHandler(this.buttonEnvVariables_Click);
+            // 
+            // btnDteCmd
+            // 
+            this.btnDteCmd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnDteCmd.Location = new System.Drawing.Point(115, 7);
+            this.btnDteCmd.Name = "btnDteCmd";
+            this.btnDteCmd.Size = new System.Drawing.Size(102, 20);
+            this.btnDteCmd.TabIndex = 25;
+            this.btnDteCmd.Text = "DTE Commands";
+            this.btnDteCmd.UseVisualStyleBackColor = true;
+            this.btnDteCmd.Click += new System.EventHandler(this.btnDteCmd_Click);
+            // 
+            // tabPageComponents
+            // 
+            this.tabPageComponents.Controls.Add(this.splitContainerComponents);
+            this.tabPageComponents.Location = new System.Drawing.Point(4, 25);
+            this.tabPageComponents.Margin = new System.Windows.Forms.Padding(0);
+            this.tabPageComponents.Name = "tabPageComponents";
+            this.tabPageComponents.Size = new System.Drawing.Size(776, 471);
+            this.tabPageComponents.TabIndex = 2;
+            this.tabPageComponents.Text = "Components";
+            // 
             // dgvActions
             // 
             this.dgvActions.AllowUserToAddRows = false;
@@ -1349,14 +1306,14 @@
             this.dgvActionName,
             this.dgvActionCaption});
             this.dgvActions.ContextMenuStrip = this.contextMenuActions;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvActions.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvActions.DefaultCellStyle = dataGridViewCellStyle1;
             this.dgvActions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvActions.DragDropSortable = true;
             this.dgvActions.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnF2;
@@ -1414,38 +1371,350 @@
             this.dgvActionCaption.ReadOnly = true;
             this.dgvActionCaption.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
-            // panelLineForSplit
+            // textEditor
             // 
-            this.panelLineForSplit.BackColor = System.Drawing.Color.Transparent;
-            this.panelLineForSplit.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panelLineForSplit.BackgroundImage")));
-            this.panelLineForSplit.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.panelLineForSplit.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panelLineForSplit.Location = new System.Drawing.Point(0, 0);
-            this.panelLineForSplit.Margin = new System.Windows.Forms.Padding(0);
-            this.panelLineForSplit.Name = "panelLineForSplit";
-            this.panelLineForSplit.Size = new System.Drawing.Size(1, 500);
-            this.panelLineForSplit.TabIndex = 1;
+            this.textEditor.CodeCompletionEnabled = false;
+            this.textEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textEditor.Location = new System.Drawing.Point(1, 1);
+            this.textEditor.Name = "textEditor";
+            this.textEditor.Size = new System.Drawing.Size(765, 116);
+            this.textEditor.TabIndex = 0;
             // 
-            // panelEventType
+            // dataGridViewOutput
             // 
-            this.panelEventType.Controls.Add(this.comboBoxEvents);
-            this.panelEventType.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelEventType.Location = new System.Drawing.Point(0, 0);
-            this.panelEventType.Margin = new System.Windows.Forms.Padding(0);
-            this.panelEventType.Name = "panelEventType";
-            this.panelEventType.Size = new System.Drawing.Size(987, 22);
-            this.panelEventType.TabIndex = 44;
+            this.dataGridViewOutput.AllowUserToResizeColumns = false;
+            this.dataGridViewOutput.AllowUserToResizeRows = false;
+            this.dataGridViewOutput.AlwaysSelected = false;
+            this.dataGridViewOutput.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.dataGridViewOutput.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewOutput.ColumnHeadersVisible = false;
+            this.dataGridViewOutput.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.owpTerm,
+            this.owpType,
+            this.owpRemove});
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewOutput.DefaultCellStyle = dataGridViewCellStyle3;
+            this.dataGridViewOutput.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridViewOutput.DragDropSortable = false;
+            this.dataGridViewOutput.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.dataGridViewOutput.Location = new System.Drawing.Point(0, 13);
+            this.dataGridViewOutput.MultiSelect = false;
+            this.dataGridViewOutput.Name = "dataGridViewOutput";
+            this.dataGridViewOutput.NumberingForRowsHeader = false;
+            this.dataGridViewOutput.RowHeadersVisible = false;
+            this.dataGridViewOutput.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
+            this.dataGridViewOutput.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.dataGridViewOutput.RowTemplate.Height = 17;
+            this.dataGridViewOutput.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
+            this.dataGridViewOutput.Size = new System.Drawing.Size(296, 134);
+            this.dataGridViewOutput.TabIndex = 7;
+            this.dataGridViewOutput.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewOutput_CellClick);
             // 
-            // comboBoxEvents
+            // owpTerm
             // 
-            this.comboBoxEvents.Dock = System.Windows.Forms.DockStyle.Top;
-            this.comboBoxEvents.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxEvents.FormattingEnabled = true;
-            this.comboBoxEvents.Location = new System.Drawing.Point(0, 0);
-            this.comboBoxEvents.Name = "comboBoxEvents";
-            this.comboBoxEvents.Size = new System.Drawing.Size(987, 21);
-            this.comboBoxEvents.TabIndex = 42;
-            this.comboBoxEvents.SelectedIndexChanged += new System.EventHandler(this.comboBoxEvents_SelectedIndexChanged);
+            this.owpTerm.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.owpTerm.HeaderText = "term";
+            this.owpTerm.Name = "owpTerm";
+            // 
+            // owpType
+            // 
+            this.owpType.HeaderText = "type";
+            this.owpType.Items.AddRange(new object[] {
+            "Default",
+            "Regexp",
+            "Wildcards"});
+            this.owpType.MinimumWidth = 76;
+            this.owpType.Name = "owpType";
+            this.owpType.Width = 76;
+            // 
+            // owpRemove
+            // 
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.Maroon;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Maroon;
+            this.owpRemove.DefaultCellStyle = dataGridViewCellStyle2;
+            this.owpRemove.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.owpRemove.HeaderText = "remove";
+            this.owpRemove.MinimumWidth = 16;
+            this.owpRemove.Name = "owpRemove";
+            this.owpRemove.Text = "-";
+            this.owpRemove.UseColumnTextForButtonValue = true;
+            this.owpRemove.Width = 16;
+            // 
+            // dataGridViewOrder
+            // 
+            this.dataGridViewOrder.AllowUserToAddRows = false;
+            this.dataGridViewOrder.AllowUserToDeleteRows = false;
+            this.dataGridViewOrder.AllowUserToResizeColumns = false;
+            this.dataGridViewOrder.AllowUserToResizeRows = false;
+            this.dataGridViewOrder.AlwaysSelected = false;
+            this.dataGridViewOrder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridViewOrder.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.dataGridViewOrder.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewOrder.ColumnHeadersVisible = false;
+            this.dataGridViewOrder.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dgvOrderEnabled,
+            this.dgvOrderProject,
+            this.dgvOrderType});
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dataGridViewOrder.DefaultCellStyle = dataGridViewCellStyle4;
+            this.dataGridViewOrder.DragDropSortable = false;
+            this.dataGridViewOrder.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.dataGridViewOrder.Location = new System.Drawing.Point(194, 18);
+            this.dataGridViewOrder.MultiSelect = false;
+            this.dataGridViewOrder.Name = "dataGridViewOrder";
+            this.dataGridViewOrder.NumberingForRowsHeader = false;
+            this.dataGridViewOrder.RowHeadersVisible = false;
+            this.dataGridViewOrder.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
+            this.dataGridViewOrder.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.dataGridViewOrder.RowTemplate.Height = 17;
+            this.dataGridViewOrder.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.dataGridViewOrder.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
+            this.dataGridViewOrder.Size = new System.Drawing.Size(264, 77);
+            this.dataGridViewOrder.TabIndex = 83;
+            // 
+            // dgvOrderEnabled
+            // 
+            this.dgvOrderEnabled.FillWeight = 21F;
+            this.dgvOrderEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.dgvOrderEnabled.HeaderText = "";
+            this.dgvOrderEnabled.MinimumWidth = 16;
+            this.dgvOrderEnabled.Name = "dgvOrderEnabled";
+            this.dgvOrderEnabled.Width = 21;
+            // 
+            // dgvOrderProject
+            // 
+            this.dgvOrderProject.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dgvOrderProject.HeaderText = "project";
+            this.dgvOrderProject.Name = "dgvOrderProject";
+            this.dgvOrderProject.ReadOnly = true;
+            // 
+            // dgvOrderType
+            // 
+            this.dgvOrderType.HeaderText = "type";
+            this.dgvOrderType.Items.AddRange(new object[] {
+            "Before",
+            "After"});
+            this.dgvOrderType.MinimumWidth = 76;
+            this.dgvOrderType.Name = "dgvOrderType";
+            this.dgvOrderType.Width = 76;
+            // 
+            // splitContainerComponents
+            // 
+            this.splitContainerComponents.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainerComponents.Location = new System.Drawing.Point(3, 3);
+            this.splitContainerComponents.Name = "splitContainerComponents";
+            this.splitContainerComponents.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainerComponents.Panel1
+            // 
+            this.splitContainerComponents.Panel1.Controls.Add(this.dgvComponents);
+            this.splitContainerComponents.Panel1.Controls.Add(this.btnCompNew);
+            // 
+            // splitContainerComponents.Panel2
+            // 
+            this.splitContainerComponents.Panel2.Controls.Add(this.dgvComponentInfo);
+            this.splitContainerComponents.Size = new System.Drawing.Size(773, 438);
+            this.splitContainerComponents.SplitterDistance = 226;
+            this.splitContainerComponents.TabIndex = 87;
+            // 
+            // dgvComponents
+            // 
+            this.dgvComponents.AllowUserToAddRows = false;
+            this.dgvComponents.AllowUserToDeleteRows = false;
+            this.dgvComponents.AllowUserToResizeColumns = false;
+            this.dgvComponents.AllowUserToResizeRows = false;
+            this.dgvComponents.AlwaysSelected = false;
+            this.dgvComponents.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgvComponents.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.dgvComponents.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.dgvComponents.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvComponents.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dgvComponentsIcon,
+            this.dgvComponentsEnabled,
+            this.dgvComponentsName,
+            this.dgvComponentsClass,
+            this.dgvComponentsDescription});
+            this.dgvComponents.ContextMenuStrip = this.contextMenuComponents;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvComponents.DefaultCellStyle = dataGridViewCellStyle5;
+            this.dgvComponents.DragDropSortable = false;
+            this.dgvComponents.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.dgvComponents.Location = new System.Drawing.Point(0, 0);
+            this.dgvComponents.Margin = new System.Windows.Forms.Padding(0);
+            this.dgvComponents.MultiSelect = false;
+            this.dgvComponents.Name = "dgvComponents";
+            this.dgvComponents.NumberingForRowsHeader = false;
+            this.dgvComponents.RowHeadersVisible = false;
+            this.dgvComponents.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
+            this.dgvComponents.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.dgvComponents.RowTemplate.Height = 17;
+            this.dgvComponents.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.dgvComponents.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvComponents.Size = new System.Drawing.Size(692, 226);
+            this.dgvComponents.TabIndex = 84;
+            this.dgvComponents.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvComponents_CellContentClick);
+            this.dgvComponents.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvComponents_CellDoubleClick);
+            this.dgvComponents.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvComponents_CellValueChanged);
+            this.dgvComponents.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvComponents_RowEnter);
+            // 
+            // dgvComponentsIcon
+            // 
+            this.dgvComponentsIcon.FillWeight = 23F;
+            this.dgvComponentsIcon.HeaderText = "";
+            this.dgvComponentsIcon.MinimumWidth = 16;
+            this.dgvComponentsIcon.Name = "dgvComponentsIcon";
+            this.dgvComponentsIcon.ReadOnly = true;
+            this.dgvComponentsIcon.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvComponentsIcon.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.dgvComponentsIcon.Width = 23;
+            // 
+            // dgvComponentsEnabled
+            // 
+            this.dgvComponentsEnabled.FillWeight = 60F;
+            this.dgvComponentsEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.dgvComponentsEnabled.HeaderText = "Enabled";
+            this.dgvComponentsEnabled.MinimumWidth = 16;
+            this.dgvComponentsEnabled.Name = "dgvComponentsEnabled";
+            this.dgvComponentsEnabled.Width = 52;
+            // 
+            // dgvComponentsName
+            // 
+            this.dgvComponentsName.FillWeight = 130F;
+            this.dgvComponentsName.HeaderText = "Name";
+            this.dgvComponentsName.MinimumWidth = 100;
+            this.dgvComponentsName.Name = "dgvComponentsName";
+            this.dgvComponentsName.ReadOnly = true;
+            this.dgvComponentsName.Width = 130;
+            // 
+            // dgvComponentsClass
+            // 
+            this.dgvComponentsClass.FillWeight = 170F;
+            this.dgvComponentsClass.HeaderText = "Class";
+            this.dgvComponentsClass.MinimumWidth = 100;
+            this.dgvComponentsClass.Name = "dgvComponentsClass";
+            this.dgvComponentsClass.ReadOnly = true;
+            this.dgvComponentsClass.Width = 170;
+            // 
+            // dgvComponentsDescription
+            // 
+            this.dgvComponentsDescription.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dgvComponentsDescription.HeaderText = "Description";
+            this.dgvComponentsDescription.Name = "dgvComponentsDescription";
+            this.dgvComponentsDescription.ReadOnly = true;
+            // 
+            // btnCompNew
+            // 
+            this.btnCompNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCompNew.Location = new System.Drawing.Point(695, 0);
+            this.btnCompNew.Name = "btnCompNew";
+            this.btnCompNew.Size = new System.Drawing.Size(75, 23);
+            this.btnCompNew.TabIndex = 86;
+            this.btnCompNew.Text = "Create new";
+            this.btnCompNew.UseVisualStyleBackColor = true;
+            this.btnCompNew.Click += new System.EventHandler(this.btnCompNew_Click);
+            // 
+            // dgvComponentInfo
+            // 
+            this.dgvComponentInfo.AllowUserToAddRows = false;
+            this.dgvComponentInfo.AllowUserToDeleteRows = false;
+            this.dgvComponentInfo.AllowUserToResizeColumns = false;
+            this.dgvComponentInfo.AllowUserToResizeRows = false;
+            this.dgvComponentInfo.AlwaysSelected = false;
+            this.dgvComponentInfo.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.dgvComponentInfo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvComponentInfo.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dgvCompInfoType,
+            this.dgvCompInfoName,
+            this.dgvCompInfoSignature,
+            this.dgvCompInfoDescription});
+            this.dgvComponentInfo.ContextMenuStrip = this.contextMenuComponents;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvComponentInfo.DefaultCellStyle = dataGridViewCellStyle6;
+            this.dgvComponentInfo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvComponentInfo.DragDropSortable = false;
+            this.dgvComponentInfo.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.dgvComponentInfo.Location = new System.Drawing.Point(0, 0);
+            this.dgvComponentInfo.Margin = new System.Windows.Forms.Padding(0);
+            this.dgvComponentInfo.MultiSelect = false;
+            this.dgvComponentInfo.Name = "dgvComponentInfo";
+            this.dgvComponentInfo.NumberingForRowsHeader = false;
+            this.dgvComponentInfo.ReadOnly = true;
+            this.dgvComponentInfo.RowHeadersVisible = false;
+            this.dgvComponentInfo.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
+            this.dgvComponentInfo.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.dgvComponentInfo.RowTemplate.Height = 17;
+            this.dgvComponentInfo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.dgvComponentInfo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvComponentInfo.Size = new System.Drawing.Size(773, 208);
+            this.dgvComponentInfo.TabIndex = 85;
+            // 
+            // dgvCompInfoType
+            // 
+            this.dgvCompInfoType.FillWeight = 38F;
+            this.dgvCompInfoType.HeaderText = "Type";
+            this.dgvCompInfoType.MinimumWidth = 16;
+            this.dgvCompInfoType.Name = "dgvCompInfoType";
+            this.dgvCompInfoType.ReadOnly = true;
+            this.dgvCompInfoType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvCompInfoType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.dgvCompInfoType.Width = 38;
+            // 
+            // dgvCompInfoName
+            // 
+            this.dgvCompInfoName.FillWeight = 140F;
+            this.dgvCompInfoName.HeaderText = "Name";
+            this.dgvCompInfoName.MinimumWidth = 100;
+            this.dgvCompInfoName.Name = "dgvCompInfoName";
+            this.dgvCompInfoName.ReadOnly = true;
+            this.dgvCompInfoName.Width = 140;
+            // 
+            // dgvCompInfoSignature
+            // 
+            this.dgvCompInfoSignature.FillWeight = 200F;
+            this.dgvCompInfoSignature.HeaderText = "Signature";
+            this.dgvCompInfoSignature.MinimumWidth = 180;
+            this.dgvCompInfoSignature.Name = "dgvCompInfoSignature";
+            this.dgvCompInfoSignature.ReadOnly = true;
+            this.dgvCompInfoSignature.Width = 200;
+            // 
+            // dgvCompInfoDescription
+            // 
+            this.dgvCompInfoDescription.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dgvCompInfoDescription.HeaderText = "Description";
+            this.dgvCompInfoDescription.Name = "dgvCompInfoDescription";
+            this.dgvCompInfoDescription.ReadOnly = true;
             // 
             // EventsFrm
             // 
@@ -1464,6 +1733,19 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.EventsFrm_FormClosing);
             this.Load += new System.EventHandler(this.EventsFrm_Load);
             this.ClientSizeChanged += new System.EventHandler(this.EventsFrm_ClientSizeChanged);
+            this.contextMenuActions.ResumeLayout(false);
+            this.panelStatusBR.ResumeLayout(false);
+            this.panelStatusBR.PerformLayout();
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
+            this.panelEventType.ResumeLayout(false);
+            this.contextMenuComponents.ResumeLayout(false);
+            this.splitContainer.Panel1.ResumeLayout(false);
+            this.splitContainer.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
+            this.splitContainer.ResumeLayout(false);
+            this.panelManagerMain.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxToggle)).EndInit();
             this.tabControl.ResumeLayout(false);
             this.tabPageSettings.ResumeLayout(false);
             this.panelSettingsMain.ResumeLayout(false);
@@ -1482,24 +1764,19 @@
             this.groupBoxEW.ResumeLayout(false);
             this.groupBoxEW.PerformLayout();
             this.groupBoxOutputControl.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOutput)).EndInit();
             this.panelSettingsBottom.ResumeLayout(false);
             this.panelSettingsBottom.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrder)).EndInit();
             this.panel2.ResumeLayout(false);
-            this.contextMenuActions.ResumeLayout(false);
-            this.panelStatusBR.ResumeLayout(false);
-            this.panelStatusBR.PerformLayout();
-            this.statusStrip.ResumeLayout(false);
-            this.statusStrip.PerformLayout();
-            this.splitContainer.Panel1.ResumeLayout(false);
-            this.splitContainer.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
-            this.splitContainer.ResumeLayout(false);
-            this.panelManagerMain.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxToggle)).EndInit();
+            this.tabPageComponents.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvActions)).EndInit();
-            this.panelEventType.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOutput)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrder)).EndInit();
+            this.splitContainerComponents.Panel1.ResumeLayout(false);
+            this.splitContainerComponents.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerComponents)).EndInit();
+            this.splitContainerComponents.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvComponents)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvComponentInfo)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1623,6 +1900,24 @@
         private System.Windows.Forms.CheckBox chkBuildContext;
         private System.Windows.Forms.CheckBox chkConfirmation;
         private Controls.TextEditor textEditor;
+        private System.Windows.Forms.TabPage tabPageComponents;
+        private Components.DataGridViewExt dgvComponents;
+        private System.Windows.Forms.Button btnCompNew;
+        private System.Windows.Forms.ContextMenuStrip contextMenuComponents;
+        private System.Windows.Forms.ToolStripMenuItem menuItemCompDoc;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem menuItemCompNew;
+        private System.Windows.Forms.SplitContainer splitContainerComponents;
+        private Components.DataGridViewExt dgvComponentInfo;
+        private System.Windows.Forms.DataGridViewImageColumn dgvComponentsIcon;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn dgvComponentsEnabled;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvComponentsName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvComponentsClass;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvComponentsDescription;
+        private System.Windows.Forms.DataGridViewImageColumn dgvCompInfoType;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvCompInfoName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvCompInfoSignature;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvCompInfoDescription;
 
     }
 }

@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using net.r_eg.vsSBE.SBEScripts.Components;
 
 namespace net.r_eg.vsSBE.SBEScripts.Dom
 {
@@ -40,5 +41,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <param name="type"></param>
         /// <returns></returns>
         IEnumerable<INodeInfo> getBy(Type type);
+
+        /// <summary>
+        /// List of constructed data by IComponent
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        IEnumerable<INodeInfo> getBy(IComponent component);
     }
 }

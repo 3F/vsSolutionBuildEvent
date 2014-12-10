@@ -149,6 +149,7 @@ namespace net.r_eg.vsSBE
                 FindToolWindow(typeof(UI.Xaml.StatusToolWindow), 0, true);
 
                 Config._.load(extractPath(Dte2));
+                Config._.updateActivation(bootloader);
 
                 _state();
                 _menuItemMain.Visible = true;

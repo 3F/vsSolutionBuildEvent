@@ -105,7 +105,7 @@ namespace vsSBETest
             {
                 get {
                     var mockEnv = new Mock<IEnvironment>();
-                    mockEnv.SetupGet(p => p.DTE2).Returns((EnvDTE80.DTE2)null);
+                    mockEnv.SetupGet(p => p.Dte2).Returns((EnvDTE80.DTE2)null);
                     return mockEnv.Object;
                 }
             }

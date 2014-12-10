@@ -49,7 +49,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="env">Used environment</param>
         public DTEComponent(IEnvironment env): base(env)
         {
-            dteo = new DTEOperation((EnvDTE.DTE)env.DTE2, Events.SolutionEventType.General);
+            dteo = new DTEOperation((EnvDTE.DTE)env.Dte2, Events.SolutionEventType.General);
         }
 
         /// <summary>

@@ -38,21 +38,14 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         }
 
         /// <summary>
+        /// Used loader
+        /// </summary>
+        protected IBootloader bootloader;
+
+        /// <summary>
         /// Main storage
         /// </summary>
         protected LInfo data = new LInfo();
-
-        /// <summary>
-        /// Construct data from used components with IBootloader
-        /// </summary>
-        /// <param name="bootloader"></param>
-        public Inspector(IBootloader bootloader)
-        {
-            foreach(IComponent c in bootloader.Components) {
-                Log.nlog.Trace("Inspector: extracting from '{0}'", c.GetType().Name);
-                extract(c, data);
-            }
-        }
 
         /// <summary>
         /// List of constructed data by identification of node
@@ -64,7 +57,9 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
             if(data.ContainsKey(ident))
             {
                 foreach(INodeInfo elem in data[ident].OrderBy(p => p.Name)) {
-                    yield return elem;
+                    if(isEnabled(elem.Name)) {
+                        yield return elem;
+                    }
                 }
             }
         }
@@ -76,7 +71,40 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <returns></returns>
         public IEnumerable<INodeInfo> getBy(Type type)
         {
-            return getBy(new NodeIdent(type.Name, null));
+            return getBy(new NodeIdent(getComponentName(type), null));
+        }
+
+        /// <summary>
+        /// List of constructed data by IComponent
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public IEnumerable<INodeInfo> getBy(IComponent component)
+        {
+            return getBy(component.GetType());
+        }
+
+        public static bool isComponent(Type type)
+        {
+            if(type.IsClass && type.GetInterfaces().Contains(typeof(IComponent)) 
+                && type.Name.EndsWith("Component")) //TODO:
+            {
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Construct data from used components with IBootloader
+        /// </summary>
+        /// <param name="bootloader"></param>
+        public Inspector(IBootloader bootloader)
+        {
+            this.bootloader = bootloader;
+            foreach(IComponent c in bootloader.ComponentsAll) {
+                Log.nlog.Trace("Inspector: extracting from '{0}'", c.GetType().Name);
+                extract(c, data);
+            }
         }
 
         /// <param name="c">From</param>
@@ -156,6 +184,23 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         }
 
         /// <summary>
+        /// Checking the enabled status for element
+        /// </summary>
+        /// <param name="elementName">Element name from storage</param>
+        /// <returns></returns>
+        protected bool isEnabled(string elementName)
+        {
+            foreach(IComponent c in bootloader.ComponentsAll) {
+                if(getComponentName(c.GetType()) == elementName) {
+                    if(!c.Enabled) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
         /// Getting component name
         /// </summary>
         /// <param name="type"></param>
@@ -167,16 +212,6 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
                 return ((ComponentAttribute)attr[0]).Name;
             }
             return type.Name;
-        }
-
-        protected bool isComponent(Type type)
-        {
-            if(type.IsClass && type.GetInterfaces().Contains(typeof(IComponent)) 
-                && type.Name.EndsWith("Component")) //TODO:
-            {
-                return true;
-            }
-            return false;
         }
     }
 }

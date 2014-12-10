@@ -81,7 +81,7 @@ namespace net.r_eg.vsSBE.OWP
         public Listener(IEnvironment env, string item)
         {
             this.item   = item;
-            evtOWP      = env.DTE2.Events.get_OutputWindowEvents(item);
+            evtOWP      = env.Dte2.Events.get_OutputWindowEvents(item);
             _ePUpdated  = new _dispOutputWindowEvents_PaneUpdatedEventHandler(evtPaneUpdated);
             _ePAdded    = new _dispOutputWindowEvents_PaneAddedEventHandler(evtPaneAdded);
             _ePClearing = new _dispOutputWindowEvents_PaneClearingEventHandler(evtPaneClearing);

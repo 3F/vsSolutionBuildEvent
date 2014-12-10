@@ -22,6 +22,8 @@ using System.Linq;
 using System.Text;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.SBEScripts;
+using net.r_eg.vsSBE.SBEScripts.Components;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -58,9 +60,9 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public SolutionEvents Data
         {
-            get { return data; }
+            get;
+            protected set;
         }
-        protected SolutionEvents data = null;
         
         /// <summary>
         /// Thread-safe getting the instance of Config class
@@ -90,31 +92,31 @@ namespace net.r_eg.vsSBE
             {
                 using(StreamReader stream = new StreamReader(_Link, Encoding.UTF8, true))
                 {
-                    data = deserialize(stream);
-                    if(data == null) {
+                    Data = deserialize(stream);
+                    if(Data == null) {
                         throw new SBEException("file is empty");
                     }
                     compatibility(stream);
                 }
-                Log.nlog.Info("Loaded settings (v{0}): '{1}'\n\nReady:", data.Header.Compatibility, Settings.WorkPath);
+                Log.nlog.Info("Loaded settings (v{0}): '{1}'\n\nReady:", Data.Header.Compatibility, Settings.WorkPath);
             }
             catch(FileNotFoundException) {
-                data = new SolutionEvents();
+                Data = new SolutionEvents();
                 Log.nlog.Info("Initialized with the new settings");
             }
             catch(JsonException ex) {
                 //Log.nlog.Warn("Incorrect configuration type: '{0}'", ex.Message);
-                data = _xmlTryUpgrade(_Link, ex);
+                Data = _xmlTryUpgrade(_Link, ex);
             }
             catch(Exception ex)
             {
-                data = new SolutionEvents();
+                Data = new SolutionEvents();
                 Log.nlog.Fatal("Configuration file is corrupt - '{0}'", ex.Message);
                 //TODO: provide actions with UI, e.g.: restore, new..
             }
 
             // now compatibility should be updated to the latest
-            data.Header.Compatibility = Entity.Version.ToString();
+            Data.Header.Compatibility = Entity.Version.ToString();
             Update();
         }
 
@@ -124,7 +126,7 @@ namespace net.r_eg.vsSBE
         /// <param name="data"></param>
         public void load(SolutionEvents data)
         {
-            this.data = data;
+            Data = data;
         }
 
         /// <summary>
@@ -141,13 +143,29 @@ namespace net.r_eg.vsSBE
         {
             try {
                 using(TextWriter stream = new StreamWriter(_Link, false, Encoding.UTF8)) {
-                    serialize(stream, data);
+                    serialize(stream, Data);
                 }
                 Log.nlog.Debug("Configuration saved: {0}", Settings.WorkPath);
                 Update();
             }
             catch(Exception ex) {
                 Log.nlog.Error("Cannot apply configuration {0}", ex.Message);
+            }
+        }
+
+        public void updateActivation(IBootloader bootloader)
+        {
+            foreach(IComponent c in bootloader.ComponentsAll)
+            {
+                if(Data.Components == null || Data.Components.Length < 1) {
+                    //c.Enabled = true;
+                    continue;
+                }
+
+                Configuration.Component found = Data.Components.Where(p => p.ClassName == c.GetType().Name).FirstOrDefault();
+                if(found != null) {
+                    c.Enabled = found.Enabled;
+                }
             }
         }
 
@@ -185,7 +203,7 @@ namespace net.r_eg.vsSBE
         /// <param name="stream"></param>
         protected void compatibility(StreamReader stream)
         {
-            System.Version cfg = System.Version.Parse(data.Header.Compatibility);
+            System.Version cfg = System.Version.Parse(Data.Header.Compatibility);
 
             if(cfg.Major > Entity.Version.Major || (cfg.Major == Entity.Version.Major && cfg.Minor > Entity.Version.Minor)) {
                 Log.nlog.Warn(

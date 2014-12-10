@@ -28,9 +28,24 @@ namespace net.r_eg.vsSBE.SBEScripts
     public class Bootloader: IBootloader
     {
         /// <summary>
-        /// All registered components
+        /// All enabled from the registered components
         /// </summary>
         public IEnumerable<IComponent> Components
+        {
+            get {
+                foreach(KeyValuePair<string, IComponent> component in components) {
+                    if(!component.Value.Enabled) {
+                        continue;
+                    }
+                    yield return component.Value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// All registered components
+        /// </summary>
+        public IEnumerable<IComponent> ComponentsAll
         {
             get {
                 foreach(KeyValuePair<string, IComponent> component in components) {
@@ -38,6 +53,10 @@ namespace net.r_eg.vsSBE.SBEScripts
                 }
             }
         }
+
+        /// <summary>
+        /// Main storage
+        /// </summary>
         protected ConcurrentDictionary<string, IComponent> components = new ConcurrentDictionary<string, IComponent>();
 
         /// <summary>
@@ -45,37 +64,37 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// </summary>
         public IEnvironment Env
         {
-            get { return env; }
+            get;
+            protected set;
         }
-        protected IEnvironment env;
 
         /// <summary>
         /// Current container of user-variables
         /// </summary>
         public IUserVariable UVariable
         {
-            get { return uvariable; }
+            get;
+            protected set;
         }
-        protected IUserVariable uvariable;
 
         /// <param name="env">Used environment</param>
         /// <param name="uvariable">Used instance of user-variable</param>
         public Bootloader(IEnvironment env, IUserVariable uvariable)
         {
-            this.env = env;
-            this.uvariable = uvariable;
+            Env         = env;
+            UVariable   = uvariable;
             init();
         }
 
         protected virtual void init()
         {
             register(new CommentComponent());
-            register(new ConditionComponent(env, uvariable));
-            register(new UserVariableComponent(env, uvariable));
+            register(new ConditionComponent(Env, UVariable));
+            register(new UserVariableComponent(Env, UVariable));
             register(new OWPComponent());
-            register(new DTEComponent(env));
+            register(new DTEComponent(Env));
             register(new InternalComponent());
-            register(new BuildComponent(env));
+            register(new BuildComponent(Env));
             register(new FileComponent());
         }
 

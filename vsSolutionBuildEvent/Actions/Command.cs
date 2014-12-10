@@ -147,7 +147,7 @@ namespace net.r_eg.vsSBE.Actions
             if(operation.Command == null || operation.Command.Length < 1) {
                 return true;
             }
-            (new DTEOperation((EnvDTE.DTE)env.DTE2, type)).exec(operation.Command, operation.AbortOnFirstError);
+            (new DTEOperation((EnvDTE.DTE)env.Dte2, type)).exec(operation.Command, operation.AbortOnFirstError);
             return true;
         }
 

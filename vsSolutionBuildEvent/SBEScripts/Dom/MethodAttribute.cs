@@ -46,54 +46,54 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// </summary>
         public string Name
         {
-            get { return name; }
+            get;
+            protected set;
         }
-        protected string name;
 
         /// <summary>
         /// Description for current method
         /// </summary>
         public string Description
         {
-            get { return description; }
+            get;
+            protected set;
         }
-        protected string description;
         
         /// <summary>
         /// Return value
         /// </summary>
         public CValueType Return
         {
-            get { return retValue; }
+            get;
+            protected set;
         }
-        protected CValueType retValue;
         
         /// <summary>
         /// Arguments of method
         /// </summary>
         public TArguments[] Arguments
         {
-            get { return arguments; }
+            get;
+            protected set;
         }
-        protected TArguments[] arguments;
 
         /// <summary>
         /// Name of the parent specification (property/method/etc.) if exist or null
         /// </summary>
         public string Parent
         {
-            get { return parent; }
+            get;
+            protected set;
         }
-        protected string parent;
 
         /// <summary>
         /// Actual/real method name of the parent specification if exist or null
         /// </summary>
         public string Method
         {
-            get { return method; }
+            get;
+            protected set;
         }
-        protected string method;
 
         /// <param name="name">Method name</param>
         /// <param name="description">Description for current method</param>
@@ -101,10 +101,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <param name="arguments">Arguments of method</param>
         public MethodAttribute(string name, string description, CValueType ret = CValueType.Void, params CValueType[] args)
         {
-            this.name           = name;
-            this.description    = description;
-            this.retValue       = ret;
-            this.arguments      = args.Select(arg => new TArguments(arg)).ToArray();
+            Name        = name;
+            Description = description;
+            Return      = ret;
+            Arguments   = args.Select(arg => new TArguments(arg)).ToArray();
         }
 
         /// <param name="name">Method name</param>
@@ -125,8 +125,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         public MethodAttribute(string name, string description, string parent, string method, CValueType ret = CValueType.Void, params CValueType[] args)
             : this(name, description, ret, args)
         {
-            this.parent = parent;
-            this.method = method;
+            Parent = parent;
+            Method = method;
         }
 
         /// <param name="name">Method name</param>
@@ -157,7 +157,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
                 throw new MismatchException("CValueType[] is not equal by count with argsName/argsDesc :: {0}", name);
             }
 
-            arguments = args.Select((arg, i) => new TArguments(arg, argsName[i], argsDesc[i])).ToArray();
+            Arguments = args.Select((arg, i) => new TArguments(arg, argsName[i], argsDesc[i])).ToArray();
         }
 
         /// <param name="name">Method name</param>
@@ -182,8 +182,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         public MethodAttribute(string name, string description, string parent, string method, string[] argsName, string[] argsDesc, CValueType ret, params CValueType[] args)
             : this(name, description, argsName, argsDesc, ret, args)
         {
-            this.parent = parent;
-            this.method = method;
+            Parent = parent;
+            Method = method;
         }
 
         /// <param name="name">Method name</param>

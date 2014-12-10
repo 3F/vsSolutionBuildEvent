@@ -131,6 +131,7 @@
     <Compile Include="Actions\DTEOperation.cs" />
     <Compile Include="Actions\HProcess.cs" />
     <Compile Include="Actions\ICommand.cs" />
+    <Compile Include="Configuration\Component.cs" />
     <Compile Include="Environment.cs" />
     <Compile Include="Events\BuildType.cs" />
     <Compile Include="Events\ModeScript.cs" />
@@ -271,7 +272,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Events\ISolutionEvent.cs" />
     <Compile Include="Events\SBEEvent.cs" />
-    <Compile Include="ConfigHeader.cs" />
+    <Compile Include="Configuration\Header.cs" />
     <Compile Include="SolutionEvents.cs" />
     <Compile Include="UI\ITransferData.cs" />
     <Compile Include="UI\WForms\PropertyCheckFrm.cs">

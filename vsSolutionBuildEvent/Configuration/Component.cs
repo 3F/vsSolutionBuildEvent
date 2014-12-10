@@ -15,31 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using net.r_eg.vsSBE.SBEScripts.Components;
-
-namespace net.r_eg.vsSBE.SBEScripts
+namespace net.r_eg.vsSBE.Configuration
 {
-    public interface IBootloader
+    /// <summary>
+    /// Configure existing components
+    /// </summary>
+    public class Component
     {
         /// <summary>
-        /// All enabled from the registered components
+        /// Identification by class name
         /// </summary>
-        IEnumerable<IComponent> Components { get; }
+        public string ClassName
+        {
+            get;
+            set;
+        }
 
         /// <summary>
-        /// All registered components
+        /// Activation status
         /// </summary>
-        IEnumerable<IComponent> ComponentsAll { get; }
-
-        /// <summary>
-        /// Operations with environment
-        /// </summary>
-        IEnvironment Env { get; }
-
-        /// <summary>
-        /// Container for user-variables
-        /// </summary>
-        IUserVariable UVariable { get; }
+        public bool Enabled
+        {
+            get;
+            set;
+        }
     }
 }

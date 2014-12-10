@@ -30,54 +30,54 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// </summary>
         public string Name
         {
-            get { return name; }
+            get;
+            protected set;
         }
-        protected string name;
 
         /// <summary>
         /// Description for current property
         /// </summary>
         public string Description
         {
-            get { return description; }
+            get;
+            protected set;
         }
-        protected string description;
         
         /// <summary>
         /// Value type for getting
         /// </summary>
         public CValueType Get
         {
-            get { return getValue; }
+            get;
+            protected set;
         }
-        protected CValueType getValue;
         
         /// <summary>
         /// Value type for setting
         /// </summary>
         public CValueType Set
         {
-            get { return setValue; }
+            get;
+            protected set;
         }
-        protected CValueType setValue;
 
         /// <summary>
         /// Name of the parent specification (property/method/etc.) if exist or null
         /// </summary>
         public string Parent
         {
-            get { return parent; }
+            get;
+            protected set;
         }
-        protected string parent;
 
         /// <summary>
         /// Actual/real method name of the parent specification if exist or null
         /// </summary>
         public string Method
         {
-            get { return method; }
+            get;
+            protected set;
         }
-        protected string method;
 
         /// <param name="name">Property name</param>
         /// <param name="description">Description for current property</param>
@@ -85,10 +85,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <param name="set">Value type for setting</param>
         public PropertyAttribute(string name, string description, CValueType get = CValueType.Void, CValueType set = CValueType.Void)
         {
-            this.name           = name;
-            this.description    = description;
-            this.getValue       = get;
-            this.setValue       = set;
+            Name            = name;
+            Description     = description;
+            Get             = get;
+            Set             = set;
         }
 
         /// <param name="name">Property name</param>
@@ -109,8 +109,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         public PropertyAttribute(string name, string description, string parent, string method, CValueType get = CValueType.Void, CValueType set = CValueType.Void)
             : this(name, description, get, set)
         {
-            this.parent = parent;
-            this.method = method;
+            Parent = parent;
+            Method = method;
         }
 
         /// <param name="name">Property name</param>

@@ -16,6 +16,7 @@
 */
 
 using System;
+using net.r_eg.vsSBE.Configuration;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
 
@@ -27,13 +28,24 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Additional information for configuration
         /// </summary>
-        public ConfigHeader Header
+        public Header Header
         {
             get { return header; }
             set { header = value; }
         }
         [NonSerialized]
-        private ConfigHeader header = new ConfigHeader();
+        private Header header = new Header();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Component[] Components
+        {
+            get { return components; }
+            set { components = value; }
+        }
+        [NonSerialized]
+        private Component[] components = null;
 
         /// <summary>
         /// Before assembling

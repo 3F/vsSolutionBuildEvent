@@ -52,7 +52,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             get {
                 if(dteo == null) {
                     Debug.Assert(env != null);
-                    dteo = new DTEOperation((EnvDTE.DTE)env.DTE2, Events.SolutionEventType.General);
+                    dteo = new DTEOperation((EnvDTE.DTE)env.Dte2, Events.SolutionEventType.General);
                 }
                 return dteo;
             }

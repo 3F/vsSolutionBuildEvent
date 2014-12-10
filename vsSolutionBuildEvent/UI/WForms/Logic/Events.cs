@@ -25,9 +25,14 @@ using System.Windows.Forms;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.Extensions;
+using net.r_eg.vsSBE.SBEScripts;
+using net.r_eg.vsSBE.SBEScripts.Components;
+using net.r_eg.vsSBE.SBEScripts.Dom;
 
 namespace net.r_eg.vsSBE.UI.WForms.Logic
 {
+    using DomIcon = net.r_eg.vsSBE.SBEScripts.Dom.Icon;
+
     public class Events
     {
         /// <summary>
@@ -71,9 +76,9 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         /// </summary>
         public IEnvironment Env
         {
-            get { return env; }
+            get;
+            protected set;
         }
-        protected IEnvironment env;
 
         /// <summary>
         /// Current SBE-event
@@ -149,6 +154,20 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         /// Used for restoring settings
         /// </summary>
         protected SolutionEvents toRestoring;
+
+        /// <summary>
+        /// Information by existing components
+        /// </summary>
+        protected Dictionary<string, List<INodeInfo>> cInfo = new Dictionary<string, List<INodeInfo>>();
+
+        /// <summary>
+        /// Used loader
+        /// </summary>
+        protected IBootloader bootloader;
+
+        /// Mapper of the available components
+        /// </summary>
+        protected IInspector inspector;
 
         public void addEvent(SBEWrap evt)
         {
@@ -377,6 +396,79 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             return buildType[index];
         }
 
+        public void fillComponents(DataGridView grid)
+        {
+            grid.Rows.Clear();
+            foreach(IComponent c in bootloader.ComponentsAll)
+            {
+                Type type = c.GetType();
+                if(!Inspector.isComponent(type)) {
+                    continue;
+                }
+
+                bool enabled        = c.Enabled;
+                string className    = c.GetType().Name;
+
+                Configuration.Component[] cfg = Config._.Data.Components;
+                if(cfg != null && cfg.Length > 0) {
+                    Configuration.Component v = cfg.Where(p => p.ClassName == className).FirstOrDefault();
+                    if(v != null) {
+                        enabled = v.Enabled;
+                    }
+                }
+
+                bool withoutAttr = true;
+                foreach(Attribute attr in type.GetCustomAttributes(true))
+                {
+                    if(attr.GetType() == typeof(ComponentAttribute))
+                    {
+                        withoutAttr = false;
+                        grid.Rows.Add(
+                                    DomIcon.package,
+                                    enabled, 
+                                    ((ComponentAttribute)attr).Name,
+                                    className,
+                                    ((ComponentAttribute)attr).Description);
+                    }
+
+                    if(attr.GetType() == typeof(DefinitionAttribute))
+                    {
+                        withoutAttr = false;
+                        grid.Rows.Add(
+                                    DomIcon.definition,
+                                    enabled,
+                                    ((DefinitionAttribute)attr).Name,
+                                    className,
+                                    ((DefinitionAttribute)attr).Description);
+                    }
+                }
+
+                if(withoutAttr) {
+                    grid.Rows.Add(DomIcon.package, enabled, String.Empty, className, String.Empty);
+                }
+
+                cInfo[className] = new List<INodeInfo>(domElemsBy(className));
+            }
+        }
+
+        public void updateComponents(Configuration.Component[] components)
+        {
+            Config._.Data.Components = components;
+            foreach(IComponent c in bootloader.ComponentsAll) {
+                Configuration.Component found = components.Where(p => p.ClassName == c.GetType().Name).FirstOrDefault();
+                if(found != null) {
+                    c.Enabled = found.Enabled;
+                }
+            }
+        }
+
+        public IEnumerable<INodeInfo> infoByComponent(string className)
+        {
+            foreach(INodeInfo info in cInfo[className]) {
+                yield return info;
+            }
+        }
+
         /// <param name="copyFrom">Cloning the event-item at the specified index</param>
         /// <returns>added item</returns>
         public ISolutionEvent addEventItem(int copyFrom = -1)
@@ -506,10 +598,12 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             SBE.update();
         }
 
-        public Events(IEnvironment env)
+        public Events(IBootloader bootloader, IInspector inspector = null)
         {
-            this.env = env;
-            toRestoring = Config._.Data.CloneBySerialization();
+            this.bootloader = bootloader;
+            this.inspector  = inspector;
+            Env             = bootloader.Env;
+            toRestoring     = Config._.Data.CloneBySerialization();
         }
 
         /// <summary>
@@ -538,6 +632,46 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                 }
             }
             return ++maxId;
+        }
+
+        protected IEnumerable<INodeInfo> domElemsBy(string className)
+        {
+            if(inspector == null) {
+                Log.nlog.Debug("domElemsBy: Inspector is null");
+                yield break;
+            }
+
+            List<INodeInfo> ret = new List<INodeInfo>();
+            foreach(IComponent c in bootloader.ComponentsAll)
+            {
+                if(c.GetType().Name != className) {
+                    continue;
+                }
+
+                foreach(INodeInfo info in inspector.getBy(c.GetType())) {
+                    ret.Add(info);
+                    ret.AddRange(domElemsBy(info.Link));
+                }
+            }
+
+            // TODO:
+            foreach(INodeInfo info in ret.Distinct()) {
+                yield return info;
+            }
+        }
+
+        protected IEnumerable<INodeInfo> domElemsBy(NodeIdent ident)
+        {
+            foreach(INodeInfo info in inspector.getBy(ident))
+            {
+                if(!String.IsNullOrEmpty(info.Name)) {
+                    yield return info;
+                }
+
+                foreach(INodeInfo child in domElemsBy(info.Link)) {
+                    yield return child;
+                }
+            }
         }
 
         protected virtual string genUniqueName(string prefix, List<ISolutionEvent> scope)

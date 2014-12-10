@@ -40,7 +40,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         public DTECheckFrm(IEnvironment env)
         {
-            _dteo = new DTEOperation((EnvDTE.DTE)env.DTE2, vsSBE.Events.SolutionEventType.General);
+            _dteo = new DTEOperation((EnvDTE.DTE)env.Dte2, vsSBE.Events.SolutionEventType.General);
             InitializeComponent();
         }
 

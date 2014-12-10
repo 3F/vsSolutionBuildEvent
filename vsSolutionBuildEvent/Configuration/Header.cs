@@ -15,9 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace net.r_eg.vsSBE.Events
+namespace net.r_eg.vsSBE.Configuration
 {
-    public class ConfigHeader
+    public class Header
     {
         /// <summary>
         /// To identification of compatibility between versions

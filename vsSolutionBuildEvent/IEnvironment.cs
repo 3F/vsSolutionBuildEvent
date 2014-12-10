@@ -66,6 +66,6 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// DTE context
         /// </summary>
-        EnvDTE80.DTE2 DTE2 { get; }
+        EnvDTE80.DTE2 Dte2 { get; }
     }
 }

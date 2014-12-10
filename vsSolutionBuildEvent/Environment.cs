@@ -140,7 +140,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public SolutionConfiguration2 SolutionActiveConfiguration
         {
-            get { return (SolutionConfiguration2)dte2.Solution.SolutionBuild.ActiveConfiguration; }
+            get { return (SolutionConfiguration2)Dte2.Solution.SolutionBuild.ActiveConfiguration; }
         }
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace net.r_eg.vsSBE
         public IEnumerable<SolutionConfiguration2> SolutionConfigurations
         {
             get {
-                foreach(SolutionConfiguration2 cfg in dte2.Solution.SolutionBuild.SolutionConfigurations) {
+                foreach(SolutionConfiguration2 cfg in Dte2.Solution.SolutionBuild.SolutionConfigurations) {
                     yield return cfg;
                 }
             }
@@ -171,7 +171,7 @@ namespace net.r_eg.vsSBE
         {
             get
             {
-                foreach(string project in (Array)dte2.Solution.SolutionBuild.StartupProjects)
+                foreach(string project in (Array)Dte2.Solution.SolutionBuild.StartupProjects)
                 {
                     if(String.IsNullOrEmpty(project)) {
                         continue;
@@ -185,15 +185,15 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// DTE context
         /// </summary>
-        public DTE2 DTE2
+        public DTE2 Dte2
         {
-            get { return dte2; }
+            get;
+            protected set;
         }
-        protected DTE2 dte2;
 
         public Environment(DTE2 dte2)
         {
-            this.dte2 = dte2;
+            Dte2 = dte2;
         }
 
         protected bool isEquals(EnvDTE.Project dteProject, Project eProject)
@@ -306,7 +306,7 @@ namespace net.r_eg.vsSBE
         {
             get
             {
-                foreach(EnvDTE.Project project in dte2.Solution.Projects)
+                foreach(EnvDTE.Project project in Dte2.Solution.Projects)
                 {
                     if(project.Kind != ProjectKinds.vsProjectKindSolutionFolder) {
                         yield return project;

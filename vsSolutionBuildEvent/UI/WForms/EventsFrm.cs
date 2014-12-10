@@ -29,6 +29,8 @@ using net.r_eg.vsSBE.UI.WForms.Logic;
 
 namespace net.r_eg.vsSBE.UI.WForms
 {
+    using DomIcon = net.r_eg.vsSBE.SBEScripts.Dom.Icon;
+
     public partial class EventsFrm: Form, ITransferDataProperty, ITransferDataCommand
     {
         public const int WM_SYSCOMMAND  = 0x0112;
@@ -40,11 +42,6 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// Operations with events etc.,
         /// </summary>
         protected Logic.Events logic;
-
-        /// <summary>
-        /// Mapper of the available components
-        /// </summary>
-        protected IInspector inspector;
 
         /// <summary>
         /// UI-helper for MSBuild Properties
@@ -80,10 +77,11 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         public EventsFrm(IBootloader bootloader)
         {
-            logic       = new Logic.Events(bootloader.Env);
-            inspector   = new Inspector(bootloader);
+            IInspector inspector    = new Inspector(bootloader);
+            logic                   = new Logic.Events(bootloader, inspector);
 
             InitializeComponent();
+
             textEditor.codeCompletionInit(inspector);
             updateColors();
             defaultSizes();
@@ -101,6 +99,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             Util.fixDGVRowHeight(dataGridViewOutput);
             Util.fixDGVRowHeight(dataGridViewOrder);
             Util.fixDGVRowHeight(dgvActions);
+            Util.fixDGVRowHeight(dgvComponents);
         }
 
         /// <summary>
@@ -146,6 +145,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                         break;
                     }
                 }
+                componentApply();
                 logic.saveData();
             }
             catch(Exception ex) {
@@ -408,6 +408,18 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
+        protected void componentApply()
+        {
+            List<Configuration.Component> list = new List<Configuration.Component>();
+            foreach(DataGridViewRow row in dgvComponents.Rows) {
+                list.Add(new Configuration.Component() { 
+                    ClassName   = (row.Cells[dgvComponentsClass.Name].Value == null)? "" : row.Cells[dgvComponentsClass.Name].Value.ToString(),
+                    Enabled     = Boolean.Parse(row.Cells[dgvComponentsEnabled.Name].Value.ToString()),
+                });
+            }
+            logic.updateComponents(list.ToArray());
+        }
+
         protected void clearControls()
         {
             textBoxEW.Text = String.Empty;
@@ -652,6 +664,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
             try {
                 expandActionsList(false);
+                logic.fillComponents(dgvComponents);
                 logic.fillBuildTypes(comboBoxBuildContext);
                 logic.fillEvents(comboBoxEvents);
             }
@@ -697,6 +710,8 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void btnApply_Click(object sender, EventArgs e)
         {
+            dgvComponents.EndEdit();
+            dgvActions.EndEdit();
             saveData();
             refreshActions();
             notice(false);
@@ -715,7 +730,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             uiViewMode(ModeType.File);
             textEditor.colorize(TextEditor.ColorSchema.FilesMode);
             textEditor._.ShowLineNumbers        = false;
-            textEditor.CodeCompletionEnabled    = false;
+            textEditor.CodeCompletionEnabled    = true;
         }
 
         private void radioModeOperation_CheckedChanged(object sender, EventArgs e)
@@ -731,7 +746,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             uiViewMode(ModeType.Interpreter);
             textEditor.colorize(TextEditor.ColorSchema.InterpreterMode);
             textEditor._.ShowLineNumbers        = false;
-            textEditor.CodeCompletionEnabled    = false;
+            textEditor.CodeCompletionEnabled    = true;
         }
 
         private void radioModeScript_CheckedChanged(object sender, EventArgs e)
@@ -869,12 +884,92 @@ namespace net.r_eg.vsSBE.UI.WForms
 #endif
         }
 
+        private void componentInfo(string name)
+        {
+            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Scripts_&_Commands/SBE-Scripts/Components/" + name);
+        }
+
+        private void btnCompNew_Click(object sender, EventArgs e)
+        {
+            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Developer%20Zone/New%20Component");
+        }
+
+        private void dgvComponents_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if(e.ColumnIndex == 0) {
+                return;
+            }
+            componentInfo(dgvComponents.Rows[e.RowIndex].Cells["dgvComponentsClass"].Value.ToString());
+        }
+
+        private void dgvComponents_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if(e.RowIndex == -1 || e.ColumnIndex != 0) {
+                return;
+            }
+            string name = dgvComponents.Rows[e.RowIndex].Cells[dgvComponentsClass.Name].Value.ToString();
+
+            foreach(DataGridViewRow row in dgvComponents.Rows) {
+                if(row.Cells[dgvComponentsClass.Name].Value.ToString() == name) {
+                    row.Cells[dgvComponentsEnabled.Name].Value = dgvComponents.Rows[e.RowIndex].Cells[dgvComponentsEnabled.Name].Value;
+                }
+            }
+        }
+
+        private void dgvComponents_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if(e.ColumnIndex == 0) {
+                dgvComponents.EndEdit();
+            }
+        }
+
+        private void dgvComponents_RowEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if(e.RowIndex < 0) {
+                return;
+            }
+
+            dgvComponentInfo.Rows.Clear();
+            foreach(INodeInfo info in logic.infoByComponent(dgvComponents.Rows[e.RowIndex].Cells[dgvComponentsClass.Name].Value.ToString()))
+            {
+                Bitmap bmap = DomIcon.definition;
+                switch(info.Type) {
+                    case InfoType.Property: {
+                        bmap = DomIcon.property;
+                        break;
+                    }
+                    case InfoType.Method: {
+                        bmap = DomIcon.function;
+                        break;
+                    }
+                    case InfoType.Definition: {
+                        bmap = DomIcon.definition;
+                        break;
+                    }
+                }
+                dgvComponentInfo.Rows.Add(bmap, info.Displaying, (info.Signature == null)? "" : info.Signature.Replace("\n", "  \n"), info.Description);
+            }
+        }
+
+        private void menuItemCompDoc_Click(object sender, EventArgs e)
+        {
+            if(dgvComponents.SelectedRows.Count < 1) {
+                return;
+            }
+            componentInfo(dgvComponents.SelectedRows[0].Cells["dgvComponentsClass"].Value.ToString());
+        }
+
+        private void menuItemCompNew_Click(object sender, EventArgs e)
+        {
+            btnCompNew_Click(sender, e);
+        }
+
         private void btnDteCmd_Click(object sender, EventArgs e)
         {
             if(Util.focusForm(frmDTECommands)) {
                 return;
             }
-            IEnumerable<EnvDTE.Command> commands = logic.Env.DTE2.Commands.Cast<EnvDTE.Command>();
+            IEnumerable<EnvDTE.Command> commands = logic.Env.Dte2.Commands.Cast<EnvDTE.Command>();
             frmDTECommands = new DTECommandsFrm(commands, this);
             frmDTECommands.Show();
         }
