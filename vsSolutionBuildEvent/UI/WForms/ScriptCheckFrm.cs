@@ -21,6 +21,7 @@ using System.Text;
 using System.Windows.Forms;
 using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts;
+using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.UI.WForms.Controls;
 using AvalonEditWPF = ICSharpCode.AvalonEdit.TextEditor;
@@ -98,6 +99,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
 
             initEditor();
+            fillComponents();
         }
 
         protected void initEditor()
@@ -105,6 +107,31 @@ namespace net.r_eg.vsSBE.UI.WForms
             _editor.Text = Resource.StringScriptExampleSBE;
             textEditor.colorize(TextEditor.ColorSchema.SBEScript);
             textEditor.codeCompletionInit(context.inspector);
+        }
+
+        protected void fillComponents()
+        {
+            chkListComponents.Items.Clear();
+            foreach(IComponent c in context.bootloader.ComponentsAll)
+            {
+                Type type = c.GetType();
+                if(!Inspector.isComponent(type)) {
+                    continue;
+                }
+                chkListComponents.Items.Add(type.Name, c.Enabled);
+            }
+        }
+
+        public void updateComponents(int index = -1, bool newValue = true)
+        {
+            for(int i = 0; i < chkListComponents.Items.Count; ++i)
+            {
+                string name = chkListComponents.Items[i].ToString();
+                IComponent found = context.bootloader.ComponentsAll.Where(c => c.GetType().Name == name).FirstOrDefault();
+                if(found != null) {
+                    found.Enabled = (index == i)? newValue : chkListComponents.GetItemChecked(i);
+                }
+            }
         }
 
         protected void updateVariableList()
@@ -191,6 +218,11 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void btnDoc_Click(object sender, EventArgs e)
         {
             Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Scripts_&_Commands/SBE-Scripts");
+        }
+
+        private void chkListComponents_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            updateComponents(e.Index, e.NewValue == CheckState.Checked);
         }
     }
 }

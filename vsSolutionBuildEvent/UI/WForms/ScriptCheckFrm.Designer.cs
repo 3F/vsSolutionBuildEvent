@@ -36,7 +36,6 @@
             this.splitContainerMHorizontal = new System.Windows.Forms.SplitContainer();
             this.panelTopMain = new System.Windows.Forms.Panel();
             this.groupBoxCommand = new System.Windows.Forms.GroupBox();
-            this.textEditor = new net.r_eg.vsSBE.UI.WForms.Controls.TextEditor();
             this.panelBottomMain = new System.Windows.Forms.Panel();
             this.btnDoc = new System.Windows.Forms.Button();
             this.checkBoxMSBuildSupport = new System.Windows.Forms.CheckBox();
@@ -46,6 +45,10 @@
             this.splitContainerUVariables = new System.Windows.Forms.SplitContainer();
             this.listBoxUVariables = new System.Windows.Forms.ListBox();
             this.richTextBoxUVariables = new System.Windows.Forms.RichTextBox();
+            this.splitContainerComponents = new System.Windows.Forms.SplitContainer();
+            this.groupBoxComponents = new System.Windows.Forms.GroupBox();
+            this.chkListComponents = new System.Windows.Forms.CheckedListBox();
+            this.textEditor = new net.r_eg.vsSBE.UI.WForms.Controls.TextEditor();
             this.contextMenuUVariables.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMVertical)).BeginInit();
             this.splitContainerMVertical.Panel1.SuspendLayout();
@@ -63,6 +66,11 @@
             this.splitContainerUVariables.Panel1.SuspendLayout();
             this.splitContainerUVariables.Panel2.SuspendLayout();
             this.splitContainerUVariables.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerComponents)).BeginInit();
+            this.splitContainerComponents.Panel1.SuspendLayout();
+            this.splitContainerComponents.Panel2.SuspendLayout();
+            this.splitContainerComponents.SuspendLayout();
+            this.groupBoxComponents.SuspendLayout();
             this.SuspendLayout();
             // 
             // contextMenuUVariables
@@ -149,16 +157,6 @@
             this.groupBoxCommand.TabStop = false;
             this.groupBoxCommand.Text = "To execution:";
             // 
-            // textEditor
-            // 
-            this.textEditor.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.textEditor.CodeCompletionEnabled = true;
-            this.textEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textEditor.Location = new System.Drawing.Point(0, 13);
-            this.textEditor.Name = "textEditor";
-            this.textEditor.Size = new System.Drawing.Size(550, 153);
-            this.textEditor.TabIndex = 3;
-            // 
             // panelBottomMain
             // 
             this.panelBottomMain.Controls.Add(this.btnDoc);
@@ -244,10 +242,10 @@
             // 
             // splitContainerUVariables.Panel2
             // 
-            this.splitContainerUVariables.Panel2.Controls.Add(this.richTextBoxUVariables);
+            this.splitContainerUVariables.Panel2.Controls.Add(this.splitContainerComponents);
             this.splitContainerUVariables.Panel2MinSize = 40;
             this.splitContainerUVariables.Size = new System.Drawing.Size(196, 347);
-            this.splitContainerUVariables.SplitterDistance = 210;
+            this.splitContainerUVariables.SplitterDistance = 140;
             this.splitContainerUVariables.TabIndex = 0;
             // 
             // listBoxUVariables
@@ -259,7 +257,7 @@
             this.listBoxUVariables.Location = new System.Drawing.Point(0, 0);
             this.listBoxUVariables.Margin = new System.Windows.Forms.Padding(0);
             this.listBoxUVariables.Name = "listBoxUVariables";
-            this.listBoxUVariables.Size = new System.Drawing.Size(196, 210);
+            this.listBoxUVariables.Size = new System.Drawing.Size(196, 140);
             this.listBoxUVariables.TabIndex = 0;
             this.listBoxUVariables.SelectedIndexChanged += new System.EventHandler(this.listBoxUVariables_SelectedIndexChanged);
             // 
@@ -272,9 +270,62 @@
             this.richTextBoxUVariables.Margin = new System.Windows.Forms.Padding(0);
             this.richTextBoxUVariables.Name = "richTextBoxUVariables";
             this.richTextBoxUVariables.ReadOnly = true;
-            this.richTextBoxUVariables.Size = new System.Drawing.Size(196, 133);
+            this.richTextBoxUVariables.Size = new System.Drawing.Size(196, 66);
             this.richTextBoxUVariables.TabIndex = 1;
             this.richTextBoxUVariables.Text = "";
+            // 
+            // splitContainerComponents
+            // 
+            this.splitContainerComponents.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerComponents.Location = new System.Drawing.Point(0, 0);
+            this.splitContainerComponents.Margin = new System.Windows.Forms.Padding(0);
+            this.splitContainerComponents.Name = "splitContainerComponents";
+            this.splitContainerComponents.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainerComponents.Panel1
+            // 
+            this.splitContainerComponents.Panel1.Controls.Add(this.richTextBoxUVariables);
+            // 
+            // splitContainerComponents.Panel2
+            // 
+            this.splitContainerComponents.Panel2.Controls.Add(this.groupBoxComponents);
+            this.splitContainerComponents.Size = new System.Drawing.Size(196, 203);
+            this.splitContainerComponents.SplitterDistance = 66;
+            this.splitContainerComponents.TabIndex = 2;
+            // 
+            // groupBoxComponents
+            // 
+            this.groupBoxComponents.Controls.Add(this.chkListComponents);
+            this.groupBoxComponents.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBoxComponents.Location = new System.Drawing.Point(0, 0);
+            this.groupBoxComponents.Margin = new System.Windows.Forms.Padding(0);
+            this.groupBoxComponents.Name = "groupBoxComponents";
+            this.groupBoxComponents.Padding = new System.Windows.Forms.Padding(0);
+            this.groupBoxComponents.Size = new System.Drawing.Size(196, 133);
+            this.groupBoxComponents.TabIndex = 0;
+            this.groupBoxComponents.TabStop = false;
+            this.groupBoxComponents.Text = "Components:";
+            // 
+            // chkListComponents
+            // 
+            this.chkListComponents.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.chkListComponents.FormattingEnabled = true;
+            this.chkListComponents.Location = new System.Drawing.Point(0, 13);
+            this.chkListComponents.Margin = new System.Windows.Forms.Padding(0);
+            this.chkListComponents.Name = "chkListComponents";
+            this.chkListComponents.Size = new System.Drawing.Size(196, 120);
+            this.chkListComponents.TabIndex = 0;
+            this.chkListComponents.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.chkListComponents_ItemCheck);
+            // 
+            // textEditor
+            // 
+            this.textEditor.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.textEditor.CodeCompletionEnabled = true;
+            this.textEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textEditor.Location = new System.Drawing.Point(0, 13);
+            this.textEditor.Name = "textEditor";
+            this.textEditor.Size = new System.Drawing.Size(550, 153);
+            this.textEditor.TabIndex = 3;
             // 
             // ScriptCheckFrm
             // 
@@ -305,6 +356,11 @@
             this.splitContainerUVariables.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerUVariables)).EndInit();
             this.splitContainerUVariables.ResumeLayout(false);
+            this.splitContainerComponents.Panel1.ResumeLayout(false);
+            this.splitContainerComponents.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerComponents)).EndInit();
+            this.splitContainerComponents.ResumeLayout(false);
+            this.groupBoxComponents.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -328,5 +384,8 @@
         private System.Windows.Forms.RichTextBox richTextBoxExecuted;
         private System.Windows.Forms.Button btnDoc;
         private Controls.TextEditor textEditor;
+        private System.Windows.Forms.SplitContainer splitContainerComponents;
+        private System.Windows.Forms.GroupBox groupBoxComponents;
+        private System.Windows.Forms.CheckedListBox chkListComponents;
     }
 }

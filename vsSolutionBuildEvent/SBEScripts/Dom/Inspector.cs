@@ -190,14 +190,39 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <returns></returns>
         protected bool isEnabled(string elementName)
         {
-            foreach(IComponent c in bootloader.ComponentsAll) {
-                if(getComponentName(c.GetType()) == elementName) {
+            foreach(IComponent c in bootloader.ComponentsAll)
+            {
+                Type type = c.GetType();
+                
+                if(getComponentName(type) == elementName) {
+                    if(!c.Enabled) {
+                        return false;
+                    }
+                    continue;
+                }
+
+                string[] defs = getDefinitionsNames(type);
+                if(defs != null && defs.Any(def => def == elementName)) {
                     if(!c.Enabled) {
                         return false;
                     }
                 }
             }
             return true;
+        }
+
+        /// <summary>
+        /// Gets names of definitions
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns>Is what is specified with all the DefinitionAttribute</returns>
+        protected string[] getDefinitionsNames(Type type)
+        {
+            object[] attr = type.GetCustomAttributes(typeof(DefinitionAttribute), false);
+            if(attr == null) {
+                return null;
+            }
+            return attr.Select(p => ((DefinitionAttribute)p).Name).ToArray();
         }
 
         /// <summary>
