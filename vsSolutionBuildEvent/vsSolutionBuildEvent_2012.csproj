@@ -231,6 +231,12 @@
       <DependentUpon>Resource.resx</DependentUpon>
     </Compile>
     <Compile Include="UI\Util.cs" />
+    <Compile Include="UI\WForms\AboutFrm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\WForms\AboutFrm.Designer.cs">
+      <DependentUpon>AboutFrm.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\WForms\Components\DataGridViewExt.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -328,6 +334,9 @@
     <EmbeddedResource Include="UI\Resource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\WForms\AboutFrm.resx">
+      <DependentUpon>AboutFrm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\WForms\Controls\TextEditor.resx">
       <DependentUpon>TextEditor.cs</DependentUpon>

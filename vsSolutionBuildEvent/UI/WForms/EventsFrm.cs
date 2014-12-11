@@ -788,6 +788,21 @@ namespace net.r_eg.vsSBE.UI.WForms
             listBoxEW.Items.RemoveAt(listBoxEW.SelectedIndex);
         }
 
+        private void toolStripMenuHelp_ButtonClick(object sender, EventArgs e)
+        {
+            toolStripMenuHelp.ShowDropDown();
+        }
+
+        private void toolStripMenuSettings_ButtonClick(object sender, EventArgs e)
+        {
+            toolStripMenuSettings.ShowDropDown();
+        }
+
+        private void toolStripMenuBug_ButtonClick(object sender, EventArgs e)
+        {
+            toolStripMenuBug.ShowDropDown();
+        }
+
         private void toolStripMenuGalleryPage_Click(object sender, EventArgs e)
         {
             Util.openUrl("http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
@@ -850,22 +865,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void toolStripMenuAbout_Click(object sender, EventArgs e)
         {
-            string inc       = "This product includes:{0}{1}{2}\n{3}";
-            string nlog      = "\n * NLog (nlog-project.org)";
-            string json      = "\n * Json.NET (json.codeplex.com)";
-            string editor    = "\n * AvalonEdit (avalonedit.net)";
-            string resources = "\n All about graphical resources see /Resources/License";
-
-            MessageBox.Show(
-                String.Format(
-                        "Copyright (c) 2013-{0}\n Developed by reg [Denis Kuzmin] < entry.reg@gmail.com >\n\n{1}",
-                        DateTime.Now.Year,
-                        String.Format(inc, editor, json, nlog, resources)
-                ),
-                toolStripMenuAbout.Text,
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information
-            );
+            (new AboutFrm()).Show();
         }
 
         private void toolStripMenuReport_Click(object sender, EventArgs e)

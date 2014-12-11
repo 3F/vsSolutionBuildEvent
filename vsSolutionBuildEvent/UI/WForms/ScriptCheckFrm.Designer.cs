@@ -36,6 +36,7 @@
             this.splitContainerMHorizontal = new System.Windows.Forms.SplitContainer();
             this.panelTopMain = new System.Windows.Forms.Panel();
             this.groupBoxCommand = new System.Windows.Forms.GroupBox();
+            this.textEditor = new net.r_eg.vsSBE.UI.WForms.Controls.TextEditor();
             this.panelBottomMain = new System.Windows.Forms.Panel();
             this.btnDoc = new System.Windows.Forms.Button();
             this.checkBoxMSBuildSupport = new System.Windows.Forms.CheckBox();
@@ -44,11 +45,10 @@
             this.groupBoxUVariables = new System.Windows.Forms.GroupBox();
             this.splitContainerUVariables = new System.Windows.Forms.SplitContainer();
             this.listBoxUVariables = new System.Windows.Forms.ListBox();
-            this.richTextBoxUVariables = new System.Windows.Forms.RichTextBox();
             this.splitContainerComponents = new System.Windows.Forms.SplitContainer();
+            this.richTextBoxUVariables = new System.Windows.Forms.RichTextBox();
             this.groupBoxComponents = new System.Windows.Forms.GroupBox();
             this.chkListComponents = new System.Windows.Forms.CheckedListBox();
-            this.textEditor = new net.r_eg.vsSBE.UI.WForms.Controls.TextEditor();
             this.contextMenuUVariables.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMVertical)).BeginInit();
             this.splitContainerMVertical.Panel1.SuspendLayout();
@@ -157,6 +157,16 @@
             this.groupBoxCommand.TabStop = false;
             this.groupBoxCommand.Text = "To execution:";
             // 
+            // textEditor
+            // 
+            this.textEditor.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.textEditor.CodeCompletionEnabled = true;
+            this.textEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textEditor.Location = new System.Drawing.Point(0, 13);
+            this.textEditor.Name = "textEditor";
+            this.textEditor.Size = new System.Drawing.Size(550, 153);
+            this.textEditor.TabIndex = 3;
+            // 
             // panelBottomMain
             // 
             this.panelBottomMain.Controls.Add(this.btnDoc);
@@ -261,19 +271,6 @@
             this.listBoxUVariables.TabIndex = 0;
             this.listBoxUVariables.SelectedIndexChanged += new System.EventHandler(this.listBoxUVariables_SelectedIndexChanged);
             // 
-            // richTextBoxUVariables
-            // 
-            this.richTextBoxUVariables.BackColor = System.Drawing.SystemColors.Control;
-            this.richTextBoxUVariables.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.richTextBoxUVariables.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBoxUVariables.Location = new System.Drawing.Point(0, 0);
-            this.richTextBoxUVariables.Margin = new System.Windows.Forms.Padding(0);
-            this.richTextBoxUVariables.Name = "richTextBoxUVariables";
-            this.richTextBoxUVariables.ReadOnly = true;
-            this.richTextBoxUVariables.Size = new System.Drawing.Size(196, 66);
-            this.richTextBoxUVariables.TabIndex = 1;
-            this.richTextBoxUVariables.Text = "";
-            // 
             // splitContainerComponents
             // 
             this.splitContainerComponents.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -293,6 +290,19 @@
             this.splitContainerComponents.SplitterDistance = 66;
             this.splitContainerComponents.TabIndex = 2;
             // 
+            // richTextBoxUVariables
+            // 
+            this.richTextBoxUVariables.BackColor = System.Drawing.SystemColors.Control;
+            this.richTextBoxUVariables.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.richTextBoxUVariables.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.richTextBoxUVariables.Location = new System.Drawing.Point(0, 0);
+            this.richTextBoxUVariables.Margin = new System.Windows.Forms.Padding(0);
+            this.richTextBoxUVariables.Name = "richTextBoxUVariables";
+            this.richTextBoxUVariables.ReadOnly = true;
+            this.richTextBoxUVariables.Size = new System.Drawing.Size(196, 66);
+            this.richTextBoxUVariables.TabIndex = 1;
+            this.richTextBoxUVariables.Text = "";
+            // 
             // groupBoxComponents
             // 
             this.groupBoxComponents.Controls.Add(this.chkListComponents);
@@ -310,22 +320,13 @@
             // 
             this.chkListComponents.Dock = System.Windows.Forms.DockStyle.Fill;
             this.chkListComponents.FormattingEnabled = true;
+            this.chkListComponents.IntegralHeight = false;
             this.chkListComponents.Location = new System.Drawing.Point(0, 13);
             this.chkListComponents.Margin = new System.Windows.Forms.Padding(0);
             this.chkListComponents.Name = "chkListComponents";
             this.chkListComponents.Size = new System.Drawing.Size(196, 120);
             this.chkListComponents.TabIndex = 0;
             this.chkListComponents.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.chkListComponents_ItemCheck);
-            // 
-            // textEditor
-            // 
-            this.textEditor.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.textEditor.CodeCompletionEnabled = true;
-            this.textEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textEditor.Location = new System.Drawing.Point(0, 13);
-            this.textEditor.Name = "textEditor";
-            this.textEditor.Size = new System.Drawing.Size(550, 153);
-            this.textEditor.TabIndex = 3;
             // 
             // ScriptCheckFrm
             // 

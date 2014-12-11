@@ -1,0 +1,271 @@
+﻿namespace net.r_eg.vsSBE.UI.WForms
+{
+    partial class AboutFrm
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if(disposing && (components != null)) {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutFrm));
+            this.pictureBoxSpace = new System.Windows.Forms.PictureBox();
+            this.labelCopyright = new System.Windows.Forms.Label();
+            this.labelContact = new System.Windows.Forms.Label();
+            this.linkEmail = new System.Windows.Forms.LinkLabel();
+            this.groupBoxCopyright = new System.Windows.Forms.GroupBox();
+            this.labelSlash = new System.Windows.Forms.Label();
+            this.linkPage = new System.Windows.Forms.LinkLabel();
+            this.groupBoxIncludes = new System.Windows.Forms.GroupBox();
+            this.textBoxIncludes = new System.Windows.Forms.TextBox();
+            this.groupBoxMixed = new System.Windows.Forms.GroupBox();
+            this.linkLicense = new System.Windows.Forms.LinkLabel();
+            this.labelLicense = new System.Windows.Forms.Label();
+            this.labelVersion = new System.Windows.Forms.Label();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.buttonOk = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSpace)).BeginInit();
+            this.groupBoxCopyright.SuspendLayout();
+            this.groupBoxIncludes.SuspendLayout();
+            this.groupBoxMixed.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // pictureBoxSpace
+            // 
+            this.pictureBoxSpace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.pictureBoxSpace.Cursor = System.Windows.Forms.Cursors.PanNorth;
+            this.pictureBoxSpace.Location = new System.Drawing.Point(0, 0);
+            this.pictureBoxSpace.Margin = new System.Windows.Forms.Padding(0);
+            this.pictureBoxSpace.Name = "pictureBoxSpace";
+            this.pictureBoxSpace.Size = new System.Drawing.Size(190, 343);
+            this.pictureBoxSpace.TabIndex = 0;
+            this.pictureBoxSpace.TabStop = false;
+            this.pictureBoxSpace.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBoxSpace_MouseDown);
+            this.pictureBoxSpace.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBoxSpace_MouseUp);
+            // 
+            // labelCopyright
+            // 
+            this.labelCopyright.AutoSize = true;
+            this.labelCopyright.Location = new System.Drawing.Point(6, 12);
+            this.labelCopyright.Margin = new System.Windows.Forms.Padding(3);
+            this.labelCopyright.Name = "labelCopyright";
+            this.labelCopyright.Size = new System.Drawing.Size(51, 13);
+            this.labelCopyright.TabIndex = 1;
+            this.labelCopyright.Text = "Copyright";
+            // 
+            // labelContact
+            // 
+            this.labelContact.AutoSize = true;
+            this.labelContact.Location = new System.Drawing.Point(6, 31);
+            this.labelContact.Margin = new System.Windows.Forms.Padding(3);
+            this.labelContact.Name = "labelContact";
+            this.labelContact.Size = new System.Drawing.Size(47, 13);
+            this.labelContact.TabIndex = 2;
+            this.labelContact.Text = "Contact:";
+            // 
+            // linkEmail
+            // 
+            this.linkEmail.AutoSize = true;
+            this.linkEmail.Location = new System.Drawing.Point(50, 31);
+            this.linkEmail.Name = "linkEmail";
+            this.linkEmail.Size = new System.Drawing.Size(106, 13);
+            this.linkEmail.TabIndex = 3;
+            this.linkEmail.TabStop = true;
+            this.linkEmail.Text = "entry.reg@gmail.com";
+            this.linkEmail.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkEmail_LinkClicked);
+            // 
+            // groupBoxCopyright
+            // 
+            this.groupBoxCopyright.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxCopyright.Controls.Add(this.labelSlash);
+            this.groupBoxCopyright.Controls.Add(this.linkPage);
+            this.groupBoxCopyright.Controls.Add(this.labelContact);
+            this.groupBoxCopyright.Controls.Add(this.linkEmail);
+            this.groupBoxCopyright.Controls.Add(this.labelCopyright);
+            this.groupBoxCopyright.Location = new System.Drawing.Point(193, -4);
+            this.groupBoxCopyright.Name = "groupBoxCopyright";
+            this.groupBoxCopyright.Size = new System.Drawing.Size(349, 52);
+            this.groupBoxCopyright.TabIndex = 4;
+            this.groupBoxCopyright.TabStop = false;
+            // 
+            // labelSlash
+            // 
+            this.labelSlash.AutoSize = true;
+            this.labelSlash.Location = new System.Drawing.Point(156, 31);
+            this.labelSlash.Name = "labelSlash";
+            this.labelSlash.Size = new System.Drawing.Size(12, 13);
+            this.labelSlash.TabIndex = 5;
+            this.labelSlash.Text = "/";
+            // 
+            // linkPage
+            // 
+            this.linkPage.AutoSize = true;
+            this.linkPage.Location = new System.Drawing.Point(167, 31);
+            this.linkPage.Name = "linkPage";
+            this.linkPage.Size = new System.Drawing.Size(43, 13);
+            this.linkPage.TabIndex = 4;
+            this.linkPage.TabStop = true;
+            this.linkPage.Text = "r-eg.net";
+            this.linkPage.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkPage_LinkClicked);
+            // 
+            // groupBoxIncludes
+            // 
+            this.groupBoxIncludes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxIncludes.Controls.Add(this.textBoxIncludes);
+            this.groupBoxIncludes.Location = new System.Drawing.Point(193, 205);
+            this.groupBoxIncludes.Name = "groupBoxIncludes";
+            this.groupBoxIncludes.Padding = new System.Windows.Forms.Padding(10, 5, 5, 5);
+            this.groupBoxIncludes.Size = new System.Drawing.Size(349, 97);
+            this.groupBoxIncludes.TabIndex = 5;
+            this.groupBoxIncludes.TabStop = false;
+            this.groupBoxIncludes.Text = "This product includes:";
+            // 
+            // textBoxIncludes
+            // 
+            this.textBoxIncludes.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBoxIncludes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxIncludes.Location = new System.Drawing.Point(10, 18);
+            this.textBoxIncludes.Multiline = true;
+            this.textBoxIncludes.Name = "textBoxIncludes";
+            this.textBoxIncludes.ReadOnly = true;
+            this.textBoxIncludes.Size = new System.Drawing.Size(334, 74);
+            this.textBoxIncludes.TabIndex = 0;
+            this.textBoxIncludes.Text = "* NLog (nlog-project.org)\r\n* Json.NET (json.codeplex.com)\r\n* AvalonEdit (avaloned" +
+    "it.net)\r\n\r\nAll about graphical resources see /Resources/License";
+            // 
+            // groupBoxMixed
+            // 
+            this.groupBoxMixed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxMixed.Controls.Add(this.linkLicense);
+            this.groupBoxMixed.Controls.Add(this.labelLicense);
+            this.groupBoxMixed.Controls.Add(this.labelVersion);
+            this.groupBoxMixed.Controls.Add(this.richTextBox1);
+            this.groupBoxMixed.Location = new System.Drawing.Point(193, 46);
+            this.groupBoxMixed.Name = "groupBoxMixed";
+            this.groupBoxMixed.Size = new System.Drawing.Size(349, 145);
+            this.groupBoxMixed.TabIndex = 6;
+            this.groupBoxMixed.TabStop = false;
+            // 
+            // linkLicense
+            // 
+            this.linkLicense.AutoSize = true;
+            this.linkLicense.Location = new System.Drawing.Point(50, 30);
+            this.linkLicense.Name = "linkLicense";
+            this.linkLicense.Size = new System.Drawing.Size(73, 13);
+            this.linkLicense.TabIndex = 8;
+            this.linkLicense.TabStop = true;
+            this.linkLicense.Text = "GNU LGPLv3";
+            this.linkLicense.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLicense_LinkClicked);
+            // 
+            // labelLicense
+            // 
+            this.labelLicense.AutoSize = true;
+            this.labelLicense.Location = new System.Drawing.Point(6, 30);
+            this.labelLicense.Margin = new System.Windows.Forms.Padding(3);
+            this.labelLicense.Name = "labelLicense";
+            this.labelLicense.Size = new System.Drawing.Size(47, 13);
+            this.labelLicense.TabIndex = 1;
+            this.labelLicense.Text = "License:";
+            // 
+            // labelVersion
+            // 
+            this.labelVersion.AutoSize = true;
+            this.labelVersion.Location = new System.Drawing.Point(6, 12);
+            this.labelVersion.Margin = new System.Windows.Forms.Padding(3);
+            this.labelVersion.Name = "labelVersion";
+            this.labelVersion.Size = new System.Drawing.Size(42, 13);
+            this.labelVersion.TabIndex = 0;
+            this.labelVersion.Text = "Version";
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(6, 49);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
+            this.richTextBox1.Size = new System.Drawing.Size(343, 90);
+            this.richTextBox1.TabIndex = 7;
+            this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
+            // 
+            // buttonOk
+            // 
+            this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonOk.Location = new System.Drawing.Point(467, 308);
+            this.buttonOk.Name = "buttonOk";
+            this.buttonOk.Size = new System.Drawing.Size(75, 31);
+            this.buttonOk.TabIndex = 7;
+            this.buttonOk.Text = "OK";
+            this.buttonOk.UseVisualStyleBackColor = true;
+            this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
+            // 
+            // AboutFrm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(544, 341);
+            this.Controls.Add(this.buttonOk);
+            this.Controls.Add(this.groupBoxCopyright);
+            this.Controls.Add(this.groupBoxMixed);
+            this.Controls.Add(this.groupBoxIncludes);
+            this.Controls.Add(this.pictureBoxSpace);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.Name = "AboutFrm";
+            this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "About - vsSolutionBuildEvent";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.AboutFrm_FormClosed);
+            this.Load += new System.EventHandler(this.AboutFrm_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSpace)).EndInit();
+            this.groupBoxCopyright.ResumeLayout(false);
+            this.groupBoxCopyright.PerformLayout();
+            this.groupBoxIncludes.ResumeLayout(false);
+            this.groupBoxIncludes.PerformLayout();
+            this.groupBoxMixed.ResumeLayout(false);
+            this.groupBoxMixed.PerformLayout();
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.PictureBox pictureBoxSpace;
+        private System.Windows.Forms.Label labelCopyright;
+        private System.Windows.Forms.Label labelContact;
+        private System.Windows.Forms.LinkLabel linkEmail;
+        private System.Windows.Forms.GroupBox groupBoxCopyright;
+        private System.Windows.Forms.GroupBox groupBoxIncludes;
+        private System.Windows.Forms.TextBox textBoxIncludes;
+        private System.Windows.Forms.GroupBox groupBoxMixed;
+        private System.Windows.Forms.Label labelLicense;
+        private System.Windows.Forms.Label labelVersion;
+        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.Button buttonOk;
+        private System.Windows.Forms.LinkLabel linkLicense;
+        private System.Windows.Forms.Label labelSlash;
+        private System.Windows.Forms.LinkLabel linkPage;
+    }
+}
