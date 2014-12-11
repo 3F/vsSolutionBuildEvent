@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.vsSBE;
@@ -234,6 +236,43 @@ namespace vsSBETest
             FileComponentAccessor target = new FileComponentAccessor();
             target.parse("[File replace.Wildcards(\"file\", \"con*from \", \"\")]");
             Assert.AreEqual("file", target.parse("[File get(\"file\")]"));
+        }
+
+        /// <summary>
+        ///A test for parse - stExists
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(SyntaxIncorrectException))]
+        public void parseTest18()
+        {
+            FileComponentAccessor target = new FileComponentAccessor();
+            target.parse("[File exists.stub(\"path\")]");
+        }
+
+        /// <summary>
+        ///A test for parse - stExists
+        ///</summary>
+        [TestMethod()]
+        public void parseTest19()
+        {
+            FileComponentAccessor target = new FileComponentAccessor();
+            string realDir = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location);
+
+            Assert.AreEqual(Value.VFALSE, target.parse("[File exists.directory(\"c:\\stubdir\\notexist\")]"));
+            Assert.AreEqual(Value.VTRUE, target.parse("[File exists.directory(\"" + realDir + "\")]"));
+        }
+
+        /// <summary>
+        ///A test for parse - stExists
+        ///</summary>
+        [TestMethod()]
+        public void parseTest20()
+        {
+            FileComponentAccessor target = new FileComponentAccessor();
+            string realFile = Assembly.GetAssembly(GetType()).Location;
+
+            Assert.AreEqual(Value.VFALSE, target.parse("[File exists.file(\"file\")]"));
+            Assert.AreEqual(Value.VTRUE, target.parse("[File exists.file(\"" + realFile + "\")]"));
         }
 
         private class FileComponentAccessor: FileComponent

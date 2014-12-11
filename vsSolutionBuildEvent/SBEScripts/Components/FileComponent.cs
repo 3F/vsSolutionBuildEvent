@@ -110,6 +110,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     stReplace(ident);
                     return String.Empty;
                 }
+                case "exists": {
+                    Log.nlog.Debug("FileComponent: use stExists");
+                    return stExists(ident);
+                }
             }
             throw new SubtypeNotFoundException("FileComponent: not found subtype - '{0}'", m.Groups[2].Value);
         }
@@ -497,6 +501,70 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             writeToFile(file, content, false, enc);
             Log.nlog.Debug("stReplace: successful :: {0}, Encoding '{1}'", content.Length, enc);
+        }
+
+        /// <summary>
+        /// Determines whether the something exists.
+        /// Work with:
+        ///  #[File exists.
+        /// </summary>
+        /// <param name="data">prepared data</param>
+        /// <returns></returns>
+        [Property("exists", "Determines whether the something exists.")]
+        [
+            Method
+            (
+                "directory",
+                "Determines whether the given path refers to an existing directory on disk.",
+                "exists",
+                "stExists",
+                new string[] { "path" },
+                new string[] { "Path to test" },
+                CValueType.Boolean,
+                CValueType.String
+            ),
+        ]
+        [
+            Method
+            (
+                "file",
+                "Determines whether the specified file exists.",
+                "exists",
+                "stExists",
+                new string[] { "path" },
+                new string[] { "The file to check" },
+                CValueType.Boolean,
+                CValueType.String
+            ),
+        ]
+        protected string stExists(string data)
+        {
+            Match m = Regex.Match(data,
+                                    String.Format(@"exists
+                                                    \s*\.\s*
+                                                    (directory|file) #1 - type
+                                                    \s*
+                                                    \({0}\)          #2 - path to test
+                                                    ",
+                                                    RPattern.DoubleQuotesContent
+                                                 ), RegexOptions.IgnorePatternWhitespace);
+
+            if(!m.Success) {
+                throw new SyntaxIncorrectException("Failed stExists - '{0}'", data);
+            }
+
+            string type = m.Groups[1].Value;
+            string path = location(m.Groups[2].Value);
+
+            switch(type) {
+                case "directory": {
+                    return Value.from(Directory.Exists(path));
+                }
+                case "file": {
+                    return Value.from(File.Exists(path));
+                }
+            }
+            throw new OperationNotFoundException("stExists: not found type - '{0}'", type);
         }
 
         /// <summary>
