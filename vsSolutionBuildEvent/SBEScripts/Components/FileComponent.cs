@@ -301,6 +301,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <summary>
         /// Work with:
         /// * #[File write("name"): multiline data]
+        /// * #[File write("name", append, line, "encoding"): multiline data]
         /// * #[File append("name"): multiline data]
         /// * #[File writeLine("name"): multiline data]
         /// * #[File appendLine("name"): multiline data]
@@ -318,6 +319,17 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 new string[] { "File name", "multiline data" },
                 CValueType.Void, 
                 CValueType.String, CValueType.Input
+            )
+        ]
+        [
+            Method
+            (
+                "write",
+                "Writes text data in file with selected encoding and with flags: CR/LF & append.\n * Creates if the file does not exist.",
+                new string[] { "name", "append", "line", "encoding", "In" },
+                new string[] { "File name", "Flag of adding data to the end file", "Adds a line terminator", "Code page name of the preferred encoding", "multiline data" },
+                CValueType.Void,
+                CValueType.String, CValueType.Boolean, CValueType.Boolean, CValueType.String, CValueType.Input
             )
         ]
         [
@@ -357,19 +369,44 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         {
             Match m = Regex.Match(data, 
                                     String.Format(@"
+                                                    (\S+)        #1 - type
                                                     \s*
-                                                    \({0}\)  #1 - file
+                                                    \(
+                                                       {0}       #2 - file
+                                                       (?:
+                                                          ,{1}   #3 - append    (optional)
+                                                          ,{1}   #4 - line      (optional)
+                                                          ,{0}   #5 - encoding  (optional)
+                                                       )?
+                                                    \)
                                                     \s*:
-                                                    (.*)     #2 - data", 
-                                                    RPattern.DoubleQuotesContent
+                                                    (.*)         #6 - data", 
+                                                    RPattern.DoubleQuotesContent,
+                                                    RPattern.BooleanContent
                                                  ), RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
 
             if(!m.Success) {
                 throw new SyntaxIncorrectException("Failed stWrite - '{0}'", data);
             }
 
-            string file     = location(StringHandler.normalize(m.Groups[1].Value.Trim()));
-            string fdata    = StringHandler.hSymbols(m.Groups[2].Value);
+            string type         = m.Groups[1].Value;
+            string file         = location(StringHandler.normalize(m.Groups[2].Value.Trim()));
+            string appendUser   = (m.Groups[3].Success)? m.Groups[3].Value : null;
+            string lineUser     = (m.Groups[4].Success)? m.Groups[4].Value : null;
+            string encUser      = (m.Groups[5].Success)? m.Groups[5].Value : null;
+            string fdata        = StringHandler.hSymbols(m.Groups[6].Value);
+
+            if(appendUser != null)
+            {
+                if(type != "write" || lineUser == null || encUser == null) {
+                    throw new SyntaxIncorrectException("Failed stWrite :: write - '{0}'", data);
+                }
+
+                Log.nlog.Debug("FileComponent: user params: append={0}; line={1}; enc={2};", appendUser, lineUser, encUser);
+                append      = Value.toBoolean(appendUser);
+                writeLine   = Value.toBoolean(lineUser);
+                enc         = Encoding.GetEncoding(encUser);
+            }
 
             Log.nlog.Debug("FileComponent: stWrite started for '{0}'", file);
             try {
@@ -389,8 +426,6 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <summary>
         /// 
         /// Work with:
-        /// * #[File replace.Regex("file", "pattern", "replacement")]
-        /// * #[File replace.Wildcards("file", "pattern", "replacement")]
         /// * #[File replace("file", "pattern", "replacement")]
         /// </summary>
         /// <param name="data">prepared data</param>
@@ -405,52 +440,13 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 CValueType.String, CValueType.String, CValueType.String
             )
         ]
-        [
-            Method
-            (
-                "Regex",
-                "Alias for Regexp", 
-                "replace", 
-                "stReplace", 
-                new string[] { "file", "pattern", "replacement" },
-                new string[] { "Input file", "Regular expression pattern", "Replacement string" },
-                CValueType.Void, 
-                CValueType.String, CValueType.String, CValueType.String
-            )
-        ]
-        [
-            Method
-            (
-                "Regexp",
-                "Replacing the strings in files with Regular expression.",
-                "replace",
-                "stReplace",
-                new string[] { "file", "pattern", "replacement" },
-                new string[] { "Input file", "Regular expression pattern", "Replacement string" },
-                CValueType.Void, 
-                CValueType.String, CValueType.String, CValueType.String
-            )
-        ]
-        [
-            Method
-            (
-                "Wildcards",
-                "Replacing the strings in files with Wildcards.",
-                "replace",
-                "stReplace",
-                new string[] { "file", "pattern", "replacement" },
-                new string[] { "Input file", "Pattern with wildcards", "Replacement string" },
-                CValueType.Void, 
-                CValueType.String, CValueType.String, CValueType.String
-            )
-        ]
         protected void stReplace(string data)
         {
             Match m = Regex.Match(data, 
                                     String.Format(@"replace
                                                     (?:
                                                     \s*\.\s*
-                                                      (Regexp|Wildcards)  #1 - Search with type (optional)
+                                                      (Regexp?|Wildcards)  #1 - Search with type (optional)
                                                     \s*
                                                     )?
                                                     \(
@@ -467,40 +463,91 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 throw new SyntaxIncorrectException("Failed stReplace - '{0}'", data);
             }
 
-            string type         = "Basic";
+            string type         = (m.Groups[1].Success)? m.Groups[1].Value : "Basic";
             string file         = location(StringHandler.normalize(m.Groups[2].Value.Trim()));
             string pattern      = StringHandler.normalize(m.Groups[3].Value);
             string replacement  = StringHandler.hSymbols(StringHandler.normalize(m.Groups[4].Value));
 
             Log.nlog.Debug("stReplace: found file '{0}',  pattern '{1}',  replacement '{2}'", file, pattern, replacement);
                         
-            Encoding enc = Encoding.UTF8;
+            Encoding enc = Encoding.UTF8; //TODO:
             string content = readToEnd(file, out enc);
 
-            if(m.Groups[1].Success) {
-                type = m.Groups[1].Value;
-            }
             Log.nlog.Debug("stReplace: type '{0}' :: received '{1}', Encoding '{2}'", type, content.Length, enc);
-
-            switch(type) {
-                case "Regex":
-                case "Regexp": {
-                    content = Regex.Replace(content, pattern, replacement);
-                    break;
-                }
-                case "Wildcards": {
-                    string stub = Regex.Escape(pattern).Replace("\\*", ".*?").Replace("\\+", ".+?").Replace("\\?", ".");
-                    content     = Regex.Replace(content, stub, replacement);
-                    break;
-                }
-                default: {
-                    content = content.Replace(pattern, replacement);
-                    break;
-                }
-            }
+            content = stReplaceEngine(type, ref content, pattern, replacement);
 
             writeToFile(file, content, false, enc);
             Log.nlog.Debug("stReplace: successful :: {0}, Encoding '{1}'", content.Length, enc);
+        }
+
+        /// <summary>
+        /// 
+        /// Work with:
+        /// * #[File replace("file", "pattern", "replacement")]
+        /// * #[File replace.Regex("file", "pattern", "replacement")]
+        /// * #[File replace.Regexp("file", "pattern", "replacement")]
+        /// * #[File replace.Wildcards("file", "pattern", "replacement")]
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="content"></param>
+        /// <param name="pattern"></param>
+        /// <param name="replacement"></param>
+        /// <returns></returns>
+        [Property("replace", "Provides the additional replacement methods")]
+        [
+            Method
+            (
+                "Regex",
+                "Alias for Regexp", 
+                "replace",
+                "stReplaceEngine", 
+                new string[] { "file", "pattern", "replacement" },
+                new string[] { "Input file", "Regular expression pattern", "Replacement string" },
+                CValueType.Void, 
+                CValueType.String, CValueType.String, CValueType.String
+            )
+        ]
+        [
+            Method
+            (
+                "Regexp",
+                "Replacing the strings in files with Regular expression.",
+                "replace",
+                "stReplaceEngine",
+                new string[] { "file", "pattern", "replacement" },
+                new string[] { "Input file", "Regular expression pattern", "Replacement string" },
+                CValueType.Void, 
+                CValueType.String, CValueType.String, CValueType.String
+            )
+        ]
+        [
+            Method
+            (
+                "Wildcards",
+                "Replacing the strings in files with Wildcards.",
+                "replace",
+                "stReplaceEngine",
+                new string[] { "file", "pattern", "replacement" },
+                new string[] { "Input file", "Pattern with wildcards", "Replacement string" },
+                CValueType.Void, 
+                CValueType.String, CValueType.String, CValueType.String
+            )
+        ]
+        protected string stReplaceEngine(string type, ref string content, string pattern, string replacement)
+        {
+            switch(type) {
+                case "Regex":
+                case "Regexp": {
+                    return Regex.Replace(content, pattern, replacement);
+                }
+                case "Wildcards": {
+                    string stub = Regex.Escape(pattern).Replace("\\*", ".*?").Replace("\\+", ".+?").Replace("\\?", ".");
+                    return Regex.Replace(content, stub, replacement);
+                }
+                default: {
+                    return content.Replace(pattern, replacement);
+                }
+            }
         }
 
         /// <summary>
@@ -607,6 +654,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="enc">The character encoding to use</param>
         protected virtual void writeToFile(string file, string data, bool append, bool writeLine, Encoding enc)
         {
+            Log.nlog.Debug("writeToFile: Encoding '{0}'", enc.EncodingName);
             using(TextWriter stream = new StreamWriter(file, append, enc)) {
                 if(writeLine) {
                     stream.WriteLine(data);

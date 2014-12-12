@@ -71,6 +71,14 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
+        /// Captures boolean value from allowed syntax
+        /// </summary>
+        public static string BooleanContent
+        {
+            get { return @"\s*(true|false|True|False|TRUE|FALSE)\s*"; }
+        }
+
+        /// <summary>
         /// Captures content for present symbol of quotes
         /// Escaping is a "\" for used symbol
         /// e.g.: \', \"
