@@ -106,8 +106,13 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         public NodeInfo(PropertyAttribute attr, string method)
             : this(attr.Name, attr.Description, new NodeIdent(attr.Name, method), InfoType.Property)
         {
-            Signature       = aboutProperty(attr.Get, attr.Set);
-            this.displaying = displayProperty(attr.Get, attr.Set);
+            try {
+                Signature   = aboutProperty(attr.Get, attr.Set);
+                displaying  = displayProperty(attr.Get, attr.Set);
+            }
+            catch(Exception ex) {
+                Log.nlog.Warn("NodeInfo-PropertyAttribute: '{0}'", ex.Message);
+            }
         }
 
         /// <param name="attr">Attribute of property</param>
@@ -131,9 +136,21 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         public NodeInfo(MethodAttribute attr, string method)
             : this(attr.Name, attr.Description, new NodeIdent(attr.Name, method), InfoType.Method)
         {
-            Signature           = aboutMethod(attr.Return, attr.Arguments);
-            this.displaying     = displayMethod(attr.Return, attr.Arguments);
-            Name                = this.displaying;
+            try {
+                Signature   = aboutMethod(attr.Return, attr.Arguments);
+                displaying  = displayMethod(attr.Return, attr.Arguments);
+                Name        = displaying;
+
+                //TODO:
+                if(attr.Arguments != null && attr.Arguments.Length > 0) {
+                    if(attr.Arguments[attr.Arguments.Length - 1].type == CValueType.Input) {
+                        Name = Name.Substring(0, displaying.LastIndexOf(',')) + "): ]";
+                    }
+                }
+            }
+            catch(Exception ex) {
+                Log.nlog.Warn("NodeInfo-MethodAttribute: '{0}'", ex.Message);
+            }
         }
 
         /// <summary>

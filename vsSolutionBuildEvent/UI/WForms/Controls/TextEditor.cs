@@ -195,7 +195,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
 
             initFontSize = _.FontSize;
             _.TextArea.MouseWheel += new System.Windows.Input.MouseWheelEventHandler(textEditor_MouseWheel);
-            menuComboBoxZoom.Text = "100 %";
+            menuComboBoxZoom.Text = zoomedValue(_.FontSize);
         }
 
         protected void attachCodeCompletionEvents()
@@ -259,6 +259,11 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
             using(XmlReader reader = new XmlTextReader(new StringReader(data))) {
                 HighlightingManager.Instance.RegisterHighlighting(name, new string[]{}, HighlightingLoader.Load(reader, HighlightingManager.Instance));
             }
+        }
+
+        protected string zoomedValue(double fontSize)
+        {
+            return Math.Round((fontSize / Math.Max(1, initFontSize)) * 100) + " %";
         }
 
         private void editorTextArea_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -328,7 +333,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
                 nval /= 1.1f;
             }
             _.FontSize = Math.Max(1, Math.Min(nval, 10000));
-            menuComboBoxZoom.Text = Math.Round((_.FontSize / initFontSize) * 100) + " %";
+            menuComboBoxZoom.Text = zoomedValue(_.FontSize);
         }
 
         protected Brush brushColorFromString(string color)
@@ -364,6 +369,11 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
         private void menuItemWordWrap_Click(object sender, EventArgs e)
         {
             menuItemWordWrap.Checked = _.WordWrap = !_.WordWrap;
+        }
+
+        private void contextMenuEditor_Opened(object sender, EventArgs e)
+        {
+            menuComboBoxZoom.Text = zoomedValue(_.FontSize);
         }
     }
 }

@@ -57,6 +57,7 @@
             this.menuItemWordWrap});
             this.contextMenuEditor.Name = "contextMenuEditor";
             this.contextMenuEditor.Size = new System.Drawing.Size(182, 203);
+            this.contextMenuEditor.Opened += new System.EventHandler(this.contextMenuEditor_Opened);
             // 
             // menuComboBoxZoom
             // 
