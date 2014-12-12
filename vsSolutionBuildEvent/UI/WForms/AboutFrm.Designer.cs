@@ -150,10 +150,13 @@
             this.textBoxIncludes.Multiline = true;
             this.textBoxIncludes.Name = "textBoxIncludes";
             this.textBoxIncludes.ReadOnly = true;
+            this.textBoxIncludes.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxIncludes.Size = new System.Drawing.Size(334, 74);
             this.textBoxIncludes.TabIndex = 0;
-            this.textBoxIncludes.Text = "* NLog (nlog-project.org)\r\n* Json.NET (json.codeplex.com)\r\n* AvalonEdit (avaloned" +
-    "it.net)\r\n\r\nAll about graphical resources see /Resources/License";
+            this.textBoxIncludes.Text = "* AvalonEdit (avalonedit.net)\r\n* Json.NET (json.codeplex.com)\r\n* NLog (nlog-proje" +
+    "ct.org)\r\n* Ude (code.google.com/p/ude/)\r\nAll about graphical resources see /Reso" +
+    "urces/License";
+            this.textBoxIncludes.WordWrap = false;
             // 
             // groupBoxMixed
             // 

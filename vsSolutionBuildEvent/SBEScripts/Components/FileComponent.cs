@@ -148,11 +148,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 throw new SyntaxIncorrectException("Failed stGet - '{0}'", data);
             }
 
-            string file     = location(StringHandler.normalize(m.Groups[1].Value.Trim()));
-            string content  = String.Empty;
+            string file = location(StringHandler.normalize(m.Groups[1].Value.Trim()));
+            Log.nlog.Debug("FileComponent: ready for '{0}'", file);
+
             try {
-                content = readToEnd(file, Encoding.UTF8, true);
-                Log.nlog.Debug("FileComponent: successful stGet- '{0}'", file);
+                return readToEnd(file, detectEncodingFromFile(file));
             }
             catch(FileNotFoundException ex) {
                 throw new ScriptException("stGet: not found - '{0}' :: {1}", file, ex.Message);
@@ -160,7 +160,6 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             catch(Exception ex) {
                 throw new ScriptException("stGet: exception - '{0}'", ex.Message);
             }
-            return content;
         }
 
         /// <summary>
@@ -469,9 +468,9 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string replacement  = StringHandler.hSymbols(StringHandler.normalize(m.Groups[4].Value));
 
             Log.nlog.Debug("stReplace: found file '{0}',  pattern '{1}',  replacement '{2}'", file, pattern, replacement);
-                        
-            Encoding enc = Encoding.UTF8; //TODO:
-            string content = readToEnd(file, out enc);
+
+            Encoding enc = detectEncodingFromFile(file);
+            string content = readToEnd(file, enc);
 
             Log.nlog.Debug("stReplace: type '{0}' :: received '{1}', Encoding '{2}'", type, content.Length, enc);
             content = stReplaceEngine(type, ref content, pattern, replacement);
@@ -620,31 +619,17 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="file">The file to be read</param>
         /// <param name="enc">The character encoding to use</param>
         /// <param name="detectEncoding">Indicates whether to look for byte order marks at the beginning of the file</param>
-        /// <param name="current">Gets the current character encoding</param>
         /// <returns></returns>
-        protected virtual string readToEnd(string file, Encoding enc, bool detectEncoding, out Encoding current)
+        protected virtual string readToEnd(string file, Encoding enc, bool detectEncoding = false)
         {
             using(StreamReader stream = new StreamReader(file, enc, detectEncoding)) {
-                current = stream.CurrentEncoding;
                 return stream.ReadToEnd();
             }
         }
 
         protected string readToEnd(string file)
         {
-            Encoding current;
-            return readToEnd(file, Encoding.UTF8, true, out current);
-        }
-
-        protected string readToEnd(string file, Encoding enc, bool detectEncoding = true)
-        {
-            Encoding current;
-            return readToEnd(file, enc, detectEncoding, out current);
-        }
-
-        protected string readToEnd(string file, out Encoding enc)
-        {
-            return readToEnd(file, Encoding.UTF8, true, out enc);
+            return readToEnd(file, Encoding.UTF8, true);
         }
 
         /// <param name="file">File path to write</param>
@@ -673,6 +658,30 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected void writeToFile(string file, string data, bool append, Encoding enc)
         {
             writeToFile(file, data, append, false, enc);
+        }
+
+        /// <summary>
+        /// Auto detecting the encoding from the file
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        protected virtual Encoding detectEncodingFromFile(string file)
+        {
+            using(FileStream fs = File.OpenRead(file))
+            {
+                Ude.CharsetDetector cdet = new Ude.CharsetDetector();
+                cdet.Feed(fs);
+                cdet.DataEnd();
+
+                if(cdet.Charset == null) {
+                    //throw new ComponentException("Ude: Detection failed for '{0}'", file);
+                    Log.nlog.Error("Problem with detection of encoding for '{0}'", file);
+                    return Encoding.UTF8; // good luck
+                }
+
+                Log.nlog.Debug("Ude: charset '{0}' confidence: '{1}'", cdet.Charset, cdet.Confidence);
+                return Encoding.GetEncoding(cdet.Charset);
+            }
         }
 
         /// <summary>

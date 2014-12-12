@@ -363,13 +363,17 @@ namespace vsSBETest
                 this.throwError = throwError;
             }
 
-            protected override string readToEnd(string file, Encoding enc, bool detectEncoding, out Encoding current)
+            protected override string readToEnd(string file, Encoding enc, bool detectEncoding)
             {
-                current = Encoding.UTF8;
                 if(throwError) {
                     throw new System.IO.FileNotFoundException(String.Format("Some error for '{0}'", file));
                 }
                 return content;
+            }
+
+            protected override Encoding detectEncodingFromFile(string file)
+            {
+                return Encoding.UTF8;
             }
 
             protected override void writeToFile(string file, string data, bool append, bool writeLine, Encoding enc)
