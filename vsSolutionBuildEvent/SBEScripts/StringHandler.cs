@@ -123,7 +123,25 @@ namespace net.r_eg.vsSBE.SBEScripts
             if(String.IsNullOrEmpty(data)) {
                 return String.Empty;
             }
-            return data.Replace("\\r", "\r").Replace("\\n", "\n").Replace("\\t", "\t");
+
+            return Regex.Replace(data, @"(\\)?\\(r|n|t|x([A-Fa-f0-9]{2}))", delegate(Match m) {
+
+                if(m.Groups[1].Success) {
+                    return m.Value.Substring(1);
+                }
+
+                if(m.Groups[3].Success) {
+                    return ((char)Convert.ToInt32(m.Groups[3].Value, 16)).ToString();
+                }
+
+                switch(m.Groups[2].Value) {
+                    case "r": { return "\r"; }
+                    case "n": { return "\n"; }
+                    case "t": { return "\t"; }
+                }
+
+                return m.Value;
+            });
         }
     }
 }

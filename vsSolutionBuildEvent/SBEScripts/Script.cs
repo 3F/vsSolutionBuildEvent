@@ -58,7 +58,7 @@ namespace net.r_eg.vsSBE.SBEScripts
                        )
                      )            -> for .NET: v
                 */
-                 return @"(
+                return @"(?:\r?\n\x20*)?\r?\n?(
                             \#{1,2}   #1 - # or ##
                           )
                           (           #2 - mixed data of SBE-Script
@@ -72,7 +72,7 @@ namespace net.r_eg.vsSBE.SBEScripts
                               )*
                               (?(R)(?!))
                             \]
-                          )";
+                          )\r?\n?";
             }
         }
 

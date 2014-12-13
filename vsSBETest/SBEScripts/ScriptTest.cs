@@ -93,7 +93,7 @@ namespace vsSBETest
         public void parseTest4()
         {
             Script target = new Script(env, new UserVariable());
-            Assert.AreEqual("\n B4 ", target.parse("#[(true) {\n #[(1 > 2){ B3 } \n else {B4} ] } else {\n B2 }]"));
+            Assert.AreEqual("B4 ", target.parse("#[(true) {\n #[(1 > 2){ B3 } \n else {B4} ] } else {\n B2 }]"));
         }
 
         /// <summary>
