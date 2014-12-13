@@ -346,10 +346,37 @@ namespace vsSBETest
         public void parseTestStExists3()
         {
             FileComponentAccessor target = new FileComponentAccessor();
+
+            Assert.AreEqual(Value.VFALSE, target.parse("[File exists.directory(\"System32\", false)]"));
+            //Assert.AreEqual(Value.VFALSE, target.parse("[File exists.directory(\"" + realDir + "\", true)]"));
+            Assert.AreEqual(Value.VTRUE, target.parse("[File exists.directory(\"System32\", true)]"));
+        }
+
+        /// <summary>
+        ///A test for parse - stExists
+        ///</summary>
+        [TestMethod()]
+        public void parseTestStExists4()
+        {
+            FileComponentAccessor target = new FileComponentAccessor();
             string realFile = Assembly.GetAssembly(GetType()).Location;
 
             Assert.AreEqual(Value.VFALSE, target.parse("[File exists.file(\"file\")]"));
             Assert.AreEqual(Value.VTRUE, target.parse("[File exists.file(\"" + realFile + "\")]"));
+        }
+
+        /// <summary>
+        ///A test for parse - stExists
+        ///</summary>
+        [TestMethod()]
+        public void parseTestStExists5()
+        {
+            FileComponentAccessor target = new FileComponentAccessor();
+            string realFile = Path.GetFileName(Assembly.GetAssembly(GetType()).Location);
+
+            Assert.AreEqual(Value.VFALSE, target.parse("[File exists.file(\"cmd.exe\", false)]"));
+            //Assert.AreEqual(Value.VFALSE, target.parse("[File exists.file(\"" + realFile + "\", true)]"));
+            Assert.AreEqual(Value.VTRUE, target.parse("[File exists.file(\"cmd.exe\", true)]"));
         }
 
         private class FileComponentAccessor: FileComponent

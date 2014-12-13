@@ -44,6 +44,23 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
+        /// Gets all directories from the PATH of the Environment
+        /// </summary>
+        protected IEnumerable<string> EnvPath
+        {
+            get
+            {
+                if(envPath == null) {
+                    envPath = System.Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process).Split(';');
+                }
+                foreach(string dir in envPath) {
+                    yield return dir;
+                }
+            }
+        }
+        protected string[] envPath = null;
+
+        /// <summary>
         /// Handler for current data
         /// </summary>
         /// <param name="data">mixed data</param>
@@ -551,8 +568,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         /// <summary>
         /// Determines whether the something exists.
+        /// 
         /// Work with:
-        ///  #[File exists.
+        ///  * #[File exists.directory("path")]
+        ///  * #[File exists.directory("path", false)]
+        ///  * #[File exists.file("path")]
+        ///  * #[File exists.file("path", true)]
         /// </summary>
         /// <param name="data">prepared data</param>
         /// <returns></returns>
@@ -573,6 +594,19 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         [
             Method
             (
+                "directory",
+                "Determines whether the given path refers to an existing directory on disk with searching in environment.",
+                "exists",
+                "stExists",
+                new string[] { "path", "environment" },
+                new string[] { "Path to test", "Using the PATH of the Environment for searching. Environment associated with the current process." },
+                CValueType.Boolean,
+                CValueType.String, CValueType.Boolean
+            ),
+        ]
+        [
+            Method
+            (
                 "file",
                 "Determines whether the specified file exists.",
                 "exists",
@@ -583,6 +617,19 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 CValueType.String
             ),
         ]
+        [
+            Method
+            (
+                "file",
+                "Determines whether the specified file exists with searching in environment.",
+                "exists",
+                "stExists",
+                new string[] { "path", "environment" },
+                new string[] { "The file to check", "Using the PATH of the Environment for searching. Environment associated with the current process." },
+                CValueType.Boolean,
+                CValueType.String, CValueType.Boolean
+            ),
+        ]
         protected string stExists(string data)
         {
             Match m = Regex.Match(data,
@@ -590,27 +637,36 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                     \s*\.\s*
                                                     (directory|file) #1 - type
                                                     \s*
-                                                    \({0}\)          #2 - path to test
+                                                    \(
+                                                       {0}           #2 - path to test
+                                                       (?:,{1})?     #3 - flag of searching in environment (optional)
+                                                    \)
                                                     ",
-                                                    RPattern.DoubleQuotesContent
+                                                    RPattern.DoubleQuotesContent,
+                                                    RPattern.BooleanContent
                                                  ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
                 throw new SyntaxIncorrectException("Failed stExists - '{0}'", data);
             }
 
-            string type = m.Groups[1].Value;
-            string path = location(m.Groups[2].Value);
+            string type         = m.Groups[1].Value;
+            string find         = m.Groups[2].Value;
+            string environment  = (m.Groups[3].Success)? m.Groups[3].Value : null;
 
-            switch(type) {
-                case "directory": {
-                    return Value.from(Directory.Exists(path));
-                }
-                case "file": {
-                    return Value.from(File.Exists(path));
+
+            if(environment == null || !Value.toBoolean(environment)) {
+                return Value.from((type == "file")? File.Exists(location(find)) : Directory.Exists(location(find)));
+            }
+
+            foreach(string dir in EnvPath)
+            {
+                bool found = (type == "file")? File.Exists(location(find, dir)) : Directory.Exists(location(find, dir));
+                if(found) {
+                    return Value.from(true);
                 }
             }
-            throw new OperationNotFoundException("stExists: not found type - '{0}'", type);
+            return Value.from(false);
         }
 
         /// <summary>
@@ -699,9 +755,21 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
-        /// File location for current context
+        /// Gets location for specific path
         /// </summary>
         /// <param name="file"></param>
+        /// <param name="path"></param>
+        /// <returns>Absolute path to file</returns>
+        protected string location(string file, string path)
+        {
+            return Path.Combine(path, file);
+        }
+
+        /// <summary>
+        /// Gets location for current context
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns>Absolute path to file</returns>
         protected string location(string file)
         {
             return Path.Combine(Settings.WorkPath, file);
