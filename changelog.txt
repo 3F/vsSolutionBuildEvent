@@ -1,3 +1,33 @@
+[v0.10]
+    * NEW: License - GNU LGPLv3
+    * NEW: Context of build action with 16 types.
+    * NEW: Confirmation dialog as option. The user interaction for specific action.
+    * NEW: Script Mode
+    * NEW: Code Completion for components & New Editor.
+    * NEW: UI-manager for available components
+    * NEW: Added the next features to FileComponent:
+            * #[File exists.directory("path")]
+            * #[File exists.directory("path", false)]
+            * #[File exists.file("path")]
+            * #[File exists.file("path", true)]
+            See our documentation for details.
+           
+    * NEW: Added the next features to FileComponent:
+            * #[File write("name", append, line, "encoding"): multiline data]
+            See our documentation for details.
+            
+    * CHANGED: Removed the KeepWindow as obsolete - see logger.
+    * CHANGED: Added alias 'Regex' for Regexp from FileComponent
+    * CHANGED: Disallowed the empty handler for interpreter mode.
+    * CHANGED: Changed behaviour for \r\n in container of SBE-Scripts
+    * CHANGED: Added escaping for special symbols & added \x00 - \xFF
+    * CHANGED: Added handling of special symbols in MSBuild core
+    * FIXED: Bug with the OutputWindow on Visual Studio 2013 (Thanks: Rafael Cossovan)
+    * FIXED: Auto detecting encoding from the file for the replace() & get() in FileComponent
+    * FIXED: Bug with layout of main form - may exist on some version of Windows (Thanks: Rafael Cossovan)
+    * FIXED: Possible bug with notification about warnings/errors in tool pane.
+    * FIXED: Message for _xmlTryUpgrade in Config when trying to detect old version of config
+
 [v0.9]
     * NEW: Multi-Actions. Unlimited actions for single event type.
     * NEW: SBE-Scripts - internal specification for additional work over MSBuild - conditions, subcommands, files, etc.

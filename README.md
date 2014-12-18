@@ -5,9 +5,9 @@
 
 * [0d1dbfd7-ed8a-40af-ae39-281bfeca2334](http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/)
 
-```
- 
-```
+![](https://www.gnu.org/graphics/lgplv3-88x31.png)
+
+-------
 
 # Visual Studio. Solution Build Event (vsSBE)
 ##### Flexible actions for all ...
@@ -26,6 +26,3 @@ Examples of using is contained on [Visual Studio Gallery page](http://visualstud
 * [Wiki & Solutions of community](https://bitbucket.org/3F/vssolutionbuildevent/wiki/Home)
 * **[Public Issue Tracker](https://bitbucket.org/3F/vssolutionbuildevent/issues)** - *bug ? suggestions ? write here*
 
-```
- 
-```
