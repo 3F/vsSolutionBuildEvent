@@ -38,6 +38,7 @@
             this.groupBoxIncludes = new System.Windows.Forms.GroupBox();
             this.textBoxIncludes = new System.Windows.Forms.TextBox();
             this.groupBoxMixed = new System.Windows.Forms.GroupBox();
+            this.labelVersionVal = new System.Windows.Forms.TextBox();
             this.linkLicense = new System.Windows.Forms.LinkLabel();
             this.labelLicense = new System.Windows.Forms.Label();
             this.labelVersion = new System.Windows.Forms.Label();
@@ -162,6 +163,7 @@
             // 
             this.groupBoxMixed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBoxMixed.Controls.Add(this.labelVersionVal);
             this.groupBoxMixed.Controls.Add(this.linkLicense);
             this.groupBoxMixed.Controls.Add(this.labelLicense);
             this.groupBoxMixed.Controls.Add(this.labelVersion);
@@ -171,6 +173,16 @@
             this.groupBoxMixed.Size = new System.Drawing.Size(349, 145);
             this.groupBoxMixed.TabIndex = 6;
             this.groupBoxMixed.TabStop = false;
+            // 
+            // labelVersionVal
+            // 
+            this.labelVersionVal.BackColor = System.Drawing.SystemColors.Control;
+            this.labelVersionVal.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.labelVersionVal.Location = new System.Drawing.Point(54, 12);
+            this.labelVersionVal.Name = "labelVersionVal";
+            this.labelVersionVal.ReadOnly = true;
+            this.labelVersionVal.Size = new System.Drawing.Size(270, 13);
+            this.labelVersionVal.TabIndex = 9;
             // 
             // linkLicense
             // 
@@ -199,9 +211,9 @@
             this.labelVersion.Location = new System.Drawing.Point(6, 12);
             this.labelVersion.Margin = new System.Windows.Forms.Padding(3);
             this.labelVersion.Name = "labelVersion";
-            this.labelVersion.Size = new System.Drawing.Size(42, 13);
+            this.labelVersion.Size = new System.Drawing.Size(45, 13);
             this.labelVersion.TabIndex = 0;
-            this.labelVersion.Text = "Version";
+            this.labelVersion.Text = "Version:";
             // 
             // richTextBox1
             // 
@@ -240,7 +252,7 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "About - vsSolutionBuildEvent";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.AboutFrm_FormClosed);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AboutFrm_FormClosing);
             this.Load += new System.EventHandler(this.AboutFrm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSpace)).EndInit();
             this.groupBoxCopyright.ResumeLayout(false);
@@ -270,5 +282,6 @@
         private System.Windows.Forms.LinkLabel linkLicense;
         private System.Windows.Forms.Label labelSlash;
         private System.Windows.Forms.LinkLabel linkPage;
+        private System.Windows.Forms.TextBox labelVersionVal;
     }
 }

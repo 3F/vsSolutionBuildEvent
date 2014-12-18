@@ -145,8 +145,6 @@
             this.buttonEnvVariables = new System.Windows.Forms.Button();
             this.btnDteCmd = new System.Windows.Forms.Button();
             this.tabPageComponents = new System.Windows.Forms.TabPage();
-            this.splitContainerComponents = new System.Windows.Forms.SplitContainer();
-            this.btnCompNew = new System.Windows.Forms.Button();
             this.dgvActions = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
             this.dgvActionEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dgvActionName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -160,12 +158,14 @@
             this.dgvOrderEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dgvOrderProject = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvOrderType = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.splitContainerComponents = new System.Windows.Forms.SplitContainer();
             this.dgvComponents = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
             this.dgvComponentsIcon = new System.Windows.Forms.DataGridViewImageColumn();
             this.dgvComponentsEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dgvComponentsName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvComponentsClass = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvComponentsDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnCompNew = new System.Windows.Forms.Button();
             this.dgvComponentInfo = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
             this.dgvCompInfoType = new System.Windows.Forms.DataGridViewImageColumn();
             this.dgvCompInfoName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -197,13 +197,13 @@
             this.panelSettingsBottom.SuspendLayout();
             this.panel2.SuspendLayout();
             this.tabPageComponents.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvActions)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOutput)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrder)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerComponents)).BeginInit();
             this.splitContainerComponents.Panel1.SuspendLayout();
             this.splitContainerComponents.Panel2.SuspendLayout();
             this.splitContainerComponents.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvActions)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOutput)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrder)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvComponents)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvComponentInfo)).BeginInit();
             this.SuspendLayout();
@@ -320,9 +320,9 @@
             this.toolStripMenuHelp,
             this.toolStripMenuBug,
             this.toolStripMenuVersion});
-            this.statusStrip.Location = new System.Drawing.Point(111, 7);
+            this.statusStrip.Location = new System.Drawing.Point(142, 7);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(189, 22);
+            this.statusStrip.Size = new System.Drawing.Size(158, 22);
             this.statusStrip.TabIndex = 81;
             // 
             // toolStripMenuSpring
@@ -349,21 +349,21 @@
             // toolStripMenuApply
             // 
             this.toolStripMenuApply.Name = "toolStripMenuApply";
-            this.toolStripMenuApply.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuApply.Size = new System.Drawing.Size(105, 22);
             this.toolStripMenuApply.Text = "Apply";
             this.toolStripMenuApply.Click += new System.EventHandler(this.toolStripMenuApply_Click);
             // 
             // toolStripMenuReset
             // 
             this.toolStripMenuReset.Name = "toolStripMenuReset";
-            this.toolStripMenuReset.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuReset.Size = new System.Drawing.Size(105, 22);
             this.toolStripMenuReset.Text = "Reset";
             this.toolStripMenuReset.Click += new System.EventHandler(this.toolStripMenuReset_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(102, 6);
             // 
             // toolStripMenuTools
             // 
@@ -374,7 +374,7 @@
             this.toolStripMenuDTECmdExec,
             this.menuSBEScript});
             this.toolStripMenuTools.Name = "toolStripMenuTools";
-            this.toolStripMenuTools.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuTools.Size = new System.Drawing.Size(105, 22);
             this.toolStripMenuTools.Text = "Tools";
             // 
             // toolStripMenuMSBuildProp
@@ -580,14 +580,14 @@
             // toolStripMenuReport
             // 
             this.toolStripMenuReport.Name = "toolStripMenuReport";
-            this.toolStripMenuReport.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuReport.Size = new System.Drawing.Size(143, 22);
             this.toolStripMenuReport.Text = "Report";
             this.toolStripMenuReport.Click += new System.EventHandler(this.toolStripMenuReport_Click);
             // 
             // toolStripMenuDebugMode
             // 
             this.toolStripMenuDebugMode.Name = "toolStripMenuDebugMode";
-            this.toolStripMenuDebugMode.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuDebugMode.Size = new System.Drawing.Size(143, 22);
             this.toolStripMenuDebugMode.Text = "Debug Mode";
             this.toolStripMenuDebugMode.Click += new System.EventHandler(this.toolStripMenuDebugMode_Click);
             // 
@@ -1294,38 +1294,6 @@
             this.tabPageComponents.TabIndex = 2;
             this.tabPageComponents.Text = "Components";
             // 
-            // splitContainerComponents
-            // 
-            this.splitContainerComponents.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainerComponents.Location = new System.Drawing.Point(3, 3);
-            this.splitContainerComponents.Name = "splitContainerComponents";
-            this.splitContainerComponents.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainerComponents.Panel1
-            // 
-            this.splitContainerComponents.Panel1.Controls.Add(this.dgvComponents);
-            this.splitContainerComponents.Panel1.Controls.Add(this.btnCompNew);
-            // 
-            // splitContainerComponents.Panel2
-            // 
-            this.splitContainerComponents.Panel2.Controls.Add(this.dgvComponentInfo);
-            this.splitContainerComponents.Size = new System.Drawing.Size(773, 438);
-            this.splitContainerComponents.SplitterDistance = 226;
-            this.splitContainerComponents.TabIndex = 87;
-            // 
-            // btnCompNew
-            // 
-            this.btnCompNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCompNew.Location = new System.Drawing.Point(695, 0);
-            this.btnCompNew.Name = "btnCompNew";
-            this.btnCompNew.Size = new System.Drawing.Size(75, 23);
-            this.btnCompNew.TabIndex = 86;
-            this.btnCompNew.Text = "Create new";
-            this.btnCompNew.UseVisualStyleBackColor = true;
-            this.btnCompNew.Click += new System.EventHandler(this.btnCompNew_Click);
-            // 
             // dgvActions
             // 
             this.dgvActions.AllowUserToAddRows = false;
@@ -1549,13 +1517,34 @@
             this.dgvOrderType.Name = "dgvOrderType";
             this.dgvOrderType.Width = 76;
             // 
+            // splitContainerComponents
+            // 
+            this.splitContainerComponents.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainerComponents.Location = new System.Drawing.Point(3, 3);
+            this.splitContainerComponents.Name = "splitContainerComponents";
+            this.splitContainerComponents.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainerComponents.Panel1
+            // 
+            this.splitContainerComponents.Panel1.Controls.Add(this.dgvComponents);
+            this.splitContainerComponents.Panel1.Controls.Add(this.btnCompNew);
+            // 
+            // splitContainerComponents.Panel2
+            // 
+            this.splitContainerComponents.Panel2.Controls.Add(this.dgvComponentInfo);
+            this.splitContainerComponents.Size = new System.Drawing.Size(773, 438);
+            this.splitContainerComponents.SplitterDistance = 226;
+            this.splitContainerComponents.TabIndex = 87;
+            // 
             // dgvComponents
             // 
             this.dgvComponents.AllowUserToAddRows = false;
             this.dgvComponents.AllowUserToDeleteRows = false;
             this.dgvComponents.AllowUserToResizeColumns = false;
             this.dgvComponents.AllowUserToResizeRows = false;
-            this.dgvComponents.AlwaysSelected = false;
+            this.dgvComponents.AlwaysSelected = true;
             this.dgvComponents.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -1604,8 +1593,7 @@
             this.dgvComponentsIcon.MinimumWidth = 16;
             this.dgvComponentsIcon.Name = "dgvComponentsIcon";
             this.dgvComponentsIcon.ReadOnly = true;
-            this.dgvComponentsIcon.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvComponentsIcon.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.dgvComponentsIcon.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvComponentsIcon.Width = 23;
             // 
             // dgvComponentsEnabled
@@ -1615,6 +1603,7 @@
             this.dgvComponentsEnabled.HeaderText = "Enabled";
             this.dgvComponentsEnabled.MinimumWidth = 16;
             this.dgvComponentsEnabled.Name = "dgvComponentsEnabled";
+            this.dgvComponentsEnabled.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.dgvComponentsEnabled.Width = 52;
             // 
             // dgvComponentsName
@@ -1641,6 +1630,17 @@
             this.dgvComponentsDescription.HeaderText = "Description";
             this.dgvComponentsDescription.Name = "dgvComponentsDescription";
             this.dgvComponentsDescription.ReadOnly = true;
+            // 
+            // btnCompNew
+            // 
+            this.btnCompNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCompNew.Location = new System.Drawing.Point(695, 0);
+            this.btnCompNew.Name = "btnCompNew";
+            this.btnCompNew.Size = new System.Drawing.Size(75, 23);
+            this.btnCompNew.TabIndex = 86;
+            this.btnCompNew.Text = "Create new";
+            this.btnCompNew.UseVisualStyleBackColor = true;
+            this.btnCompNew.Click += new System.EventHandler(this.btnCompNew_Click);
             // 
             // dgvComponentInfo
             // 
@@ -1690,8 +1690,7 @@
             this.dgvCompInfoType.MinimumWidth = 16;
             this.dgvCompInfoType.Name = "dgvCompInfoType";
             this.dgvCompInfoType.ReadOnly = true;
-            this.dgvCompInfoType.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvCompInfoType.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.dgvCompInfoType.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvCompInfoType.Width = 38;
             // 
             // dgvCompInfoName
@@ -1771,13 +1770,13 @@
             this.panelSettingsBottom.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.tabPageComponents.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvActions)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOutput)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrder)).EndInit();
             this.splitContainerComponents.Panel1.ResumeLayout(false);
             this.splitContainerComponents.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerComponents)).EndInit();
             this.splitContainerComponents.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dgvActions)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOutput)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrder)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvComponents)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvComponentInfo)).EndInit();
             this.ResumeLayout(false);

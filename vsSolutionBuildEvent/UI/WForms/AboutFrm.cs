@@ -59,16 +59,15 @@ namespace net.r_eg.vsSBE.UI.WForms
                 (new System.Threading.Tasks.Task(() => {
                     while(true)
                     {
-                        if(abort) {
-                            break;
-                        }
-
                         for(int i = 1; i < 6; ++i) {
                             drawLayer(coord, i, i);
                         }
                         drawLayer(coord, 6, 8);
 
                         System.Threading.Thread.Sleep(40);
+                        if(abort) {
+                            return;
+                        }
                         graphics.Clear(Color.Black);
                     }
                 })).Start();
@@ -141,11 +140,16 @@ namespace net.r_eg.vsSBE.UI.WForms
             space = new DeepSpace(pictureBoxSpace.CreateGraphics(), pictureBoxSpace.Width, pictureBoxSpace.Height);
 
             labelCopyright.Text = String.Format("Copyright (c) 2013-{0}  Denis Kuzmin (reg) < entry.reg@gmail.com >", DateTime.Now.Year);
-            labelVersion.Text   = String.Format("Version: v{0} [ {1} ] /{2}:{3}",
-                                                Version.numberWithRevString, 
-                                                Version.branchSha1, 
-                                                Version.branchName, 
-                                                Version.branchRevCount);
+
+#if !DEBUG
+            labelVersionVal.Text   = String.Format("v{0} [ {1} ]", Version.numberWithRevString, Version.branchSha1);
+#else
+            labelVersionVal.Text = String.Format("v{0} Debug [ {1} ] /\"{2}\":{3}",
+                                                    Version.numberWithRevString,
+                                                    Version.branchSha1,
+                                                    Version.branchName,
+                                                    Version.branchRevCount);
+#endif
         }
 
         private void AboutFrm_Load(object sender, EventArgs e)
@@ -153,7 +157,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             space.start(350);
         }
 
-        private void AboutFrm_FormClosed(object sender, FormClosedEventArgs e)
+        private void AboutFrm_FormClosing(object sender, FormClosingEventArgs e)
         {
             space.stop();
         }

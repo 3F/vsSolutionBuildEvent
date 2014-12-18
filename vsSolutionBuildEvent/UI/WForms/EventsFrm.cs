@@ -896,7 +896,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void dgvComponents_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if(e.ColumnIndex == 0) {
+            if(e.ColumnIndex == 1 || e.RowIndex < 0) {
                 return;
             }
             componentInfo(dgvComponents.Rows[e.RowIndex].Cells["dgvComponentsClass"].Value.ToString());

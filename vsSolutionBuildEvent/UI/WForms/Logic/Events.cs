@@ -449,6 +449,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
 
                 cInfo[className] = new List<INodeInfo>(domElemsBy(className));
             }
+            grid.Sort(grid.Columns[2], System.ComponentModel.ListSortDirection.Descending);
         }
 
         public void updateComponents(Configuration.Component[] components)
