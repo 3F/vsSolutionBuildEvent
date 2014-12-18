@@ -131,7 +131,7 @@ namespace net.r_eg.vsSBE.MSBuild
             {
                 try {
                     defVariables(project);
-                    project.SetProperty(container, _wrapVariable(ref unevaluated));
+                    project.SetProperty(container, StringHandler.hSymbols(_wrapVariable(ref unevaluated)));
                     return project.GetProperty(container).EvaluatedValue;
                 }
                 finally {
