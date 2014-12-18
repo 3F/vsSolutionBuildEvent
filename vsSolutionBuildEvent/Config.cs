@@ -29,17 +29,17 @@ using Newtonsoft.Json.Converters;
 
 namespace net.r_eg.vsSBE
 {
-    /// <summary>
-    /// hooking up notifications
-    /// </summary>
-    internal delegate void ConfigEventHandler();
-
     internal class Config
     {
         /// <summary>
-        /// Event after updates SBE-data
+        /// Notification about updating configuration
         /// </summary>
-        public event ConfigEventHandler Update = delegate { };
+        public delegate void UpdateEvent();
+
+        /// <summary>
+        /// After update the SBE-data
+        /// </summary>
+        public event UpdateEvent Update = delegate { };
 
         public struct Entity
         {

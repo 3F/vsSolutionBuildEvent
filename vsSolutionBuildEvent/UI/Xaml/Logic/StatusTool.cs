@@ -138,9 +138,9 @@ namespace net.r_eg.vsSBE.UI.Xaml.Logic
         }
 
         /// <exception cref="*"></exception>
-        public void executeCommand(EnvDTE80.DTE2 dte2, string cmd)
+        public void executeCommand(string cmd)
         {
-            dte2.ExecuteCommand(cmd);
+            vsSolutionBuildEventPackage.exec(cmd); //TODO
         }
 
         protected virtual ISolutionEvent[] getEvent(SolutionEventType type)

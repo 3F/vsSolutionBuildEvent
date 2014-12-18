@@ -64,10 +64,6 @@ namespace net.r_eg.vsSBE.Actions
             public volatile uint level;
             public Queue<DTEPrepared> cmd;
         }
-        /// <summary>
-        /// splitted by event type
-        /// </summary>
-        protected static ConcurrentDictionary<SolutionEventType, TQueue> queues = new ConcurrentDictionary<SolutionEventType, TQueue>();
 
         /// <summary>
         /// Current type for recursive DTE commands
@@ -88,6 +84,11 @@ namespace net.r_eg.vsSBE.Actions
         /// DTE context
         /// </summary>
         protected DTE dte;
+
+        /// <summary>
+        /// splitted by event type
+        /// </summary>
+        private static ConcurrentDictionary<SolutionEventType, TQueue> queues = new ConcurrentDictionary<SolutionEventType, TQueue>();
 
         /// <summary>
         /// object synch.

@@ -34,6 +34,16 @@ using net.r_eg.vsSBE.SBEScripts.Dom;
 
 namespace net.r_eg.vsSBE
 {
+    /// <summary>
+    /// Notification about opening/creating the solution
+    /// </summary>
+    public delegate void OpenSolutionEvent();
+
+    /// <summary>
+    /// Notification about closing the solution
+    /// </summary>
+    public delegate void CloseSolutionEvent();
+
     // Managed Package Registration
     [PackageRegistration(UseManagedResourcesOnly = true)]
 
@@ -78,6 +88,16 @@ namespace net.r_eg.vsSBE
         {
             get { return (IVsShell)Package.GetGlobalService(typeof(SVsShell)); }
         }
+
+        /// <summary>
+        /// The solution has been opened
+        /// </summary>
+        public static event OpenSolutionEvent OpenSolution = delegate { };
+
+        /// <summary>
+        /// The solution has been closed
+        /// </summary>
+        public static event OpenSolutionEvent CloseSolution = delegate { };
 
         /// <summary>
         /// For IVsSolutionEvents events
@@ -147,13 +167,14 @@ namespace net.r_eg.vsSBE
         {
             try {
                 FindToolWindow(typeof(UI.Xaml.StatusToolWindow), 0, true);
+                Log.paneAttach("Solution Build-Events", Dte2);
 
                 Config._.load(extractPath(Dte2));
                 Config._.updateActivation(bootloader);
 
                 _state();
                 _menuItemMain.Visible = true;
-                UI.Xaml.StatusToolWindow.control.enabledPanel(true);
+                OpenSolution();
                 return VSConstants.S_OK;
             }
             catch(Exception ex) {
@@ -165,9 +186,10 @@ namespace net.r_eg.vsSBE
         int IVsSolutionEvents.OnAfterCloseSolution(object pUnkReserved)
         {
             _menuItemMain.Visible = false;
-            UI.Xaml.StatusToolWindow.control.enabledPanel(false);
+            CloseSolution();
             UI.Util.closeTool(_configFrm);
 
+            Log.paneDetach((IVsOutputWindow)GetGlobalService(typeof(SVsOutputWindow)));
             return VSConstants.S_OK;
         }
 
@@ -236,6 +258,15 @@ namespace net.r_eg.vsSBE
             return VSConstants.S_FALSE;
         }
 
+        /// <summary>
+        /// Execute the DTE command
+        /// </summary>
+        /// <param name="cmd">DTE command</param>
+        public static void exec(string cmd)
+        {
+            ((EnvDTE.DTE)Dte2).ExecuteCommand(cmd);
+        }
+
         private void init()
         {
             Log.show();
@@ -253,8 +284,6 @@ namespace net.r_eg.vsSBE
             _owpBuild = new OWP.Listener(env, "Build");
             _owpBuild.attachEvents();
             _owpBuild.register(_c);
-
-            UI.Xaml.StatusToolWindow.control.setDTE(Dte2);
         }
 
         /// <summary>
@@ -416,7 +445,8 @@ namespace net.r_eg.vsSBE
             Log.nlog.Trace(string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
             base.Initialize();
 
-            try {
+            try
+            {
                 init();
                 OleMenuCommandService mcs = (OleMenuCommandService)GetService(typeof(IMenuCommandService));
 

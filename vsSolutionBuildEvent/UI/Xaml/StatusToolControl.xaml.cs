@@ -30,11 +30,6 @@ namespace net.r_eg.vsSBE.UI.Xaml
     public partial class StatusToolControl: UserControl
     {
         /// <summary>
-        /// Used DTE context
-        /// </summary>
-        protected DTE2 dte2;
-
-        /// <summary>
         /// Logic for this UI
         /// </summary>
         protected Logic.StatusTool logic;
@@ -81,14 +76,6 @@ namespace net.r_eg.vsSBE.UI.Xaml
         public void enabledPanel(bool flag)
         {
             grid.IsEnabled = flag;
-        }
-
-        /// <summary>
-        /// Update DTE context
-        /// </summary>
-        public void setDTE(DTE2 dte2)
-        {
-            this.dte2 = dte2;
         }
 
         /// <summary>
@@ -186,7 +173,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
         private void btnSettings_Click(object sender, RoutedEventArgs e)
         {
             try {
-                logic.executeCommand(dte2, "Build.EventsSolution");
+                logic.executeCommand("Build.EventsSolution");
             }
             catch(Exception ex) {
                 Log.nlog.Warn("Cannot open window with settings'{0}'", ex.Message);

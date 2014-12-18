@@ -16,13 +16,7 @@
 */
 
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Windows;
 using System.Runtime.InteropServices;
-using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Shell;
 
 namespace net.r_eg.vsSBE.UI.Xaml
@@ -30,22 +24,46 @@ namespace net.r_eg.vsSBE.UI.Xaml
     [Guid(GuidList.PANEL_STRING)]
     internal class StatusToolWindow: ToolWindowPane
     {
-        public static readonly StatusToolControl control = new StatusToolControl();
+        /// <summary>
+        /// Main control for this ToolWindow
+        /// </summary>
+        protected StatusToolControl control;
 
+        /// <summary>
+        /// object synch.
+        /// </summary>
         private Object _eLock = new Object();
-        public StatusToolWindow(): base(null)
+
+        public StatusToolWindow()
+            : base(null)
         {
-            this.Caption = "Solution Build-Events";
+            Caption = "Solution Build-Events";
+            control = new StatusToolControl();
+
             base.Content = control;
 
-            ConfigEventHandler cfgEvent = new ConfigEventHandler(control.updateData);
-            LogEventHandler logEvent    = new LogEventHandler(control.notify);
-            lock(_eLock) {
-                Config._.Update -= cfgEvent;
-                Config._.Update += cfgEvent;
-                Log.Receive -= logEvent;
-                Log.Receive += logEvent;
+            lock(_eLock)
+            {
+                vsSolutionBuildEventPackage.OpenSolution -= new OpenSolutionEvent(onOpenSolution);
+                vsSolutionBuildEventPackage.OpenSolution += new OpenSolutionEvent(onOpenSolution);
+                vsSolutionBuildEventPackage.CloseSolution -= new OpenSolutionEvent(onCloseSolution);
+                vsSolutionBuildEventPackage.CloseSolution += new OpenSolutionEvent(onCloseSolution);
+
+                Config._.Update -= new Config.UpdateEvent(control.updateData);
+                Config._.Update += new Config.UpdateEvent(control.updateData);
+                Log.Receipt -= new Log.ReceiptEvent(control.notify);
+                Log.Receipt += new Log.ReceiptEvent(control.notify);
             }
+        }
+
+        protected void onCloseSolution()
+        {
+            control.enabledPanel(false);
+        }
+
+        protected void onOpenSolution()
+        {
+            control.enabledPanel(true);
         }
     }
 }

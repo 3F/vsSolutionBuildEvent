@@ -16,35 +16,29 @@
 */
 
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using EnvDTE;
-using EnvDTE80;
-using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Exceptions;
 using NLog;
 
 namespace net.r_eg.vsSBE
 {
     /// <summary>
-    /// hooking up notifications
-    /// </summary>
-    internal delegate void LogEventHandler();
-
-    /// <summary>
-    /// Notifications with message
-    /// </summary>
-    internal delegate void LogMessageEvent(string message);
-
-    /// <summary>
     /// Main logger for Package
-    /// Uses the OutputWindowPanes as target
     /// </summary>
     internal static class Log
     {
-        public const string OWP_ITEM_NAME = "Solution Build-Events";
+        /// <summary>
+        /// Notification about any receiving
+        /// </summary>
+        public delegate void ReceiptEvent();
+
+        /// <summary>
+        /// Notification about receiving of message
+        /// </summary>
+        public delegate void MessageEvent(string message);
 
         /// <summary>
         /// external logic
@@ -52,19 +46,29 @@ namespace net.r_eg.vsSBE
         public static readonly Logger nlog = LogManager.GetCurrentClassLogger();
 
         /// <summary>
-        /// Notify about received, only as signal
+        /// Any receipt - only as signal
         /// </summary>
-        public static event LogEventHandler Receive = delegate { };
+        public static event ReceiptEvent Receipt = delegate { };
 
         /// <summary>
-        /// Notify about received with formatted message
+        /// Received message
         /// </summary>
-        public static event LogMessageEvent ReceiveMessage = delegate(string message) { };
+        public static event MessageEvent Message = delegate(string message) { };
+
+        /// <summary>
+        /// DTE context
+        /// </summary>
+        private static EnvDTE.DTE dte;
         
         /// <summary>
-        /// to display text output, represented by the OutputWindowPane
+        /// To displaying messages on the OutputWindowPane by SVsOutputWindow
         /// </summary>
-        private static OutputWindowPane _pane = null;
+        private static IVsOutputWindowPane _paneCOM = null;
+
+        /// <summary>
+        /// To displaying messages on the OutputWindowPane by EnvDTE
+        /// </summary>
+        private static EnvDTE.OutputWindowPane _paneDTE = null;
 
         /// <summary>
         /// NLog :: static "MethodCall"
@@ -84,45 +88,116 @@ namespace net.r_eg.vsSBE
             _notify(oLevel);
 
             string formatted = _format(level, message, stamp);
-            ReceiveMessage(formatted);
+            Message(formatted);
 
             print(formatted);
         }
 
         public static void print(string message)
         {
-            if(_pane == null) {
-                init();
+            if(_paneDTE != null) {
+                _paneDTE.OutputString(message);
+                return;
             }
-            _pane.OutputString(message);
+
+            if(_paneCOM != null) {
+                _paneCOM.OutputString(message);
+                return;
+            }
+
+            Debug.WriteLine(message);
+            Console.Out.WriteLine(message);
         }
 
-        public static void init()
+        /// <summary>
+        /// Initialization of the IVsOutputWindowPane
+        /// note: probably slow initialization, 
+        ///       and be careful with using in Initialize() of package or constructor, 
+        ///       may be inner exception for COM object in VS (tested on VS2013 with docked to output panel)
+        ///       Otherwise, use the IVsUIShell.FindToolWindow (again, only with __VSFINDTOOLWIN.FTW_fFindFirst)
+        /// </summary>
+        /// <param name="name">Name of the pane</param>
+        /// <param name="ow"></param>
+        /// <param name="dteContext"></param>
+        public static void paneAttach(string name, IVsOutputWindow ow, EnvDTE.DTE dteContext)
         {
+            dte = dteContext;
+            if(_paneCOM != null || _paneDTE != null) {
+                Log.nlog.Debug("paneAttach-COM: skipped");
+                return; // currently we work only with one pane
+            }
+
+            Guid id = GuidList.OWP_SBE;
+            ow.CreatePane(ref id, name, 1, 1);
+            ow.GetPane(ref id, out _paneCOM);
+        }
+
+        /// <summary>
+        /// Initialization of the EnvDTE.OutputWindowPane
+        /// </summary>
+        /// <param name="name">Name of the pane</param>
+        /// <param name="dte2"></param>
+        public static void paneAttach(string name, EnvDTE80.DTE2 dte2)
+        {
+            dte = (EnvDTE.DTE)dte2;
+            if(_paneCOM != null || _paneDTE != null) {
+                Log.nlog.Debug("paneAttach-DTE: skipped");
+                return; // currently we work only with one pane
+            }
+
             try {
-                _pane = vsSolutionBuildEventPackage.Dte2.ToolWindows.OutputWindow.OutputWindowPanes.Item(OWP_ITEM_NAME);
+                _paneDTE = dte2.ToolWindows.OutputWindow.OutputWindowPanes.Item(name);
             }
             catch(ArgumentException) {
-                _pane = vsSolutionBuildEventPackage.Dte2.ToolWindows.OutputWindow.OutputWindowPanes.Add(OWP_ITEM_NAME);
+                _paneDTE = dte2.ToolWindows.OutputWindow.OutputWindowPanes.Add(name);
             }
             catch(Exception ex) {
-                throw new ComponentException("Log :: inner exception", ex);
+                Log.nlog.Error("Log :: inner exception", ex);
             }
         }
 
+        public static void paneDetach(IVsOutputWindow ow)
+        {
+            Guid id;
+            if(_paneDTE != null) {
+                id = new Guid(_paneDTE.Guid);
+                _paneDTE.Clear();
+            }
+            else{
+                id = GuidList.OWP_SBE;
+            }
+            ow.DeletePane(ref id);
+
+            paneDetach();
+        }
+
+        public static void paneDetach()
+        {
+            _paneCOM = null;
+            _paneDTE = null;
+            dte      = null;
+        }
+
+        /// <summary>
+        /// Opening the Output window and activate pane
+        /// </summary>
         public static void show()
         {
-            if(_pane == null) {
-                init();
-            }
+            try
+            {
+                if(dte != null) {
+                    dte.ExecuteCommand("View.Output"); //TODO:
+                }
 
-            try {
-                vsSolutionBuildEventPackage.Dte2.ExecuteCommand("View.Output");
-                _pane.Activate();
+                if(_paneDTE != null) {
+                    _paneDTE.Activate();
+                }
+                else if(_paneCOM != null) {
+                    _paneCOM.Activate();
+                }
             }
             catch(Exception ex) {
-                //not critical because that option for quick access
-                Log.nlog.Debug("DTE error 'View.Output' {0}", ex.Message);
+                Log.nlog.Debug("Log: error of the showing {0}", ex.Message);
             }
         }
 
@@ -140,7 +215,7 @@ namespace net.r_eg.vsSBE
             if(level < LogLevel.Warn) {
                 return;
             }
-            Receive();
+            Receipt();
         }
     }
 }

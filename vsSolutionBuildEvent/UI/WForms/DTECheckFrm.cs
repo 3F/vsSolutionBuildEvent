@@ -48,10 +48,10 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             richTextBoxExecuted.Text = String.Empty;
 
-            LogMessageEvent hlog = new LogMessageEvent(delegate(string msg) {
+            Log.MessageEvent hlog = new Log.MessageEvent(delegate(string msg) {
                 richTextBoxExecuted.Text += msg;
             });
-            Log.ReceiveMessage += hlog;
+            Log.Message += hlog;
 
             try {
                 _dteo.exec(richTextBoxCommand.Text.Split('\n'), false);
@@ -59,7 +59,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             catch(Exception ex) {
                 richTextBoxExecuted.Text += ex.Message;
             }
-            Log.ReceiveMessage -= hlog;
+            Log.Message -= hlog;
         }
 
         private void richTextBoxCommand_Click(object sender, EventArgs e)
