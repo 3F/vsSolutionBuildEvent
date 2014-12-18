@@ -44,10 +44,13 @@
             this.labelVersion = new System.Windows.Forms.Label();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.buttonOk = new System.Windows.Forms.Button();
+            this.groupBoxThanks = new System.Windows.Forms.GroupBox();
+            this.textBoxThanks = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSpace)).BeginInit();
             this.groupBoxCopyright.SuspendLayout();
             this.groupBoxIncludes.SuspendLayout();
             this.groupBoxMixed.SuspendLayout();
+            this.groupBoxThanks.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBoxSpace
@@ -58,7 +61,7 @@
             this.pictureBoxSpace.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxSpace.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBoxSpace.Name = "pictureBoxSpace";
-            this.pictureBoxSpace.Size = new System.Drawing.Size(190, 343);
+            this.pictureBoxSpace.Size = new System.Drawing.Size(190, 326);
             this.pictureBoxSpace.TabIndex = 0;
             this.pictureBoxSpace.TabStop = false;
             this.pictureBoxSpace.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBoxSpace_MouseDown);
@@ -135,10 +138,10 @@
             this.groupBoxIncludes.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxIncludes.Controls.Add(this.textBoxIncludes);
-            this.groupBoxIncludes.Location = new System.Drawing.Point(193, 205);
+            this.groupBoxIncludes.Location = new System.Drawing.Point(193, 162);
             this.groupBoxIncludes.Name = "groupBoxIncludes";
             this.groupBoxIncludes.Padding = new System.Windows.Forms.Padding(10, 5, 5, 5);
-            this.groupBoxIncludes.Size = new System.Drawing.Size(349, 97);
+            this.groupBoxIncludes.Size = new System.Drawing.Size(349, 75);
             this.groupBoxIncludes.TabIndex = 5;
             this.groupBoxIncludes.TabStop = false;
             this.groupBoxIncludes.Text = "This product includes:";
@@ -152,11 +155,11 @@
             this.textBoxIncludes.Name = "textBoxIncludes";
             this.textBoxIncludes.ReadOnly = true;
             this.textBoxIncludes.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxIncludes.Size = new System.Drawing.Size(334, 74);
+            this.textBoxIncludes.Size = new System.Drawing.Size(334, 52);
             this.textBoxIncludes.TabIndex = 0;
             this.textBoxIncludes.Text = "* AvalonEdit (avalonedit.net)\r\n* Json.NET (json.codeplex.com)\r\n* NLog (nlog-proje" +
-    "ct.org)\r\n* Ude (code.google.com/p/ude/)\r\nAll about graphical resources see /Reso" +
-    "urces/License";
+    "ct.org)\r\n* Ude (code.google.com/p/ude/)\r\n\r\nAll about graphical resources see /Re" +
+    "sources/License";
             this.textBoxIncludes.WordWrap = false;
             // 
             // groupBoxMixed
@@ -170,7 +173,7 @@
             this.groupBoxMixed.Controls.Add(this.richTextBox1);
             this.groupBoxMixed.Location = new System.Drawing.Point(193, 46);
             this.groupBoxMixed.Name = "groupBoxMixed";
-            this.groupBoxMixed.Size = new System.Drawing.Size(349, 145);
+            this.groupBoxMixed.Size = new System.Drawing.Size(349, 114);
             this.groupBoxMixed.TabIndex = 6;
             this.groupBoxMixed.TabStop = false;
             // 
@@ -220,7 +223,7 @@
             this.richTextBox1.Location = new System.Drawing.Point(6, 49);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(343, 90);
+            this.richTextBox1.Size = new System.Drawing.Size(343, 65);
             this.richTextBox1.TabIndex = 7;
             this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
             // 
@@ -228,19 +231,46 @@
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOk.Location = new System.Drawing.Point(467, 308);
+            this.buttonOk.Location = new System.Drawing.Point(467, 293);
             this.buttonOk.Name = "buttonOk";
-            this.buttonOk.Size = new System.Drawing.Size(75, 31);
+            this.buttonOk.Size = new System.Drawing.Size(75, 29);
             this.buttonOk.TabIndex = 7;
             this.buttonOk.Text = "OK";
             this.buttonOk.UseVisualStyleBackColor = true;
             this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
             // 
+            // groupBoxThanks
+            // 
+            this.groupBoxThanks.Controls.Add(this.textBoxThanks);
+            this.groupBoxThanks.Location = new System.Drawing.Point(193, 240);
+            this.groupBoxThanks.Name = "groupBoxThanks";
+            this.groupBoxThanks.Padding = new System.Windows.Forms.Padding(10, 5, 5, 5);
+            this.groupBoxThanks.Size = new System.Drawing.Size(349, 52);
+            this.groupBoxThanks.TabIndex = 8;
+            this.groupBoxThanks.TabStop = false;
+            this.groupBoxThanks.Text = "Thanks:";
+            // 
+            // textBoxThanks
+            // 
+            this.textBoxThanks.BackColor = System.Drawing.SystemColors.Control;
+            this.textBoxThanks.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBoxThanks.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBoxThanks.Location = new System.Drawing.Point(10, 18);
+            this.textBoxThanks.Multiline = true;
+            this.textBoxThanks.Name = "textBoxThanks";
+            this.textBoxThanks.ReadOnly = true;
+            this.textBoxThanks.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBoxThanks.Size = new System.Drawing.Size(334, 29);
+            this.textBoxThanks.TabIndex = 0;
+            this.textBoxThanks.Text = "* Rafael Cossovan (navossoc@gmail.com)";
+            this.textBoxThanks.WordWrap = false;
+            // 
             // AboutFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(544, 341);
+            this.ClientSize = new System.Drawing.Size(544, 324);
+            this.Controls.Add(this.groupBoxThanks);
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.groupBoxCopyright);
             this.Controls.Add(this.groupBoxMixed);
@@ -261,6 +291,8 @@
             this.groupBoxIncludes.PerformLayout();
             this.groupBoxMixed.ResumeLayout(false);
             this.groupBoxMixed.PerformLayout();
+            this.groupBoxThanks.ResumeLayout(false);
+            this.groupBoxThanks.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -283,5 +315,7 @@
         private System.Windows.Forms.Label labelSlash;
         private System.Windows.Forms.LinkLabel linkPage;
         private System.Windows.Forms.TextBox labelVersionVal;
+        private System.Windows.Forms.GroupBox groupBoxThanks;
+        private System.Windows.Forms.TextBox textBoxThanks;
     }
 }
