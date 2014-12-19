@@ -3,14 +3,54 @@
     "application": "http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/",
     "Compatibility": "0.9"
   },
+  "Components": [
+    {
+      "ClassName": "InternalComponent",
+      "Enabled": true
+    },
+    {
+      "ClassName": "UserVariableComponent",
+      "Enabled": true
+    },
+    {
+      "ClassName": "UserVariableComponent",
+      "Enabled": true
+    },
+    {
+      "ClassName": "OWPComponent",
+      "Enabled": true
+    },
+    {
+      "ClassName": "FileComponent",
+      "Enabled": true
+    },
+    {
+      "ClassName": "DTEComponent",
+      "Enabled": true
+    },
+    {
+      "ClassName": "BuildComponent",
+      "Enabled": true
+    },
+    {
+      "ClassName": "ConditionComponent",
+      "Enabled": true
+    },
+    {
+      "ClassName": "CommentComponent",
+      "Enabled": true
+    }
+  ],
   "PreBuild": [
     {
       "Enabled": true,
-      "Name": "Act1",
+      "Name": "ActVersion",
       "Caption": "Updating version",
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
-      "IgnoreIfBuildFailed": true,
+      "IgnoreIfBuildFailed": false,
+      "BuildType": "common",
+      "Confirmation": false,
       "ToConfiguration": [],
       "ExecutionOrder": {
         "$type": "net.r_eg.vsSBE.Events.ExecutionOrder[], vsSolutionBuildEvent",
@@ -19,35 +59,26 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true,
-        "KeepWindow": false
+        "Hidden": true
       },
       "Mode": {
-        "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
-        "Type": "interpreter",
-        "Command": "#[\" \n     Updating version\n\"]\n\n#[var ver = #[File get(\"_version\")]]\n#[var tpl = #[File get(\"Version.tpl\")]]\n#[var vsSBEDir = $($(ProjectDir:$(SolutionName)))]\n\n#[var tStart = $([System.DateTime]::Parse(\"07.07.2014\").ToBinary())]\n#[var tNow   = $([System.DateTime]::UtcNow.Ticks)]\n#[var revBuild = $([System.TimeSpan]::FromTicks($([MSBuild]::Subtract(#[var tNow], #[var tStart]))).TotalMinutes.ToString(\"0\"))]\n\n#[var branchSha1 = #[File sout(\"git\", \"rev-parse --short HEAD\")]]\n#[var branchName = #[File sout(\"git\", \"rev-parse --abbrev-ref HEAD\")]]\n#[var branchRevCount = #[File sout(\"git\", \"rev-list HEAD --count\")]]\n\n#[var cs = $(tpl.Replace(%Version%, \"$(ver.Replace(\".\", \", \")), #[var revBuild]\"))]\n\n#[var cs = $(cs.Replace(%VersionRevString%, \"$(ver).#[var revBuild]\").Replace(%VersionString%, \"$(ver)\"))]\n#[var cs = $(cs.Replace(%branchName%, \"#[var branchName]\").Replace(%branchSha1%, \"#[var branchSha1]\").Replace(%branchRevCount%, \"#[var branchRevCount]\"))]\n\n#[File write(\"#[var vsSBEDir]Version.cs\"):#[var cs]]\n\n#[\" \n    .vsixmanifest\n\"]\n\n#[($(Configuration) ~= _with_revision){\n    #[var ver = #[var ver].#[var revBuild]]\n}]\n\n#[File replace.Regexp(\"#[var vsSBEDir]/source.extension.vsixmanifest\", \"<Version>[0-9\\.]+</Version>\", \"<Version>#[var ver]</Version>\")]",
-        "Handler": "",
-        "Newline": "",
-        "Wrapper": ""
+        "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
+        "Type": "script",
+        "Command": "#[\" \r\n     Updating version\r\n\"]\r\n\r\n#[var ver\t = #[File get(\"_version\")]]\r\n#[var tpl \t = #[File get(\"Version.tpl\")]]\r\n#[var vsSBEDir = $($(ProjectDir:$(SolutionName)))]\r\n\r\n#[var tStart     = $([System.DateTime]::Parse(\"07.07.2014\").ToBinary())]\r\n#[var tNow      = $([System.DateTime]::UtcNow.Ticks)]\r\n#[var revBuild = $([System.TimeSpan]::FromTicks($([MSBuild]::Subtract(#[var tNow], #[var tStart]))).TotalMinutes.ToString(\"0\"))]\r\n\r\n#[var cs = $(tpl.Replace(%Version%, \"$(ver.Replace(\".\", \", \")), #[var revBuild]\"))]\r\n#[var cs = $(cs.Replace(%VersionRevString%, \"$(ver).#[var revBuild]\").Replace(%VersionString%, \"$(ver)\"))]\r\n\r\n#[( #[File exists.file(\"git.exe\", true)] ) {\r\n\r\n\t#[var branchSha1   \t = #[File sout(\"git\", \"rev-parse --short HEAD\")]]\r\n\t#[var branchName \t = #[File sout(\"git\", \"rev-parse --abbrev-ref HEAD\")]]\r\n\t#[var branchRevCount = #[File sout(\"git\", \"rev-list HEAD --count\")]]\r\n\t\r\n\t#[var cs = $(cs.Replace(%branchName%, \"#[var branchName]\").Replace(%branchSha1%, \"#[var branchSha1]\").Replace(%branchRevCount%, \"#[var branchRevCount]\"))]\r\n}\r\nelse {\r\n\t#[var cs = $(cs.Replace(%branchName%, \"-\").Replace(%branchSha1%, \"-\").Replace(%branchRevCount%, \"-\"))]\r\n}]\r\n\r\n#[File write(\"#[var vsSBEDir]Version.cs\"):#[var cs]]\r\n\r\n#[\" \r\n    .vsixmanifest\r\n\"]\r\n\r\n#[($(Configuration) ~= _with_revision) {\r\n\t#[var ver = #[var ver].#[var revBuild]]\r\n}]\r\n\r\n#[File replace.Regexp(\"#[var vsSBEDir]/source.extension.vsixmanifest\", \"<Version>[0-9\\.]+</Version>\", \"<Version>#[var ver]</Version>\")]"
       }
     }
   ],
   "PostBuild": [
     {
       "Enabled": true,
-      "Name": "Act1",
+      "Name": "ActTest",
       "Caption": "Run all tests for release configurations",
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": true,
-      "ToConfiguration": [
-        "Release_with_revision|Any CPU",
-        "Release_with_revision|Mixed Platforms",
-        "Release_with_revision|x86",
-        "Release|Any CPU",
-        "Release|Mixed Platforms",
-        "Release|x86"
-      ],
+      "BuildType": "common",
+      "Confirmation": false,
+      "ToConfiguration": [],
       "ExecutionOrder": {
         "$type": "net.r_eg.vsSBE.Events.ExecutionOrder[], vsSolutionBuildEvent",
         "$values": [
@@ -60,17 +91,12 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true,
-        "KeepWindow": false
+        "Hidden": true
       },
       "Mode": {
-        "$type": "net.r_eg.vsSBE.Events.ModeOperation, vsSolutionBuildEvent",
-        "Type": "operation",
-        "Command": [
-          "Test.RunAllTestsInSolution"
-        ],
-        "Caption": "Run all Unit-Tests",
-        "AbortOnFirstError": true
+        "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
+        "Type": "script",
+        "Command": "#[($(Configuration) ~= Release) {\r\n\t#[DTE exec: Test.RunAllTestsInSolution]\r\n}]"
       }
     }
   ],
@@ -82,13 +108,14 @@
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": false,
+      "BuildType": "common",
+      "Confirmation": false,
       "ToConfiguration": null,
       "ExecutionOrder": null,
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true,
-        "KeepWindow": false
+        "Hidden": true
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
@@ -110,13 +137,14 @@
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": false,
+      "BuildType": "common",
+      "Confirmation": false,
       "ToConfiguration": null,
       "ExecutionOrder": null,
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true,
-        "KeepWindow": false
+        "Hidden": true
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
@@ -138,13 +166,14 @@
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": false,
+      "BuildType": "common",
+      "Confirmation": false,
       "ToConfiguration": null,
       "ExecutionOrder": null,
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true,
-        "KeepWindow": false
+        "Hidden": true
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
@@ -165,13 +194,14 @@
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": false,
+      "BuildType": "common",
+      "Confirmation": false,
       "ToConfiguration": null,
       "ExecutionOrder": null,
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true,
-        "KeepWindow": false
+        "Hidden": true
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
@@ -191,13 +221,14 @@
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": false,
+      "BuildType": "common",
+      "Confirmation": false,
       "ToConfiguration": null,
       "ExecutionOrder": null,
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true,
-        "KeepWindow": false
+        "Hidden": true
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",

@@ -1,4 +1,4 @@
-[v0.10]
+[v0.10] 2014.12.19
     * NEW: License - GNU LGPLv3
     * NEW: Context of build action with 16 types.
     * NEW: Confirmation dialog as option. The user interaction for specific action.
@@ -16,7 +16,7 @@
             * #[File write("name", append, line, "encoding"): multiline data]
             See our documentation for details.
             
-    * CHANGED: Removed the KeepWindow as obsolete - see logger.
+    * CHANGED: Removed setting the "Keep Window.." as obsolete - see logger.
     * CHANGED: Added alias 'Regex' for Regexp from FileComponent
     * CHANGED: Disallowed the empty handler for interpreter mode.
     * CHANGED: Changed behaviour for \r\n in container of SBE-Scripts
@@ -26,9 +26,9 @@
     * FIXED: Auto detecting encoding from the file for the replace() & get() in FileComponent
     * FIXED: Bug with layout of main form - may exist on some version of Windows (Thanks: Rafael Cossovan)
     * FIXED: Possible bug with notification about warnings/errors in tool pane.
-    * FIXED: Message for _xmlTryUpgrade in Config when trying to detect old version of config
+    * FIXED: Message of detecting the old version of the configuration file.
 
-[v0.9]
+[v0.9] 2014.11.05
     * NEW: Multi-Actions. Unlimited actions for single event type.
     * NEW: SBE-Scripts - internal specification for additional work over MSBuild - conditions, subcommands, files, etc.
     * NEW: Excluding projects from build - proposal #24 ("Exclude projects from build on pre-build event"). 
@@ -78,15 +78,15 @@
     * NOTE: All available components of the SBE-Scripts and all available commands, you can see with our documentation or sources. 
             Use project page, wiki, etc.
 
-[v0.8.2]
+[v0.8.2] 2014.10.07
     * FIXED: Major bug with processing for next events - Output/Errors/Warnings, worked only if the transmitter activated before.
 
-[v0.8.1]
+[v0.8.1] 2014.09.29
     * FIXED: Crashes, if solution contains the unloaded projects (Thanks for testing: Rafael Cossovan)
     * FIXED: Resolved the loop problem for recursive DTE-commands.
     * CHANGED: "Abort operations on first error" - Changed default value on false for new configurations.
 
-[v0.8]
+[v0.8] 2014.09.26
     * NEW: Actions only for a specific configuration.
     * NEW: Arguments for DTE Commands. Sample: File.OpenProject("path to sln")
     * NEW: Execution order or Events order (After/Before selected project). 
@@ -110,33 +110,33 @@
     * FIXED: All Operations executed as "Error HRESULT E_FAIL has been returned from a call to a COM component."
     * FIXED: Other minor UI/Core bugs
 
-[v0.7.2]
+[v0.7.2] 2014.09.01
     * FIXED: Saving property into files(*.csproj, *.vcxproj,..) after evaluating.
     * CHANGED: List projects inside the solution - possible bug "Solution Subfolders not resolved"
 
-[v0.7.1]
+[v0.7.1] 2014.08.24
     * NEW: Support for Visual Studio 14.0
     * FIXED: trivial bug with "Keep window with result" in Files Mode.
     
-[v0.7]
+[v0.7] 2014.08.11
     * NEW: Option for ignoring POST actions if the build failed.
     * CHANGED: Major changes & fixes with the MSBuildParser.
     * CHANGED: Improve work performance with the properties of projects
 
-[v0.6.3]
+[v0.6.3] 2014.08.05
     * FIXED: Resolved the problem - "Error with getting properties: not found project: <default>".
     * FIXED: Problem with the UI-State panel initialization on some projects.
 
-[v0.6.2]
+[v0.6.2] 2014.08.02
     * FIXED: Incorrect check configuration from the "Configuration Manager". 
              Possible bug - "MSBuild Properties are empty not listed and used"
 
-[v0.6.1]
+[v0.6.1] 2014.07.31
     * CHANGED: MSBuild Properties are evaluated as they appear.
     * FIXED: Crashes with the MSBuild Properties on some VS versions.
     * FIXED: Plugin not loading on project creation with the wizzard.
 
-[v0.6]
+[v0.6] 2014.06.19
     * CHANGED: Additional support of MSBuild variables. 
                Property Functions 
                - MSDN: http://msdn.microsoft.com/en-us/library/vstudio/dd633440%28v=vs.120%29.aspx
@@ -150,7 +150,7 @@
                     
     * FIXED: bug fixed with escape symbol for additional variables.
 
-[v0.5]
+[v0.5] 2014.04.10
     * NEW: UI-State panel of SBE: ( VS IDE View -> Other Windows -> Solution Build-Events )
     * NEW: Experimental New Event - Transmitter. To transfer output data to outer handler. 
            Uses custom variables.
@@ -161,28 +161,28 @@
     * FIXED: Duplicate data with OutputWindowPane
     * FIXED: Other UI/Core bugs fixed
 
-[v0.4.1]
+[v0.4.1] 2014.03.25
     * FIXED: Incorrect render settings for some UI-items
     * CHANGED: Minor UI changes - the "Clear" functionality changed to the "Reset" & lock label of status
 
-[v0.4]
+[v0.4] 2014.03.13
     * NEW: New Events: Warnings-Build, Errors-Build, Output-Build
     * NEW: New modes: Operation Mode
     * NEW: Different action for all events. Experimental combination of DTE Commands.
     * FIXED: Other minor bug fixes
 
-[v0.3.2]
+[v0.3.2] 2013.12.28
     * FIXED: MSBuild variables with custom Configuration & Platform at Runtime
 
-[v0.3.1]
+[v0.3.1] 2013.12.17
     * FIXED: Button "MSBuild Properties" does not resize with the Window
     * FIXED: Doubling escape symbol
 
-[v0.3]
+[v0.3] 2013.12.11
     * NEW: MSBuild environment variables (properties). See help for detail.
     * CHANGED: New License:: BSL 1.0
 
-[v0.2.2]
+[v0.2.2] 2013.11.22
     * NEW: Advanced control of events
     * NEW: New modes: interpreter & files mode
     * FIXED: vsix. restrictions removed
@@ -190,3 +190,6 @@
     * CHANGED: minor UI changes
 ...
 ~
+[v0.1] 2013.08.17
+    * First release
+
