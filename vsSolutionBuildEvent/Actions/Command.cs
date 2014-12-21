@@ -68,17 +68,17 @@ namespace net.r_eg.vsSBE.Actions
             }
             this.type = type;
 
-            if(!confirm(evt)) {
-                Log.nlog.Debug("Skipped action by user");
-                return false;
-            }
-
             string cfg = env.SolutionConfigurationFormat(env.SolutionActiveConfiguration);
 
             if(evt.ToConfiguration != null 
                 && evt.ToConfiguration.Length > 0 && evt.ToConfiguration.Where(s => s == cfg).Count() < 1)
             {
                 Log.nlog.Info("Action '{0}' is ignored for current configuration - '{1}'", evt.Caption, cfg);
+                return false;
+            }
+
+            if(!confirm(evt)) {
+                Log.nlog.Debug("Skipped action by user");
                 return false;
             }
 
