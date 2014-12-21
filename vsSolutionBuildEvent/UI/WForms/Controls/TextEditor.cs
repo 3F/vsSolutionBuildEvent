@@ -186,8 +186,11 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
             colorize(ColorSchema.Default);
             ContextMenuStrip = contextMenuEditor;
 
-            _.ShowLineNumbers = true;
-            _.TextArea.TextView.Options.HighlightCurrentLine = true;
+            _.Options.ConvertTabsToSpaces                       = true;
+            _.Options.IndentationSize                           = 4;
+            _.ShowLineNumbers                                   = true;
+            _.TextArea.TextView.Options.HighlightCurrentLine    = true;
+
             menuItemWordWrap.Checked = _.WordWrap = true;
 
             _.TextArea.TextView.CurrentLineBackground = brushColorFromString("#F5F5F5");
