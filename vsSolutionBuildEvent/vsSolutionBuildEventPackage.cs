@@ -330,7 +330,11 @@ namespace net.r_eg.vsSBE
         {
             Guid guid = new Guid(guidString);
 
-            if(GuidList.VSStd97CmdID == guid || GuidList.VSStd2KCmdID == guid) {
+            if(GuidList.VSStd97CmdID != guid && GuidList.VSStd2KCmdID != guid) {
+                return;
+            }
+
+            if(Enum.IsDefined(typeof(BuildType), id)) {
                 _c.updateContext((BuildType)id);
             }
         }
