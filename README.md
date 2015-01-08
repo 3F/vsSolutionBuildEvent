@@ -5,11 +5,11 @@
 
 * [0d1dbfd7-ed8a-40af-ae39-281bfeca2334](http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/)
 
-![](https://www.gnu.org/graphics/lgplv3-88x31.png)
+[![This program is licensed under GNU LGPLv3](https://bytebucket.org/3F/vssolutionbuildevent/raw/master/vsSolutionBuildEvent/Resources/lgplv3-88x31.png)](https://bitbucket.org/3F/vssolutionbuildevent/raw/master/LICENSE)
 
 -------
 
-# Visual Studio. Solution Build Event (vsSBE)
+# Visual Studio. Solution Build-Events (vsSBE)
 ##### Flexible actions for all ...
 
 This extension provides advanced handling of all events in MS Visual Studio. Full control and flexible multi-actions for basic events and other additional such as:

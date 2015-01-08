@@ -1,3 +1,8 @@
+[v0.10.1] 2015.01.08
+    * FIXED: bug with confirmation dialog - ignores configurations list ('Only for')
+    * FIXED: a probable bug ~"Ignored context. Build type '2200'"
+    * CHANGED: replaces tabs on 4 spaces by default in editor.
+
 [v0.10] 2014.12.19
     * NEW: License - GNU LGPLv3
     * NEW: Context of build action with 16 types.
