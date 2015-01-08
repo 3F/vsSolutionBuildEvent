@@ -597,7 +597,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(Util.focusForm(frmProperties)) {
                 return;
             }
-            frmProperties = new PropertiesFrm(this);
+            frmProperties = new PropertiesFrm(logic.Env, this);
             frmProperties.Show();
         }
 

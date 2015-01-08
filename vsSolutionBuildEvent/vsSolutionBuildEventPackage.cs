@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,32 +18,17 @@
 using System;
 using System.ComponentModel.Design;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
-using net.r_eg.vsSBE.MSBuild;
-using net.r_eg.vsSBE.SBEScripts;
-using net.r_eg.vsSBE.SBEScripts.Dom;
 
 namespace net.r_eg.vsSBE
 {
-    /// <summary>
-    /// Notification about opening/creating the solution
-    /// </summary>
-    public delegate void OpenSolutionEvent();
-
-    /// <summary>
-    /// Notification about closing the solution
-    /// </summary>
-    public delegate void CloseSolutionEvent();
-
     // Managed Package Registration
     [PackageRegistration(UseManagedResourcesOnly = true)]
 
@@ -57,7 +42,7 @@ namespace net.r_eg.vsSBE
     [ProvideAutoLoad(UIContextGuids80.SolutionExists)]
 
     // Registers the tool window
-    [ProvideToolWindow(typeof(UI.Xaml.StatusToolWindow), Height=23, Style=VsDockStyle.Linked, Orientation=ToolWindowOrientation.Top, Window=ToolWindowGuids80.Outputwindow)]
+    [ProvideToolWindow(typeof(UI.Xaml.StatusToolWindow), Height=25, Style=VsDockStyle.Linked, Orientation=ToolWindowOrientation.Top, Window=ToolWindowGuids80.Outputwindow)]
 
     // Package Guid
     [Guid(GuidList.PACKAGE_STRING)]
@@ -65,39 +50,21 @@ namespace net.r_eg.vsSBE
     public sealed class vsSolutionBuildEventPackage: Package, IVsSolutionEvents, IVsUpdateSolutionEvents2
     {
         /// <summary>
-        /// top-level object in the Visual Studio
-        /// TODO: replace on the Environment
+        /// DTE2 Context
         /// </summary>
-        public static DTE2 Dte2
+        public DTE2 Dte2
         {
             get{ return (DTE2)Package.GetGlobalService(typeof(SDTE)); }
         }
 
         /// <summary>
-        /// top-level manipulation or maintenance of the solution
+        /// For working and supporting the all public events
         /// </summary>
-        public static IVsSolution Solution
+        public static API.EventLevel Event
         {
-            get { return (IVsSolution)Package.GetGlobalService(typeof(SVsSolution)); }
+            get;
+            private set;
         }
-
-        /// <summary>
-        /// access to the fundamental environment services
-        /// </summary>
-        public static IVsShell Shell
-        {
-            get { return (IVsShell)Package.GetGlobalService(typeof(SVsShell)); }
-        }
-
-        /// <summary>
-        /// The solution has been opened
-        /// </summary>
-        public static event OpenSolutionEvent OpenSolution = delegate { };
-
-        /// <summary>
-        /// The solution has been closed
-        /// </summary>
-        public static event OpenSolutionEvent CloseSolution = delegate { };
 
         /// <summary>
         /// For IVsSolutionEvents events
@@ -134,59 +101,42 @@ namespace net.r_eg.vsSBE
         private UI.WForms.EventsFrm _configFrm;
 
         /// <summary>
-        /// Main container of user-variables
+        /// Priority call with SVsSolution.
+        /// Part of IVsSolutionEvents - that the solution has been opened.
+        /// http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivssolutionevents.onafteropensolution.aspx
         /// </summary>
-        private IUserVariable uvariable = new UserVariable();
-
-        /// <summary>
-        /// SBE support
-        /// </summary>
-        private Connection _c;
-
-        /// <summary>
-        /// Main loader
-        /// </summary>
-        private IBootloader bootloader;
-
-        /// <summary>
-        /// Working with the OutputWindowsPane -> "Build" pane
-        /// </summary>
-        private OWP.Listener _owpBuild;
-
-        /// <summary>
-        /// Provides command events for automation clients
-        /// </summary>
-        private EnvDTE.CommandEvents _cmdEvents;
-
-        /// <summary>
-        /// object synch.
-        /// </summary>
-        private Object _lock = new Object();
-
-        int IVsSolutionEvents.OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
+        /// <param name="pUnkReserved"></param>
+        /// <param name="fNewSolution"></param>
+        /// <returns></returns>
+        public int OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
         {
             try {
                 FindToolWindow(typeof(UI.Xaml.StatusToolWindow), 0, true);
                 Log.paneAttach("Solution Build-Events", Dte2);
 
-                Config._.load(extractPath(Dte2));
-                Config._.updateActivation(bootloader);
+                int ret = Event.solutionOpened(pUnkReserved, fNewSolution);
 
                 _state();
                 _menuItemMain.Visible = true;
-                OpenSolution();
-                return VSConstants.S_OK;
+                return ret;
             }
             catch(Exception ex) {
-                Log.nlog.Fatal("Cannot load configuration: " + ex.Message);
+                Log.nlog.Fatal("Problem with loading solution: " + ex.Message);
             }
             return VSConstants.S_FALSE;
         }
 
-        int IVsSolutionEvents.OnAfterCloseSolution(object pUnkReserved)
+        /// <summary>
+        /// Priority call with SVsSolution.
+        /// Part of IVsSolutionEvents - that a solution has been closed.
+        /// http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivssolutionevents.onafterclosesolution.aspx
+        /// </summary>
+        /// <param name="pUnkReserved"></param>
+        /// <returns></returns>
+        public int OnAfterCloseSolution(object pUnkReserved)
         {
             _menuItemMain.Visible = false;
-            CloseSolution();
+            Event.solutionClosed(pUnkReserved);
             UI.Util.closeTool(_configFrm);
 
             Log.paneDetach((IVsOutputWindow)GetGlobalService(typeof(SVsOutputWindow)));
@@ -195,24 +145,12 @@ namespace net.r_eg.vsSBE
 
         public int UpdateSolution_Begin(ref int pfCancelUpdate)
         {
-            try {
-                return _c.bindPre(ref pfCancelUpdate);
-            }
-            catch(Exception ex) {
-                Log.nlog.Error("Failed Solution.Pre-binding: '{0}'", ex.Message);
-            }
-            return VSConstants.S_FALSE;
+            return Event.onPre(ref pfCancelUpdate);
         }
 
         public int UpdateSolution_Cancel()
         {
-            try {
-                return _c.bindCancel();
-            }
-            catch(Exception ex) {
-                Log.nlog.Error("Failed Solution.Cancel-binding: '{0}'", ex.Message);
-            }
-            return VSConstants.S_FALSE;
+            return Event.onCancel();
         }
 
         /// <summary>
@@ -223,120 +161,17 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public int UpdateSolution_Done(int fSucceeded, int fModified, int fCancelCommand)
         {
-            try {
-                int ret = _c.bindPost(fSucceeded, fModified, fCancelCommand);
-                if(_c.reset()) {
-                    uvariable.unsetAll();
-                }
-                return ret;
-            }
-            catch(Exception ex) {
-                Log.nlog.Error("Failed Solution.Post-binding: '{0}'", ex.Message);
-            }
-            return VSConstants.S_FALSE;
+            return Event.onPost(fSucceeded, fModified, fCancelCommand);
         }
 
         public int UpdateProjectCfg_Begin(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel)
         {
-            try {
-                return _c.bindProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel);
-            }
-            catch(Exception ex) {
-                Log.nlog.Error("Failed Project.Pre-binding: '{0}'", ex.Message);
-            }
-            return VSConstants.S_FALSE;
+            return Event.onProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel);
         }
 
         public int UpdateProjectCfg_Done(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
         {
-            try {
-                return _c.bindProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
-            }
-            catch(Exception ex) {
-                Log.nlog.Error("Failed Project.Post-binding: '{0}'", ex.Message);
-            }
-            return VSConstants.S_FALSE;
-        }
-
-        /// <summary>
-        /// Execute the DTE command
-        /// </summary>
-        /// <param name="cmd">DTE command</param>
-        public static void exec(string cmd)
-        {
-            ((EnvDTE.DTE)Dte2).ExecuteCommand(cmd);
-        }
-
-        private void init()
-        {
-            Log.show();
-            attachCommandEvents();
-            IEnvironment env = new Environment(Dte2);
-
-            bootloader = new Bootloader(env, uvariable);
-
-            _c = new Connection(
-                    new Command(env,
-                                new Script(bootloader),
-                                new MSBuildParser(env, uvariable))
-            );
-
-            _owpBuild = new OWP.Listener(env, "Build");
-            _owpBuild.attachEvents();
-            _owpBuild.register(_c);
-        }
-
-        /// <summary>
-        /// Getting work path from DTE-context of current solution
-        /// </summary>
-        /// <param name="dte2">DTE context</param>
-        private string extractPath(DTE2 dte2)
-        {
-            string path = dte2.Solution.FullName; // empty if used the new solution 
-            if(string.IsNullOrEmpty(path)) {
-                path = dte2.Solution.Properties.Item("Path").Value.ToString();
-            }
-            string dir = Path.GetDirectoryName(path);
-
-            if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
-                dir += Path.DirectorySeparatorChar;
-            }
-            return dir;
-        }
-
-        private void attachCommandEvents()
-        {
-            _cmdEvents = Dte2.Events.CommandEvents; // protection from garbage collector
-            lock(_lock) {
-                _cmdEvents.BeforeExecute -= new EnvDTE._dispCommandEvents_BeforeExecuteEventHandler(_cmdBeforeExecute);
-                _cmdEvents.BeforeExecute += new EnvDTE._dispCommandEvents_BeforeExecuteEventHandler(_cmdBeforeExecute);
-            }
-        }
-
-        private void detachCommandEvents()
-        {
-            lock(_lock) {
-                Dte2.Events.CommandEvents.BeforeExecute -= new EnvDTE._dispCommandEvents_BeforeExecuteEventHandler(_cmdBeforeExecute);
-            }
-        }
-
-        /// <summary>
-        /// Provides the BuildAction
-        /// Note: VSSOLNBUILDUPDATEFLAGS with IVsUpdateSolutionEvents4 exist only for VS2012 and higher
-        /// http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivsupdatesolutionevents4.updatesolution_beginupdateaction.aspx
-        /// See for details: http://stackoverflow.com/q/27018762
-        /// </summary>
-        private void _cmdBeforeExecute(string guidString, int id, object customIn, object customOut, ref bool cancelDefault)
-        {
-            Guid guid = new Guid(guidString);
-
-            if(GuidList.VSStd97CmdID != guid && GuidList.VSStd2KCmdID != guid) {
-                return;
-            }
-
-            if(Enum.IsDefined(typeof(BuildType), id)) {
-                _c.updateContext((BuildType)id);
-            }
+            return Event.onProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
         }
 
         /// <summary>
@@ -347,7 +182,7 @@ namespace net.r_eg.vsSBE
             if(UI.Util.focusForm(_configFrm)) {
                 return;
             }
-            _configFrm = new UI.WForms.EventsFrm(bootloader);
+            _configFrm = new UI.WForms.EventsFrm(Event.Bootloader);
             _configFrm.Show();
         }
 
@@ -451,7 +286,7 @@ namespace net.r_eg.vsSBE
 
             try
             {
-                init();
+                Event = new API.EventLevel(Dte2);
                 OleMenuCommandService mcs = (OleMenuCommandService)GetService(typeof(IMenuCommandService));
 
                 // Build / <Main App>
@@ -511,7 +346,6 @@ namespace net.r_eg.vsSBE
                 spSolution.UnadviseSolutionEvents(_pdwCookieSolution);
             }
 
-            detachCommandEvents();
             base.Dispose(disposing);
         }
         #endregion

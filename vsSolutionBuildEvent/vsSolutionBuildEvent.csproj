@@ -34,6 +34,9 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Bridge">
+      <HintPath>..\Bridge\bin\Bridge.dll</HintPath>
+    </Reference>
     <Reference Include="ICSharpCode.AvalonEdit">
       <HintPath>..\packages\AvalonEdit.5.0.2\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
@@ -134,6 +137,8 @@
     <Compile Include="Actions\DTEOperation.cs" />
     <Compile Include="Actions\HProcess.cs" />
     <Compile Include="Actions\ICommand.cs" />
+    <Compile Include="API\EventLevel.cs" />
+    <Compile Include="API\Version.cs" />
     <Compile Include="Configuration\Component.cs" />
     <Compile Include="Environment.cs" />
     <Compile Include="Events\BuildType.cs" />

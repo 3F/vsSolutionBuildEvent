@@ -22,6 +22,7 @@ using System.Linq;
 using System.Text;
 using EnvDTE80;
 using Microsoft.Build.Evaluation;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild.Exceptions;
@@ -259,7 +260,8 @@ namespace net.r_eg.vsSBE
                 // http://technet.microsoft.com/en-us/microsoft.visualstudio.shell.interop.__vsspropid%28v=vs.71%29.aspx
 
                 object dirObject = null;
-                vsSolutionBuildEventPackage.Shell.GetProperty((int)__VSSPROPID.VSSPROPID_InstallDirectory, out dirObject);
+                IVsShell shell = (IVsShell)Package.GetGlobalService(typeof(SVsShell));
+                shell.GetProperty((int)__VSSPROPID.VSSPROPID_InstallDirectory, out dirObject);
 
                 string dir              = (string)dirObject;
                 const string vDefault   = "Undefined";
@@ -280,7 +282,8 @@ namespace net.r_eg.vsSBE
                || !prop.ContainsKey("SolutionPath"))
             {
                 string dir, file, opts;
-                vsSolutionBuildEventPackage.Solution.GetSolutionInfo(out dir, out file, out opts);
+                IVsSolution solution = (IVsSolution)Package.GetGlobalService(typeof(SVsSolution));
+                solution.GetSolutionInfo(out dir, out file, out opts);
 
                 string fname                = Path.GetFileName(file);
                 string name                 = Path.GetFileNameWithoutExtension(file);

@@ -18,6 +18,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell;
+using vsSBEPackage = net.r_eg.vsSBE.vsSolutionBuildEventPackage;
 
 namespace net.r_eg.vsSBE.UI.Xaml
 {
@@ -44,10 +45,10 @@ namespace net.r_eg.vsSBE.UI.Xaml
 
             lock(_eLock)
             {
-                vsSolutionBuildEventPackage.OpenSolution -= new OpenSolutionEvent(onOpenSolution);
-                vsSolutionBuildEventPackage.OpenSolution += new OpenSolutionEvent(onOpenSolution);
-                vsSolutionBuildEventPackage.CloseSolution -= new OpenSolutionEvent(onCloseSolution);
-                vsSolutionBuildEventPackage.CloseSolution += new OpenSolutionEvent(onCloseSolution);
+                vsSBEPackage.Event.OpenedSolution -= new API.EventLevel.OpenedSolutionEvent(onOpenSolution);
+                vsSBEPackage.Event.OpenedSolution += new API.EventLevel.OpenedSolutionEvent(onOpenSolution);
+                vsSBEPackage.Event.ClosedSolution -= new API.EventLevel.ClosedSolutionEvent(onCloseSolution);
+                vsSBEPackage.Event.ClosedSolution += new API.EventLevel.ClosedSolutionEvent(onCloseSolution);
 
                 Config._.Update -= new Config.UpdateEvent(control.updateData);
                 Config._.Update += new Config.UpdateEvent(control.updateData);

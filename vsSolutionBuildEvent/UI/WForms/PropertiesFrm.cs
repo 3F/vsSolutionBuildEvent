@@ -43,20 +43,20 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// <summary>
         /// 
         /// </summary>
-        private Environment _env;
+        private IEnvironment _env;
 
         /// <summary>
         /// Caching of retrieved properties
         /// </summary>
         private ConcurrentDictionary<string, List<TMSBuildPropertyItem>> _cacheProperties;
 
-        public PropertiesFrm(ITransferDataProperty pin)
+        public PropertiesFrm(IEnvironment env, ITransferDataProperty pin)
         {
             InitializeComponent();
 
-            _env                = new Environment(vsSolutionBuildEventPackage.Dte2);
+            _env                = env;
             _msbuild            = new MSBuildParser(_env);
-            this._pin           = pin;
+            _pin                = pin;
             _cacheProperties    = new ConcurrentDictionary<string, List<TMSBuildPropertyItem>>();
         }
 

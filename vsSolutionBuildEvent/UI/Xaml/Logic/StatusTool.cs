@@ -19,6 +19,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using EnvDTE;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
 
@@ -140,7 +143,7 @@ namespace net.r_eg.vsSBE.UI.Xaml.Logic
         /// <exception cref="*"></exception>
         public void executeCommand(string cmd)
         {
-            vsSolutionBuildEventPackage.exec(cmd); //TODO
+            ((DTE)Package.GetGlobalService(typeof(SDTE))).ExecuteCommand(cmd);
         }
 
         protected virtual ISolutionEvent[] getEvent(SolutionEventType type)
