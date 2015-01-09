@@ -12,7 +12,7 @@ using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
-namespace vsSBETest.SBEScripts.Components
+namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 {
     /// <summary>
     ///This is a test class for BuildComponentTest and is intended

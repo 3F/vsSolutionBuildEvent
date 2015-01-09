@@ -9,7 +9,7 @@ using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
-namespace vsSBETest
+namespace net.r_eg.vsSBE.Test
 {
     /// <summary>
     ///This is a test class for FileComponentTest and is intended

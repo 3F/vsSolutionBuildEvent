@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts;
 
-namespace vsSBETest.SBEScripts
+namespace net.r_eg.vsSBE.Test.SBEScripts
 {
     /// <summary>
     ///This is a test class for ValuesTest and is intended

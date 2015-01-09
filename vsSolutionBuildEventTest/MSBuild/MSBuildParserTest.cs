@@ -10,7 +10,7 @@ using net.r_eg.vsSBE;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild;
 
-namespace vsSBETest.MSBuild
+namespace net.r_eg.vsSBE.Test.MSBuild
 {
     /// <summary>
     ///This is a test class for MSBuildParserTest and is intended

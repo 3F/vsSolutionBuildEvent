@@ -7,7 +7,7 @@ using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
 
-namespace vsSBETest.Actions
+namespace net.r_eg.vsSBE.Test.Actions
 {
     /// <summary>
     ///This is a test class for DTEOperationTest and is intended

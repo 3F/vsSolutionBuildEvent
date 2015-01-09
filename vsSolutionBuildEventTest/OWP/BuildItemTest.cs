@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.vsSBE;
 using net.r_eg.vsSBE.OWP;
 
-namespace vsSBETest.OWP
+namespace net.r_eg.vsSBE.Test.OWP
 {
     /// <summary>
     ///This is a test class for BuildItemTest and is intended
