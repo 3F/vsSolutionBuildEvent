@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -155,11 +155,29 @@ namespace net.r_eg.vsSBE.Actions
         }
 
         /// <summary>
+        /// Binding 'PRE' of Projects
+        /// </summary>
+        public int bindProjectPre(string project)
+        {
+            onProject(project, ExecutionOrderType.Before);
+            return VSConstants.S_OK;
+        }
+
+        /// <summary>
         /// Binding 'POST' of Projects
         /// </summary>
         public int bindProjectPost(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
         {
             onProject(pHierProj, ExecutionOrderType.After, fSuccess == 1 ? true : false);
+            return VSConstants.S_OK;
+        }
+
+        /// <summary>
+        /// Binding 'POST' of Projects
+        /// </summary>
+        public int bindProjectPost(string project, int fSuccess)
+        {
+            onProject(project, ExecutionOrderType.After, fSuccess == 1 ? true : false);
             return VSConstants.S_OK;
         }
 
@@ -200,24 +218,10 @@ namespace net.r_eg.vsSBE.Actions
         }
 
         /// <summary>
-        /// Resetting all progress of handling events
+        /// Full process of building.
         /// </summary>
-        /// <returns>true value if successful resetted</returns>
-        public bool reset()
-        {
-            if(!IsAllowActions) {
-                return false;
-            }
-            projects.Clear();
-            current = new ExecutionOrder();
-            Status._.flush();
-            return true;
-        }
-
-        /// <summary>
-        /// Listener of raw OWP
-        /// </summary>
-        void OWP.IListenerOWPL.raw(string data)
+        /// <param name="data">Raw data</param>
+        public void bindBuildRaw(string data)
         {
             if(!IsAllowActions)
             {
@@ -274,6 +278,27 @@ namespace net.r_eg.vsSBE.Actions
                     sbeOutput(evt, ref data);
                 }
             }
+        }
+
+        /// <summary>
+        /// Resetting all progress of handling events
+        /// </summary>
+        /// <returns>true value if successful resetted</returns>
+        public bool reset()
+        {
+            if(!IsAllowActions) {
+                return false;
+            }
+            projects.Clear();
+            current = new ExecutionOrder();
+            Status._.flush();
+            return true;
+        }
+
+        //TODO:
+        void OWP.IListenerOWPL.raw(string data)
+        {
+            bindBuildRaw(data);
         }
 
         /// <summary>
@@ -435,11 +460,14 @@ namespace net.r_eg.vsSBE.Actions
 
         protected void onProject(IVsHierarchy pHierProj, ExecutionOrderType type, bool fSuccess = true)
         {
-            string project      = getProjectName(pHierProj);
-            projects[project]   = type;
+            onProject(getProjectName(pHierProj), type, fSuccess);
+        }
 
-            current.Project = project;
-            current.Order   = type;
+        protected void onProject(string project, ExecutionOrderType type, bool fSuccess = true)
+        {
+            projects[project]   = type;
+            current.Project     = project;
+            current.Order       = type;
 
             Log.nlog.Trace("onProject: '{0}':{1} == {2}", project, type, fSuccess);
 

@@ -68,7 +68,7 @@ namespace net.r_eg.vsSBE.Actions
             }
             this.type = type;
 
-            string cfg = env.SolutionConfigurationFormat(env.SolutionActiveConfiguration);
+            string cfg = env.SolutionActiveCfgString;
 
             if(evt.ToConfiguration != null 
                 && evt.ToConfiguration.Length > 0 && evt.ToConfiguration.Where(s => s == cfg).Count() < 1)
@@ -147,7 +147,7 @@ namespace net.r_eg.vsSBE.Actions
             if(operation.Command == null || operation.Command.Length < 1) {
                 return true;
             }
-            (new DTEOperation((EnvDTE.DTE)env.Dte2, type)).exec(operation.Command, operation.AbortOnFirstError);
+            (new DTEOperation(env, type)).exec(operation.Command, operation.AbortOnFirstError);
             return true;
         }
 

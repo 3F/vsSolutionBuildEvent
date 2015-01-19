@@ -108,6 +108,7 @@
     <Compile Include="Actions\HProcess.cs" />
     <Compile Include="Actions\ICommand.cs" />
     <Compile Include="API\EventLevel.cs" />
+    <Compile Include="API\IEventLevel.cs" />
     <Compile Include="API\Version.cs" />
     <Compile Include="Configuration\Component.cs" />
     <Compile Include="Environment.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="Events\IExecutionOrder.cs" />
     <Compile Include="Extensions\ArrayExtension.cs" />
     <Compile Include="Extensions\ObjectExtension.cs" />
+    <Compile Include="IsolatedEnv.cs" />
     <Compile Include="SBEScripts\Bootloader.cs" />
     <Compile Include="SBEScripts\Components\Component.cs" />
     <Compile Include="SBEScripts\Dom\CompletionData.cs" />
@@ -190,6 +192,7 @@
     <Compile Include="SBEScripts\UserVariable.cs" />
     <Compile Include="SBEScripts\Value.cs" />
     <Compile Include="Settings.cs" />
+    <Compile Include="SolutionParser.cs" />
     <Compile Include="SynchSubscribers.cs" />
     <Compile Include="MSBuild\TPreparedData.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />

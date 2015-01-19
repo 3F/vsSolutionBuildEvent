@@ -45,10 +45,10 @@ namespace net.r_eg.vsSBE.UI.Xaml
 
             lock(_eLock)
             {
-                vsSBEPackage.Event.OpenedSolution -= new API.EventLevel.OpenedSolutionEvent(onOpenSolution);
-                vsSBEPackage.Event.OpenedSolution += new API.EventLevel.OpenedSolutionEvent(onOpenSolution);
-                vsSBEPackage.Event.ClosedSolution -= new API.EventLevel.ClosedSolutionEvent(onCloseSolution);
-                vsSBEPackage.Event.ClosedSolution += new API.EventLevel.ClosedSolutionEvent(onCloseSolution);
+                vsSBEPackage.Event.OpenedSolution -= new EventHandler(onOpenSolution);
+                vsSBEPackage.Event.OpenedSolution += new EventHandler(onOpenSolution);
+                vsSBEPackage.Event.ClosedSolution -= new EventHandler(onCloseSolution);
+                vsSBEPackage.Event.ClosedSolution += new EventHandler(onCloseSolution);
 
                 Config._.Update -= new Config.UpdateEvent(control.updateData);
                 Config._.Update += new Config.UpdateEvent(control.updateData);
@@ -57,12 +57,12 @@ namespace net.r_eg.vsSBE.UI.Xaml
             }
         }
 
-        protected void onCloseSolution()
+        protected void onCloseSolution(object sender, EventArgs e)
         {
             control.enabledPanel(false);
         }
 
-        protected void onOpenSolution()
+        protected void onOpenSolution(object sender, EventArgs e)
         {
             control.enabledPanel(true);
         }

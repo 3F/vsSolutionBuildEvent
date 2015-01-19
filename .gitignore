@@ -13,3 +13,7 @@
 /Bridge/bin
 /Devenv/bin
 /Devenv/obj
+/CI.MSBuild/bin
+/CI.MSBuild/obj
+/Provider/bin
+/Provider/obj

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -22,24 +22,19 @@ namespace net.r_eg.vsSBE
     public interface IEnvironment
     {
         /// <summary>
-        /// Provides projects from EnvDTE
-        /// </summary>
-        IEnumerable<EnvDTE.Project> DTEProjects { get; }
-
-        /// <summary>
         /// Simple list of names from EnvDTE projects
         /// </summary>
-        List<string> DTEProjectsList { get; }
-
-        /// <summary>
-        /// Should provide the Build.Evaluation.Project by project name
-        /// </summary>
-        Microsoft.Build.Evaluation.Project getProject(string project);
+        List<string> ProjectsList { get; }
 
         /// <summary>
         /// Should provide active configuration for current solution
         /// </summary>
-        EnvDTE80.SolutionConfiguration2 SolutionActiveConfiguration { get; }
+        EnvDTE80.SolutionConfiguration2 SolutionActiveCfg { get; }
+
+        /// <summary>
+        /// Formatted string with active configuration for current solution
+        /// </summary>
+        string SolutionActiveCfgString { get; }
 
         /// <summary>
         /// Should provide all configurations for current solution
@@ -47,25 +42,47 @@ namespace net.r_eg.vsSBE
         IEnumerable<EnvDTE80.SolutionConfiguration2> SolutionConfigurations { get; }
 
         /// <summary>
+        /// Name from "Set as StartUp Project"
+        /// </summary>
+        string StartupProjectString { get; }
+
+        /// <summary>
+        /// Events in the extensibility model
+        /// </summary>
+        EnvDTE.Events Events { get; }
+
+        /// <summary>
+        /// Solution path from the DTE-context
+        /// </summary>
+        string SolutionPath { get; }
+
+        /// <summary>
+        /// Contains all of the commands in the environment
+        /// </summary>
+        EnvDTE.Commands Commands { get; }
+
+        /// <summary>
+        /// Should provide instance of the Build.Evaluation.Project by project name
+        /// </summary>
+        Microsoft.Build.Evaluation.Project getProject(string name);
+
+        /// <summary>
         /// Gets configuration for specific format
         /// e.g.: http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivscfg.get_displayname.aspx
         /// </summary>
-        string SolutionConfigurationFormat(EnvDTE80.SolutionConfiguration2 cfg);
-
-        /// <summary>
-        /// Name from "Set as SturtUp Project"
-        /// </summary>
-        string StartupProjectString { get; }
+        string SolutionCfgFormat(EnvDTE80.SolutionConfiguration2 cfg);
 
         /// <summary>
         /// Provide global property for all existing projects
         /// </summary>
         /// <param name="name">Property name</param>
-        string getSolutionGlobalProperty(string name);
+        string getSolutionProperty(string name);
 
         /// <summary>
-        /// DTE context
+        /// Execution command with DTE
         /// </summary>
-        EnvDTE80.DTE2 Dte2 { get; }
+        /// <param name="name">Command name</param>
+        /// <param name="args">Command arguments</param>
+        void exec(string name, string args = "");
     }
 }

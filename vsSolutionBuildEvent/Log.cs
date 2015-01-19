@@ -105,8 +105,8 @@ namespace net.r_eg.vsSBE
                 return;
             }
 
-            Debug.WriteLine(message);
-            Console.Out.WriteLine(message);
+            Console.Write(message);
+            Debug.Write(message);
         }
 
         /// <summary>

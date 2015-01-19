@@ -104,15 +104,16 @@ namespace net.r_eg.vsSBE.Test
             public static IEnvironment MockOfIEnvironment
             {
                 get {
-                    var mockEnv = new Mock<IEnvironment>();
-                    mockEnv.SetupGet(p => p.Dte2).Returns((EnvDTE80.DTE2)null);
-                    return mockEnv.Object;
+                    return new Environment((EnvDTE80.DTE2)null);
+                    //var mockEnv = new Mock<IEnvironment>();
+                    //mockEnv.SetupGet(p => p.Dte2).Returns((EnvDTE80.DTE2)null);
+                    //return mockEnv.Object;
                 }
             }
 
             public DTEComponentAccessor(): base(MockOfIEnvironment)
             {
-                var mock = new Mock<DTEOperation>((EnvDTE80.DTE2)null, SolutionEventType.General);
+                var mock = new Mock<DTEOperation>((IEnvironment)null, SolutionEventType.General);
                 mock.Setup(m => m.exec(It.IsAny<string[]>(), It.IsAny<bool>()));
                 dteo = mock.Object;
             }

@@ -45,7 +45,7 @@ namespace net.r_eg.vsSBE.Bridge
 
         /// <summary>
         /// 'PRE' of the solution.
-        /// Called before any build actions have begun.
+        /// Before any build actions have begun.
         /// </summary>
         /// <param name="pfCancelUpdate">Pointer to a flag indicating cancel update.</param>
         /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
@@ -53,14 +53,14 @@ namespace net.r_eg.vsSBE.Bridge
 
         /// <summary>
         /// 'Cancel/Abort' of the solution.
-        /// Called when a build is being cancelled.
+        /// When a build is being cancelled.
         /// </summary>
         /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
         int onCancel();
 
         /// <summary>
         /// 'POST' of the solution.
-        /// Called when a build is completed.
+        /// When a build is completed.
         /// </summary>
         /// <param name="fSucceeded">true if no update actions failed.</param>
         /// <param name="fModified">true if any update action succeeded.</param>
@@ -69,8 +69,8 @@ namespace net.r_eg.vsSBE.Bridge
         int onPost(int fSucceeded, int fModified, int fCancelCommand);
 
         /// <summary>
-        /// 'PRE' of Projects.
-        /// Called right before a project configuration begins to build.
+        /// 'PRE' of Project.
+        /// Before a project configuration begins to build.
         /// </summary>
         /// <param name="pHierProj">Pointer to a hierarchy project object.</param>
         /// <param name="pCfgProj">Pointer to a configuration project object.</param>
@@ -81,8 +81,16 @@ namespace net.r_eg.vsSBE.Bridge
         int onProjectPre(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel);
 
         /// <summary>
-        /// 'POST' of Projects.
-        /// Called right after a project configuration is finished building.
+        /// 'PRE' of Project.
+        /// Before a project configuration begins to build.
+        /// </summary>
+        /// <param name="project">Project name.</param>
+        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        int onProjectPre(string project);
+
+        /// <summary>
+        /// 'POST' of Project.
+        /// After a project configuration is finished building.
         /// </summary>
         /// <param name="pHierProj">Pointer to a hierarchy project object.</param>
         /// <param name="pCfgProj">Pointer to a configuration project object.</param>
@@ -92,5 +100,14 @@ namespace net.r_eg.vsSBE.Bridge
         /// <param name="fCancel">Flag indicating cancel.</param>
         /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
         int onProjectPost(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel);
+
+        /// <summary>
+        /// 'POST' of Project.
+        /// After a project configuration is finished building.
+        /// </summary>
+        /// <param name="project">Project name.</param>
+        /// <param name="fSuccess">Flag indicating success.</param>
+        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        int onProjectPost(string project, int fSuccess);
     }
 }

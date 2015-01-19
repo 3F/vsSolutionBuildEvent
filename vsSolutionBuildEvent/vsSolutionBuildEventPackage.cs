@@ -58,9 +58,9 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// For working and supporting the all public events
+        /// For work and supporting the all public events
         /// </summary>
-        public static API.EventLevel Event
+        public static API.IEventLevel Event
         {
             get;
             private set;
@@ -91,6 +91,11 @@ namespace net.r_eg.vsSBE
         private uint _pdwCookieSolutionBM;
 
         /// <summary>
+        /// Listener of the OutputWindowsPane
+        /// </summary>
+        private OWP.Listener _owpListener;
+
+        /// <summary>
         /// VS IDE menu - Build / <Main App>
         /// </summary>
         private MenuCommand _menuItemMain;
@@ -113,10 +118,9 @@ namespace net.r_eg.vsSBE
             try {
                 FindToolWindow(typeof(UI.Xaml.StatusToolWindow), 0, true);
                 Log.paneAttach("Solution Build-Events", Dte2);
+                Log.show();
 
                 int ret = Event.solutionOpened(pUnkReserved, fNewSolution);
-
-                _state();
                 _menuItemMain.Visible = true;
                 return ret;
             }
@@ -174,6 +178,15 @@ namespace net.r_eg.vsSBE
             return Event.onProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
         }
 
+        private void init()
+        {
+            Event = new API.EventLevel(Dte2);
+
+            _owpListener = new OWP.Listener(Event.Environment, "Build");
+            _owpListener.attachEvents();
+            _owpListener.register(Event.Action);
+        }
+
         /// <summary>
         /// to show the main window if clicked # Build/<pack> #
         /// </summary>
@@ -193,35 +206,6 @@ namespace net.r_eg.vsSBE
                 throw new ComponentException("Cannot create UI.StatusToolWindow");
             }
             ErrorHandler.ThrowOnFailure(((IVsWindowFrame)window.Frame).Show());
-        }
-
-        private void _state()
-        {
-            Func<ISolutionEvent[], string, string> about = delegate(ISolutionEvent[] evt, string caption)
-            {
-                if(evt == null) {
-                    return String.Format("\n\t-- /--] {0} :: Not Initialized", caption);
-                }
-
-                System.Text.StringBuilder info = new System.Text.StringBuilder();
-                info.Append(String.Format("\n\t{0,2} /{1,2}] {2} :: ", evt.Where(i => i.Enabled).Count(), evt.Length, caption));
-                foreach(ISolutionEvent item in evt) {
-                    info.Append(String.Format("[{0}]", (item.Enabled) ? "!" : "X"));
-                }
-                return info.ToString();
-            };
-
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            sb.Append(about(Config._.Data.PreBuild,      "Pre-Build     "));
-            sb.Append(about(Config._.Data.PostBuild,     "Post-Build    "));
-            sb.Append(about(Config._.Data.CancelBuild,   "Cancel-Build  "));
-            sb.Append(about(Config._.Data.WarningsBuild, "Warnings-Build"));
-            sb.Append(about(Config._.Data.ErrorsBuild,   "Errors-Build  "));
-            sb.Append(about(Config._.Data.OWPBuild,      "Output-Build  "));
-            sb.Append(about(Config._.Data.Transmitter,   "Transmitter   "));
-            sb.Append("\n---\n");
-            Log.print(sb.ToString());
-            Log.nlog.Info("vsSBE tool pane: View -> Other Windows -> Solution Build-Events");
         }
 
         #region unused
@@ -286,7 +270,7 @@ namespace net.r_eg.vsSBE
 
             try
             {
-                Event = new API.EventLevel(Dte2);
+                init();
                 OleMenuCommandService mcs = (OleMenuCommandService)GetService(typeof(IMenuCommandService));
 
                 // Build / <Main App>

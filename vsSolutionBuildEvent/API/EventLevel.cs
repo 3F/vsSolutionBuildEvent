@@ -29,27 +29,17 @@ using net.r_eg.vsSBE.SBEScripts;
 
 namespace net.r_eg.vsSBE.API
 {
-    public class EventLevel: Bridge.IEvent, IDisposable
+    public class EventLevel: IEventLevel, Bridge.IBuild, Bridge.IEvent, IDisposable
     {
-        /// <summary>
-        /// Notification about of the solution after opening/creating
-        /// </summary>
-        public delegate void OpenedSolutionEvent();
-
-        /// <summary>
-        /// Notification about of the solution after closing
-        /// </summary>
-        public delegate void ClosedSolutionEvent();
-
         /// <summary>
         /// The solution has been opened
         /// </summary>
-        public event OpenedSolutionEvent OpenedSolution = delegate { };
+        public event EventHandler OpenedSolution = delegate(object sender, EventArgs e) { };
 
         /// <summary>
         /// The solution has been closed
         /// </summary>
-        public event ClosedSolutionEvent ClosedSolution = delegate { };
+        public event EventHandler ClosedSolution = delegate(object sender, EventArgs e) { };
 
         /// <summary>
         /// Main loader
@@ -61,9 +51,22 @@ namespace net.r_eg.vsSBE.API
         }
 
         /// <summary>
-        /// DTE2 Context
+        /// Binder of action
         /// </summary>
-        protected DTE2 dte2;
+        public Actions.Connection Action
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
+        /// Used Environment
+        /// </summary>
+        public IEnvironment Environment
+        {
+            get;
+            protected set;
+        }
 
         /// <summary>
         /// Container of user-variables
@@ -71,19 +74,9 @@ namespace net.r_eg.vsSBE.API
         protected IUserVariable uvariable = new UserVariable();
 
         /// <summary>
-        /// SBE support
-        /// </summary>
-        protected Actions.Connection action;
-
-        /// <summary>
         /// Provides command events for automation clients
         /// </summary>
         protected EnvDTE.CommandEvents cmdEvents;
-
-        /// <summary>
-        /// Working with the OutputWindowsPane -> "Build" pane
-        /// </summary>
-        private OWP.Listener _owpListener;
 
         /// <summary>
         /// object synch.
@@ -99,10 +92,11 @@ namespace net.r_eg.vsSBE.API
         public int solutionOpened(object pUnkReserved, int fNewSolution)
         {
             try {
-                Config._.load(extractPath(dte2));
+                Config._.load(Environment.SolutionPath);
                 Config._.updateActivation(Bootloader);
+                _state();
 
-                OpenedSolution();
+                OpenedSolution(this, new EventArgs());
                 return VSConstants.S_OK;
             }
             catch(Exception ex) {
@@ -118,7 +112,7 @@ namespace net.r_eg.vsSBE.API
         /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
         public int solutionClosed(object pUnkReserved)
         {
-            ClosedSolution();
+            ClosedSolution(this, new EventArgs());
             return VSConstants.S_OK;
         }
 
@@ -131,7 +125,7 @@ namespace net.r_eg.vsSBE.API
         public int onPre(ref int pfCancelUpdate)
         {
             try {
-                return action.bindPre(ref pfCancelUpdate);
+                return Action.bindPre(ref pfCancelUpdate);
             }
             catch(Exception ex) {
                 Log.nlog.Error("Failed Solution.Pre-binding: '{0}'", ex.Message);
@@ -147,7 +141,7 @@ namespace net.r_eg.vsSBE.API
         public int onCancel()
         {
             try {
-                return action.bindCancel();
+                return Action.bindCancel();
             }
             catch(Exception ex) {
                 Log.nlog.Error("Failed Solution.Cancel-binding: '{0}'", ex.Message);
@@ -166,8 +160,8 @@ namespace net.r_eg.vsSBE.API
         public int onPost(int fSucceeded, int fModified, int fCancelCommand)
         {
             try {
-                int ret = action.bindPost(fSucceeded, fModified, fCancelCommand);
-                if(action.reset()) {
+                int ret = Action.bindPost(fSucceeded, fModified, fCancelCommand);
+                if(Action.reset()) {
                     uvariable.unsetAll();
                 }
                 return ret;
@@ -191,10 +185,27 @@ namespace net.r_eg.vsSBE.API
         public int onProjectPre(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel)
         {
             try {
-                return action.bindProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel);
+                return Action.bindProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel);
             }
             catch(Exception ex) {
                 Log.nlog.Error("Failed Project.Pre-binding: '{0}'", ex.Message);
+            }
+            return VSConstants.S_FALSE;
+        }
+
+        /// <summary>
+        /// 'PRE' of Project.
+        /// Before a project configuration begins to build.
+        /// </summary>
+        /// <param name="project">Project name.</param>
+        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        public int onProjectPre(string project)
+        {
+            try {
+                return Action.bindProjectPre(project);
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Failed Project.Pre-binding/simple: '{0}'", ex.Message);
             }
             return VSConstants.S_FALSE;
         }
@@ -213,12 +224,44 @@ namespace net.r_eg.vsSBE.API
         public int onProjectPost(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
         {
             try {
-                return action.bindProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
+                return Action.bindProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
             }
             catch(Exception ex) {
                 Log.nlog.Error("Failed Project.Post-binding: '{0}'", ex.Message);
             }
             return VSConstants.S_FALSE;
+        }
+
+        /// <summary>
+        /// 'POST' of Project.
+        /// After a project configuration is finished building.
+        /// </summary>
+        /// <param name="project">Project name.</param>
+        /// <param name="fSuccess">Flag indicating success.</param>
+        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        public int onProjectPost(string project, int fSuccess)
+        {
+            try {
+                return Action.bindProjectPost(project, fSuccess);
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Failed Project.Post-binding/simple: '{0}'", ex.Message);
+            }
+            return VSConstants.S_FALSE;
+        }
+
+        /// <summary>
+        /// During assembly.
+        /// </summary>
+        /// <param name="data">Raw data of building process</param>
+        public void onBuildRaw(string data)
+        {
+            try {
+                Action.bindBuildRaw(data);
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Failed build-raw: '{0}'", ex.Message);
+            }
         }
 
         public void Dispose()
@@ -228,50 +271,36 @@ namespace net.r_eg.vsSBE.API
 
         public EventLevel(DTE2 dte2)
         {
-            this.dte2 = dte2;
+            this.Environment = new Environment(dte2);
+            init();
+        }
+
+        public EventLevel(string solutionFile, Dictionary<string, string> properties)
+        {
+            this.Environment = new IsolatedEnv(solutionFile, properties);
             init();
         }
 
         protected void init()
         {
-            Log.show();
             attachCommandEvents();
+            this.Bootloader = new Bootloader(Environment, uvariable);
 
-            IEnvironment env    = new Environment(dte2);
-            this.Bootloader     = new Bootloader(env, uvariable);
-
-            action = new Actions.Connection(
-                            new Actions.Command(env,
+            Action = new Actions.Connection(
+                            new Actions.Command(Environment,
                                          new Script(Bootloader),
-                                         new MSBuildParser(env, uvariable))
+                                         new MSBuildParser(Environment, uvariable))
             );
-
-            _owpListener = new OWP.Listener(env, "Build");
-            _owpListener.attachEvents();
-            _owpListener.register(action);
-        }
-
-        /// <summary>
-        /// Getting work path from DTE-context of current solution
-        /// </summary>
-        /// <param name="dte2">DTE context</param>
-        protected string extractPath(DTE2 dte2)
-        {
-            string path = dte2.Solution.FullName; // empty if used the new solution 
-            if(string.IsNullOrEmpty(path)) {
-                path = dte2.Solution.Properties.Item("Path").Value.ToString();
-            }
-            string dir = Path.GetDirectoryName(path);
-
-            if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
-                dir += Path.DirectorySeparatorChar;
-            }
-            return dir;
         }
 
         protected void attachCommandEvents()
         {
-            cmdEvents = dte2.Events.CommandEvents; // protection from garbage collector
+            if(Environment.Events == null) {
+                Log.nlog.Warn("Context of build action: Disabled for current Environment.");
+                return; //this can be for emulated DTE2 context
+            }
+
+            cmdEvents = Environment.Events.CommandEvents; // protection from garbage collector
             lock(_lock) {
                 cmdEvents.BeforeExecute -= new EnvDTE._dispCommandEvents_BeforeExecuteEventHandler(_cmdBeforeExecute);
                 cmdEvents.BeforeExecute += new EnvDTE._dispCommandEvents_BeforeExecuteEventHandler(_cmdBeforeExecute);
@@ -280,9 +309,41 @@ namespace net.r_eg.vsSBE.API
 
         protected void detachCommandEvents()
         {
-            lock(_lock) {
-                dte2.Events.CommandEvents.BeforeExecute -= new EnvDTE._dispCommandEvents_BeforeExecuteEventHandler(_cmdBeforeExecute);
+            if(cmdEvents == null) {
+                return;
             }
+            lock(_lock) {
+                cmdEvents.BeforeExecute -= new EnvDTE._dispCommandEvents_BeforeExecuteEventHandler(_cmdBeforeExecute);
+            }
+        }
+
+        private void _state()
+        {
+            Func<ISolutionEvent[], string, string> about = delegate(ISolutionEvent[] evt, string caption)
+            {
+                if(evt == null) {
+                    return String.Format("\n\t-- /--] {0} :: Not Initialized", caption);
+                }
+
+                System.Text.StringBuilder info = new System.Text.StringBuilder();
+                info.Append(String.Format("\n\t{0,2} /{1,2}] {2} :: ", evt.Where(i => i.Enabled).Count(), evt.Length, caption));
+                foreach(ISolutionEvent item in evt) {
+                    info.Append(String.Format("[{0}]", (item.Enabled) ? "!" : "X"));
+                }
+                return info.ToString();
+            };
+
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.Append(about(Config._.Data.PreBuild,      "Pre-Build     "));
+            sb.Append(about(Config._.Data.PostBuild,     "Post-Build    "));
+            sb.Append(about(Config._.Data.CancelBuild,   "Cancel-Build  "));
+            sb.Append(about(Config._.Data.WarningsBuild, "Warnings-Build"));
+            sb.Append(about(Config._.Data.ErrorsBuild,   "Errors-Build  "));
+            sb.Append(about(Config._.Data.OWPBuild,      "Output-Build  "));
+            sb.Append(about(Config._.Data.Transmitter,   "Transmitter   "));
+            sb.Append("\n---\n");
+            Log.print(sb.ToString());
+            Log.nlog.Info("vsSBE tool pane: View -> Other Windows -> Solution Build-Events");
         }
 
         /// <summary>
@@ -300,7 +361,7 @@ namespace net.r_eg.vsSBE.API
             }
 
             if(Enum.IsDefined(typeof(BuildType), id)) {
-                action.updateContext((BuildType)id);
+                Action.updateContext((BuildType)id);
             }
         }
     }

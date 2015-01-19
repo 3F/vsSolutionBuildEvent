@@ -70,8 +70,6 @@
     <Compile Include="Connect.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Library.cs" />
-    <Compile Include="Loader.cs" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="EnvDTE">
@@ -102,6 +100,10 @@
     <ProjectReference Include="..\Bridge\Bridge.csproj">
       <Project>{73919171-44B6-4536-B892-F1FCA653887C}</Project>
       <Name>Bridge</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Provider\Provider.csproj">
+      <Project>{4F8BB8CD-1116-4F07-9B8F-06D69FB8589B}</Project>
+      <Name>Provider</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />

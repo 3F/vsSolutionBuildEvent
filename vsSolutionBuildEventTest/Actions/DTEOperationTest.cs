@@ -40,7 +40,7 @@ namespace net.r_eg.vsSBE.Test.Actions
         [TestMethod()]
         public void parseTest()
         {
-            DTEOperation target = new DTEOperation((DTE)null, SolutionEventType.General);
+            DTEOperation target = new DTEOperation((IEnvironment)null, SolutionEventType.General);
 
             string line = "File.OpenProject(\"c:\\path\\app.sln\")";
             DTEOperation.DTEPrepared actual = target.parse(line);
@@ -55,7 +55,7 @@ namespace net.r_eg.vsSBE.Test.Actions
         [TestMethod()]
         public void parseTest2()
         {
-            DTEOperation target = new DTEOperation((DTE)null, SolutionEventType.General);
+            DTEOperation target = new DTEOperation((IEnvironment)null, SolutionEventType.General);
 
             string line = "Debug.StartWithoutDebugging";
             DTEOperation.DTEPrepared actual = target.parse(line);
@@ -71,7 +71,7 @@ namespace net.r_eg.vsSBE.Test.Actions
         [ExpectedException(typeof(IncorrectSyntaxException))]
         public void parseTest3()
         {
-            DTEOperation target = new DTEOperation((DTE)null, SolutionEventType.General);
+            DTEOperation target = new DTEOperation((IEnvironment)null, SolutionEventType.General);
 
             string line = "Debug StartWithoutDebugging";
             DTEOperation.DTEPrepared actual = target.parse(line);
@@ -84,7 +84,7 @@ namespace net.r_eg.vsSBE.Test.Actions
         [ExpectedException(typeof(IncorrectSyntaxException))]
         public void parseTest4()
         {
-            DTEOperation target = new DTEOperation((DTE)null, SolutionEventType.General);
+            DTEOperation target = new DTEOperation((IEnvironment)null, SolutionEventType.General);
 
             string line = "";
             DTEOperation.DTEPrepared actual = target.parse(line);
@@ -96,7 +96,7 @@ namespace net.r_eg.vsSBE.Test.Actions
         [TestMethod()]
         public void parseTest5()
         {
-            DTEOperation target = new DTEOperation((DTE)null, SolutionEventType.General);
+            DTEOperation target = new DTEOperation((IEnvironment)null, SolutionEventType.General);
 
             string line = "  OpenProject(arg)  ";
             DTEOperation.DTEPrepared actual = target.parse(line);
@@ -200,8 +200,8 @@ namespace net.r_eg.vsSBE.Test.Actions
         {
             public class Accessor: DTEOperation
             {
-                public Accessor(): base((DTE)null, SolutionEventType.General) {}
-                public Accessor(DTE dte, SolutionEventType type): base(dte, type) {}
+                public Accessor(): base((IEnvironment)null, SolutionEventType.General) {}
+                public Accessor(IEnvironment env, SolutionEventType type): base(env, type) {}
             }
 
             public class ToExec: Accessor

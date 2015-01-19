@@ -80,10 +80,7 @@ namespace net.r_eg.vsSBE.Actions
             }
         }
 
-        /// <summary>
-        /// DTE context
-        /// </summary>
-        protected DTE dte;
+        protected IEnvironment env;
 
         /// <summary>
         /// splitted by event type
@@ -197,7 +194,7 @@ namespace net.r_eg.vsSBE.Actions
 
         public virtual void exec(string name, string args = "")
         {
-            dte.ExecuteCommand(name, (args == null)? String.Empty : args);
+            env.exec(name, args);
         }
 
         public void flushQueue()
@@ -213,9 +210,9 @@ namespace net.r_eg.vsSBE.Actions
             queues[type] = new TQueue();
         }
 
-        public DTEOperation(DTE dte, SolutionEventType type)
+        public DTEOperation(IEnvironment env, SolutionEventType type)
         {
-            this.dte    = dte;
+            this.env    = env;
             this.type   = type;
             initQueue(type);
         }

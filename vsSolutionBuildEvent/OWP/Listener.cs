@@ -51,40 +51,44 @@ namespace net.r_eg.vsSBE.OWP
         private int _prevCountLines = 1;
 
         /// <summary>
-        /// events handlers
+        /// obj synch.
         /// </summary>
-        private _dispOutputWindowEvents_PaneUpdatedEventHandler _ePUpdated;
-        private _dispOutputWindowEvents_PaneAddedEventHandler _ePAdded;
-        private _dispOutputWindowEvents_PaneClearingEventHandler _ePClearing;
-
         private Object _eLock = new Object();
 
         public void attachEvents()
         {
+            if(evtOWP == null) {
+                Log.nlog.Warn("OWP: Disabled for current Environment.");
+                return;
+            }
+
             lock(_eLock) {
                 detachEvents();
-                evtOWP.PaneUpdated     += _ePUpdated;
-                evtOWP.PaneAdded       += _ePAdded;
-                evtOWP.PaneClearing    += _ePClearing;
+                evtOWP.PaneUpdated      += new _dispOutputWindowEvents_PaneUpdatedEventHandler(evtPaneUpdated);
+                evtOWP.PaneAdded        += new _dispOutputWindowEvents_PaneAddedEventHandler(evtPaneAdded);
+                evtOWP.PaneClearing     += new _dispOutputWindowEvents_PaneClearingEventHandler(evtPaneClearing);
             }
         }
 
         public void detachEvents()
         {
+            if(evtOWP == null) {
+                return;
+            }
             lock(_eLock) {
-                evtOWP.PaneUpdated     -= _ePUpdated;
-                evtOWP.PaneAdded       -= _ePAdded;
-                evtOWP.PaneClearing    -= _ePClearing;
+                evtOWP.PaneUpdated      -= new _dispOutputWindowEvents_PaneUpdatedEventHandler(evtPaneUpdated);
+                evtOWP.PaneAdded        -= new _dispOutputWindowEvents_PaneAddedEventHandler(evtPaneAdded);
+                evtOWP.PaneClearing     -= new _dispOutputWindowEvents_PaneClearingEventHandler(evtPaneClearing);
             }
         }
 
         public Listener(IEnvironment env, string item)
         {
-            this.item   = item;
-            evtOWP      = env.Dte2.Events.get_OutputWindowEvents(item);
-            _ePUpdated  = new _dispOutputWindowEvents_PaneUpdatedEventHandler(evtPaneUpdated);
-            _ePAdded    = new _dispOutputWindowEvents_PaneAddedEventHandler(evtPaneAdded);
-            _ePClearing = new _dispOutputWindowEvents_PaneClearingEventHandler(evtPaneClearing);
+            this.item = item;
+
+            if(env.Events != null) {
+                evtOWP = env.Events.get_OutputWindowEvents(item);
+            }
         }
 
         /// <summary>

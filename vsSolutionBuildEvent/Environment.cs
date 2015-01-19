@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,12 +19,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using EnvDTE80;
 using Microsoft.Build.Evaluation;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild.Exceptions;
 
 namespace net.r_eg.vsSBE
@@ -32,9 +30,110 @@ namespace net.r_eg.vsSBE
     public class Environment: IEnvironment
     {
         /// <summary>
-        /// Getting projects from EnvDTE
+        /// Simple list of names from EnvDTE projects
         /// </summary>
-        public virtual IEnumerable<EnvDTE.Project> DTEProjects
+        public List<string> ProjectsList
+        {
+            get
+            {
+                try {
+                    return DTEProjects.Select(p => p.Name).ToList<string>();
+                }
+                catch(Exception ex) {
+                    Log.nlog.Error("Failed getting project from EnvDTE: {0}", ex.Message);
+                }
+                return new List<string>();
+            }
+        }
+
+        /// <summary>
+        /// Events in the extensibility model
+        /// </summary>
+        public EnvDTE.Events Events
+        {
+            get { return Dte2.Events; }
+        }
+
+        /// <summary>
+        /// Contains all of the commands in the environment
+        /// </summary>
+        public EnvDTE.Commands Commands
+        {
+            get { return Dte2.Commands; }
+        }
+
+        /// <summary>
+        /// Active configuration for current solution
+        /// </summary>
+        public SolutionConfiguration2 SolutionActiveCfg
+        {
+            get { return (SolutionConfiguration2)Dte2.Solution.SolutionBuild.ActiveConfiguration; }
+        }
+
+        /// <summary>
+        /// Formatted string with active configuration for current solution
+        /// </summary>
+        public string SolutionActiveCfgString
+        {
+            get {
+                return SolutionCfgFormat(SolutionActiveCfg);
+            }
+        }
+
+        /// <summary>
+        /// All configurations for current solution
+        /// </summary>
+        public IEnumerable<SolutionConfiguration2> SolutionConfigurations
+        {
+            get {
+                foreach(SolutionConfiguration2 cfg in Dte2.Solution.SolutionBuild.SolutionConfigurations) {
+                    yield return cfg;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Getting name from "Set as StartUp Project"
+        /// </summary>
+        public virtual string StartupProjectString
+        {
+            get
+            {
+                foreach(string project in (Array)Dte2.Solution.SolutionBuild.StartupProjects)
+                {
+                    if(String.IsNullOrEmpty(project)) {
+                        continue;
+                    }
+                    return project;
+                }
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Solution path from the DTE-context
+        /// </summary>
+        public string SolutionPath
+        {
+            get {
+                if(solutionPath != null) {
+                    return solutionPath;
+                }
+                solutionPath = extractPath(Dte2);
+                return solutionPath;
+            }
+        }
+        protected string solutionPath = null;
+
+        /// <summary>
+        /// DTE2 context
+        /// </summary>
+        protected DTE2 Dte2 { get; set; }
+
+        /// <summary>
+        /// Getting projects from DTE
+        /// </summary>
+        protected virtual IEnumerable<EnvDTE.Project> DTEProjects
         {
             get
             {
@@ -49,51 +148,48 @@ namespace net.r_eg.vsSBE
             }
         }
 
-        /// <summary>
-        /// Simple list of names from EnvDTE projects
-        /// </summary>
-        public List<string> DTEProjectsList
+        protected IEnumerable<EnvDTE.Project> DTEProjectsRaw
         {
-            get {
-                List<string> projects = new List<string>();
+            get
+            {
+                foreach(EnvDTE.Project project in Dte2.Solution.Projects)
+                {
+                    if(project.Kind != ProjectKinds.vsProjectKindSolutionFolder) {
+                        yield return project;
+                        continue;
+                    }
 
-                try {
-                    foreach(EnvDTE.Project project in DTEProjects) {
-                        projects.Add(project.Name);
+                    foreach(EnvDTE.Project subproject in listSubProjectsDTE(project)) {
+                        yield return subproject;
                     }
                 }
-                catch(Exception ex) {
-                    Log.nlog.Error("Failed getting project from EnvDTE: {0}", ex.Message);
-                }
-                return projects;
             }
         }
 
         /// <summary>
-        /// Getting the Build.Evaluation.Project for access to properties etc.
+        /// Gets instance of the Build.Evaluation.Project for accessing to properties etc.
         /// 
-        /// if the project as null then selected startup-project in the list or the first with the same Configuration & Platform
+        /// Used the Startup-project in the list or the first with the same Configuration & Platform if the name contains null value
         /// Note: we work with DTE because the ProjectCollection.GlobalProjectCollection can be is empty
         /// https://bitbucket.org/3F/vssolutionbuildevent/issue/8/
         /// </summary>
-        /// <param name="project">Specific project</param>
-        /// <exception cref="MSBProjectNotFoundException">something wrong with loaded projects</exception>
+        /// <param name="name">Project name</param>
         /// <returns>Microsoft.Build.Evaluation.Project</returns>
-        public virtual Project getProject(string project = null)
+        public virtual Project getProject(string name = null)
         {
             EnvDTE.Project selected = null;
-            string sturtup          = StartupProjectString;
+            string startup          = StartupProjectString;
 
-            if(project == null) {
-                Log.nlog.Debug("default project is a '{0}'", sturtup);
+            if(name == null) {
+                Log.nlog.Debug("default project is a '{0}'", startup);
             }
 
             foreach(EnvDTE.Project dteProject in DTEProjects)
             {
-                if(project == null && !String.IsNullOrEmpty(sturtup) && !dteProject.UniqueName.Equals(sturtup)) {
+                if(name == null && !String.IsNullOrEmpty(startup) && !dteProject.UniqueName.Equals(startup)) {
                     continue;
                 }
-                else if(project != null && !dteProject.Name.Equals(project)) {
+                else if(name != null && !dteProject.Name.Equals(name)) {
                     continue;
                 }
                 selected = dteProject;
@@ -112,89 +208,70 @@ namespace net.r_eg.vsSBE
                 Log.nlog.Debug("getProject->selected '{0}'", selected.FullName);
                 return tryLoadPCollection(selected);
             }
-            throw new MSBProjectNotFoundException("not found project: '{0}' [sturtup: '{1}']", project, sturtup);
+            throw new MSBProjectNotFoundException("not found project: '{0}' [sturtup: '{1}']", name, startup);
         }
 
         /// <summary>
         /// Getting global(general for all existing projects) property
         /// </summary>
         /// <param name="name">Property name</param>
-        public string getSolutionGlobalProperty(string name)
+        public string getSolutionProperty(string name)
         {
             if(String.IsNullOrEmpty(name)) {
                 return null;
             }
 
             if(name.Equals("Configuration")) {
-                return SolutionActiveConfiguration.Name;
+                return SolutionActiveCfg.Name;
             }
 
             if(name.Equals("Platform")) {
-                return SolutionActiveConfiguration.PlatformName;
+                return SolutionActiveCfg.PlatformName;
             }
 
             return null;
         }
 
         /// <summary>
-        /// Active configuration for current solution
-        /// </summary>
-        public SolutionConfiguration2 SolutionActiveConfiguration
-        {
-            get { return (SolutionConfiguration2)Dte2.Solution.SolutionBuild.ActiveConfiguration; }
-        }
-
-        /// <summary>
         /// Compatible format: 'configname'|'platformname'
         /// http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivscfg.get_displayname.aspx
         /// </summary>
-        public string SolutionConfigurationFormat(SolutionConfiguration2 cfg)
+        public string SolutionCfgFormat(SolutionConfiguration2 cfg)
         {
             return String.Format("{0}|{1}", cfg.Name, cfg.PlatformName);
         }
 
         /// <summary>
-        /// All configurations for current solution
+        /// Execute command with DTE
         /// </summary>
-        public IEnumerable<SolutionConfiguration2> SolutionConfigurations
+        /// <param name="name">Command name</param>
+        /// <param name="args">Command arguments</param>
+        public virtual void exec(string name, string args = "")
         {
-            get {
-                foreach(SolutionConfiguration2 cfg in Dte2.Solution.SolutionBuild.SolutionConfigurations) {
-                    yield return cfg;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Getting name from "Set as SturtUp Project"
-        /// </summary>
-        public virtual string StartupProjectString
-        {
-            get
-            {
-                foreach(string project in (Array)Dte2.Solution.SolutionBuild.StartupProjects)
-                {
-                    if(String.IsNullOrEmpty(project)) {
-                        continue;
-                    }
-                    return project;
-                }
-                return null;
-            }
-        }
-
-        /// <summary>
-        /// DTE context
-        /// </summary>
-        public DTE2 Dte2
-        {
-            get;
-            protected set;
+            ((EnvDTE.DTE)Dte2).ExecuteCommand(name, (args == null)? String.Empty : args);
         }
 
         public Environment(DTE2 dte2)
         {
             Dte2 = dte2;
+        }
+
+        /// <summary>
+        /// Extract the solution path from the DTE-context
+        /// </summary>
+        /// <param name="dte2">DTE2 context</param>
+        protected virtual string extractPath(DTE2 dte2)
+        {
+            string path = dte2.Solution.FullName; // empty if used the new solution 
+            if(String.IsNullOrEmpty(path)) {
+                path = dte2.Solution.Properties.Item("Path").Value.ToString();
+            }
+            string dir = Path.GetDirectoryName(path);
+
+            if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
+                dir += Path.DirectorySeparatorChar;
+            }
+            return dir;
         }
 
         protected bool isEquals(EnvDTE.Project dteProject, Project eProject)
@@ -303,24 +380,6 @@ namespace net.r_eg.vsSBE
             }
 
             return prop;
-        }
-
-        protected IEnumerable<EnvDTE.Project> DTEProjectsRaw
-        {
-            get
-            {
-                foreach(EnvDTE.Project project in Dte2.Solution.Projects)
-                {
-                    if(project.Kind != ProjectKinds.vsProjectKindSolutionFolder) {
-                        yield return project;
-                        continue;
-                    }
-
-                    foreach(EnvDTE.Project subproject in listSubProjectsDTE(project)) {
-                        yield return subproject;
-                    }
-                }
-            }
         }
 
         protected IEnumerable<EnvDTE.Project> listSubProjectsDTE(EnvDTE.Project project)

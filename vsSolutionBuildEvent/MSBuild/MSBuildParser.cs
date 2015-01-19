@@ -77,7 +77,7 @@ namespace net.r_eg.vsSBE.MSBuild
 
             if(projectName == null)
             {
-                string slnProp = env.getSolutionGlobalProperty(name);
+                string slnProp = env.getSolutionProperty(name);
                 if(slnProp != null) {
                     Log.nlog.Debug("Solution-context for getProperty - '{0}' = '{1}'", name, slnProp);
                     return slnProp;
@@ -103,7 +103,7 @@ namespace net.r_eg.vsSBE.MSBuild
                 string eValue = property.EvaluatedValue;
                 if(projectName == null)
                 {
-                    string slnProp = env.getSolutionGlobalProperty(property.Name);
+                    string slnProp = env.getSolutionProperty(property.Name);
                     if(slnProp != null) {
                         Log.nlog.Debug("Solution-context for listProperties - '{0}' = '{1}'", property.Name, slnProp);
                         eValue = slnProp;

@@ -119,7 +119,7 @@ namespace net.r_eg.vsSBE.OWP
         protected void extract()
         {
             flushCodes();
-            MatchCollection matches = Regex.Matches(rawdata, @":\s*?(error|warning)([^:]+):", RegexOptions.IgnoreCase);
+            MatchCollection matches = Regex.Matches(rawdata, @"\s+(error|warning)\s+([^:]+):", RegexOptions.IgnoreCase);
             // 1  -> type
             // 2  -> code####
 

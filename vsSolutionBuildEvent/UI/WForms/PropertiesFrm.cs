@@ -66,7 +66,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             comboBoxProjects.Items.Add("<default>");
 
             try {
-                comboBoxProjects.Items.AddRange(_env.DTEProjectsList.ToArray());
+                comboBoxProjects.Items.AddRange(_env.ProjectsList.ToArray());
             }
             catch(Exception ex) {
                 Log.nlog.Error("Error with getting projects: " + ex.Message);

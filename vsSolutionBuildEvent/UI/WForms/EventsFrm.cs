@@ -525,7 +525,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             if(checkedListBoxSpecCfg.Items.Count < 1) {
                 foreach(EnvDTE80.SolutionConfiguration2 cfg in logic.Env.SolutionConfigurations) {
-                    checkedListBoxSpecCfg.Items.Add(logic.Env.SolutionConfigurationFormat(cfg), false);
+                    checkedListBoxSpecCfg.Items.Add(logic.Env.SolutionCfgFormat(cfg), false);
                 }
             }
 
@@ -541,7 +541,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         protected void executionOrder()
         {
             if(dataGridViewOrder.Rows.Count < 1) {
-                foreach(string name in logic.Env.DTEProjectsList) {
+                foreach(string name in logic.Env.ProjectsList) {
                     dataGridViewOrder.Rows.Add(false, name, dgvOrderType.Items[0]);
                 }
             }
@@ -969,7 +969,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(Util.focusForm(frmDTECommands)) {
                 return;
             }
-            IEnumerable<EnvDTE.Command> commands = logic.Env.Dte2.Commands.Cast<EnvDTE.Command>();
+            IEnumerable<EnvDTE.Command> commands = logic.Env.Commands.Cast<EnvDTE.Command>();
             frmDTECommands = new DTECommandsFrm(commands, this);
             frmDTECommands.Show();
         }

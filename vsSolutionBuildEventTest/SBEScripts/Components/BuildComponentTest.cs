@@ -54,7 +54,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 
                     mockSolutionContexts.Setup(m => m.GetEnumerator()).Returns(SolutionContexts);
                     mockSolutionActiveConfiguration.SetupGet(p => p.SolutionContexts).Returns(mockSolutionContexts.Object);
-                    mockEnv.SetupGet(p => p.SolutionActiveConfiguration).Returns(mockSolutionActiveConfiguration.Object);
+                    mockEnv.SetupGet(p => p.SolutionActiveCfg).Returns(mockSolutionActiveConfiguration.Object);
                     env = mockEnv.Object;
                 }
                 return env;
@@ -243,7 +243,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         {
             public BuildComponentAccessor(): base((IEnvironment)null)
             {
-                var mock = new Mock<DTEOperation>((EnvDTE80.DTE2)null, SolutionEventType.General);
+                var mock = new Mock<DTEOperation>((IEnvironment)null, SolutionEventType.General);
                 mock.Setup(m => m.exec(It.IsAny<string[]>(), It.IsAny<bool>()));
                 dteo = mock.Object;
             }

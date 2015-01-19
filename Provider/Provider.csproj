@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{73919171-44B6-4536-B892-F1FCA653887C}</ProjectGuid>
+    <ProjectGuid>{4F8BB8CD-1116-4F07-9B8F-06D69FB8589B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>net.r_eg.vsSBE.Bridge</RootNamespace>
-    <AssemblyName>Bridge</AssemblyName>
+    <RootNamespace>net.r_eg.vsSBE.Provider</RootNamespace>
+    <AssemblyName>Provider</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,7 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.Shell.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="EnvDTE80, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="System" />
@@ -43,10 +46,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IBuild.cs" />
-    <Compile Include="IEvent.cs" />
-    <Compile Include="IVersion.cs" />
+    <Compile Include="ILibrary.cs" />
+    <Compile Include="ILoader.cs" />
+    <Compile Include="Library.cs" />
+    <Compile Include="Loader.cs" />
+    <Compile Include="Services\_Solution.cs" />
+    <Compile Include="Services\_DTE2.cs" />
+    <Compile Include="Service.cs" />
+    <Compile Include="IService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Bridge\Bridge.csproj">
+      <Project>{73919171-44B6-4536-B892-F1FCA653887C}</Project>
+      <Name>Bridge</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

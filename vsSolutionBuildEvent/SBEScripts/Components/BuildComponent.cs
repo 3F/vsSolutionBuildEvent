@@ -52,7 +52,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             get {
                 if(dteo == null) {
                     Debug.Assert(env != null);
-                    dteo = new DTEOperation((EnvDTE.DTE)env.Dte2, Events.SolutionEventType.General);
+                    dteo = new DTEOperation(env, Events.SolutionEventType.General);
                 }
                 return dteo;
             }
@@ -162,8 +162,13 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string project      = m.Groups[1].Value;
             string operation    = m.Groups[2].Value;
 
+            if(env.SolutionActiveCfg == null) {
+                //TODO:
+                throw new ComponentException("Disabled for this environment");
+            }
+
             SolutionContext context = null;
-            IEnumerator slnc        = env.SolutionActiveConfiguration.SolutionContexts.GetEnumerator();
+            IEnumerator slnc        = env.SolutionActiveCfg.SolutionContexts.GetEnumerator();
 
             while(slnc.MoveNext()) {
                 SolutionContext item = (SolutionContext)slnc.Current;
