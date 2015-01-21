@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,16 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace net.r_eg.vsSBE.OWP
+namespace net.r_eg.vsSBE.Receiver.Output
 {
-    public interface IListenerOWPL
+    public interface IItem
     {
         /// <summary>
-        /// raw data
-        /// e.g. Formatting the Output of a Custom Build Step or Build Event:
-        /// http://msdn.microsoft.com/en-us/library/yxkt8b26%28v=vs.100%29.aspx
+        /// Item of build process
         /// </summary>
-        /// <param name="data"></param>
-        void raw(string data);
+        BuildItem Build { get; }
     }
 }

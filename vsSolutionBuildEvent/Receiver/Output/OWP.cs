@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,30 +18,35 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using EnvDTE;
-using EnvDTE80;
 using System.Threading;
+using EnvDTE;
 
-namespace net.r_eg.vsSBE.OWP
+namespace net.r_eg.vsSBE.Receiver.Output
 {
     /// <summary>
-    /// Working with the OutputWindowsPane
-    /// Must receive and send different data for own subscribers
+    /// Work with the OutputWindowsPane
+    /// Forwards messages from VS component for own subscribers.
     /// </summary>
-    internal class Listener: SynchSubscribers<IListenerOWPL>
+    internal class OWP
     {
+        public delegate void MessageEvent(string data);
+
         /// <summary>
-        /// Keep events for any pane
+        /// Any message
         /// </summary>
-        protected OutputWindowEvents evtOWP;
+        public event MessageEvent raw = delegate(string data) { };
+
+        /// <summary>
+        /// Used events of selected pane.
+        /// </summary>
+        protected OutputWindowEvents evt;
 
         //TODO: fix me. Prevent Duplicate Data / bug with OutputWindowPane
         protected SynchronizedCollection<string> dataList = new SynchronizedCollection<string>();
         protected System.Threading.Thread tUpdated;
 
         /// <summary>
-        /// Used item by name
+        /// Current item name
         /// </summary>
         protected string item;
 
@@ -57,37 +62,37 @@ namespace net.r_eg.vsSBE.OWP
 
         public void attachEvents()
         {
-            if(evtOWP == null) {
+            if(evt == null) {
                 Log.nlog.Warn("OWP: Disabled for current Environment.");
                 return;
             }
 
             lock(_eLock) {
                 detachEvents();
-                evtOWP.PaneUpdated      += new _dispOutputWindowEvents_PaneUpdatedEventHandler(evtPaneUpdated);
-                evtOWP.PaneAdded        += new _dispOutputWindowEvents_PaneAddedEventHandler(evtPaneAdded);
-                evtOWP.PaneClearing     += new _dispOutputWindowEvents_PaneClearingEventHandler(evtPaneClearing);
+                evt.PaneUpdated      += new _dispOutputWindowEvents_PaneUpdatedEventHandler(evtPaneUpdated);
+                evt.PaneAdded        += new _dispOutputWindowEvents_PaneAddedEventHandler(evtPaneAdded);
+                evt.PaneClearing     += new _dispOutputWindowEvents_PaneClearingEventHandler(evtPaneClearing);
             }
         }
 
         public void detachEvents()
         {
-            if(evtOWP == null) {
+            if(evt == null) {
                 return;
             }
+
             lock(_eLock) {
-                evtOWP.PaneUpdated      -= new _dispOutputWindowEvents_PaneUpdatedEventHandler(evtPaneUpdated);
-                evtOWP.PaneAdded        -= new _dispOutputWindowEvents_PaneAddedEventHandler(evtPaneAdded);
-                evtOWP.PaneClearing     -= new _dispOutputWindowEvents_PaneClearingEventHandler(evtPaneClearing);
+                evt.PaneUpdated      -= new _dispOutputWindowEvents_PaneUpdatedEventHandler(evtPaneUpdated);
+                evt.PaneAdded        -= new _dispOutputWindowEvents_PaneAddedEventHandler(evtPaneAdded);
+                evt.PaneClearing     -= new _dispOutputWindowEvents_PaneClearingEventHandler(evtPaneClearing);
             }
         }
 
-        public Listener(IEnvironment env, string item)
+        public OWP(IEnvironment env, string item)
         {
             this.item = item;
-
             if(env.Events != null) {
-                evtOWP = env.Events.get_OutputWindowEvents(item);
+                evt = env.Events.get_OutputWindowEvents(item);
             }
         }
 
@@ -95,7 +100,7 @@ namespace net.r_eg.vsSBE.OWP
         /// all collection must receive raw-data
         /// TODO: fix me. Prevent Duplicate Data / bug with OutputWindowPane
         /// </summary>
-        protected virtual void notifyRaw()
+        protected void notifyRaw()
         {
             if(dataList.Count < 1) {
                 return;
@@ -103,16 +108,13 @@ namespace net.r_eg.vsSBE.OWP
 
             lock(_eLock)
             {
-                string envelope = "";
+                string envelope = String.Empty;
                 while(dataList.Count > 0) {
                     envelope += dataList[0];
                     dataList.RemoveAt(0);
                 }
 
-                updateComponent(envelope);
-                foreach(IListenerOWPL l in subscribers) {
-                    l.raw(envelope);
-                }
+                raw(envelope);
             }
 
             if(dataList.Count > 0) {
@@ -122,8 +124,8 @@ namespace net.r_eg.vsSBE.OWP
 
         protected virtual void evtPaneUpdated(OutputWindowPane pane)
         {
-            TextDocument textD   = pane.TextDocument;
-            int countLines       = textD.EndPoint.Line;
+            TextDocument textD  = pane.TextDocument;
+            int countLines      = textD.EndPoint.Line;
 
             if(countLines <= 1 || countLines - _prevCountLines < 1) {
                 return;
@@ -158,16 +160,6 @@ namespace net.r_eg.vsSBE.OWP
         {
             _prevCountLines = 1;
             dataList.Clear();
-        }
-
-        protected void updateComponent(string data)
-        {
-            switch(item) {
-                case "Build": {
-                    Items._.Build.updateRaw(data);
-                    return;
-                }
-            }
         }
     }
 }

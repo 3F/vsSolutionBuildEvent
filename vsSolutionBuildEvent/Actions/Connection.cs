@@ -25,7 +25,7 @@ using net.r_eg.vsSBE.Events;
 
 namespace net.r_eg.vsSBE.Actions
 {
-    public class Connection: OWP.IListenerOWPL
+    public class Connection
     {
         /// <summary>
         /// Ignored all action if value as true
@@ -223,6 +223,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="data">Raw data</param>
         public void bindBuildRaw(string data)
         {
+            Receiver.Output.Item._.Build.updateRaw(data); //TODO:
             if(!IsAllowActions)
             {
                 if(!isDisabledAll(Config._.Data.Transmitter)) {
@@ -263,13 +264,13 @@ namespace net.r_eg.vsSBE.Actions
 
             foreach(SBEEventEW evt in Config._.Data.WarningsBuild) {
                 if(evt.Enabled) {
-                    sbeEW(evt, OWP.BuildItem.Type.Warnings);
+                    sbeEW(evt, Receiver.Output.BuildItem.Type.Warnings);
                 }
             }
 
             foreach(SBEEventEW evt in Config._.Data.ErrorsBuild) {
                 if(evt.Enabled) {
-                    sbeEW(evt, OWP.BuildItem.Type.Errors);
+                    sbeEW(evt, Receiver.Output.BuildItem.Type.Errors);
                 }
             }
 
@@ -295,18 +296,12 @@ namespace net.r_eg.vsSBE.Actions
             return true;
         }
 
-        //TODO:
-        void OWP.IListenerOWPL.raw(string data)
-        {
-            bindBuildRaw(data);
-        }
-
         /// <summary>
         /// Entry point to Errors/Warnings
         /// </summary>
-        protected int sbeEW(ISolutionEventEW evt, OWP.BuildItem.Type type)
+        protected int sbeEW(ISolutionEventEW evt, Receiver.Output.BuildItem.Type type)
         {
-            OWP.BuildItem info = OWP.Items._.Build;
+            Receiver.Output.BuildItem info = Receiver.Output.Item._.Build;
 
             // TODO: capture code####, message..
             if(!info.checkRule(type, evt.IsWhitelist, evt.Codes)) {
@@ -319,7 +314,7 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             try {
-                if(cmd.exec(evt, (type == OWP.BuildItem.Type.Warnings)? SolutionEventType.Warnings : SolutionEventType.Errors)) {
+                if(cmd.exec(evt, (type == Receiver.Output.BuildItem.Type.Warnings)? SolutionEventType.Warnings : SolutionEventType.Errors)) {
                     Log.nlog.Info("[{0}] finished SBE: {1}", type, evt.Caption);
                 }
                 return VSConstants.S_OK;
@@ -335,7 +330,7 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         protected int sbeOutput(ISolutionEventOWP evt, ref string raw)
         {
-            if(!(new OWP.Matcher()).match(evt.Match, raw)) {
+            if(!(new Receiver.Output.Matcher()).match(evt.Match, raw)) {
                 return VSConstants.S_OK;
             }
 

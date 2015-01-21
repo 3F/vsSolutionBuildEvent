@@ -126,7 +126,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string property = m.Groups[2].Value.Trim();
             Log.nlog.Debug("stOut: property = '{0}'", property);
 
-            string raw = StringHandler.escapeQuotes(OWP.Items._.Build.Raw);
+            string raw = StringHandler.escapeQuotes(Receiver.Output.Item._.Build.Raw);
 
             // #[OWP out.All] / #[OWP out]
             if(property == ".All" || property == String.Empty) {
@@ -135,32 +135,32 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             // #[OWP out.Warnings.Raw] / #[OWP out.Warnings]
             if(property == ".Warnings" || property == ".Warnings.Raw") {
-                return (OWP.Items._.Build.IsWarnings)? raw : String.Empty;
+                return (Receiver.Output.Item._.Build.IsWarnings)? raw : String.Empty;
             }
 
             // #[OWP out.Warnings.Count]
             if(property == ".Warnings.Count") {
-                return Value.from(OWP.Items._.Build.WarningsCount);
+                return Value.from(Receiver.Output.Item._.Build.WarningsCount);
             }
 
             // #[OWP out.Warnings.Codes]
             if(property == ".Warnings.Codes") {
-                return Value.from(OWP.Items._.Build.Warnings);
+                return Value.from(Receiver.Output.Item._.Build.Warnings);
             }
 
             // #[OWP out.Errors.Raw] / #[OWP out.Errors]
             if(property == ".Errors" || property == ".Errors.Raw") {
-                return (OWP.Items._.Build.IsErrors)? raw : String.Empty;
+                return (Receiver.Output.Item._.Build.IsErrors)? raw : String.Empty;
             }
 
             // #[OWP out.Errors.Count]
             if(property == ".Errors.Count") {
-                return Value.from(OWP.Items._.Build.ErrorsCount);
+                return Value.from(Receiver.Output.Item._.Build.ErrorsCount);
             }
 
             // #[OWP out.Errors.Codes]
             if(property == ".Errors.Codes") {
-                return Value.from(OWP.Items._.Build.Errors);
+                return Value.from(Receiver.Output.Item._.Build.Errors);
             }
 
             throw new NotSupportedOperationException("property - '{0}' not yet supported", property);

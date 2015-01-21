@@ -93,7 +93,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Listener of the OutputWindowsPane
         /// </summary>
-        private OWP.Listener _owpListener;
+        private Receiver.Output.OWP _owpListener;
 
         /// <summary>
         /// VS IDE menu - Build / <Main App>
@@ -182,9 +182,11 @@ namespace net.r_eg.vsSBE
         {
             Event = new API.EventLevel(Dte2);
 
-            _owpListener = new OWP.Listener(Event.Environment, "Build");
+            _owpListener = new Receiver.Output.OWP(Event.Environment, "Build");
             _owpListener.attachEvents();
-            _owpListener.register(Event.Action);
+            _owpListener.raw += new Receiver.Output.OWP.MessageEvent((string raw) => {
+                ((Bridge.IBuild)Event).onBuildRaw(raw);
+            });
         }
 
         /// <summary>

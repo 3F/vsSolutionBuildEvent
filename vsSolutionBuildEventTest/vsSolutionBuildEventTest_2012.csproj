@@ -90,8 +90,8 @@
     <Compile Include="SBEScripts\Components\InternalComponentTest.cs" />
     <Compile Include="MSBuild\MSBuildParserTest.cs" />
     <Compile Include="SBEScripts\Components\OWPComponentTest.cs" />
-    <Compile Include="OWP\BuildItemTest.cs" />
-    <Compile Include="OWP\MatcherTest.cs" />
+    <Compile Include="Receiver\Output\BuildItemTest.cs" />
+    <Compile Include="Receiver\Output\MatcherTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SBEScripts\RPatternTest.cs" />
     <Compile Include="SBEScripts\ScriptTest.cs" />

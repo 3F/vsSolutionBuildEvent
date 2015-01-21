@@ -141,9 +141,8 @@
     <Compile Include="Events\IModeFile.cs" />
     <Compile Include="Events\IModeInterpreter.cs" />
     <Compile Include="Events\IModeOperation.cs" />
-    <Compile Include="OWP\IItems.cs" />
-    <Compile Include="OWP\IListenerOWPL.cs" />
-    <Compile Include="OWP\Items.cs" />
+    <Compile Include="Receiver\Output\IItem.cs" />
+    <Compile Include="Receiver\Output\Item.cs" />
     <Compile Include="SBEScripts\Components\CommentComponent.cs" />
     <Compile Include="SBEScripts\Components\ConditionComponent.cs" />
     <Compile Include="SBEScripts\Components\FileComponent.cs" />
@@ -166,7 +165,7 @@
     <Compile Include="Exceptions\SBEException.cs" />
     <Compile Include="IEnvironment.cs" />
     <Compile Include="Log.cs" />
-    <Compile Include="OWP\Matcher.cs" />
+    <Compile Include="Receiver\Output\Matcher.cs" />
     <Compile Include="Events\ISolutionEventOWP.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Events\SBEEventOWP.cs" />
@@ -233,8 +232,8 @@
       <DependentUpon>PropertiesFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="MSBuild\IMSBuild.cs" />
-    <Compile Include="OWP\Listener.cs" />
-    <Compile Include="OWP\BuildItem.cs" />
+    <Compile Include="Receiver\Output\OWP.cs" />
+    <Compile Include="Receiver\Output\BuildItem.cs" />
     <Compile Include="MSBuild\MSBuildParser.cs" />
     <Compile Include="MSBuild\Exceptions\MSBuildParserException.cs" />
     <Compile Include="Actions\Command.cs" />

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.vsSBE;
-using net.r_eg.vsSBE.OWP;
+using net.r_eg.vsSBE.Receiver.Output;
 
-namespace net.r_eg.vsSBE.Test.OWP
+namespace net.r_eg.vsSBE.Test.Receiver.Output
 {
     /// <summary>
     ///This is a test class for MatcherTest and is intended

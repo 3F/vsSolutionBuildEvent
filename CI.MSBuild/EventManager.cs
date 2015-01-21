@@ -25,25 +25,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace net.r_eg.vsSBE.CI.MSBuild
 {
-    /// <summary>
-    /// *!* DRAFT *!* - it's not complete implementation *!* DRAFT *!*
-    /// see latest version on: https://bitbucket.org/3F/vssolutionbuildevent/src
-    /// TODO: 
-    ///    * Direct pushing EW-codes with API
-    ///    * lib: OWP -> EW & wrap BuildItem
-    ///    * EW events
-    ///    * Cancel evetns
-    ///    * Abort signals
-    ///    * not localized raw message
-    /// </summary>
     public class EventManager: Logger
     {
         /// <summary>
@@ -80,127 +71,61 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         protected Dictionary<string, string> args = new Dictionary<string, string>();
 
         /// <summary>
-        /// Information of project by ident
+        /// About projects by ident
         /// </summary>
-        protected class Project
-        {
-            /// <summary>
-            /// Project name
-            /// </summary>
-            public string Name { get; set; }
-
-            /// <summary>
-            /// All available properties with msbuild
-            /// </summary>
-            public Dictionary<object, string> Properties { get; set; }
-
-            /// <summary>
-            /// Full path to project file
-            /// </summary>
-            public string File { get; set; }
-
-            /// <summary>
-            /// Has error/s with some target/s
-            /// </summary>
-            public bool HasErrors { get; set; }
-        }
         protected Dictionary<int, Project> projects = new Dictionary<int, Project>();
 
         /// <summary>
         /// Abort the all msbuild operations
         /// TODO: variant of normal termination !
         /// </summary>
-        protected virtual void Abort()
-        {
-            throw new AbortException();
-        }
-        private class AbortException: Exception { }
+        protected class AbortException: Exception { }
 
+        /// <summary>
+        /// Reserved for future use with IVsSolutionEvents
+        /// </summary>
         private object pUnkReserved = new object();
 
-        public int solutionOpened()
-        {
-            return library.Event.solutionOpened(pUnkReserved, 0);
-        }
-
-        public int solutionClosed()
-        {
-            return library.Event.solutionClosed(pUnkReserved);
-        }
-
-        public int onPre()
-        {
-            int pfCancelUpdate = 0;
-            return library.Event.onPre(ref pfCancelUpdate);
-        }
-
-        public int onCancel()
-        {
-            return library.Event.onCancel();
-        }
-
-        public int onPost(int fSucceeded)
-        {
-            return library.Event.onPost(fSucceeded, 0, 0);
-        }
-
-        public int onProjectPre(string project)
-        {
-            return library.Event.onProjectPre(project);
-        }
-
-        public int onProjectPost(string project, int fSuccess)
-        {
-            return library.Event.onProjectPost(project, fSuccess);
-        }
-
-        public void onBuildRaw(string data)
-        {
-            if(library != null) {
-                library.Build.onBuildRaw(data);
-            }
-        }
 
         public override void Initialize(IEventSource evt)
         {
             args = extractArguments(Parameters);
 
-
-            //TODO:
-            evt.BuildFinished       += new BuildFinishedEventHandler(onBuildFinished);
-            evt.ProjectStarted      += new ProjectStartedEventHandler(onProjectStarted);
-            evt.ProjectFinished     += new ProjectFinishedEventHandler(onProjectFinished);            
-            evt.AnyEventRaised      += new AnyEventHandler(onAnyEventRaised);
-            evt.CustomEventRaised   += new CustomBuildEventHandler(onCustomEventRaised);
-            evt.ErrorRaised         += new BuildErrorEventHandler(onErrorRaised);
-            evt.MessageRaised       += new BuildMessageEventHandler(onMessageRaised);
-            evt.StatusEventRaised   += new BuildStatusEventHandler(onStatusEventRaised);
-            evt.TargetFinished      += new TargetFinishedEventHandler(onTargetFinished);
-            evt.TargetStarted       += new TargetStartedEventHandler(onTargetStarted);
-            evt.TaskFinished        += new TaskFinishedEventHandler(onTaskFinished);
-            evt.TaskStarted         += new TaskStartedEventHandler(onTaskStarted);
-            evt.WarningRaised       += new BuildWarningEventHandler(onWarningRaised);
+            evt.TargetStarted   += new TargetStartedEventHandler(onTargetStarted);
+            evt.ProjectStarted  += new ProjectStartedEventHandler(onProjectStarted);
+            evt.AnyEventRaised  += new AnyEventHandler(onAnyEventRaised);
+            evt.ErrorRaised     += new BuildErrorEventHandler(onErrorRaised);
+            evt.WarningRaised   += new BuildWarningEventHandler(onWarningRaised);
+            evt.BuildFinished   += new BuildFinishedEventHandler(onBuildFinished);
         }
 
         public override void Shutdown()
         {
-            solutionClosed();
-        }
-
-        protected void onWarningRaised(object sender, BuildWarningEventArgs e)
-        {
-            //TODO: e.Code
-            //onBuildRaw(e.Message);
-        }
-
-        protected void onErrorRaised(object sender, BuildErrorEventArgs e)
-        {
-            if(projects.ContainsKey(e.BuildEventContext.ProjectInstanceId)) {
-                projects[e.BuildEventContext.ProjectInstanceId].HasErrors = true;
+            if(library != null) {
+                library.Event.solutionClosed(pUnkReserved);
             }
+        }
 
-            //TODO: e.Code
-            //onBuildRaw(e.Message);
+        public void setCulture(string name)
+        {
+            try {
+                Thread.CurrentThread.CurrentUICulture = new CultureInfo(name);
+                // also -> CurrentCulture - for time etc.
+            }
+            catch(Exception ex) {
+                msg(ex.Message);
+            }
+        }
+
+        public EventManager()
+        {
+            msg(new String('=', 60));
+            msg("[[ vsSolutionBuildEvent CI.MSBuild ]] Welcomes You!");
+            msg(new String('=', 60));
+            msg("Feedback: entry.reg@gmail.com");
+            msg(new String('_', 60));
+
+            setCulture("en-US"); //TODO: set with params to logger
         }
 
         protected void onProjectStarted(object sender, ProjectStartedEventArgs e)
@@ -208,23 +133,21 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             if(String.IsNullOrEmpty(SolutionFile))
             {
                 if(!e.ProjectFile.ToLower().EndsWith(".sln")) {
+                    debug("solutionOpened() has been ignored for '{0}'", e.ProjectFile);
                     return;
                 }
                 SolutionFile = e.ProjectFile;
                 library = load(SolutionFile, getSolutionProperties(e.Properties), LibraryPath);
-                solutionOpened();
-                onPre();
+
+                int pfCancelUpdate = 0;
+                library.Event.onPre(ref pfCancelUpdate); // or use some target for delays as variant
                 return;
             }
 
             if(e.ProjectFile.ToLower().EndsWith(".metaproj")) {
+                debug(".metaproj has been ignored for '{0}'", e.ProjectFile);
                 return;
             }
-
-            //string target = e.TargetNames.Trim().ToLower();
-            //if(target != "build" && target != "rebuild" && target != "clean") {
-            //    return; //work only with general targets
-            //}
 
             if(projects.ContainsKey(e.ProjectId)) {
                 // already pushed
@@ -242,77 +165,63 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             }
         }
 
-        protected void onProjectFinished(object sender, ProjectFinishedEventArgs e)
-        {
-            //if(e.ProjectFile.ToLower().EndsWith(".metaproj")) {
-            //    return;
-            //}
-
-            //if(projects.ContainsKey(e.BuildEventContext.ProjectInstanceId)) {
-            //    onProjectPost(projects[e.BuildEventContext.ProjectInstanceId].Name, e.Succeeded? 1 : 0);
-            //    return;
-            //}
-            //msg("Not found ProjectName property for '{0}'", e.ProjectFile);
-        }
-
         protected void onTargetStarted(object sender, TargetStartedEventArgs e)
         {
-            onBuildRaw(e.Message);
             if(!projects.ContainsKey(e.BuildEventContext.ProjectInstanceId)) {
                 return;
             }
 
             switch(e.TargetName) { //.Trim().ToLower()
                 case "PreBuildEvent": {
-                    onProjectPre(projects[e.BuildEventContext.ProjectInstanceId].Name);
+                    library.Event.onProjectPre(projects[e.BuildEventContext.ProjectInstanceId].Name);
                     break;
                 }
                 case "PostBuildEvent": {
                     Project p = projects[e.BuildEventContext.ProjectInstanceId];
-                    onProjectPost(p.Name, p.HasErrors? 0 : 1);
+                    library.Event.onProjectPost(p.Name, p.HasErrors ? 0 : 1);
                     break;
                 }
             }
         }
 
+        protected void onWarningRaised(object sender, BuildWarningEventArgs e)
+        {
+            if(library != null) {
+                library.Build.onBuildRaw(format("warning", e.Code, e.Message, e.File, e.LineNumber));
+            }
+        }
+
+        protected void onErrorRaised(object sender, BuildErrorEventArgs e)
+        {
+            if(projects.ContainsKey(e.BuildEventContext.ProjectInstanceId)) {
+                projects[e.BuildEventContext.ProjectInstanceId].HasErrors = true;
+            }
+
+            if(library != null) {
+                library.Build.onBuildRaw(format("error", e.Code, e.Message, e.File, e.LineNumber));
+            }
+        }
+
         protected void onBuildFinished(object sender, BuildFinishedEventArgs e)
         {
-            onPost((e.Succeeded)? 1 : 0);
+            if(library == null) {
+                return;
+            }
+
+            if(!e.Succeeded) {
+                library.Event.onCancel();
+            }
+            library.Event.onPost(e.Succeeded ? 1 : 0, 0, 0);
         }
 
-        protected void onTaskStarted(object sender, TaskStartedEventArgs e)
-        {
-            //TODO:
-        }
-
-        protected void onTaskFinished(object sender, TaskFinishedEventArgs e)
-        {
-            //TODO:
-        }
-
-        protected void onTargetFinished(object sender, TargetFinishedEventArgs e)
-        {
-            //TODO:
-        }
-
-        protected void onStatusEventRaised(object sender, BuildStatusEventArgs e)
-        {
-            //TODO:
-        }
-
-        protected void onMessageRaised(object sender, BuildMessageEventArgs e)
-        {
-            //TODO:
-        }
-
-        protected void onCustomEventRaised(object sender, CustomBuildEventArgs e)
-        {
-            //TODO:
-        }
-
+        /// <summary>
+        /// see also: MessageRaised or StatusEventRaised
+        /// </summary>
         protected void onAnyEventRaised(object sender, BuildEventArgs e)
         {
-            //TODO:
+            if(library != null) {
+                library.Build.onBuildRaw(e.Message);
+            }
         }
 
         /// <summary>
@@ -341,7 +250,10 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         protected Provider.ILibrary load(string solutionFile, Dictionary<string, string> properties, string libPath)
         {
             Provider.ILoader loader = new Provider.Loader();
-            //loader.DebugMode = true;
+            if(Verbosity >= LoggerVerbosity.Detailed) {
+                loader.DebugMode = true;
+            }
+
             try {
                 Provider.ILibrary library = loader.load(solutionFile, properties, libPath, false);
                 msg("Library: loaded from '{0}' :: v{1} [{2}] /'{3}':{4}", 
@@ -350,6 +262,8 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                                     library.Version.BranchSha1,
                                     library.Version.BranchName,
                                     library.Version.BranchRevCount);
+
+                library.Event.solutionOpened(pUnkReserved, 0);
                 return library;
             }
             catch(DllNotFoundException ex)
@@ -359,10 +273,10 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                 msg(
                     "* Or try manually place the {0} into directory with current logger({1})", 
                     "vsSolutionBuildEvent.dll with dependencies",
-                    GetType().Assembly.Location);
-                msg("* Or provide any path to library with current logger, e.g.: /l:<path>\\CI.MSBuild.dll;lib=<path to vsSolutionBuildEvent.dll>");
+                    Assembly.GetExecutingAssembly().Location);
+                msg("* Or set any path to library for this logger, e.g.: /l:CI.MSBuild.dll;lib=<path_to_vsSolutionBuildEvent.dll>");
 
-                msg("For more details, see our documentations.");
+                msg("See our documentation for more details.");
                 msg("https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
                 msg("Minimum requirements: vsSolutionBuildEvent.dll v{0}", loader.MinVersion.ToString());
                 msg(new String('=', 80));
@@ -375,9 +289,36 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                 }
             }
             catch(Exception ex) {
-                msg("Error with library: '{0}'", ex.ToString());
+                msg("Error with loading: '{0}'", ex.ToString());
             }
             throw new AbortException();
+        }
+
+        //TODO: new lightweight logger or main NLog for all projects. New reference with NLog very large for simple wrappers..
+        protected virtual void msg(string data, params object[] args)
+        {
+            Console.WriteLine(data, args);
+        }
+
+        protected virtual void debug(string data, params object[] args)
+        {
+            if(Verbosity >= LoggerVerbosity.Detailed) {
+                msg(data, args);
+            }
+        }
+
+        /// <summary>
+        /// Format specification: http://msdn.microsoft.com/en-us/library/yxkt8b26.aspx
+        /// </summary>
+        /// <param name="type">Type of message</param>
+        /// <param name="code">code####</param>
+        /// <param name="msg">Localizable string</param>
+        /// <param name="file">Filename</param>
+        /// <param name="line">Line</param>
+        /// <returns></returns>
+        protected virtual string format(string type, string code, string msg, string file, int line)
+        {
+            return String.Format("{0}({1}): {2} {3}: {4}", file, line, type, code, msg);
         }
 
         /// <summary>
@@ -397,12 +338,6 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                         .Select(p => p.Split('='))
                         .Select(p => new KeyValuePair<string, string>(p[0], (p.Length < 2)? null : p[1]))
                         .ToDictionary(k => k.Key, v => v.Value);
-        }
-
-        //TODO: new lightweight logger or main NLog for all projects. New reference with NLog very large for simple wrappers..
-        protected void msg(string data, params object[] args)
-        {
-            Console.WriteLine(data, args);
         }
     }
 }

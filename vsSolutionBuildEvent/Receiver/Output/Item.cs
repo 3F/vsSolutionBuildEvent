@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,13 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace net.r_eg.vsSBE.OWP
+using System;
+
+namespace net.r_eg.vsSBE.Receiver.Output
 {
-    public interface IItems
+    /// <summary>
+    /// Provides the available items from the output
+    /// </summary>
+    public sealed class Item: IItem
     {
+        public BuildItem Build
+        {
+            get { return build; }
+        }
+        private BuildItem build = new BuildItem();
+
         /// <summary>
-        /// Provides the 'Build' item of OutputWindowPane
+        /// Thread-safe getting the instance of Items
         /// </summary>
-        BuildItem Build { get; }
+        public static Item _
+        {
+            get { return _lazy.Value; }
+        }
+        private static readonly Lazy<Item> _lazy = new Lazy<Item>(() => new Item());
+
+        private Item(){}
     }
 }

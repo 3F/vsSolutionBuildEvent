@@ -21,12 +21,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace net.r_eg.vsSBE.OWP
+namespace net.r_eg.vsSBE.Receiver.Output
 {
-    /// <summary>
-    /// Working with the "Build"
-    /// http://msdn.microsoft.com/en-us/library/yxkt8b26%28v=vs.120%29.aspx
-    /// </summary>
     public class BuildItem
     {
         public int ErrorsCount
@@ -119,6 +115,7 @@ namespace net.r_eg.vsSBE.OWP
         protected void extract()
         {
             flushCodes();
+            // Format specification: http://msdn.microsoft.com/en-us/library/yxkt8b26%28v=vs.120%29.aspx
             MatchCollection matches = Regex.Matches(rawdata, @"\s+(error|warning)\s+([^:]+):", RegexOptions.IgnoreCase);
             // 1  -> type
             // 2  -> code####

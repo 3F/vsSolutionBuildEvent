@@ -731,7 +731,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
                 if(cdet.Charset == null) {
                     //throw new ComponentException("Ude: Detection failed for '{0}'", file);
-                    Log.nlog.Error("Problem with detection of encoding for '{0}'", file);
+                    Log.nlog.Warn("Problem with detection of encoding for '{0}'", file);
                     return Encoding.UTF8; // good luck
                 }
 
