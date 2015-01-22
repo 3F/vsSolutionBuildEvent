@@ -154,6 +154,11 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                 return;
             }
 
+            if(e.Properties == null) {
+                debug("onProjectStarted: e.Properties is null :: '{0}' ({1})", e.ProjectFile, e.Message);
+                return;
+            }
+
             Dictionary<object, string> properties = e.Properties.OfType<DictionaryEntry>().ToDictionary(k => k.Key, v => v.Value.ToString());
             if(properties.ContainsKey("ProjectName"))
             {
@@ -187,7 +192,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         protected void onWarningRaised(object sender, BuildWarningEventArgs e)
         {
             if(library != null) {
-                library.Build.onBuildRaw(format("warning", e.Code, e.Message, e.File, e.LineNumber));
+                library.Build.onBuildRaw(formatEW("warning", e.Code, e.Message, e.File, e.LineNumber));
             }
         }
 
@@ -198,7 +203,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             }
 
             if(library != null) {
-                library.Build.onBuildRaw(format("error", e.Code, e.Message, e.File, e.LineNumber));
+                library.Build.onBuildRaw(formatEW("error", e.Code, e.Message, e.File, e.LineNumber));
             }
         }
 
@@ -243,18 +248,39 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             if(_properties.ContainsKey("Platform")) {
                 ret["Platform"] = _properties["Platform"];
             }
+            if(_properties.ContainsKey("SolutionDir")) {
+                ret["SolutionDir"] = _properties["SolutionDir"];
+            }
+            if(_properties.ContainsKey("SolutionName")) {
+                ret["SolutionName"] = _properties["SolutionName"];
+            }
+            if(_properties.ContainsKey("SolutionFileName")) {
+                ret["SolutionFileName"] = _properties["SolutionFileName"];
+            }
+            if(_properties.ContainsKey("SolutionExt")) {
+                ret["SolutionExt"] = _properties["SolutionExt"];
+            }
+            if(_properties.ContainsKey("SolutionPath")) {
+                ret["SolutionPath"] = _properties["SolutionPath"];
+            }
 
+            if(Verbosity == LoggerVerbosity.Diagnostic)
+            {
+                foreach(KeyValuePair<string, string> p in ret) {
+                    msg(String.Format("SolutionProperty found: ['{0}' => '{1}']", p.Key, p.Value));
+                }
+            }
             return ret;
         }
 
         protected Provider.ILibrary load(string solutionFile, Dictionary<string, string> properties, string libPath)
         {
-            Provider.ILoader loader = new Provider.Loader();
-            if(Verbosity >= LoggerVerbosity.Detailed) {
-                loader.DebugMode = true;
-            }
+            debug("Loading: '{0}' /'{1}'", solutionFile, libPath);
 
-            try {
+            Provider.ILoader loader     = new Provider.Loader();
+            loader.Settings.DebugMode   = (Verbosity == LoggerVerbosity.Diagnostic);
+            try
+            {
                 Provider.ILibrary library = loader.load(solutionFile, properties, libPath, false);
                 msg("Library: loaded from '{0}' :: v{1} [{2}] /'{3}':{4}", 
                                     library.Dllpath, 
@@ -302,7 +328,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
 
         protected virtual void debug(string data, params object[] args)
         {
-            if(Verbosity >= LoggerVerbosity.Detailed) {
+            if(Verbosity == LoggerVerbosity.Diagnostic) {
                 msg(data, args);
             }
         }
@@ -316,7 +342,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         /// <param name="file">Filename</param>
         /// <param name="line">Line</param>
         /// <returns></returns>
-        protected virtual string format(string type, string code, string msg, string file, int line)
+        protected virtual string formatEW(string type, string code, string msg, string file, int line)
         {
             return String.Format("{0}({1}): {2} {3}: {4}", file, line, type, code, msg);
         }

@@ -31,7 +31,7 @@ using EnvDTE80;
 
 namespace net.r_eg.vsSBE.Provider
 {
-    public class Library: MarshalByRefObject, ILibrary
+    internal class Library: MarshalByRefObject, ILibrary
     {
         public const string NAME = "vsSolutionBuildEvent.dll";
 
@@ -80,12 +80,12 @@ namespace net.r_eg.vsSBE.Provider
         }
 
         /// <summary>
-        /// Shows errors with the resolver if true
+        /// Settings of used library
         /// </summary>
-        public bool ResolveErrorsShow
+        public Bridge.ISettings Settings
         {
             get;
-            set;
+            protected set;
         }
 
         /// <summary>
@@ -103,6 +103,14 @@ namespace net.r_eg.vsSBE.Provider
                 }
                 throw new DllNotFoundException(String.Format("incorrect library for type '{0}'", typeof(T)));
             }
+        }
+
+        /// <summary>
+        /// Access to provider settings
+        /// </summary>
+        protected ISettings PSettings
+        {
+            get { return Provider.Settings._; }
         }
 
         /// <summary>
@@ -127,10 +135,7 @@ namespace net.r_eg.vsSBE.Provider
         /// <param name="dte2">DTE2 instance</param>
         public Library(string libpath, DTE2 dte2)
         {
-            Assembly lib = prepare(libpath);
-            Event   = Instance<Bridge.IEvent>.from(lib, dte2);
-            Build   = (Bridge.IBuild)Event;
-            Version = Instance<Bridge.IVersion>.from(lib);
+            initLib(prepare(libpath), dte2, PSettings.DebugMode);
         }
 
         /// <summary>
@@ -141,10 +146,15 @@ namespace net.r_eg.vsSBE.Provider
         /// <param name="properties">Solution properties</param>
         public Library(string libpath, string solutionFile, Dictionary<string, string> properties)
         {
-            Assembly lib = prepare(libpath);
-            Event   = Instance<Bridge.IEvent>.from(lib, solutionFile, properties);
-            Build   = (Bridge.IBuild)Event;
-            Version = Instance<Bridge.IVersion>.from(lib);
+            initLib(prepare(libpath), solutionFile, properties, PSettings.DebugMode);
+        }
+
+        protected void initLib(Assembly lib, params object[] args)
+        {
+            Event       = Instance<Bridge.IEvent>.from(lib, args);
+            Build       = (Bridge.IBuild)Event;
+            Settings    = Instance<Bridge.ISettings>.from(lib);
+            Version     = Instance<Bridge.IVersion>.from(lib);
         }
 
         /// <param name="path">Path to library</param>
@@ -164,10 +174,13 @@ namespace net.r_eg.vsSBE.Provider
                 }
 
                 try {
-                    return Assembly.LoadFrom(String.Format("{0}{1}.dll", path, args.Name.Substring(0, args.Name.IndexOf(","))));
+                    int split = args.Name.IndexOf(",");
+                    return Assembly.LoadFrom(String.Format("{0}{1}.dll", 
+                                                            path, 
+                                                            args.Name.Substring(0, (split == -1)? args.Name.Length : split)));
                 }
                 catch(Exception ex) {
-                    if(ResolveErrorsShow) {
+                    if(PSettings.DebugMode) {
                         Console.WriteLine("Use other resolver for '{0}' :: {1}", args.Name, ex.Message);
                     }
                 }

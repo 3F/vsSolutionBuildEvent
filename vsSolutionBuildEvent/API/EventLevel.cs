@@ -269,14 +269,16 @@ namespace net.r_eg.vsSBE.API
             detachCommandEvents(); //optional, i.e. should with cmdEvents ...
         }
 
-        public EventLevel(DTE2 dte2)
+        public EventLevel(DTE2 dte2, bool debug = false)
         {
+            vsSBE.Settings.debugMode = debug;
             this.Environment = new Environment(dte2);
             init();
         }
 
-        public EventLevel(string solutionFile, Dictionary<string, string> properties)
+        public EventLevel(string solutionFile, Dictionary<string, string> properties, bool debug = false)
         {
+            vsSBE.Settings.debugMode = debug;
             this.Environment = new IsolatedEnv(solutionFile, properties);
             init();
         }

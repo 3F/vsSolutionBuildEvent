@@ -24,36 +24,11 @@
 
 namespace net.r_eg.vsSBE.Provider
 {
-    public interface ILibrary
+    public interface ISettings
     {
         /// <summary>
-        /// Absolute path to used library
+        /// Additional details for all elements in provider namespace
         /// </summary>
-        string Dllpath { get; }
-
-        /// <summary>
-        /// Name of used library with full path
-        /// </summary>
-        string FullName { get; }
-
-        /// <summary>
-        /// Version of used library
-        /// </summary>
-        Bridge.IVersion Version { get; }
-
-        /// <summary>
-        /// All public events of used library
-        /// </summary>
-        Bridge.IEvent Event { get; }
-
-        /// <summary>
-        /// The Build operations of used library
-        /// </summary>
-        Bridge.IBuild Build { get; }
-
-        /// <summary>
-        /// Settings of used library
-        /// </summary>
-        Bridge.ISettings Settings { get; }
+        bool DebugMode { get; set; }
     }
 }

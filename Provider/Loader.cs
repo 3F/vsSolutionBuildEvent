@@ -50,11 +50,11 @@ namespace net.r_eg.vsSBE.Provider
         }
 
         /// <summary>
-        /// Switches the debug mode for details about errors with loader/library etc.
+        /// Access to settings
         /// </summary>
-        public bool DebugMode
+        public ISettings Settings
         {
-            get; set;
+            get { return Provider.Settings._; }
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace net.r_eg.vsSBE.Provider
             if(!Provider.Library.existsIn(path)) {
                 path = findWithRegistry(dte2.RegistryRoot);
             }
-            this.Library = new Library(path, dte2) { ResolveErrorsShow = DebugMode };
+            this.Library = new Library(path, dte2);
             return Library;
         }
 
@@ -89,7 +89,7 @@ namespace net.r_eg.vsSBE.Provider
                 this.Library = createInNewDomain(path, dte2);
             }
             else {
-                this.Library = new Library(path, dte2) { ResolveErrorsShow = DebugMode };
+                this.Library = new Library(path, dte2);
             }
             return Library;
         }
@@ -107,7 +107,7 @@ namespace net.r_eg.vsSBE.Provider
                 this.Library = createInNewDomain(libPath, solutionFile, properties);
             }
             else {
-                this.Library = new Library(libPath, solutionFile, properties) { ResolveErrorsShow = DebugMode };
+                this.Library = new Library(libPath, solutionFile, properties);
             }
             return Library;
         }
@@ -126,7 +126,7 @@ namespace net.r_eg.vsSBE.Provider
         }
 
         // TODO:
-        protected Library createInNewDomain(params Object[] arguments)
+        protected virtual ILibrary createInNewDomain(params Object[] arguments)
         {
             domain = AppDomain.CreateDomain(String.Format("Library_{0}", GUID), null, new AppDomainSetup() {
                 ApplicationBase = Environment.CurrentDirectory
@@ -137,19 +137,16 @@ namespace net.r_eg.vsSBE.Provider
                                                         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), 
                                                         args.Name.Substring(0, args.Name.IndexOf(","))));
             });
-            Library lib = (Library)domain.CreateInstanceAndUnwrap(
-                                            typeof(Library).Assembly.FullName,
-                                            typeof(Library).FullName,
-                                            false,
-                                            BindingFlags.Default,
-                                            null,
-                                            arguments,
-                                            null,
-                                            null
-                                          );
-
-            lib.ResolveErrorsShow = DebugMode;
-            return lib;
+            return (Library)domain.CreateInstanceAndUnwrap(
+                                        typeof(Library).Assembly.FullName,
+                                        typeof(Library).FullName,
+                                        false,
+                                        BindingFlags.Default,
+                                        null,
+                                        arguments,
+                                        null,
+                                        null
+                                   );
         }
 
         protected string findWithRegistry(string root)

@@ -59,6 +59,11 @@ namespace net.r_eg.vsSBE
             public string Path { get; set; }
 
             /// <summary>
+            /// Full path to project 
+            /// </summary>
+            public string FullPath { get; set; }
+
+            /// <summary>
             /// Project GUID
             /// </summary>
             public string Guid { get; set; }
@@ -88,6 +93,12 @@ namespace net.r_eg.vsSBE
             /// </summary>
             public List<Project> projects;
         }
+
+        /// <summary>
+        /// Full path to root solution directory
+        /// </summary>
+        private string _solutionDir;
+
         
         /// <summary>
         /// Parse of selected .sln file
@@ -96,6 +107,8 @@ namespace net.r_eg.vsSBE
         /// <returns></returns>
         public Result parse(string sln)
         {
+            _solutionDir = getPathFrom(sln);
+
             Result Data = new Result() {
                 configs  = new List<SolutionCfg>(),
                 projects = new List<Project>()
@@ -127,6 +140,7 @@ namespace net.r_eg.vsSBE
             {
                 string left = line.Split('=')[0].Trim(); // Debug|Win32 = Debug|Win32
                 if(string.Compare(left, "DESCRIPTION", StringComparison.OrdinalIgnoreCase) == 0) {
+                    Log.nlog.Trace("SolutionParser: Configuration has been ignored for line '{0}'", line);
                     continue;
                 }
 
@@ -134,6 +148,8 @@ namespace net.r_eg.vsSBE
                 if(cfg.Length < 2) {
                     continue;
                 }
+
+                Log.nlog.Trace("SolutionParser: Configuration ->['{0}' ; '{1}']", cfg[0], cfg[1]);
                 configuration.Add(new SolutionCfg() {
                     Configuration   = cfg[0],
                     Platform        = cfg[1]
@@ -147,22 +163,47 @@ namespace net.r_eg.vsSBE
             string pattern = "^Project\\(\"(?<PROJECTTYPEGUID>.*)\"\\)\\s*=\\s*\"(?<PROJECTNAME>.*)\"\\s*,\\s*\"(?<RELATIVEPATH>.*)\"\\s*,\\s*\"(?<PROJECTGUID>.*)\"$";
             Match m = Regex.Match(line, pattern);
             if(!m.Success) {
+                Log.nlog.Debug("SolutionParser: incorrect line for pattern :: '{0}'", line);
                 return;
             }
 
             string pType = m.Groups["PROJECTTYPEGUID"].Value.Trim();
-
+            
             if(String.Equals("{2150E333-8FDC-42A3-9474-1A3956D46DE8}", pType, StringComparison.OrdinalIgnoreCase)) {
-                // SolutionFolder
+                Log.nlog.Trace("SolutionParser: ignored as SolutionFolder");
                 return;
             }
 
+            string pName = m.Groups["PROJECTNAME"].Value.Trim();
+            string pPath = m.Groups["RELATIVEPATH"].Value.Trim();
+            string pGuid = m.Groups["PROJECTGUID"].Value.Trim();
+
+            string fullPath;
+            if(Path.IsPathRooted(pPath)) {
+                fullPath = pPath;
+            }
+            else {
+                fullPath = (!String.IsNullOrEmpty(pPath))? Path.Combine(_solutionDir, pPath) : pPath;
+            }
+
+            Log.nlog.Trace("SolutionParser: project ->[Type: '{0}'; Name: '{1}'; Path: '{2}'; GUID: '{3}'; FullPath: '{4}']",
+                                                            pType, pName, pPath, pGuid, fullPath);
             projects.Add(new Project() {
-                Type = pType,
-                Name = m.Groups["PROJECTNAME"].Value.Trim(),
-                Path = m.Groups["RELATIVEPATH"].Value.Trim(),
-                Guid = m.Groups["PROJECTGUID"].Value.Trim()
+                Type        = pType,
+                Name        = pName,
+                Path        = pPath,
+                FullPath    = fullPath,
+                Guid        = pGuid
             });
+        }
+
+        protected string getPathFrom(string file)
+        {
+            string dir = Path.GetDirectoryName(file);
+            if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
+                dir += Path.DirectorySeparatorChar;
+            }
+            return dir;
         }
     }
 }

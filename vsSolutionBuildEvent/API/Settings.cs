@@ -15,30 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using LibVersion = net.r_eg.vsSBE.Version;
-
 namespace net.r_eg.vsSBE.API
 {
-    public class Version: Bridge.IVersion
+    public class Settings: Bridge.ISettings
     {
-        public System.Version Number
+        /// <summary>
+        /// Access to the debug mode
+        /// </summary>
+        public bool DebugMode
         {
-            get { return LibVersion.number; }
-        }
-
-        public string BranchName
-        {
-            get { return LibVersion.branchName; }
-        }
-
-        public string BranchSha1
-        {
-            get { return LibVersion.branchSha1; }
-        }
-
-        public string BranchRevCount
-        {
-            get { return LibVersion.branchRevCount; }
+            get { return vsSBE.Settings.debugMode; }
+            set { vsSBE.Settings.debugMode = value; }
         }
     }
 }

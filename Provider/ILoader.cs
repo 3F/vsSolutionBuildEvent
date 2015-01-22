@@ -40,9 +40,9 @@ namespace net.r_eg.vsSBE.Provider
         Version MinVersion { get; }
 
         /// <summary>
-        /// Switches the debug mode for details about errors with loader/library etc.
+        /// Access to settings
         /// </summary>
-        bool DebugMode { get; set; }
+        ISettings Settings { get; }
 
         /// <summary>
         /// Load the library with path from DTE2 & AddIn for alternative path.

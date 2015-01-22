@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ISettings.cs" />
     <Compile Include="IBuild.cs" />
     <Compile Include="IEvent.cs" />
     <Compile Include="IVersion.cs" />

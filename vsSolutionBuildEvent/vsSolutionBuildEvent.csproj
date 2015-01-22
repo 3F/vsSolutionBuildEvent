@@ -99,6 +99,7 @@
     <Compile Include="Actions\ICommand.cs" />
     <Compile Include="API\EventLevel.cs" />
     <Compile Include="API\IEventLevel.cs" />
+    <Compile Include="API\Settings.cs" />
     <Compile Include="API\Version.cs" />
     <Compile Include="Configuration\Component.cs" />
     <Compile Include="Environment.cs" />

@@ -123,31 +123,38 @@ namespace net.r_eg.vsSBE
         /// <returns>Microsoft.Build.Evaluation.Project</returns>
         public virtual Project getProject(string name = null)
         {
+            Log.nlog.Trace("getProject: started with '{0}'", name);
+
             if(String.IsNullOrEmpty(name)) {
                 name = StartupProjectString;
+                Log.nlog.Trace("getProject: use the StartupProject '{0}'", name);
             }
+            SolutionParser.Project project = _sln.projects.Find(p => p.Name == name);
 
             foreach(Project eProject in ProjectCollection.GlobalProjectCollection.LoadedProjects)
             {
                 string pName = eProject.GetPropertyValue("ProjectName");
                 string pCfg  = formatCfg(eProject.GetPropertyValue("Configuration"), eProject.GetPropertyValue("Platform"));
 
-                Log.nlog.Trace("find in projects collection: project '{0}', '{1}' == '{2}' [{3} = {4}]",
-                                eProject.FullPath, pName, name, SolutionActiveCfgString, pCfg);
+                Log.nlog.Trace("find in projects collection: project '{0}' == '{1}', '{2}' == '{3}' [{4} = {5}]",
+                                eProject.FullPath, project.FullPath, pName, name, SolutionActiveCfgString, pCfg);
 
-                if(pName == name && SolutionActiveCfgString == pCfg) {
+                if(SolutionActiveCfgString != pCfg) {
+                    continue;
+                }
+
+                if(project.FullPath == eProject.FullPath || pName == name) {
                     return eProject;
                 }
             }
-            Log.nlog.Trace("trying to load project :: '{0}'", name);
-            SolutionParser.Project project = _sln.projects.Find(p => p.Name == name);
 
-            if(String.IsNullOrEmpty(project.Path)) {
-                throw new NotFoundException("Missed path to project '{0}'", name);
+            Log.nlog.Trace("trying to load project :: '{0}' ('{1}')", project.Name, project.FullPath);
+            if(String.IsNullOrEmpty(project.FullPath)) {
+                throw new NotFoundException("Missed path to project '{0}' ['{1}', '{2}']", name, project.Name, project.Guid);
             }
 
-            Log.nlog.Debug("-> '{0}' [{1} ; {2}]", project.Path, properties["Configuration"], properties["Platform"]);
-            return new Project(project.Path, properties, null, ProjectCollection.GlobalProjectCollection);
+            Log.nlog.Debug("-> ['{0}' ; '{1}']", properties["Configuration"], properties["Platform"]);
+            return new Project(project.FullPath, properties, null, ProjectCollection.GlobalProjectCollection);
         }
 
         /// <summary>
