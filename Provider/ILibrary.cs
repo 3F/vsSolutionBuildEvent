@@ -22,8 +22,12 @@
  * THE SOFTWARE.
 */
 
+using System;
+using System.Runtime.InteropServices;
+
 namespace net.r_eg.vsSBE.Provider
 {
+    [Guid("536FFC0D-8BC1-4347-B4B4-694308F9E396")]
     public interface ILibrary
     {
         /// <summary>

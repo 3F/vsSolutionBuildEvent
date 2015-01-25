@@ -22,8 +22,12 @@
  * THE SOFTWARE.
 */
 
+using System;
+using System.Runtime.InteropServices;
+
 namespace net.r_eg.vsSBE.Bridge
 {
+    [Guid("15A35810-27BB-4D8F-9CD1-1EAE12C6A9DA")]
     public interface IBuild
     {
         /// <summary>

@@ -22,8 +22,12 @@
  * THE SOFTWARE.
 */
 
+using System;
+using System.Runtime.InteropServices;
+
 namespace net.r_eg.vsSBE.Provider
 {
+    [Guid("29223824-6176-47F4-A185-502B04AA3017")]
     public interface ISettings
     {
         /// <summary>

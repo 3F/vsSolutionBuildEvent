@@ -24,9 +24,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace net.r_eg.vsSBE.Provider
 {
+    [Guid("371E873E-A4EC-4844-92AB-E5835B86CC67")]
     public interface ILoader
     {
         /// <summary>

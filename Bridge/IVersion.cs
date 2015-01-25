@@ -22,8 +22,12 @@
  * THE SOFTWARE.
 */
 
+using System;
+using System.Runtime.InteropServices;
+
 namespace net.r_eg.vsSBE.Bridge
 {
+    [Guid("6F40D8EE-C79C-47EB-9EA0-5594C63779B0")]
     public interface IVersion
     {
         System.Version Number { get; }

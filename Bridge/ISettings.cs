@@ -22,8 +22,12 @@
  * THE SOFTWARE.
 */
 
+using System;
+using System.Runtime.InteropServices;
+
 namespace net.r_eg.vsSBE.Bridge
 {
+    [Guid("D087BD0B-536F-4B21-A86D-973509318200")]
     public interface ISettings
     {
         /// <summary>

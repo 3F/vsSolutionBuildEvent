@@ -22,10 +22,13 @@
  * THE SOFTWARE.
 */
 
+using System;
+using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell.Interop;
 
 namespace net.r_eg.vsSBE.Bridge
 {
+    [Guid("FD4E35DB-9509-4353-9F2A-C31B7B1E63B8")]
     public interface IEvent
     {
         /// <summary>
