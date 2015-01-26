@@ -94,7 +94,7 @@ namespace net.r_eg.vsSBE.API
             try {
                 Config._.load(Environment.SolutionPath);
                 Config._.updateActivation(Bootloader);
-                _state();
+                UI.Plain.State.print(Config._.Data);
 
                 OpenedSolution(this, new EventArgs());
                 return VSConstants.S_OK;
@@ -317,35 +317,6 @@ namespace net.r_eg.vsSBE.API
             lock(_lock) {
                 cmdEvents.BeforeExecute -= new EnvDTE._dispCommandEvents_BeforeExecuteEventHandler(_cmdBeforeExecute);
             }
-        }
-
-        private void _state()
-        {
-            Func<ISolutionEvent[], string, string> about = delegate(ISolutionEvent[] evt, string caption)
-            {
-                if(evt == null) {
-                    return String.Format("\n\t-- /--] {0} :: Not Initialized", caption);
-                }
-
-                System.Text.StringBuilder info = new System.Text.StringBuilder();
-                info.Append(String.Format("\n\t{0,2} /{1,2}] {2} :: ", evt.Where(i => i.Enabled).Count(), evt.Length, caption));
-                foreach(ISolutionEvent item in evt) {
-                    info.Append(String.Format("[{0}]", (item.Enabled) ? "!" : "X"));
-                }
-                return info.ToString();
-            };
-
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
-            sb.Append(about(Config._.Data.PreBuild,      "Pre-Build     "));
-            sb.Append(about(Config._.Data.PostBuild,     "Post-Build    "));
-            sb.Append(about(Config._.Data.CancelBuild,   "Cancel-Build  "));
-            sb.Append(about(Config._.Data.WarningsBuild, "Warnings-Build"));
-            sb.Append(about(Config._.Data.ErrorsBuild,   "Errors-Build  "));
-            sb.Append(about(Config._.Data.OWPBuild,      "Output-Build  "));
-            sb.Append(about(Config._.Data.Transmitter,   "Transmitter   "));
-            sb.Append("\n---\n");
-            Log.print(sb.ToString());
-            Log.nlog.Info("vsSBE tool pane: View -> Other Windows -> Solution Build-Events");
         }
 
         /// <summary>

@@ -55,16 +55,20 @@
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
         <Strings>
-          <CommandName>CMD_MAIN</CommandName>
-          <ButtonText>Events Solution</ButtonText>
+            <CommandName>CMD_MAIN</CommandName>
+            <ButtonText>Events Solution</ButtonText>
+            <MenuText>Events Solution</MenuText>
+            <CanonicalName>vsSBE.Settings</CanonicalName>
         </Strings>
       </Button>
 
      <Button guid="GUID_PANEL_CMD" id="CMD_PANEL" priority="0x0100" type="Button">
        <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1" />
        <Strings>
-          <CommandName>CMD_PANEL</CommandName>
-          <ButtonText>Solution Build-Events</ButtonText>
+           <CommandName>CMD_PANEL</CommandName>
+           <ButtonText>Solution Build-Events Panel</ButtonText>
+           <MenuText>Solution Build-Events Panel</MenuText>
+           <CanonicalName>vsSBE.Panel</CanonicalName>
        </Strings>
      </Button>
 

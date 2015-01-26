@@ -61,6 +61,15 @@
             this.toolStripMenuDTECmd = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuDTECmdExec = new System.Windows.Forms.ToolStripMenuItem();
             this.menuSBEScript = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuCI = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuCIMSBuild = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuDevenv = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuPlugin = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuCopyPath = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuPluginDir = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuSBEPanel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuHelp = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripMenuDocItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuGalleryPage = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,6 +78,8 @@
             this.toolStripMenuDocDte = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuDocMSBuild = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuDocSBE = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuDocCI = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuDocDev = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuChangelog = new System.Windows.Forms.ToolStripMenuItem();
@@ -94,6 +105,10 @@
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.panelManagerMain = new System.Windows.Forms.Panel();
             this.pictureBoxToggle = new System.Windows.Forms.PictureBox();
+            this.dgvActions = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
+            this.dgvActionEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.dgvActionName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvActionCaption = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panelLineForSplit = new System.Windows.Forms.Panel();
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPageSettings = new System.Windows.Forms.TabPage();
@@ -117,6 +132,7 @@
             this.radioModeInterpreter = new System.Windows.Forms.RadioButton();
             this.radioModeFiles = new System.Windows.Forms.RadioButton();
             this.panelCommand = new System.Windows.Forms.Panel();
+            this.textEditor = new net.r_eg.vsSBE.UI.WForms.Controls.TextEditor();
             this.labelToCommandBox = new System.Windows.Forms.Label();
             this.groupBoxInterpreter = new System.Windows.Forms.GroupBox();
             this.comboBoxWrapper = new System.Windows.Forms.ComboBox();
@@ -134,30 +150,25 @@
             this.radioCodesBlacklist = new System.Windows.Forms.RadioButton();
             this.radioCodesWhitelist = new System.Windows.Forms.RadioButton();
             this.groupBoxOutputControl = new System.Windows.Forms.GroupBox();
+            this.dataGridViewOutput = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
+            this.owpTerm = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.owpType = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.owpRemove = new System.Windows.Forms.DataGridViewButtonColumn();
             this.panelSettingsBottom = new System.Windows.Forms.Panel();
             this.checkedListBoxSpecCfg = new System.Windows.Forms.CheckedListBox();
             this.labelCaption = new System.Windows.Forms.Label();
             this.textBoxCaption = new System.Windows.Forms.TextBox();
             this.btnApply = new System.Windows.Forms.Button();
+            this.dataGridViewOrder = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
+            this.dgvOrderEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.dgvOrderProject = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvOrderType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.labelOnlyFor = new System.Windows.Forms.Label();
             this.labelOrder = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.buttonEnvVariables = new System.Windows.Forms.Button();
             this.btnDteCmd = new System.Windows.Forms.Button();
             this.tabPageComponents = new System.Windows.Forms.TabPage();
-            this.dgvActions = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
-            this.dgvActionEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.dgvActionName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvActionCaption = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.textEditor = new net.r_eg.vsSBE.UI.WForms.Controls.TextEditor();
-            this.dataGridViewOutput = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
-            this.owpTerm = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.owpType = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.owpRemove = new System.Windows.Forms.DataGridViewButtonColumn();
-            this.dataGridViewOrder = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
-            this.dgvOrderEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.dgvOrderProject = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvOrderType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.splitContainerComponents = new System.Windows.Forms.SplitContainer();
             this.dgvComponents = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
             this.dgvComponentsIcon = new System.Windows.Forms.DataGridViewImageColumn();
@@ -182,6 +193,7 @@
             this.splitContainer.SuspendLayout();
             this.panelManagerMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxToggle)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvActions)).BeginInit();
             this.tabControl.SuspendLayout();
             this.tabPageSettings.SuspendLayout();
             this.panelSettingsMain.SuspendLayout();
@@ -194,12 +206,11 @@
             this.groupBoxVariants.SuspendLayout();
             this.groupBoxEW.SuspendLayout();
             this.groupBoxOutputControl.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOutput)).BeginInit();
             this.panelSettingsBottom.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrder)).BeginInit();
             this.panel2.SuspendLayout();
             this.tabPageComponents.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvActions)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOutput)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrder)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerComponents)).BeginInit();
             this.splitContainerComponents.Panel1.SuspendLayout();
             this.splitContainerComponents.Panel2.SuspendLayout();
@@ -320,9 +331,9 @@
             this.toolStripMenuHelp,
             this.toolStripMenuBug,
             this.toolStripMenuVersion});
-            this.statusStrip.Location = new System.Drawing.Point(142, 7);
+            this.statusStrip.Location = new System.Drawing.Point(111, 7);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(158, 22);
+            this.statusStrip.Size = new System.Drawing.Size(189, 22);
             this.statusStrip.TabIndex = 81;
             // 
             // toolStripMenuSpring
@@ -338,7 +349,10 @@
             this.toolStripMenuApply,
             this.toolStripMenuReset,
             this.toolStripSeparator6,
-            this.toolStripMenuTools});
+            this.toolStripMenuTools,
+            this.toolStripMenuCI,
+            this.toolStripSeparator11,
+            this.toolStripMenuSBEPanel});
             this.toolStripMenuSettings.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuSettings.Image")));
             this.toolStripMenuSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripMenuSettings.Name = "toolStripMenuSettings";
@@ -349,21 +363,21 @@
             // toolStripMenuApply
             // 
             this.toolStripMenuApply.Name = "toolStripMenuApply";
-            this.toolStripMenuApply.Size = new System.Drawing.Size(105, 22);
+            this.toolStripMenuApply.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuApply.Text = "Apply";
             this.toolStripMenuApply.Click += new System.EventHandler(this.toolStripMenuApply_Click);
             // 
             // toolStripMenuReset
             // 
             this.toolStripMenuReset.Name = "toolStripMenuReset";
-            this.toolStripMenuReset.Size = new System.Drawing.Size(105, 22);
+            this.toolStripMenuReset.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuReset.Text = "Reset";
             this.toolStripMenuReset.Click += new System.EventHandler(this.toolStripMenuReset_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(102, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(149, 6);
             // 
             // toolStripMenuTools
             // 
@@ -374,7 +388,7 @@
             this.toolStripMenuDTECmdExec,
             this.menuSBEScript});
             this.toolStripMenuTools.Name = "toolStripMenuTools";
-            this.toolStripMenuTools.Size = new System.Drawing.Size(105, 22);
+            this.toolStripMenuTools.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuTools.Text = "Tools";
             // 
             // toolStripMenuMSBuildProp
@@ -409,8 +423,73 @@
             // 
             this.menuSBEScript.Name = "menuSBEScript";
             this.menuSBEScript.Size = new System.Drawing.Size(214, 22);
-            this.menuSBEScript.Text = "SBE-Scripts";
+            this.menuSBEScript.Text = "SBE-Scripts Testing tool";
             this.menuSBEScript.Click += new System.EventHandler(this.menuSBEScript_Click);
+            // 
+            // toolStripMenuCI
+            // 
+            this.toolStripMenuCI.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuCIMSBuild,
+            this.toolStripMenuDevenv,
+            this.toolStripSeparator12,
+            this.toolStripMenuPlugin});
+            this.toolStripMenuCI.Name = "toolStripMenuCI";
+            this.toolStripMenuCI.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuCI.Text = "CI Utilities";
+            // 
+            // toolStripMenuCIMSBuild
+            // 
+            this.toolStripMenuCIMSBuild.Name = "toolStripMenuCIMSBuild";
+            this.toolStripMenuCIMSBuild.Size = new System.Drawing.Size(200, 22);
+            this.toolStripMenuCIMSBuild.Text = "CI.MSBuild";
+            this.toolStripMenuCIMSBuild.Click += new System.EventHandler(this.toolStripMenuCIMSBuild_Click);
+            // 
+            // toolStripMenuDevenv
+            // 
+            this.toolStripMenuDevenv.Name = "toolStripMenuDevenv";
+            this.toolStripMenuDevenv.Size = new System.Drawing.Size(200, 22);
+            this.toolStripMenuDevenv.Text = "Devenv Command-Line";
+            this.toolStripMenuDevenv.Click += new System.EventHandler(this.toolStripMenuDevenv_Click);
+            // 
+            // toolStripSeparator12
+            // 
+            this.toolStripSeparator12.Name = "toolStripSeparator12";
+            this.toolStripSeparator12.Size = new System.Drawing.Size(197, 6);
+            // 
+            // toolStripMenuPlugin
+            // 
+            this.toolStripMenuPlugin.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuCopyPath,
+            this.toolStripMenuPluginDir});
+            this.toolStripMenuPlugin.Name = "toolStripMenuPlugin";
+            this.toolStripMenuPlugin.Size = new System.Drawing.Size(200, 22);
+            this.toolStripMenuPlugin.Text = "Plugin";
+            // 
+            // toolStripMenuCopyPath
+            // 
+            this.toolStripMenuCopyPath.Name = "toolStripMenuCopyPath";
+            this.toolStripMenuCopyPath.Size = new System.Drawing.Size(216, 22);
+            this.toolStripMenuCopyPath.Text = "Copy path to plugin";
+            this.toolStripMenuCopyPath.Click += new System.EventHandler(this.toolStripMenuCopyPath_Click);
+            // 
+            // toolStripMenuPluginDir
+            // 
+            this.toolStripMenuPluginDir.Name = "toolStripMenuPluginDir";
+            this.toolStripMenuPluginDir.Size = new System.Drawing.Size(216, 22);
+            this.toolStripMenuPluginDir.Text = "Open directory with plugin";
+            this.toolStripMenuPluginDir.Click += new System.EventHandler(this.toolStripMenuPluginDir_Click);
+            // 
+            // toolStripSeparator11
+            // 
+            this.toolStripSeparator11.Name = "toolStripSeparator11";
+            this.toolStripSeparator11.Size = new System.Drawing.Size(149, 6);
+            // 
+            // toolStripMenuSBEPanel
+            // 
+            this.toolStripMenuSBEPanel.Name = "toolStripMenuSBEPanel";
+            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuSBEPanel.Text = "vsSBE Panel";
+            this.toolStripMenuSBEPanel.Click += new System.EventHandler(this.toolStripMenuSBEPanel_Click);
             // 
             // toolStripMenuHelp
             // 
@@ -443,6 +522,8 @@
             this.toolStripMenuDocDte,
             this.toolStripMenuDocMSBuild,
             this.toolStripMenuDocSBE,
+            this.toolStripSeparator13,
+            this.toolStripMenuDocCI,
             this.toolStripSeparator10,
             this.toolStripMenuDocDev});
             this.toolStripMenuDocItem.Name = "toolStripMenuDocItem";
@@ -452,52 +533,64 @@
             // toolStripMenuGalleryPage
             // 
             this.toolStripMenuGalleryPage.Name = "toolStripMenuGalleryPage";
-            this.toolStripMenuGalleryPage.Size = new System.Drawing.Size(162, 22);
+            this.toolStripMenuGalleryPage.Size = new System.Drawing.Size(219, 22);
             this.toolStripMenuGalleryPage.Text = "VS Gallery Page";
             this.toolStripMenuGalleryPage.Click += new System.EventHandler(this.toolStripMenuGalleryPage_Click);
             // 
             // toolStripMenuWiki
             // 
             this.toolStripMenuWiki.Name = "toolStripMenuWiki";
-            this.toolStripMenuWiki.Size = new System.Drawing.Size(162, 22);
+            this.toolStripMenuWiki.Size = new System.Drawing.Size(219, 22);
             this.toolStripMenuWiki.Text = "Wiki";
             this.toolStripMenuWiki.Click += new System.EventHandler(this.toolStripMenuWiki_Click);
             // 
             // toolStripSeparator9
             // 
             this.toolStripSeparator9.Name = "toolStripSeparator9";
-            this.toolStripSeparator9.Size = new System.Drawing.Size(159, 6);
+            this.toolStripSeparator9.Size = new System.Drawing.Size(216, 6);
             // 
             // toolStripMenuDocDte
             // 
             this.toolStripMenuDocDte.Name = "toolStripMenuDocDte";
-            this.toolStripMenuDocDte.Size = new System.Drawing.Size(162, 22);
+            this.toolStripMenuDocDte.Size = new System.Drawing.Size(219, 22);
             this.toolStripMenuDocDte.Text = "DTE-Commands";
             this.toolStripMenuDocDte.Click += new System.EventHandler(this.toolStripMenuDocDte_Click);
             // 
             // toolStripMenuDocMSBuild
             // 
             this.toolStripMenuDocMSBuild.Name = "toolStripMenuDocMSBuild";
-            this.toolStripMenuDocMSBuild.Size = new System.Drawing.Size(162, 22);
+            this.toolStripMenuDocMSBuild.Size = new System.Drawing.Size(219, 22);
             this.toolStripMenuDocMSBuild.Text = "MSBuild";
             this.toolStripMenuDocMSBuild.Click += new System.EventHandler(this.toolStripMenuDocMSBuild_Click);
             // 
             // toolStripMenuDocSBE
             // 
             this.toolStripMenuDocSBE.Name = "toolStripMenuDocSBE";
-            this.toolStripMenuDocSBE.Size = new System.Drawing.Size(162, 22);
+            this.toolStripMenuDocSBE.Size = new System.Drawing.Size(219, 22);
             this.toolStripMenuDocSBE.Text = "SBE-Scripts";
             this.toolStripMenuDocSBE.Click += new System.EventHandler(this.toolStripMenuDocSBE_Click);
+            // 
+            // toolStripSeparator13
+            // 
+            this.toolStripSeparator13.Name = "toolStripSeparator13";
+            this.toolStripSeparator13.Size = new System.Drawing.Size(216, 6);
+            // 
+            // toolStripMenuDocCI
+            // 
+            this.toolStripMenuDocCI.Name = "toolStripMenuDocCI";
+            this.toolStripMenuDocCI.Size = new System.Drawing.Size(219, 22);
+            this.toolStripMenuDocCI.Text = "Continuous Integration (CI)";
+            this.toolStripMenuDocCI.Click += new System.EventHandler(this.toolStripMenuDocCI_Click);
             // 
             // toolStripSeparator10
             // 
             this.toolStripSeparator10.Name = "toolStripSeparator10";
-            this.toolStripSeparator10.Size = new System.Drawing.Size(159, 6);
+            this.toolStripSeparator10.Size = new System.Drawing.Size(216, 6);
             // 
             // toolStripMenuDocDev
             // 
             this.toolStripMenuDocDev.Name = "toolStripMenuDocDev";
-            this.toolStripMenuDocDev.Size = new System.Drawing.Size(162, 22);
+            this.toolStripMenuDocDev.Size = new System.Drawing.Size(219, 22);
             this.toolStripMenuDocDev.Text = "For developers";
             this.toolStripMenuDocDev.Click += new System.EventHandler(this.toolStripMenuDocDev_Click);
             // 
@@ -692,6 +785,86 @@
             this.pictureBoxToggle.TabIndex = 47;
             this.pictureBoxToggle.TabStop = false;
             this.pictureBoxToggle.Click += new System.EventHandler(this.pictureBoxToggle_Click);
+            // 
+            // dgvActions
+            // 
+            this.dgvActions.AllowUserToAddRows = false;
+            this.dgvActions.AllowUserToDeleteRows = false;
+            this.dgvActions.AllowUserToResizeColumns = false;
+            this.dgvActions.AllowUserToResizeRows = false;
+            this.dgvActions.AlwaysSelected = true;
+            this.dgvActions.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.dgvActions.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.dgvActions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvActions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dgvActionEnabled,
+            this.dgvActionName,
+            this.dgvActionCaption});
+            this.dgvActions.ContextMenuStrip = this.contextMenuActions;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvActions.DefaultCellStyle = dataGridViewCellStyle1;
+            this.dgvActions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvActions.DragDropSortable = true;
+            this.dgvActions.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnF2;
+            this.dgvActions.EnableHeadersVisualStyles = false;
+            this.dgvActions.Location = new System.Drawing.Point(0, 0);
+            this.dgvActions.Margin = new System.Windows.Forms.Padding(0);
+            this.dgvActions.MultiSelect = false;
+            this.dgvActions.Name = "dgvActions";
+            this.dgvActions.NumberingForRowsHeader = true;
+            this.dgvActions.RowHeadersWidth = 28;
+            this.dgvActions.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            this.dgvActions.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
+            this.dgvActions.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.dgvActions.RowTemplate.Height = 17;
+            this.dgvActions.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvActions.ShowEditingIcon = false;
+            this.dgvActions.Size = new System.Drawing.Size(202, 500);
+            this.dgvActions.TabIndex = 46;
+            this.dgvActions.DragDropSortedRow += new net.r_eg.vsSBE.UI.WForms.Components.DGVSortEventHandler(this.dgvActions_DragDropSortedRow);
+            this.dgvActions.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvActions_CellContentClick);
+            this.dgvActions.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dgvActions_CellParsing);
+            this.dgvActions.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvActions_CellValueChanged);
+            this.dgvActions.Click += new System.EventHandler(this.dgvActions_Click);
+            this.dgvActions.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvActions_KeyDown);
+            this.dgvActions.KeyUp += new System.Windows.Forms.KeyEventHandler(this.dgvActions_KeyUp);
+            this.dgvActions.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dgvActions_MouseDown);
+            // 
+            // dgvActionEnabled
+            // 
+            this.dgvActionEnabled.FillWeight = 21F;
+            this.dgvActionEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.dgvActionEnabled.HeaderText = "";
+            this.dgvActionEnabled.MinimumWidth = 16;
+            this.dgvActionEnabled.Name = "dgvActionEnabled";
+            this.dgvActionEnabled.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvActionEnabled.ToolTipText = "Enabled";
+            this.dgvActionEnabled.Width = 21;
+            // 
+            // dgvActionName
+            // 
+            this.dgvActionName.FillWeight = 70F;
+            this.dgvActionName.HeaderText = "Name";
+            this.dgvActionName.MaxInputLength = 256;
+            this.dgvActionName.MinimumWidth = 70;
+            this.dgvActionName.Name = "dgvActionName";
+            this.dgvActionName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            this.dgvActionName.Width = 70;
+            // 
+            // dgvActionCaption
+            // 
+            this.dgvActionCaption.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dgvActionCaption.HeaderText = "Caption";
+            this.dgvActionCaption.MinimumWidth = 50;
+            this.dgvActionCaption.Name = "dgvActionCaption";
+            this.dgvActionCaption.ReadOnly = true;
+            this.dgvActionCaption.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // panelLineForSplit
             // 
@@ -969,6 +1142,15 @@
             this.panelCommand.Size = new System.Drawing.Size(767, 118);
             this.panelCommand.TabIndex = 62;
             // 
+            // textEditor
+            // 
+            this.textEditor.CodeCompletionEnabled = false;
+            this.textEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textEditor.Location = new System.Drawing.Point(1, 1);
+            this.textEditor.Name = "textEditor";
+            this.textEditor.Size = new System.Drawing.Size(765, 116);
+            this.textEditor.TabIndex = 0;
+            // 
             // labelToCommandBox
             // 
             this.labelToCommandBox.AutoSize = true;
@@ -1169,220 +1351,6 @@
             this.groupBoxOutputControl.TabStop = false;
             this.groupBoxOutputControl.Text = "Output customization";
             // 
-            // panelSettingsBottom
-            // 
-            this.panelSettingsBottom.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelSettingsBottom.Controls.Add(this.checkedListBoxSpecCfg);
-            this.panelSettingsBottom.Controls.Add(this.labelCaption);
-            this.panelSettingsBottom.Controls.Add(this.textBoxCaption);
-            this.panelSettingsBottom.Controls.Add(this.btnApply);
-            this.panelSettingsBottom.Controls.Add(this.dataGridViewOrder);
-            this.panelSettingsBottom.Controls.Add(this.labelOnlyFor);
-            this.panelSettingsBottom.Controls.Add(this.labelOrder);
-            this.panelSettingsBottom.Controls.Add(this.panel2);
-            this.panelSettingsBottom.Location = new System.Drawing.Point(6, 376);
-            this.panelSettingsBottom.Margin = new System.Windows.Forms.Padding(0);
-            this.panelSettingsBottom.Name = "panelSettingsBottom";
-            this.panelSettingsBottom.Size = new System.Drawing.Size(770, 99);
-            this.panelSettingsBottom.TabIndex = 71;
-            // 
-            // checkedListBoxSpecCfg
-            // 
-            this.checkedListBoxSpecCfg.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.checkedListBoxSpecCfg.FormattingEnabled = true;
-            this.checkedListBoxSpecCfg.IntegralHeight = false;
-            this.checkedListBoxSpecCfg.Location = new System.Drawing.Point(0, 18);
-            this.checkedListBoxSpecCfg.Margin = new System.Windows.Forms.Padding(0);
-            this.checkedListBoxSpecCfg.MinimumSize = new System.Drawing.Size(191, 77);
-            this.checkedListBoxSpecCfg.Name = "checkedListBoxSpecCfg";
-            this.checkedListBoxSpecCfg.ScrollAlwaysVisible = true;
-            this.checkedListBoxSpecCfg.Size = new System.Drawing.Size(191, 77);
-            this.checkedListBoxSpecCfg.TabIndex = 78;
-            this.checkedListBoxSpecCfg.Click += new System.EventHandler(this.checkedListBoxSpecCfg_Click);
-            this.checkedListBoxSpecCfg.MouseLeave += new System.EventHandler(this.checkedListBoxSpecCfg_MouseLeave);
-            // 
-            // labelCaption
-            // 
-            this.labelCaption.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelCaption.AutoSize = true;
-            this.labelCaption.Location = new System.Drawing.Point(464, 26);
-            this.labelCaption.Name = "labelCaption";
-            this.labelCaption.Size = new System.Drawing.Size(46, 13);
-            this.labelCaption.TabIndex = 81;
-            this.labelCaption.Text = "Caption:";
-            // 
-            // textBoxCaption
-            // 
-            this.textBoxCaption.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxCaption.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxCaption.Location = new System.Drawing.Point(464, 42);
-            this.textBoxCaption.Name = "textBoxCaption";
-            this.textBoxCaption.Size = new System.Drawing.Size(221, 20);
-            this.textBoxCaption.TabIndex = 80;
-            // 
-            // btnApply
-            // 
-            this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApply.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnApply.Location = new System.Drawing.Point(692, 42);
-            this.btnApply.Name = "btnApply";
-            this.btnApply.Size = new System.Drawing.Size(75, 23);
-            this.btnApply.TabIndex = 79;
-            this.btnApply.Text = "Apply";
-            this.btnApply.UseVisualStyleBackColor = true;
-            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
-            // 
-            // labelOnlyFor
-            // 
-            this.labelOnlyFor.AutoSize = true;
-            this.labelOnlyFor.Location = new System.Drawing.Point(-2, 4);
-            this.labelOnlyFor.Name = "labelOnlyFor";
-            this.labelOnlyFor.Size = new System.Drawing.Size(46, 13);
-            this.labelOnlyFor.TabIndex = 82;
-            this.labelOnlyFor.Text = "Only for:";
-            // 
-            // labelOrder
-            // 
-            this.labelOrder.AutoSize = true;
-            this.labelOrder.Location = new System.Drawing.Point(194, 5);
-            this.labelOrder.Name = "labelOrder";
-            this.labelOrder.Size = new System.Drawing.Size(84, 13);
-            this.labelOrder.TabIndex = 84;
-            this.labelOrder.Text = "Execution order:";
-            // 
-            // panel2
-            // 
-            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel2.Controls.Add(this.buttonEnvVariables);
-            this.panel2.Controls.Add(this.btnDteCmd);
-            this.panel2.Location = new System.Drawing.Point(543, 0);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(223, 32);
-            this.panel2.TabIndex = 85;
-            // 
-            // buttonEnvVariables
-            // 
-            this.buttonEnvVariables.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.buttonEnvVariables.Location = new System.Drawing.Point(3, 6);
-            this.buttonEnvVariables.Name = "buttonEnvVariables";
-            this.buttonEnvVariables.Size = new System.Drawing.Size(106, 20);
-            this.buttonEnvVariables.TabIndex = 24;
-            this.buttonEnvVariables.Text = "MSBuild Properties";
-            this.buttonEnvVariables.UseVisualStyleBackColor = true;
-            this.buttonEnvVariables.Click += new System.EventHandler(this.buttonEnvVariables_Click);
-            // 
-            // btnDteCmd
-            // 
-            this.btnDteCmd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnDteCmd.Location = new System.Drawing.Point(115, 7);
-            this.btnDteCmd.Name = "btnDteCmd";
-            this.btnDteCmd.Size = new System.Drawing.Size(102, 20);
-            this.btnDteCmd.TabIndex = 25;
-            this.btnDteCmd.Text = "DTE Commands";
-            this.btnDteCmd.UseVisualStyleBackColor = true;
-            this.btnDteCmd.Click += new System.EventHandler(this.btnDteCmd_Click);
-            // 
-            // tabPageComponents
-            // 
-            this.tabPageComponents.Controls.Add(this.splitContainerComponents);
-            this.tabPageComponents.Location = new System.Drawing.Point(4, 25);
-            this.tabPageComponents.Margin = new System.Windows.Forms.Padding(0);
-            this.tabPageComponents.Name = "tabPageComponents";
-            this.tabPageComponents.Size = new System.Drawing.Size(776, 471);
-            this.tabPageComponents.TabIndex = 2;
-            this.tabPageComponents.Text = "Components";
-            // 
-            // dgvActions
-            // 
-            this.dgvActions.AllowUserToAddRows = false;
-            this.dgvActions.AllowUserToDeleteRows = false;
-            this.dgvActions.AllowUserToResizeColumns = false;
-            this.dgvActions.AllowUserToResizeRows = false;
-            this.dgvActions.AlwaysSelected = true;
-            this.dgvActions.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.dgvActions.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.dgvActions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvActions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.dgvActionEnabled,
-            this.dgvActionName,
-            this.dgvActionCaption});
-            this.dgvActions.ContextMenuStrip = this.contextMenuActions;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvActions.DefaultCellStyle = dataGridViewCellStyle1;
-            this.dgvActions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgvActions.DragDropSortable = true;
-            this.dgvActions.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnF2;
-            this.dgvActions.EnableHeadersVisualStyles = false;
-            this.dgvActions.Location = new System.Drawing.Point(0, 0);
-            this.dgvActions.Margin = new System.Windows.Forms.Padding(0);
-            this.dgvActions.MultiSelect = false;
-            this.dgvActions.Name = "dgvActions";
-            this.dgvActions.NumberingForRowsHeader = true;
-            this.dgvActions.RowHeadersWidth = 28;
-            this.dgvActions.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.dgvActions.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
-            this.dgvActions.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.dgvActions.RowTemplate.Height = 17;
-            this.dgvActions.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvActions.ShowEditingIcon = false;
-            this.dgvActions.Size = new System.Drawing.Size(202, 500);
-            this.dgvActions.TabIndex = 46;
-            this.dgvActions.DragDropSortedRow += new net.r_eg.vsSBE.UI.WForms.Components.DGVSortEventHandler(this.dgvActions_DragDropSortedRow);
-            this.dgvActions.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvActions_CellContentClick);
-            this.dgvActions.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dgvActions_CellParsing);
-            this.dgvActions.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvActions_CellValueChanged);
-            this.dgvActions.Click += new System.EventHandler(this.dgvActions_Click);
-            this.dgvActions.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvActions_KeyDown);
-            this.dgvActions.KeyUp += new System.Windows.Forms.KeyEventHandler(this.dgvActions_KeyUp);
-            this.dgvActions.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dgvActions_MouseDown);
-            // 
-            // dgvActionEnabled
-            // 
-            this.dgvActionEnabled.FillWeight = 21F;
-            this.dgvActionEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.dgvActionEnabled.HeaderText = "";
-            this.dgvActionEnabled.MinimumWidth = 16;
-            this.dgvActionEnabled.Name = "dgvActionEnabled";
-            this.dgvActionEnabled.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvActionEnabled.ToolTipText = "Enabled";
-            this.dgvActionEnabled.Width = 21;
-            // 
-            // dgvActionName
-            // 
-            this.dgvActionName.FillWeight = 70F;
-            this.dgvActionName.HeaderText = "Name";
-            this.dgvActionName.MaxInputLength = 256;
-            this.dgvActionName.MinimumWidth = 70;
-            this.dgvActionName.Name = "dgvActionName";
-            this.dgvActionName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            this.dgvActionName.Width = 70;
-            // 
-            // dgvActionCaption
-            // 
-            this.dgvActionCaption.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dgvActionCaption.HeaderText = "Caption";
-            this.dgvActionCaption.MinimumWidth = 50;
-            this.dgvActionCaption.Name = "dgvActionCaption";
-            this.dgvActionCaption.ReadOnly = true;
-            this.dgvActionCaption.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // textEditor
-            // 
-            this.textEditor.CodeCompletionEnabled = false;
-            this.textEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textEditor.Location = new System.Drawing.Point(1, 1);
-            this.textEditor.Name = "textEditor";
-            this.textEditor.Size = new System.Drawing.Size(765, 116);
-            this.textEditor.TabIndex = 0;
-            // 
             // dataGridViewOutput
             // 
             this.dataGridViewOutput.AllowUserToResizeColumns = false;
@@ -1452,6 +1420,70 @@
             this.owpRemove.UseColumnTextForButtonValue = true;
             this.owpRemove.Width = 16;
             // 
+            // panelSettingsBottom
+            // 
+            this.panelSettingsBottom.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelSettingsBottom.Controls.Add(this.checkedListBoxSpecCfg);
+            this.panelSettingsBottom.Controls.Add(this.labelCaption);
+            this.panelSettingsBottom.Controls.Add(this.textBoxCaption);
+            this.panelSettingsBottom.Controls.Add(this.btnApply);
+            this.panelSettingsBottom.Controls.Add(this.dataGridViewOrder);
+            this.panelSettingsBottom.Controls.Add(this.labelOnlyFor);
+            this.panelSettingsBottom.Controls.Add(this.labelOrder);
+            this.panelSettingsBottom.Controls.Add(this.panel2);
+            this.panelSettingsBottom.Location = new System.Drawing.Point(6, 376);
+            this.panelSettingsBottom.Margin = new System.Windows.Forms.Padding(0);
+            this.panelSettingsBottom.Name = "panelSettingsBottom";
+            this.panelSettingsBottom.Size = new System.Drawing.Size(770, 99);
+            this.panelSettingsBottom.TabIndex = 71;
+            // 
+            // checkedListBoxSpecCfg
+            // 
+            this.checkedListBoxSpecCfg.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.checkedListBoxSpecCfg.FormattingEnabled = true;
+            this.checkedListBoxSpecCfg.IntegralHeight = false;
+            this.checkedListBoxSpecCfg.Location = new System.Drawing.Point(0, 18);
+            this.checkedListBoxSpecCfg.Margin = new System.Windows.Forms.Padding(0);
+            this.checkedListBoxSpecCfg.MinimumSize = new System.Drawing.Size(191, 77);
+            this.checkedListBoxSpecCfg.Name = "checkedListBoxSpecCfg";
+            this.checkedListBoxSpecCfg.ScrollAlwaysVisible = true;
+            this.checkedListBoxSpecCfg.Size = new System.Drawing.Size(191, 77);
+            this.checkedListBoxSpecCfg.TabIndex = 78;
+            this.checkedListBoxSpecCfg.Click += new System.EventHandler(this.checkedListBoxSpecCfg_Click);
+            this.checkedListBoxSpecCfg.MouseLeave += new System.EventHandler(this.checkedListBoxSpecCfg_MouseLeave);
+            // 
+            // labelCaption
+            // 
+            this.labelCaption.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelCaption.AutoSize = true;
+            this.labelCaption.Location = new System.Drawing.Point(464, 26);
+            this.labelCaption.Name = "labelCaption";
+            this.labelCaption.Size = new System.Drawing.Size(46, 13);
+            this.labelCaption.TabIndex = 81;
+            this.labelCaption.Text = "Caption:";
+            // 
+            // textBoxCaption
+            // 
+            this.textBoxCaption.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxCaption.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBoxCaption.Location = new System.Drawing.Point(464, 42);
+            this.textBoxCaption.Name = "textBoxCaption";
+            this.textBoxCaption.Size = new System.Drawing.Size(221, 20);
+            this.textBoxCaption.TabIndex = 80;
+            // 
+            // btnApply
+            // 
+            this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnApply.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnApply.Location = new System.Drawing.Point(692, 42);
+            this.btnApply.Name = "btnApply";
+            this.btnApply.Size = new System.Drawing.Size(75, 23);
+            this.btnApply.TabIndex = 79;
+            this.btnApply.Text = "Apply";
+            this.btnApply.UseVisualStyleBackColor = true;
+            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
+            // 
             // dataGridViewOrder
             // 
             this.dataGridViewOrder.AllowUserToAddRows = false;
@@ -1516,6 +1548,67 @@
             this.dgvOrderType.MinimumWidth = 76;
             this.dgvOrderType.Name = "dgvOrderType";
             this.dgvOrderType.Width = 76;
+            // 
+            // labelOnlyFor
+            // 
+            this.labelOnlyFor.AutoSize = true;
+            this.labelOnlyFor.Location = new System.Drawing.Point(-2, 4);
+            this.labelOnlyFor.Name = "labelOnlyFor";
+            this.labelOnlyFor.Size = new System.Drawing.Size(46, 13);
+            this.labelOnlyFor.TabIndex = 82;
+            this.labelOnlyFor.Text = "Only for:";
+            // 
+            // labelOrder
+            // 
+            this.labelOrder.AutoSize = true;
+            this.labelOrder.Location = new System.Drawing.Point(194, 5);
+            this.labelOrder.Name = "labelOrder";
+            this.labelOrder.Size = new System.Drawing.Size(84, 13);
+            this.labelOrder.TabIndex = 84;
+            this.labelOrder.Text = "Execution order:";
+            // 
+            // panel2
+            // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.buttonEnvVariables);
+            this.panel2.Controls.Add(this.btnDteCmd);
+            this.panel2.Location = new System.Drawing.Point(543, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(223, 32);
+            this.panel2.TabIndex = 85;
+            // 
+            // buttonEnvVariables
+            // 
+            this.buttonEnvVariables.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.buttonEnvVariables.Location = new System.Drawing.Point(3, 6);
+            this.buttonEnvVariables.Name = "buttonEnvVariables";
+            this.buttonEnvVariables.Size = new System.Drawing.Size(106, 20);
+            this.buttonEnvVariables.TabIndex = 24;
+            this.buttonEnvVariables.Text = "MSBuild Properties";
+            this.buttonEnvVariables.UseVisualStyleBackColor = true;
+            this.buttonEnvVariables.Click += new System.EventHandler(this.buttonEnvVariables_Click);
+            // 
+            // btnDteCmd
+            // 
+            this.btnDteCmd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnDteCmd.Location = new System.Drawing.Point(115, 7);
+            this.btnDteCmd.Name = "btnDteCmd";
+            this.btnDteCmd.Size = new System.Drawing.Size(102, 20);
+            this.btnDteCmd.TabIndex = 25;
+            this.btnDteCmd.Text = "DTE Commands";
+            this.btnDteCmd.UseVisualStyleBackColor = true;
+            this.btnDteCmd.Click += new System.EventHandler(this.btnDteCmd_Click);
+            // 
+            // tabPageComponents
+            // 
+            this.tabPageComponents.Controls.Add(this.splitContainerComponents);
+            this.tabPageComponents.Location = new System.Drawing.Point(4, 25);
+            this.tabPageComponents.Margin = new System.Windows.Forms.Padding(0);
+            this.tabPageComponents.Name = "tabPageComponents";
+            this.tabPageComponents.Size = new System.Drawing.Size(776, 471);
+            this.tabPageComponents.TabIndex = 2;
+            this.tabPageComponents.Text = "Components";
             // 
             // splitContainerComponents
             // 
@@ -1748,6 +1841,7 @@
             this.splitContainer.ResumeLayout(false);
             this.panelManagerMain.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxToggle)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvActions)).EndInit();
             this.tabControl.ResumeLayout(false);
             this.tabPageSettings.ResumeLayout(false);
             this.panelSettingsMain.ResumeLayout(false);
@@ -1766,13 +1860,12 @@
             this.groupBoxEW.ResumeLayout(false);
             this.groupBoxEW.PerformLayout();
             this.groupBoxOutputControl.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOutput)).EndInit();
             this.panelSettingsBottom.ResumeLayout(false);
             this.panelSettingsBottom.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrder)).EndInit();
             this.panel2.ResumeLayout(false);
             this.tabPageComponents.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dgvActions)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOutput)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrder)).EndInit();
             this.splitContainerComponents.Panel1.ResumeLayout(false);
             this.splitContainerComponents.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerComponents)).EndInit();
@@ -1920,6 +2013,17 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvCompInfoName;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvCompInfoSignature;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvCompInfoDescription;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuCI;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuSBEPanel;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuCIMSBuild;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuDevenv;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuPlugin;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuCopyPath;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuPluginDir;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuDocCI;
 
     }
 }

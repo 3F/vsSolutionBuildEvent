@@ -818,6 +818,11 @@ namespace net.r_eg.vsSBE.UI.WForms
             Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Scripts_&_Commands/MSBuild");
         }
 
+        private void toolStripMenuDocCI_Click(object sender, EventArgs e)
+        {
+            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/CI");
+        }
+
         private void toolStripMenuDocSBE_Click(object sender, EventArgs e)
         {
             Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Scripts_&_Commands/SBE-Scripts");
@@ -882,6 +887,33 @@ namespace net.r_eg.vsSBE.UI.WForms
 #if !DEBUG
             Settings.debugMode = (toolStripMenuDebugMode.Checked = !toolStripMenuDebugMode.Checked);
 #endif
+        }
+
+        private void toolStripMenuSBEPanel_Click(object sender, EventArgs e)
+        {
+            logic.Env.exec("View.vsSBE.Panel");
+        }
+
+        private void toolStripMenuCopyPath_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(String.Format("\"{0}\"", Settings.LibPath));
+            MessageBox.Show(String.Format("Copied to clipboard: \n\n{0}\n\nUse this with the CI utilities", Settings.LibPath), 
+                            "Full path to vsSolutionBuildEvent");
+        }
+
+        private void toolStripMenuPluginDir_Click(object sender, EventArgs e)
+        {
+            Util.openUrl(String.Format("\"{0}\"", Settings.LibPath));
+        }
+
+        private void toolStripMenuCIMSBuild_Click(object sender, EventArgs e)
+        {
+            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/CI/CI.MSBuild");
+        }
+
+        private void toolStripMenuDevenv_Click(object sender, EventArgs e)
+        {
+            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/CI/Devenv%20Command-Line");
         }
 
         private void componentInfo(string name)

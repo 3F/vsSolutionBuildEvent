@@ -2,7 +2,7 @@
 <Vsix xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="1.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2010">
     <Identifier Id="94ecd13f-15f3-4f51-9afd-17f0275c6266">
         <Name>vsSolutionBuildEvent</Name>
-        <Author>reg [entry.reg@gmail.com]</Author>
+        <Author>entry.reg@gmail.com</Author>
         <Version>0.10.1</Version>
         <Description xml:space="preserve">Flexible actions for all events of the MS Visual Studio.</Description>
         <Locale>1033</Locale>

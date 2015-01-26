@@ -173,7 +173,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
         private void btnSettings_Click(object sender, RoutedEventArgs e)
         {
             try {
-                logic.executeCommand("Build.EventsSolution");
+                logic.executeCommand("Build.vsSBE.Settings");
             }
             catch(Exception ex) {
                 Log.nlog.Warn("Cannot open window with settings'{0}'", ex.Message);

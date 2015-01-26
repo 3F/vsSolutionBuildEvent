@@ -196,6 +196,7 @@
     <Compile Include="SynchSubscribers.cs" />
     <Compile Include="MSBuild\TPreparedData.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
+    <Compile Include="UI\Plain\State.cs" />
     <Compile Include="UI\Resource.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
