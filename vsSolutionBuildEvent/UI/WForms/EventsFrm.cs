@@ -86,6 +86,8 @@ namespace net.r_eg.vsSBE.UI.WForms
             updateColors();
             defaultSizes();
 
+            toolTip.SetToolTip(pictureBoxWarnWait, Resource.StringWarnForWaiting);
+
 #if DEBUG
             this.Text                       += " [Debug version]";
             toolStripMenuDebugMode.Checked  = true;
@@ -239,7 +241,8 @@ namespace net.r_eg.vsSBE.UI.WForms
             checkBoxIgnoreIfFailed.Enabled  = false;
             groupBoxOutputControl.Enabled   = false;
             groupBoxEW.Enabled              = false;
-            checkBoxWaitForExit.Enabled     = false;
+            checkBoxWaitForExit.Enabled     = true;
+            pictureBoxWarnWait.Visible      = true;
 
             switch(logic.SBE.type)
             {
@@ -261,7 +264,12 @@ namespace net.r_eg.vsSBE.UI.WForms
                 case SolutionEventType.Post:
                 {
                     checkBoxIgnoreIfFailed.Enabled  = true;
-                    checkBoxWaitForExit.Enabled     = true;
+                    pictureBoxWarnWait.Visible      = false;
+                    break;
+                }
+                case SolutionEventType.Logging:
+                {
+                    checkBoxWaitForExit.Enabled = false;
                     break;
                 }
             }

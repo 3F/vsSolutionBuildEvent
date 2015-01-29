@@ -143,7 +143,7 @@ namespace net.r_eg.vsSBE.Actions
                 if(queue.level == 0) {
                     Log.nlog.Debug("DTE: init the queue");
                     queue.cmd = commands;
-                    Connection.silent = true;
+                    Settings.silentModeActions = true;
                 }
 
                 if(queue.cmd.Count < 1) {
@@ -184,7 +184,7 @@ namespace net.r_eg.vsSBE.Actions
                 if(queue.level < 1)
                 {
                     Log.nlog.Debug("DTE: all completed");
-                    Connection.silent = false;
+                    Settings.silentModeActions = false;
                     if(terminated != null) {
                         throw new ComponentException(terminated.Message, terminated);
                     }

@@ -104,6 +104,8 @@
     <Compile Include="Configuration\Component.cs" />
     <Compile Include="Environment.cs" />
     <Compile Include="Events\BuildType.cs" />
+    <Compile Include="Events\LoggingEvent.cs" />
+    <Compile Include="Events\ILoggingEvent.cs" />
     <Compile Include="Events\ModeScript.cs" />
     <Compile Include="Events\IModeScript.cs" />
     <Compile Include="Events\ITransmitter.cs" />
@@ -114,7 +116,10 @@
     <Compile Include="Events\IExecutionOrder.cs" />
     <Compile Include="Extensions\ArrayExtension.cs" />
     <Compile Include="Extensions\ObjectExtension.cs" />
+    <Compile Include="ILogData.cs" />
+    <Compile Include="IOW.cs" />
     <Compile Include="IsolatedEnv.cs" />
+    <Compile Include="OW.cs" />
     <Compile Include="SBEScripts\Bootloader.cs" />
     <Compile Include="SBEScripts\Components\Component.cs" />
     <Compile Include="SBEScripts\Dom\CompletionData.cs" />

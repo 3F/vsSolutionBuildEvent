@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,6 +19,11 @@ namespace net.r_eg.vsSBE.SBEScripts
 {
     public interface ISBEScript
     {
+        /// <summary>
+        /// Instance of used loader
+        /// </summary>
+        IBootloader Bootloader { get; }
+
         /// <summary>
         /// Handler of mixed data SBE-Scripts
         /// </summary>

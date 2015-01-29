@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -38,6 +38,11 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// </summary>
         private bool _isHiddenSample = false;
 
+        /// <summary>
+        /// obj synch.
+        /// </summary>
+        private Object _lock = new Object();
+
         public DTECheckFrm(IEnvironment env)
         {
             _dteo = new DTEOperation(env, vsSBE.Events.SolutionEventType.General);
@@ -48,18 +53,23 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             richTextBoxExecuted.Text = String.Empty;
 
-            Log.MessageEvent hlog = new Log.MessageEvent(delegate(string msg) {
+            Log.MessageEvent hlog = new Log.MessageEvent(delegate(string msg, string level) {
                 richTextBoxExecuted.Text += msg;
             });
-            Log.Message += hlog;
 
-            try {
-                _dteo.exec(richTextBoxCommand.Text.Split('\n'), false);
+            lock(_lock)
+            {
+                Log.Message -= hlog;
+                Log.Message += hlog;
+
+                try {
+                    _dteo.exec(richTextBoxCommand.Text.Split('\n'), false);
+                }
+                catch(Exception ex) {
+                    richTextBoxExecuted.Text += ex.Message;
+                }
+                Log.Message -= hlog;
             }
-            catch(Exception ex) {
-                richTextBoxExecuted.Text += ex.Message;
-            }
-            Log.Message -= hlog;
         }
 
         private void richTextBoxCommand_Click(object sender, EventArgs e)

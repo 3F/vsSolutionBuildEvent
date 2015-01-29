@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -38,7 +38,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Notification about receiving of message
         /// </summary>
-        public delegate void MessageEvent(string message);
+        public delegate void MessageEvent(string message, string level);
 
         /// <summary>
         /// external logic
@@ -53,7 +53,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Received message
         /// </summary>
-        public static event MessageEvent Message = delegate(string message) { };
+        public static event MessageEvent Message = delegate(string message, string level) { };
 
         /// <summary>
         /// DTE context
@@ -86,15 +86,13 @@ namespace net.r_eg.vsSBE
 #endif
 
             _notify(oLevel);
-
-            string formatted = _format(level, message, stamp);
-            Message(formatted);
-
-            print(formatted);
+            print(_format(level, message, stamp), level);
         }
 
-        public static void print(string message)
+        public static void print(string message, string level = null)
         {
+            Message(message, level?? String.Empty);
+
             if(_paneDTE != null) {
                 _paneDTE.OutputString(message);
                 return;

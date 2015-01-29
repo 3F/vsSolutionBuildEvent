@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -29,27 +29,48 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// Work with SBE-Scripts
         /// </summary>
-        protected ISBEScript script;
+        public ISBEScript SBEScript
+        {
+            get;
+            protected set;
+        }
 
         /// <summary>
         /// Work with MSBuild
         /// </summary>
-        protected IMSBuild msbuild;
+        public IMSBuild MSBuild
+        {
+            get;
+            protected set;
+        }
 
         /// <summary>
         /// Used environment
         /// </summary>
-        protected IEnvironment env;
+        public IEnvironment Env
+        {
+            get;
+            protected set;
+        }
 
         /// <summary>
-        /// For additional handling
+        /// Specified Event type
         /// </summary>
+        public SolutionEventType EventType
+        {
+            get { return type; }
+        }
         protected SolutionEventType type = SolutionEventType.General;
 
         /// <summary>
-        /// Type of build action
+        /// Specified type of build action
         /// </summary>
-        protected BuildType buildType;
+        public BuildType BuildType
+        {
+            get { return buildType; }
+        }
+        protected BuildType buildType = BuildType.Common;
+
 
         /// <summary>
         /// Entry point for execution
@@ -68,7 +89,7 @@ namespace net.r_eg.vsSBE.Actions
             }
             this.type = type;
 
-            string cfg = env.SolutionActiveCfgString;
+            string cfg = Env.SolutionActiveCfgString;
 
             if(evt.ToConfiguration != null 
                 && evt.ToConfiguration.Length > 0 && evt.ToConfiguration.Where(s => s == cfg).Count() < 1)
@@ -126,9 +147,9 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="msbuild">Used MSBuild</param>
         public Command(IEnvironment env, ISBEScript script, IMSBuild msbuild)
         {
-            this.env        = env;
-            this.script     = script;
-            this.msbuild    = msbuild;
+            Env         = env;
+            SBEScript   = script;
+            MSBuild     = msbuild;
         }
 
         protected bool hModeFile(ISolutionEvent evt)
@@ -147,7 +168,7 @@ namespace net.r_eg.vsSBE.Actions
             if(operation.Command == null || operation.Command.Length < 1) {
                 return true;
             }
-            (new DTEOperation(env, type)).exec(operation.Command, operation.AbortOnFirstError);
+            (new DTEOperation(Env, type)).exec(operation.Command, operation.AbortOnFirstError);
             return true;
         }
 
@@ -199,11 +220,11 @@ namespace net.r_eg.vsSBE.Actions
         protected virtual void parse(ISolutionEvent evt, ref string data)
         {
             if(evt.SupportSBEScripts) {
-                data = script.parse(data, evt.SupportMSBuild);
+                data = SBEScript.parse(data, evt.SupportMSBuild);
             }
 
             if(evt.SupportMSBuild) {
-                data = msbuild.parse(data);
+                data = MSBuild.parse(data);
             }
         }
 

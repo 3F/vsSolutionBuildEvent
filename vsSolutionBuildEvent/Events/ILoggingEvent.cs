@@ -15,34 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Runtime.InteropServices;
+
 namespace net.r_eg.vsSBE.Events
 {
-    /// <summary>
-    /// General types of available events for all components
-    /// </summary>
-    public enum SolutionEventType
+    [Guid("E01CD0C6-E9C1-4FAB-A9F0-B6AF4F159C38")]
+    public interface ILoggingEvent: ISolutionEvent
     {
-        Pre, Post, Cancel, Warnings, Errors, OWP, Transmitter, 
-        /// <summary>
-        /// Processes with internal logging
-        /// </summary>
-        Logging,
-        /// <summary>
-        /// Without identification - all ISolutionEvent
-        /// </summary>
-        General,
-        /// <summary>
-        /// Errors + Warnings
-        /// </summary>
-        EW,
-        /// <summary>
-        /// By individual projects
-        /// </summary>
-        ProjectPre,
-        ProjectPost,
-        /// <summary>
-        /// The 'PRE' as deferred action of existing projects
-        /// </summary>
-        DeferredPre,
+
     }
 }

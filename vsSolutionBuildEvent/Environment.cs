@@ -126,6 +126,21 @@ namespace net.r_eg.vsSBE
         protected string solutionPath = null;
 
         /// <summary>
+        /// Access to OutputWindowPane through IOW
+        /// </summary>
+        public IOW OutputWindowPane
+        {
+            get
+            {
+                if(outputWindowPane == null) {
+                    outputWindowPane = new OWP(Dte2);
+                }
+                return outputWindowPane;
+            }
+        }
+        protected IOW outputWindowPane;
+
+        /// <summary>
         /// DTE2 context
         /// </summary>
         protected DTE2 Dte2 { get; set; }

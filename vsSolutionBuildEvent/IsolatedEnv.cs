@@ -50,7 +50,11 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public EnvDTE80.SolutionConfiguration2 SolutionActiveCfg
         {
-            get { return null; } //TODO:
+            get {
+                //TODO:
+                Log.nlog.Debug("Accessing to property 'SolutionActiveCfg' has been disabled in Isolated environment.");
+                return null; 
+            }
         }
 
         /// <summary>
@@ -68,7 +72,11 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public IEnumerable<EnvDTE80.SolutionConfiguration2> SolutionConfigurations
         {
-            get { yield break; } //TODO: only list see in .sln -> SolutionConfigurationPlatforms
+            get {
+                //TODO: only list see in .sln -> SolutionConfigurationPlatforms
+                Log.nlog.Debug("Accessing to property 'SolutionConfigurations' has been disabled in Isolated environment.");
+                yield break;
+            }
         }
 
         /// <summary>
@@ -85,7 +93,10 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public EnvDTE.Events Events
         {
-            get { return null; }
+            get {
+                Log.nlog.Debug("Accessing to property 'Events' has been disabled in Isolated environment.");
+                return null; 
+            }
         }
 
         /// <summary>
@@ -102,7 +113,21 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public EnvDTE.Commands Commands
         {
-            get { return null; }
+            get {
+                Log.nlog.Debug("Accessing to property 'Commands' has been disabled in Isolated environment.");
+                return null; 
+            }
+        }
+
+        /// <summary>
+        /// Access to OutputWindowPane through IOW
+        /// </summary>
+        public IOW OutputWindowPane
+        {
+            get {
+                Log.nlog.Debug("Accessing to property 'OutputWindowPane' has been disabled in Isolated environment.");
+                return null;
+            }
         }
 
         /// <summary>

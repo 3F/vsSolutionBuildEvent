@@ -50,6 +50,7 @@ namespace net.r_eg.vsSBE.UI.Plain
             sb.Append(about(data.ErrorsBuild,   "Errors-Build  "));
             sb.Append(about(data.OWPBuild,      "Output-Build  "));
             sb.Append(about(data.Transmitter,   "Transmitter   "));
+            sb.Append(about(data.Logging,       "Logging       "));
             sb.Append("\n---\n");
             Log.print(sb.ToString());
         }

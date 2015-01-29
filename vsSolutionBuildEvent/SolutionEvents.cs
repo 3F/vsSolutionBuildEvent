@@ -124,6 +124,23 @@ namespace net.r_eg.vsSBE
         [NonSerialized]
         private SBETransmitter[] transmitter = new SBETransmitter[] { new SBETransmitter() };
 
+        /// <summary>
+        /// All processes with internal logging
+        /// </summary>
+        public LoggingEvent[] Logging
+        {
+            get { return logging; }
+            set { logging = value; }
+        }
+        [NonSerialized]
+        private LoggingEvent[] logging = new LoggingEvent[] { 
+            new LoggingEvent(){ 
+                Process = new EventProcess(){ 
+                    Waiting = false // is better for performance
+                }
+            } 
+        };
+
 
         /// <summary>
         /// Getting event by type
@@ -153,6 +170,9 @@ namespace net.r_eg.vsSBE
                 }
                 case SolutionEventType.Transmitter: {
                     return Transmitter;
+                }
+                case SolutionEventType.Logging: {
+                    return Logging;
                 }
             }
             throw new NotFoundException("getEvent: Not found event type - '{0}'", type);

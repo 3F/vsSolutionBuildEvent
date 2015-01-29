@@ -323,6 +323,9 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             addEvent(new SBEWrap(SolutionEventType.Transmitter));
             combo.Items.Add(":: Transmitter :: Transmission of the build-data to outer handler");
 
+            addEvent(new SBEWrap(SolutionEventType.Logging));
+            combo.Items.Add(":: Logging :: All processes with internal logging");
+
             combo.SelectedIndex = 0;
         }
 
@@ -503,6 +506,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                     Config._.Data.Transmitter = Config._.Data.Transmitter.GetWithAdded(new SBETransmitter());
                     break;
                 }
+                case SolutionEventType.Logging: {
+                    Config._.Data.Logging = Config._.Data.Logging.GetWithAdded(new LoggingEvent());
+                    break;
+                }
             }
             SBE.update();
 
@@ -558,6 +565,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                     Config._.Data.Transmitter = Config._.Data.Transmitter.GetWithMoved(from, to);
                     break;
                 }
+                case SolutionEventType.Logging: {
+                    Config._.Data.Logging = Config._.Data.Logging.GetWithMoved(from, to);
+                    break;
+                }
             }
             SBE.update();
             setEventIndexes(currentEventIndex, to);
@@ -593,6 +604,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                 }
                 case SolutionEventType.Transmitter: {
                     Config._.Data.Transmitter = Config._.Data.Transmitter.GetWithRemoved(index);
+                    break;
+                }
+                case SolutionEventType.Logging: {
+                    Config._.Data.Logging = Config._.Data.Logging.GetWithRemoved(index);
                     break;
                 }
             }

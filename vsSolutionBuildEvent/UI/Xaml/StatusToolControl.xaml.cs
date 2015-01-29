@@ -68,6 +68,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
             update(btnErrors, SolutionEventType.Errors);
             update(btnOutput, SolutionEventType.OWP);
             update(btnTransmitter, SolutionEventType.Transmitter);
+            update(btnLogging, SolutionEventType.Logging);
         }
 
         /// <summary>
@@ -222,6 +223,11 @@ namespace net.r_eg.vsSBE.UI.Xaml
             toggleRestored(SolutionEventType.Transmitter, btnTransmitter.IsChecked.Value);
         }
 
+        private void btnLogging_Click(object sender, RoutedEventArgs e)
+        {
+            toggleRestored(SolutionEventType.Logging, btnLogging.IsChecked.Value);
+        }
+
         private void btnPre_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
             btnPre.Content = caption(SolutionEventType.Pre, true);
@@ -287,9 +293,19 @@ namespace net.r_eg.vsSBE.UI.Xaml
             btnTransmitter.Content = caption(SolutionEventType.Transmitter, true);
         }
 
+        private void btnLogging_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            btnLogging.Content = caption(SolutionEventType.Logging, true);
+        }
+
         private void btnTransmitter_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             btnTransmitter.Content = caption(SolutionEventType.Transmitter, false);
+        }
+
+        private void btnLogging_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            btnLogging.Content = caption(SolutionEventType.Logging, false);
         }
         
         private void btnPre_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -338,6 +354,13 @@ namespace net.r_eg.vsSBE.UI.Xaml
         {
             if(e.ChangedButton == System.Windows.Input.MouseButton.Middle) {
                 btnTransmitter.IsChecked = toggleEnabled(SolutionEventType.Transmitter, btnTransmitter.IsChecked.Value);
+            }
+        }
+
+        private void btnLogging_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if(e.ChangedButton == System.Windows.Input.MouseButton.Middle) {
+                btnLogging.IsChecked = toggleEnabled(SolutionEventType.Logging, btnLogging.IsChecked.Value);
             }
         }
     }

@@ -94,7 +94,9 @@ namespace net.r_eg.vsSBE.API
             try {
                 Config._.load(Environment.SolutionPath);
                 Config._.updateActivation(Bootloader);
+
                 UI.Plain.State.print(Config._.Data);
+                Action.loggingEventActivated = true;
 
                 OpenedSolution(this, new EventArgs());
                 return VSConstants.S_OK;

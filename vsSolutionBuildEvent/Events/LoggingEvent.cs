@@ -18,31 +18,10 @@
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
-    /// General types of available events for all components
+    /// Event of internal logging
     /// </summary>
-    public enum SolutionEventType
+    public class LoggingEvent: SBEEvent, ISolutionEvent, ILoggingEvent
     {
-        Pre, Post, Cancel, Warnings, Errors, OWP, Transmitter, 
-        /// <summary>
-        /// Processes with internal logging
-        /// </summary>
-        Logging,
-        /// <summary>
-        /// Without identification - all ISolutionEvent
-        /// </summary>
-        General,
-        /// <summary>
-        /// Errors + Warnings
-        /// </summary>
-        EW,
-        /// <summary>
-        /// By individual projects
-        /// </summary>
-        ProjectPre,
-        ProjectPost,
-        /// <summary>
-        /// The 'PRE' as deferred action of existing projects
-        /// </summary>
-        DeferredPre,
+
     }
 }

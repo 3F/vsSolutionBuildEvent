@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -77,6 +77,25 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
+        /// Getting instance of used loader.
+        /// Initialization with default loader if not selected.
+        /// </summary>
+        public IBootloader Bootloader
+        {
+            get
+            {
+                if(bootloader == null)
+                {
+                    Debug.Assert(env != null);
+                    Debug.Assert(uvariable != null);
+                    bootloader = new Bootloader(env, uvariable);
+                }
+                return bootloader;
+            }
+        }
+        protected IBootloader bootloader;
+
+        /// <summary>
         /// Work with user-variables
         /// </summary>
         protected IUserVariable uvariable;
@@ -97,24 +116,6 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// (e.g. FileComponent etc.) For such components need additional flag about allowed processing, if this used of course...
         /// </summary>
         protected bool postProcessingMSBuild;
-
-        /// <summary>
-        /// Getting the instance of used loader
-        /// Initialized by default if loader not exist
-        /// </summary>
-        protected IBootloader Bootloader
-        {
-            get
-            {
-                if(bootloader == null) {
-                    Debug.Assert(env != null);
-                    Debug.Assert(uvariable != null);
-                    bootloader = new Bootloader(env, uvariable);
-                }
-                return bootloader;
-            }
-        }
-        protected IBootloader bootloader;
 
         /// <summary>
         /// Current level of nesting data.

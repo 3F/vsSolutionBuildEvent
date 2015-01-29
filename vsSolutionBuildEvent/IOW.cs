@@ -16,38 +16,34 @@
 */
 
 using System;
-using System.Collections.Generic;
-using net.r_eg.vsSBE.SBEScripts.Components;
 
-namespace net.r_eg.vsSBE.SBEScripts
+namespace net.r_eg.vsSBE
 {
-    public interface IBootloader
+    public interface IOW
     {
         /// <summary>
-        /// All enabled from the registered components
+        /// Access to OutputWindow.
         /// </summary>
-        IEnumerable<IComponent> Components { get; }
+        EnvDTE.OutputWindow OutputWindow { get; }
 
         /// <summary>
-        /// All registered components
+        /// Getting item of the output window by name.
         /// </summary>
-        IEnumerable<IComponent> ComponentsAll { get; }
-
-        /// <summary>
-        /// Operations with environment
-        /// </summary>
-        IEnvironment Env { get; }
-
-        /// <summary>
-        /// Container for user-variables
-        /// </summary>
-        IUserVariable UVariable { get; }
-
-        /// <summary>
-        /// Getting component for selected type
-        /// </summary>
-        /// <param name="type"></param>
+        /// <param name="name">Name of item</param>
+        /// <param name="createIfNotExist">Flag of creating. It means ~create new pane if this item does not exist etc.</param>
         /// <returns></returns>
-        IComponent getComponentByType(Type type);
+        EnvDTE.OutputWindowPane getByName(string name, bool createIfNotExist);
+
+        /// <summary>
+        /// Removes pane by name of item.
+        /// </summary>
+        /// <param name="name"></param>
+        void deleteByName(string name);
+
+        /// <summary>
+        /// Removes pane with selected GUID.
+        /// </summary>
+        /// <param name="guid"></param>
+        void deleteByGuid(Guid guid);
     }
 }

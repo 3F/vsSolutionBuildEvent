@@ -123,6 +123,7 @@
             this.checkBoxIgnoreIfFailed = new System.Windows.Forms.CheckBox();
             this.checkBoxMSBuildSupport = new System.Windows.Forms.CheckBox();
             this.panelControlByOperation = new System.Windows.Forms.Panel();
+            this.pictureBoxWarnWait = new System.Windows.Forms.PictureBox();
             this.checkBoxWaitForExit = new System.Windows.Forms.CheckBox();
             this.checkBoxProcessHide = new System.Windows.Forms.CheckBox();
             this.checkBoxStatus = new System.Windows.Forms.CheckBox();
@@ -182,6 +183,7 @@
             this.dgvCompInfoName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvCompInfoSignature = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvCompInfoDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuActions.SuspendLayout();
             this.panelStatusBR.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -200,6 +202,7 @@
             this.groupBoxSettings.SuspendLayout();
             this.panelControl.SuspendLayout();
             this.panelControlByOperation.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxWarnWait)).BeginInit();
             this.groupBoxPMode.SuspendLayout();
             this.panelCommand.SuspendLayout();
             this.groupBoxInterpreter.SuspendLayout();
@@ -331,9 +334,9 @@
             this.toolStripMenuHelp,
             this.toolStripMenuBug,
             this.toolStripMenuVersion});
-            this.statusStrip.Location = new System.Drawing.Point(111, 7);
+            this.statusStrip.Location = new System.Drawing.Point(142, 7);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(189, 22);
+            this.statusStrip.Size = new System.Drawing.Size(158, 22);
             this.statusStrip.TabIndex = 81;
             // 
             // toolStripMenuSpring
@@ -363,21 +366,21 @@
             // toolStripMenuApply
             // 
             this.toolStripMenuApply.Name = "toolStripMenuApply";
-            this.toolStripMenuApply.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuApply.Size = new System.Drawing.Size(136, 22);
             this.toolStripMenuApply.Text = "Apply";
             this.toolStripMenuApply.Click += new System.EventHandler(this.toolStripMenuApply_Click);
             // 
             // toolStripMenuReset
             // 
             this.toolStripMenuReset.Name = "toolStripMenuReset";
-            this.toolStripMenuReset.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuReset.Size = new System.Drawing.Size(136, 22);
             this.toolStripMenuReset.Text = "Reset";
             this.toolStripMenuReset.Click += new System.EventHandler(this.toolStripMenuReset_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(133, 6);
             // 
             // toolStripMenuTools
             // 
@@ -388,7 +391,7 @@
             this.toolStripMenuDTECmdExec,
             this.menuSBEScript});
             this.toolStripMenuTools.Name = "toolStripMenuTools";
-            this.toolStripMenuTools.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuTools.Size = new System.Drawing.Size(136, 22);
             this.toolStripMenuTools.Text = "Tools";
             // 
             // toolStripMenuMSBuildProp
@@ -423,7 +426,7 @@
             // 
             this.menuSBEScript.Name = "menuSBEScript";
             this.menuSBEScript.Size = new System.Drawing.Size(214, 22);
-            this.menuSBEScript.Text = "SBE-Scripts Testing tool";
+            this.menuSBEScript.Text = "SBE-Scripts testing tool";
             this.menuSBEScript.Click += new System.EventHandler(this.menuSBEScript_Click);
             // 
             // toolStripMenuCI
@@ -434,7 +437,7 @@
             this.toolStripSeparator12,
             this.toolStripMenuPlugin});
             this.toolStripMenuCI.Name = "toolStripMenuCI";
-            this.toolStripMenuCI.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuCI.Size = new System.Drawing.Size(136, 22);
             this.toolStripMenuCI.Text = "CI Utilities";
             // 
             // toolStripMenuCIMSBuild
@@ -482,12 +485,12 @@
             // toolStripSeparator11
             // 
             this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator11.Size = new System.Drawing.Size(133, 6);
             // 
             // toolStripMenuSBEPanel
             // 
             this.toolStripMenuSBEPanel.Name = "toolStripMenuSBEPanel";
-            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(136, 22);
             this.toolStripMenuSBEPanel.Text = "vsSBE Panel";
             this.toolStripMenuSBEPanel.Click += new System.EventHandler(this.toolStripMenuSBEPanel_Click);
             // 
@@ -1028,6 +1031,7 @@
             // 
             // panelControlByOperation
             // 
+            this.panelControlByOperation.Controls.Add(this.pictureBoxWarnWait);
             this.panelControlByOperation.Controls.Add(this.checkBoxWaitForExit);
             this.panelControlByOperation.Controls.Add(this.checkBoxProcessHide);
             this.panelControlByOperation.Location = new System.Drawing.Point(0, 21);
@@ -1035,6 +1039,17 @@
             this.panelControlByOperation.Name = "panelControlByOperation";
             this.panelControlByOperation.Size = new System.Drawing.Size(171, 38);
             this.panelControlByOperation.TabIndex = 18;
+            // 
+            // pictureBoxWarnWait
+            // 
+            this.pictureBoxWarnWait.Cursor = System.Windows.Forms.Cursors.Help;
+            this.pictureBoxWarnWait.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxWarnWait.Image")));
+            this.pictureBoxWarnWait.Location = new System.Drawing.Point(136, 0);
+            this.pictureBoxWarnWait.Name = "pictureBoxWarnWait";
+            this.pictureBoxWarnWait.Size = new System.Drawing.Size(16, 16);
+            this.pictureBoxWarnWait.TabIndex = 18;
+            this.pictureBoxWarnWait.TabStop = false;
+            this.pictureBoxWarnWait.Visible = false;
             // 
             // checkBoxWaitForExit
             // 
@@ -1811,6 +1826,12 @@
             this.dgvCompInfoDescription.Name = "dgvCompInfoDescription";
             this.dgvCompInfoDescription.ReadOnly = true;
             // 
+            // toolTip
+            // 
+            this.toolTip.AutoPopDelay = 15000;
+            this.toolTip.InitialDelay = 500;
+            this.toolTip.ReshowDelay = 100;
+            // 
             // EventsFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1851,6 +1872,7 @@
             this.panelControl.PerformLayout();
             this.panelControlByOperation.ResumeLayout(false);
             this.panelControlByOperation.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxWarnWait)).EndInit();
             this.groupBoxPMode.ResumeLayout(false);
             this.groupBoxPMode.PerformLayout();
             this.panelCommand.ResumeLayout(false);
@@ -2024,6 +2046,8 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuPluginDir;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuDocCI;
+        private System.Windows.Forms.PictureBox pictureBoxWarnWait;
+        private System.Windows.Forms.ToolTip toolTip;
 
     }
 }

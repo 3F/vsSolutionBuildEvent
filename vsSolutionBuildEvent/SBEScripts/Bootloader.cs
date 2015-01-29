@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -33,7 +33,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         public IEnumerable<IComponent> Components
         {
             get {
-                foreach(KeyValuePair<string, IComponent> component in components) {
+                foreach(KeyValuePair<Type, IComponent> component in components) {
                     if(!component.Value.Enabled) {
                         continue;
                     }
@@ -48,16 +48,11 @@ namespace net.r_eg.vsSBE.SBEScripts
         public IEnumerable<IComponent> ComponentsAll
         {
             get {
-                foreach(KeyValuePair<string, IComponent> component in components) {
+                foreach(KeyValuePair<Type, IComponent> component in components) {
                     yield return component.Value;
                 }
             }
         }
-
-        /// <summary>
-        /// Main storage
-        /// </summary>
-        protected ConcurrentDictionary<string, IComponent> components = new ConcurrentDictionary<string, IComponent>();
 
         /// <summary>
         /// Provides operations with environment
@@ -77,6 +72,24 @@ namespace net.r_eg.vsSBE.SBEScripts
             protected set;
         }
 
+        /// <summary>
+        /// Main storage
+        /// </summary>
+        protected ConcurrentDictionary<Type, IComponent> components = new ConcurrentDictionary<Type, IComponent>();
+
+        /// <summary>
+        /// Gets component for selected type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns>Instance of the IComponent or null value if the type not registered in collection</returns>
+        public IComponent getComponentByType(Type type)
+        {
+            if(components.ContainsKey(type)) {
+                return components[type];
+            }
+            return null;
+        }
+
         /// <param name="env">Used environment</param>
         /// <param name="uvariable">Used instance of user-variable</param>
         public Bootloader(IEnvironment env, IUserVariable uvariable)
@@ -91,7 +104,7 @@ namespace net.r_eg.vsSBE.SBEScripts
             register(new CommentComponent());
             register(new ConditionComponent(Env, UVariable));
             register(new UserVariableComponent(Env, UVariable));
-            register(new OWPComponent());
+            register(new OWPComponent(Env));
             register(new DTEComponent(Env));
             register(new InternalComponent());
             register(new BuildComponent(Env));
@@ -100,8 +113,8 @@ namespace net.r_eg.vsSBE.SBEScripts
 
         protected void register(IComponent c)
         {
-            string ident = c.Condition;
-            if(String.IsNullOrEmpty(ident) || components.ContainsKey(ident)) {
+            Type ident = c.GetType();
+            if(String.IsNullOrEmpty(c.Condition) || components.ContainsKey(ident)) {
                 throw new ComponentException("IComponent '{0}:{1}' is empty or is already registered", ident, c.ToString());
             }
             components[ident] = c;

@@ -188,8 +188,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
 
             _.Options.ConvertTabsToSpaces                       = true;
             _.Options.IndentationSize                           = 4;
+            _.Options.ShowTabs                                  = true;
             _.ShowLineNumbers                                   = true;
             _.TextArea.TextView.Options.HighlightCurrentLine    = true;
+            _.FontFamily                                        = new FontFamily("Consolas");
 
             menuItemWordWrap.Checked = _.WordWrap = true;
 
@@ -235,7 +237,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
                 return;
             }
 
-            completionWindow = new CompletionWindow(_.TextArea);
+            completionWindow = new CompletionWindow(_.TextArea) { Width = 270 };
             completionWindow.Closed += delegate {
                 completionWindow = null;
             };

@@ -17,21 +17,22 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Events;
+using net.r_eg.vsSBE.SBEScripts.Components;
 
 namespace net.r_eg.vsSBE.Actions
 {
     public class Connection
     {
         /// <summary>
-        /// Ignored all action if value as true
-        /// Support of cycle control, e.g.: PRE -> POST [recursive DTE: PRE -> POST] -> etc.
+        /// Activation of the ILoggingEvent.
+        /// Special delays for internal services.
         /// </summary>
-        public static volatile bool silent = false;
+        public bool loggingEventActivated = false;
 
         /// <summary>
         /// Execution order support.
@@ -59,13 +60,20 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         protected bool IsAllowActions
         {
-            get { return !silent; }
+            get { return !Settings.silentModeActions; }
         }
+
+        /// <summary>
+        /// synch. of logging-event
+        /// </summary>
+        private Object _lockLog = new Object();
+
 
         public Connection(ICommand cmd)
         {
             this.cmd = cmd;
             projects = new Dictionary<string, ExecutionOrderType>();
+            attachLoggingEvent();
         }
 
         /// <summary>
@@ -526,6 +534,78 @@ namespace net.r_eg.vsSBE.Actions
                 return false;
             }
             return true;
+        }
+
+        /// <summary>
+        /// TODO: not comfortable with static
+        /// </summary>
+        private void attachLoggingEvent()
+        {
+            Log.Message -= new Log.MessageEvent(onLogging);
+            Log.Message += new Log.MessageEvent(onLogging);
+        }
+
+        /// <summary>
+        /// Works with all processes of internal logging
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="level"></param>
+        private void onLogging(string message, string level)
+        {
+            if(!loggingEventActivated) {
+                return;
+            }
+
+            lock(_lockLog)
+            {
+                // performance of this block is similar with System.Environment.StackTrace
+                StackFrame[] stack = (new StackTrace()).GetFrames();
+                for(int i = 1; i < stack.Length; ++i) {
+                    if(_ident(stack[0]) == _ident(stack[i])) {
+                        return; //already pushed with onLogging
+                    }
+                }
+            }
+
+            IComponent component = cmd.SBEScript.Bootloader.getComponentByType(typeof(OWPComponent));
+            if(component != null) {
+                ((ILogData)component).updateLogData(message, level);
+            }
+
+            if(isDisabledAll(Config._.Data.Logging)) {
+                return;
+            }
+
+            if(!IsAllowActions) {
+                _ignoredAction(SolutionEventType.Logging);
+                return;
+            }
+
+            foreach(LoggingEvent evt in Config._.Data.Logging)
+            {
+                if(!isExecute(evt, current)) {
+                    Log.nlog.Info("[Logging] ignored action '{0}' :: by execution order", evt.Caption);
+                }
+                else {
+                    try {
+                        if(cmd.exec(evt, SolutionEventType.Logging)) {
+                            //Log.nlog.Trace("[Logging]: " + evt.Caption);
+                        }
+                    }
+                    catch(Exception ex) {
+                        Log.nlog.Error("LoggingEvent error: {0}", ex.Message);
+                    }
+                }
+            }
+        }
+
+        private string _ident(StackFrame frame)
+        {
+            string path = frame.GetMethod().ReflectedType.ToString();
+            string name = frame.GetMethod().Name;
+            string args = String.Join(",", frame.GetMethod().GetParameters().Select(p => p.ToString()));
+
+            return String.Format("{0}{1}{2}", path, name, args);
         }
 
         private int _ignoredAction(SolutionEventType type)

@@ -109,6 +109,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
             try {
                 Signature   = aboutProperty(attr.Get, attr.Set);
                 displaying  = displayProperty(attr.Get, attr.Set);
+                Name        = displaying;
+
+                //TODO:
+                if(attr.Set == CValueType.Input) {
+                    Name += ": ]";
+                }
             }
             catch(Exception ex) {
                 Log.nlog.Warn("NodeInfo-PropertyAttribute: '{0}'", ex.Message);

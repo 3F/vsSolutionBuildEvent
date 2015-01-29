@@ -117,7 +117,7 @@ namespace net.r_eg.vsSBE
         {
             try {
                 FindToolWindow(typeof(UI.Xaml.StatusToolWindow), 0, true);
-                Log.paneAttach("Solution Build-Events", Dte2);
+                Log.paneAttach(Settings.OWP_ITEM_VSSBE, Dte2);
                 Log.show();
 
                 int ret = Event.solutionOpened(pUnkReserved, fNewSolution);

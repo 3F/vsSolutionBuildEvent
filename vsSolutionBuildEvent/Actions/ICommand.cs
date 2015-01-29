@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,11 +16,38 @@
 */
 
 using net.r_eg.vsSBE.Events;
+using net.r_eg.vsSBE.MSBuild;
+using net.r_eg.vsSBE.SBEScripts;
 
 namespace net.r_eg.vsSBE.Actions
 {
     public interface ICommand
     {
+        /// <summary>
+        /// SBE-Scripts core
+        /// </summary>
+        ISBEScript SBEScript { get; }
+
+        /// <summary>
+        /// MSBuild core
+        /// </summary>
+        IMSBuild MSBuild { get; }
+
+        /// <summary>
+        /// Used environment
+        /// </summary>
+        IEnvironment Env { get; }
+
+        /// <summary>
+        /// Specified Event type
+        /// </summary>
+        SolutionEventType EventType { get; }
+
+        /// <summary>
+        /// Specified type of build action
+        /// </summary>
+        BuildType BuildType { get; }
+
         /// <summary>
         /// Entry point for execution
         /// </summary>

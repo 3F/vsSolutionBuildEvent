@@ -25,9 +25,20 @@ namespace net.r_eg.vsSBE
     public static class Settings
     {
         /// <summary>
-        /// Debug mode for current application
+        /// Name of vsSBE log item in OutputWindowPane
+        /// </summary>
+        public const string OWP_ITEM_VSSBE = "Solution Build-Events";
+
+        /// <summary>
+        /// Debug mode for this application
         /// </summary>
         public static bool debugMode = false;
+
+        /// <summary>
+        /// Ignores all actions if value as true
+        /// Support of cycle control, e.g.: PRE -> POST [recursive DTE: PRE -> POST] -> etc.
+        /// </summary>
+        public static volatile bool silentModeActions = false;
 
         /// <summary>
         /// Path to this library

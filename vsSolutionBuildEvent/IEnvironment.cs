@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 
 namespace net.r_eg.vsSBE
@@ -60,6 +61,11 @@ namespace net.r_eg.vsSBE
         /// Contains all of the commands in the environment
         /// </summary>
         EnvDTE.Commands Commands { get; }
+
+        /// <summary>
+        /// Access to OutputWindowPane through IOW
+        /// </summary>
+        IOW OutputWindowPane { get; }
 
         /// <summary>
         /// Should provide instance of the Build.Evaluation.Project by project name

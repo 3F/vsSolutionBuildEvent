@@ -3,15 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" d:DesignHeight="23" d:DesignWidth="568">
-    <Grid Name="grid" Width="565" HorizontalAlignment="Left" VerticalAlignment="Top">
+             mc:Ignorable="d" d:DesignHeight="23" d:DesignWidth="628">
+    <Grid Name="grid" Width="624" HorizontalAlignment="Left" VerticalAlignment="Top">
         <ToggleButton Content="Pre" Height="23" HorizontalAlignment="Left" Margin="84,0,0,0" Name="btnPre" VerticalAlignment="Top" Width="47" Click="btnPre_Click" MouseEnter="btnPre_MouseEnter" MouseLeave="btnPre_MouseLeave" MouseUp="btnPre_MouseUp" />
-        <ToggleButton Content="Post" Height="23" HorizontalAlignment="Left" Margin="134,0,0,0" Name="btnPost" VerticalAlignment="Top" Width="53" Click="btnPost_Click" MouseEnter="btnPost_MouseEnter" MouseLeave="btnPost_MouseLeave" MouseUp="btnPost_MouseUp" />
-        <ToggleButton Content="Cancel" Height="23" HorizontalAlignment="Left" Margin="190,0,0,0" Name="btnCancel" VerticalAlignment="Top" Width="64" Click="btnCancel_Click" MouseEnter="btnCancel_MouseEnter" MouseLeave="btnCancel_MouseLeave" MouseUp="btnCancel_MouseUp" />
-        <ToggleButton Content="Warnings" Height="23" HorizontalAlignment="Left" Margin="257,0,0,0" Name="btnWarnings" VerticalAlignment="Top" Click="btnWarnings_Click" Width="79" MouseEnter="btnWarnings_MouseEnter" MouseLeave="btnWarnings_MouseLeave" MouseUp="btnWarnings_MouseUp" />
-        <ToggleButton Content="Errors" Height="23" HorizontalAlignment="Left" Margin="339,0,0,0" Name="btnErrors" VerticalAlignment="Top" Width="59" Click="btnErrors_Click" MouseEnter="btnErrors_MouseEnter" MouseLeave="btnErrors_MouseLeave" MouseUp="btnErrors_MouseUp" />
-        <ToggleButton Content="Output" Height="23" HorizontalAlignment="Left" Margin="401,0,0,0" Name="btnOutput" VerticalAlignment="Top" Width="66" Click="btnOutput_Click" MouseEnter="btnOutput_MouseEnter" MouseLeave="btnOutput_MouseLeave" MouseUp="btnOutput_MouseUp" />
-        <ToggleButton Content="Transmitter" Height="23" HorizontalAlignment="Left" Margin="470,0,0,0" Name="btnTransmitter" VerticalAlignment="Top" Width="88" Click="btnTransmitter_Click" MouseEnter="btnTransmitter_MouseEnter" MouseLeave="btnTransmitter_MouseLeave" MouseUp="btnTransmitter_MouseUp" />
+        <ToggleButton Content="Post" Height="23" HorizontalAlignment="Left" Margin="132,0,0,0" Name="btnPost" VerticalAlignment="Top" Width="53" Click="btnPost_Click" MouseEnter="btnPost_MouseEnter" MouseLeave="btnPost_MouseLeave" MouseUp="btnPost_MouseUp" />
+        <ToggleButton Content="Cancel" Height="23" HorizontalAlignment="Left" Margin="186,0,0,0" Name="btnCancel" VerticalAlignment="Top" Width="64" Click="btnCancel_Click" MouseEnter="btnCancel_MouseEnter" MouseLeave="btnCancel_MouseLeave" MouseUp="btnCancel_MouseUp" />
+        <ToggleButton Content="Warnings" Height="23" HorizontalAlignment="Left" Margin="251,0,0,0" Name="btnWarnings" VerticalAlignment="Top" Click="btnWarnings_Click" Width="79" MouseEnter="btnWarnings_MouseEnter" MouseLeave="btnWarnings_MouseLeave" MouseUp="btnWarnings_MouseUp" />
+        <ToggleButton Content="Errors" Height="23" HorizontalAlignment="Left" Margin="331,0,0,0" Name="btnErrors" VerticalAlignment="Top" Width="59" Click="btnErrors_Click" MouseEnter="btnErrors_MouseEnter" MouseLeave="btnErrors_MouseLeave" MouseUp="btnErrors_MouseUp" />
+        <ToggleButton Content="Output" Height="23" HorizontalAlignment="Left" Margin="391,0,0,0" Name="btnOutput" VerticalAlignment="Top" Width="66" Click="btnOutput_Click" MouseEnter="btnOutput_MouseEnter" MouseLeave="btnOutput_MouseLeave" MouseUp="btnOutput_MouseUp" />
+        <ToggleButton Content="Transmitter" Height="23" HorizontalAlignment="Left" Margin="458,0,0,0" Name="btnTransmitter" VerticalAlignment="Top" Width="88" Click="btnTransmitter_Click" MouseEnter="btnTransmitter_MouseEnter" MouseLeave="btnTransmitter_MouseLeave" MouseUp="btnTransmitter_MouseUp" />
+        <ToggleButton Content="Logging" Height="23" HorizontalAlignment="Left" Margin="547,0,0,0" Name="btnLogging" VerticalAlignment="Top" Width="72" Click="btnLogging_Click" MouseEnter="btnLogging_MouseEnter" MouseLeave="btnLogging_MouseLeave" MouseUp="btnLogging_MouseUp" />
         <Button Height="23" HorizontalAlignment="Left" Name="btnSettings" VerticalAlignment="Top" Width="20" Padding="0" Click="btnSettings_Click">
             <StackPanel>
                 <Image Source="/vsSolutionBuildEvent;component/Resources/Settings_16.png" Height="20" Width="20" Stretch="None" />
