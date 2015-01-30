@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,10 +16,8 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using net.r_eg.vsSBE.Exceptions;
@@ -47,10 +45,15 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         public static Encoding EncodingOEM
         {
-            get {
-                return Encoding.GetEncoding(OEMCodePage);
+            get
+            {
+                if(encodingOEM == null) {
+                    encodingOEM = Encoding.GetEncoding(OEMCodePage);
+                }
+                return encodingOEM;
             }
         }
+        protected static Encoding encodingOEM;
 
         /// <summary>
         /// Initial directory
@@ -77,9 +80,14 @@ namespace net.r_eg.vsSBE.Actions
 
             string errors = p.StandardError.ReadToEnd();
             if(errors.Length > 0) {
-                throw new ComponentException(errors);
+                throw new ComponentException(reEncodeString(errors));
             }
-            return p.StandardOutput.ReadToEnd().TrimEnd(new char[]{ '\r', '\n' });
+
+            string ret = reEncodeString(p.StandardOutput.ReadToEnd());
+            if(!String.IsNullOrEmpty(ret)) {
+                ret = ret.TrimEnd(new char[] { '\r', '\n' });
+            }
+            return ret;
         }
 
         /// <summary>
@@ -96,12 +104,12 @@ namespace net.r_eg.vsSBE.Actions
                 if(String.IsNullOrEmpty(e.Data)) {
                     return;
                 }
-                Log.nlog.Warn("Command executed with error: '{0}'", e.Data);
+                Log.nlog.Warn("Command executed with error: '{0}'", reEncodeString(e.Data));
             });
 
             p.OutputDataReceived += new DataReceivedEventHandler((object sender, DataReceivedEventArgs e) => {
                 if(!hidden) {
-                    Log.nlog.Info("Result of command: '{0}'", e.Data);
+                    Log.nlog.Info("Result of command: '{0}'", reEncodeString(e.Data));
                 }
             });
 
@@ -116,7 +124,7 @@ namespace net.r_eg.vsSBE.Actions
             p.WaitForExit();
             string errors = p.StandardError.ReadToEnd();
             if(errors.Length > 0) {
-                throw new ComponentException(errors);
+                throw new ComponentException(reEncodeString(errors));
             }
         }
 
@@ -149,8 +157,8 @@ namespace net.r_eg.vsSBE.Actions
             p.StartInfo.RedirectStandardOutput  = true;
             p.StartInfo.RedirectStandardError   = true;
             p.StartInfo.RedirectStandardInput   = true;
-            p.StartInfo.StandardErrorEncoding   = p.StartInfo.StandardOutputEncoding 
-                                                = EncodingOEM;
+            p.StartInfo.StandardErrorEncoding   = p.StartInfo.StandardOutputEncoding
+                                                = EncodingOEM;  // by default, and we must to detect a charset for received data later
 
             if(hidden) {
                 p.StartInfo.WindowStyle     = ProcessWindowStyle.Hidden;
@@ -161,6 +169,39 @@ namespace net.r_eg.vsSBE.Actions
                 p.StartInfo.CreateNoWindow  = false;
             }
             return p;
+        }
+
+        /// <summary>
+        /// Auto-detector to fixing the encoded string.
+        /// </summary>
+        /// <param name="str">Data for reencoding</param>
+        /// <param name="from">Known Encoding for current string</param>
+        /// <returns>Reencoded string with auto-detected charset.</returns>
+        protected virtual string reEncodeString(string str, Encoding from)
+        {
+            if(String.IsNullOrEmpty(str)) {
+                return str;
+            }
+
+            byte[] bytes = from.GetBytes(str);
+
+            Ude.CharsetDetector cdet = new Ude.CharsetDetector();
+            cdet.Feed(bytes, 0, bytes.Length);
+            cdet.DataEnd();
+
+            if(cdet.Charset == null) {
+                Log.nlog.Debug("reEncodeString: Problem with detection... use original");
+                return str;
+            }
+
+            Encoding to = Encoding.GetEncoding(cdet.Charset);
+            Log.nlog.Debug("reEncodeString: '{0}' -> '{1}'", from.EncodingName, to.EncodingName);
+            return to.GetString(bytes);
+        }
+
+        protected string reEncodeString(string str)
+        {
+            return reEncodeString(str, EncodingOEM);
         }
     }
 }
