@@ -3,13 +3,12 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using net.r_eg.vsSBE;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
-namespace net.r_eg.vsSBE.Test
+namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 {
     /// <summary>
     ///This is a test class for FileComponentTest and is intended
@@ -63,7 +62,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void parseTestStGet1()
+        public void stGetParseTest1()
         {
             FileComponent target = new FileComponent();
             target.parse("[File get(file)]");
@@ -73,7 +72,7 @@ namespace net.r_eg.vsSBE.Test
         ///A test for parse - stGet
         ///</summary>
         [TestMethod()]
-        public void parseTestStGet2()
+        public void stGetParseTest2()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             Assert.AreEqual("content from file", target.parse("[File get(\"file\")]"));
@@ -84,7 +83,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(ScriptException))]
-        public void parseTestStGet3()
+        public void stGetParseTest3()
         {
             FileComponentAccessor target = new FileComponentAccessor(true);
             target.parse("[File get(\"file\")]");
@@ -95,7 +94,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void parseTestStCall1()
+        public void stCallParseTest1()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             target.parse("[File call(file)]");
@@ -106,7 +105,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void parseTestStCall2()
+        public void stCallParseTest2()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             target.parse("[File out(file)]");
@@ -116,7 +115,7 @@ namespace net.r_eg.vsSBE.Test
         ///A test for parse - stCall
         ///</summary>
         [TestMethod()]
-        public void parseTestStCall3()
+        public void stCallParseTest3()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             Assert.AreEqual("stdout", target.parse("[File call(\"file\")]"));
@@ -134,7 +133,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(ScriptException))]
-        public void parseTestStCall4()
+        public void stCallParseTest4()
         {
             FileComponentAccessor target = new FileComponentAccessor(true);
             target.parse("[File call(\"file\")]");
@@ -145,7 +144,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void parseTestStWrite1()
+        public void stWriteParseTest1()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             target.parse("[File write(\"file\")]");
@@ -155,7 +154,7 @@ namespace net.r_eg.vsSBE.Test
         ///A test for parse - stWrite
         ///</summary>
         [TestMethod()]
-        public void parseTestStWrite2()
+        public void stWriteParseTest2()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             target.parse("[File write(\"file\"):data]");
@@ -176,7 +175,7 @@ namespace net.r_eg.vsSBE.Test
         ///A test for parse - stWrite
         ///</summary>
         [TestMethod()]
-        public void parseTestStWrite3()
+        public void stWriteParseTest3()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             target.parse("[File write(\"file\"): multi\nline\" \n 'data'.]");
@@ -188,7 +187,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(ScriptException))]
-        public void parseTestStWrite4()
+        public void stWriteParseTest4()
         {
             FileComponentAccessor target = new FileComponentAccessor(true);
             target.parse("[File write(\"file\"):data]");
@@ -199,7 +198,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void parseTestStWrite5()
+        public void stWriteParseTest5()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             target.parse("[File write(\"file\", true):data]");
@@ -210,7 +209,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void parseTestStWrite6()
+        public void stWriteParseTest6()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             target.parse("[File write(\"file\", true, true):data]");
@@ -221,7 +220,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void parseTestStWrite7()
+        public void stWriteParseTest7()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             target.parse("[File write(\"file\", \"true\", \"true\", \"utf-8\"):data]");
@@ -232,7 +231,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void parseTestStWrite8()
+        public void stWriteParseTest8()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             target.parse("[File append(\"file\", true, true, \"utf-8\"):data]");
@@ -243,7 +242,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void parseTestStWrite9()
+        public void stWriteParseTest9()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             target.parse("[File appendLine(\"file\", true, true, \"utf-8\"):data]");
@@ -254,7 +253,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void parseTestStWrite10()
+        public void stWriteParseTest10()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             target.parse("[File writeLine(\"file\", true, true, \"utf-8\"):data]");
@@ -265,7 +264,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void parseTestStReplace1()
+        public void stReplaceParseTest1()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             target.parse("[File replace(file, pattern, replacement)]");
@@ -275,7 +274,7 @@ namespace net.r_eg.vsSBE.Test
         ///A test for parse - stReplace
         ///</summary>
         [TestMethod()]
-        public void parseTestStReplace2()
+        public void stReplaceParseTest2()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             target.parse("[File replace(\"file\", \"from\", \"to\")]");
@@ -286,7 +285,7 @@ namespace net.r_eg.vsSBE.Test
         ///A test for parse - stReplace
         ///</summary>
         [TestMethod()]
-        public void parseTestStReplace3()
+        public void stReplaceParseTest3()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             target.parse("[File replace.Regexp(\"file\", \"t\\s*from\", \"t to\")]");
@@ -297,7 +296,7 @@ namespace net.r_eg.vsSBE.Test
         ///A test for parse - stReplace
         ///</summary>
         [TestMethod()]
-        public void parseTestStReplace4()
+        public void stReplaceParseTest4()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             target.parse("[File replace.Wildcards(\"file\", \"con*from \", \"\")]");
@@ -308,7 +307,7 @@ namespace net.r_eg.vsSBE.Test
         ///A test for parse - stReplace
         ///</summary>
         [TestMethod()]
-        public void parseTestStReplace5()
+        public void stReplaceParseTest5()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             target.parse("[File replace.Regex(\"file\", \"t\\s*from\", \"t to\")]");
@@ -320,7 +319,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void parseTestStExists1()
+        public void stExistsParseTest1()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             target.parse("[File exists.stub(\"path\")]");
@@ -330,7 +329,7 @@ namespace net.r_eg.vsSBE.Test
         ///A test for parse - stExists
         ///</summary>
         [TestMethod()]
-        public void parseTestStExists2()
+        public void stExistsParseTest2()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             string realDir = Path.GetDirectoryName(Assembly.GetAssembly(GetType()).Location);
@@ -343,7 +342,7 @@ namespace net.r_eg.vsSBE.Test
         ///A test for parse - stExists
         ///</summary>
         [TestMethod()]
-        public void parseTestStExists3()
+        public void stExistsParseTest3()
         {
             FileComponentAccessor target = new FileComponentAccessor();
 
@@ -356,7 +355,7 @@ namespace net.r_eg.vsSBE.Test
         ///A test for parse - stExists
         ///</summary>
         [TestMethod()]
-        public void parseTestStExists4()
+        public void stExistsParseTest4()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             string realFile = Assembly.GetAssembly(GetType()).Location;
@@ -369,7 +368,7 @@ namespace net.r_eg.vsSBE.Test
         ///A test for parse - stExists
         ///</summary>
         [TestMethod()]
-        public void parseTestStExists5()
+        public void stExistsParseTest5()
         {
             FileComponentAccessor target = new FileComponentAccessor();
             string realFile = Path.GetFileName(Assembly.GetAssembly(GetType()).Location);

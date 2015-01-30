@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections;
 using EnvDTE;
-using EnvDTE80;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using net.r_eg.vsSBE;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
-using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
@@ -104,22 +101,22 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         }
 
         /// <summary>
-        ///A test for parse
+        ///A test for parse - stCancel
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void parseTest2()
+        public void stCancelTest1()
         {
             BuildComponentAccessor target = new BuildComponentAccessor();
             target.parse("#[Build cancel = true]");
         }
 
         /// <summary>
-        ///A test for parse
+        ///A test for parse - stCancel
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void parseTest3()
+        public void stCancelTest2()
         {
             BuildComponentAccessor target = new BuildComponentAccessor();
             target.parse("Build cancel = true");
@@ -130,7 +127,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///#[Build cancel = true]
         ///</summary>
         [TestMethod()]
-        public void parseTest4()
+        public void stCancelTest3()
         {
             BuildComponentAccessor target = new BuildComponentAccessor();
             Assert.AreEqual(String.Empty, target.parse("[Build cancel = true]"));
@@ -145,7 +142,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(OperationNotFoundException))]
-        public void parseTest5()
+        public void stCancelTest4()
         {
             BuildComponentAccessor target = new BuildComponentAccessor();
             target.parse("[Build cancel = 1true]");
@@ -157,7 +154,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void parseTest6()
+        public void stProjectsTest1()
         {
             BuildComponentAccessor target = new BuildComponentAccessor();
             target.parse("[Build projects.find(name)]");
@@ -169,7 +166,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(NotFoundException))]
-        public void parseTest7()
+        public void stProjectsTest2()
         {
             BuildComponent target = new BuildComponent(Env);
             target.parse("[Build projects.find(\"NotExist\").]");
@@ -180,7 +177,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void parseTest8()
+        public void stProjectConfTest1()
         {
             BuildComponent target = new BuildComponent(Env);
             target.parse("[Build projects.find(\"project1\").IsBuildable = val]");
@@ -191,27 +188,27 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(OperationNotFoundException))]
-        public void parseTest9()
+        public void stProjectConfTest2()
         {
             BuildComponent target = new BuildComponent(Env);
             target.parse("[Build projects.find(\"project1\").NotExist = true]");
         }
 
         /// <summary>
-        ///A test for parse -> stProjectConf
+        ///A test for parse -> IsBuildable
         ///</summary>
         [TestMethod()]
-        public void parseTest10()
+        public void isBuildableTest1()
         {
             BuildComponent target = new BuildComponent(Env);
             Assert.AreEqual(String.Empty, target.parse("[Build projects.find(\"project1\").IsBuildable = true]"));
         }
 
         /// <summary>
-        ///A test for parse -> stProjectConf
+        ///A test for parse -> IsBuildable
         ///</summary>
         [TestMethod()]
-        public void parseTest11()
+        public void isBuildableTest2()
         {
             BuildComponent target = new BuildComponent(Env);
             Assert.AreEqual("true", target.parse("[Build projects.find(\"project1\").IsBuildable]"));
@@ -219,20 +216,20 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         }
 
         /// <summary>
-        ///A test for parse -> stProjectConf
+        ///A test for parse -> IsDeployable
         ///</summary>
         [TestMethod()]
-        public void parseTest12()
+        public void isDeployableTest1()
         {
             BuildComponent target = new BuildComponent(Env);
             Assert.AreEqual(String.Empty, target.parse("[Build projects.find(\"project1\").IsDeployable = true]"));
         }
 
         /// <summary>
-        ///A test for parse -> stProjectConf
+        ///A test for parse -> IsDeployable
         ///</summary>
         [TestMethod()]
-        public void parseTest13()
+        public void isDeployableTest2()
         {
             BuildComponent target = new BuildComponent(Env);
             Assert.AreEqual("true", target.parse("[Build projects.find(\"project1\").IsDeployable]"));

@@ -97,7 +97,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - stOut
         ///</summary>
         [TestMethod()]
-        public void parseTest4()
+        public void stOutParseTest1()
         {
             OWPComponent target = new OWPComponent((IEnvironment)null);
             Assert.AreEqual(String.Empty, target.parse("[OWP out.All]"));
@@ -113,43 +113,43 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         }
 
         /// <summary>
-        ///A test for parse
+        ///A test for parse - stOut
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(NotSupportedOperationException))]
-        public void parseTest5()
+        public void stOutParseTest2()
         {
             OWPComponent target = new OWPComponent((IEnvironment)null);
             target.parse("[OWP out.NotSupportedTest]");
         }
 
         /// <summary>
-        ///A test for stLog
+        ///A test for parse - stLog
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(OperationNotFoundException))]
-        public void stLogTest1()
+        public void stLogParseTest1()
         {
             OWPComponent target = new OWPComponent((IEnvironment)null);
             target.parse("[OWP log]");
         }
 
         /// <summary>
-        ///A test for stLog
+        ///A test for parse - stLog
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(OperationNotFoundException))]
-        public void stLogTest2()
+        public void stLogParseTest2()
         {
             OWPComponent target = new OWPComponent((IEnvironment)null);
             target.parse("[OWP log.NotSupportedTest]");
         }
 
         /// <summary>
-        ///A test for stLog
+        ///A test for parse - stLog
         ///</summary>
         [TestMethod()]
-        public void stLogTest3()
+        public void stLogParseTest3()
         {
             OWPComponent target = new OWPComponent((IEnvironment)null);
             Assert.AreEqual(null, target.parse("[OWP log.Message]"));
@@ -157,65 +157,65 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         }
 
         /// <summary>
-        ///A test for stItem
+        ///A test for parse - stItem
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void stItemTest1()
+        public void stItemParseTest1()
         {
             OWPComponent target = new OWPComponent((IEnvironment)null);
             target.parse("[OWP item(\"name\")]");
         }
 
         /// <summary>
-        ///A test for stItem
+        ///A test for parse - stItem
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(OperandNotFoundException))]
-        public void stItemTest2()
+        public void stItemParseTest2()
         {
             OWPComponent target = new OWPComponent((IEnvironment)null);
             target.parse("[OWP item(\"name\").NotSupportedTest]");
         }
 
         /// <summary>
-        ///A test for stItem
+        ///A test for parse - stItem
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(NotSupportedOperationException))]
-        public void stItemTest3()
+        public void stItemParseTest3()
         {
             OWPComponent target = new OWPComponent((IEnvironment)null);
             target.parse("[OWP item(\"\").write(false): ]");
         }
 
         /// <summary>
-        ///A test for stItem
+        ///A test for parse - stItem
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void stItemTest4()
+        public void stItemParseTest4()
         {
             OWPComponent target = new OWPComponent((IEnvironment)null);
             target.parse("[OWP item(name).write(false): ]");
         }
 
         /// <summary>
-        ///A test for stItemWrite
+        ///A test for parse stItemWrite
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void stItemWriteTest1()
+        public void stItemWriteParseTest1()
         {
             OWPComponent target = new OWPComponent((IEnvironment)null);
             target.parse("[OWP item(\"name\").write(\"false\"): ]");
         }
 
         /// <summary>
-        ///A test for stItemWrite
+        ///A test for parse - stItemWrite
         ///</summary>
         [TestMethod()]
-        public void stItemWriteTest2()
+        public void stItemWriteParseTest2()
         {
             OWPComponent target = new OWPComponent(Env);
             Assert.AreEqual(String.Empty, target.parse("[OWP item(\"name\").write(false): data]"));
@@ -225,21 +225,21 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         }
 
         /// <summary>
-        ///A test for stItemDelete
+        ///A test for parse - stItemDelete
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(OperationNotFoundException))]
-        public void stItemDeleteTest1()
+        public void stItemDeleteParseTest1()
         {
             OWPComponent target = new OWPComponent(Env);
             Assert.AreEqual(String.Empty, target.parse("[OWP item(\"name\").delete]"));
         }
 
         /// <summary>
-        ///A test for stItemDelete
+        ///A test for parse - stItemDelete
         ///</summary>
         [TestMethod()]
-        public void stItemDeleteTest2()
+        public void stItemDeleteParseTest2()
         {
             OWPComponent target = new OWPComponent(Env);
             Assert.AreEqual(Value.from(false), target.parse("[OWP item(\"name\").delete = false]"));
@@ -247,21 +247,21 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         }
 
         /// <summary>
-        ///A test for stItemClear
+        ///A test for parse - stItemClear
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(OperationNotFoundException))]
-        public void stItemClearTest1()
+        public void stItemClearParseTest1()
         {
             OWPComponent target = new OWPComponent(Env);
             Assert.AreEqual(String.Empty, target.parse("[OWP item(\"name\").clear]"));
         }
 
         /// <summary>
-        ///A test for stItemClear
+        ///A test for parse - stItemClear
         ///</summary>
         [TestMethod()]
-        public void stItemClearTest2()
+        public void stItemClearParseTest2()
         {
             OWPComponent target = new OWPComponent(Env);
             Assert.AreEqual(Value.from(false), target.parse("[OWP item(\"name\").clear = false]"));
@@ -269,21 +269,21 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         }
 
         /// <summary>
-        ///A test for stItemActivate
+        ///A test for parse - stItemActivate
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(OperationNotFoundException))]
-        public void stItemActivateTest1()
+        public void stItemActivateParseTest1()
         {
             OWPComponent target = new OWPComponent(Env);
             Assert.AreEqual(String.Empty, target.parse("[OWP item(\"name\").activate]"));
         }
 
         /// <summary>
-        ///A test for stItemActivate
+        ///A test for parse - stItemActivate
         ///</summary>
         [TestMethod()]
-        public void stItemActivateTest2()
+        public void stItemActivateParseTest2()
         {
             OWPComponent target = new OWPComponent(Env);
             Assert.AreEqual(Value.from(false), target.parse("[OWP item(\"name\").activate = false]"));

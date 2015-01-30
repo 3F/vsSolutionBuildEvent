@@ -1,12 +1,11 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using net.r_eg.vsSBE;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
-namespace net.r_eg.vsSBE.Test
+namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 {
     /// <summary>
     ///This is a test class for UserVariableComponentTest and is intended

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using EnvDTE;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using net.r_eg.vsSBE;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
@@ -35,10 +33,10 @@ namespace net.r_eg.vsSBE.Test.Actions
         }
 
         /// <summary>
-        ///A test for parse
+        ///A test for DTEPrepared
         ///</summary>
         [TestMethod()]
-        public void parseTest()
+        public void dtePreparedTest()
         {
             DTEOperation target = new DTEOperation((IEnvironment)null, SolutionEventType.General);
 
@@ -50,10 +48,10 @@ namespace net.r_eg.vsSBE.Test.Actions
         }
 
         /// <summary>
-        ///A test for parse
+        ///A test for DTEPrepared
         ///</summary>
         [TestMethod()]
-        public void parseTest2()
+        public void dtePreparedTest2()
         {
             DTEOperation target = new DTEOperation((IEnvironment)null, SolutionEventType.General);
 
@@ -65,11 +63,11 @@ namespace net.r_eg.vsSBE.Test.Actions
         }
 
         /// <summary>
-        ///A test for parse
+        ///A test for DTEPrepared
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(IncorrectSyntaxException))]
-        public void parseTest3()
+        public void dtePreparedTest3()
         {
             DTEOperation target = new DTEOperation((IEnvironment)null, SolutionEventType.General);
 
@@ -78,11 +76,11 @@ namespace net.r_eg.vsSBE.Test.Actions
         }
 
         /// <summary>
-        ///A test for parse
+        ///A test for DTEPrepared
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(IncorrectSyntaxException))]
-        public void parseTest4()
+        public void dtePreparedTest4()
         {
             DTEOperation target = new DTEOperation((IEnvironment)null, SolutionEventType.General);
 
@@ -91,10 +89,10 @@ namespace net.r_eg.vsSBE.Test.Actions
         }
 
         /// <summary>
-        ///A test for parse
+        ///A test for DTEPrepared
         ///</summary>
         [TestMethod()]
-        public void parseTest5()
+        public void dtePreparedTest5()
         {
             DTEOperation target = new DTEOperation((IEnvironment)null, SolutionEventType.General);
 

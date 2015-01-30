@@ -1,11 +1,10 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.vsSBE.Events;
-using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
-namespace net.r_eg.vsSBE.Test
+namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 {
     /// <summary>
     ///This is a test class for InternalComponentTest and is intended
@@ -70,7 +69,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void parseTest4()
+        public void stEventsParseTest1()
         {
             InternalComponent target = new InternalComponent();
             target.parse("[vsSBE events.Type.item(name)]");
@@ -81,7 +80,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(OperandNotFoundException))]
-        public void parseTest5()
+        public void stEventsParseTest2()
         {
             InternalComponent target = new InternalComponent();
             target.parse("[vsSBE events.Type.item(1).test]");
@@ -91,7 +90,7 @@ namespace net.r_eg.vsSBE.Test
         ///A test for parse - stEventItem - pEnabled
         ///</summary>
         [TestMethod()]
-        public void parseTest6()
+        public void pEnabledParseTest1()
         {
             InternalComponentAccessor target = new InternalComponentAccessor();
             Assert.AreEqual("true", target.parse("[vsSBE events.Pre.item(1).Enabled]"));
@@ -105,7 +104,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(OperandNotFoundException))]
-        public void parseTest7()
+        public void pEnabledParseTest2()
         {
             InternalComponentAccessor target = new InternalComponentAccessor();
             target.parse("[vsSBE events.Pre.item(1).Enabled = 1true]");
@@ -115,7 +114,7 @@ namespace net.r_eg.vsSBE.Test
         ///A test for parse - stEventItem - pEnabled
         ///</summary>
         [TestMethod()]
-        public void parseTest8()
+        public void pEnabledParseTest3()
         {
             InternalComponentAccessor target = new InternalComponentAccessor();
             Assert.AreEqual("true", target.parse("[vsSBE events.Pre.item(1).Enabled]"));
@@ -132,7 +131,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(OperandNotFoundException))]
-        public void parseTest9()
+        public void pStatusParseTest1()
         {
             InternalComponentAccessor target = new InternalComponentAccessor();
             target.parse("[vsSBE events.Pre.item(1).Status.Has Errors]");
@@ -142,7 +141,7 @@ namespace net.r_eg.vsSBE.Test
         ///A test for parse - stEventItem - pStatus
         ///</summary>
         [TestMethod()]
-        public void parseTest10()
+        public void pStatusParseTest2()
         {
             InternalComponentAccessor target = new InternalComponentAccessor();
             Assert.AreEqual("false", target.parse("[vsSBE events.Pre.item(1).Status.HasErrors]"));
@@ -153,7 +152,7 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SubtypeNotFoundException))]
-        public void parseTest11()
+        public void pStatusParseTest3()
         {
             InternalComponentAccessor target = new InternalComponentAccessor();
             target.parse("[vsSBE events.Pre.item(1).Status.NotExistProp]");

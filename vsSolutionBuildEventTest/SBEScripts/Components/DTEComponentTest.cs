@@ -1,14 +1,12 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using net.r_eg.vsSBE;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events;
-using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
-namespace net.r_eg.vsSBE.Test
+namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 {
     /// <summary>
     ///This is a test class for DTEComponentTest and is intended
@@ -36,25 +34,56 @@ namespace net.r_eg.vsSBE.Test
         }
 
         /// <summary>
-        ///A test for parse
+        ///A test for parse - exec
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void parseTest()
+        public void parseExecTest1()
         {
             DTEComponentAccessor target = new DTEComponentAccessor();
             target.parse("#[DTE exec: command(arg)]");
         }
 
         /// <summary>
-        ///A test for parse
+        ///A test for parse - exec
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void parseTest2()
+        public void parseExecTest2()
         {
             DTEComponentAccessor target = new DTEComponentAccessor();
             target.parse("DTE exec: command(arg)");
+        }
+
+        /// <summary>
+        ///A test for parse - exec
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(OperandNotFoundException))]
+        public void parseExecTest3()
+        {
+            DTEComponentAccessor target = new DTEComponentAccessor();
+            target.parse("[DTE exec:]");
+        }
+
+        /// <summary>
+        ///A test for parse - exec
+        ///</summary>
+        [TestMethod()]
+        public void parseExecTest4()
+        {
+            DTEComponentAccessor target = new DTEComponentAccessor();
+            Assert.AreEqual(String.Empty, target.parse("[DTE exec: command]"));
+        }
+
+        /// <summary>
+        ///A test for parse - exec
+        ///</summary>
+        [TestMethod()]
+        public void parseExecTest5()
+        {
+            DTEComponentAccessor target = new DTEComponentAccessor();
+            Assert.AreEqual(String.Empty, target.parse("[DTE exec: command(args)]"));
         }
 
         /// <summary>
@@ -62,41 +91,10 @@ namespace net.r_eg.vsSBE.Test
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SubtypeNotFoundException))]
-        public void parseTest3()
+        public void parseTest1()
         {
             DTEComponentAccessor target = new DTEComponentAccessor();
             target.parse("[DTE NotExist.test]");
-        }
-
-        /// <summary>
-        ///A test for parse
-        ///</summary>
-        [TestMethod()]
-        [ExpectedException(typeof(OperandNotFoundException))]
-        public void parseTest4()
-        {
-            DTEComponentAccessor target = new DTEComponentAccessor();
-            target.parse("[DTE exec:]");
-        }
-
-        /// <summary>
-        ///A test for parse
-        ///</summary>
-        [TestMethod()]
-        public void parseTest5()
-        {
-            DTEComponentAccessor target = new DTEComponentAccessor();
-            Assert.AreEqual(String.Empty, target.parse("[DTE exec: command]"));
-        }
-
-        /// <summary>
-        ///A test for parse
-        ///</summary>
-        [TestMethod()]
-        public void parseTest6()
-        {
-            DTEComponentAccessor target = new DTEComponentAccessor();
-            Assert.AreEqual(String.Empty, target.parse("[DTE exec: command(args)]"));
         }
 
         private class DTEComponentAccessor: DTEComponent
