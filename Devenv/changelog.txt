@@ -1,0 +1,6 @@
+vsSolutionBuildEvent Devenv Command-Line
+________________________________________
+
+
+[v1.0] 2015.02.02
+    * First release for vsSolutionBuildEvent API v1.0

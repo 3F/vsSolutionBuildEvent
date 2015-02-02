@@ -1,3 +1,8 @@
+vsSolutionBuildEvent
+____________________
+
+
+
 [v0.10.1] 2015.01.08
     * FIXED: bug with confirmation dialog - ignores configurations list ('Only for')
     * FIXED: a probable bug ~"Ignored context. Build type '2200'"

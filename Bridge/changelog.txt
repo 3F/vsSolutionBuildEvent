@@ -1,0 +1,6 @@
+vsSolutionBuildEvent API
+________________________
+
+
+[v1.0] 2015.02.02
+    * First release for vsSolutionBuildEvent v0.11
