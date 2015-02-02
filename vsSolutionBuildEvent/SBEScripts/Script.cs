@@ -144,7 +144,7 @@ namespace net.r_eg.vsSBE.SBEScripts
                 _depthLevel = 0;
                 postProcessingMSBuild = allowMSBuild;
                 StringHandler hString = new StringHandler();
-                return hString.recovery(parse(hString.protect(data), _depthLevel, hString));
+                return hString.recovery(parse(hString.protectQuotes(data), _depthLevel, hString));
             }
         }
 
@@ -186,7 +186,8 @@ namespace net.r_eg.vsSBE.SBEScripts
         protected string parse(string data, int level, StringHandler hString = null)
         {
             if(level >= DEPTH_LIMIT) {
-                throw new LimitException("Nesting level of '{0}' reached. Aborted.", level);
+                _depthLevel = 0;
+                throw new LimitException("Nesting level of '{0}' reached. Aborted.", DEPTH_LIMIT);
             }
 
             return Regex.Replace(data, ContainerPattern, delegate(Match m)

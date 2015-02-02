@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,19 +16,15 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
-using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
     /// <summary>
-    /// Conditions in scripts
+    /// Conditional statement for scripts
     /// </summary>
     [Definition("(true) { }", "Conditionals statements\n\n(1 > 2) {\n ... \n}")]
     public class ConditionComponent: Component, IComponent
@@ -41,9 +37,32 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             get { return "("; }
         }
 
+        /// <summary>
+        /// Maximum of nesting level for brackets
+        /// </summary>
+        protected const int DEPTH_BRACKETS_LIMIT = 40;
+
+        /// <summary>
+        /// Current level of nesting brackets.
+        /// Aborting if reached limit
+        /// </summary>
+        private volatile uint _depthBracketsLevel = 0;
+
+        /// <summary>
+        /// For protecting from quotes & containers
+        /// </summary>
+        private StringHandler _hString = new StringHandler();
+
+        /// <summary>
+        /// object synch.
+        /// </summary>
+        private Object _lock = new Object();
+
+
         /// <param name="env">Used environment</param>
         /// <param name="uvariable">Used instance of user-variables</param>
-        public ConditionComponent(IEnvironment env, IUserVariable uvariable): base(env, uvariable)
+        public ConditionComponent(IEnvironment env, IUserVariable uvariable)
+            : base(env, uvariable)
         {
             beforeDeepen    = true; // Should be located before deepening
             postParse       = true; // Forced post analysis
@@ -56,9 +75,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns>prepared and evaluated data</returns>
         public override string parse(string data)
         {
-            StringHandler hString = new StringHandler();
+            lock(_lock) {
+                _hString = new StringHandler();
+                _depthBracketsLevel = 0;
+            }
 
-            Match m = Regex.Match(hString.protect(data.Trim()),
+            Match m = Regex.Match(_hString.protectQuotes(data.Trim()),
                                     String.Format(@"^\[\s*
                                                     {0}            #1 - Condition
                                                     \s*
@@ -69,27 +91,36 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                     )?\s*\]",
                                                     RPattern.RoundBracketsContent,
                                                     RPattern.CurlyBracketsContent
-                                                 ), RegexOptions.IgnorePatternWhitespace);
+                                                 ), 
+                                                 RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
                 throw new SyntaxIncorrectException("Failed ConditionComponent - '{0}'", data);
             }
 
-            string condition    = hString.recovery(m.Groups[1].Value);
-            string bodyIfTrue   = hString.recovery(m.Groups[2].Value);
-            string bodyIfFalse  = (m.Groups[3].Success)? hString.recovery(m.Groups[3].Value) : String.Empty;
+            string condition    = m.Groups[1].Value;
+            string bodyIfTrue   = _hString.recovery(m.Groups[2].Value);
+            string bodyIfFalse  = (m.Groups[3].Success)? _hString.recovery(m.Groups[3].Value) : String.Empty;
 
-            return parse(condition, bodyIfTrue, bodyIfFalse);
+            return parse(_hString.protectCores(condition), bodyIfTrue, bodyIfFalse);
         }
 
         protected string parse(string condition, string ifTrue, string ifFalse)
         {
             Log.nlog.Debug("Condition-parse: started with - '{0}' :: '{1}' :: '{2}'", condition, ifTrue, ifFalse);
+            return (disclosure(condition) == Value.VTRUE)? ifTrue : ifFalse;
+        }
 
-            Match m = Regex.Match(condition.Trim(), 
+        protected bool calculate(string data)
+        {
+            Log.nlog.Debug("Condition->calculate: started with - '{0}'", data);
+            data = _hString.recovery(data);
+            Log.nlog.Debug("Condition->calculate: after recovery - '{0}'", data);
+
+            Match m = Regex.Match(data.Trim(), 
                                               @"^\s*
                                                (!)?         #1 - flag of inversion (optional)
-                                               ([^=!~<>]+) #2 - left operand - boolean type if as a single
+                                               ([^=!~<>]+)  #2 - left operand - boolean type if as a single
                                                (?:
                                                    (
                                                       ===
@@ -115,7 +146,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed ConditionComponent->parse - '{0}'", condition);
+                throw new SyntaxIncorrectException("Failed ConditionComponent->calculate - '{0}'", data);
             }
 
             bool invert         = m.Groups[1].Success;
@@ -124,7 +155,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string right        = null;
             bool result         = false;
 
-            if(m.Groups[3].Success) {
+            if(m.Groups[3].Success)
+            {
                 coperator   = m.Groups[3].Value;
                 right       = m.Groups[4].Value;
 
@@ -133,12 +165,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     case "!==":
                     case ">=":
                     case "<=": {
-                        throw new SyntaxIncorrectException("Failed ConditionComponent: reserved combination- '{0}'", condition);
+                        throw new SyntaxIncorrectException("Failed ConditionComponent: reserved combination- '{0}'", data);
                     }
                 }
                 right = spaces(right);
             }
-            Log.nlog.Debug("Condition-parse: left: '{0}', right: '{1}', operator: '{2}', invert: {3}", left, right, coperator, invert);
+            Log.nlog.Debug("Condition->calculate: left: '{0}', right: '{1}', operator: '{2}', invert: {3}", left, right, coperator, invert);
 
             left = evaluate(left);
 
@@ -148,8 +180,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             else {
                 result = Value.cmp((left == "1")? Value.VTRUE : (left == "0")? Value.VFALSE : left);
             }
-            Log.nlog.Debug("Condition-parse: result is: '{0}'", result);
-            return ((invert)? !result : result)? ifTrue : ifFalse;
+            Log.nlog.Debug("Condition->calculate: result is: '{0}'", result);
+            return ((invert)? !result : result);
         }
 
         /// <summary>
@@ -192,36 +224,115 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
             return data;
         }
-    }
-
-    /// <summary>
-    /// Result type for ConditionComponent
-    /// </summary>
-    public struct ConditionComponentResult
-    {
-        /// <summary>
-        /// Left operand
-        /// </summary>
-        public string left;
 
         /// <summary>
-        /// Right operand
+        /// TODO: this realy fastest variant of implementation. 
+        ///       However, for productivity and Short-circuit Evaluation! needed additional implementation as left serial movement..
         /// </summary>
-        public string right;
+        /// <param name="data"></param>
+        /// <returns></returns>
+        protected string disclosure(string data)
+        {
+            if(_depthBracketsLevel >= DEPTH_BRACKETS_LIMIT) {
+                _depthBracketsLevel = 0;
+                throw new LimitException("Condition-disclosure: Nesting level of '{0}' reached. Aborted.", DEPTH_BRACKETS_LIMIT);
+            }
+
+            string ret = Regex.Replace(data, @"
+                                                \(
+                                                   (
+                                                     [^()]*
+                                                   )         #1 - expression
+                                                \)
+                                              ", 
+            delegate(Match m)
+            {
+                string exp = m.Groups[1].Value.Trim();
+                Log.nlog.Trace("Condition-disclosure: expression - '{0}' /level: {1}", exp, _depthBracketsLevel);
+
+                if(String.IsNullOrEmpty(exp)) {
+                    throw new SyntaxIncorrectException("Condition-disclosure: empty brackets are not allowed.");
+                }
+                return composite(exp);
+            },
+            RegexOptions.IgnorePatternWhitespace);
+
+            if(ret.IndexOf('(') != -1)
+            {
+                Log.nlog.Trace("Condition-disclosure: found a new bracket - '{0}'", ret);
+
+                ++_depthBracketsLevel;
+                string dret = disclosure(ret); // not all disclosed
+                --_depthBracketsLevel;
+
+                return dret;
+            }
+            return composite(ret);
+        }
 
         /// <summary>
-        /// Operator of comparison
+        /// Composite Conditions
         /// </summary>
-        public string coperator;
+        /// <param name="data"></param>
+        /// <returns></returns>
+        protected string composite(string data)
+        {
+            Log.nlog.Trace("Condition-composite: started with - '{0}'", data);
 
-        /// <summary>
-        /// Body if true
-        /// </summary>
-        public string ifTrue;
+            //if(data.IndexOfAny(new char[] { '=', '>', '<', '!', '|', '&' }) == -1) {
+            //    //TODO: without expression e.g.: 1 > (7) -> 1 > 7
+            //}
+            //Log.nlog.Trace("Condition-composite: finding operators..");
 
-        /// <summary>
-        /// Body if false
-        /// </summary>
-        public string ifFalse;
+            int left = 0;
+            for(int i = 0, len = data.Length - 1; i < len; )
+            {
+                char curr   = data[i];
+                char next   = data[i + 1];
+                if((curr == '|' && next != '|')
+                    ||
+                    (curr == '&' && next != '&'))
+                {
+                    throw new SyntaxIncorrectException("Condition-composite: allowed only logical operators - '&&' and '||'");
+                }
+
+                string exp = null;
+                if(curr == '|' || curr == '&') {
+                    exp = data.Substring(left, i - left);
+                    left = i += 2;
+                }
+
+                if(curr == '|')
+                {
+                    if(calculate(exp)) {
+                        return Value.VTRUE;
+                    }
+
+                    if(left >= len) {
+                        return Value.VFALSE;
+                    }
+
+                    continue;
+                }
+
+                if(curr == '&')
+                {
+                    if(calculate(exp)) {
+                        continue;
+                    }
+
+                    int orpos = data.IndexOf("||", left);
+                    if(orpos == -1) {
+                        return Value.VFALSE;
+                    }
+
+                    left = i = (orpos + 2);
+                    continue; // try with new block _x_|| -> ?
+                }
+
+                ++i;
+            }
+            return calculate(data.Substring(left))? Value.VTRUE : Value.VFALSE; // -> ??? EOL
+        }
     }
 }
