@@ -924,6 +924,11 @@ namespace net.r_eg.vsSBE.UI.WForms
             Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/CI/Devenv%20Command-Line");
         }
 
+        private void toolStripMenuAPI_Click(object sender, EventArgs e)
+        {
+            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/API");
+        }
+
         private void componentInfo(string name)
         {
             Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Scripts_&_Commands/SBE-Scripts/Components/" + name);

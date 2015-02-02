@@ -184,6 +184,7 @@
             this.dgvCompInfoSignature = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvCompInfoDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.toolStripMenuAPI = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuActions.SuspendLayout();
             this.panelStatusBR.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -334,9 +335,9 @@
             this.toolStripMenuHelp,
             this.toolStripMenuBug,
             this.toolStripMenuVersion});
-            this.statusStrip.Location = new System.Drawing.Point(142, 7);
+            this.statusStrip.Location = new System.Drawing.Point(111, 7);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(158, 22);
+            this.statusStrip.Size = new System.Drawing.Size(189, 22);
             this.statusStrip.TabIndex = 81;
             // 
             // toolStripMenuSpring
@@ -354,6 +355,7 @@
             this.toolStripSeparator6,
             this.toolStripMenuTools,
             this.toolStripMenuCI,
+            this.toolStripMenuAPI,
             this.toolStripSeparator11,
             this.toolStripMenuSBEPanel});
             this.toolStripMenuSettings.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuSettings.Image")));
@@ -366,21 +368,21 @@
             // toolStripMenuApply
             // 
             this.toolStripMenuApply.Name = "toolStripMenuApply";
-            this.toolStripMenuApply.Size = new System.Drawing.Size(136, 22);
+            this.toolStripMenuApply.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuApply.Text = "Apply";
             this.toolStripMenuApply.Click += new System.EventHandler(this.toolStripMenuApply_Click);
             // 
             // toolStripMenuReset
             // 
             this.toolStripMenuReset.Name = "toolStripMenuReset";
-            this.toolStripMenuReset.Size = new System.Drawing.Size(136, 22);
+            this.toolStripMenuReset.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuReset.Text = "Reset";
             this.toolStripMenuReset.Click += new System.EventHandler(this.toolStripMenuReset_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(133, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(149, 6);
             // 
             // toolStripMenuTools
             // 
@@ -391,7 +393,7 @@
             this.toolStripMenuDTECmdExec,
             this.menuSBEScript});
             this.toolStripMenuTools.Name = "toolStripMenuTools";
-            this.toolStripMenuTools.Size = new System.Drawing.Size(136, 22);
+            this.toolStripMenuTools.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuTools.Text = "Tools";
             // 
             // toolStripMenuMSBuildProp
@@ -437,7 +439,7 @@
             this.toolStripSeparator12,
             this.toolStripMenuPlugin});
             this.toolStripMenuCI.Name = "toolStripMenuCI";
-            this.toolStripMenuCI.Size = new System.Drawing.Size(136, 22);
+            this.toolStripMenuCI.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuCI.Text = "CI Utilities";
             // 
             // toolStripMenuCIMSBuild
@@ -485,12 +487,12 @@
             // toolStripSeparator11
             // 
             this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(133, 6);
+            this.toolStripSeparator11.Size = new System.Drawing.Size(149, 6);
             // 
             // toolStripMenuSBEPanel
             // 
             this.toolStripMenuSBEPanel.Name = "toolStripMenuSBEPanel";
-            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(136, 22);
+            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuSBEPanel.Text = "vsSBE Panel";
             this.toolStripMenuSBEPanel.Click += new System.EventHandler(this.toolStripMenuSBEPanel_Click);
             // 
@@ -1832,6 +1834,13 @@
             this.toolTip.InitialDelay = 500;
             this.toolTip.ReshowDelay = 100;
             // 
+            // toolStripMenuAPI
+            // 
+            this.toolStripMenuAPI.Name = "toolStripMenuAPI";
+            this.toolStripMenuAPI.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuAPI.Text = "API";
+            this.toolStripMenuAPI.Click += new System.EventHandler(this.toolStripMenuAPI_Click);
+            // 
             // EventsFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2048,6 +2057,7 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuDocCI;
         private System.Windows.Forms.PictureBox pictureBoxWarnWait;
         private System.Windows.Forms.ToolTip toolTip;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuAPI;
 
     }
 }
