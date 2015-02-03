@@ -1,7 +1,29 @@
 vsSolutionBuildEvent
 ____________________
 
-
+[v0.11] 2015.02.03
+    * NEW: Supports the Command-Line mode for devenv.
+    * NEW: Supports the msbuild.exe for CI / Special Build Servers - see our documentation of how to configure for TeamCity, AppVeyor etc.
+    * NEW: Composite Conditions with limited Short-circuit Evaluation. Available logical operators: && and ||
+    * NEW: Added new Event type - 'Logging'. Now we can catch all messages and send to any other place - files, services, logs, output window etc.
+    * NEW: Added the next features to OWPComponent:
+            * #[OWP log.Message]
+            * #[OWP log.Level]
+            * #[OWP item("name")]
+            * #[OWP item("name").write(boolean createIfNotExist): content]
+            * #[OWP item("name").writeLine(boolean createIfNotExist): content]
+            * #[OWP item("name").delete = true]
+            * #[OWP item("name").activate = true]
+            * #[OWP item("name").clear = true]
+            See our documentation for details.
+            -> Now you can push the custom messages into VS.Output Window -> Buid pane  /Suggestion #28
+            
+    * NEW: API Level - for any your external application for work with events/actions. - [for developers]
+    * CHANGED: Enabled option "Waiting for completion" for repeated events.
+    * CHANGED: Signed libraries to getting a strong names - [for developers]
+    * CHANGED: FontFamily for editor - 'Consolas' by default.
+    * CHANGED: Updated Nlog -> v3.2 & Newtonsoft.Json -> v6.0.8 + replaced UDE.CSharp on Ude.Signed.
+    * FIXED: Probably problem with encoding for call/out processes of the SBE-Scripts components.
 
 [v0.10.1] 2015.01.08
     * FIXED: bug with confirmation dialog - ignores configurations list ('Only for')
