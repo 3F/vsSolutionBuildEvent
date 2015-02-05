@@ -64,7 +64,7 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "script",
-        "Command": "#[\" \r\n     Updating version\r\n\"]\r\n\r\n#[var ver\t = #[File get(\"_version\")]]\r\n#[var tpl \t = #[File get(\"Version.tpl\")]]\r\n#[var vsSBEDir = $($(ProjectDir:$(SolutionName)))]\r\n\r\n#[var tStart     = $([System.DateTime]::Parse(\"15.01.2015\").ToBinary())]\r\n#[var tNow      = $([System.DateTime]::UtcNow.Ticks)]\r\n#[var revBuild = $([System.TimeSpan]::FromTicks($([MSBuild]::Subtract(#[var tNow], #[var tStart]))).TotalMinutes.ToString(\"0\"))]\r\n\r\n#[var cs = $(tpl.Replace(%Version%, \"$(ver.Replace(\".\", \", \")), #[var revBuild]\"))]\r\n#[var cs = $(cs.Replace(%VersionRevString%, \"$(ver).#[var revBuild]\").Replace(%VersionString%, \"$(ver)\"))]\r\n\r\n#[( #[File exists.file(\"git.exe\", true)] ) {\r\n\r\n\t#[var branchSha1   \t = #[File sout(\"git\", \"rev-parse --short HEAD\")]]\r\n\t#[var branchName \t = #[File sout(\"git\", \"rev-parse --abbrev-ref HEAD\")]]\r\n\t#[var branchRevCount = #[File sout(\"git\", \"rev-list HEAD --count\")]]\r\n\t\r\n\t#[var cs = $(cs.Replace(%branchName%, \"#[var branchName]\").Replace(%branchSha1%, \"#[var branchSha1]\").Replace(%branchRevCount%, \"#[var branchRevCount]\"))]\r\n}\r\nelse {\r\n\t#[var cs = $(cs.Replace(%branchName%, \"-\").Replace(%branchSha1%, \"-\").Replace(%branchRevCount%, \"-\"))]\r\n}]\r\n\r\n#[File write(\"#[var vsSBEDir]Version.cs\"):#[var cs]]\r\n\r\n#[\" \r\n    .vsixmanifest\r\n\"]\r\n\r\n#[($(Configuration) ~= _with_revision) {\r\n\t#[var ver = #[var ver].#[var revBuild]]\r\n}]\r\n\r\n#[File replace.Regexp(\"#[var vsSBEDir]/source.extension.vsixmanifest\", \"<Version>[0-9\\.]+</Version>\", \"<Version>#[var ver]</Version>\")]"
+        "Command": "#[\" \r\n     Updating version\r\n\"]\r\n\r\n#[var ver       = #[File get(\"_version\")]]\r\n#[var tpl       = #[File get(\"Version.tpl\")]]\r\n#[var vsSBEDir  = $($(ProjectDir:$(SolutionName)))]\r\n\r\n#[var tStart    = $([System.DateTime]::Parse(\"15.01.2015\").ToBinary())]\r\n#[var tNow      = $([System.DateTime]::UtcNow.Ticks)]\r\n#[var revBuild  = $([System.TimeSpan]::FromTicks($([MSBuild]::Subtract(#[var tNow], #[var tStart]))).TotalMinutes.ToString(\"0\"))]\r\n\r\n#[var cs = $(tpl.Replace(%Version%, \"$(ver.Replace(\".\", \", \")), #[var revBuild]\"))]\r\n#[var cs = $(cs.Replace(%VersionRevString%, \"$(ver).#[var revBuild]\").Replace(%VersionString%, \"$(ver)\"))]\r\n\r\n#[( #[File exists.directory(\".git\")] && #[File exists.file(\"git.exe\", true)] ) {\r\n\r\n    #[var branchSha1        = #[File sout(\"git\", \"rev-parse --short HEAD\")]]\r\n    #[var branchName        = #[File sout(\"git\", \"rev-parse --abbrev-ref HEAD\")]]\r\n    #[var branchRevCount    = #[File sout(\"git\", \"rev-list HEAD --count\")]]\r\n    \r\n    #[var cs = $(cs.Replace(%branchName%, \"#[var branchName]\").Replace(%branchSha1%, \"#[var branchSha1]\").Replace(%branchRevCount%, \"#[var branchRevCount]\"))]\r\n}\r\nelse {\r\n    #[var cs = $(cs.Replace(%branchName%, \"-\").Replace(%branchSha1%, \"-\").Replace(%branchRevCount%, \"-\"))]\r\n}]\r\n\r\n#[File write(\"#[var vsSBEDir]Version.cs\"):#[var cs]]\r\n\r\n#[\" \r\n    .vsixmanifest\r\n\"]\r\n\r\n#[($(Configuration) ~= \"_with_revision\" || $(Configuration) ~= \"CI_\") {\r\n    #[var ver = #[var ver].#[var revBuild]]\r\n}]\r\n\r\n#[File replace.Regexp(\"#[var vsSBEDir]/source.extension.vsixmanifest\", \"<Version>[0-9\\.]+</Version>\", \"<Version>#[var ver]</Version>\")]"
       }
     }
   ],
@@ -96,7 +96,7 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "script",
-        "Command": "#[($(Configuration) ~= Release) {\r\n\t#[DTE exec: Test.RunAllTestsInSolution]\r\n}]"
+        "Command": "#[($(Configuration) ~= \"Release\" && !$(Configuration) ~= \"CI_\") {\r\n\t#[DTE exec: Test.RunAllTestsInSolution]\r\n}]"
       }
     }
   ],
@@ -237,6 +237,30 @@
         "Handler": "",
         "Newline": "",
         "Wrapper": ""
+      }
+    }
+  ],
+  "Logging": [
+    {
+      "Enabled": false,
+      "Name": null,
+      "Caption": "",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": false,
+      "BuildType": "common",
+      "Confirmation": false,
+      "ToConfiguration": null,
+      "ExecutionOrder": null,
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": false,
+        "Hidden": true
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeFile, vsSolutionBuildEvent",
+        "Type": "file",
+        "Command": ""
       }
     }
   ]
