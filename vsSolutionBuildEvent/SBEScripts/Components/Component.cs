@@ -79,7 +79,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <summary>
         /// Disabled regex engine for property - condition
         /// </summary>
-        bool IComponent.CRegex
+        public bool CRegex
         {
             get { return cregex; }
         }

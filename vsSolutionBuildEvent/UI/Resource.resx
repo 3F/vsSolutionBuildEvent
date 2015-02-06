@@ -125,7 +125,7 @@
 #[var log = $(TMP)/ver.txt]
 
 #[($(Configuration) ~= Deb) {
-    #[var tStart   = $([System.DateTime]::Parse("01.01.2015").ToBinary())]
+    #[var tStart   = $([System.DateTime]::Parse("2015/02/01").ToBinary())]
     #[var tNow     = $([System.DateTime]::UtcNow.Ticks)]
     #[var revBuild = $([System.TimeSpan]::FromTicks($([MSBuild]::Subtract(#[var tNow], #[var tStart]))).TotalMinutes.ToString("0"))]
     #[var ver      = #[var ver].#[var revBuild]]

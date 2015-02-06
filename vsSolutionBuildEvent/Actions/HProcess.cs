@@ -26,8 +26,12 @@ namespace net.r_eg.vsSBE.Actions
 {
     public class HProcess
     {
-        [DllImport("kernel32.dll")]
-        public static extern int GetSystemDefaultLCID();
+        // CA1060
+        internal static class NativeMethods
+        {
+            [DllImport("kernel32.dll")]
+            internal static extern int GetSystemDefaultLCID();
+        }
 
         /// <summary>
         /// The current OEM code page from the system locale
@@ -35,7 +39,7 @@ namespace net.r_eg.vsSBE.Actions
         public static int OEMCodePage
         {
             get {
-                CultureInfo inf = CultureInfo.GetCultureInfo(GetSystemDefaultLCID());
+                CultureInfo inf = CultureInfo.GetCultureInfo(NativeMethods.GetSystemDefaultLCID());
                 return inf.TextInfo.OEMCodePage;
             }
         }

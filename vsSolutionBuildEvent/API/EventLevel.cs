@@ -29,7 +29,7 @@ using net.r_eg.vsSBE.SBEScripts;
 
 namespace net.r_eg.vsSBE.API
 {
-    public class EventLevel: IEventLevel, Bridge.IBuild, Bridge.IEvent, IDisposable
+    public class EventLevel: IEventLevel, Bridge.IBuild, Bridge.IEvent
     {
         /// <summary>
         /// The solution has been opened
@@ -264,11 +264,6 @@ namespace net.r_eg.vsSBE.API
             catch(Exception ex) {
                 Log.nlog.Error("Failed build-raw: '{0}'", ex.Message);
             }
-        }
-
-        public void Dispose()
-        {
-            detachCommandEvents(); //optional, i.e. should with cmdEvents ...
         }
 
         public EventLevel(DTE2 dte2, bool debug = false)
