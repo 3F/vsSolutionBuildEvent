@@ -349,7 +349,7 @@
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
-    <None Include="$(SolutionDir)_version" />
+    <None Include="$(SolutionDir).version" />
     <None Include="xshd\FilesMode.xshd" />
     <None Include="xshd\InterpreterMode.xshd" />
     <None Include="xshd\OperationMode.xshd" />

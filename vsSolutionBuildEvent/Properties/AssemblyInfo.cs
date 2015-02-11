@@ -1,8 +1,7 @@
-﻿using System.Reflection;
+﻿using net.r_eg.vsSBE;
+using System.Reflection;
 using System.Resources;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using net.r_eg.vsSBE;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -22,6 +21,9 @@ using net.r_eg.vsSBE;
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
 
+// The following GUID is for the ID of the typelib if this project is exposed to COM
+[assembly: Guid("F242A98F-7119-4ED1-821D-3ACAF58ED9B8")]
+
 // Version information for an assembly consists of the following four values:
 //
 //      Major Version
@@ -29,5 +31,8 @@ using net.r_eg.vsSBE;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion(Version.numberString)]
-[assembly: AssemblyFileVersion(Version.numberString)]
+
+// Current format: {Major}.{Minor}.{Patch}.{Build} ->
+//     For changes use the .version file only as {Major}.{Minor}.{Patch}
+[assembly: AssemblyVersion(Version.numberWithRevString)]
+[assembly: AssemblyFileVersion(Version.numberWithRevString)]

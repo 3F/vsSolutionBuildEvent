@@ -44,9 +44,9 @@ namespace net.r_eg.vsSBE.Provider
         /// <summary>
         /// Minimum requirements for library
         /// </summary>
-        public Version MinVersion
+        public System.Version MinVersion
         {
-            get { return new Version(0, 11); }
+            get { return new System.Version(0, 11); }
         }
 
         /// <summary>

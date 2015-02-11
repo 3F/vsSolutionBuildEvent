@@ -17,3 +17,8 @@
 /CI.MSBuild/obj
 /Provider/bin
 /Provider/obj
+/Bridge/Version.cs
+/CI.MSBuild/Version.cs
+/Devenv/Version.cs
+/Provider/Version.cs
+/bin/Releases

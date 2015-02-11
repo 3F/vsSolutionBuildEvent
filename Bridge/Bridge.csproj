@@ -54,8 +54,10 @@
     <Compile Include="IEvent.cs" />
     <Compile Include="IVersion.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Version.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".version" />
     <None Include="key.pfx" />
     <None Include="key.snk" />
   </ItemGroup>

@@ -39,7 +39,7 @@ namespace net.r_eg.vsSBE.Provider
         /// <summary>
         /// Minimum requirements for library.
         /// </summary>
-        Version MinVersion { get; }
+        System.Version MinVersion { get; }
 
         /// <summary>
         /// Access to settings
