@@ -2,6 +2,11 @@
 
 ##### Flexible actions for all ...
 
+[![Build status](https://ci.appveyor.com/api/projects/status/l38xn0j2c5an28e1/branch/master?svg=true)](https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/branch/master)
+
+[![Download vsSolutionBuildEvent (vsSBE)](https://img.shields.io/sourceforge/dm/vssbe.svg)](https://sourceforge.net/projects/vssbe/files/latest/download)[![Download vsSolutionBuildEvent (vsSBE)](https://img.shields.io/sourceforge/dt/vssbe.svg)](https://sourceforge.net/projects/vssbe/files/latest/download)
+
+
 MSBuild & SBE-Scripts engine for advanced usage. 
 
 +Supports the CI/Special Build Servers, Command-Line mode and many other features for build, tests, debugging, versioning, CI, logging, files etc., 
@@ -41,5 +46,6 @@ Examples of using are contained on [Visual Studio Gallery page](http://visualstu
 -------
 * [Wiki & Complete Solutions](https://bitbucket.org/3F/vssolutionbuildevent/wiki/Home)
 * **[Public Issue Tracker](https://bitbucket.org/3F/vssolutionbuildevent/issues)** - *bug ? suggestions ? write here*
+
 
 
