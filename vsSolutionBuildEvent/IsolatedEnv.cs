@@ -39,7 +39,7 @@ namespace net.r_eg.vsSBE
                         .Where(p => p.GetPropertyValue("Configuration") == properties["Configuration"] 
                                     && p.GetPropertyValue("Platform") == properties["Platform"]
                         )
-                        .Select(p => p.GetPropertyValue("ProjectName"))
+                        .Select(p => getProjectNameFrom(p))
                         .Where(name => !String.IsNullOrEmpty(name))
                         .ToList<string>();
             }
@@ -158,7 +158,7 @@ namespace net.r_eg.vsSBE
 
             foreach(Project eProject in ProjectCollection.GlobalProjectCollection.LoadedProjects)
             {
-                string pName = eProject.GetPropertyValue("ProjectName");
+                string pName = getProjectNameFrom(eProject);
                 string pCfg  = formatCfg(eProject.GetPropertyValue("Configuration"), eProject.GetPropertyValue("Platform"));
 
                 Log.nlog.Trace("find in projects collection: project '{0}' == '{1}', '{2}' == '{3}' [{4} = {5}]",
@@ -246,6 +246,20 @@ namespace net.r_eg.vsSBE
                 dir += Path.DirectorySeparatorChar;
             }
             return dir;
+        }
+
+        /// <summary>
+        /// Gets project name from Microsoft.Build.Evaluation.Project
+        /// </summary>
+        /// <param name="eProject"></param>
+        /// <returns></returns>
+        protected virtual string getProjectNameFrom(Project eProject)
+        {
+            string pName    = eProject.GetPropertyValue("ProjectName"); // can be as 'AppName' and 'AppName_2013' for different .sln
+            string asmName  = eProject.GetPropertyValue("AssemblyName");
+            Log.nlog.Trace("getProjectNameFrom: ProjectName - '{0}'; AssemblyName - '{1}'", pName, asmName);
+
+            return asmName;
         }
 
         protected virtual Dictionary<string, string> propertiesByDefault(Dictionary<string, string> properties)

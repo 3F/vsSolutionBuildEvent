@@ -37,7 +37,7 @@ namespace net.r_eg.vsSBE
             get
             {
                 try {
-                    return DTEProjects.Select(p => p.Name).ToList<string>();
+                    return DTEProjects.Select(p => getProjectNameFrom(p)).ToList<string>();
                 }
                 catch(Exception ex) {
                     Log.nlog.Error("Failed getting project from EnvDTE: {0}", ex.Message);
@@ -204,7 +204,7 @@ namespace net.r_eg.vsSBE
                 if(name == null && !String.IsNullOrEmpty(startup) && !dteProject.UniqueName.Equals(startup)) {
                     continue;
                 }
-                else if(name != null && !dteProject.Name.Equals(name)) {
+                else if(name != null && !getProjectNameFrom(dteProject).Equals(name)) {
                     continue;
                 }
                 selected = dteProject;
@@ -291,11 +291,11 @@ namespace net.r_eg.vsSBE
 
         protected bool isEquals(EnvDTE.Project dteProject, Project eProject)
         {
-            string ePrgName         = eProject.GetPropertyValue("ProjectName");
+            string ePrgName         = getProjectNameFrom(eProject);
             string ePrgCfg          = eProject.GetPropertyValue("Configuration");
             string ePrgPlatform     = eProject.GetPropertyValue("Platform");
 
-            string dtePrgName       = dteProject.Name;
+            string dtePrgName       = getProjectNameFrom(dteProject);
             string dtePrgCfg        = dteProject.ConfigurationManager.ActiveConfiguration.ConfigurationName;
             string dtePrgPlatform   = dteProject.ConfigurationManager.ActiveConfiguration.PlatformName;
 
@@ -324,6 +324,34 @@ namespace net.r_eg.vsSBE
             Log.nlog.Debug("tryLoadPCollection :: '{0}' [{1} ; {2}]", dteProject.FullName, prop["Configuration"], prop["Platform"]);
             //ProjectCollection.GlobalProjectCollection.LoadProject(dteProject.FullName, prop, null);
             return new Project(dteProject.FullName, prop, null, ProjectCollection.GlobalProjectCollection);
+        }
+
+        /// <summary>
+        /// Gets project name from EnvDTE.Project
+        /// </summary>
+        /// <param name="dteProject"></param>
+        /// <returns></returns>
+        protected virtual string getProjectNameFrom(EnvDTE.Project dteProject)
+        {
+            string pName    = dteProject.Name; //can be as 'AppName' and 'AppName_2013' for different .sln
+            string asmName  = dteProject.Properties.Item("AssemblyName").Value.ToString();
+            Log.nlog.Trace("getProjectNameFrom-dte: DTEName: '{0}'; AssemblyName: '{1}'", pName, asmName);
+
+            return asmName;
+        }
+
+        /// <summary>
+        /// Gets project name from Microsoft.Build.Evaluation.Project
+        /// </summary>
+        /// <param name="eProject"></param>
+        /// <returns></returns>
+        protected virtual string getProjectNameFrom(Project eProject)
+        {
+            string pName    = eProject.GetPropertyValue("ProjectName"); // can be as 'AppName' and 'AppName_2013' for different .sln
+            string asmName  = eProject.GetPropertyValue("AssemblyName");
+            Log.nlog.Trace("getProjectNameFrom: ProjectName - '{0}'; AssemblyName - '{1}'", pName, asmName);
+
+            return asmName;
         }
 
         protected Dictionary<string, string> getGlobalProperties(EnvDTE.Project dteProject)
