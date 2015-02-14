@@ -96,6 +96,13 @@ namespace net.r_eg.vsSBE.API
                 Config._.updateActivation(Bootloader);
 
                 UI.Plain.State.print(Config._.Data);
+#if DEBUG
+                Log.nlog.Warn("Used the [Debug version]");
+#else
+                if(vsSBE.Version.branchName != "Releases") {
+                    Log.nlog.Warn("Used the [Unofficial release]");
+                }
+#endif
                 Action.loggingEventActivated = true;
 
                 OpenedSolution(this, new EventArgs());

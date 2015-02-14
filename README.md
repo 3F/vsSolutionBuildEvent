@@ -48,4 +48,4 @@ Examples of using are contained on [Visual Studio Gallery page](http://visualstu
 * **[Public Issue Tracker](https://bitbucket.org/3F/vssolutionbuildevent/issues)** - *bug ? suggestions ? write here*
 
 
-
+Help/Donation: [![?](https://bytebucket.org/3F/vssolutionbuildevent/raw/master/vsSolutionBuildEvent/Resources/help-16.png)](https://bitbucket.org/3F/vssolutionbuildevent/wiki/Donation) [![Donate](https://bytebucket.org/3F/vssolutionbuildevent/raw/master/vsSolutionBuildEvent/Resources/paypal.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=P2HRG52AJSA9N&lc=US&item_name=vsSolutionBuildEvent%20%28vsSBE%29%20projects&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted)

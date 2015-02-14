@@ -94,6 +94,9 @@ namespace net.r_eg.vsSBE.UI.WForms
             toolStripMenuDebugMode.Enabled  = false;
             toolStripMenuVersion.Text       = string.Format("based on {0}", Version.branchSha1);
 #else
+            if(Version.branchName != "Releases") {
+                this.Text += " [Unofficial release]";
+            }
             toolStripMenuDebugMode.Checked  = Settings.debugMode;
             toolStripMenuVersion.Text       = string.Format("v{0} [ {1} ]", Version.numberString, Version.branchSha1);
 #endif

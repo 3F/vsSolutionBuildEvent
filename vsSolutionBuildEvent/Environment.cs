@@ -356,7 +356,7 @@ namespace net.r_eg.vsSBE
                 shell.GetProperty((int)__VSSPROPID.VSSPROPID_InstallDirectory, out dirObject);
 
                 string dir              = (string)dirObject;
-                const string vDefault   = "Undefined";
+                const string vDefault   = "*Undefined*";
 
                 if(String.IsNullOrEmpty(dir)) {
                     prop["DevEnvDir"] = vDefault;
@@ -380,7 +380,7 @@ namespace net.r_eg.vsSBE
                 string fname                = Path.GetFileName(file);
                 string name                 = Path.GetFileNameWithoutExtension(file);
                 string ext                  = Path.GetExtension(file);
-                const string vDefault       = "Undefined";
+                const string vDefault       = "*Undefined*";
 
                 prop["SolutionDir"]         = dir != null ? dir : vDefault;
                 prop["SolutionName"]        = name != null ? name : vDefault;

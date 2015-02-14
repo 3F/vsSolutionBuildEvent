@@ -321,7 +321,7 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "script",
-        "Command": "#[File sout(\"cmd\", \"/C cd \\\"#[var pDir]bin/#[var cfg]/\\\" & copy vsSolutionBuildEvent.vsix \\\"#[var odir]vsSolutionBuildEvent_v#[var numSBE]_[#[var branchSha1]][#[var netStamp]].vsix\\\"\")]"
+        "Command": "#[File sout(\"cmd\", \"/C copy \\\"#[var pDir]bin\\#[var cfg]\\vsSolutionBuildEvent.vsix\\\" \\\"#[var odir]vsSolutionBuildEvent_v#[var numSBE]_[#[var branchSha1]][#[var netStamp]].vsix\\\" /Y/V/B\")]"
       }
     }
   ],

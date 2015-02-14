@@ -132,4 +132,32 @@ You should have received a copy of the GNU Lesser General Public License
 along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
 </value>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="pictureBoxDonation.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        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
+</value>
+  </data>
 </root>

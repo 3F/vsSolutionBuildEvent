@@ -142,7 +142,10 @@ namespace net.r_eg.vsSBE.UI.WForms
             labelCopyright.Text = String.Format("Copyright (c) 2013-{0}  Denis Kuzmin (reg) < entry.reg@gmail.com >", DateTime.Now.Year);
 
 #if !DEBUG
-            labelVersionVal.Text   = String.Format("v{0} [ {1} ]", Version.numberWithRevString, Version.branchSha1);
+            labelVersionVal.Text = String.Format("v{0} [ {1} ]", Version.numberWithRevString, Version.branchSha1);
+            if(Version.branchName != "Releases") {
+                labelVersionVal.Text += String.Format(" /\"{0}\":{1}", Version.branchName, Version.branchRevCount);
+            }
 #else
             labelVersionVal.Text = String.Format("v{0} Debug [ {1} ] /\"{2}\":{3}",
                                                     Version.numberWithRevString,
@@ -190,6 +193,16 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void linkPage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Util.openUrl("http://r-eg.net");
+        }
+
+        private void linkLabelDonationHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Donation");
+        }
+
+        private void pictureBoxDonation_Click(object sender, EventArgs e)
+        {
+            Util.openUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=P2HRG52AJSA9N&lc=US&item_name=vsSolutionBuildEvent%20%28vsSBE%29%20projects&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted");
         }
     }
 }

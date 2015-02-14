@@ -90,7 +90,8 @@ namespace net.r_eg.vsSBE.MSBuild
             if(prop != null) {
                 return prop.EvaluatedValue;
             }
-            throw new MSBPropertyNotFoundException("variable - '{0}' : project - '{1}'", name, (projectName == null) ? "<default>" : projectName);
+            return "*Undefined*";
+            //throw new MSBPropertyNotFoundException("variable - '{0}' : project - '{1}'", name, (projectName == null) ? "<default>" : projectName);
         }
 
         public List<TMSBuildPropertyItem> listProperties(string projectName = null)
