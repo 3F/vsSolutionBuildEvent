@@ -194,12 +194,19 @@ namespace net.r_eg.vsSBE.Actions
             cdet.DataEnd();
 
             if(cdet.Charset == null) {
-                Log.nlog.Debug("reEncodeString: Problem with detection... use original");
+                Log.nlog.Debug("reEncodeString: Problem with detection... use the original");
+                return str;
+            }
+            Log.nlog.Debug("reEncodeString: charset '{0}' confidence: '{1}'", cdet.Charset, cdet.Confidence);
+
+            if(cdet.Confidence < 0.92f) {
+                Log.nlog.Debug("reEncodeString: Confidence < 0.92 /use the original");
                 return str;
             }
 
             Encoding to = Encoding.GetEncoding(cdet.Charset);
             Log.nlog.Debug("reEncodeString: '{0}' -> '{1}'", from.EncodingName, to.EncodingName);
+            Log.nlog.Trace("reEncodeString: original - '{0}'", str);
             return to.GetString(bytes);
         }
 

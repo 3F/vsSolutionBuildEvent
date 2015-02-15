@@ -99,7 +99,7 @@ namespace net.r_eg.vsSBE.API
 #if DEBUG
                 Log.nlog.Warn("Used the [Debug version]");
 #else
-                if(vsSBE.Version.branchName != "Releases") {
+                if(vsSBE.Version.branchName.ToLower() != "releases") {
                     Log.nlog.Warn("Used the [Unofficial release]");
                 }
 #endif

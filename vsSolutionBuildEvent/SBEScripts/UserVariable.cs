@@ -237,7 +237,7 @@ namespace net.r_eg.vsSBE.SBEScripts
             if(String.IsNullOrEmpty(name)) {
                 return false;
             }
-            return Regex.Match(name, "^[a-z][a-z_0-9]*$", RegexOptions.IgnoreCase).Success;
+            return Regex.Match(name, "^[a-z_][a-z_0-9]*$", RegexOptions.IgnoreCase).Success;
         }
 
         /// <summary>

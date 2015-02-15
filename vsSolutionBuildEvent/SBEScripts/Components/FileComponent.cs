@@ -51,8 +51,14 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             get
             {
                 if(envPath == null) {
-                    envPath = System.Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process).Split(';');
+                    envPath = String.Format("{0};{1};{2};{3};{4}", 
+                                            System.Environment.SystemDirectory,
+                                            System.Environment.GetEnvironmentVariable("SystemRoot"),
+                                            System.Environment.GetEnvironmentVariable("SystemRoot") + @"\System32\Wbem",
+                                            System.Environment.GetEnvironmentVariable("SystemRoot") + @"\System32\WindowsPowerShell\v1.0\",
+                                            System.Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process)).Split(';');
                 }
+
                 foreach(string dir in envPath) {
                     yield return dir;
                 }
@@ -188,6 +194,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// * #[File out("name")]
         /// 
         /// For silent mode use the scall(..) & sout(..)
+        /// 
+        /// NOTE: All errors can be ~disabled with arguments, for example:
+        ///       * stderr to stdout: [command] 2>&1
+        ///       * stderr to nul i.e. as disabled: [command] 2>nul
         /// </summary>
         /// <param name="data">prepared data</param>
         /// <param name="stdOut">Use StandardOutput or not</param>
@@ -304,9 +314,15 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string args = StringHandler.normalize(m.Groups[2].Value);
 
             Log.nlog.Debug("stCall: '{0}', '{1}' :: stdOut {2}, silent {3}", file, args, stdOut, silent);
+
+            string pfile = findFile(file);
+            if(String.IsNullOrEmpty(pfile)) {
+                throw new NotFoundException("FileComponent: File '{0}' not found", file);
+            }
+
             try {
-                string ret = run(file, args, silent, stdOut);
-                Log.nlog.Debug("FileComponent: successful stCall - '{0}'", file);
+                string ret = run(pfile, args, silent, stdOut);
+                Log.nlog.Debug("FileComponent: successful stCall - '{0}'", pfile);
                 return ret;
             }
             catch(Exception ex) {
@@ -752,6 +768,31 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         {
             string ret = (new Actions.HProcess(Settings.WorkPath)).run(file, args, silent, null);
             return (stdOut)? ret : String.Empty;
+        }
+
+        /// <summary>
+        /// Gets full path to file in found directory
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns>null value if not found in any places</returns>
+        protected string findFile(string file)
+        {
+            string lfile = location(file);
+            if(File.Exists(lfile)) {
+                return lfile;
+            }
+            Log.nlog.Trace("trying to find the file '{0}' with environment PATH :: '{1}'", file, lfile);
+
+            string[] exts = System.Environment.GetEnvironmentVariable("PATHEXT").Split(';');
+            foreach(string dir in EnvPath)
+            {
+                lfile = location(file, dir);
+                if(File.Exists(lfile) || exts.Any(ext => File.Exists(lfile + ext))) {
+                    Log.nlog.Trace("found in: '{0}' :: '{1}'", dir, lfile);
+                    return lfile;
+                }
+            }
+            return null;
         }
 
         /// <summary>

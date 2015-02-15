@@ -143,7 +143,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
 #if !DEBUG
             labelVersionVal.Text = String.Format("v{0} [ {1} ]", Version.numberWithRevString, Version.branchSha1);
-            if(Version.branchName != "Releases") {
+            if(Version.branchName.ToLower() != "releases") {
                 labelVersionVal.Text += String.Format(" /\"{0}\":{1}", Version.branchName, Version.branchRevCount);
             }
 #else
