@@ -775,7 +775,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         /// <param name="file"></param>
         /// <returns>null value if not found in any places</returns>
-        protected string findFile(string file)
+        protected virtual string findFile(string file)
         {
             string lfile = location(file);
             if(File.Exists(lfile)) {

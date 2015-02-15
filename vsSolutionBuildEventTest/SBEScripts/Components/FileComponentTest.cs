@@ -410,6 +410,11 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 content = data;
             }
 
+            protected override string findFile(string file)
+            {
+                return file;
+            }
+
             protected override string run(string file, string args, bool silent, bool stdOut)
             {
                 if(throwError) {
