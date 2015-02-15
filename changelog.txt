@@ -1,6 +1,15 @@
 vsSolutionBuildEvent
 ____________________
 
+[v0.11.1] 2015.02.15
+    * CHANGED: Default value for user variables with MSBuild core instead of the error.
+    * CHANGED: Limit for Confidence Ude (< 0.92) with detection of the encoding from call/out processes (FileComponent)
+    * CHANGED: Allowed '_' as first symbol of the variable name for SBE-Scripts.
+    * FIXED: bug with loading settings into the 'Execution order' for different .sln
+    * FIXED: UI. bug with changing the 'Enabled' column in actions list.
+    * FIXED: UI. fixes with displaying menu when the solution is not fully loaded.
+    * FIXED: fixes with file location for call/out commands (FileComponent)
+
 [v0.11] 2015.02.03
     * NEW: Supports the Command-Line mode for devenv.
     * NEW: Supports the msbuild.exe for CI / Special Build Servers - see our documentation of how to configure for TeamCity, AppVeyor etc.
