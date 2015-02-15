@@ -285,7 +285,8 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
                 return;
             }
 
-            if(e.Text.Length == 1 && !char.IsLetterOrDigit(e.Text[0])) {
+            //if(e.Text.Length == 1 && !char.IsLetterOrDigit(e.Text[0])) {
+            if(e.Text.Length == 1 && (e.Text[0] == ' ' || e.Text[0] == '.')) {
                 completionWindow.CompletionList.RequestInsertion(e);
             }
         }

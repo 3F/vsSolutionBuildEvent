@@ -68,6 +68,7 @@
             this.toolStripMenuPlugin = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuCopyPath = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuPluginDir = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuAPI = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuSBEPanel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuHelp = new System.Windows.Forms.ToolStripSplitButton();
@@ -184,7 +185,6 @@
             this.dgvCompInfoSignature = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvCompInfoDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.toolStripMenuAPI = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuActions.SuspendLayout();
             this.panelStatusBR.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -335,9 +335,9 @@
             this.toolStripMenuHelp,
             this.toolStripMenuBug,
             this.toolStripMenuVersion});
-            this.statusStrip.Location = new System.Drawing.Point(111, 7);
+            this.statusStrip.Location = new System.Drawing.Point(142, 7);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(189, 22);
+            this.statusStrip.Size = new System.Drawing.Size(158, 22);
             this.statusStrip.TabIndex = 81;
             // 
             // toolStripMenuSpring
@@ -368,21 +368,21 @@
             // toolStripMenuApply
             // 
             this.toolStripMenuApply.Name = "toolStripMenuApply";
-            this.toolStripMenuApply.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuApply.Size = new System.Drawing.Size(136, 22);
             this.toolStripMenuApply.Text = "Apply";
             this.toolStripMenuApply.Click += new System.EventHandler(this.toolStripMenuApply_Click);
             // 
             // toolStripMenuReset
             // 
             this.toolStripMenuReset.Name = "toolStripMenuReset";
-            this.toolStripMenuReset.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuReset.Size = new System.Drawing.Size(136, 22);
             this.toolStripMenuReset.Text = "Reset";
             this.toolStripMenuReset.Click += new System.EventHandler(this.toolStripMenuReset_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(133, 6);
             // 
             // toolStripMenuTools
             // 
@@ -393,7 +393,7 @@
             this.toolStripMenuDTECmdExec,
             this.menuSBEScript});
             this.toolStripMenuTools.Name = "toolStripMenuTools";
-            this.toolStripMenuTools.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuTools.Size = new System.Drawing.Size(136, 22);
             this.toolStripMenuTools.Text = "Tools";
             // 
             // toolStripMenuMSBuildProp
@@ -439,7 +439,7 @@
             this.toolStripSeparator12,
             this.toolStripMenuPlugin});
             this.toolStripMenuCI.Name = "toolStripMenuCI";
-            this.toolStripMenuCI.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuCI.Size = new System.Drawing.Size(136, 22);
             this.toolStripMenuCI.Text = "CI Utilities";
             // 
             // toolStripMenuCIMSBuild
@@ -484,15 +484,22 @@
             this.toolStripMenuPluginDir.Text = "Open directory with plugin";
             this.toolStripMenuPluginDir.Click += new System.EventHandler(this.toolStripMenuPluginDir_Click);
             // 
+            // toolStripMenuAPI
+            // 
+            this.toolStripMenuAPI.Name = "toolStripMenuAPI";
+            this.toolStripMenuAPI.Size = new System.Drawing.Size(136, 22);
+            this.toolStripMenuAPI.Text = "API";
+            this.toolStripMenuAPI.Click += new System.EventHandler(this.toolStripMenuAPI_Click);
+            // 
             // toolStripSeparator11
             // 
             this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator11.Size = new System.Drawing.Size(133, 6);
             // 
             // toolStripMenuSBEPanel
             // 
             this.toolStripMenuSBEPanel.Name = "toolStripMenuSBEPanel";
-            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(136, 22);
             this.toolStripMenuSBEPanel.Text = "vsSBE Panel";
             this.toolStripMenuSBEPanel.Click += new System.EventHandler(this.toolStripMenuSBEPanel_Click);
             // 
@@ -840,6 +847,7 @@
             this.dgvActions.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvActions_KeyDown);
             this.dgvActions.KeyUp += new System.Windows.Forms.KeyEventHandler(this.dgvActions_KeyUp);
             this.dgvActions.MouseDown += new System.Windows.Forms.MouseEventHandler(this.dgvActions_MouseDown);
+            this.dgvActions.MouseUp += new System.Windows.Forms.MouseEventHandler(this.dgvActions_MouseUp);
             // 
             // dgvActionEnabled
             // 
@@ -1833,13 +1841,6 @@
             this.toolTip.AutoPopDelay = 15000;
             this.toolTip.InitialDelay = 500;
             this.toolTip.ReshowDelay = 100;
-            // 
-            // toolStripMenuAPI
-            // 
-            this.toolStripMenuAPI.Name = "toolStripMenuAPI";
-            this.toolStripMenuAPI.Size = new System.Drawing.Size(152, 22);
-            this.toolStripMenuAPI.Text = "API";
-            this.toolStripMenuAPI.Click += new System.EventHandler(this.toolStripMenuAPI_Click);
             // 
             // EventsFrm
             // 

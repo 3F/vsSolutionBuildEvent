@@ -1159,13 +1159,27 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void dgvActions_MouseDown(object sender, MouseEventArgs e)
         {
-            if(e.Button == System.Windows.Forms.MouseButtons.Left) {
-                // MouseDown because the CellClick event may not be called for some rows
-                // the RowEnter called is too late..
-                int idx = dgvActions.HitTest(e.X, e.Y).RowIndex;
-                if(idx != -1) {
-                    refreshSettingsWithIndex(idx);
+            // MouseDown because the CellClick event may not be called for some rows
+            // the RowEnter called is too late..
+            if(e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                DataGridView.HitTestInfo inf = dgvActions.HitTest(e.X, e.Y);
+                if(inf.RowIndex == -1 || inf.ColumnIndex == -1) {
+                    return;
                 }
+
+                if(inf.ColumnIndex > 0) {
+                    refreshSettingsWithIndex(inf.RowIndex);
+                    return;
+                }
+                logic.setEventIndexes(comboBoxEvents.SelectedIndex, inf.RowIndex);
+            }
+        }
+
+        private void dgvActions_MouseUp(object sender, MouseEventArgs e)
+        {
+            if(dgvActions.HitTest(e.X, e.Y).ColumnIndex == 0) {
+                refreshSettings();
             }
         }
 

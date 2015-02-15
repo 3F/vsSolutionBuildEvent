@@ -121,7 +121,7 @@ namespace net.r_eg.vsSBE
                 Log.show();
 
                 int ret = Event.solutionOpened(pUnkReserved, fNewSolution);
-                _menuItemMain.Visible = true;
+                _menuItemMain.Visible = (ret == VSConstants.S_OK);
                 return ret;
             }
             catch(Exception ex) {
