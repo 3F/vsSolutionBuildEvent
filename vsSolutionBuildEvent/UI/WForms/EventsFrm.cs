@@ -1164,11 +1164,11 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(e.Button == System.Windows.Forms.MouseButtons.Left)
             {
                 DataGridView.HitTestInfo inf = dgvActions.HitTest(e.X, e.Y);
-                if(inf.RowIndex == -1 || inf.ColumnIndex == -1) {
+                if(inf.RowIndex == -1) {
                     return;
                 }
 
-                if(inf.ColumnIndex > 0) {
+                if(inf.ColumnIndex != 0) {
                     refreshSettingsWithIndex(inf.RowIndex);
                     return;
                 }
