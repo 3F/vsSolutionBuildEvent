@@ -15,15 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using EnvDTE80;
+using Microsoft.Build.Evaluation;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using net.r_eg.vsSBE.MSBuild.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using EnvDTE80;
-using Microsoft.Build.Evaluation;
-using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using net.r_eg.vsSBE.MSBuild.Exceptions;
 
 namespace net.r_eg.vsSBE
 {
@@ -124,6 +125,21 @@ namespace net.r_eg.vsSBE
             }
         }
         protected string solutionPath = null;
+
+        /// <summary>
+        /// Name of used solution file without extension
+        /// </summary>
+        public string SolutionFileName
+        {
+            get {
+                if(solutionFileName != null) {
+                    return solutionFileName;
+                }
+                solutionFileName = extractFileName(Dte2);
+                return solutionFileName;
+            }
+        }
+        protected string solutionFileName = null;
 
         /// <summary>
         /// Access to OutputWindowPane through IOW
@@ -272,21 +288,27 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Extract the solution path from the DTE-context
+        /// Extracts the solution path from the DTE-context
         /// </summary>
         /// <param name="dte2">DTE2 context</param>
         protected virtual string extractPath(DTE2 dte2)
         {
-            string path = dte2.Solution.FullName; // empty if used the new solution 
-            if(String.IsNullOrEmpty(path)) {
-                path = dte2.Solution.Properties.Item("Path").Value.ToString();
-            }
-            string dir = Path.GetDirectoryName(path);
+            string dir = Path.GetDirectoryName(_getFullPathFrom(dte2));
 
             if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
                 dir += Path.DirectorySeparatorChar;
             }
             return dir;
+        }
+
+        /// <summary>
+        /// Extracts the solution file name from the DTE-context
+        /// </summary>
+        /// <param name="dte2">DTE2 context</param>
+        /// <returns>File name without extension</returns>
+        protected virtual string extractFileName(DTE2 dte2)
+        {
+            return Path.GetFileNameWithoutExtension(_getFullPathFrom(dte2));
         }
 
         protected bool isEquals(EnvDTE.Project dteProject, Project eProject)
@@ -333,11 +355,23 @@ namespace net.r_eg.vsSBE
         /// <returns></returns>
         protected virtual string getProjectNameFrom(EnvDTE.Project dteProject)
         {
-            string pName    = dteProject.Name; //can be as 'AppName' and 'AppName_2013' for different .sln
-            string asmName  = dteProject.Properties.Item("AssemblyName").Value.ToString();
-            Log.nlog.Trace("getProjectNameFrom-dte: DTEName: '{0}'; AssemblyName: '{1}'", pName, asmName);
+            //return dteProject.Name; // can be as 'AppName' and 'AppName_2013' for different .sln
 
-            return asmName;
+            IVsSolution sln = (IVsSolution)Package.GetGlobalService(typeof(SVsSolution));
+            IVsHierarchy hr;
+            sln.GetProjectOfUniqueName(dteProject.FullName, out hr);
+
+            Guid id;
+            hr.GetGuidProperty((uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_ProjectIDGuid, out id);
+
+            foreach(Project eProject in ProjectCollection.GlobalProjectCollection.LoadedProjects)
+            {
+                string guidString = eProject.GetPropertyValue("ProjectGuid");
+                if(!String.IsNullOrEmpty(guidString) && id == (new Guid(guidString))) {
+                    return getProjectNameFrom(eProject);
+                }
+            }
+            return getProjectNameFrom(tryLoadPCollection(dteProject));
         }
 
         /// <summary>
@@ -347,11 +381,8 @@ namespace net.r_eg.vsSBE
         /// <returns></returns>
         protected virtual string getProjectNameFrom(Project eProject)
         {
-            string pName    = eProject.GetPropertyValue("ProjectName"); // can be as 'AppName' and 'AppName_2013' for different .sln
-            string asmName  = eProject.GetPropertyValue("AssemblyName");
-            Log.nlog.Trace("getProjectNameFrom: ProjectName - '{0}'; AssemblyName - '{1}'", pName, asmName);
-
-            return asmName;
+            return eProject.GetPropertyValue("ProjectName");
+            //note: we can to define as unified name for all .sln files in project file, e.g.: <PropertyGroup> <ProjectName>YourName</ProjectName> </PropertyGroup>
         }
 
         protected Dictionary<string, string> getGlobalProperties(EnvDTE.Project dteProject)
@@ -442,6 +473,20 @@ namespace net.r_eg.vsSBE
                     yield return subproject;
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets full path to solution file
+        /// </summary>
+        /// <param name="dte2">DTE2 context</param>
+        /// <returns></returns>
+        private string _getFullPathFrom(DTE2 dte2)
+        {
+            string path = dte2.Solution.FullName; // empty if used the new solution 
+            if(String.IsNullOrEmpty(path)) {
+                return dte2.Solution.Properties.Item("Path").Value.ToString();
+            }
+            return path;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -74,22 +74,37 @@ namespace net.r_eg.vsSBE
         private static readonly Lazy<Config> _lazy = new Lazy<Config>(() => new Config());
 
         /// <summary>
-        /// identification with full path
+        /// Link to configuration file
         /// </summary>
         private string _Link
         {
-            get { return Settings.WorkPath + Entity.NAME; }
+            get { return _formatLink(Settings.WorkPath, Entity.NAME, _solution); }
         }
+
+        /// <summary>
+        /// Special version of configuration file.
+        /// Specified for .sln if used
+        /// </summary>
+        private string _solution;
+
 
         /// <summary>
         /// Initializing settings from file
         /// </summary>
-        /// <param name="path">path to configuration file</param>
-        public void load(string path)
+        /// <param name="path">Path to configuration file.</param>
+        /// <param name="prefix">Special version of configuration file.</param>
+        public void load(string path, string prefix = null)
         {
+            _solution = prefix;
+            if(!String.IsNullOrEmpty(prefix) && !File.Exists(_formatLink(path, Entity.NAME, prefix))) {
+                _solution = null;
+                Log.nlog.Debug("Configuration: Not found the special version of configuration file - '{0}'", prefix);
+            }
             Settings.setWorkPath(path);
+
             try
             {
+                Log.nlog.Trace("Configuration: trying to load - '{0}'", _Link);
                 using(StreamReader stream = new StreamReader(_Link, Encoding.UTF8, true))
                 {
                     Data = deserialize(stream);
@@ -195,6 +210,15 @@ namespace net.r_eg.vsSBE
         protected void serialize(TextWriter stream, SolutionEvents data)
         {
             stream.Write(serialize(data));
+        }
+
+        /// <param name="path">Full path to configuration file</param>
+        /// <param name="name">File name</param>
+        /// <param name="prefix">Special version of configuration file if used</param>
+        /// <returns></returns>
+        protected string _formatLink(string path, string name, string prefix = null)
+        {
+            return String.Format("{0}{1}{2}", path, prefix, name);
         }
 
         /// <summary>

@@ -92,7 +92,7 @@ namespace net.r_eg.vsSBE.API
         public int solutionOpened(object pUnkReserved, int fNewSolution)
         {
             try {
-                Config._.load(Environment.SolutionPath);
+                Config._.load(Environment.SolutionPath, Environment.SolutionFileName);
                 Config._.updateActivation(Bootloader);
 
                 UI.Plain.State.print(Config._.Data);

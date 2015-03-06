@@ -544,7 +544,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             for(int i = 0; i < checkedListBoxSpecCfg.Items.Count; ++i)
             {
                 string name = checkedListBoxSpecCfg.Items[i].ToString();
-                bool state  = (toConf == null)? false : toConf.Where(s => s == name).Count() > 0;
+                bool state  = (toConf == null)? false : toConf.Any(s => s == name);
                 checkedListBoxSpecCfg.SetItemChecked(i, state);
             }
         }

@@ -5,6 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30424</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
+    <ProjectName>Devenv</ProjectName>
     <ProjectGuid>{56437CBB-4AE5-4405-B928-600009D60E2D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <StartupObject>

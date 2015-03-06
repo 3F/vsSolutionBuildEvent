@@ -53,9 +53,14 @@ namespace net.r_eg.vsSBE
         EnvDTE.Events Events { get; }
 
         /// <summary>
-        /// Solution path from the DTE-context
+        /// Path to solution file
         /// </summary>
         string SolutionPath { get; }
+
+        /// <summary>
+        /// Name of used solution file without extension
+        /// </summary>
+        string SolutionFileName { get; }
 
         /// <summary>
         /// Contains all of the commands in the environment

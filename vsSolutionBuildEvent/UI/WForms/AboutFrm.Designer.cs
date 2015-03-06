@@ -280,6 +280,8 @@
             this.pictureBoxDonation.TabIndex = 9;
             this.pictureBoxDonation.TabStop = false;
             this.pictureBoxDonation.Click += new System.EventHandler(this.pictureBoxDonation_Click);
+            this.pictureBoxDonation.MouseLeave += new System.EventHandler(this.pictureBoxDonation_MouseLeave);
+            this.pictureBoxDonation.MouseHover += new System.EventHandler(this.pictureBoxDonation_MouseHover);
             // 
             // labelDonation
             // 

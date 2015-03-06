@@ -204,5 +204,17 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             Util.openUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=P2HRG52AJSA9N&lc=US&item_name=vsSolutionBuildEvent%20%28vsSBE%29%20projects&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted");
         }
+
+        private void pictureBoxDonation_MouseHover(object sender, EventArgs e)
+        {
+            pictureBoxDonation.Padding = new Padding(1);
+            pictureBoxDonation.Refresh();
+        }
+
+        private void pictureBoxDonation_MouseLeave(object sender, EventArgs e)
+        {
+            pictureBoxDonation.Padding = new Padding(0);
+            pictureBoxDonation.Refresh();
+        }
     }
 }

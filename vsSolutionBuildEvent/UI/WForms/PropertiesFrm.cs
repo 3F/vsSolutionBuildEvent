@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -75,13 +75,17 @@ namespace net.r_eg.vsSBE.UI.WForms
             comboBoxProjects.SelectedIndex = 0;
         }
 
-        protected void fillProperties(string project, string filter = null)
+        protected void fillProperties(string project, string filterName = null, string filterValue = null)
         {
             dataGridViewVariables.Rows.Clear();
             try
             {
-                foreach(TMSBuildPropertyItem prop in _getProperties(project)) {
-                    if(filter != null && !prop.name.ToLower().Contains(filter)) {
+                foreach(TMSBuildPropertyItem prop in _getProperties(project))
+                {
+                    if(!String.IsNullOrEmpty(filterName) && !cmp(prop.name, filterName, mFilterRegexp.Checked)) {
+                        continue;
+                    }
+                    if(!String.IsNullOrEmpty(filterValue) && !cmp(prop.value, filterValue, mFilterRegexp.Checked)) {
                         continue;
                     }
                     dataGridViewVariables.Rows.Add(prop.name, prop.value);
@@ -92,9 +96,23 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
+        protected virtual bool cmp(string data, string filter, bool regexp = false)
+        {
+            if(!regexp) {
+                return data.ToLower().Contains(filter.ToLower());
+            }
+
+            try {
+                return System.Text.RegularExpressions.Regex.IsMatch(data, filter);
+            }
+            catch(Exception) {
+                return false;
+            }
+        }
+
         protected void listRender()
         {
-            fillProperties(getSelectedProject(), textBoxFilter.Text.Trim().ToLower());
+            fillProperties(getSelectedProject(), textBoxFilter.Text.Trim(), textBoxFilterVal.Text.Trim());
             labelPropCount.Text = dataGridViewVariables.Rows.Count.ToString();
         }
 
@@ -164,6 +182,16 @@ namespace net.r_eg.vsSBE.UI.WForms
             keyUp(sender, e);
         }
 
+        private void textBoxFilterVal_TextChanged(object sender, EventArgs e)
+        {
+            listRender();
+        }
+
+        private void textBoxFilterVal_KeyUp(object sender, KeyEventArgs e)
+        {
+            keyUp(sender, e);
+        }
+
         private void dataGridViewVariables_KeyUp(object sender, KeyEventArgs e)
         {
             keyUp(sender, e);
@@ -187,12 +215,50 @@ namespace net.r_eg.vsSBE.UI.WForms
             keyUp(sender, e);
         }
 
+        private void dataGridViewVariables_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            dataGridViewVariables.Rows[e.RowIndex].DefaultCellStyle.SelectionBackColor = Color.FromArgb(225, 241, 253);
+            dataGridViewVariables.Rows[e.RowIndex].DefaultCellStyle.SelectionForeColor = Color.FromArgb(23, 36, 47);
+        }
+
         private void dataGridViewVariables_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if(e.RowIndex >= 0) {
                 _pin.property(dataGridViewVariables[0, e.RowIndex].Value.ToString(), getSelectedProject());
-                this.Dispose();
             }
+
+            dataGridViewVariables.Rows[e.RowIndex].DefaultCellStyle.SelectionBackColor = Color.FromArgb(245, 242, 203);
+            dataGridViewVariables.Rows[e.RowIndex].DefaultCellStyle.SelectionForeColor = Color.FromArgb(23, 36, 47);
+        }
+
+        private void menuItemExportList_Click(object sender, EventArgs e)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.Append(String.Format("MSBuild Properties for project '{0}'\n", getSelectedProject()));
+            sb.Append(String.Format("* Variables Filter: '{0}'\n", textBoxFilter.Text.Trim()));
+            sb.Append(String.Format("* Values Filter: '{0}'\n", textBoxFilterVal.Text.Trim()));
+            sb.Append(String.Format("* Regexp: {0}\n", mFilterRegexp.Checked));
+            sb.Append(String.Format("* Found: {0}\n", dataGridViewVariables.Rows.Count));
+            sb.Append(new String('_', 50) + "\n");
+            sb.Append(new String('=', 50) + "\n\n\n");
+
+
+            foreach(DataGridViewRow row in dataGridViewVariables.Rows) {
+                sb.Append(String.Format("$({0}) = '{1}'\n{2}\n", 
+                                        row.Cells["colName"].Value, 
+                                        row.Cells["colValue"].Value,
+                                        new String('_', 110)));
+            }
+
+            Clipboard.SetText(sb.ToString());
+        }
+
+        private void menuItemFilterRegexp_Click(object sender, EventArgs e)
+        {
+            mFilterRegexp.Checked       = !mFilterRegexp.Checked;
+            textBoxFilter.BackColor     = (mFilterRegexp.Checked)? Color.FromArgb(232, 237, 247) : Color.White;
+            textBoxFilterVal.BackColor  = textBoxFilter.BackColor;
+            listRender();
         }
     }
 }

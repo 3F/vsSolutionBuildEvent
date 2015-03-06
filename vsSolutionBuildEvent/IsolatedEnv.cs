@@ -100,9 +100,18 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Solution path from the DTE-context
+        /// Path to solution file
         /// </summary>
         public string SolutionPath
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
+        /// Name of used solution file without extension
+        /// </summary>
+        public string SolutionFileName
         {
             get;
             protected set;
@@ -225,7 +234,8 @@ namespace net.r_eg.vsSBE
         /// <param name="properties">Solution properties / global properties for all project collection</param>
         public IsolatedEnv(string solutionFile, Dictionary<string, string> properties)
         {
-            SolutionPath = extractPath(solutionFile);
+            SolutionPath        = extractPath(solutionFile);
+            SolutionFileName    = extractFileName(solutionFile);
 
             this.properties = propertiesByDefault(properties);
             foreach(KeyValuePair<string, string> property in properties) {
@@ -249,17 +259,23 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
+        /// Extracts the solution file name without extension
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        protected string extractFileName(string file)
+        {
+            return Path.GetFileNameWithoutExtension(file);
+        }
+
+        /// <summary>
         /// Gets project name from Microsoft.Build.Evaluation.Project
         /// </summary>
         /// <param name="eProject"></param>
         /// <returns></returns>
         protected virtual string getProjectNameFrom(Project eProject)
         {
-            string pName    = eProject.GetPropertyValue("ProjectName"); // can be as 'AppName' and 'AppName_2013' for different .sln
-            string asmName  = eProject.GetPropertyValue("AssemblyName");
-            Log.nlog.Trace("getProjectNameFrom: ProjectName - '{0}'; AssemblyName - '{1}'", pName, asmName);
-
-            return asmName;
+            return eProject.GetPropertyValue("ProjectName");
         }
 
         protected virtual Dictionary<string, string> propertiesByDefault(Dictionary<string, string> properties)

@@ -412,10 +412,10 @@ namespace net.r_eg.vsSBE.Actions
             }
             Log.nlog.Debug("hasExecutionOrder(->isReached) for '{0}' is true", evt.Caption);
 
-            return evt.ExecutionOrder.Where(e =>
-                                              projects.ContainsKey(e.Project)
+            return evt.ExecutionOrder.Any(e =>
+                                            projects.ContainsKey(e.Project)
                                                && projects[e.Project] == e.Order
-                                            ).Count() > 0;
+                                          );
         }
 
         /// <summary>
@@ -509,7 +509,7 @@ namespace net.r_eg.vsSBE.Actions
                     return;
                 }
 
-                if(evt[i].ExecutionOrder.Where(o => o.Project == project && o.Order == type).Count() > 0) {
+                if(evt[i].ExecutionOrder.Any(o => o.Project == project && o.Order == type)) {
                     Log.nlog.Info("Incoming '{0}'({1}) :: Execute the deferred action: '{2}'", project, type, evt[i].Caption);
                     Status._.update(SolutionEventType.Pre, i, (execPre(evt[i]) == VSConstants.S_OK)? StatusType.Success : StatusType.Fail);
                 }
