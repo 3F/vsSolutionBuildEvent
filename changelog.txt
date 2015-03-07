@@ -1,6 +1,15 @@
 vsSolutionBuildEvent
 ____________________
 
+[v0.11.2] 2015.03.08
+    * FIXED: "Failed getting project from EnvDTE: The parameter is incorrect."
+    * FIXED: Bug for VS2015 CTP6 - "Error resolving type specified in JSON"
+    * FIXED: UI. not worked rows header in actions list.
+    * CHANGED: .vssbe for each .sln (Solution File) - format: '<SolutionFile>.vssbe'
+    * CHANGED: Supporting stdout & stderr streams for write()/writeLine() functions (FileComponent)
+    * CHANGED: UI. Added filter for values in MSBuild Properties window + 'Export list to Clipboard' + optional regexp
+    * CHANGED: Updated Ude.Signed library - v0.1.1
+
 [v0.11.1] 2015.02.15
     * CHANGED: Default value for user variables with MSBuild core instead of the error.
     * CHANGED: Limit for Confidence Ude (< 0.92) with detection of the encoding from call/out processes (FileComponent)
