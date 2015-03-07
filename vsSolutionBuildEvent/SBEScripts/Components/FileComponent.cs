@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -65,6 +65,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
         }
         protected string[] envPath = null;
+
 
         /// <summary>
         /// Handler for current data
@@ -397,6 +398,28 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 CValueType.String, CValueType.Input
             )
         ]
+        [
+            Method
+            (
+                "write",
+                "Writes text data in standard stream.\n * STDOUT - Standard output stream.\n * STDERR - Standard error stream.",
+                new string[] { "std", "In" },
+                new string[] { "Constant of standard stream", "multiline data" },
+                CValueType.Void,
+                CValueType.Const, CValueType.Input
+            )
+        ]
+        [
+            Method
+            (
+                "writeLine",
+                "Writes text data with CR/LF in standard stream.\n * STDOUT - Standard output stream.\n * STDERR - Standard error stream.",
+                new string[] { "std", "In" },
+                new string[] { "Constant of standard stream", "multiline data" },
+                CValueType.Void,
+                CValueType.Const, CValueType.Input
+            )
+        ]
         protected void stWrite(string data, bool append, bool writeLine, Encoding enc)
         {
             Match m = Regex.Match(data, 
@@ -404,15 +427,19 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                     (\S+)        #1 - type
                                                     \s*
                                                     \(
-                                                       {0}       #2 - file
+                                                       (?: 
+                                                          (STDOUT|STDERR)  #2 - standard streams
+                                                           |
+                                                          {0}              #3 - file
+                                                       )
                                                        (?:
-                                                          ,{1}   #3 - append    (optional)
-                                                          ,{1}   #4 - line      (optional)
-                                                          ,{0}   #5 - encoding  (optional)
+                                                          ,{1}   #4 - append    (optional)
+                                                          ,{1}   #5 - line      (optional)
+                                                          ,{0}   #6 - encoding  (optional)
                                                        )?
                                                     \)
                                                     \s*:
-                                                    (.*)         #6 - data", 
+                                                    (.*)         #7 - data", 
                                                     RPattern.DoubleQuotesContent,
                                                     RPattern.BooleanContent
                                                  ), RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
@@ -422,11 +449,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             string type         = m.Groups[1].Value;
-            string file         = location(StringHandler.normalize(m.Groups[2].Value.Trim()));
-            string appendUser   = (m.Groups[3].Success)? m.Groups[3].Value : null;
-            string lineUser     = (m.Groups[4].Success)? m.Groups[4].Value : null;
-            string encUser      = (m.Groups[5].Success)? m.Groups[5].Value : null;
-            string fdata        = StringHandler.hSymbols(m.Groups[6].Value);
+            bool stdStream      = m.Groups[2].Success;
+            string file         = (stdStream)? m.Groups[2].Value : location(StringHandler.normalize(m.Groups[3].Value.Trim()));
+            string appendUser   = (m.Groups[4].Success)? m.Groups[4].Value : null;
+            string lineUser     = (m.Groups[5].Success)? m.Groups[5].Value : null;
+            string encUser      = (m.Groups[6].Success)? m.Groups[6].Value : null;
+            string fdata        = StringHandler.hSymbols(m.Groups[7].Value);
 
             if(appendUser != null)
             {
@@ -440,10 +468,21 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 enc         = Encoding.GetEncoding(encUser);
             }
 
-            Log.nlog.Debug("FileComponent: stWrite started for '{0}'", file);
-            try {
-                writeToFile(file, fdata, append, writeLine, enc);
-                Log.nlog.Debug("FileComponent: successful stWrite - '{0}'", file);
+            Log.nlog.Debug("FileComponent: stWrite started for '{0}'({1})", file, stdStream);
+            try
+            {
+                if(!stdStream) {
+                    writeToFile(file, fdata, append, writeLine, enc);
+                    Log.nlog.Trace("FileComponent: successful stWrite - '{0}'", file);
+                    return;
+                }
+
+                if(file == "STDERR") {
+                    writeToStdErr(fdata, writeLine);
+                }
+                else {
+                    writeToStdOut(fdata, writeLine);
+                }
             }
             catch(Exception ex) {
                 throw new ScriptException("FileComponent: Cannot write {0}", ex.Message);
@@ -730,6 +769,36 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected void writeToFile(string file, string data, bool append, Encoding enc)
         {
             writeToFile(file, data, append, false, enc);
+        }
+
+        /// <summary>
+        /// Writes to standard output stream.
+        /// </summary>
+        /// <param name="data">The string to write</param>
+        /// <param name="writeLine">Writes a string followed by a line terminator if true</param>
+        protected void writeToStdOut(string data, bool writeLine)
+        {
+            if(writeLine) {
+                Console.Out.WriteLine(data);
+            }
+            else {
+                Console.Out.Write(data);
+            }
+        }
+
+        /// <summary>
+        /// Writes to standard error stream.
+        /// </summary>
+        /// <param name="data">The string to write</param>
+        /// <param name="writeLine">Writes a string followed by a line terminator if true</param>
+        protected void writeToStdErr(string data, bool writeLine)
+        {
+            if(writeLine) {
+                Console.Error.WriteLine(data);
+            }
+            else {
+                Console.Error.Write(data);
+            }
         }
 
         /// <summary>
