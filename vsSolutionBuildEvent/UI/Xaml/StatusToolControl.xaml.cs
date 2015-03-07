@@ -31,8 +31,13 @@ namespace net.r_eg.vsSBE.UI.Xaml
     {
         /// <summary>
         /// Logic for this UI
+        /// TODO:
         /// </summary>
-        protected Logic.StatusTool logic;
+        public Logic.StatusTool logic
+        {
+            get;
+            protected set;
+        }
 
         public StatusToolControl()
         {

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -70,7 +70,9 @@ namespace net.r_eg.vsSBE.Extensions
         /// <returns>Cloned</returns>
         public static T CloneBySerialization<T>(this T obj)
         {
-            return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(obj));
+            return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(obj), new JsonSerializerSettings() { 
+                Binder = new JsonSerializationBinder()
+            });
         }
 
         /// <summary>
@@ -83,7 +85,9 @@ namespace net.r_eg.vsSBE.Extensions
         /// <returns>Cloned with new type</returns>
         public static T2 CloneBySerializationWithType<T, T2>(this T obj)
         {
-            return JsonConvert.DeserializeObject<T2>(JsonConvert.SerializeObject(obj));
+            return JsonConvert.DeserializeObject<T2>(JsonConvert.SerializeObject(obj), new JsonSerializerSettings() {
+                Binder = new JsonSerializationBinder()
+            });
         }
     }
 }

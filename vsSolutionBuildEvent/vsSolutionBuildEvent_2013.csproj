@@ -77,8 +77,9 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
-    <Reference Include="Ude">
-      <HintPath>..\packages\Ude.Signed.0.1.0\lib\net40\Ude.dll</HintPath>
+    <Reference Include="Ude, Version=0.1.1.0, Culture=neutral, PublicKeyToken=dd537652db4726a9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Ude.Signed.0.1.1\lib\net40\Ude.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
@@ -130,6 +131,7 @@
     <Compile Include="ILogData.cs" />
     <Compile Include="IOW.cs" />
     <Compile Include="IsolatedEnv.cs" />
+    <Compile Include="JsonSerializationBinder.cs" />
     <Compile Include="OW.cs" />
     <Compile Include="SBEScripts\Bootloader.cs" />
     <Compile Include="SBEScripts\Components\Component.cs" />

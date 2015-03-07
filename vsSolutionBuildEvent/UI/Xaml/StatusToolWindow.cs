@@ -59,6 +59,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
 
         protected void onCloseSolution(object sender, EventArgs e)
         {
+            control.logic.resetWarnings();
             control.enabledPanel(false);
         }
 

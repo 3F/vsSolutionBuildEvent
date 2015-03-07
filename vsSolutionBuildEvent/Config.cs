@@ -197,13 +197,19 @@ namespace net.r_eg.vsSBE
 
         public SolutionEvents deserialize(string data)
         {
-            return JsonConvert.DeserializeObject<SolutionEvents>(data);
+            return JsonConvert.DeserializeObject<SolutionEvents>(data, new JsonSerializerSettings() {
+                Binder = new JsonSerializationBinder()
+            });
         }
 
         protected SolutionEvents deserialize(StreamReader stream)
         {
-            using(JsonTextReader reader = new JsonTextReader(stream)) {
-                return (new JsonSerializer()).Deserialize<SolutionEvents>(reader);
+            using(JsonTextReader reader = new JsonTextReader(stream))
+            {
+                JsonSerializer js = new JsonSerializer() {
+                    Binder = new JsonSerializationBinder() 
+                };
+                return js.Deserialize<SolutionEvents>(reader);
             }
         }
 
