@@ -323,6 +323,63 @@
         "Type": "script",
         "Command": "#[File sout(\"cmd\", \"/C copy \\\"#[var pDir]bin\\#[var cfg]\\vsSolutionBuildEvent.vsix\\\" \\\"#[var odir]vsSolutionBuildEvent_v#[var numSBE]_[#[var branchSha1]][#[var netStamp]].vsix\\\" /Y/V/B\")]"
       }
+    },
+    {
+      "Enabled": false,
+      "Name": "VerCIMPrompt",
+      "Caption": "Gets next number for package from official nuget server",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": true,
+      "BuildType": "common",
+      "Confirmation": true,
+      "ToConfiguration": [
+        "Release_with_revision|Any CPU",
+        "Release_with_revision|Mixed Platforms",
+        "Release_with_revision|x86",
+        "Release|Any CPU",
+        "Release|Mixed Platforms",
+        "Release|x86"
+      ],
+      "ExecutionOrder": {
+        "$type": "net.r_eg.vsSBE.Events.ExecutionOrder[], vsSolutionBuildEvent",
+        "$values": []
+      },
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
+        "Type": "script",
+        "Command": "#[($(Configuration) ~= \"Release\" && !$(Configuration) ~= \"CI_\") {\r\n    #[var numCIMPackage = $([MSBuild]::Add(#[File sout(\"cmd\", \"/C .nuget\\nuget.exe list vsSBE.CI.MSBuild | grep 'vsSBE.CI.MSBuild' | sed -r 's/^.*\\s[0-9]+\\.[0-9]+\\.//'\")], 1))]\r\n}\r\nelse{\r\n    #[var numCIMPackage = 0]\r\n}]"
+      }
+    },
+    {
+      "Enabled": true,
+      "Name": "NuGetCIM",
+      "Caption": "NuGet pack - CI.MSBuild",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": true,
+      "BuildType": "common",
+      "Confirmation": false,
+      "ToConfiguration": [],
+      "ExecutionOrder": {
+        "$type": "net.r_eg.vsSBE.Events.ExecutionOrder[], vsSolutionBuildEvent",
+        "$values": []
+      },
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
+        "Type": "script",
+        "Command": "#[var tplNuspecCIM  = #[File get(\"vsSBE.CI.MSBuild.nuspec.tpl\")]]\r\n#[var nupCIMdir     = $(odir)NuGet-CI.MSBuild-package]\r\n\r\n#[File sout(\"cmd\", \"/C mkdir \\\"#[var nupCIMdir]\\\" 2>&1\")]\r\n#[File sout(\"cmd\", \"/C del /F/Q \\\"#[var nupCIMdir]\\\" & del /F/Q \\\"#[var nupCIMdir]\\bin\\\" 2>&1\")]\r\n\r\n#[var nuspecCIM = $(tplNuspecCIM.Replace(%CIMVersion%, \"$(numCIM)\").Replace(%PackageVersion%, \"\").Replace(%vsSBEVersion%, \"$(numSBE)\"))]\r\n#[File write(\"#[var nupCIMdir]\\vsSBE.CI.MSBuild.nuspec\"):#[var nuspecCIM]]\r\n\r\n#[\" files for package \"]\r\n\r\n#[File sout(\"cmd\", \"/C cd \\\"#[var pDir]bin/#[var cfg]/\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I & xcopy NLog.dll.nlog \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]\r\n#[File sout(\"cmd\", \"/C cd \\\"#[var pDirCIM]bin/#[var cfg]/\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]\r\n#[File scall(\".nuget\\nuget.exe\", \"pack \\\"#[var nupCIMdir]\\vsSBE.CI.MSBuild.nuspec\\\" -OutputDirectory \\\"#[var nupCIMdir]\\..\\\" -NonInteractive\")]"
+      }
     }
   ],
   "CancelBuild": [

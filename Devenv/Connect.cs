@@ -193,7 +193,7 @@ namespace net.r_eg.vsSBE.Devenv
             Console.WriteLine(new String('=', 60));
             Console.WriteLine("[[ vsSolutionBuildEvent Devenv Command-Line ]] Welcomes You!");
             Console.WriteLine(new String('=', 60));
-            Console.WriteLine("Version: v{0}", Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            Console.WriteLine("Version: v{0}", System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
             Console.WriteLine("Feedback: entry.reg@gmail.com");
             Console.WriteLine(new String('_', 60));
         }

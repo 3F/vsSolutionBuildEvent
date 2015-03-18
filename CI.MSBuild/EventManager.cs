@@ -122,7 +122,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             msg(new String('=', 60));
             msg("[[ vsSolutionBuildEvent CI.MSBuild ]] Welcomes You!");
             msg(new String('=', 60));
-            msg("Version: v{0}", Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            msg("Version: v{0}", System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
             msg("Feedback: entry.reg@gmail.com");
             msg(new String('_', 60));
 

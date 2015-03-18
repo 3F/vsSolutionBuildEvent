@@ -9,7 +9,7 @@
 
 MSBuild & SBE-Scripts engine for advanced usage. 
 
-+Supports the CI/Special Build Servers, Command-Line mode and many other features for build, tests, debugging, versioning, CI, logging, files etc., 
++Supports the CI/Special Build Servers, Command-Line mode and many other features for build, tests, debugging, versioning, CI, logging(+logger for msbuild), work with files etc., 
 
 -------
 [Download](http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/referral/118151) (SourceForge.net)                    
@@ -29,12 +29,12 @@ Advanced handling of the all events in MS Visual Studio. Full control and flexib
 
 to all subprojects at once in solution as Solution-Events (this feature not provided by default for IDE) or for each project individually.
 
-*Can be used without Visual Studio for work through msbuild.exe*
+*Can be used without Visual Studio for work through msbuild.exe (Microsoft Build Tools)*
 
 Examples of using are contained on [Visual Studio Gallery page](http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/) & [Wiki](https://bitbucket.org/3F/vssolutionbuildevent/wiki) - *scripts, solutions, syntax etc.,*
 
 
-* [Change List](https://bitbucket.org/3F/vssolutionbuildevent/raw/master/changelog.txt)
+* [Changelist](https://bitbucket.org/3F/vssolutionbuildevent/raw/master/changelog.txt)
 * **[How to build vsSBE](https://bitbucket.org/3F/vssolutionbuildevent/wiki/Developer%20Zone/How%20to%20build)** ([Developer Zone](https://bitbucket.org/3F/vssolutionbuildevent/wiki/Developer%20Zone))
 * [SBE-Scripts](https://bitbucket.org/3F/vssolutionbuildevent/wiki/Scripts_&_Commands/SBE-Scripts)
 * [MSBuild](https://bitbucket.org/3F/vssolutionbuildevent/wiki/Scripts_&_Commands/MSBuild)

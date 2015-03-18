@@ -10,5 +10,7 @@ namespace net.r_eg.vsSBE%namespace%
         public const string branchName                  = "%branchName%";
         public const string branchSha1                  = "%branchSha1%";
         public const string branchRevCount              = "%branchRevCount%";
+        public const string informational               = "%VersionRevString% [ %branchSha1% ]";
+        public const string informationalFull           = "%VersionRevString% [ %branchSha1% ] /'%branchName%':%branchRevCount%";
     }
 }
