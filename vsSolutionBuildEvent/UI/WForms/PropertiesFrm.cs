@@ -136,6 +136,22 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
+        protected void keyDownToDGV(DataGridView grid, object sender, KeyEventArgs e)
+        {
+            if(grid == null || grid.CurrentCell == null) {
+                e.SuppressKeyPress = (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down);
+                return;
+            }
+
+            if(e.KeyCode == Keys.Up || e.KeyCode == Keys.Down)
+            {
+                int newpos          = grid.CurrentCell.RowIndex + (e.KeyCode == Keys.Up ? -1 : 1);
+                grid.CurrentCell    = grid[0, Math.Max(0, Math.Min(newpos, grid.Rows.Count - 1))];
+                e.SuppressKeyPress  = true;
+                return;
+            }
+        }
+
         /// <exception cref="MSBuildParserProjectNotFoundException">if not found the specific project</exception>
         private List<TMSBuildPropertyItem> _getProperties(string project)
         {
@@ -158,6 +174,12 @@ namespace net.r_eg.vsSBE.UI.WForms
                 return comboBoxProjects.Text;
             }
             return null;
+        }
+
+        private void _cellColor(Color backColor, Color foreColor, DataGridViewRow row)
+        {
+            row.DefaultCellStyle.SelectionBackColor = backColor;
+            row.DefaultCellStyle.SelectionForeColor = foreColor;
         }
 
         private void EnvironmentVariablesFrm_Load(object sender, EventArgs e)
@@ -217,18 +239,19 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void dataGridViewVariables_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            dataGridViewVariables.Rows[e.RowIndex].DefaultCellStyle.SelectionBackColor = Color.FromArgb(225, 241, 253);
-            dataGridViewVariables.Rows[e.RowIndex].DefaultCellStyle.SelectionForeColor = Color.FromArgb(23, 36, 47);
+            if(e.RowIndex < 0) {
+                return;
+            }
+            _cellColor(Color.FromArgb(225, 241, 253), Color.FromArgb(23, 36, 47), dataGridViewVariables.Rows[e.RowIndex]);
         }
 
         private void dataGridViewVariables_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if(e.RowIndex >= 0) {
-                _pin.property(dataGridViewVariables[0, e.RowIndex].Value.ToString(), getSelectedProject());
+            if(e.RowIndex < 0) {
+                return;
             }
-
-            dataGridViewVariables.Rows[e.RowIndex].DefaultCellStyle.SelectionBackColor = Color.FromArgb(245, 242, 203);
-            dataGridViewVariables.Rows[e.RowIndex].DefaultCellStyle.SelectionForeColor = Color.FromArgb(23, 36, 47);
+            _pin.property(dataGridViewVariables[0, e.RowIndex].Value.ToString(), getSelectedProject());
+            _cellColor(Color.FromArgb(245, 242, 203), Color.FromArgb(23, 36, 47), dataGridViewVariables.Rows[e.RowIndex]);
         }
 
         private void menuItemExportList_Click(object sender, EventArgs e)
@@ -259,6 +282,16 @@ namespace net.r_eg.vsSBE.UI.WForms
             textBoxFilter.BackColor     = (mFilterRegexp.Checked)? Color.FromArgb(232, 237, 247) : Color.White;
             textBoxFilterVal.BackColor  = textBoxFilter.BackColor;
             listRender();
+        }
+
+        private void textBoxFilter_KeyDown(object sender, KeyEventArgs e)
+        {
+            keyDownToDGV(dataGridViewVariables, sender, e);
+        }
+
+        private void textBoxFilterVal_KeyDown(object sender, KeyEventArgs e)
+        {
+            keyDownToDGV(dataGridViewVariables, sender, e);
         }
     }
 }

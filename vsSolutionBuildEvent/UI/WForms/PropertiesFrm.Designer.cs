@@ -159,6 +159,7 @@
             this.textBoxFilter.Size = new System.Drawing.Size(276, 20);
             this.textBoxFilter.TabIndex = 0;
             this.textBoxFilter.TextChanged += new System.EventHandler(this.textBoxFilter_TextChanged);
+            this.textBoxFilter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxFilter_KeyDown);
             this.textBoxFilter.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxFilter_KeyUp);
             // 
             // labelFiler
@@ -203,6 +204,7 @@
             this.textBoxFilterVal.Size = new System.Drawing.Size(281, 20);
             this.textBoxFilterVal.TabIndex = 6;
             this.textBoxFilterVal.TextChanged += new System.EventHandler(this.textBoxFilterVal_TextChanged);
+            this.textBoxFilterVal.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxFilterVal_KeyDown);
             this.textBoxFilterVal.KeyUp += new System.Windows.Forms.KeyEventHandler(this.textBoxFilterVal_KeyUp);
             // 
             // splitContainerFilters
