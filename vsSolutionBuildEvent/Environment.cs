@@ -28,7 +28,7 @@ using System.Linq;
 
 namespace net.r_eg.vsSBE
 {
-    public class Environment: IEnvironment
+    public class Environment: IEnvironment, IEnvironmentExt
     {
         /// <summary>
         /// Simple list of names from EnvDTE projects
@@ -200,7 +200,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Gets instance of the Build.Evaluation.Project for accessing to properties etc.
         /// 
-        /// Used the Startup-project in the list or the first with the same Configuration & Platform if the name contains null value
+        /// Uses the 'StartUp Project' from list or first with the same Configuration|Platform if the name contains the null value.
         /// Note: we work with DTE because the ProjectCollection.GlobalProjectCollection can be is empty
         /// https://bitbucket.org/3F/vssolutionbuildevent/issue/8/
         /// </summary>
@@ -270,6 +270,30 @@ namespace net.r_eg.vsSBE
         public string SolutionCfgFormat(SolutionConfiguration2 cfg)
         {
             return String.Format("{0}|{1}", cfg.Name, cfg.PlatformName);
+        }
+
+        /// <param name="pHierProj"></param>
+        /// <param name="force">Load in global collection with __VSHPROPID.VSHPROPID_ExtObject if true value</param>
+        /// <returns>project name from Microsoft.Build.Evaluation rules or null value if project not found in GlobalProjectCollection and force value is false</returns>
+        public string getProjectNameFrom(IVsHierarchy pHierProj, bool force = false)
+        {
+            Guid id;
+            pHierProj.GetGuidProperty((uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_ProjectIDGuid, out id);
+
+            foreach(Project eProject in ProjectCollection.GlobalProjectCollection.LoadedProjects)
+            {
+                string guidString = eProject.GetPropertyValue("ProjectGuid");
+                if(!String.IsNullOrEmpty(guidString) && id == (new Guid(guidString))) {
+                    return getProjectNameFrom(eProject);
+                }
+            }
+
+            if(!force) {
+                return null;
+            }
+            object dteProject;
+            pHierProj.GetProperty((uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_ExtObject, out dteProject);
+            return getProjectNameFrom(tryLoadPCollection((EnvDTE.Project)dteProject));
         }
 
         /// <summary>
@@ -361,15 +385,9 @@ namespace net.r_eg.vsSBE
             IVsHierarchy hr;
             sln.GetProjectOfUniqueName(dteProject.FullName, out hr);
 
-            Guid id;
-            hr.GetGuidProperty((uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_ProjectIDGuid, out id);
-
-            foreach(Project eProject in ProjectCollection.GlobalProjectCollection.LoadedProjects)
-            {
-                string guidString = eProject.GetPropertyValue("ProjectGuid");
-                if(!String.IsNullOrEmpty(guidString) && id == (new Guid(guidString))) {
-                    return getProjectNameFrom(eProject);
-                }
+            string projectName = getProjectNameFrom(hr, false);
+            if(!String.IsNullOrEmpty(projectName)) {
+                return projectName;
             }
             return getProjectNameFrom(tryLoadPCollection(dteProject));
         }

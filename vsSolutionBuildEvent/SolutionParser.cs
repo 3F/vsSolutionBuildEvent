@@ -25,8 +25,8 @@ using System.Text.RegularExpressions;
 namespace net.r_eg.vsSBE
 {
     /// <summary>
-    /// Basic work with .sln for getting list of projects, available configurations etc.
-    /// Please note: it's necessary for work without DTE-context/IDE mode, for example with isolated enviroment.
+    /// Basic works with .sln for getting list of projects, available configurations etc.
+    /// Please note: it's necessary for working without DTE-context/IDE mode, for example with isolated enviroment.
     ///              Use the EnvDTE & ProjectCollection if it's possible!
     /// 
     /// Another variants:

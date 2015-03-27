@@ -128,6 +128,7 @@
     <Compile Include="Events\IExecutionOrder.cs" />
     <Compile Include="Extensions\ArrayExtension.cs" />
     <Compile Include="Extensions\ObjectExtension.cs" />
+    <Compile Include="IEnvironmentExt.cs" />
     <Compile Include="ILogData.cs" />
     <Compile Include="IOW.cs" />
     <Compile Include="IsolatedEnv.cs" />

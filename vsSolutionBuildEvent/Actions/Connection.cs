@@ -390,6 +390,11 @@ namespace net.r_eg.vsSBE.Actions
 
         protected string getProjectName(IVsHierarchy pHierProj)
         {
+            string projectName = ((IEnvironmentExt)cmd.Env).getProjectNameFrom(pHierProj, true);
+            if(!String.IsNullOrEmpty(projectName)) {
+                return projectName;
+            }
+
             object name;
             // http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivshierarchy.getproperty.aspx
             // http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.__vshpropid.aspx
