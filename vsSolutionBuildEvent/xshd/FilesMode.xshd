@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
-<SyntaxDefinition name="" extensions=".js" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+<SyntaxDefinition name="" extensions="" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
     <Color name="Punctuation" foreground="DarkSlateGray" />
-	<Color name="Digits" foreground="DarkBlue" />
+    <Color name="Digits" foreground="DarkBlue" />
     
-	<RuleSet ignoreCase="false">  
+    <RuleSet ignoreCase="false">  
             
-		<Rule color="Punctuation">
-			[.()\[\]{}\/!]+
-		</Rule>        
+        <Rule color="Punctuation">
+            [.()\[\]{}\/!]+
+        </Rule>        
         
-		<Rule color="Digits">
-			[0-9]+
-		</Rule>        
+        <Rule color="Digits">
+            [0-9]+
+        </Rule>        
         
-	</RuleSet>
+    </RuleSet>
 </SyntaxDefinition>

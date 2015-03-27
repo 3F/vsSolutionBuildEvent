@@ -1,49 +1,77 @@
 <?xml version="1.0"?>
-<SyntaxDefinition name="" extensions=".js" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+<SyntaxDefinition name="" extensions="" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
     <Color name="Components" foreground="DarkCyan" exampleText="#[Build " />
     <Color name="Punctuation" foreground="DarkSlateGray" />
     <Color name="MSBuildPunctuation" foreground="Indigo" />
-	<Color name="Digits" foreground="DarkBlue" />
-	<Color name="String" foreground="Sienna" />
-	<Color name="Literals" foreground="Blue" />
+    <Color name="Digits" foreground="DarkBlue" />
+    <Color name="String" foreground="Sienna" />
+    <Color name="Comment" foreground="Gray" />
+    <Color name="SysConst" fontWeight="bold" foreground="#FF4D6082" />
+    <Color name="Literals" foreground="Blue" />
     
-	<RuleSet ignoreCase="false">  
+    <RuleSet ignoreCase="false">  
     
         <Keywords color="Components">
-			<Word>Build</Word>
+            <Word>Build</Word>
             <Word>DTE</Word>
             <Word>File</Word>
             <Word>Func</Word>
             <Word>vsSBE</Word>
             <Word>OWP</Word>
             <Word>var</Word>
-		</Keywords>
+        </Keywords>
+
+        <Keywords color="SysConst">
+            <Word>STDOUT</Word>
+            <Word>STDIN</Word>
+            <Word>STDERR</Word>
+        </Keywords>        
         
-		<Rule color="Punctuation">
-			[?,.;()\[\]{}+\-/%*&lt;&gt;^+~!|&amp;]+
-		</Rule>
+        <Rule color="Punctuation">
+            [?,.;()\[\]{}+\-/%*&lt;&gt;^+~!|&amp;]+
+        </Rule>
         
-		<Rule color="MSBuildPunctuation">
-			(\$|::)
-		</Rule>
+        <Rule color="MSBuildPunctuation">
+            (\$|::)
+        </Rule>
         
-		<Rule color="Digits">
-			[0-9]+
-		</Rule>
+        <Rule color="Digits">
+            [0-9]+
+        </Rule>
         
-		<Span color="String" multiline="true">
-			<Begin>"</Begin>
-			<End>"</End>
-			<RuleSet>
-				<Span begin="\\" end="." />
-			</RuleSet>
-		</Span>        
+        <Span color="String" multiline="true">
+            <Begin>"</Begin>
+            <End>"</End>
+            <RuleSet>
+                <Span begin="\\" end="." />
+            </RuleSet>
+        </Span>
+
+        <Span color="Comment" ruleSet="CommentRule" multiline="true">
+            <Begin>\#\[\"</Begin>
+            <End>\"\]</End>
+        </Span>
         
-		<Keywords color="Literals">
-			<Word>false</Word>
-			<Word>null</Word>
-			<Word>true</Word>
-		</Keywords>
+        <Keywords color="Literals">
+            <Word>false</Word>
+            <Word>null</Word>
+            <Word>true</Word>
+        </Keywords>
         
-	</RuleSet>
+    </RuleSet>
+
+    <!-- nested #[".."] comments -->
+    <RuleSet name="CommentRule">
+        <Span multiline="true">
+            <Begin>\#\[\"</Begin>
+            <End>\"\]</End>
+            <RuleSet>
+                <Span color="Comment" ruleSet="CommentRule" multiline="true">
+                    <Begin>\#\[\"</Begin>
+                    <End>\"\]</End>
+                </Span>
+            </RuleSet>
+        </Span>
+    </RuleSet>
+    
 </SyntaxDefinition>

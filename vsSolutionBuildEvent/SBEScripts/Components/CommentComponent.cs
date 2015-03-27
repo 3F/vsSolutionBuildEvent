@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,11 +16,7 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
@@ -52,9 +48,9 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns>prepared and evaluated data</returns>
         public override string parse(string data)
         {
-            Match m = Regex.Match(data, 
-                                    String.Format(@"^\[{0}\]", RPattern.DoubleQuotesContent), 
-                                    RegexOptions.IgnorePatternWhitespace);
+            Match m = Regex.Match(data, @"^\[""
+                                              .*
+                                              ""\]$", RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
 
             if(!m.Success) {
                 throw new SyntaxIncorrectException("Failed CommentComponent - '{0}'", data);

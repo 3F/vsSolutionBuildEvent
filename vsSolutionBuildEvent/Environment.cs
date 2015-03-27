@@ -15,16 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using EnvDTE80;
 using Microsoft.Build.Evaluation;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.MSBuild.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace net.r_eg.vsSBE
 {
