@@ -64,6 +64,16 @@ namespace net.r_eg.vsSBE.SBEScripts
             return Int32.Parse(val.Trim());
         }
 
+        /// <summary>
+        /// Getting Unsigned Int32 value
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        public static uint toUInt32(string val)
+        {
+            return UInt32.Parse(val.Trim());
+        }
+
         /// <param name="val"></param>
         /// <returns></returns>
         public static string from(bool val)

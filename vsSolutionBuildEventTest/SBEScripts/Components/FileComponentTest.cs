@@ -140,6 +140,52 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         }
 
         /// <summary>
+        ///A test for parse - stCall
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(SyntaxIncorrectException))]
+        public void stCallParseTest5()
+        {
+            FileComponentAccessor target = new FileComponentAccessor();
+            target.parse("[File call(\"file\", \"args\", \"10\")]");
+        }
+
+        /// <summary>
+        ///A test for parse - stCall
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(SyntaxIncorrectException))]
+        public void stCallParseTest6()
+        {
+            FileComponentAccessor target = new FileComponentAccessor();
+            target.parse("[File call(\"file\", 10)]");
+        }
+
+        /// <summary>
+        ///A test for parse - stCall
+        ///</summary>
+        [TestMethod()]
+        public void stCallParseTest7()
+        {
+            FileComponentAccessor target = new FileComponentAccessor();
+            Assert.AreEqual("stdout", target.parse("[File call(\"file\", \"args\", 0)]"));
+            Assert.AreEqual("stdout", target.parse("[File out(\"file\", \"args\", 10)]"));
+            Assert.AreEqual("silent stdout", target.parse("[File scall(\"file\", \"args\", 15)]"));
+            Assert.AreEqual("silent stdout", target.parse("[File sout(\"file\", \"args\", 10)]"));
+        }
+
+        /// <summary>
+        ///A test for parse - stCall
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(SyntaxIncorrectException))]
+        public void stCallParseTest8()
+        {
+            FileComponentAccessor target = new FileComponentAccessor();
+            target.parse("[File call(\"file\", \"args\", )]");
+        }
+
+        /// <summary>
         ///A test for parse - stWrite
         ///</summary>
         [TestMethod()]
@@ -385,7 +431,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 
             public FileComponentAccessor(bool throwError = false)
             {
-                Settings.setWorkPath("/");
+                Settings.setWorkingPath("/");
                 this.throwError = throwError;
             }
 
@@ -415,7 +461,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 return file;
             }
 
-            protected override string run(string file, string args, bool silent, bool stdOut)
+            protected override string run(string file, string args, bool silent, bool stdOut, int timeout = 0)
             {
                 if(throwError) {
                     throw new ComponentException(String.Format("Some error for '{0} {1}'", file, args));

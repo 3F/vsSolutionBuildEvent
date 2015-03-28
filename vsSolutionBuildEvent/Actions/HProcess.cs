@@ -64,22 +64,31 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         protected string initDir;
 
+
         /// <summary>
         /// Execute file with arguments.
-        /// Uses synchronous read operations.
+        /// 
+        /// Uses synchronous the read operations.
+        /// TODO: Serial data for stdin.
         /// </summary>
         /// <param name="file"></param>
         /// <param name="args"></param>
         /// <param name="hidden">Hide process if true</param>
-        /// <param name="stdin">Post input for app. Can be null if not used</param>
+        /// <param name="timeout">How long to wait the execution, in seconds. 0 value - infinitely</param>
         /// <returns></returns>
-        public string run(string file, string args, bool hidden, string stdin)
+        public string run(string file, string args, bool hidden, int timeout = 0)
         {
             Process p = prepareProcessFor(file, args, hidden);
             p.Start();
 
-            if(!String.IsNullOrEmpty(stdin)) {
-                p.StandardInput.Write(stdin);
+            Log.nlog.Trace("time limit is '{0}'sec :: HProcess.run", timeout);
+            if(timeout != 0)
+            {
+                p.WaitForExit(timeout * 1000);
+                if(!p.HasExited) {
+                    Log.nlog.Warn("sigkill to the process - '{0}': limit in {1}sec for time is reached. Use any other value or 0 for unlimited time.", file, timeout);
+                    p.Kill();
+                }
             }
 
             string errors = p.StandardError.ReadToEnd();
@@ -140,7 +149,7 @@ namespace net.r_eg.vsSBE.Actions
 
         public HProcess()
         {
-            initDir = Settings.WorkPath;
+            initDir = Settings.WorkingPath;
         }
 
         /// <summary>

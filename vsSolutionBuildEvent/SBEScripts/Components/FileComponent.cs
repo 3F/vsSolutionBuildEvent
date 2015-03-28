@@ -36,6 +36,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     public class FileComponent: Component, IComponent
     {
         /// <summary>
+        /// Default limit in seconds for execution processes.
+        /// </summary>
+        public const uint STCALL_TIMEOUT_DEFAULT = 10;
+
+        /// <summary>
         /// Ability to work with data for current component
         /// </summary>
         public override string Condition
@@ -187,14 +192,9 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
-        /// 
-        /// Work with:
-        /// * #[File call("name", "args")]
-        /// * #[File call("name")]
-        /// * #[File out("name", "args")]
-        /// * #[File out("name")]
-        /// 
-        /// For silent mode use the scall(..) & sout(..)
+        /// Handler for:
+        /// * #[File call(..)] + for silent mode - #[File scall(..)]
+        /// * #[File out(..)]  + for silent mode - #[File sout(..)]
         /// 
         /// NOTE: All errors can be ~disabled with arguments, for example:
         ///       * stderr to stdout: [command] 2>&1
@@ -204,94 +204,102 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="stdOut">Use StandardOutput or not</param>
         /// <param name="silent">Silent mode</param>
         /// <returns>Received data from StandardOutput</returns>
-        [
-            Method
-            (
-                "call", 
-                "Caller of executable files.", 
-                new string[] { "name" }, 
-                new string[] { "Executable file" }, 
-                CValueType.Void, 
-                CValueType.String
-            )
-        ]
-        [
-            Method
-            (
-                "call", 
-                "Caller of executable files with arguments.", 
-                new string[] { "name", "args" }, 
-                new string[] { "Executable file", "Arguments" }, 
-                CValueType.Void, 
-                CValueType.String, CValueType.String
-            )
-        ]
-        [
-            Method
-            (
-                "scall", 
-                "Caller of executable files in silent mode.", 
-                new string[] { "name" }, 
-                new string[] { "Executable file" }, 
-                CValueType.Void, 
-                CValueType.String
-            )
-        ]
-        [
-            Method
-            (
-                "scall", 
-                "Caller of executable files in silent mode with arguments.", 
-                new string[] { "name", "args" }, 
-                new string[] { "Executable file", "Arguments" }, 
-                CValueType.Void, 
-                CValueType.String, CValueType.String
-            )
-        ]
-        [
-            Method
-            (
-                "out", 
-                "Receiving data from stdout of executed file.", 
-                new string[] { "name" }, 
-                new string[] { "Executable file" }, 
-                CValueType.Void, 
-                CValueType.String
-            )
-        ]
-        [
-            Method
-            (
-                "out", 
-                "Receiving data from stdout of executed file with arguments.", 
-                new string[] { "name", "args" }, 
-                new string[] { "Executable file", "Arguments" }, 
-                CValueType.Void, 
-                CValueType.String, CValueType.String
-            )
-        ]
-        [
-            Method
-            (
-                "sout", 
-                "Receiving data from stdout of executed file in silent mode.", 
-                new string[] { "name" }, 
-                new string[] { "Executable file" }, 
-                CValueType.Void, 
-                CValueType.String
-            )
-        ]
-        [
-            Method
-            (
-                "sout", 
-                "Receiving data from stdout of executed file in silent mode with arguments.", 
-                new string[] { "name", "args" }, 
-                new string[] { "Executable file", "Arguments" }, 
-                CValueType.Void, 
-                CValueType.String, CValueType.String
-            )
-        ]
+        [Method (
+            "call", 
+            "Caller of executable files.", 
+            new string[] { "name" }, 
+            new string[] { "Executable file" }, 
+            CValueType.Void, 
+            CValueType.String
+        )]
+        [Method (
+            "call", 
+            "Caller of executable files with arguments.", 
+            new string[] { "name", "args" }, 
+            new string[] { "Executable file", "Arguments" }, 
+            CValueType.Void, 
+            CValueType.String, CValueType.String
+        )]
+        [Method(
+            "call",
+            "Caller of executable files with arguments and with timeout configuration.",
+            new string[] { "name", "args", "timeout" },
+            new string[] { "Executable file", "Arguments", "How long to wait the execution, in seconds. 0 value - infinitely" },
+            CValueType.Void,
+            CValueType.String, CValueType.String, CValueType.UInteger
+        )]
+        [Method (
+            "scall", 
+            "Caller of executable files in silent mode.", 
+            new string[] { "name" }, 
+            new string[] { "Executable file" }, 
+            CValueType.Void, 
+            CValueType.String
+        )]
+        [Method (
+            "scall", 
+            "Caller of executable files in silent mode with arguments.", 
+            new string[] { "name", "args" }, 
+            new string[] { "Executable file", "Arguments" }, 
+            CValueType.Void, 
+            CValueType.String, CValueType.String
+        )]
+        [Method(
+            "scall",
+            "Caller of executable files in silent mode with arguments and with timeout configuration.",
+            new string[] { "name", "args", "timeout" },
+            new string[] { "Executable file", "Arguments", "How long to wait the execution, in seconds. 0 value - infinitely" },
+            CValueType.Void,
+            CValueType.String, CValueType.String, CValueType.UInteger
+        )]
+        [Method (
+            "out", 
+            "Receiving data from stdout of executed file.", 
+            new string[] { "name" }, 
+            new string[] { "Executable file" }, 
+            CValueType.Void, 
+            CValueType.String
+        )]
+        [Method (
+            "out", 
+            "Receiving data from stdout of executed file with arguments.", 
+            new string[] { "name", "args" }, 
+            new string[] { "Executable file", "Arguments" }, 
+            CValueType.Void, 
+            CValueType.String, CValueType.String
+        )]
+        [Method(
+            "out",
+            "Receiving data from stdout of executed file with arguments and with timeout configuration.",
+            new string[] { "name", "args", "timeout" },
+            new string[] { "Executable file", "Arguments", "How long to wait the execution, in seconds. 0 value - infinitely" },
+            CValueType.Void,
+            CValueType.String, CValueType.String, CValueType.UInteger
+        )]
+        [Method (
+            "sout", 
+            "Receiving data from stdout of executed file in silent mode.", 
+            new string[] { "name" }, 
+            new string[] { "Executable file" }, 
+            CValueType.Void, 
+            CValueType.String
+        )]
+        [Method (
+            "sout", 
+            "Receiving data from stdout of executed file in silent mode with arguments.", 
+            new string[] { "name", "args" }, 
+            new string[] { "Executable file", "Arguments" }, 
+            CValueType.Void, 
+            CValueType.String, CValueType.String
+        )]
+        [Method(
+            "sout",
+            "Receiving data from stdout of executed file in silent mode with arguments and with timeout configuration.",
+            new string[] { "name", "args", "timeout" },
+            new string[] { "Executable file", "Arguments", "How long to wait the execution, in seconds. 0 value - infinitely" },
+            CValueType.Void,
+            CValueType.String, CValueType.String, CValueType.UInteger
+        )]
         protected string stCall(string data, bool stdOut, bool silent)
         {
             Match m = Regex.Match(data, 
@@ -302,17 +310,23 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                         (?:
                                                             ,
                                                             {0}       #2 - args (optional)
+                                                            (?:
+                                                                ,
+                                                                {1}   #3 - timeout (optional)
+                                                            )?
                                                         )?
                                                     \)", 
-                                                    RPattern.DoubleQuotesContent
+                                                    RPattern.DoubleQuotesContent,
+                                                    RPattern.UnsignedIntegerContent
                                                  ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
                 throw new SyntaxIncorrectException("Failed stCall - '{0}'", data);
             }
 
-            string file = StringHandler.normalize(m.Groups[1].Value.Trim());
-            string args = StringHandler.normalize(m.Groups[2].Value);
+            string file     = StringHandler.normalize(m.Groups[1].Value.Trim());
+            string args     = StringHandler.normalize(m.Groups[2].Value);
+            uint timeout    = (m.Groups[3].Success)? Value.toUInt32(m.Groups[3].Value) : STCALL_TIMEOUT_DEFAULT;
 
             Log.nlog.Debug("stCall: '{0}', '{1}' :: stdOut {2}, silent {3}", file, args, stdOut, silent);
 
@@ -322,7 +336,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             try {
-                string ret = run(pfile, args, silent, stdOut);
+                string ret = run(pfile, args, silent, stdOut, (int)timeout);
                 Log.nlog.Debug("FileComponent: successful stCall - '{0}'", pfile);
                 return ret;
             }
@@ -832,10 +846,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="args"></param>
         /// <param name="silent">Hide process if true</param>
         /// <param name="stdOut">Reads from StandardOutput if true</param>
+        /// <param name="timeout">How long to wait the execution, in seconds. 0 value - infinitely</param>
         /// <returns></returns>
-        protected virtual string run(string file, string args, bool silent, bool stdOut)
+        protected virtual string run(string file, string args, bool silent, bool stdOut, int timeout = 0)
         {
-            string ret = (new Actions.HProcess(Settings.WorkPath)).run(file, args, silent, null);
+            string ret = (new Actions.HProcess(Settings.WorkingPath)).run(file, args, silent, timeout);
             return (stdOut)? ret : String.Empty;
         }
 
@@ -882,7 +897,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns>Absolute path to file</returns>
         protected string location(string file)
         {
-            return Path.Combine(Settings.WorkPath, file);
+            return Path.Combine(Settings.WorkingPath, file);
         }
     }
 }

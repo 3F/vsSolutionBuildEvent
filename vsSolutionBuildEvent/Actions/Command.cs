@@ -213,7 +213,7 @@ namespace net.r_eg.vsSBE.Actions
         {
             Log.nlog.Info("Prepared command: '{0}'",  cmd);
 
-            HProcess p = new HProcess(Settings.WorkPath);
+            HProcess p = new HProcess(Settings.WorkingPath);
             p.useShell(cmd, evt.Process.Waiting, evt.Process.Hidden);
         }
 

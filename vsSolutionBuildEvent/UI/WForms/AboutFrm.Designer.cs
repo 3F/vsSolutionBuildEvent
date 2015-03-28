@@ -273,7 +273,7 @@
             // 
             this.pictureBoxDonation.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBoxDonation.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxDonation.Image")));
-            this.pictureBoxDonation.Location = new System.Drawing.Point(293, 298);
+            this.pictureBoxDonation.Location = new System.Drawing.Point(280, 298);
             this.pictureBoxDonation.Name = "pictureBoxDonation";
             this.pictureBoxDonation.Size = new System.Drawing.Size(38, 21);
             this.pictureBoxDonation.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -286,18 +286,19 @@
             // labelDonation
             // 
             this.labelDonation.AutoSize = true;
-            this.labelDonation.Location = new System.Drawing.Point(196, 301);
+            this.labelDonation.Location = new System.Drawing.Point(202, 301);
             this.labelDonation.Name = "labelDonation";
-            this.labelDonation.Size = new System.Drawing.Size(80, 13);
+            this.labelDonation.Size = new System.Drawing.Size(61, 13);
             this.labelDonation.TabIndex = 10;
-            this.labelDonation.Text = "Help/Donation:";
+            this.labelDonation.Text = "Support us:";
             // 
             // linkLabelDonationHelp
             // 
             this.linkLabelDonationHelp.AutoSize = true;
-            this.linkLabelDonationHelp.Location = new System.Drawing.Point(271, 301);
+            this.linkLabelDonationHelp.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.linkLabelDonationHelp.Location = new System.Drawing.Point(260, 295);
             this.linkLabelDonationHelp.Name = "linkLabelDonationHelp";
-            this.linkLabelDonationHelp.Size = new System.Drawing.Size(13, 13);
+            this.linkLabelDonationHelp.Size = new System.Drawing.Size(10, 12);
             this.linkLabelDonationHelp.TabIndex = 11;
             this.linkLabelDonationHelp.TabStop = true;
             this.linkLabelDonationHelp.Text = "?";
