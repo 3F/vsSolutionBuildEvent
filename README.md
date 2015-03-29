@@ -22,7 +22,7 @@ MSBuild & SBE-Scripts engine for advanced usage.
 [![This program is licensed under GNU LGPLv3](https://bytebucket.org/3F/vssolutionbuildevent/raw/master/vsSolutionBuildEvent/Resources/lgplv3-88x31.png)](https://bitbucket.org/3F/vssolutionbuildevent/raw/master/LICENSE)
 
 -------
-[![Short Overview](https://bytebucket.org/3F/vssolutionbuildevent/wiki/Resources/examples/overview-youtube.png)
+[![Short Overview](https://bytebucket.org/3F/vssolutionbuildevent/wiki/Resources/examples/overview-youtube.png)](http://youtu.be/FX5GiMX0ulI)
 
 Advanced handler of most events for MS Visual Studio & MSBuild tools. Full control and flexible multi-actions for basic events and other additional such as:
 

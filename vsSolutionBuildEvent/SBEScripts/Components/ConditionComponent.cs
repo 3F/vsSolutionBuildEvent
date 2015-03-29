@@ -119,8 +119,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             Match m = Regex.Match(data.Trim(), 
                                               @"^\s*
-                                               (!)?         #1 - flag of inversion (optional)
-                                               ([^=!~<>]+)  #2 - left operand - boolean type if as a single
+                                               (!)?           #1 - flag of inversion (optional)
+                                               ([^\^=!~<>]+)  #2 - left operand - boolean type if as a single
                                                (?:
                                                    (
                                                       ===
@@ -133,6 +133,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                     |
                                                       !=
                                                     |
+                                                      \^=
+                                                    |
+                                                      =\^
+                                                    |
                                                       >=
                                                     |
                                                       <=
@@ -140,8 +144,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                       >
                                                     |
                                                       <
-                                                   )        #3 - operator      (optional with #4)
-                                                   (.+)     #4 - right operand (optional with #3)
+                                                   )          #3 - operator      (optional with #4)
+                                                   (.+)       #4 - right operand (optional with #3)
                                                )?$", 
                                                RegexOptions.IgnorePatternWhitespace);
 
