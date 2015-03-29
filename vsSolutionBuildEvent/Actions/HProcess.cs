@@ -82,6 +82,10 @@ namespace net.r_eg.vsSBE.Actions
                 p.StandardInput.Write(stdin);
             }
 
+            if(!p.StartInfo.RedirectStandardError) {
+                return String.Empty;
+            }
+
             string errors = p.StandardError.ReadToEnd();
             if(errors.Length > 0) {
                 throw new ComponentException(reEncodeString(errors));
@@ -155,23 +159,23 @@ namespace net.r_eg.vsSBE.Actions
             Process p = new Process();
             p.StartInfo.FileName = file;
 
-            p.StartInfo.Arguments               = args;
-            p.StartInfo.UseShellExecute         = false;
-            p.StartInfo.WorkingDirectory        = initDir;
+            p.StartInfo.Arguments           = args;
+            p.StartInfo.UseShellExecute     = false;
+            p.StartInfo.WorkingDirectory    = initDir;
+
+            if(!hidden) {
+                p.StartInfo.WindowStyle     = ProcessWindowStyle.Normal;
+                p.StartInfo.CreateNoWindow  = false;
+                return p;
+            }
+
+            p.StartInfo.WindowStyle             = ProcessWindowStyle.Hidden;
+            p.StartInfo.CreateNoWindow          = true;
             p.StartInfo.RedirectStandardOutput  = true;
             p.StartInfo.RedirectStandardError   = true;
             p.StartInfo.RedirectStandardInput   = true;
             p.StartInfo.StandardErrorEncoding   = p.StartInfo.StandardOutputEncoding
                                                 = EncodingOEM;  // by default, and we must to detect a charset for received data later
-
-            if(hidden) {
-                p.StartInfo.WindowStyle     = ProcessWindowStyle.Hidden;
-                p.StartInfo.CreateNoWindow  = true;
-            }
-            else {
-                p.StartInfo.WindowStyle     = ProcessWindowStyle.Normal;
-                p.StartInfo.CreateNoWindow  = false;
-            }
             return p;
         }
 
