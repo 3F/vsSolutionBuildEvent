@@ -18,6 +18,7 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
 using net.r_eg.vsSBE.Exceptions;
@@ -87,8 +88,12 @@ namespace net.r_eg.vsSBE.Actions
                 p.WaitForExit(timeout * 1000);
                 if(!p.HasExited) {
                     Log.nlog.Warn("sigkill to the process - '{0}': limit in {1}sec for time is reached. Use any other value or 0 for unlimited time.", file, timeout);
-                    p.Kill();
+                    killProcessesFor(p.Id);
                 }
+            }
+
+            if(!p.StartInfo.RedirectStandardError) {
+                return String.Empty;
             }
 
             string errors = p.StandardError.ReadToEnd();
@@ -164,24 +169,43 @@ namespace net.r_eg.vsSBE.Actions
             Process p = new Process();
             p.StartInfo.FileName = file;
 
-            p.StartInfo.Arguments               = args;
-            p.StartInfo.UseShellExecute         = false;
-            p.StartInfo.WorkingDirectory        = initDir;
+            p.StartInfo.Arguments           = args;
+            p.StartInfo.UseShellExecute     = false;
+            p.StartInfo.WorkingDirectory    = initDir;
+
+            if(!hidden) {
+                p.StartInfo.WindowStyle     = ProcessWindowStyle.Normal;
+                p.StartInfo.CreateNoWindow  = false;
+                return p;
+            }
+
+            p.StartInfo.WindowStyle             = ProcessWindowStyle.Hidden;
+            p.StartInfo.CreateNoWindow          = true;
             p.StartInfo.RedirectStandardOutput  = true;
             p.StartInfo.RedirectStandardError   = true;
             p.StartInfo.RedirectStandardInput   = true;
             p.StartInfo.StandardErrorEncoding   = p.StartInfo.StandardOutputEncoding
                                                 = EncodingOEM;  // by default, and we must to detect a charset for received data later
-
-            if(hidden) {
-                p.StartInfo.WindowStyle     = ProcessWindowStyle.Hidden;
-                p.StartInfo.CreateNoWindow  = true;
-            }
-            else {
-                p.StartInfo.WindowStyle     = ProcessWindowStyle.Normal;
-                p.StartInfo.CreateNoWindow  = false;
-            }
             return p;
+        }
+
+        /// <summary>
+        /// Destroys process and all its child processes by the pid of parent.
+        /// </summary>
+        /// <param name="pid"></param>
+        protected void killProcessesFor(int pid)
+        {
+            // The Win32_Process WMI class represents a process on an operating system. :: https://msdn.microsoft.com/en-us/library/aa394372%28v=vs.85%29.aspx
+            ManagementObjectCollection moProcesses = (new ManagementObjectSearcher("SELECT ProcessId FROM Win32_Process WHERE ParentProcessId = " + pid)).Get();
+            foreach(ManagementObject moProcess in moProcesses) {
+                killProcessesFor(Convert.ToInt32(moProcess["ProcessId"]));
+            }
+
+            Process p = Process.GetProcessById(pid);
+            if(!p.HasExited) {
+                Log.nlog.Trace("sigkill: -> {0}", pid);
+                p.Kill();
+            }
         }
 
         /// <summary>

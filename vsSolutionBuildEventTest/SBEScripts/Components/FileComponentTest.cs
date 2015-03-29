@@ -120,8 +120,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             FileComponentAccessor target = new FileComponentAccessor();
             Assert.AreEqual("stdout", target.parse("[File call(\"file\")]"));
             Assert.AreEqual("stdout", target.parse("[File call(\"file\", \"args\")]"));
-            Assert.AreEqual("stdout", target.parse("[File out(\"file\")]"));
-            Assert.AreEqual("stdout", target.parse("[File out(\"file\", \"args\")]"));
             Assert.AreEqual("silent stdout", target.parse("[File scall(\"file\")]"));
             Assert.AreEqual("silent stdout", target.parse("[File scall(\"file\", \"args\")]"));
             Assert.AreEqual("silent stdout", target.parse("[File sout(\"file\")]"));
@@ -169,7 +167,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         {
             FileComponentAccessor target = new FileComponentAccessor();
             Assert.AreEqual("stdout", target.parse("[File call(\"file\", \"args\", 0)]"));
-            Assert.AreEqual("stdout", target.parse("[File out(\"file\", \"args\", 10)]"));
             Assert.AreEqual("silent stdout", target.parse("[File scall(\"file\", \"args\", 15)]"));
             Assert.AreEqual("silent stdout", target.parse("[File sout(\"file\", \"args\", 10)]"));
         }
