@@ -49,6 +49,8 @@
             this.richTextBoxUVariables = new System.Windows.Forms.RichTextBox();
             this.groupBoxComponents = new System.Windows.Forms.GroupBox();
             this.chkListComponents = new System.Windows.Forms.CheckedListBox();
+            this.mItemUVarEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.contextMenuUVariables.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMVertical)).BeginInit();
             this.splitContainerMVertical.Panel1.SuspendLayout();
@@ -76,22 +78,24 @@
             // contextMenuUVariables
             // 
             this.contextMenuUVariables.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mItemUVarEdit,
+            this.toolStripSeparator1,
             this.menuItemUVarUnsetSel,
             this.menuItemUVarUnsetAll});
             this.contextMenuUVariables.Name = "contextMenuUVariables";
-            this.contextMenuUVariables.Size = new System.Drawing.Size(172, 48);
+            this.contextMenuUVariables.Size = new System.Drawing.Size(206, 76);
             // 
             // menuItemUVarUnsetSel
             // 
             this.menuItemUVarUnsetSel.Name = "menuItemUVarUnsetSel";
-            this.menuItemUVarUnsetSel.Size = new System.Drawing.Size(171, 22);
+            this.menuItemUVarUnsetSel.Size = new System.Drawing.Size(205, 22);
             this.menuItemUVarUnsetSel.Text = "Unset Selected";
             this.menuItemUVarUnsetSel.Click += new System.EventHandler(this.menuItemUVarUnsetSel_Click);
             // 
             // menuItemUVarUnsetAll
             // 
             this.menuItemUVarUnsetAll.Name = "menuItemUVarUnsetAll";
-            this.menuItemUVarUnsetAll.Size = new System.Drawing.Size(171, 22);
+            this.menuItemUVarUnsetAll.Size = new System.Drawing.Size(205, 22);
             this.menuItemUVarUnsetAll.Text = "Unset All Variables";
             this.menuItemUVarUnsetAll.Click += new System.EventHandler(this.menuItemUVarUnsetAll_Click);
             // 
@@ -270,6 +274,7 @@
             this.listBoxUVariables.Size = new System.Drawing.Size(196, 140);
             this.listBoxUVariables.TabIndex = 0;
             this.listBoxUVariables.SelectedIndexChanged += new System.EventHandler(this.listBoxUVariables_SelectedIndexChanged);
+            this.listBoxUVariables.DoubleClick += new System.EventHandler(this.listBoxUVariables_DoubleClick);
             // 
             // splitContainerComponents
             // 
@@ -302,6 +307,7 @@
             this.richTextBoxUVariables.Size = new System.Drawing.Size(196, 66);
             this.richTextBoxUVariables.TabIndex = 1;
             this.richTextBoxUVariables.Text = "";
+            this.richTextBoxUVariables.Leave += new System.EventHandler(this.richTextBoxUVariables_Leave);
             // 
             // groupBoxComponents
             // 
@@ -327,6 +333,18 @@
             this.chkListComponents.Size = new System.Drawing.Size(196, 120);
             this.chkListComponents.TabIndex = 0;
             this.chkListComponents.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.chkListComponents_ItemCheck);
+            // 
+            // mItemUVarEdit
+            // 
+            this.mItemUVarEdit.Name = "mItemUVarEdit";
+            this.mItemUVarEdit.Size = new System.Drawing.Size(205, 22);
+            this.mItemUVarEdit.Text = "Edit with evaluated value";
+            this.mItemUVarEdit.Click += new System.EventHandler(this.mItemUVarEdit_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(202, 6);
             // 
             // ScriptCheckFrm
             // 
@@ -388,5 +406,7 @@
         private System.Windows.Forms.SplitContainer splitContainerComponents;
         private System.Windows.Forms.GroupBox groupBoxComponents;
         private System.Windows.Forms.CheckedListBox chkListComponents;
+        private System.Windows.Forms.ToolStripMenuItem mItemUVarEdit;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,7 +17,6 @@
 
 using System;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts;
@@ -87,6 +86,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             get { return textEditor._; }
         }
 
+
         public ScriptCheckFrm(IEnvironment env)
         {
             InitializeComponent();
@@ -122,7 +122,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
-        public void updateComponents(int index = -1, bool newValue = true)
+        protected void updateComponents(int index = -1, bool newValue = true)
         {
             for(int i = 0; i < chkListComponents.Items.Count; ++i)
             {
@@ -185,6 +185,18 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
+        private void _lockUVarEditor(RichTextBox editor, bool disabled)
+        {
+            if(disabled) {
+                editor.ReadOnly     = true;
+                editor.BackColor    = System.Drawing.SystemColors.Control;
+                return;
+            }
+            editor.BackColor = System.Drawing.SystemColors.Window;
+            editor.Focus();
+            editor.ReadOnly = false;
+        }
+
         private void btnExecute_Click(object sender, EventArgs e)
         {
             richTextBoxExecuted.Text = execute(textEditor.Text);
@@ -193,6 +205,8 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void menuItemUVarUnsetSel_Click(object sender, EventArgs e)
         {
             richTextBoxUVariables.Text = String.Empty;
+            _lockUVarEditor(richTextBoxUVariables, true);
+
             if(listBoxUVariables.SelectedIndex == -1) {
                 return;
             }
@@ -204,6 +218,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             context.uvariable.unsetAll();
             listBoxUVariables.Items.Clear();
+            _lockUVarEditor(richTextBoxUVariables, true);
             richTextBoxUVariables.Text = String.Empty;
         }
 
@@ -223,6 +238,28 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void chkListComponents_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             updateComponents(e.Index, e.NewValue == CheckState.Checked);
+        }
+
+        private void mItemUVarEdit_Click(object sender, EventArgs e)
+        {
+            if(listBoxUVariables.SelectedIndex == -1) {
+                return;
+            }
+            _lockUVarEditor(richTextBoxUVariables, false);
+        }
+
+        private void richTextBoxUVariables_Leave(object sender, EventArgs e)
+        {
+            if(listBoxUVariables.SelectedIndex == -1) {
+                return;
+            }
+            _lockUVarEditor(richTextBoxUVariables, true);
+            ((IUserVariableDebug)context.uvariable).debSetEvaluated(listBoxUVariables.Text, richTextBoxUVariables.Text);
+        }
+
+        private void listBoxUVariables_DoubleClick(object sender, EventArgs e)
+        {
+            mItemUVarEdit_Click(sender, e);
         }
     }
 }

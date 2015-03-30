@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -26,7 +26,7 @@ using net.r_eg.vsSBE.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts
 {
-    public class UserVariable: IUserVariable
+    public class UserVariable: IUserVariable, IUserVariableDebug
     {
         /// <summary>
         /// Exposes the enumerable for defined names of user-variables
@@ -292,6 +292,30 @@ namespace net.r_eg.vsSBE.SBEScripts
                 definitions.Clear();
             }
             Log.nlog.Debug("Reseted all User-variables");
+        }
+
+        /// <summary>
+        /// Re/Defines user-variable with evaluated value.
+        /// </summary>
+        /// <param name="ident">Unique identificator</param>
+        /// <param name="evaluated">mixed string with evaluated data</param>
+        public void debSetEvaluated(string ident, string evaluated)
+        {
+            if(evaluated == null) {
+                evaluated = String.Empty;
+            }
+
+            lock(_lock)
+            {
+                definitions[ident] = new TUserVariable() {
+                    unevaluated = evaluated,
+                    ident       = ident,
+                    status      = TUserVariable.StatusType.Evaluated,
+                    prev        = (definitions.ContainsKey(ident))? definitions[ident] : new TUserVariable(),
+                    evaluated   = evaluated
+                };
+                Log.nlog.Debug("User-variable(Debug service): updated '{0}' with evaluated value '{1}'", ident, evaluated);
+            }
         }
 
         /// <summary>
