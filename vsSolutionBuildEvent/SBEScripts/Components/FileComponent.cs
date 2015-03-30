@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -35,6 +34,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     [Component("File", "I/O operations")]
     public class FileComponent: Component, IComponent
     {
+        /// <summary>
+        /// Default limit in seconds for execution processes.
+        /// </summary>
+        public const uint STCALL_TIMEOUT_DEFAULT = 10;
+
         /// <summary>
         /// Ability to work with data for current component
         /// </summary>
@@ -78,6 +82,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                               \s+
                                               (                  #1 - full ident
                                                 ([A-Za-z_0-9]+)  #2 - subtype
+                                                \s*
+                                                [.(=]
                                                 .*
                                               )
                                            \]$", 
@@ -90,53 +96,46 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             switch(m.Groups[2].Value) {
                 case "get": {
-                    Log.nlog.Debug("FileComponent: use stGet");
                     return stGet(ident);
                 }
                 case "call": {
-                    Log.nlog.Debug("FileComponent: use stCall");
                     return stCall(ident, false, false);
                 }
-                case "out": {
-                    Log.nlog.Debug("FileComponent: use stCall");
-                    return stCall(ident, true, false);
+                case "out": { // is obsolete
+                    //return stCall(ident, true, false);
+                    return stCall(ident, true, true); // redirect to sout
                 }
                 case "scall": {
-                    Log.nlog.Debug("FileComponent: use stCall");
                     return stCall(ident, false, true);
                 }
                 case "sout": {
-                    Log.nlog.Debug("FileComponent: use stCall");
                     return stCall(ident, true, true);
                 }
                 case "write": {
-                    Log.nlog.Debug("FileComponent: use stWrite");
                     stWrite(ident, false, false);
                     return String.Empty;
                 }
                 case "append": {
-                    Log.nlog.Debug("FileComponent: use stWrite + append");
                     stWrite(ident, true, false);
                     return String.Empty;
                 }
                 case "writeLine": {
-                    Log.nlog.Debug("FileComponent: use stWrite + line");
                     stWrite(ident, false, true);
                     return String.Empty;
                 }
                 case "appendLine": {
-                    Log.nlog.Debug("FileComponent: use stWrite + append + line");
                     stWrite(ident, true, true);
                     return String.Empty;
                 }
                 case "replace": {
-                    Log.nlog.Debug("FileComponent: use stReplace");
                     stReplace(ident);
                     return String.Empty;
                 }
                 case "exists": {
-                    Log.nlog.Debug("FileComponent: use stExists");
                     return stExists(ident);
+                }
+                case "cmd": {
+                    return stCmd(ident);
                 }
             }
             throw new SubtypeNotFoundException("FileComponent: not found subtype - '{0}'", m.Groups[2].Value);
@@ -151,8 +150,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         [
             Method
             (
-                "get", 
-                "Receiving data from file.", 
+                "get",
+                "Gets all data from file.", 
                 new string[] { "name" }, 
                 new string[] { "File name" }, 
                 CValueType.String, 
@@ -161,6 +160,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         ]
         protected string stGet(string data)
         {
+            Log.nlog.Trace("FileComponent: use stGet");
             Match m = Regex.Match(data, 
                                     String.Format(@"get
                                                     \s*
@@ -187,113 +187,92 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
-        /// 
-        /// Work with:
-        /// * #[File call("name", "args")]
-        /// * #[File call("name")]
-        /// * #[File out("name", "args")]
-        /// * #[File out("name")]
-        /// 
-        /// For silent mode use the scall(..) & sout(..)
+        /// Handler for:
+        /// * #[File call(..)] + for silent mode - #[File scall(..)] + #[File sout(..)]
         /// 
         /// NOTE: All errors can be ~disabled with arguments, for example:
-        ///       * stderr to stdout: [command] 2>&1
+        ///       * stderr to stdout: [command] 2>&amp;1
         ///       * stderr to nul i.e. as disabled: [command] 2>nul
         /// </summary>
         /// <param name="data">prepared data</param>
         /// <param name="stdOut">Use StandardOutput or not</param>
         /// <param name="silent">Silent mode</param>
         /// <returns>Received data from StandardOutput</returns>
-        [
-            Method
-            (
-                "call", 
-                "Caller of executable files.", 
-                new string[] { "name" }, 
-                new string[] { "Executable file" }, 
-                CValueType.Void, 
-                CValueType.String
-            )
-        ]
-        [
-            Method
-            (
-                "call", 
-                "Caller of executable files with arguments.", 
-                new string[] { "name", "args" }, 
-                new string[] { "Executable file", "Arguments" }, 
-                CValueType.Void, 
-                CValueType.String, CValueType.String
-            )
-        ]
-        [
-            Method
-            (
-                "scall", 
-                "Caller of executable files in silent mode.", 
-                new string[] { "name" }, 
-                new string[] { "Executable file" }, 
-                CValueType.Void, 
-                CValueType.String
-            )
-        ]
-        [
-            Method
-            (
-                "scall", 
-                "Caller of executable files in silent mode with arguments.", 
-                new string[] { "name", "args" }, 
-                new string[] { "Executable file", "Arguments" }, 
-                CValueType.Void, 
-                CValueType.String, CValueType.String
-            )
-        ]
-        [
-            Method
-            (
-                "out", 
-                "Receiving data from stdout of executed file.", 
-                new string[] { "name" }, 
-                new string[] { "Executable file" }, 
-                CValueType.Void, 
-                CValueType.String
-            )
-        ]
-        [
-            Method
-            (
-                "out", 
-                "Receiving data from stdout of executed file with arguments.", 
-                new string[] { "name", "args" }, 
-                new string[] { "Executable file", "Arguments" }, 
-                CValueType.Void, 
-                CValueType.String, CValueType.String
-            )
-        ]
-        [
-            Method
-            (
-                "sout", 
-                "Receiving data from stdout of executed file in silent mode.", 
-                new string[] { "name" }, 
-                new string[] { "Executable file" }, 
-                CValueType.Void, 
-                CValueType.String
-            )
-        ]
-        [
-            Method
-            (
-                "sout", 
-                "Receiving data from stdout of executed file in silent mode with arguments.", 
-                new string[] { "name", "args" }, 
-                new string[] { "Executable file", "Arguments" }, 
-                CValueType.Void, 
-                CValueType.String, CValueType.String
-            )
-        ]
+        [Method (
+            "call", 
+            "Caller of executable files.", 
+            new string[] { "name" }, 
+            new string[] { "Executable file" }, 
+            CValueType.Void, 
+            CValueType.String
+        )]
+        [Method (
+            "call", 
+            "Caller of executable files with arguments.", 
+            new string[] { "name", "args" }, 
+            new string[] { "Executable file", "Arguments" }, 
+            CValueType.Void, 
+            CValueType.String, CValueType.String
+        )]
+        [Method(
+            "call",
+            "Caller of executable files with arguments and with timeout configuration.",
+            new string[] { "name", "args", "timeout" },
+            new string[] { "Executable file", "Arguments", "How long to wait the execution, in seconds. 0 value - infinitely" },
+            CValueType.Void,
+            CValueType.String, CValueType.String, CValueType.UInteger
+        )]
+        [Method (
+            "scall", 
+            "Caller of executable files in silent mode.", 
+            new string[] { "name" }, 
+            new string[] { "Executable file" }, 
+            CValueType.Void, 
+            CValueType.String
+        )]
+        [Method (
+            "scall", 
+            "Caller of executable files in silent mode with arguments.", 
+            new string[] { "name", "args" }, 
+            new string[] { "Executable file", "Arguments" }, 
+            CValueType.Void, 
+            CValueType.String, CValueType.String
+        )]
+        [Method(
+            "scall",
+            "Caller of executable files in silent mode with arguments and with timeout configuration.",
+            new string[] { "name", "args", "timeout" },
+            new string[] { "Executable file", "Arguments", "How long to wait the execution, in seconds. 0 value - infinitely" },
+            CValueType.Void,
+            CValueType.String, CValueType.String, CValueType.UInteger
+        )]
+        [Method (
+            "sout",
+            "Receives data from standard streams for executed file.\nTo disable errors use the '2>nul' and similar.", 
+            new string[] { "name" }, 
+            new string[] { "Executable file" },
+            CValueType.String, 
+            CValueType.String
+        )]
+        [Method (
+            "sout",
+            "Receives data from standard streams for executed file with arguments.\nTo disable errors use the '2>nul' and similar.", 
+            new string[] { "name", "args" }, 
+            new string[] { "Executable file", "Arguments" },
+            CValueType.String, 
+            CValueType.String, CValueType.String
+        )]
+        [Method(
+            "sout",
+            "Receives data from standard streams for executed file with arguments and with timeout configuration.\nTo disable errors use the '2>nul' and similar.",
+            new string[] { "name", "args", "timeout" },
+            new string[] { "Executable file", "Arguments", "How long to wait the execution, in seconds. 0 value - infinitely" },
+            CValueType.String,
+            CValueType.String, CValueType.String, CValueType.UInteger
+        )]
         protected string stCall(string data, bool stdOut, bool silent)
         {
+            Log.nlog.Trace("FileComponent: use stCall");
             Match m = Regex.Match(data, 
                                     String.Format(@"
                                                     \s*
@@ -302,17 +281,23 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                         (?:
                                                             ,
                                                             {0}       #2 - args (optional)
+                                                            (?:
+                                                                ,
+                                                                {1}   #3 - timeout (optional)
+                                                            )?
                                                         )?
                                                     \)", 
-                                                    RPattern.DoubleQuotesContent
+                                                    RPattern.DoubleQuotesContent,
+                                                    RPattern.UnsignedIntegerContent
                                                  ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
                 throw new SyntaxIncorrectException("Failed stCall - '{0}'", data);
             }
 
-            string file = StringHandler.normalize(m.Groups[1].Value.Trim());
-            string args = StringHandler.normalize(m.Groups[2].Value);
+            string file     = StringHandler.normalize(m.Groups[1].Value.Trim());
+            string args     = StringHandler.normalize(m.Groups[2].Value);
+            uint timeout    = (m.Groups[3].Success)? Value.toUInt32(m.Groups[3].Value) : STCALL_TIMEOUT_DEFAULT;
 
             Log.nlog.Debug("stCall: '{0}', '{1}' :: stdOut {2}, silent {3}", file, args, stdOut, silent);
 
@@ -322,7 +307,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             try {
-                string ret = run(pfile, args, silent, stdOut);
+                string ret = run(pfile, args, silent, stdOut, (int)timeout);
                 Log.nlog.Debug("FileComponent: successful stCall - '{0}'", pfile);
                 return ret;
             }
@@ -332,96 +317,107 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
-        /// Work with:
-        /// * #[File write("name"): multiline data]
-        /// * #[File write("name", append, line, "encoding"): multiline data]
-        /// * #[File append("name"): multiline data]
-        /// * #[File writeLine("name"): multiline data]
-        /// * #[File appendLine("name"): multiline data]
+        /// Alias to sout() for cmd
+        /// - #[File cmd("args")] -> #[File sout("cmd", "/C args")]
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="silent"></param>
+        /// <returns></returns>
+        [Method(
+            "cmd",
+            "Alias to #[File sout(\"cmd\", \"/C args\")] \nReceives data from standard streams for cmd process with arguments.",
+            new string[] { "args" },
+            new string[] { "Arguments" },
+            CValueType.String,
+            CValueType.String
+        )]
+        [Method(
+            "cmd",
+            "Alias to #[File sout(\"cmd\", \"/C args\", timeout)] \nReceives data from standard streams for cmd process with arguments and with timeout configuration.",
+            new string[] { "args", "timeout" },
+            new string[] { "Arguments", "How long to wait the execution, in seconds. 0 value - infinitely" },
+            CValueType.String,
+            CValueType.String, CValueType.UInteger
+        )]
+        protected string stCmd(string data)
+        {
+            Log.nlog.Trace("FileComponent: use stCmd");
+            Log.nlog.Trace("stCmd redirect to stCall");
+            string rmod = String.Format("(\"cmd\", \"/C {0}", Regex.Match(data, @"\(\s*""(.*)$").Groups[1].Value);
+
+            Log.nlog.Debug("stCmd: '{0}' -> '{1}'", data, rmod);
+            return stCall(rmod, true, true);
+        }
+
+        /// <summary>
+        /// Handler for:
+        /// * write(), writeLine(), append(), appendLine()
+        /// * * #[File write("name", append, line, "encoding"): multiline data]
+        /// * * #[File write("..."): multiline data];
         /// </summary>
         /// <param name="data">prepared data</param>
         /// <param name="append">flag</param>
         /// <param name="writeLine">writes with CR?/LF</param>
         /// <param name="enc">Used encoding</param>
-        [
-            Method
-            (
-                "write", 
-                "Writes text data in file.\n * Creates if the file does not exist.\n * Overwrites content if already exist.",
-                new string[] { "name", "In" }, 
-                new string[] { "File name", "multiline data" },
-                CValueType.Void, 
-                CValueType.String, CValueType.Input
-            )
-        ]
-        [
-            Method
-            (
-                "write",
-                "Writes text data in file with selected encoding and with flags: CR/LF & append.\n * Creates if the file does not exist.",
-                new string[] { "name", "append", "line", "encoding", "In" },
-                new string[] { "File name", "Flag of adding data to the end file", "Adds a line terminator", "Code page name of the preferred encoding", "multiline data" },
-                CValueType.Void,
-                CValueType.String, CValueType.Boolean, CValueType.Boolean, CValueType.String, CValueType.Input
-            )
-        ]
-        [
-            Method
-            (
-                "append",
-                "Writes text data in file.\n * Creates if the file does not exist.\n * Adds data to the end file if it already exist.",
-                new string[] { "name", "In" }, 
-                new string[] { "File name", "multiline data" },
-                CValueType.Void, 
-                CValueType.String, CValueType.Input
-            )
-        ]
-        [
-            Method
-            (
-                "writeLine", 
-                "Writes text data with CR/LF in file.\n * Creates if the file does not exist.\n * Overwrites content if already exist.", 
-                new string[] { "name", "In" }, 
-                new string[] { "File name", "multiline data" },
-                CValueType.Void, 
-                CValueType.String, CValueType.Input
-            )
-        ]
-        [
-            Method
-            (
-                "appendLine", 
-                "Writes text data with CR/LF in file.\n * Creates if the file does not exist.\n * Adds data to the end file if it already exist.", 
-                new string[] { "name", "In" }, 
-                new string[] { "File name", "multiline data" },
-                CValueType.Void, 
-                CValueType.String, CValueType.Input
-            )
-        ]
-        [
-            Method
-            (
-                "write",
-                "Writes text data in standard stream.\n * STDOUT - Standard output stream.\n * STDERR - Standard error stream.",
-                new string[] { "std", "In" },
-                new string[] { "Constant of standard stream", "multiline data" },
-                CValueType.Void,
-                CValueType.Const, CValueType.Input
-            )
-        ]
-        [
-            Method
-            (
-                "writeLine",
-                "Writes text data with CR/LF in standard stream.\n * STDOUT - Standard output stream.\n * STDERR - Standard error stream.",
-                new string[] { "std", "In" },
-                new string[] { "Constant of standard stream", "multiline data" },
-                CValueType.Void,
-                CValueType.Const, CValueType.Input
-            )
-        ]
+        [Method (
+            "write", 
+            "Writes text data in file.\n * Creates if the file does not exist.\n * Overwrites content if already exist.",
+            new string[] { "name", "In" }, 
+            new string[] { "File name", "multiline data" },
+            CValueType.Void, 
+            CValueType.String, CValueType.Input
+        )]
+        [Method (
+            "write",
+            "Writes text data in file with selected encoding and with flags: CR/LF & append.\n * Creates if the file does not exist.",
+            new string[] { "name", "append", "line", "encoding", "In" },
+            new string[] { "File name", "Flag of adding data to the end file", "Adds a line terminator", "Code page name of the preferred encoding", "multiline data" },
+            CValueType.Void,
+            CValueType.String, CValueType.Boolean, CValueType.Boolean, CValueType.String, CValueType.Input
+        )]
+        [Method (
+            "append",
+            "Writes text data in file.\n * Creates if the file does not exist.\n * Adds data to the end file if it already exist.",
+            new string[] { "name", "In" }, 
+            new string[] { "File name", "multiline data" },
+            CValueType.Void, 
+            CValueType.String, CValueType.Input
+        )]
+        [Method (
+            "writeLine", 
+            "Writes text data with CR/LF in file.\n * Creates if the file does not exist.\n * Overwrites content if already exist.", 
+            new string[] { "name", "In" }, 
+            new string[] { "File name", "multiline data" },
+            CValueType.Void, 
+            CValueType.String, CValueType.Input
+        )]
+        [Method (
+            "appendLine", 
+            "Writes text data with CR/LF in file.\n * Creates if the file does not exist.\n * Adds data to the end file if it already exist.", 
+            new string[] { "name", "In" }, 
+            new string[] { "File name", "multiline data" },
+            CValueType.Void, 
+            CValueType.String, CValueType.Input
+        )]
+        [Method (
+            "write",
+            "Writes text data in standard stream.\n * STDOUT - Standard output stream.\n * STDERR - Standard error stream.",
+            new string[] { "std", "In" },
+            new string[] { "Constant of standard stream", "multiline data" },
+            CValueType.Void,
+            CValueType.Const, CValueType.Input
+        )]
+        [Method (
+            "writeLine",
+            "Writes text data with CR/LF in standard stream.\n * STDOUT - Standard output stream.\n * STDERR - Standard error stream.",
+            new string[] { "std", "In" },
+            new string[] { "Constant of standard stream", "multiline data" },
+            CValueType.Void,
+            CValueType.Const, CValueType.Input
+        )]
         protected void stWrite(string data, bool append, bool writeLine, Encoding enc)
         {
+            Log.nlog.Trace("FileComponent: use stWrite [{0}, {1}]", append, writeLine);
             Match m = Regex.Match(data, 
                                     String.Format(@"
                                                     (\S+)        #1 - type
@@ -513,6 +509,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         ]
         protected void stReplace(string data)
         {
+            Log.nlog.Trace("FileComponent: use stReplace");
             Match m = Regex.Match(data, 
                                     String.Format(@"replace
                                                     (?:
@@ -687,6 +684,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         ]
         protected string stExists(string data)
         {
+            Log.nlog.Trace("FileComponent: use stExists");
             Match m = Regex.Match(data,
                                     String.Format(@"exists
                                                     \s*\.\s*
@@ -832,10 +830,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="args"></param>
         /// <param name="silent">Hide process if true</param>
         /// <param name="stdOut">Reads from StandardOutput if true</param>
+        /// <param name="timeout">How long to wait the execution, in seconds. 0 value - infinitely</param>
         /// <returns></returns>
-        protected virtual string run(string file, string args, bool silent, bool stdOut)
+        protected virtual string run(string file, string args, bool silent, bool stdOut, int timeout = 0)
         {
-            string ret = (new Actions.HProcess(Settings.WorkPath)).run(file, args, silent, null);
+            string ret = (new Actions.HProcess(Settings.WorkingPath)).run(file, args, silent, timeout);
             return (stdOut)? ret : String.Empty;
         }
 
@@ -882,7 +881,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns>Absolute path to file</returns>
         protected string location(string file)
         {
-            return Path.Combine(Settings.WorkPath, file);
+            return Path.Combine(Settings.WorkingPath, file);
         }
     }
 }

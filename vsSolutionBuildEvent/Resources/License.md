@@ -90,12 +90,14 @@
 
 *!* Modified *!* And this notice also provides the following information under terms from the CC BY 3.0:
 
-    Initial image:
-    * License: Creative Commons Attribution 3.0 Unported (CC BY 3.0)
-    * By: PixelKit 
-    * * http://pixelkit.com
-    * url: https://www.iconfinder.com/icons/171268/tree_icon#size=512
+Initial image:
 
-    Modified by:
-    * Denis Kuzmin (reg) <entry.reg@gmail.com> / r-eg.net
+* License: Creative Commons Attribution 3.0 Unported (CC BY 3.0)
+* By: PixelKit 
+* * http://pixelkit.com
+* url: https://www.iconfinder.com/icons/171268/tree_icon#size=512
+
+Modified by:
+
+* Denis Kuzmin (reg) <entry.reg@gmail.com> / r-eg.net
 

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -64,6 +64,16 @@ namespace net.r_eg.vsSBE.SBEScripts
             return Int32.Parse(val.Trim());
         }
 
+        /// <summary>
+        /// Getting Unsigned Int32 value
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        public static uint toUInt32(string val)
+        {
+            return UInt32.Parse(val.Trim());
+        }
+
         /// <param name="val"></param>
         /// <returns></returns>
         public static string from(bool val)
@@ -110,6 +120,12 @@ namespace net.r_eg.vsSBE.SBEScripts
                 }
                 case "!=": {
                     return !isEqual(left, right);
+                }
+                case "^=": {
+                    return left.StartsWith(right);
+                }
+                case "=^": {
+                    return left.EndsWith(right);
                 }
                 case ">": {
                     return (toInt32(left) > toInt32(right));

@@ -57,21 +57,21 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Root path for all operations
         /// </summary>
-        public static string WorkPath
+        public static string WorkingPath
         {
             get
             {
-                if(String.IsNullOrEmpty(_workPath)) {
-                    throw new SBEException("WorkPath is empty or null");
+                if(String.IsNullOrEmpty(_workingPath)) {
+                    throw new SBEException("WorkingPath is empty or null");
                 }
-                return _workPath;
+                return _workingPath;
             }
         }
-        private static string _workPath = null;
+        private static string _workingPath = null;
 
-        public static void setWorkPath(string path)
+        public static void setWorkingPath(string path)
         {
-            _workPath = path;
+            _workingPath = path;
         }
     }
 }

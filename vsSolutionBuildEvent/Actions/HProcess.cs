@@ -18,6 +18,7 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
 using net.r_eg.vsSBE.Exceptions;
@@ -64,22 +65,31 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         protected string initDir;
 
+
         /// <summary>
         /// Execute file with arguments.
-        /// Uses synchronous read operations.
+        /// 
+        /// Uses synchronous the read operations.
+        /// TODO: Serial data for stdin.
         /// </summary>
         /// <param name="file"></param>
         /// <param name="args"></param>
         /// <param name="hidden">Hide process if true</param>
-        /// <param name="stdin">Post input for app. Can be null if not used</param>
+        /// <param name="timeout">How long to wait the execution, in seconds. 0 value - infinitely</param>
         /// <returns></returns>
-        public string run(string file, string args, bool hidden, string stdin)
+        public string run(string file, string args, bool hidden, int timeout = 0)
         {
             Process p = prepareProcessFor(file, args, hidden);
             p.Start();
 
-            if(!String.IsNullOrEmpty(stdin)) {
-                p.StandardInput.Write(stdin);
+            Log.nlog.Trace("time limit is '{0}'sec :: HProcess.run", timeout);
+            if(timeout != 0)
+            {
+                p.WaitForExit(timeout * 1000);
+                if(!p.HasExited) {
+                    Log.nlog.Warn("sigkill to the process - '{0}': limit in {1}sec for time is reached. Use any other value or 0 for unlimited time.", file, timeout);
+                    killProcessesFor(p.Id);
+                }
             }
 
             if(!p.StartInfo.RedirectStandardError) {
@@ -144,7 +154,7 @@ namespace net.r_eg.vsSBE.Actions
 
         public HProcess()
         {
-            initDir = Settings.WorkPath;
+            initDir = Settings.WorkingPath;
         }
 
         /// <summary>
@@ -177,6 +187,25 @@ namespace net.r_eg.vsSBE.Actions
             p.StartInfo.StandardErrorEncoding   = p.StartInfo.StandardOutputEncoding
                                                 = EncodingOEM;  // by default, and we must to detect a charset for received data later
             return p;
+        }
+
+        /// <summary>
+        /// Destroys process and all its child processes by the pid of parent.
+        /// </summary>
+        /// <param name="pid"></param>
+        protected void killProcessesFor(int pid)
+        {
+            // The Win32_Process WMI class represents a process on an operating system. :: https://msdn.microsoft.com/en-us/library/aa394372%28v=vs.85%29.aspx
+            ManagementObjectCollection moProcesses = (new ManagementObjectSearcher("SELECT ProcessId FROM Win32_Process WHERE ParentProcessId = " + pid)).Get();
+            foreach(ManagementObject moProcess in moProcesses) {
+                killProcessesFor(Convert.ToInt32(moProcess["ProcessId"]));
+            }
+
+            Process p = Process.GetProcessById(pid);
+            if(!p.HasExited) {
+                Log.nlog.Trace("sigkill: -> {0}", pid);
+                p.Kill();
+            }
         }
 
         /// <summary>

@@ -55,21 +55,93 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         }
 
         /// <summary>
-        ///A test for parse
+        ///A test for parse -> '-' operation
         ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(NotFoundException))]
         public void parseTest3()
+        {
+            UserVariableComponentAccessor target = new UserVariableComponentAccessor((IEnvironment)null, new UserVariable());
+            Assert.AreEqual(String.Empty, target.parse("[var name = value]"));
+            Assert.AreEqual(String.Empty, target.parse("[var -name]"));
+            Assert.AreEqual("[E1:value]", target.parse("[var name]"));
+        }
+
+        /// <summary>
+        ///A test for parse -> '-' operation
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(SyntaxIncorrectException))]
+        public void parseTest4()
+        {
+            UserVariableComponentAccessor target = new UserVariableComponentAccessor((IEnvironment)null, new UserVariable());
+            Assert.AreEqual(String.Empty, target.parse("[var name = value]"));
+            Assert.AreEqual(String.Empty, target.parse("[var -name = value]"));
+        }
+
+        /// <summary>
+        ///A test for parse -> '+' operation
+        ///</summary>
+        [TestMethod()]
+        public void parseTest5()
+        {
+            UserVariableComponentAccessor target = new UserVariableComponentAccessor((IEnvironment)null, new UserVariable());
+            Assert.AreEqual(String.Empty, target.parse("[var name = value]"));
+            Assert.AreEqual(String.Empty, target.parse("[var +name]"));
+            Assert.AreEqual(String.Format("[E1:{0}]", UserVariableComponent.UVARIABLE_VALUE_DEFAULT), target.parse("[var name]"));
+        }
+
+        /// <summary>
+        ///A test for parse -> '+' operation
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(SyntaxIncorrectException))]
+        public void parseTest6()
+        {
+            UserVariableComponentAccessor target = new UserVariableComponentAccessor((IEnvironment)null, new UserVariable());
+            Assert.AreEqual(String.Empty, target.parse("[var name = value]"));
+            Assert.AreEqual(String.Empty, target.parse("[var +name = value]"));
+        }
+
+        /// <summary>
+        ///A test for parse -> '-' operation
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(SyntaxIncorrectException))]
+        public void parseTest7()
+        {
+            UserVariableComponentAccessor target = new UserVariableComponentAccessor((IEnvironment)null, new UserVariable());
+            Assert.AreEqual(String.Empty, target.parse("[var name = value]"));
+            Assert.AreEqual(String.Empty, target.parse("[var -name = value]"));
+        }
+
+        /// <summary>
+        ///A test for parse -> '+' operation
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(SyntaxIncorrectException))]
+        public void parseTest8()
+        {
+            UserVariableComponentAccessor target = new UserVariableComponentAccessor((IEnvironment)null, new UserVariable());
+            Assert.AreEqual(String.Empty, target.parse("[var + name]"));
+        }
+
+        /// <summary>
+        ///A test for std
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(NotFoundException))]
+        public void stdTest1()
         {
             UserVariableComponent target = new UserVariableComponent((IEnvironment)null, new UserVariable());
             target.parse("[var name]");
         }
 
         /// <summary>
-        ///A test for parse
+        ///A test for std
         ///</summary>
         [TestMethod()]
-        public void parseTest4()
+        public void stdTest2()
         {
             UserVariableComponentAccessor target = new UserVariableComponentAccessor((IEnvironment)null, new UserVariable());
             Assert.AreEqual(String.Empty, target.parse("[var name = value]"));
@@ -77,10 +149,10 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         }
 
         /// <summary>
-        ///A test for parse
+        ///A test for std
         ///</summary>
         [TestMethod()]
-        public void parseTest5()
+        public void stdTest3()
         {
             UserVariableComponentAccessor target = new UserVariableComponentAccessor((IEnvironment)null, new UserVariable());
             Assert.AreEqual(String.Empty, target.parse("[var name = line1 \n line2]"));
@@ -88,10 +160,10 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         }
 
         /// <summary>
-        ///A test for parse
+        ///A test for std
         ///</summary>
         [TestMethod()]
-        public void parseTest6()
+        public void stdTest4()
         {
             UserVariableComponentAccessor target = new UserVariableComponentAccessor((IEnvironment)null, new UserVariable());
             Assert.AreEqual(String.Empty, target.parse("[var name = value]"));

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,24 +16,26 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
-using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
     /// <summary>
-    /// For work with User-Variables
+    /// Works with User-Variables
     /// </summary>
     [Definition("var name", "Get data from variable the 'name'")]
     [Definition("var name = data", "Set the 'data' for variable the 'name'")]
     public class UserVariableComponent: Component, IComponent
     {
+        /// <summary>
+        /// Default value for user-variables.
+        /// The '*Undefined*' as value for compatibility with MSBuild core.
+        /// </summary>
+        public const string UVARIABLE_VALUE_DEFAULT = "*Undefined*";
+
         /// <summary>
         /// Ability to work with data for current component
         /// </summary>
@@ -44,7 +46,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         /// <param name="env">Used environment</param>
         /// <param name="uvariable">Instance of used user-variables</param>
-        public UserVariableComponent(IEnvironment env, IUserVariable uvariable): base(env, uvariable)
+        public UserVariableComponent(IEnvironment env, IUserVariable uvariable)
+            : base(env, uvariable)
         {
 
         }
@@ -58,6 +61,50 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         {
             Match m = Regex.Match(data, @"^\[var
                                               \s+
+                                              (\+|-)           #1 - operation
+                                              ([A-Za-z_0-9]+)  #2 - name
+                                              (?:
+                                                :([^=\]]+)     #3 - project (optional)
+                                              )?
+                                              \s*
+                                           \]$",
+                                           RegexOptions.IgnorePatternWhitespace);
+
+            if(!m.Success) {
+                return std(data);
+            }
+            
+            string op       = m.Groups[1].Value;
+            string name     = m.Groups[2].Value;
+            string project  = (m.Groups[3].Success)? m.Groups[3].Value.Trim() : null;
+
+            Log.nlog.Trace("UVariable: found '{0}' as operation", op);
+            switch(op)
+            {
+                case "+": {
+                    Log.nlog.Debug("UVariable: set default value for variable - '{0}':'{1}'", name, project);
+                    set(name, project, UVARIABLE_VALUE_DEFAULT);
+                    return String.Empty;
+                }
+                case "-": {
+                    Log.nlog.Debug("UVariable: unset variable - '{0}':'{1}'", name, project);
+                    unset(name, project);
+                    return String.Empty;
+                }
+            }
+            throw new SubtypeNotFoundException("UVariable: not found type of operation - '{0}' :: '{1}'", op, data);
+        }
+
+        /// <summary>
+        /// Standard operations with variables
+        /// </summary>
+        /// <param name="data">mixed data</param>
+        /// <returns>prepared and evaluated data</returns>
+        protected string std(string data)
+        {
+            Log.nlog.Trace("UVariable: use std handler");
+            Match m = Regex.Match(data, @"^\[var
+                                              \s+
                                               ([A-Za-z_0-9]+)  #1 - name 
                                               (?:
                                                 :([^=\]]+)     #2 - project (optional)
@@ -65,7 +112,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                               \s*
                                               (?:
                                                 =\s*
-                                                (.+)           #3 - mixed data for definition (optional)
+                                                (.*)           #3 - mixed data for definition (optional)
                                               )?
                                            \]$", // #3 - greedy, however it's controlled by main container of SBE-Script
                                            RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
@@ -77,7 +124,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string name     = m.Groups[1].Value;
             string project  = (m.Groups[2].Success)? m.Groups[2].Value.Trim() : null;
             string value    = (m.Groups[3].Success)? m.Groups[3].Value : null;
-            
+
+            Log.nlog.Trace("UVariable: found '{0}':'{1}' = '{2}'", name, project, value);
             if(value != null) {
                 set(name, project, value);
                 return String.Empty;
@@ -105,6 +153,16 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected void set(string name, string value)
         {
             set(name, null, value);
+        }
+
+        /// <summary>
+        /// Removes user-variable by using scope of project
+        /// </summary>
+        /// <param name="name">variable name</param>
+        /// <param name="project">project name</param>
+        protected void unset(string name, string project = null)
+        {
+            uvariable.unset(name, project);
         }
 
         /// <summary>

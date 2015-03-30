@@ -78,7 +78,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         private string _Link
         {
-            get { return _formatLink(Settings.WorkPath, Entity.NAME, _solution); }
+            get { return _formatLink(Settings.WorkingPath, Entity.NAME, _solution); }
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace net.r_eg.vsSBE
                 _solution = null;
                 Log.nlog.Debug("Configuration: Not found the special version of configuration file - '{0}'", prefix);
             }
-            Settings.setWorkPath(path);
+            Settings.setWorkingPath(path);
 
             try
             {
@@ -113,7 +113,7 @@ namespace net.r_eg.vsSBE
                     }
                     compatibility(stream);
                 }
-                Log.nlog.Info("Loaded settings (v{0}): '{1}'\n\nReady:", Data.Header.Compatibility, Settings.WorkPath);
+                Log.nlog.Info("Loaded settings (v{0}): '{1}'\n\nReady:", Data.Header.Compatibility, Settings.WorkingPath);
             }
             catch(FileNotFoundException) {
                 Data = new SolutionEvents();
@@ -150,7 +150,7 @@ namespace net.r_eg.vsSBE
         /// <param name="path">path to configuration file</param>
         public void save(string path)
         {
-            Settings.setWorkPath(path);
+            Settings.setWorkingPath(path);
             save();
         }
 
@@ -160,7 +160,7 @@ namespace net.r_eg.vsSBE
                 using(TextWriter stream = new StreamWriter(_Link, false, Encoding.UTF8)) {
                     serialize(stream, Data);
                 }
-                Log.nlog.Debug("Configuration saved: {0}", Settings.WorkPath);
+                Log.nlog.Debug("Configuration saved: {0}", Settings.WorkingPath);
                 Update();
             }
             catch(Exception ex) {

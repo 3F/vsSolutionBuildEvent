@@ -302,6 +302,25 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         }
 
         /// <summary>
+        ///A test for parse
+        ///</summary>
+        [TestMethod()]
+        public void parseTest18()
+        {
+            var mockEnv = new Mock<IEnvironment>();
+            var mockUVar = new Mock<IUserVariable>();
+            ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
+
+            Assert.AreEqual(" body1 ", target.parse("[(ConsoleApplication_1 ^= Console){ body1 }else{ body2 }]"));
+            Assert.AreEqual(" body2 ", target.parse("[(ConsoleApplication_1 ^= Application){ body1 }else{ body2 }]"));
+            Assert.AreEqual(" body2 ", target.parse("[(ConsoleApplication_1 ^= \" Console\"){ body1 }else{ body2 }]"));
+
+            Assert.AreEqual(" body1 ", target.parse("[(ConsoleApplication_1 =^ _1){ body1 }else{ body2 }]"));
+            Assert.AreEqual(" body2 ", target.parse("[(ConsoleApplication_1 =^ Console){ body1 }else{ body2 }]"));
+            Assert.AreEqual(" body2 ", target.parse("[(ConsoleApplication_1 =^ \"_1 \"){ body1 }else{ body2 }]"));
+        }
+
+        /// <summary>
         ///A test for parse->disclosure
         ///</summary>
         [TestMethod()]

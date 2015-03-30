@@ -79,6 +79,38 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
+        /// Captures Integer value from allowed syntax
+        /// </summary>
+        public static string IntegerContent
+        {
+            get { return @"\s*(-?\d+)\s*"; }
+        }
+
+        /// <summary>
+        /// Captures Unsigned Integer value from allowed syntax
+        /// </summary>
+        public static string UnsignedIntegerContent
+        {
+            get { return @"\s*(\d+)\s*"; }
+        }
+
+        /// <summary>
+        /// Captures Float value from allowed syntax
+        /// </summary>
+        public static string FloatContent
+        {
+            get { return @"\s*(-?\d+(?:\.\d+)?)\s*"; }
+        }
+
+        /// <summary>
+        /// Captures Unsigned Float value from allowed syntax
+        /// </summary>
+        public static string UnsignedFloatContent
+        {
+            get { return @"\s*(\d+(?:\.\d+)?)\s*"; }
+        }
+
+        /// <summary>
         /// Captures content for present symbol of quotes
         /// Escaping is a "\" for used symbol
         /// e.g.: \', \"

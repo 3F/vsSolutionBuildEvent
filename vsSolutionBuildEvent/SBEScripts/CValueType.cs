@@ -44,12 +44,18 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// Predefined data
         /// </summary>
         Enum,
+        Const,
 
         String,
         Boolean,
         Integer,
         Float,
-        Const,
+
+        /// <summary>
+        /// Unsigned types
+        /// </summary>
+        UInteger,
+        UFloat,
 
         /// <summary>
         /// Sequential list of mixed values

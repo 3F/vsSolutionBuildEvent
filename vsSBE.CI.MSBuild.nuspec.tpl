@@ -8,7 +8,7 @@
     <owners>reg</owners>
     <licenseUrl>https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/</licenseUrl>
     <projectUrl>https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/</projectUrl>
-    <iconUrl>https://bytebucket.org/3F/vssolutionbuildevent/raw/51dac46b51c529172b4ed94ee6465e7983e6ad4b/vsSolutionBuildEvent/Resources/Package.png</iconUrl>
+    <iconUrl>https://bitbucket.org/3F/vssolutionbuildevent/raw/master/vsSolutionBuildEvent/Resources/Package.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Official package of the libraries to support the CI / Special Build Servers for plugin vsSolutionBuildEvent.
     
