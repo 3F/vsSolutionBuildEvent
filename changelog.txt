@@ -1,6 +1,36 @@
 vsSolutionBuildEvent
 ____________________
 
+[v0.11.3] 2015.03.31
+    * FIXED: UI. Crashes for columns header in 'MSBuild Properties' window.
+    * FIXED: Bug with "not reached selected projects in execution order" for different .sln 
+    * FIXED: Problem with double quotes in #[".."] (CommentComponent)
+    * FIXED: Empty black-window for sout() & call() processes (FileComponent)
+    * CHANGED: Time limit on the s/call & sout execution. 10sec by default. New signatures: 
+            * void #[File call(string filename, string args, uinteger timeout)]
+            * void #[File scall(string filename, string args, uinteger timeout)]
+            * string #[File sout(string filename, string args, uinteger timeout)]
+            
+    * CHANGED: Allowed the empty strings for user-variables (SBE-Scripts core).
+    * CHANGED: The out() function marked as obsolete. Redirects to to sout(). (FileComponent)
+    * NEW: Comparison parts of strings. The new operators: ^=, =^ (ConditionComponent)
+            * '^=' - Compares as: left Begins with right ?
+            * '=^' - Compares as: left Ends with right ?
+              #[( $(left.ToLower()) ^= $(right.ToLower()) ) {
+                  ...
+              }]
+              
+    * NEW: The cmd() function as alias to sout() (FileComponent)
+            #[File cmd("args")] -> #[File sout("cmd", "/C args")]:
+            * string #[File cmd(string args)]
+            * string #[File cmd(string args, uinteger timeout)]
+            
+    * NEW: Operations '-' & '+' for user-variables (SBE-Scripts core)
+            * #[var -name] - Unset variable.
+            * #[var +name] - Default value for variable.
+            
+    * NEW: UI. Added "Edit with evaluated value" in SBE-Scripts testing tool.
+
 [v0.11.2] 2015.03.08
     * FIXED: "Failed getting project from EnvDTE: The parameter is incorrect."
     * FIXED: Bug for VS2015 CTP6 - "Error resolving type specified in JSON"
