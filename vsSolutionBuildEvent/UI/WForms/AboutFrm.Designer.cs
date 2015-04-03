@@ -61,6 +61,7 @@
             // 
             this.pictureBoxSpace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.pictureBoxSpace.BackColor = System.Drawing.Color.Black;
             this.pictureBoxSpace.Cursor = System.Windows.Forms.Cursors.PanNorth;
             this.pictureBoxSpace.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxSpace.Margin = new System.Windows.Forms.Padding(0);
