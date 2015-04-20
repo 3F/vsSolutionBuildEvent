@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,18 +16,10 @@
 */
 
 using System;
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using EnvDTE80;
-using Microsoft.Build.Collections;
 using Microsoft.Build.Evaluation;
-using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild.Exceptions;
 using net.r_eg.vsSBE.SBEScripts;
@@ -436,20 +428,43 @@ namespace net.r_eg.vsSBE.MSBuild
         }
 
         /// <summary>
+        /// Exceptions to the general rules
+        /// for example: $(registry:Hive\MyKey\MySubKey@Value)
+        /// </summary>
+        /// <param name="left">left operand</param>
+        /// <param name="right">right operand</param>
+        /// <returns>formatted raw to evaluation</returns>
+        protected virtual string customRule(string left, string right)
+        {
+            if(left == "registry" && !String.IsNullOrEmpty(right)) { // Registry Properties :: https://msdn.microsoft.com/en-us/library/vstudio/ms171458.aspx
+                Log.nlog.Trace("Rule: Registry Property");
+                return String.Format("{0}:{1}", left, right);
+            }
+            return null;
+        }
+
+        /// <summary>
         /// End value from prepared information with TPreparedData
         /// </summary>
         /// <param name="prepared"></param>
         protected string evaluateVariable(TPreparedData prepared)
         {
             string evaluated = String.Empty;
-            
-            if(prepared.property.completed && !prepared.property.complex)
+
+            string custom = customRule(prepared.property.unevaluated, prepared.property.project);
+            if(custom != null)
             {
-                Log.nlog.Debug("Evaluate: use the getProperty");
+                Log.nlog.Trace("Evaluate: custom '{0}'", custom);
+                evaluated = evaluate(custom, null);
+            }
+            else if(prepared.property.completed && !prepared.property.complex)
+            {
+                Log.nlog.Trace("Evaluate: use getProperty");
                 evaluated = getProperty(prepared.property.unevaluated, prepared.property.project);
             }
-            else if(prepared.property.escaped){
-                Log.nlog.Debug("Evaluate: escaped value");
+            else if(prepared.property.escaped)
+            {
+                Log.nlog.Trace("Evaluate: escaped value");
                 evaluated = prepared.property.unevaluated;
             }
             else
@@ -469,13 +484,13 @@ namespace net.r_eg.vsSBE.MSBuild
             if(!String.IsNullOrEmpty(prepared.variable.name))
             {
                 //INFO: prepared.variable.isPersistence - [reserved]
-                Log.nlog.Debug("Evaluate: found definition of user-variable");
+                Log.nlog.Trace("Evaluate: found definition of user-variable");
                 uvariable.set(prepared.variable.name, prepared.variable.project, evaluated);
                 uvariable.evaluate(prepared.variable.name, prepared.variable.project, this, true);
                 evaluated = "";
             }
 
-            Log.nlog.Debug("Evaluated: '{0}'", evaluated);
+            Log.nlog.Trace("Evaluated: '{0}'", evaluated);
             return evaluated;
         }
 

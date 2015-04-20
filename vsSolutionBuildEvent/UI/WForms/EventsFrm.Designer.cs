@@ -72,6 +72,8 @@
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuSBEPanel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuHelp = new System.Windows.Forms.ToolStripSplitButton();
+            this.tsMenuItemExamples = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuDocItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuGalleryPage = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuWiki = new System.Windows.Forms.ToolStripMenuItem();
@@ -335,9 +337,9 @@
             this.toolStripMenuHelp,
             this.toolStripMenuBug,
             this.toolStripMenuVersion});
-            this.statusStrip.Location = new System.Drawing.Point(142, 7);
+            this.statusStrip.Location = new System.Drawing.Point(111, 7);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(158, 22);
+            this.statusStrip.Size = new System.Drawing.Size(189, 22);
             this.statusStrip.TabIndex = 81;
             // 
             // toolStripMenuSpring
@@ -368,21 +370,23 @@
             // toolStripMenuApply
             // 
             this.toolStripMenuApply.Name = "toolStripMenuApply";
-            this.toolStripMenuApply.Size = new System.Drawing.Size(136, 22);
+            this.toolStripMenuApply.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.toolStripMenuApply.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuApply.Text = "Apply";
             this.toolStripMenuApply.Click += new System.EventHandler(this.toolStripMenuApply_Click);
             // 
             // toolStripMenuReset
             // 
             this.toolStripMenuReset.Name = "toolStripMenuReset";
-            this.toolStripMenuReset.Size = new System.Drawing.Size(136, 22);
+            this.toolStripMenuReset.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
+            this.toolStripMenuReset.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuReset.Text = "Reset";
             this.toolStripMenuReset.Click += new System.EventHandler(this.toolStripMenuReset_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(133, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(149, 6);
             // 
             // toolStripMenuTools
             // 
@@ -393,7 +397,7 @@
             this.toolStripMenuDTECmdExec,
             this.menuSBEScript});
             this.toolStripMenuTools.Name = "toolStripMenuTools";
-            this.toolStripMenuTools.Size = new System.Drawing.Size(136, 22);
+            this.toolStripMenuTools.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuTools.Text = "Tools";
             // 
             // toolStripMenuMSBuildProp
@@ -439,7 +443,7 @@
             this.toolStripSeparator12,
             this.toolStripMenuPlugin});
             this.toolStripMenuCI.Name = "toolStripMenuCI";
-            this.toolStripMenuCI.Size = new System.Drawing.Size(136, 22);
+            this.toolStripMenuCI.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuCI.Text = "CI Utilities";
             // 
             // toolStripMenuCIMSBuild
@@ -487,19 +491,19 @@
             // toolStripMenuAPI
             // 
             this.toolStripMenuAPI.Name = "toolStripMenuAPI";
-            this.toolStripMenuAPI.Size = new System.Drawing.Size(136, 22);
+            this.toolStripMenuAPI.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuAPI.Text = "API";
             this.toolStripMenuAPI.Click += new System.EventHandler(this.toolStripMenuAPI_Click);
             // 
             // toolStripSeparator11
             // 
             this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(133, 6);
+            this.toolStripSeparator11.Size = new System.Drawing.Size(149, 6);
             // 
             // toolStripMenuSBEPanel
             // 
             this.toolStripMenuSBEPanel.Name = "toolStripMenuSBEPanel";
-            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(136, 22);
+            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuSBEPanel.Text = "vsSBE Panel";
             this.toolStripMenuSBEPanel.Click += new System.EventHandler(this.toolStripMenuSBEPanel_Click);
             // 
@@ -507,6 +511,8 @@
             // 
             this.toolStripMenuHelp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripMenuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsMenuItemExamples,
+            this.toolStripSeparator14,
             this.toolStripMenuDocItem,
             this.toolStripMenuChangelog,
             this.toolStripSeparator3,
@@ -524,6 +530,18 @@
             this.toolStripMenuHelp.Size = new System.Drawing.Size(32, 20);
             this.toolStripMenuHelp.Text = "?";
             this.toolStripMenuHelp.ButtonClick += new System.EventHandler(this.toolStripMenuHelp_ButtonClick);
+            // 
+            // tsMenuItemExamples
+            // 
+            this.tsMenuItemExamples.Name = "tsMenuItemExamples";
+            this.tsMenuItemExamples.Size = new System.Drawing.Size(187, 22);
+            this.tsMenuItemExamples.Text = "Examples";
+            this.tsMenuItemExamples.Click += new System.EventHandler(this.tsMenuItemExamples_Click);
+            // 
+            // toolStripSeparator14
+            // 
+            this.toolStripSeparator14.Name = "toolStripSeparator14";
+            this.toolStripSeparator14.Size = new System.Drawing.Size(184, 6);
             // 
             // toolStripMenuDocItem
             // 
@@ -685,14 +703,16 @@
             // toolStripMenuReport
             // 
             this.toolStripMenuReport.Name = "toolStripMenuReport";
-            this.toolStripMenuReport.Size = new System.Drawing.Size(143, 22);
+            this.toolStripMenuReport.Size = new System.Drawing.Size(208, 22);
             this.toolStripMenuReport.Text = "Report";
             this.toolStripMenuReport.Click += new System.EventHandler(this.toolStripMenuReport_Click);
             // 
             // toolStripMenuDebugMode
             // 
             this.toolStripMenuDebugMode.Name = "toolStripMenuDebugMode";
-            this.toolStripMenuDebugMode.Size = new System.Drawing.Size(143, 22);
+            this.toolStripMenuDebugMode.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Alt) 
+            | System.Windows.Forms.Keys.D)));
+            this.toolStripMenuDebugMode.Size = new System.Drawing.Size(208, 22);
             this.toolStripMenuDebugMode.Text = "Debug Mode";
             this.toolStripMenuDebugMode.Click += new System.EventHandler(this.toolStripMenuDebugMode_Click);
             // 
@@ -2059,6 +2079,8 @@
         private System.Windows.Forms.PictureBox pictureBoxWarnWait;
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuAPI;
+        private System.Windows.Forms.ToolStripMenuItem tsMenuItemExamples;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
 
     }
 }

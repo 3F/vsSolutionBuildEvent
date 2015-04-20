@@ -453,7 +453,6 @@ namespace net.r_eg.vsSBE.UI.WForms
             groupBoxInterpreter.Enabled         = false;
             listBoxOperation.Enabled            = false;
             textEditor.Enabled                  = true;
-            textEditor.Text                     = String.Empty;
             panelControlByOperation.Enabled     = true;
             checkBoxOperationsAbort.Enabled     = false;
             checkBoxSBEScriptSupport.Enabled    = true;
@@ -515,12 +514,12 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(isOperationCustom(list)) {
                 labelToCommandBox.Text  = "DTE execute (separated by enter key):";
                 textEditor.Enabled      = true;
-                textEditor.Text         = String.Empty;
+                //textEditor.Text         = String.Empty;
             }
             else {
                 labelToCommandBox.Text  = "~";
                 textEditor.Enabled      = false;
-                textEditor.Text         = "> " + logic.DefOperations[list.SelectedIndex].Caption;
+                textEditor.Text         = ":: " + logic.DefOperations[list.SelectedIndex].Caption;
             }
         }
 
@@ -672,6 +671,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             Util.noticeAboutChanges(typeof(ComboBox), this, call);
             Util.noticeAboutChanges(typeof(CheckedListBox), this, call);
             Util.noticeAboutChanges(typeof(DataGridView), this, call);
+            textEditor._.TextChanged += call;
 
             try {
                 expandActionsList(false);
@@ -852,6 +852,11 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void toolStripMenuWiki_Click(object sender, EventArgs e)
         {
             Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki");
+        }
+
+        private void tsMenuItemExamples_Click(object sender, EventArgs e)
+        {
+            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Examples");
         }
 
         private void toolStripMenuIssue_Click(object sender, EventArgs e)

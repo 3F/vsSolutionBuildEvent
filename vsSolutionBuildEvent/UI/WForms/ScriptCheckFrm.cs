@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using net.r_eg.vsSBE.MSBuild;
@@ -104,7 +105,8 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         protected void initEditor()
         {
-            _editor.Text = Resource.StringScriptExampleSBE;
+            string exDate   = DateTime.Now.AddDays((new Random()).Next(-30, -2)).ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern);
+            _editor.Text    = Resource.StringScriptExampleSBE.Replace("%mdate%", exDate);
             textEditor.colorize(TextEditor.ColorSchema.SBEScript);
             textEditor.codeCompletionInit(context.inspector);
         }

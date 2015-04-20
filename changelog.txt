@@ -12,7 +12,7 @@ ____________________
             * string #[File sout(string filename, string args, uinteger timeout)]
             
     * CHANGED: Allowed the empty strings for user-variables (SBE-Scripts core).
-    * CHANGED: The out() function marked as obsolete. Redirects to to sout(). (FileComponent)
+    * CHANGED: The out() function marked as obsolete. Redirects to sout(). (FileComponent)
     * NEW: Comparison parts of strings. The new operators: ^=, =^ (ConditionComponent)
             * '^=' - Compares as: left Begins with right ?
             * '=^' - Compares as: left Ends with right ?

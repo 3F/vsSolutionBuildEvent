@@ -168,9 +168,9 @@
             this.labelFiler.AutoSize = true;
             this.labelFiler.Location = new System.Drawing.Point(0, 5);
             this.labelFiler.Name = "labelFiler";
-            this.labelFiler.Size = new System.Drawing.Size(43, 13);
+            this.labelFiler.Size = new System.Drawing.Size(38, 13);
             this.labelFiler.TabIndex = 3;
-            this.labelFiler.Text = "Names:";
+            this.labelFiler.Text = "Name:";
             // 
             // labelPropCount
             // 
@@ -188,9 +188,9 @@
             this.labelFilerVal.AutoSize = true;
             this.labelFilerVal.Location = new System.Drawing.Point(0, 5);
             this.labelFilerVal.Name = "labelFilerVal";
-            this.labelFilerVal.Size = new System.Drawing.Size(42, 13);
+            this.labelFilerVal.Size = new System.Drawing.Size(37, 13);
             this.labelFilerVal.TabIndex = 5;
-            this.labelFilerVal.Text = "Values:";
+            this.labelFilerVal.Text = "Value:";
             // 
             // textBoxFilterVal
             // 
