@@ -3,7 +3,6 @@ using System.Linq;
 using EnvDTE80;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild;
 
 namespace net.r_eg.vsSBE.Test.MSBuild
@@ -51,7 +50,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             mockSolution.SetupGet(p => p.SolutionBuild).Returns(mockSolutionBuild.Object);
             mockDte2.SetupGet(p => p.Solution).Returns(mockSolution.Object);
 
-            MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment(mockDte2.Object));
+            vsSBE.MSBuild.Parser target = new Parser(new net.r_eg.vsSBE.Environment(mockDte2.Object));
             Assert.IsNotNull(target.getProperty("Configuration"));
             Assert.IsNotNull(target.getProperty("Platform"));
         }
@@ -62,7 +61,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
         [TestMethod()]
         public void parseVariablesSBETest()
         {
-            MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment((DTE2)null));
+            vsSBE.MSBuild.Parser target = new Parser(new net.r_eg.vsSBE.Environment((DTE2)null));
 
             string expected = "$(name)";
             string actual   = target.parseVariablesSBE("$(name)", "subname", "value");
@@ -75,7 +74,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
         [TestMethod()]
         public void parseVariablesSBETest2()
         {
-            MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment((DTE2)null));
+            vsSBE.MSBuild.Parser target = new Parser(new net.r_eg.vsSBE.Environment((DTE2)null));
 
             string expected = "value";
             string actual   = target.parseVariablesSBE("$(name)", "name", "value");
@@ -88,7 +87,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
         [TestMethod()]
         public void parseVariablesSBETest3()
         {
-            MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment((DTE2)null));
+            vsSBE.MSBuild.Parser target = new Parser(new net.r_eg.vsSBE.Environment((DTE2)null));
 
             string expected = "$$(name)";
             string actual   = target.parseVariablesSBE("$$(name)", "name", "value");
@@ -101,7 +100,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
         [TestMethod()]
         public void parseVariablesSBETest4()
         {
-            MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment((DTE2)null));
+            vsSBE.MSBuild.Parser target = new Parser(new net.r_eg.vsSBE.Environment((DTE2)null));
 
             string expected = String.Empty;
             string actual   = target.parseVariablesSBE("$(name)", "name", null);
@@ -109,315 +108,12 @@ namespace net.r_eg.vsSBE.Test.MSBuild
         }
 
         /// <summary>
-        ///A test for prepareVariables
-        ///</summary>
-        [TestMethod()]
-        [ExpectedException(typeof(IncorrectSyntaxException))]
-        public void prepareVariablesTest()
-        {
-            (new MSBuildParserAccessor.ToPrepareVariables()).prepareVariables("var=$(Path:project2):project");
-        }
-
-        /// <summary>
-        ///A test for prepareVariables
-        ///</summary>
-        [TestMethod()]
-        [ExpectedException(typeof(IncorrectSyntaxException))]
-        public void prepareVariablesTest2()
-        {
-            (new MSBuildParserAccessor.ToPrepareVariables()).prepareVariables("$(var=$(Path:project2):project)");
-        }
-
-        /// <summary>
-        ///A test for prepareVariables
-        ///</summary>
-        [TestMethod()]
-        public void prepareVariablesTest3()
-        {
-            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
-
-            string raw = "(var=$(Path:project2):project)";
-
-            TPreparedData expected  = new TPreparedData();
-            expected.variable.name          = "var";
-            expected.variable.project       = "project";
-            expected.variable.isPersistence = false;
-            expected.property.raw           = "$(Path:project2)";
-            expected.property.escaped       = false;
-            expected.property.project       = "project2";
-            expected.property.completed     = true;
-            expected.property.complex       = false;
-            expected.property.unevaluated   = "Path";
-
-            TPreparedData actual = target.prepareVariables(raw);
-            Assert.AreEqual(expected, actual);
-        }
-
-        /// <summary>
-        ///A test for prepareVariables
-        ///</summary>
-        [TestMethod()]
-        public void prepareVariablesTest4()
-        {
-            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
-
-            string raw = "(#var=$(Path:project2):project)";
-
-            TPreparedData expected          = new TPreparedData();
-            expected.variable.name          = "var";
-            expected.variable.project       = "project";
-            expected.variable.isPersistence = true;
-            expected.property.raw           = "$(Path:project2)";
-            expected.property.escaped       = false;
-            expected.property.project       = "project2";
-            expected.property.completed     = true;
-            expected.property.complex       = false;
-            expected.property.unevaluated   = "Path";
-
-            TPreparedData actual = target.prepareVariables(raw);
-            Assert.AreEqual(expected, actual);
-        }
-
-        /// <summary>
-        ///A test for prepareVariables
-        ///</summary>
-        [TestMethod()]
-        public void prepareVariablesTest5()
-        {
-            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
-
-            string raw = "(Path:project)";
-
-            TPreparedData expected          = new TPreparedData();
-            expected.variable.name          = null;
-            expected.variable.project       = null;
-            expected.variable.isPersistence = false;
-            expected.property.raw           = "Path";
-            expected.property.escaped       = false;
-            expected.property.project       = "project";
-            expected.property.completed     = true;
-            expected.property.complex       = false;
-            expected.property.unevaluated   = "Path";
-
-            TPreparedData actual = target.prepareVariables(raw);
-            Assert.AreEqual(expected, actual);
-        }
-
-        /// <summary>
-        ///A test for prepareVariables
-        ///</summary>
-        [TestMethod()]
-        public void prepareVariablesTest6()
-        {
-            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
-
-            string raw = "(Path)";
-
-            TPreparedData expected          = new TPreparedData();
-            expected.variable.name          = null;
-            expected.variable.project       = null;
-            expected.variable.isPersistence = false;
-            expected.property.raw           = "Path";
-            expected.property.escaped       = false;
-            expected.property.project       = null;
-            expected.property.completed     = true;
-            expected.property.complex       = false;
-            expected.property.unevaluated   = "Path";
-
-            TPreparedData actual = target.prepareVariables(raw);
-            Assert.AreEqual(expected, actual);
-        }
-
-
-        /// <summary>
-        ///A test for prepareVariables
-        ///</summary>
-        [TestMethod()]
-        public void prepareVariablesTest7()
-        {
-            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
-
-            string raw = "(var=$$(Path:project2):project)";
-
-            TPreparedData expected  = new TPreparedData();
-            expected.variable.name          = "var";
-            expected.variable.project       = "project";
-            expected.variable.isPersistence = false;
-            expected.property.raw           = "$$(Path:project2)";
-            expected.property.escaped       = true;
-            expected.property.project       = null;
-            expected.property.completed     = true;
-            expected.property.complex       = true;
-            expected.property.unevaluated   = "$(Path:project2)";
-
-            TPreparedData actual = target.prepareVariables(raw);
-            Assert.AreEqual(expected, actual);
-        }
-
-        /// <summary>
-        ///A test for prepareVariables
-        ///</summary>
-        [TestMethod()]
-        public void prepareVariablesTest8()
-        {
-            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
-
-            string raw              = "(var=$(Path.Replace('\', '/')):project)";
-            TPreparedData actual    = target.prepareVariables(raw);
-
-            Assert.AreEqual(actual.variable.name,           "var");
-            Assert.AreEqual(actual.variable.project,        "project");
-            Assert.AreEqual(actual.variable.isPersistence,  false);
-            Assert.AreEqual(actual.property.raw,            "$(Path.Replace('\', '/'))");
-            Assert.AreEqual(actual.property.escaped,        false);
-            Assert.AreEqual(actual.property.project,        null);
-            //Assert.AreEqual(actual.property.completed,      true);
-            Assert.AreEqual(actual.property.complex,        true);
-            Assert.AreEqual(actual.property.unevaluated,    "$(Path.Replace('\', '/'))");
-        }
-
-        /// <summary>
-        ///A test for prepareVariables
-        ///</summary>
-        [TestMethod()]
-        public void prepareVariablesTest9()
-        {
-            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
-
-            string raw              = "(Path.Replace('\', '/'))";
-            TPreparedData actual    = target.prepareVariables(raw);
-            
-            Assert.AreEqual(actual.variable.name,           null);
-            Assert.AreEqual(actual.variable.project,        null);
-            Assert.AreEqual(actual.variable.isPersistence,  false);
-            Assert.AreEqual(actual.property.raw,            "Path.Replace('\', '/')");
-            Assert.AreEqual(actual.property.escaped,        false);
-            Assert.AreEqual(actual.property.project,        null);
-            //Assert.AreEqual(actual.property.completed,      true);
-            Assert.AreEqual(actual.property.complex,        true);
-            Assert.AreEqual(actual.property.unevaluated,    "$(Path.Replace('\', '/'))");
-        }
-
-        /// <summary>
-        ///A test for prepareVariables
-        ///</summary>
-        [TestMethod()]
-        public void prepareVariablesTest10()
-        {
-            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
-
-            string raw = "(var=$(Path:project))";
-
-            TPreparedData expected  = new TPreparedData();
-            expected.variable.name          = "var";
-            expected.variable.project       = null;
-            expected.variable.isPersistence = false;
-            expected.property.raw           = "$(Path:project)";
-            expected.property.escaped       = false;
-            expected.property.project       = "project";
-            expected.property.completed     = true;
-            expected.property.complex       = false;
-            expected.property.unevaluated   = "Path";
-
-            TPreparedData actual = target.prepareVariables(raw);
-            Assert.AreEqual(expected, actual);
-        }
-
-        /// <summary>
-        ///A test for prepareVariables
-        ///</summary>
-        [TestMethod()]
-        public void prepareVariablesTest11()
-        {
-            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
-
-            string raw = "($(Path:project))";
-
-            TPreparedData expected  = new TPreparedData();
-            expected.variable.name          = null;
-            expected.variable.project       = null;
-            expected.variable.isPersistence = false;
-            expected.property.raw           = "$(Path:project)";
-            expected.property.escaped       = false;
-            expected.property.project       = "project";
-            expected.property.completed     = true;
-            expected.property.complex       = false;
-            expected.property.unevaluated   = "Path";
-
-            TPreparedData actual = target.prepareVariables(raw);
-            Assert.AreEqual(expected, actual);
-        }
-
-        /// <summary>
-        ///A test for prepareVariables
-        ///</summary>
-        [TestMethod()]
-        public void prepareVariablesTest12()
-        {
-            MSBuildParserAccessor.ToPrepareVariables target = new MSBuildParserAccessor.ToPrepareVariables();
-
-            string raw = "(var=$$(Path:project))";
-
-            TPreparedData expected  = new TPreparedData();
-            expected.variable.name          = "var";
-            expected.variable.project       = null;
-            expected.variable.isPersistence = false;
-            expected.property.raw           = "$$(Path:project)";
-            expected.property.escaped       = true;
-            expected.property.project       = null;
-            expected.property.completed     = true;
-            expected.property.complex       = true;
-            expected.property.unevaluated = "$(Path:project)";
-
-            TPreparedData actual = target.prepareVariables(raw);
-            Assert.AreEqual(expected, actual);
-        }
-
-        /// <summary>
-        ///A test for evaluateVariable
-        ///</summary>
-        [TestMethod()]
-        public void evaluateVariableTest()
-        {
-            MSBuildParserAccessor.ToEvaluateVariable target = new MSBuildParserAccessor.ToEvaluateVariable();
-
-            TPreparedData prepared  = new TPreparedData();
-            prepared.variable.name          = "var";
-            prepared.variable.project       = "project";
-            prepared.variable.isPersistence = false;
-            prepared.property.raw           = "$$(Path:project2)";
-            prepared.property.escaped       = true;
-            prepared.property.project       = null;
-            prepared.property.completed     = true;
-            prepared.property.complex       = true;
-            prepared.property.unevaluated   = "$(Path:project2)";
-
-            Assert.IsTrue(target.uvariable.Variables.Count() < 1);
-            Assert.AreEqual(String.Empty, target.evaluateVariable(prepared));
-            Assert.IsTrue(target.uvariable.Variables.Count() == 1);
-        }
-
-        /// <summary>
         ///A test for parse
         ///</summary>
         [TestMethod()]
-        public void parseTest()
+        public void parseTest1()
         {
-            MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment((DTE2)null));
-
-            string actual   = target.parse("$$(Path:project)");
-            string expected = "$(Path:project)";
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        /// <summary>
-        ///A test for parse
-        ///</summary>
-        [TestMethod()]
-        public void parseTest2()
-        {
-            MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment((DTE2)null));
+            vsSBE.MSBuild.Parser target = new Parser(new net.r_eg.vsSBE.Environment((DTE2)null));
 
             string actual   = target.parse("FooBar");
             string expected = "FooBar";
@@ -429,112 +125,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
         ///A test for parse
         ///</summary>
         [TestMethod()]
-        public void parseTest3()
-        {
-            MSBuildParser target = new MSBuildParser(new net.r_eg.vsSBE.Environment((DTE2)null));
-                        
-            string actual   = target.parse("$$(Path.Replace('\', '/'):project)");
-            string expected = "$(Path.Replace('\', '/'):project)";
-
-            Assert.AreEqual(expected, actual);
-        }
-
-        /// <summary>
-        ///A test for parse
-        ///</summary>
-        [TestMethod()]
-        public void parseTest4()
-        {
-            MSBuildParserAccessor.ToUserVariables target = new MSBuildParserAccessor.ToUserVariables();
-
-            target.uvariable.set("var", "project", "is a Windows_NT"); //"$(var.Replace('%OS%', $(OS)):project)";
-
-            string actual   = target.parse("$(var:project)");
-            Assert.AreEqual("is a Windows_NT", actual);
-        }
-
-        /// <summary>
-        ///A test for parse
-        ///</summary>
-        [TestMethod()]
-        public void parseTest5()
-        {
-            string data     = "$(ProjectDir.Replace(\"str1\", \"str2\"))";
-            string actual   = (new MSBuildParserAccessor.ToParse()).parse(data);
-            Assert.AreEqual("[E~ProjectDir.Replace(\"str1\", \"str2\")~]", actual);
-        }
-
-        /// <summary>
-        ///A test for parse
-        ///</summary>
-        [TestMethod()]
-        public void parseTest6()
-        {
-            string data     = "$($(ProjectDir.Replace('\\', '/'):client))";
-            string actual   = (new MSBuildParserAccessor.ToParse()).parse(data);
-            Assert.AreEqual("[E~ProjectDir.Replace('\\', '/')~client]", actual);
-        }
-
-        /// <summary>
-        ///A test for parse
-        ///</summary>
-        [TestMethod()]
-        public void parseTest7()
-        {
-            string data     = "$(ProjectDir.Replace('\\', '/'):client)";
-            string actual   = (new MSBuildParserAccessor.ToParse()).parse(data);
-            Assert.AreEqual("[E~ProjectDir.Replace('\\', '/')~client]", actual);
-        }
-
-        /// <summary>
-        ///A test for parse
-        ///</summary>
-        [TestMethod()]
-        public void parseTest8()
-        {
-            string data     = "$(ProjectDir.Replace('\\', '/'))";
-            string actual   = (new MSBuildParserAccessor.ToParse()).parse(data);
-            Assert.AreEqual("[E~ProjectDir.Replace('\\', '/')~]", actual);
-        }
-
-        /// <summary>
-        ///A test for parse
-        ///</summary>
-        [TestMethod()]
-        public void parseTest9()
-        {
-            string data     = "$($(ProjectDir.Replace('\\', '/')))";
-            string actual   = (new MSBuildParserAccessor.ToParse()).parse(data);
-            Assert.AreEqual("[E~ProjectDir.Replace('\\', '/')~]", actual);
-        }
-
-        /// <summary>
-        ///A test for parse
-        ///</summary>
-        [TestMethod()]
-        public void parseTest10()
-        {
-            string data     = "$(var.Method('~str~', $(OS:$($(data):project2)), \"~str2~\"):project)";
-            string actual   = (new MSBuildParserAccessor.ToParse()).parse(data);
-            Assert.AreEqual("[E~var.Method('~str~', [P~OS~[E~[P~data~]~project2]], \"~str2~\")~project]", actual);
-        }
-
-        /// <summary>
-        ///A test for parse
-        ///</summary>
-        [TestMethod()]
-        public void parseTest11()
-        {
-            string data     = "$($(var.Method('str', $(OS))):$(var.Method('str2', $(SO))))";
-            string actual   = (new MSBuildParserAccessor.ToParse()).parse(data);
-            Assert.AreEqual("[E~var.Method('str', [P~OS~])~]:[E~var.Method('str2', [P~SO~])~]", actual);
-        }
-
-        /// <summary>
-        ///A test for parse
-        ///</summary>
-        [TestMethod()]
-        public void parseTest12()
+        public void parseTest2()
         {
             string data     = "$(Path)";
             string actual   = (new MSBuildParserAccessor.ToParse()).parse(data);
@@ -545,7 +136,40 @@ namespace net.r_eg.vsSBE.Test.MSBuild
         ///A test for parse
         ///</summary>
         [TestMethod()]
-        public void parseTest13()
+        public void parseTest3()
+        {
+            string data     = "$$(Path)";
+            string actual   = (new MSBuildParserAccessor.ToParse()).parse(data);
+            Assert.AreEqual("$(Path)", actual);
+        }
+
+        /// <summary>
+        ///A test for parse
+        ///</summary>
+        [TestMethod()]
+        public void parseTest4()
+        {
+            string data     = "$$$(Path)";
+            string actual   = (new MSBuildParserAccessor.ToParse()).parse(data);
+            Assert.AreEqual("$$(Path)", actual);
+        }
+
+        /// <summary>
+        ///A test for parse
+        ///</summary>
+        [TestMethod()]
+        public void parseTest5()
+        {
+            string data     = "(Path)";
+            string actual   = (new MSBuildParserAccessor.ToParse()).parse(data);
+            Assert.AreEqual("(Path)", actual);
+        }
+
+        /// <summary>
+        ///A test for parse
+        ///</summary>
+        [TestMethod()]
+        public void parseTest6()
         {
             string data     = "$(Path:project)";
             string actual   = (new MSBuildParserAccessor.ToParse()).parse(data);
@@ -556,16 +180,647 @@ namespace net.r_eg.vsSBE.Test.MSBuild
         ///A test for parse
         ///</summary>
         [TestMethod()]
+        public void parseTest7()
+        {
+            string data = "$$(Path:project)";
+            string actual = (new MSBuildParserAccessor.ToParse()).parse(data);
+            Assert.AreEqual("$(Path:project)", actual);
+        }
+
+        /// <summary>
+        ///A test for parse
+        ///</summary>
+        [TestMethod()]
+        public void parseTest8()
+        {
+            string data     = "$([System.DateTime]::UtcNow.Ticks)";
+            string actual   = (new MSBuildParserAccessor.ToParse()).parse(data);
+            Assert.AreEqual("[E~[System.DateTime]::UtcNow.Ticks~]", actual);
+        }
+
+        /// <summary>
+        ///A test for parse
+        ///</summary>
+        [TestMethod()]
+        public void parseTest9()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(Path.Replace('\\\\', '/'))";
+            Assert.AreEqual("[E~Path.Replace('\\\\', '/')~]", target.parse(data));
+        }
+
+        /// <summary>
+        ///A test for parse
+        ///</summary>
+        [TestMethod()]
+        public void parseTest10()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(Path.Replace('\\', '/'))";
+            Assert.AreEqual("[E~Path.Replace('\\', '/')~]", target.parse(data));
+        }
+
+        /// <summary>
+        ///A test for parse
+        ///</summary>
+        [TestMethod()]
+        public void parseTest11()
+        {
+            string data = "$(ProjectDir.Replace('\\', '/'):client)";
+            string actual = (new MSBuildParserAccessor.ToParse()).parse(data);
+            Assert.AreEqual("[E~ProjectDir.Replace('\\', '/')~client]", actual);
+        }
+
+        /// <summary>
+        ///A test for parse
+        ///</summary>
+        [TestMethod()]
+        public void parseTest12()
+        {
+            vsSBE.MSBuild.Parser target = new Parser(new net.r_eg.vsSBE.Environment((DTE2)null));
+
+            string actual = target.parse("$$(Path.Replace('\', '/'):project)");
+            string expected = "$(Path.Replace('\', '/'):project)";
+
+            Assert.AreEqual(expected, actual);
+        }
+
+        /// <summary>
+        ///A test for parse
+        ///</summary>
+        [TestMethod()]
+        public void parseTest13()
+        {
+            string data = "$(ProjectDir.Replace(\"str1\", \"str2\"))";
+            string actual = (new MSBuildParserAccessor.ToParse()).parse(data);
+            Assert.AreEqual("[E~ProjectDir.Replace(\"str1\", \"str2\")~]", actual);
+        }
+
+        /// <summary>
+        ///A test for parse
+        ///</summary>
+        [TestMethod()]
         public void parseTest14()
         {
-            string data     = "$([System.DateTime]::Now)";
-            string actual   = (new MSBuildParserAccessor.ToParse()).parse(data);
-            Assert.AreEqual("[E~[System.DateTime]::Now~]", actual);
+            string data = "$(ProjectDir.Replace('str1', 'str2'))";
+            string actual = (new MSBuildParserAccessor.ToParse()).parse(data);
+            Assert.AreEqual("[E~ProjectDir.Replace('str1', 'str2')~]", actual);
         }
+
+        /// <summary>
+        ///A test for parse
+        ///</summary>
+        [TestMethod()]
+        public void parseTest15()
+        {
+            string data = "$(var.Method('~str~', $(OS:$($(data):project2)), \"~str2~\"):project)";
+            string actual = (new MSBuildParserAccessor.ToParse()).parse(data);
+            Assert.AreEqual("[E~var.Method('~str~', [P~OS~[E~[P~data~]~project2]], \"~str2~\")~project]", actual);
+        }
+
+        /// <summary>
+        ///A test for parse - Wrapping
+        ///</summary>
+        [TestMethod()]
+        public void parseWrappingTest1()
+        {
+            string data = "$($(ProjectDir.Replace('\\', '/'):client))";
+            string actual = (new MSBuildParserAccessor.ToParse()).parse(data);
+            Assert.AreEqual("[E~[E~ProjectDir.Replace('\\', '/')~client]~]", actual);
+        }
+
+        /// <summary>
+        ///A test for parse - Wrapping
+        ///</summary>
+        [TestMethod()]
+        public void parseWrappingTest2()
+        {
+            string data = "$($(ProjectDir.Replace('\\', '/')))";
+            string actual = (new MSBuildParserAccessor.ToParse()).parse(data);
+            Assert.AreEqual("[E~[E~ProjectDir.Replace('\\', '/')~]~]", actual);
+        }
+
+        /// <summary>
+        ///A test for parse - Wrapping
+        ///</summary>
+        [TestMethod()]
+        public void parseWrappingTest3()
+        {
+            string data = "$($(var.Method('str', $(OS))):$(var.Method('str2', $(SO))))";
+            string actual = (new MSBuildParserAccessor.ToParse()).parse(data);
+            Assert.AreEqual("[E~[E~var.Method('str', [P~OS~])~]:[E~var.Method('str2', [P~SO~])~]~]", actual);
+        }
+
+        /// <summary>
+        ///A test for parse - Wrapping
+        ///</summary>
+        [TestMethod()]
+        public void parseWrappingTest4()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$($(Path:project))";
+            string actual = target.parse(data);
+            Assert.IsTrue("[E~[P~Path~project]~]" == actual || "[P~[P~Path~project]~]" == actual);
+        }
+
+        /// <summary>
+        ///A test for parse - Variable & data
+        ///</summary>
+        [TestMethod()]
+        public void parseVarAndDataTest1()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(var=$(Path.Replace('\\', '/')):project)";
+
+            Assert.AreEqual("", target.parse(data));
+            Assert.AreEqual(null, target.uvariable.get("var"));
+            Assert.AreEqual("[E~Path.Replace('\\', '/')~]", target.uvariable.get("var", "project"));
+        }
+
+        /// <summary>
+        ///A test for parse - Variable & data
+        ///</summary>
+        [TestMethod()]
+        public void parseVarAndDataTest2()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(var = $$(Path:project))";
+
+            Assert.AreEqual("", target.parse(data));
+            Assert.AreEqual("$(Path:project)", target.uvariable.get("var"));
+        }
+
+        /// <summary>
+        ///A test for parse - Variable & data
+        ///</summary>
+        [TestMethod()]
+        public void parseVarAndDataTest3()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$$(var = $$(Path:project))";
+            Assert.AreEqual("$(var = $$(Path:project))", target.parse(data));
+        }
+
+        /// <summary>
+        ///A test for parse - Variable & data
+        ///</summary>
+        [TestMethod()]
+        public void parseVarAndDataTest4()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$$(var = $(Path:project))";
+            Assert.AreEqual("$(var = $(Path:project))", target.parse(data));
+        }
+
+        /// <summary>
+        ///A test for parse - Variable & data
+        ///</summary>
+        [TestMethod()]
+        public void parseVarAndDataTest5()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(var = $(Path:project))";
+
+            Assert.AreEqual("", target.parse(data));
+            Assert.AreEqual("[P~Path~project]", target.uvariable.get("var"));
+        }
+
+        /// <summary>
+        ///A test for parse - Variable & data
+        ///</summary>
+        [TestMethod()]
+        public void parseVarAndDataTest6()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(var=$(Path:project2):project)";
+
+            Assert.IsTrue(target.uvariable.Variables.Count() < 1);
+            Assert.AreEqual("", target.parse(data));
+            Assert.AreEqual("[P~Path~project2]", target.uvariable.get("var", "project"));
+            Assert.IsTrue(target.uvariable.Variables.Count() == 1);
+        }
+
+        /// <summary>
+        ///A test for parse - Variable & data
+        ///</summary>
+        [TestMethod()]
+        public void parseVarAndDataTest7()
+        {
+            MSBuildParserAccessor.ToUserVariables target = new MSBuildParserAccessor.ToUserVariables();
+
+            target.uvariable.set("var", "project", "is a Windows_NT"); //"$(var.Replace('%OS%', $(OS)):project)";
+
+            string actual = target.parse("$(var:project)");
+            Assert.AreEqual("is a Windows_NT", actual);
+        }
+
+        /// <summary>
+        ///A test for parse - Escape & Variable
+        ///</summary>
+        [TestMethod()]
+        public void parseEscapeAndVarTest1()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            /*
+                $(p1 = $(Platform))
+                $(p2 = $(p1))
+                $(p2)
+             */
+            string data = "$(p1 = $(Platform))$(p2 = $(p1))$(p2)";
+            Assert.AreEqual("[P~p2~]", target.parse(data));
+            Assert.AreEqual("[P~Platform~]", target.uvariable.get("p1"));
+            Assert.AreEqual("[P~p1~]", target.uvariable.get("p2"));
+        }
+
+        /// <summary>
+        ///A test for parse - Escape & Variable
+        ///</summary>
+        [TestMethod()]
+        public void parseEscapeAndVarTest2()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            /*
+                $(p1 = $(Platform))
+                $(p2 = $$(p1))
+                $(p2)
+             */
+            string data = "$(p1 = $(Platform))$(p2 = $$(p1))$(p2)";
+            Assert.AreEqual("[P~Platform~]", target.parse(data));
+            Assert.AreEqual("[P~Platform~]", target.uvariable.get("p1"));
+            Assert.AreEqual("$(p1)", target.uvariable.get("p2"));
+        }
+
+
+        /// <summary>
+        ///A test for parse - Escape & Variable
+        ///</summary>
+        [TestMethod()]
+        public void parseEscapeAndVarTest3()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            /*
+                $(p1 = $(Platform))
+                $(p2 = $$$(p1))
+                $(p2)
+             */
+            string data = "$(p1 = $(Platform))$(p2 = $$$(p1))$(p2)";
+            Assert.AreEqual("$(p1)", target.parse(data));
+            Assert.AreEqual("[P~Platform~]", target.uvariable.get("p1"));
+            Assert.AreEqual("$$(p1)", target.uvariable.get("p2"));
+        }
+
+        /// <summary>
+        ///A test for parse - Escape & Variable
+        ///</summary>
+        [TestMethod()]
+        public void parseEscapeAndVarTest4()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            /*
+                $(p1 = $(Platform))
+                $(p2 = $$$$(p1))
+                $(p2)
+             */
+            string data = "$(p1 = $(Platform))$(p2 = $$$$(p1))$(p2)";
+            Assert.AreEqual("$$(p1)", target.parse(data));
+            Assert.AreEqual("[P~Platform~]", target.uvariable.get("p1"));
+            Assert.AreEqual("$$$(p1)", target.uvariable.get("p2"));
+        }
+
+        /// <summary>
+        ///A test for parse - Escape & Variable
+        ///</summary>
+        [TestMethod()]
+        public void parseEscapeAndVarTest5()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(p2 = $(Platform))";
+            Assert.AreEqual("", target.parse(data));
+            Assert.AreEqual("[P~Platform~]", target.uvariable.get("p2"));
+        }
+
+        /// <summary>
+        ///A test for parse - Escape & Variable
+        ///</summary>
+        [TestMethod()]
+        public void parseEscapeAndVarTest6()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(p2 = $$(Platform))";
+            Assert.AreEqual("", target.parse(data));
+            Assert.AreEqual("$(Platform)", target.uvariable.get("p2"));
+        }
+
+        /// <summary>
+        ///A test for parse - Escape & Variable
+        ///</summary>
+        [TestMethod()]
+        public void parseEscapeAndVarTest7()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(p2 = $$$(Platform))";
+            Assert.AreEqual("", target.parse(data));
+            Assert.AreEqual("$$(Platform)", target.uvariable.get("p2"));
+        }
+
+        /// <summary>
+        ///A test for parse - Escape & Variable
+        ///</summary>
+        [TestMethod()]
+        public void parseEscapeAndVarTest8()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(p2 = $$$$(Platform))";
+            Assert.AreEqual("", target.parse(data));
+            Assert.AreEqual("$$$(Platform)", target.uvariable.get("p2"));
+        }
+
+        /// <summary>
+        ///A test for parse - string
+        ///</summary>
+        [TestMethod()]
+        public void parseStringTest1()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(var = \"$(Path:project)\")";
+
+            Assert.AreEqual("", target.parse(data));
+            Assert.AreEqual("[P~Path~project]", target.uvariable.get("var"));
+        }
+
+        /// <summary>
+        ///A test for parse - string
+        ///</summary>
+        [TestMethod()]
+        public void parseStringTest2()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(var = \" mixed $(Path:project) \" )";
+
+            Assert.AreEqual("", target.parse(data));
+            Assert.AreEqual(" mixed [P~Path~project] ", target.uvariable.get("var"));
+        }
+
+        /// <summary>
+        ///A test for parse - string
+        ///</summary>
+        [TestMethod()]
+        public void parseStringTest3()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(var = \" $$(Path:project) \")";
+
+            Assert.AreEqual("", target.parse(data));
+            Assert.AreEqual(" $(Path:project) ", target.uvariable.get("var"));
+        }
+
+        /// <summary>
+        ///A test for parse - string
+        ///</summary>
+        [TestMethod()]
+        public void parseStringTest4()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(var = ' $(Path:project) ')";
+
+            Assert.AreEqual("", target.parse(data));
+            Assert.AreEqual(" $(Path:project) ", target.uvariable.get("var"));
+        }
+
+        /// <summary>
+        ///A test for parse - string
+        ///</summary>
+        [TestMethod()]
+        public void parseStringTest5()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = @"$(var = '$(Path.Replace(\'1\', \'2\'))')";
+
+            Assert.AreEqual("", target.parse(data));
+            Assert.AreEqual("$(Path.Replace('1', '2'))", target.uvariable.get("var"));
+        }
+
+        /// <summary>
+        ///A test for parse - string
+        ///</summary>
+        [TestMethod()]
+        public void parseStringTest6()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(var = '$(Path.Replace(\\\"1\\\", \\\"2\\\"))')";
+
+            Assert.AreEqual("", target.parse(data));
+            Assert.AreEqual("$(Path.Replace(\\\"1\\\", \\\"2\\\"))", target.uvariable.get("var"));
+        }
+
+        /// <summary>
+        ///A test for parse - string
+        ///</summary>
+        [TestMethod()]
+        public void parseStringTest7()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(var = \"$(Path.Replace(\\'1\\', \\'2\\'))\")";
+
+            Assert.AreEqual("", target.parse(data));
+            Assert.AreEqual("[E~Path.Replace(\\'1\\', \\'2\\')~]", target.uvariable.get("var"));
+        }
+
+        /// <summary>
+        ///A test for parse - string
+        ///</summary>
+        [TestMethod()]
+        public void parseStringTest8()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(var = \"$(Path.Replace(\\\"1\\\", \\\"2\\\"))\")";
+
+            Assert.AreEqual("", target.parse(data));
+            Assert.AreEqual("[E~Path.Replace(\"1\", \"2\")~]", target.uvariable.get("var"));
+        }
+
+        /// <summary>
+        ///A test for parse - string
+        ///</summary>
+        [TestMethod()]
+        public void parseStringTest9()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = @"$(var = $(Path.Replace(\'1\', '2')))";
+
+            Assert.AreEqual("", target.parse(data));
+            Assert.AreEqual(@"[E~Path.Replace(\'1\', '2')~]", target.uvariable.get("var"));
+        }
+
+        /// <summary>
+        ///A test for parse - string
+        ///</summary>
+        [TestMethod()]
+        public void parseStringTest10()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(var = $(Path.Replace(\\\"1\\\", \"2\")))";
+
+            Assert.AreEqual("", target.parse(data));
+            Assert.AreEqual("[E~Path.Replace(\\\"1\\\", \"2\")~]", target.uvariable.get("var"));
+        }
+
+        /// <summary>
+        ///A test for parse - string
+        ///</summary>
+        [TestMethod()]
+        public void parseStringTest11()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+            
+            Assert.AreEqual("", target.parse("$(name = ' test 12345  -_*~!@#$%^&= :) ')"));
+            Assert.AreEqual(" test 12345  -_*~!@#$%^&= :) ", target.uvariable.get("name"));
+
+            Assert.AreEqual("", target.parse("$(name = ' $( -_*~!@#$%^&= :) ')"));
+            Assert.AreEqual(" $( -_*~!@#$%^&= :) ", target.uvariable.get("name"));
+        }
+
+        /// <summary>
+        ///A test for parse - nested
+        ///</summary>
+        [TestMethod()]
+        public void parseNestedTest1()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = @"$(var.Method('str1', $(OS:$($(data.Replace('\', '/')):project2)), 'str2'):project)";
+            Assert.AreEqual(@"[E~var.Method('str1', [E~OS:[E~[E~data.Replace('\', '/')~]~project2]~], 'str2')~project]", target.parse(data));
+        }
+
+        /// <summary>
+        ///A test for parse - nested
+        ///</summary>
+        [TestMethod()]
+        public void parseNestedTest2()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = @"$(var.Method('str1', $(OS:$($(data.Method2):project2)), 'str2'):project)";
+            Assert.AreEqual(@"[E~var.Method('str1', [P~OS~[E~[E~data.Method2~]~project2]], 'str2')~project]", target.parse(data));
+        }
+
+        /// <summary>
+        ///A test for parse - nested
+        ///</summary>
+        [TestMethod()]
+        public void parseNestedTest3()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(var.Method('str1', $(OS:$($([System.DateTime]::Parse(\"27.03.2015\").ToBinary()):project2)), 'str2'):project)";
+            Assert.AreEqual("[E~var.Method('str1', [E~OS:[E~[E~[System.DateTime]::Parse(\"27.03.2015\").ToBinary()~]~project2]~], 'str2')~project]", target.parse(data));
+        }
+
+        /// <summary>
+        ///A test for parse - nested
+        ///</summary>
+        [TestMethod()]
+        public void parseNestedTest4()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$(var.Method('str1', $(OS:$($(test.Ticks):project2)), \\\"str2\\\"):project)";
+            Assert.AreEqual("[E~var.Method('str1', [P~OS~[E~[E~test.Ticks~]~project2]], \\\"str2\\\")~project]", target.parse(data));
+        }
+
+        /// <summary>
+        ///A test for parse - nested
+        ///</summary>
+        [TestMethod()]
+        public void parseNestedTest5()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data     = "$(var.Method('str1', $(OS:$($(data):project2)), \\\"str2\\\"):project)";
+            string actual   = target.parse(data);
+            Assert.IsTrue("[E~var.Method('str1', [P~OS~[E~[P~data~]~project2]], \\\"str2\\\")~project]" == actual
+                            || "[E~var.Method('str1', [P~OS~[P~[P~data~]~project2]], \\\"str2\\\")~project]" == actual);
+        }
+
+        /// <summary>
+        ///A test for parse - nested
+        ///</summary>
+        [TestMethod()]
+        public void parseNestedTest6()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$([System.DateTime]::Parse(\"01.01.2000\").ToBinary())";
+            Assert.AreEqual("[E~[System.DateTime]::Parse(\"01.01.2000\").ToBinary()~]", target.parse(data));
+        }
+
+        /// <summary>
+        ///A test for parse - nested
+        ///</summary>
+        [TestMethod()]
+        public void parseNestedTest7()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$([System.DateTime]::Parse(\" left $([System.DateTime]::UtcNow.Ticks) right\").ToBinary())";
+            Assert.AreEqual("[E~[System.DateTime]::Parse(\" left [E~[System.DateTime]::UtcNow.Ticks~] right\").ToBinary()~]", target.parse(data));
+        }
+
+        /// <summary>
+        ///A test for parse - nested
+        ///</summary>
+        [TestMethod()]
+        public void parseNestedTest8()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$([System.DateTime]::Parse(' left $([System.DateTime]::UtcNow.Ticks) right').ToBinary())";
+            Assert.AreEqual("[E~[System.DateTime]::Parse(' left $([System.DateTime]::UtcNow.Ticks) right').ToBinary()~]", target.parse(data));
+        }
+
+        /// <summary>
+        ///A test for parse - nested
+        ///</summary>
+        [TestMethod()]
+        public void parseNestedTest9()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            string data = "$([System.TimeSpan]::FromTicks($([MSBuild]::Subtract($([System.DateTime]::UtcNow.Ticks), $([System.DateTime]::Parse('27.03.2015').ToBinary())))).TotalMinutes.ToString(\"0\"))";
+            Assert.AreEqual("[E~[System.TimeSpan]::FromTicks([E~[MSBuild]::Subtract([E~[System.DateTime]::UtcNow.Ticks~], [E~[System.DateTime]::Parse('27.03.2015').ToBinary()~])~]).TotalMinutes.ToString(\"0\")~]", target.parse(data));
+        }
+
 
         private class MSBuildParserAccessor
         {
-            public class Accessor: MSBuildParser
+            public class Accessor: vsSBE.MSBuild.Parser
             {
                 public Accessor(): base(new net.r_eg.vsSBE.Environment((DTE2)null)) {}
                 public Accessor(net.r_eg.vsSBE.Environment env): base(env) { }
@@ -587,33 +842,33 @@ namespace net.r_eg.vsSBE.Test.MSBuild
                 }
             }
 
-            public class ToParse: StubEvaluatingProperty
-            {
-
-            }
-
             public class ToUserVariables: StubEvaluatingProperty
             {
-                public new net.r_eg.vsSBE.SBEScripts.IUserVariable uvariable
+                public new Scripts.IUserVariable uvariable
                 {
                     get { return base.uvariable; }
                     set { base.uvariable = value; }
                 }
             }
 
+            public class ToParse: ToUserVariables
+            {
+
+            }
+
             public class ToPrepareVariables: StubEvaluatingProperty
             {
-                public new TPreparedData prepareVariables(string raw)
+                public new PreparedData prepare(string raw)
                 {
-                    return base.prepareVariables(raw);
+                    return base.prepare(raw);
                 }
             }
 
             public class ToEvaluateVariable: ToUserVariables
             {
-                public new string evaluateVariable(TPreparedData prepared)
+                public new string evaluate(PreparedData prepared)
                 {
-                    return base.evaluateVariable(prepared);
+                    return base.evaluate(prepared);
                 }
             }
         }

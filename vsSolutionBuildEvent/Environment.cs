@@ -432,11 +432,10 @@ namespace net.r_eg.vsSBE
                 IVsShell shell = (IVsShell)Package.GetGlobalService(typeof(SVsShell));
                 shell.GetProperty((int)__VSSPROPID.VSSPROPID_InstallDirectory, out dirObject);
 
-                string dir              = (string)dirObject;
-                const string vDefault   = "*Undefined*";
+                string dir = (string)dirObject;
 
                 if(String.IsNullOrEmpty(dir)) {
-                    prop["DevEnvDir"] = vDefault;
+                    prop["DevEnvDir"] = MSBuild.Parser.PROP_VALUE_DEFAULT;
                 }
                 else if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
                     dir += Path.DirectorySeparatorChar;
@@ -457,13 +456,13 @@ namespace net.r_eg.vsSBE
                 string fname                = Path.GetFileName(file);
                 string name                 = Path.GetFileNameWithoutExtension(file);
                 string ext                  = Path.GetExtension(file);
-                const string vDefault       = "*Undefined*";
+                const string vDefault       = MSBuild.Parser.PROP_VALUE_DEFAULT;
 
-                prop["SolutionDir"]         = dir != null ? dir : vDefault;
-                prop["SolutionName"]        = name != null ? name : vDefault;
-                prop["SolutionFileName"]    = fname != null ? fname : vDefault;
-                prop["SolutionExt"]         = ext != null ? ext : vDefault;
-                prop["SolutionPath"]        = file != null ? file : vDefault;
+                prop["SolutionDir"]         = (dir != null)? dir : vDefault;
+                prop["SolutionName"]        = (name != null)? name : vDefault;
+                prop["SolutionFileName"]    = (fname != null)? fname : vDefault;
+                prop["SolutionExt"]         = (ext != null)? ext : vDefault;
+                prop["SolutionPath"]        = (file != null)? file : vDefault;
             }
 
             if(!prop.ContainsKey("RunCodeAnalysisOnce")) {

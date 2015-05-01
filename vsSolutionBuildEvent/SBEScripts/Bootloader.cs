@@ -18,10 +18,9 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Components;
+using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.SBEScripts
 {

@@ -20,6 +20,7 @@ using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
+using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
@@ -34,7 +35,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// Default value for user-variables.
         /// The '*Undefined*' as value for compatibility with MSBuild core.
         /// </summary>
-        public const string UVARIABLE_VALUE_DEFAULT = "*Undefined*";
+        public const string UVARIABLE_VALUE_DEFAULT = MSBuild.Parser.PROP_VALUE_DEFAULT;
 
         /// <summary>
         /// Ability to work with data for current component

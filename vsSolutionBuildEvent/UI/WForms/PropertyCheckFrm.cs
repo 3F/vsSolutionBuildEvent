@@ -32,7 +32,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// <summary>
         /// Work with MSBuild
         /// </summary>
-        private MSBuildParser _parser;
+        private MSBuild.Parser _parser;
         /// <summary>
         /// Flag of sample
         /// </summary>
@@ -40,7 +40,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         public PropertyCheckFrm(IEnvironment env)
         {
-            _parser = new MSBuildParser(env);
+            _parser = new MSBuild.Parser(env);
             InitializeComponent();
         }
 

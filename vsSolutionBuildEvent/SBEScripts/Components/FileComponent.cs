@@ -450,7 +450,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string appendUser   = (m.Groups[4].Success)? m.Groups[4].Value : null;
             string lineUser     = (m.Groups[5].Success)? m.Groups[5].Value : null;
             string encUser      = (m.Groups[6].Success)? m.Groups[6].Value : null;
-            string fdata        = StringHandler.hSymbols(m.Groups[7].Value);
+            string fdata        = Scripts.Tokens.characters(m.Groups[7].Value);
 
             if(appendUser != null)
             {
@@ -534,7 +534,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string type         = (m.Groups[1].Success)? m.Groups[1].Value : "Basic";
             string file         = location(StringHandler.normalize(m.Groups[2].Value.Trim()));
             string pattern      = StringHandler.normalize(m.Groups[3].Value);
-            string replacement  = StringHandler.hSymbols(StringHandler.normalize(m.Groups[4].Value));
+            string replacement  = Scripts.Tokens.characters(StringHandler.normalize(m.Groups[4].Value));
 
             Log.nlog.Debug("stReplace: found file '{0}',  pattern '{1}',  replacement '{2}'", file, pattern, replacement);
 

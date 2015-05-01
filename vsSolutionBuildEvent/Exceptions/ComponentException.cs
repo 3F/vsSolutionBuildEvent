@@ -19,40 +19,30 @@ using System;
 
 namespace net.r_eg.vsSBE.Exceptions
 {
-    public class SBEException: NotSupportedException
+    public class ComponentException: SBEException
     {
-        public SBEException()
-        {
-
-        }
-
-        public SBEException(string message)
+        public ComponentException(string message)
             : base(message)
         {
 
         }
 
-        public SBEException(string message, Exception innerException)
+        public ComponentException(string message, Exception innerException)
             : base(message, innerException)
         {
 
         }
 
-        public SBEException(string message, params object[] args)
-            : base(format(ref message, args))
+        public ComponentException(string message, params object[] args)
+            : base(message, args)
         {
 
         }
 
-        public SBEException(string message, Exception innerException, params object[] args)
-            : base(format(ref message, args), innerException)
+        public ComponentException(string message, Exception innerException, params object[] args)
+            : base(message, innerException, args)
         {
 
-        }
-
-        protected static string format(ref string message, params object[] args)
-        {
-            return String.Format(message, args);
         }
     }
 }

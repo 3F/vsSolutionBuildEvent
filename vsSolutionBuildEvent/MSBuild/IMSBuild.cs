@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,6 +14,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+using System.Collections.Generic;
 
 namespace net.r_eg.vsSBE.MSBuild
 {
@@ -35,19 +37,26 @@ namespace net.r_eg.vsSBE.MSBuild
         string getProperty(string name, string projectName);
 
         /// <summary>
-        /// Evaluate data with the MSBuild engine.
-        /// Property Function Syntax: 
+        /// Gets all properties from specific project.
+        /// </summary>
+        /// <param name="projectName"></param>
+        /// <returns></returns>
+        List<PropertyItem> listProperties(string projectName = null);
+
+        /// <summary>
+        /// Evaluate data with MSBuild engine.
+        /// Property Functions Syntax: 
         ///   http://msdn.microsoft.com/en-us/library/vstudio/dd633440%28v=vs.120%29.aspx
         /// </summary>
         /// <param name="unevaluated">raw unevaluated data</param>
-        /// <param name="projectName">Specific project for evaluating</param>
-        /// <returns>Evaluated end value</returns>
-        string evaluate(string unevaluated, string projectName);
+        /// <param name="projectName">specific project or null value for default</param>
+        /// <returns>Evaluated value</returns>
+        string evaluate(string unevaluated, string projectName = null);
 
         /// <summary>
-        /// Handler of variables/properties MSBuild
+        /// Entry point to evaluating MSBuild data.
         /// </summary>
-        /// <param name="data">string with $(ident) data</param>
+        /// <param name="data">mixed data</param>
         /// <returns>All evaluated values for data</returns>
         string parse(string data);
     }

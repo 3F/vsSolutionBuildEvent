@@ -20,6 +20,7 @@ using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
+using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
@@ -80,7 +81,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 _depthBracketsLevel = 0;
             }
 
-            Match m = Regex.Match(_hString.protectQuotes(data.Trim()),
+            Match m = Regex.Match(_hString.protectMixedQuotes(data.Trim()),
                                     String.Format(@"^\[\s*
                                                     {0}            #1 - Condition
                                                     \s*

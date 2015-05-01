@@ -64,7 +64,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
         public void protectTest()
         {
             StringHandler target = new StringHandler();
-            string actual = target.protectQuotes("test \"str1\" - 'str2' data");            
+            string actual = target.protectMixedQuotes("test \"str1\" - 'str2' data");            
             Assert.AreEqual(false, Regex.IsMatch(actual, RPattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace));
             Assert.AreEqual(false, Regex.IsMatch(actual, RPattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace));
         }
@@ -76,10 +76,8 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
         public void recoveryTest()
         {
             StringHandler target = new StringHandler();
-            string str      = target.protectQuotes("test \"str1\" - 'str2' data");
-            string actual   = target.recovery(str);
-            Assert.AreEqual(true, Regex.IsMatch(actual, RPattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace));
-            Assert.AreEqual(true, Regex.IsMatch(actual, RPattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace));
+            string str = target.protectMixedQuotes("test \"str1\" - 'str2' data");
+            Assert.AreEqual("test \"str1\" - 'str2' data", target.recovery(str));
         }
     }
 }

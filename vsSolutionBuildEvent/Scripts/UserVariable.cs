@@ -16,15 +16,12 @@
 */
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
 
-namespace net.r_eg.vsSBE.SBEScripts
+namespace net.r_eg.vsSBE.Scripts
 {
     public class UserVariable: IUserVariable, IUserVariableDebug
     {

@@ -237,6 +237,50 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
         }
 
         /// <summary>
+        ///A test for DoubleQuotesContent
+        ///</summary>
+        [TestMethod()]
+        public void DoubleQuotesContentTest4()
+        {
+            string data     = "\"\\\",\"p\""; //->  "\","p"
+            string expected = "\\\","; //->  \",
+            Assert.AreEqual(expected, Regex.Match(data, RPattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
+        }
+
+        /// <summary>
+        ///A test for DoubleQuotesContent
+        ///</summary>
+        [TestMethod()]
+        public void DoubleQuotesContentTest5()
+        {
+            string data     = "\"\\\\\",\"p\""; //->  "\\","p"
+            string expected = "\\\\"; //->  \\
+            Assert.AreEqual(expected, Regex.Match(data, RPattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
+        }
+
+        /// <summary>
+        ///A test for DoubleQuotesContent
+        ///</summary>
+        [TestMethod()]
+        public void DoubleQuotesContentTest6()
+        {
+            string data = "\"\\ \",\"p\""; //->  "\ ","p"
+            string expected = "\\ "; //->  \ 
+            Assert.AreEqual(expected, Regex.Match(data, RPattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
+        }
+
+        /// <summary>
+        ///A test for DoubleQuotesContent
+        ///</summary>
+        [TestMethod()]
+        public void DoubleQuotesContentTest7()
+        {
+            string data = "\"\\\\\\\",\"p\""; //->  "\\\","p"
+            string expected = "\\\\\\\","; //->  \\\",
+            Assert.AreEqual(expected, Regex.Match(data, RPattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
+        }
+
+        /// <summary>
         ///A test for SingleQuotesContent
         ///</summary>
         [TestMethod()]
@@ -268,6 +312,50 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
             string data = " test 123' ";
             bool actual = Regex.IsMatch(data, RPattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace);
             Assert.AreEqual(false, actual);
+        }
+
+        /// <summary>
+        ///A test for SingleQuotesContent
+        ///</summary>
+        [TestMethod()]
+        public void SingleQuotesContentTest4()
+        {
+            string data     = "'\\','p'"; //-> '\','p'
+            string expected = "\\',"; //-> \',
+            Assert.AreEqual(expected, Regex.Match(data, RPattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
+        }
+
+        /// <summary>
+        ///A test for SingleQuotesContent
+        ///</summary>
+        [TestMethod()]
+        public void SingleQuotesContentTest5()
+        {
+            string data = "'\\\\','p'"; //->  '\\','p'
+            string expected = "\\\\"; //->  \\
+            Assert.AreEqual(expected, Regex.Match(data, RPattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
+        }
+
+        /// <summary>
+        ///A test for SingleQuotesContent
+        ///</summary>
+        [TestMethod()]
+        public void SingleQuotesContentTest6()
+        {
+            string data = "'\\ ','p'"; //->  '\ ','p'
+            string expected = "\\ "; //->  \ 
+            Assert.AreEqual(expected, Regex.Match(data, RPattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
+        }
+
+        /// <summary>
+        ///A test for SingleQuotesContent
+        ///</summary>
+        [TestMethod()]
+        public void SingleQuotesContentTest7()
+        {
+            string data = "'\\\\\\','p'"; //->  '\\\','p'
+            string expected = "\\\\\\',"; //->  \\\',
+            Assert.AreEqual(expected, Regex.Match(data, RPattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
         }
     }
 }

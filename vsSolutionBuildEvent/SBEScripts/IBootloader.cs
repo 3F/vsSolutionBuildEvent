@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using net.r_eg.vsSBE.SBEScripts.Components;
+using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.SBEScripts
 {

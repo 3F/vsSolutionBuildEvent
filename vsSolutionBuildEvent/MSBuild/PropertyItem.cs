@@ -15,22 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using net.r_eg.vsSBE.Exceptions;
-
-namespace net.r_eg.vsSBE.SBEScripts.Exceptions
+namespace net.r_eg.vsSBE.MSBuild
 {
-    public class ScriptException: SBEException
+    /// <summary>
+    /// Basic unit of properties
+    /// </summary>
+    public struct PropertyItem
     {
-        public ScriptException(string message)
-            : base(message)
+        public string name;
+        public string value;
+
+        public PropertyItem(string name, string value)
         {
-
-        }
-
-        public ScriptException(string message, params object[] args)
-            : base(message, args)
-        {
-
+            this.name   = name;
+            this.value  = value;
         }
     }
 }

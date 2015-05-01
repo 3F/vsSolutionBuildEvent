@@ -144,7 +144,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
                 return ListNull;
             }
 
-            string ident = (new StringHandler()).protectQuotes(raw.Trim());
+            string ident = (new StringHandler()).protectMixedQuotes(raw.Trim());
 
             if(_isLatest('.', ident))
             {
@@ -208,7 +208,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
                     return infoBy(name, info.Link, strict);
                 }
 
-                string elem = (new StringHandler()).protectQuotes(info.Name);
+                string elem = (new StringHandler()).protectMixedQuotes(info.Name);
                 elem = Regex.Replace(elem, RPattern.RoundBracketsContent, "()", RegexOptions.IgnorePatternWhitespace);
                 
                 if((strict && elem == name)

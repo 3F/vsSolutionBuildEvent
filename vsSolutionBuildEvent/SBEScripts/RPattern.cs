@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,62 +16,114 @@
 */
 
 using System;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace net.r_eg.vsSBE.SBEScripts
 {
     public static class RPattern
     {
         /// <summary>
-        /// Captures content from double quotes
+        /// Content from double quotes
         /// </summary>
         public static string DoubleQuotesContent
         {
             get {
-                return quotesContent('"');
+                if(doubleQuotesContent == null) {
+                    doubleQuotesContent = quotesContent('"', true);
+                }
+                return doubleQuotesContent;
             }
         }
+        private static string doubleQuotesContent;
 
         /// <summary>
-        /// Captures content from single quotes
+        /// Content from single quotes
         /// </summary>
         public static string SingleQuotesContent
         {
             get {
-                return quotesContent('\'');
+                if(singleQuotesContent == null) {
+                    singleQuotesContent = quotesContent('\'', true);
+                }
+                return singleQuotesContent;
             }
         }
+        private static string singleQuotesContent;
 
         /// <summary>
-        /// Captures content from Square Brackets
+        /// Double quotes with content
+        /// </summary>
+        public static string DoubleQuotesContentFull
+        {
+            get {
+                if(doubleQuotesContentFull == null) {
+                    doubleQuotesContentFull = quotesContent('"', false);
+                }
+                return doubleQuotesContentFull;
+            }
+        }
+        private static string doubleQuotesContentFull;
+
+        /// <summary>
+        /// Single quotes with content
+        /// </summary>
+        public static string SingleQuotesContentFull
+        {
+            get {
+                if(singleQuotesContentFull == null) {
+                    singleQuotesContentFull = quotesContent('\'', false);
+                }
+                return singleQuotesContentFull;
+            }
+        }
+        private static string singleQuotesContentFull;
+
+        /// <summary>
+        /// Content from Square Brackets
         /// [ ... ]
         /// </summary>
         public static string SquareBracketsContent
         {
-            get { return bracketsContent('[', ']'); }
+            get {
+                if(squareBracketsContent == null) {
+                    squareBracketsContent = bracketsContent('[', ']');
+                }
+                return squareBracketsContent;
+            }
         }
+        private static string squareBracketsContent;
 
         /// <summary>
-        /// Captures content from Parentheses (Round Brackets)
+        /// Content from Parentheses (Round Brackets)
         /// ( ... )
         /// </summary>
         public static string RoundBracketsContent
         {
-            get { return bracketsContent('(', ')'); }
+            get {
+                if(roundBracketsContent == null) {
+                    roundBracketsContent = bracketsContent('(', ')');
+                }
+                return roundBracketsContent;
+            }
         }
+        private static string roundBracketsContent;
 
         /// <summary>
-        /// Captures content from Curly Brackets
+        /// Content from Curly Brackets
         /// { ... }
         /// </summary>
         public static string CurlyBracketsContent
         {
-            get { return bracketsContent('{', '}'); }
+            get {
+                if(curlyBracketsContent == null) {
+                    curlyBracketsContent = bracketsContent('{', '}');
+                }
+                return curlyBracketsContent;
+            }
         }
+        private static string curlyBracketsContent;
 
         /// <summary>
-        /// Captures boolean value from allowed syntax
+        /// Boolean value from allowed syntax
         /// </summary>
         public static string BooleanContent
         {
@@ -79,7 +131,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
-        /// Captures Integer value from allowed syntax
+        /// Integer value from allowed syntax
         /// </summary>
         public static string IntegerContent
         {
@@ -87,7 +139,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
-        /// Captures Unsigned Integer value from allowed syntax
+        /// Unsigned Integer value from allowed syntax
         /// </summary>
         public static string UnsignedIntegerContent
         {
@@ -95,7 +147,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
-        /// Captures Float value from allowed syntax
+        /// Float value from allowed syntax
         /// </summary>
         public static string FloatContent
         {
@@ -103,7 +155,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
-        /// Captures Unsigned Float value from allowed syntax
+        /// Unsigned Float value from allowed syntax
         /// </summary>
         public static string UnsignedFloatContent
         {
@@ -111,28 +163,35 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
-        /// Captures content for present symbol of quotes
+        /// Content for present symbol of quotes
         /// Escaping is a "\" for used symbol
         /// e.g.: \', \"
         /// </summary>
         /// <param name="symbol">' or "</param>
-        private static string quotesContent(char symbol)
+        /// <param name="withoutQuotes"></param>
+        private static string quotesContent(char symbol, bool withoutQuotes = true)
         {
             return String.Format(@"
-                                  \s*(?<!\\){0}
-                                  (
-                                     (?:
-                                        [^{0}\\]
-                                      |
-                                        \\{0}?
-                                     )*
-                                  )
-                                  {0}\s*", symbol);
+                                  \s*(?<!\\)
+                                  ({1}
+                                   {0}({2}
+                                         (?:
+                                            [^{0}\\]
+                                          |
+                                            \\\\
+                                          |
+                                            \\{0}?
+                                         )*
+                                      ){0}
+                                  )\s*", 
+                                  symbol,
+                                  (withoutQuotes)? "?:" : String.Empty,
+                                  (withoutQuotes)? String.Empty : "?:");
         }
 
 
         /// <summary>
-        /// Captures content for present symbol of brackets
+        /// Content for present symbol of brackets
         /// 
         /// Note: A balancing group definition deletes the definition of a previously defined group, 
         ///       therefore allowed some intersection with name of the balancing group.. don't worry., be happy

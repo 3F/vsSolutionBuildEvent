@@ -38,7 +38,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// <summary>
         /// Work with properties
         /// </summary>
-        private MSBuildParser _msbuild;
+        private MSBuild.Parser _msbuild;
 
         /// <summary>
         /// 
@@ -48,16 +48,16 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// <summary>
         /// Caching of retrieved properties
         /// </summary>
-        private ConcurrentDictionary<string, List<TMSBuildPropertyItem>> _cacheProperties;
+        private ConcurrentDictionary<string, List<MSBuild.PropertyItem>> _cacheProperties;
 
         public PropertiesFrm(IEnvironment env, ITransferDataProperty pin)
         {
             InitializeComponent();
 
             _env                = env;
-            _msbuild            = new MSBuildParser(_env);
+            _msbuild            = new MSBuild.Parser(_env);
             _pin                = pin;
-            _cacheProperties    = new ConcurrentDictionary<string, List<TMSBuildPropertyItem>>();
+            _cacheProperties    = new ConcurrentDictionary<string, List<MSBuild.PropertyItem>>();
         }
 
         protected void fillProjects()
@@ -80,7 +80,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             dataGridViewVariables.Rows.Clear();
             try
             {
-                foreach(TMSBuildPropertyItem prop in _getProperties(project))
+                foreach(MSBuild.PropertyItem prop in _getProperties(project))
                 {
                     if(!String.IsNullOrEmpty(filterName) && !cmp(prop.name, filterName, mFilterRegexp.Checked)) {
                         continue;
@@ -153,7 +153,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         }
 
         /// <exception cref="MSBuildParserProjectNotFoundException">if not found the specific project</exception>
-        private List<TMSBuildPropertyItem> _getProperties(string project)
+        private List<MSBuild.PropertyItem> _getProperties(string project)
         {
             string key = project;
             if(String.IsNullOrEmpty(key)) {

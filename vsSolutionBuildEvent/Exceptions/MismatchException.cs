@@ -15,18 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace net.r_eg.vsSBE.SBEScripts
+namespace net.r_eg.vsSBE.Exceptions
 {
-    /// <summary>
-    /// Debugging and complex support the IUserVariable
-    /// </summary>
-    public interface IUserVariableDebug
+    public class MismatchException: SBEException
     {
-        /// <summary>
-        /// Re/Defines user-variable with evaluated value.
-        /// </summary>
-        /// <param name="ident">Unique identificator</param>
-        /// <param name="evaluated">mixed string with evaluated data</param>
-        void debSetEvaluated(string ident, string evaluated);
+        public MismatchException(string message)
+            : base(message)
+        {
+
+        }
+
+        public MismatchException(string message, params object[] args)
+            : base(message, args)
+        {
+
+        }
     }
 }

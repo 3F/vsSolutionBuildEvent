@@ -16,15 +16,12 @@
 */
 
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
+using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.SBEScripts
 {
@@ -144,7 +141,7 @@ namespace net.r_eg.vsSBE.SBEScripts
                 _depthLevel = 0;
                 postProcessingMSBuild = allowMSBuild;
                 StringHandler hString = new StringHandler();
-                return hString.recovery(parse(hString.protectQuotes(data), _depthLevel, hString));
+                return hString.recovery(parse(hString.protectMixedQuotes(data), _depthLevel, hString));
             }
         }
 
@@ -193,12 +190,12 @@ namespace net.r_eg.vsSBE.SBEScripts
             return Regex.Replace(data, ContainerPattern, delegate(Match m)
             {
                 if(m.Groups[1].Value.Length > 1) { //escape
-                    Log.nlog.Debug("SBEScripts: escape - '{0}'", m.Groups[1].Value);
-                    return m.Value.Substring(1);
+                    Log.nlog.Debug("SBEScripts: escape - '{0}'", m.Groups[2].Value);
+                    return "#" + escapeMSBuildData(m.Groups[2].Value, true);
                 }
                 string raw = m.Groups[2].Value;
 
-                Log.nlog.Debug("SBEScripts-data: to parse '{0}'", raw);
+                Log.nlog.Trace("SBEScripts-data: to parse '{0}'", raw);
                 if(hString != null) {
                     return selector(hString.recovery(raw));
                 }
@@ -224,6 +221,17 @@ namespace net.r_eg.vsSBE.SBEScripts
                 --_depthLevel;
             }
             return ret;
+        }
+
+        /// <param name="data"></param>
+        /// <param name="force">only $(..) -> $$(..) if false / and $$(..) -> $$$(..), etc. if true</param>
+        /// <returns></returns>
+        protected virtual string escapeMSBuildData(string data, bool force)
+        {
+            string pattern = String.Format(@"{0}{1}", 
+                                            (force)? String.Empty : @"(?<!\$)", 
+                                            MSBuild.RPattern.ContainerOuter);
+            return Regex.Replace(data, pattern, delegate(Match m) { return "$" + m.Value; }, RegexOptions.IgnorePatternWhitespace);
         }
 
         /// <summary>

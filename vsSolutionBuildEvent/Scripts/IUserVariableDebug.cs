@@ -15,22 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using net.r_eg.vsSBE.Exceptions;
-
-namespace net.r_eg.vsSBE.SBEScripts.Exceptions
+namespace net.r_eg.vsSBE.Scripts
 {
-    public class ScriptException: SBEException
+    /// <summary>
+    /// Debugging and complex support the IUserVariable
+    /// </summary>
+    public interface IUserVariableDebug
     {
-        public ScriptException(string message)
-            : base(message)
-        {
-
-        }
-
-        public ScriptException(string message, params object[] args)
-            : base(message, args)
-        {
-
-        }
+        /// <summary>
+        /// Re/Defines user-variable with evaluated value.
+        /// </summary>
+        /// <param name="ident">Unique identificator</param>
+        /// <param name="evaluated">mixed string with evaluated data</param>
+        void debSetEvaluated(string ident, string evaluated);
     }
 }

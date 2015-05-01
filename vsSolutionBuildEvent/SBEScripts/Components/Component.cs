@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,11 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using net.r_eg.vsSBE.MSBuild;
+using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
@@ -112,7 +109,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             this.env        = env;
             this.uvariable  = uvariable;
             script          = new Script(env, uvariable);
-            msbuild         = new MSBuildParser(env, uvariable);
+            msbuild         = new MSBuild.Parser(env, uvariable);
         }
 
         /// <param name="env">Used environment</param>

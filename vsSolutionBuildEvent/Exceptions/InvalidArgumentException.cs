@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,18 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace net.r_eg.vsSBE.SBEScripts
+namespace net.r_eg.vsSBE.Exceptions
 {
-    /// <summary>
-    /// Specification of the evaluation for different data
-    /// </summary>
-    public interface IEvaluator
+    public class InvalidArgumentException: SBEException
     {
-        /// <summary>
-        /// Entry point for some evaluation
-        /// </summary>
-        /// <param name="data">mixed data</param>
-        /// <returns>Evaluated end value</returns>
-        string evaluate(string data);
+        public InvalidArgumentException(string message)
+            : base(message)
+        {
+
+        }
+
+        public InvalidArgumentException(string message, params object[] args)
+            : base(message, args)
+        {
+
+        }
     }
 }

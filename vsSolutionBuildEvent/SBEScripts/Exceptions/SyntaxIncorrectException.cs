@@ -15,44 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
-namespace net.r_eg.vsSBE.Exceptions
+namespace net.r_eg.vsSBE.SBEScripts.Exceptions
 {
-    public class SBEException: NotSupportedException
+    public class SyntaxIncorrectException: ScriptException
     {
-        public SBEException()
-        {
-
-        }
-
-        public SBEException(string message)
+        public SyntaxIncorrectException(string message)
             : base(message)
         {
 
         }
 
-        public SBEException(string message, Exception innerException)
-            : base(message, innerException)
+        public SyntaxIncorrectException(string message, params object[] args)
+            : base(message, args)
         {
 
-        }
-
-        public SBEException(string message, params object[] args)
-            : base(format(ref message, args))
-        {
-
-        }
-
-        public SBEException(string message, Exception innerException, params object[] args)
-            : base(format(ref message, args), innerException)
-        {
-
-        }
-
-        protected static string format(ref string message, params object[] args)
-        {
-            return String.Format(message, args);
         }
     }
 }

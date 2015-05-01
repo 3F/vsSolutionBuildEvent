@@ -18,7 +18,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace net.r_eg.vsSBE.SBEScripts
+namespace net.r_eg.vsSBE.MSBuild
 {
     public class StringHandler: Scripts.StringProtector
     {
@@ -39,54 +39,23 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
-        /// Protects the MSBuild/SBE-Scripts containers.
+        /// Protects escaped MSBuild data.
         /// </summary>
         /// <param name="data"></param>
         /// <returns>protected string</returns>
-        public string protectCores(string data)
+        public string protectEscContainer(string data)
         {
             lock(_lock)
             {
-                return Regex.Replace(data, String.Format(@"({0}|{1})",                          // #1 - mixed
-                                                @"\#{1,2}" + RPattern.SquareBracketsContent,    // #2 -  #[..]
-                                                @"\${1,2}" + RPattern.RoundBracketsContent),    // #3 -  $(..)
-                        delegate(Match m)
-                        {
-                            uint ident      = IdentNext;
-                            strings[ident]  = m.Groups[1].Value;
-                            Log.nlog.Trace("StringHandler: protect cores '{0}' :: '{1}'", strings[ident], ident);
-                            return replacementIn(ident);
-                        },
-                        RegexOptions.IgnorePatternWhitespace);
+                return Regex.Replace(data, RPattern.ContainerEscOuter, delegate(Match m)
+                {
+                    uint ident      = IdentNext;
+                    strings[ident]  = "$" + m.Groups[1].Value;
+                    Log.nlog.Trace("StringHandler: protect the escaped outer container '{0}' :: '{1}'", strings[ident], ident);
+                    return replacementIn(ident);
+                },
+                RegexOptions.IgnorePatternWhitespace);
             }
-        }
-
-        /// <summary>
-        /// Escaping quotes in data
-        /// </summary>
-        /// <param name="data">mixed string</param>
-        /// <returns>data with escaped quotes</returns>
-        public static string escapeQuotes(string data)
-        {
-            if(String.IsNullOrEmpty(data)) {
-                return String.Empty;
-            }
-            // (?<!\\)"
-            return Regex.Replace(data, "(?<!\\\\)\"", "\\\"");
-        }
-
-        /// <summary>
-        /// Normalize data for strings.
-        /// e.g.: unescape double quotes etc.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public static string normalize(string data)
-        {
-            if(String.IsNullOrEmpty(data)) {
-                return String.Empty;
-            }
-            return data.Replace("\\\"", "\"");
         }
 
         /// <summary>
@@ -97,7 +66,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         protected override string replacementFormat(string format)
         {
             // no conflict, because all variants with '!' as argument is not possible without quotes.
-            return String.Format("!s{0}!", format);
+            return String.Format("!p{0}!", format);
         }
     }
 }

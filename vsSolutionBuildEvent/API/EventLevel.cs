@@ -17,15 +17,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Events;
-using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts;
+using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.API
 {
@@ -295,7 +292,7 @@ namespace net.r_eg.vsSBE.API
             Action = new Actions.Connection(
                             new Actions.Command(Environment,
                                          new Script(Bootloader),
-                                         new MSBuildParser(Environment, uvariable))
+                                         new MSBuild.Parser(Environment, uvariable))
             );
         }
 

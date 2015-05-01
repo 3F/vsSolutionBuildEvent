@@ -27,14 +27,14 @@ namespace net.r_eg.vsSBE
     /// <summary>
     /// Basic works with .sln for getting list of projects, available configurations etc.
     /// Please note: it's necessary for working without DTE-context/IDE mode, for example with isolated enviroment.
-    ///              Use the EnvDTE & ProjectCollection if it's possible!
+    ///              Use the EnvDTE and ProjectCollection if it's possible!
     /// 
     /// Another variants:
     /// * Using deprecated Microsoft.Build.BuildEngine.Project - http://msdn.microsoft.com/en-us/library/microsoft.build.buildengine.project%28v=vs.100%29.aspx
     /// * Or reflect the internal SolutionParser from Microsoft.Build.BuildEngine.Shared, for example for getting all projects:
     ///   -> void ParseProject(string firstLine)
     ///      -> void ParseFirstProjectLine(string firstLine, ProjectInSolution proj)
-    ///      -> crackProjectLine -> PROJECTNAME & RELATIVEPATH
+    ///      -> crackProjectLine -> PROJECTNAME + RELATIVEPATH
     /// </summary>
     public class SolutionParser
     {
@@ -70,7 +70,7 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Configuration & Platform
+        /// Configuration / Platform
         /// </summary>
         public struct SolutionCfg
         {

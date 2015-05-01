@@ -23,6 +23,7 @@ using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Dom;
+using net.r_eg.vsSBE.Scripts;
 using net.r_eg.vsSBE.UI.WForms.Controls;
 using AvalonEditWPF = ICSharpCode.AvalonEdit.TextEditor;
 
@@ -74,7 +75,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                 bootloader  = new Bootloader(env, uvariable);
                 inspector   = new Inspector(bootloader);
                 script      = new Script(bootloader);
-                msbuild     = new MSBuildParser(env, uvariable);
+                msbuild     = new MSBuild.Parser(env, uvariable);
             }
         }
         private static ToolContext context;

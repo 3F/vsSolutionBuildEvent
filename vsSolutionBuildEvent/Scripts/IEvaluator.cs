@@ -15,22 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using net.r_eg.vsSBE.Exceptions;
-
-namespace net.r_eg.vsSBE.SBEScripts.Exceptions
+namespace net.r_eg.vsSBE.Scripts
 {
-    public class ScriptException: SBEException
+    /// <summary>
+    /// Specification of the evaluation for different data
+    /// </summary>
+    public interface IEvaluator
     {
-        public ScriptException(string message)
-            : base(message)
-        {
-
-        }
-
-        public ScriptException(string message, params object[] args)
-            : base(message, args)
-        {
-
-        }
+        /// <summary>
+        /// Entry point for some evaluation
+        /// </summary>
+        /// <param name="data">mixed data</param>
+        /// <returns>Evaluated end value</returns>
+        string evaluate(string data);
     }
 }
