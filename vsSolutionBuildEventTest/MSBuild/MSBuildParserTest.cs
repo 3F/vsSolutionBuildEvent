@@ -437,9 +437,9 @@ namespace net.r_eg.vsSBE.Test.MSBuild
                 $(p2)
              */
             string data = "$(p1 = $(Platform))$(p2 = $(p1))$(p2)";
-            Assert.AreEqual("[P~p2~]", target.parse(data));
+            Assert.AreEqual("[P~Platform~]", target.parse(data));
             Assert.AreEqual("[P~Platform~]", target.uvariable.get("p1"));
-            Assert.AreEqual("[P~p1~]", target.uvariable.get("p2"));
+            Assert.AreEqual("[P~Platform~]", target.uvariable.get("p2"));
         }
 
         /// <summary>
@@ -550,6 +550,40 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             string data = "$(p2 = $$$$(Platform))";
             Assert.AreEqual("", target.parse(data));
             Assert.AreEqual("$$$(Platform)", target.uvariable.get("p2"));
+        }
+
+        /// <summary>
+        ///A test for parse - Escape & Variable
+        ///</summary>
+        [TestMethod()]
+        public void parseEscapeAndVarTest9()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            /*
+                $(p1 = $(Platform))
+                $(p1)
+             */
+            string data = "$(p1 = $(Platform))$(p1)";
+            Assert.AreEqual("[P~Platform~]", target.parse(data));
+            Assert.AreEqual("[P~Platform~]", target.uvariable.get("p1"));
+        }
+
+        /// <summary>
+        ///A test for parse - Escape & Variable
+        ///</summary>
+        [TestMethod()]
+        public void parseEscapeAndVarTest10()
+        {
+            MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
+
+            /*
+                $(p1 = $(Platform))
+                $$(p1)
+             */
+            string data = "$(p1 = $(Platform))$$(p1)";
+            Assert.AreEqual("$(p1)", target.parse(data));
+            Assert.AreEqual("[P~Platform~]", target.uvariable.get("p1"));
         }
 
         /// <summary>

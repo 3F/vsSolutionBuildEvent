@@ -33,9 +33,9 @@ namespace net.r_eg.vsSBE.MSBuild
         public const string PROP_VALUE_DEFAULT = "*Undefined*";
 
         /// <summary>
-        /// Maximum of nesting level
+        /// Max of supported containers for processing.
         /// </summary>
-        protected const int DEPTH_LIMIT = 50;
+        protected const uint CONTAINERS_LIMIT = 1 << 22;
 
         /// <summary>
         /// Provides operation with environment
@@ -51,12 +51,6 @@ namespace net.r_eg.vsSBE.MSBuild
         /// object synch.
         /// </summary>
         private Object _lock = new Object();
-
-        /// <summary>
-        /// Current level of nesting data.
-        /// Aborting if reached limit
-        /// </summary>
-        private volatile int _depthLevel = 0;
 
 
         /// <summary>
@@ -167,13 +161,12 @@ namespace net.r_eg.vsSBE.MSBuild
 
             lock(_lock)
             {
-                _depthLevel = 0;
                 return sh.recovery(
                             containerIn(
                                 sh.protectEscContainer(
                                     sh.protectSingleQuotes(data)
                                 ),
-                                sh, DEPTH_LIMIT
+                                sh, CONTAINERS_LIMIT
                             )
                         );
             }
@@ -238,43 +231,44 @@ namespace net.r_eg.vsSBE.MSBuild
 
 
         /// <summary>
-        /// Work with deepest container, e.g.: $(.. -} $(..) {- ...)
+        /// Handler of general containers.
+        /// Moving upward from deepest container.
         /// 
-        /// (name) or (name:project) or ([MSBuild]::MakeRelative($(path1), ...):project) ..
+        /// $(name) or $(name:project) or $([MSBuild]::MakeRelative($(path1), ...):project) ..
         /// https://msdn.microsoft.com/en-us/library/vstudio/dd633440%28v=vs.120%29.aspx
         /// </summary>
         /// <param name="data"></param>
         /// <param name="sh"></param>
-        /// <param name="limit">Maximum of nesting level. Aborts if reached</param>
+        /// <param name="limit">Limitation to containers. Aborts if reached</param>
         /// <exception cref="LimitException"></exception>
         /// <returns></returns>
-        protected string containerIn(string data, StringHandler sh, int limit)
+        protected string containerIn(string data, StringHandler sh, uint limit)
         {
-            Log.nlog.Trace("containerIn: level {0}", _depthLevel);
-            if(_depthLevel > limit) {
-                throw new LimitException("Nesting level of '{0}' reached. Aborted.", limit);
-            }
+            Regex con   = new Regex(RPattern.ContainerIn, RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
+            int maxRep  = 1; // rule of depth, e.g.: $(p1 = $(Platform))$(p2 = $(p1))$(p2)
+                             //TODO: it's slowest but fully compatible with classic rules with minimal programming.. so, improve performance
 
-            data = Regex.Replace(data, RPattern.ContainerIn, delegate(Match m)
-                    {
-                        string raw = m.Groups[1].Value;
-                        Log.nlog.Debug("containerIn: raw - '{0}'", raw);
-                        return evaluate(prepare(sh.recovery(raw)));
-                    }, 
-                    RegexOptions.IgnorePatternWhitespace);
-
-            data = sh.protectEscContainer(sh.protectSingleQuotes(data));
-
-            if(Regex.IsMatch(data, RPattern.ContainerIn, RegexOptions.IgnorePatternWhitespace))
+            uint step = 0;
+            do
             {
-                ++_depthLevel;
-                Log.nlog.Trace("containerIn: step in");
-                data = containerIn(data, sh, limit);
-                --_depthLevel;
-            }
+                if(step++ > limit) {
+                    throw new LimitException("Restriction of supported containers '{0}' reached. Aborted.", limit);
+                }
+
+                data = con.Replace(data, delegate(Match m)
+                        {
+                            string raw = m.Groups[1].Value;
+                            Log.nlog.Trace("containerIn: raw - '{0}'", raw);
+                            return evaluate(prepare(sh.recovery(raw)));
+                        }, maxRep);
+
+                // protect before new checking
+                data = sh.protectEscContainer(sh.protectSingleQuotes(data));
+
+            } while(con.IsMatch(data));
+
             return data;
         }
-
 
         /// <summary>
         /// Prepare data for next evaluation step.
@@ -323,7 +317,7 @@ namespace net.r_eg.vsSBE.MSBuild
                     raw = raw
                 }
             };
-            Log.nlog.Trace("prepare: raw '{0}'", raw);
+            //Log.nlog.Trace("prepare: raw '{0}'", raw);
 
 
             /* Variable */
@@ -339,11 +333,11 @@ namespace net.r_eg.vsSBE.MSBuild
             /* Data */
 
             if(rStringDataD.Success) {
-                ret.property.unevaluated    = rStringDataD.Value.Replace("\\\"", "\"");
+                ret.property.unevaluated    = rStringDataD.Value.Replace("\\\"", "\""); //TODO:
                 ret.variable.type           = PreparedData.ValueType.StringFromDouble;
             }
             else if(rStringDataS.Success) {
-                ret.property.unevaluated    = rStringDataS.Value.Replace("\\'", "'");
+                ret.property.unevaluated    = rStringDataS.Value.Replace("\\'", "'"); //TODO:
                 ret.variable.type           = PreparedData.ValueType.StringFromSingle;
             }
             else {
