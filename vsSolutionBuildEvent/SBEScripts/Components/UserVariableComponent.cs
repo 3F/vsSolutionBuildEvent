@@ -27,8 +27,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// <summary>
     /// Works with User-Variables
     /// </summary>
-    [Definition("var name", "Get data from variable the 'name'")]
-    [Definition("var name = data", "Set the 'data' for variable the 'name'")]
+    [Definition("var", "Definitions of User-Variables")]
+    [Definition("name", "Get data from variable 'name'", "var")]
+    [Definition("name = ", "Set mixed data for variable 'name'", "var")]
+    [Definition("-name", "Unset variable 'name'", "var")]
+    [Definition("+name", "Default value for variable 'name'", "var")]
     public class UserVariableComponent: Component, IComponent
     {
         /// <summary>

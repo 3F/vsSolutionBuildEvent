@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -40,12 +40,23 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
             protected set;
         }
 
+        /// <summary>
+        /// Name of parent specification if exist or null
+        /// </summary>
+        public string Parent
+        {
+            get;
+            protected set;
+        }
+
         /// <param name="name">Definition name</param>
         /// <param name="description">About of the definition</param>
-        public DefinitionAttribute(string name, string description)
+        /// <param name="parent">Name of parent specification if exist or null</param>
+        public DefinitionAttribute(string name, string description, string parent = null)
         {
             Name        = name;
             Description = description;
+            Parent      = parent;
         }
     }
 }

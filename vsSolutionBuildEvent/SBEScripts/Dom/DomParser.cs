@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,8 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 
@@ -102,7 +100,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
                                           \s*
                                           (\S+)     #1 - Component
                                           \s*
-                                          (.+)? #2 - properties/methods etc. (optional)", 
+                                          (.+)?     #2 - properties/methods etc. (optional)", 
                                           RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
@@ -291,7 +289,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         {
             foreach(INodeInfo info in Inspector.Root)
             {
-                if(info.Type != InfoType.Component) {
+                if(info.Type != InfoType.Component && info.Type != InfoType.Definition) {
                     continue;
                 }
                 if(data.StartsWith(String.Format("#[{0}", info.Name))) { //TODO: IComponent <- Condition

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -20,7 +20,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using net.r_eg.vsSBE.SBEScripts.Components;
 
 namespace net.r_eg.vsSBE.SBEScripts.Dom
@@ -165,8 +164,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
                 return;
             }
 
-            //IAttrDomLevelA levA = (IAttrDomLevelA)attr;
-            NodeIdent ident = new NodeIdent(null, null);
+            IAttrDomLevelA levA = (IAttrDomLevelA)attr;
+            NodeIdent ident     = new NodeIdent(levA.Parent, null);
 
             if(!data.ContainsKey(ident)) {
                 data[ident] = new List<INodeInfo>();

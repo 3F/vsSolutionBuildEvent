@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -92,7 +92,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
 
         /// <param name="name">Element name</param>
         /// <param name="description">Description for current element</param>
-        /// <param name="method">Link to the binding with other node</param>
+        /// <param name="ident">Link to the binding with other node</param>
         /// <param name="type">Element type</param>
         /// <param name="displaying">Displays element over the 'Name' property</param>
         public NodeInfo(string name, string description, NodeIdent ident, InfoType type = InfoType.Unspecified, string displaying = null)
@@ -124,7 +124,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <param name="attr">Attribute of property</param>
         /// <param name="displaying">Displays element over the 'Name' property</param>
         public NodeInfo(DefinitionAttribute attr, string displaying = null)
-            : this(attr.Name, attr.Description, InfoType.Definition, displaying)
+            : this(attr.Name, attr.Description, new NodeIdent(attr.Name, null), InfoType.Definition, displaying)
         {
 
         }
@@ -132,7 +132,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <param name="attr">Attribute of property</param>
         /// <param name="displaying">Displays element over the 'Name' property</param>
         public NodeInfo(ComponentAttribute attr, string displaying = null)
-            : this(attr.Name, attr.Description, InfoType.Component, displaying)
+            : this(attr.Name, attr.Description, new NodeIdent(attr.Name, null), InfoType.Component, displaying)
         {
 
         }
