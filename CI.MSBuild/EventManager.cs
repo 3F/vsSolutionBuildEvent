@@ -32,6 +32,7 @@ using System.Reflection;
 using System.Threading;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using net.r_eg.vsSBE.Bridge;
 
 namespace net.r_eg.vsSBE.CI.MSBuild
 {
@@ -64,6 +65,11 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             get;
             private set;
         }
+
+        /// <summary>
+        /// Specified type of build action
+        /// </summary>
+        protected volatile BuildType buildType = BuildType.Common;
 
         /// <summary>
         /// Logger parameters
@@ -129,19 +135,31 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             setCulture("en-US"); //TODO: set with params to logger
         }
 
+
+        /// <summary>
+        /// Initialize library with ProjectStarted event.
+        /// This is the first event from all where we can define the SolutionFile
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns>true if loaded</returns>
+        protected bool initLibraryOnProjectStarted(ProjectStartedEventArgs e)
+        {
+            if(!e.ProjectFile.TrimEnd().ToLower().EndsWith(".sln")) {
+                debug("solutionOpened() has been ignored for '{0}'", e.ProjectFile);
+                return false;
+            }
+
+            SolutionFile    = e.ProjectFile; // should be .sln
+            library         = load(SolutionFile, getSolutionProperties(e.Properties), LibraryPath);
+            return true;
+        }
+
         protected void onProjectStarted(object sender, ProjectStartedEventArgs e)
         {
-            if(String.IsNullOrEmpty(SolutionFile))
-            {
-                if(!e.ProjectFile.ToLower().EndsWith(".sln")) {
-                    debug("solutionOpened() has been ignored for '{0}'", e.ProjectFile);
-                    return;
+            if(library == null || String.IsNullOrEmpty(SolutionFile)) {
+                if(initLibraryOnProjectStarted(e)) {
+                    onPre(e); // or use some target for delays as variant
                 }
-                SolutionFile = e.ProjectFile;
-                library = load(SolutionFile, getSolutionProperties(e.Properties), LibraryPath);
-
-                int pfCancelUpdate = 0;
-                library.Event.onPre(ref pfCancelUpdate); // or use some target for delays as variant
                 return;
             }
 
@@ -154,6 +172,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                 // already pushed
                 return;
             }
+            //updateBuildType(e.TargetNames);
 
             if(e.Properties == null) {
                 debug("onProjectStarted: e.Properties is null :: '{0}' ({1})", e.ProjectFile, e.Message);
@@ -208,6 +227,14 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             }
         }
 
+        protected void onPre(ProjectStartedEventArgs e)
+        {
+            updateBuildType(e.TargetNames);
+
+            int pfCancelUpdate = 0;
+            library.Event.onPre(ref pfCancelUpdate);
+        }
+
         protected void onBuildFinished(object sender, BuildFinishedEventArgs e)
         {
             if(library == null) {
@@ -217,7 +244,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             if(!e.Succeeded) {
                 library.Event.onCancel();
             }
-            library.Event.onPost(e.Succeeded ? 1 : 0, 0, 0);
+            library.Event.onPost((e.Succeeded)? 1 : 0, 0, 0);
         }
 
         /// <summary>
@@ -272,6 +299,22 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                 }
             }
             return ret;
+        }
+
+        /// <summary>
+        /// Updates the type by target name if it exists in BuildType list
+        /// </summary>
+        /// <param name="targets">each target separately or with a semicolon if this is a multiple targets</param>
+        protected void updateBuildType(string targets)
+        {
+            foreach(string target in targets.Split(';'))
+            {
+                if(Enum.IsDefined(typeof(BuildType), target.Trim())) {
+                    buildType = (BuildType)Enum.Parse(typeof(BuildType), target);
+                    library.Build.updateBuildType(buildType);
+                    return; // use as 'or' for a multiple targets
+                }
+            }
         }
 
         protected Provider.ILibrary load(string solutionFile, Dictionary<string, string> properties, string libPath)

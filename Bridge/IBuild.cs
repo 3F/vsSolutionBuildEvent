@@ -35,5 +35,11 @@ namespace net.r_eg.vsSBE.Bridge
         /// </summary>
         /// <param name="data">Raw data of building process</param>
         void onBuildRaw(string data);
+
+        /// <summary>
+        /// Sets current type of the build
+        /// </summary>
+        /// <param name="type"></param>
+        void updateBuildType(BuildType type);
     }
 }

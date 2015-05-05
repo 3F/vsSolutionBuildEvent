@@ -106,7 +106,7 @@
     <Compile Include="API\Version.cs" />
     <Compile Include="Configuration\Component.cs" />
     <Compile Include="Environment.cs" />
-    <Compile Include="Events\BuildType.cs" />
+    <Compile Include="UnifiedTypes\Build\VSCommand.cs" />
     <Compile Include="Events\LoggingEvent.cs" />
     <Compile Include="Events\ILoggingEvent.cs" />
     <Compile Include="Events\ModeScript.cs" />

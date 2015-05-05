@@ -17,6 +17,7 @@
 
 using System;
 using System.Linq;
+using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild;
@@ -84,7 +85,7 @@ namespace net.r_eg.vsSBE.Actions
                 return false;
             }
             if(evt.BuildType != BuildType.Common && evt.BuildType != buildType) {
-                Log.nlog.Debug("Ignored context. Build type '{0}'", buildType);
+                Log.nlog.Debug("Ignored context. Build type '{0}' should be '{1}'", buildType, evt.BuildType);
                 return false;
             }
             this.type = type;

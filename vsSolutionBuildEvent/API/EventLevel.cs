@@ -270,6 +270,15 @@ namespace net.r_eg.vsSBE.API
             }
         }
 
+        /// <summary>
+        /// Sets current type of the build
+        /// </summary>
+        /// <param name="type"></param>
+        public void updateBuildType(Bridge.BuildType type)
+        {
+            Action.updateContext(type);
+        }
+
         public EventLevel(DTE2 dte2, bool debug = false)
         {
             vsSBE.Settings.debugMode = debug;
@@ -299,7 +308,7 @@ namespace net.r_eg.vsSBE.API
         protected void attachCommandEvents()
         {
             if(Environment.Events == null) {
-                Log.nlog.Warn("Context of build action: Disabled for current Environment.");
+                Log.nlog.Info("Context of build action: uses a limited types.");
                 return; //this can be for emulated DTE2 context
             }
 
@@ -334,8 +343,8 @@ namespace net.r_eg.vsSBE.API
                 return;
             }
 
-            if(Enum.IsDefined(typeof(BuildType), id)) {
-                Action.updateContext((BuildType)id);
+            if(UnifiedTypes.Build.VSCommand.existsById(id)) {
+                updateBuildType(UnifiedTypes.Build.VSCommand.getByCommandId(id));
             }
         }
     }
