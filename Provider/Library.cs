@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using EnvDTE80;
 
 namespace net.r_eg.vsSBE.Provider
 {
@@ -133,7 +132,7 @@ namespace net.r_eg.vsSBE.Provider
         /// </summary>
         /// <param name="libpath">Path to library</param>
         /// <param name="dte2">DTE2 instance</param>
-        public Library(string libpath, DTE2 dte2)
+        public Library(string libpath, object dte2)
         {
             initLib(prepare(libpath), dte2, PSettings.DebugMode);
         }

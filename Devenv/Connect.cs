@@ -32,11 +32,10 @@ using Extensibility;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using net.r_eg.vsSBE.Bridge;
 
 namespace net.r_eg.vsSBE.Devenv
 {
-    /// <summary>The object for implementing an Add-in.</summary>
-    /// <seealso class='IDTExtensibility2' />
     public sealed class Connect: IDTExtensibility2, IVsSolutionEvents, IVsUpdateSolutionEvents2
     {
         /// <summary>
@@ -71,12 +70,20 @@ namespace net.r_eg.vsSBE.Devenv
         /// <summary>
         /// DTE2 Context from the root object of the host application.
         /// </summary>
-        private DTE2 _applicationObject;
+        private DTE2 _dte2;
 
         /// <summary>
         /// Representing this Add-in.
         /// </summary>
-        private AddIn _addInInstance;
+        private AddIn _addIn;
+
+        /// <summary>
+        /// Loader of main library
+        /// </summary>
+        private Provider.ILoader loader;
+
+
+        #region pingpong
 
         public int OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
         {
@@ -113,71 +120,100 @@ namespace net.r_eg.vsSBE.Devenv
             return library.Event.onProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
         }
 
-        /// <summary>Implements the OnConnection method of the IDTExtensibility2 interface. Receives notification that the Add-in is being loaded.</summary>
+        #endregion
+
+        /// <summary>Receives notification that the Add-in is being loaded.</summary>
         /// <param term='application'>Root object of the host application.</param>
         /// <param term='connectMode'>Describes how the Add-in is being loaded.</param>
         /// <param term='addInInst'>Object representing this Add-in.</param>
         /// <seealso class='IDTExtensibility2' />
         public void OnConnection(object application, ext_ConnectMode connectMode, object addInInst, ref Array custom)
         {
-            _applicationObject = (DTE2)application;
-            _addInInstance = (AddIn)addInInst;
 
 //#if !DEBUG
             if(connectMode != ext_ConnectMode.ext_cm_CommandLine) {
-                Console.WriteLine("[Ignored] Allowed only Command line mode /'{0}'", connectMode);
+                msg("[Ignored] Allowed only Command line mode /'{0}'", connectMode);
                 return;
             }
 //#endif
 
-            Provider.ILoader loader     = new Provider.Loader();
+            loader                      = new Provider.Loader();
             loader.Settings.DebugMode   = Environment.GetCommandLineArgs().Contains("verbosity:diagnostic");
-            try {
-                library = loader.load(_applicationObject, _addInInstance);
-                Console.WriteLine("Library: loaded from '{0}' :: v{1} [{2}] /'{3}':{4}", 
-                                    library.Dllpath, 
-                                    library.Version.Number.ToString(), 
-                                    library.Version.BranchSha1,
-                                    library.Version.BranchName,
-                                    library.Version.BranchRevCount);
+            _dte2                       = (DTE2)application;
+            _addIn                      = (AddIn)addInInst;
 
-                // To listen events fires from IVsSolutionEvents
-                spSolution = (IVsSolution)ServiceProvider.GlobalProvider.GetService(typeof(SVsSolution));
-                spSolution.AdviseSolutionEvents(this, out _pdwCookieSolution);
+            try
+            {
+                library = loader.load(application, _addIn.SatelliteDllPath, _dte2.RegistryRoot);
+                msg("Library: loaded from '{0}' :: v{1} [{2}] /'{3}':{4}", 
+                                                    library.Dllpath, 
+                                                    library.Version.Number.ToString(), 
+                                                    library.Version.BranchSha1,
+                                                    library.Version.BranchName,
+                                                    library.Version.BranchRevCount);
 
-                // To listen events fires from IVsUpdateSolutionEvents2
-                spSolutionBM = (IVsSolutionBuildManager2)ServiceProvider.GlobalProvider.GetService(typeof(SVsSolutionBuildManager));
-                spSolutionBM.AdviseUpdateSolutionEvents(this, out _pdwCookieSolutionBM);
+                updateBuildType(Environment.GetCommandLineArgs());
+                adviseEvents();
             }
             catch(DllNotFoundException ex)
             {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(
-                    "You can install vsSolutionBuildEvent as plugin for this Visual Studio v{0} or manually place the {1} into the current add-in folder", 
-                    _applicationObject.Version,
+                msg(ex.Message);
+                msg("You can install vsSolutionBuildEvent as plugin for this Visual Studio v{0} or manually place the {1} into the current add-in folder",
+                    _dte2.Version,
                     "vsSolutionBuildEvent.dll with dependencies");
 
-                Console.WriteLine("https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
-                Console.WriteLine("Minimum requirements: vsSolutionBuildEvent.dll v{0}", loader.MinVersion.ToString());
-                Console.WriteLine(new String('=', 80));
+                msg("https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
+                msg("Minimum requirements: vsSolutionBuildEvent.dll v{0}", loader.MinVersion.ToString());
+                msg(new String('=', 80));
             }
-            catch(ReflectionTypeLoadException ex) {
+            catch(ReflectionTypeLoadException ex)
+            {
                 foreach(FileNotFoundException le in ex.LoaderExceptions) {
-                    Console.WriteLine("{2} {0}{3} {0}{0}{4} {0}{1}",
+                    msg("{2} {0}{3} {0}{0}{4} {0}{1}",
                                         Environment.NewLine, new String('~', 80),
                                         le.FileName, le.Message, le.FusionLog);
                 }
             }
             catch(Exception ex) {
-                Console.WriteLine("Error with advising '{0}'", ex.ToString());
+                msg("Error with advising '{0}'", ex.ToString());
             }
         }
 
-        /// <summary>Implements the OnDisconnection method of the IDTExtensibility2 interface. Receives notification that the Add-in is being unloaded.</summary>
+        /// <summary>Receives notification that the Add-in is being unloaded.</summary>
         /// <param term='disconnectMode'>Describes how the Add-in is being unloaded.</param>
         /// <param term='custom'>Array of parameters that are host application specific.</param>
         /// <seealso class='IDTExtensibility2' />
         public void OnDisconnection(ext_DisconnectMode disconnectMode, ref Array custom)
+        {
+            unadviseEvents();
+        }
+
+        public Connect()
+        {
+            msg(new String('=', 60));
+            msg("[[ vsSolutionBuildEvent Devenv Command-Line ]] Welcomes You!");
+            msg(new String('=', 60));
+            msg("Version: v{0}", System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
+            msg("Feedback: entry.reg@gmail.com");
+            msg(new String('_', 60));
+        }
+
+
+        /// <summary>
+        /// Defines listeners for main events.
+        /// </summary>
+        private void adviseEvents()
+        {
+            // To listen events fires from IVsSolutionEvents
+            spSolution = (IVsSolution)ServiceProvider.GlobalProvider.GetService(typeof(SVsSolution));
+            spSolution.AdviseSolutionEvents(this, out _pdwCookieSolution);
+
+            // To listen events fires from IVsUpdateSolutionEvents2
+            spSolutionBM = (IVsSolutionBuildManager2)ServiceProvider.GlobalProvider.GetService(typeof(SVsSolutionBuildManager));
+            spSolutionBM.AdviseUpdateSolutionEvents(this, out _pdwCookieSolutionBM);
+        }
+
+        private void unadviseEvents()
         {
             if(spSolutionBM != null && _pdwCookieSolutionBM != 0) {
                 spSolutionBM.UnadviseUpdateSolutionEvents(_pdwCookieSolutionBM);
@@ -188,19 +224,52 @@ namespace net.r_eg.vsSBE.Devenv
             }
         }
 
-        public Connect()
+        /// <summary>
+        /// Updates the type by command-line switches if it exists in BuildType list
+        /// https://msdn.microsoft.com/en-us/library/vstudio/xee0c8y7.aspx
+        /// </summary>
+        /// <param name="switches">command-line switches</param>
+        private void updateBuildType(string[] switches)
         {
-            Console.WriteLine(new String('=', 60));
-            Console.WriteLine("[[ vsSolutionBuildEvent Devenv Command-Line ]] Welcomes You!");
-            Console.WriteLine(new String('=', 60));
-            Console.WriteLine("Version: v{0}", System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
-            Console.WriteLine("Feedback: entry.reg@gmail.com");
-            Console.WriteLine(new String('_', 60));
+            foreach(string type in switches.Where(p => p.StartsWith("/")).Select(p => p.Substring(1)))
+            {
+                debug("updateBuildType: check '{0}'", type);
+                if(Enum.IsDefined(typeof(BuildType), type))
+                {
+                    BuildType buildType = (BuildType)Enum.Parse(typeof(BuildType), type);
+                    library.Build.updateBuildType(buildType);
+                    debug("updateBuildType: updated as a '{0}'", buildType);
+                    return;
+                }
+            }
         }
+
+        /// <summary>
+        /// TODO: logger
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="args"></param>
+        private void msg(string data, params object[] args)
+        {
+            Console.WriteLine(data, args);
+        }
+
+        /// <summary>
+        /// TODO: logger
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="args"></param>
+        private void debug(string data, params object[] args)
+        {
+            if(loader.Settings.DebugMode) {
+                msg(data, args);
+            }
+        }
+
 
         #region unused
 
-        /// <summary>Implements the OnAddInsUpdate method of the IDTExtensibility2 interface. Receives notification when the collection of Add-ins has changed.</summary>
+        /// <summary>Receives notification when the collection of Add-ins has changed.</summary>
         /// <param term='custom'>Array of parameters that are host application specific.</param>
         /// <seealso class='IDTExtensibility2' />		
         public void OnAddInsUpdate(ref Array custom)
@@ -208,7 +277,7 @@ namespace net.r_eg.vsSBE.Devenv
 
         }
 
-        /// <summary>Implements the OnStartupComplete method of the IDTExtensibility2 interface. Receives notification that the host application has completed loading.</summary>
+        /// <summary>Receives notification that the host application has completed loading.</summary>
         /// <param term='custom'>Array of parameters that are host application specific.</param>
         /// <seealso class='IDTExtensibility2' />
         public void OnStartupComplete(ref Array custom)
@@ -216,7 +285,7 @@ namespace net.r_eg.vsSBE.Devenv
 
         }
 
-        /// <summary>Implements the OnBeginShutdown method of the IDTExtensibility2 interface. Receives notification that the host application is being unloaded.</summary>
+        /// <summary>Receives notification that the host application is being unloaded.</summary>
         /// <param term='custom'>Array of parameters that are host application specific.</param>
         /// <seealso class='IDTExtensibility2' />
         public void OnBeginShutdown(ref Array custom)

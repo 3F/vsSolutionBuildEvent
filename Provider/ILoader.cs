@@ -47,27 +47,30 @@ namespace net.r_eg.vsSBE.Provider
         ISettings Settings { get; }
 
         /// <summary>
-        /// Load the library with path from DTE2 & AddIn for alternative path.
+        /// Load library with DTE2-context & Add-In
         /// </summary>
-        /// <param name="dte2">Uses paths from dte2 object for search in registry etc.</param>
-        /// <param name="addIn">Uses paths from addIn object to find in place with Add-in.</param>
-        ILibrary load(EnvDTE80.DTE2 dte2, EnvDTE.AddIn addIn);
+        /// <param name="dte2">DTE2-context</param>
+        /// <param name="pathAddIn">Path to Add-in.</param>
+        /// <param name="registryRoot">Search in registry as alternative.</param>
+        ILibrary load(object dte2, string pathAddIn, string registryRoot = null);
+        //ILibrary load(EnvDTE80.DTE2 dte2, EnvDTE.AddIn addIn); // deprecated - heavy dependencies
+        
+        /// <summary>
+        /// Load library with DTE2-context from path.
+        /// </summary>
+        /// <param name="dte2">DTE2-context</param>
+        /// <param name="path">Specific path to library.</param>
+        /// <param name="createDomain">Create new domain for loading new references into current domain</param>
+        ILibrary load(object dte2, string path, bool createDomain = false);
+        ////ILibrary load(EnvDTE80.DTE2 dte2, string path, bool createDomain = false); // deprecated - heavy dependencies
 
         /// <summary>
-        /// Load the library with path from DTE2 & another path as alternative.
-        /// </summary>
-        /// <param name="dte2">Uses paths from dte2 object for search in registry etc.</param>
-        /// <param name="path">Specific path for search this library.</param>
-        /// <param name="createDomain">Create new domain for loading new references into this domain</param>
-        ILibrary load(EnvDTE80.DTE2 dte2, string path, bool createDomain = false);
-
-        /// <summary>
-        /// Load the library from path with isolated environment.
+        /// Load library from path with Isolated Environments.
         /// </summary>
         /// <param name="solutionFile">Path to .sln file</param>
         /// <param name="properties">Solution properties</param>
-        /// <param name="libPath">Specific path for search this library.</param>
-        /// <param name="createDomain">Create new domain for loading new references into this domain</param>
+        /// <param name="libPath">Specific path to library.</param>
+        /// <param name="createDomain">Create new domain for loading new references into current domain</param>
         ILibrary load(string solutionFile, Dictionary<string, string> properties, string libPath, bool createDomain = false);
 
         /// <summary>

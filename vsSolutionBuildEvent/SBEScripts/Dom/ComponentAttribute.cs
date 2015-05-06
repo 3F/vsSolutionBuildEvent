@@ -51,6 +51,14 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
 
         /// <param name="name">Componen name</param>
         /// <param name="description">About component</param>
+        public ComponentAttribute(string name, string description)
+        {
+            Name        = name;
+            Description = description;
+        }
+
+        /// <param name="name">Componen name</param>
+        /// <param name="description">About component</param>
         /// <param name="parent">Name of parent specification if exist or null</param>
         public ComponentAttribute(string name, string description, string parent = null)
         {

@@ -303,15 +303,18 @@ namespace net.r_eg.vsSBE.CI.MSBuild
 
         /// <summary>
         /// Updates the type by target name if it exists in BuildType list
+        /// https://msdn.microsoft.com/en-us/library/vstudio/ms164311.aspx
         /// </summary>
         /// <param name="targets">each target separately or with a semicolon if this is a multiple targets</param>
         protected void updateBuildType(string targets)
         {
             foreach(string target in targets.Split(';'))
             {
-                if(Enum.IsDefined(typeof(BuildType), target.Trim())) {
+                if(Enum.IsDefined(typeof(BuildType), target.Trim()))
+                {
                     buildType = (BuildType)Enum.Parse(typeof(BuildType), target);
                     library.Build.updateBuildType(buildType);
+                    debug("updateBuildType: '{0}' from - '{1}'", buildType, targets);
                     return; // use as 'or' for a multiple targets
                 }
             }

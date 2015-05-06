@@ -51,8 +51,16 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
 
         /// <param name="name">Definition name</param>
         /// <param name="description">About of the definition</param>
+        public DefinitionAttribute(string name, string description)
+        {
+            Name        = name;
+            Description = description;
+        }
+
+        /// <param name="name">Definition name</param>
+        /// <param name="description">About of the definition</param>
         /// <param name="parent">Name of parent specification if exist or null</param>
-        public DefinitionAttribute(string name, string description, string parent = null)
+        public DefinitionAttribute(string name, string description, string parent)
         {
             Name        = name;
             Description = description;

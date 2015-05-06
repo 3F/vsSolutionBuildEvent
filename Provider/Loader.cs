@@ -63,27 +63,28 @@ namespace net.r_eg.vsSBE.Provider
         protected AppDomain domain = null;
 
         /// <summary>
-        /// Load the library with path from DTE2 & AddIn for alternative path.
+        /// Load library with DTE2-context & Add-In
         /// </summary>
-        /// <param name="dte2">Uses paths from dte2 object for search in registry etc.</param>
-        /// <param name="addIn">Uses paths from addIn object to find in place with Add-in.</param>
-        public ILibrary load(EnvDTE80.DTE2 dte2, EnvDTE.AddIn addIn)
+        /// <param name="dte2">DTE2-context</param>
+        /// <param name="pathAddIn">Path to Add-in.</param>
+        /// <param name="registryRoot">Search in registry as alternative.</param>
+        public ILibrary load(object dte2, string pathAddIn, string registryRoot = null)
         {
-            string path = extractPath(addIn.SatelliteDllPath);
+            string path = extractPath(pathAddIn);
             if(!Provider.Library.existsIn(path)) {
-                path = findWithRegistry(dte2.RegistryRoot);
+                path = findWithRegistry(registryRoot);
             }
             this.Library = new Library(path, dte2);
             return Library;
         }
 
         /// <summary>
-        /// Load the library with path from DTE2 & another path as alternative.
+        /// Load library with DTE2-context from path.
         /// </summary>
-        /// <param name="dte2">Uses paths from dte2 object for search in registry etc.</param>
-        /// <param name="path">Specific path for search this library.</param>
-        /// <param name="createDomain">Create new domain for loading new references into this domain</param>
-        public ILibrary load(EnvDTE80.DTE2 dte2, string path, bool createDomain = false)
+        /// <param name="dte2">DTE2-context</param>
+        /// <param name="path">Specific path to library.</param>
+        /// <param name="createDomain">Create new domain for loading new references into current domain</param>
+        public ILibrary load(object dte2, string path, bool createDomain = false)
         {
             if(createDomain) {
                 this.Library = createInNewDomain(path, dte2);
@@ -95,12 +96,12 @@ namespace net.r_eg.vsSBE.Provider
         }
 
         /// <summary>
-        /// Load the library from path with isolated environment.
+        /// Load library from path with Isolated Environments.
         /// </summary>
         /// <param name="solutionFile">Path to .sln file</param>
         /// <param name="properties">Solution properties</param>
-        /// <param name="libPath">Specific path for search this library.</param>
-        /// <param name="createDomain">Create new domain for loading new references into this domain</param>
+        /// <param name="libPath">Specific path to library.</param>
+        /// <param name="createDomain">Create new domain for loading new references into current domain</param>
         public ILibrary load(string solutionFile, Dictionary<string, string> properties, string libPath, bool createDomain = false)
         {
             if(createDomain) {
@@ -151,6 +152,10 @@ namespace net.r_eg.vsSBE.Provider
 
         protected string findWithRegistry(string root)
         {
+            if(String.IsNullOrEmpty(root)) {
+                throw new DllNotFoundException(String.Format("Not found '{0}' root is empty for search. Use specific path or provide registryRoot", GUID));
+            }
+
             string keypath = String.Format(@"{0}\ExtensionManager\EnabledExtensions", root);
             using(RegistryKey rk = Registry.CurrentUser.OpenSubKey(keypath))
             {

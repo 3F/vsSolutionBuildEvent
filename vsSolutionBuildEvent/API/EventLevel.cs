@@ -286,6 +286,12 @@ namespace net.r_eg.vsSBE.API
             init();
         }
 
+        public EventLevel(object dte2, bool debug = false)
+            : this((DTE2)dte2, debug)
+        {
+
+        }
+
         public EventLevel(string solutionFile, Dictionary<string, string> properties, bool debug = false)
         {
             vsSBE.Settings.debugMode = debug;
