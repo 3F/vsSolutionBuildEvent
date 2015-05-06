@@ -4,7 +4,7 @@
 
 [![Build status - master branch](https://ci.appveyor.com/api/projects/status/l38xn0j2c5an28e1/branch/master?svg=true)](https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/branch/master)
 
-[![VSPackage](https://img.shields.io/badge/VSPackage-v0.11.3-68217A.svg)](http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/) [![Download vsSolutionBuildEvent (vsSBE)](https://img.shields.io/sourceforge/dm/vssbe.svg)](https://sourceforge.net/projects/vssbe/files/latest/download) [![Download vsSolutionBuildEvent (vsSBE)](https://img.shields.io/sourceforge/dt/vssbe.svg)](https://sourceforge.net/projects/vssbe/files/latest/download) [![This program is licensed under GNU LGPLv3](https://img.shields.io/badge/license-LGPLv3-008033.svg?style=flat-square)](https://bitbucket.org/3F/vssolutionbuildevent/raw/master/LICENSE) 
+[![VSPackage](https://img.shields.io/badge/VSPackage-v0.11.4-68217A.svg)](http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/) [![Download vsSolutionBuildEvent (vsSBE)](https://img.shields.io/sourceforge/dm/vssbe.svg)](https://sourceforge.net/projects/vssbe/files/latest/download) [![Download vsSolutionBuildEvent (vsSBE)](https://img.shields.io/sourceforge/dt/vssbe.svg)](https://sourceforge.net/projects/vssbe/files/latest/download) [![This program is licensed under GNU LGPLv3](https://img.shields.io/badge/license-LGPLv3-008033.svg?style=flat-square)](https://bitbucket.org/3F/vssolutionbuildevent/raw/master/LICENSE) 
 
 
 MSBuild & SBE-Scripts engine for advanced usage. 
@@ -21,7 +21,7 @@ MSBuild & SBE-Scripts engine for advanced usage.
 
 *Components*:
 
-* [![nuget vsSBE.CI.MSBuild](https://img.shields.io/nuget/v/vsSBE.CI.MSBuild.svg)](https://www.nuget.org/packages/vsSBE.CI.MSBuild/) [![CI.MSBuild](https://img.shields.io/badge/CI.MSBuild-v1.0-8080C0.svg?style=flat)](http://sourceforge.net/projects/vssbe/files/CI-Utilities/CI.MSBuild/) [![Devenv](https://img.shields.io/badge/Devenv-v1.0-B5B5D7.svg?style=flat)](http://sourceforge.net/projects/vssbe/files/CI-Utilities/Devenv/)   [![API](https://img.shields.io/badge/API-v1.0-AFCFBE.svg?style=flat)](http://sourceforge.net/projects/vssbe/files/API/)
+* [![nuget vsSBE.CI.MSBuild](https://img.shields.io/nuget/v/vsSBE.CI.MSBuild.svg)](https://www.nuget.org/packages/vsSBE.CI.MSBuild/) [![CI.MSBuild](https://img.shields.io/badge/CI.MSBuild-v1.1-8080C0.svg?style=flat)](http://sourceforge.net/projects/vssbe/files/CI-Utilities/CI.MSBuild/) [![Devenv](https://img.shields.io/badge/Devenv-v1.1-B5B5D7.svg?style=flat)](http://sourceforge.net/projects/vssbe/files/CI-Utilities/Devenv/)  [![Provider](https://img.shields.io/badge/Provider-v2.0-BAC5C0.svg?style=flat)](https://sourceforge.net/projects/vssbe/files/API/Provider/) [![API](https://img.shields.io/badge/API-v1.1-AFCFBE.svg?style=flat)](https://sourceforge.net/projects/vssbe/files/API/Bridge/)
 
 -------
 [![Short Overview](https://bytebucket.org/3F/vssolutionbuildevent/wiki/Resources/examples/overview-youtube.png)](http://youtu.be/FX5GiMX0ulI)

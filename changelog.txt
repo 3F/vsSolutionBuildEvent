@@ -1,6 +1,36 @@
 vsSolutionBuildEvent
 ____________________
 
+[v0.11.4] 2015.05.06
+    * CHANGED: Parser of MSBuild core. Fixes the order and moving of evaluation steps.
+    * CHANGED: Incompatible changes for post-evaluation e.g.: 
+                `$($(ProjectDir:$(SolutionName)))` is now should be simply as a `$(ProjectDir:$(SolutionName))`
+                
+    * CHANGED: The project name in properties is now 1 symbol or more - e.g.: `$(name:p)`
+    * CHANGED: Updated Tokens for escape-sequence - characters: r|n|t|v|a|b|0|f|x|u|U    
+    * CHANGED: UI: new list of UserVariableComponent in code completion for all new features.
+    * CHANGED: Updated references with API - Bridge v1.1
+    * CHANGED: Updated NLog v3.2.1
+    * FIXED: Bug for some complex deepest containers (MSBuild core): 
+             For example:
+             `$([System.TimeSpan]::FromTicks($([MSBuild]::Subtract($([System.DateTime]::UtcNow.Ticks), $([System.DateTime]::Parse("01.01.2000").ToBinary())))).TotalMinutes.ToString("0"))` 
+    
+    * FIXED: Bug with unescaping \n##[..] - (SBE-Script core)
+    * FIXED: Bug with quotes character for escaped slash "\\" & '\\' (SBE-Scripts & MSBuild core)
+    * FIXED: Escaping with msbuild containers inside #[] (SBE-Script) e.g.: `##[var p3 = $(p1) . $(p2) ]`
+    * NEW: Support MSBuild Registry Properties - https://msdn.microsoft.com/en-us/library/vstudio/ms171458.aspx
+            $(registry:Hive\MyKey\MySubKey@Value)
+            $(registry:Hive\MyKey\MySubKey)
+            
+    * NEW: Added strings for user-variables (MSBuild core) - 2 types:
+            * ".." - Allows any evaluation inside string. Escaping is a \"
+            * '..' - All msbuild containers $() should not be evaluated for this type string. Escaping is a \'
+            Also: '\' and "\" used 'as is' for compatibility with MSBuild
+            
+    * NEW: [CI.MSBuild]: Implemented limited types from msbuild targets for context of build action type or the build type for Isolated Environments.
+    * NEW: [Devenv Command-Line]: Implemented limited types from command-line switches for context of build action type.
+    * OTHER: also trivial changes and bug fixes for UI and developers. see related components (API, Provider etc.) & commits-log.
+
 [v0.11.3] 2015.03.31
     * FIXED: UI. Crashes for columns header in 'MSBuild Properties' window.
     * FIXED: Bug with "not reached selected projects in execution order" for different .sln 
