@@ -1,6 +1,11 @@
 vsSolutionBuildEvent Provider
 _____________________________
 
+[v2.0] 2015.05.06
+    * Updated Bridge v1.1
+    * ILoader: incompatible changes with signatures for load() methods - as part of removing the heavy dependencies:
+               + ILibrary load(object dte2, string pathAddIn, string registryRoot = null);
+               + ILibrary load(object dte2, string path, bool createDomain = false);
 
 [v1.0] 2015.02.02
     * First release for vsSolutionBuildEvent API v1.0

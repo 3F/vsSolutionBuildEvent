@@ -1,6 +1,9 @@
 vsSolutionBuildEvent Devenv Command-Line
 ________________________________________
 
+[v1.1] 2015.05.06
+    * Updated references with API - Bridge v1.1
+    * Implemented limited types from command-line switches for context of build action type.
 
 [v1.0] 2015.02.02
     * First release for vsSolutionBuildEvent API v1.0
