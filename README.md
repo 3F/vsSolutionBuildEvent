@@ -24,9 +24,9 @@ MSBuild & SBE-Scripts engine for advanced usage.
 * [![nuget vsSBE.CI.MSBuild](https://img.shields.io/nuget/v/vsSBE.CI.MSBuild.svg)](https://www.nuget.org/packages/vsSBE.CI.MSBuild/) [![CI.MSBuild](https://img.shields.io/badge/CI.MSBuild-v1.1-8080C0.svg?style=flat)](http://sourceforge.net/projects/vssbe/files/CI-Utilities/CI.MSBuild/) [![Devenv](https://img.shields.io/badge/Devenv-v1.1-B5B5D7.svg?style=flat)](http://sourceforge.net/projects/vssbe/files/CI-Utilities/Devenv/)  [![Provider](https://img.shields.io/badge/Provider-v2.0-BAC5C0.svg?style=flat)](https://sourceforge.net/projects/vssbe/files/API/Provider/) [![API](https://img.shields.io/badge/API-v1.1-AFCFBE.svg?style=flat)](https://sourceforge.net/projects/vssbe/files/API/Bridge/)
 
 -------
-[![Short Overview](https://bytebucket.org/3F/vssolutionbuildevent/wiki/Resources/examples/overview-youtube.png)](http://youtu.be/FX5GiMX0ulI)
+[![Short Overview](https://bitbucket.org/3F/vssolutionbuildevent/wiki/Resources/examples/overview-youtube.png)](http://youtu.be/FX5GiMX0ulI)
 
-Advanced handler of most events for MS Visual Studio & MSBuild tools. Full control and flexible multi-actions for basic events and other additional such as:
+Advanced handler of most events for MS Visual Studio & MSBuild tools. Full control and flexible multi-actions for all basic events and other additional such as:
 
     Warnings-Build, Errors-Build, Output-Build, Pre-Build, Post-Build, Cancel-Build, Transmitter
 
@@ -46,9 +46,11 @@ Examples of using are contained on [Visual Studio Gallery page](http://visualstu
 * [Continuous Integration (CI)](https://bitbucket.org/3F/vssolutionbuildevent/wiki/CI)
 * [API](https://bitbucket.org/3F/vssolutionbuildevent/wiki/API)
 
+[![Scheme of vsSolutionBuildEvent projects](https://bitbucket.org/3F/vssolutionbuildevent/wiki/Resources/scheme.png)](https://bitbucket.org/3F/vssolutionbuildevent/wiki/scheme)
+
 -------
 * [Wiki & Complete Solutions](https://bitbucket.org/3F/vssolutionbuildevent/wiki/Home)
 * **[Public Issue Tracker](https://bitbucket.org/3F/vssolutionbuildevent/issues)** - *bug ? suggestions ? write here*
 
 
-**[Support us: ![About donation](https://bytebucket.org/3F/vssolutionbuildevent/raw/master/vsSolutionBuildEvent/Resources/help-16.png)](https://bitbucket.org/3F/vssolutionbuildevent/wiki/Donation)**    [![Donate](https://bytebucket.org/3F/vssolutionbuildevent/raw/master/vsSolutionBuildEvent/Resources/paypal.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=P2HRG52AJSA9N&lc=US&item_name=vsSolutionBuildEvent%20%28vsSBE%29%20projects&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted)
+**[Support us: ![About donation](https://bitbucket.org/3F/vssolutionbuildevent/raw/master/vsSolutionBuildEvent/Resources/help-16.png)](https://bitbucket.org/3F/vssolutionbuildevent/wiki/Donation)**    [![Donate](https://bitbucket.org/3F/vssolutionbuildevent/raw/master/vsSolutionBuildEvent/Resources/paypal.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=P2HRG52AJSA9N&lc=US&item_name=vsSolutionBuildEvent%20%28vsSBE%29%20projects&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted)
