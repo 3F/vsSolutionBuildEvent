@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using EnvDTE;
+using EnvDTE80;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using net.r_eg.vsSBE.Actions;
+using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Components;
@@ -146,6 +148,24 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         {
             BuildComponentAccessor target = new BuildComponentAccessor();
             target.parse("[Build cancel = 1true]");
+        }
+
+        /// <summary>
+        ///A test for parse -> stType
+        ///</summary>
+        [TestMethod()]
+        public void stTypeTest1()
+        {
+            IEnvironment _env       = new Environment((DTE2)(new Mock<DTE2>()).Object);
+            BuildComponent target   = new BuildComponent(_env);
+
+            Assert.AreEqual(BuildType.Common.ToString(), target.parse("[Build type]"));
+
+            _env.BuildType = BuildType.Compile;
+            Assert.AreEqual(BuildType.Compile.ToString(), target.parse("[Build type]"));
+
+            _env.BuildType = BuildType.Clean;
+            Assert.AreEqual(BuildType.Clean, (BuildType)Enum.Parse(typeof(BuildType), target.parse("[Build type]")));
         }
 
         /// <summary>

@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Build.Evaluation;
+using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Exceptions;
 
 namespace net.r_eg.vsSBE
@@ -65,6 +66,14 @@ namespace net.r_eg.vsSBE
             get {
                 return formatCfg(properties["Configuration"], properties["Platform"]);
             }
+        }
+
+        /// <summary>
+        /// Specified type of current build action
+        /// </summary>
+        public BuildType BuildType
+        {
+            get; set;
         }
 
         /// <summary>

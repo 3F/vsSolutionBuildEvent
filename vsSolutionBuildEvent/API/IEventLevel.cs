@@ -23,12 +23,12 @@ namespace net.r_eg.vsSBE.API
     public interface IEventLevel: Bridge.IEvent
     {
         /// <summary>
-        /// Notification about of the solution after opening/creating
+        /// When the solution has been opened or created
         /// </summary>
         event EventHandler OpenedSolution;
 
         /// <summary>
-        /// Notification about of the solution after closing
+        /// When the solution has been closed
         /// </summary>
         event EventHandler ClosedSolution;
 

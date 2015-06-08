@@ -79,6 +79,10 @@
     <Compile Include="SBEScripts\ValueTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Bridge\Bridge.csproj">
+      <Project>{73919171-44b6-4536-b892-f1fca653887c}</Project>
+      <Name>Bridge</Name>
+    </ProjectReference>
     <ProjectReference Include="..\vsSolutionBuildEvent\vsSolutionBuildEvent_2012.csproj">
       <Project>{32E44995-F621-4E77-B46A-8F65D64E7FEA}</Project>
       <Name>vsSolutionBuildEvent</Name>

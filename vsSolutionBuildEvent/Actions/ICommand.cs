@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts;
@@ -45,11 +44,6 @@ namespace net.r_eg.vsSBE.Actions
         SolutionEventType EventType { get; }
 
         /// <summary>
-        /// Specified type of build action
-        /// </summary>
-        BuildType BuildType { get; }
-
-        /// <summary>
         /// Entry point for execution
         /// </summary>
         /// <param name="evt">Configured event</param>
@@ -63,11 +57,5 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="evt">Configured event</param>
         /// <returns>true value if has been processed</returns>
         bool exec(ISolutionEvent evt);
-
-        /// <summary>
-        /// Updating context with the BuildType
-        /// </summary>
-        /// <param name="buildType">Type of build action</param>
-        void updateContext(BuildType buildType);
     }
 }

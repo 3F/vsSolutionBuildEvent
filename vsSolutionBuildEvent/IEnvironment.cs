@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
+using net.r_eg.vsSBE.Bridge;
 
 namespace net.r_eg.vsSBE
 {
@@ -36,6 +36,11 @@ namespace net.r_eg.vsSBE
         /// Formatted string with active configuration for current solution
         /// </summary>
         string SolutionActiveCfgString { get; }
+
+        /// <summary>
+        /// Specified type of current build action
+        /// </summary>
+        BuildType BuildType { get; set; }
 
         /// <summary>
         /// Should provide all configurations for current solution

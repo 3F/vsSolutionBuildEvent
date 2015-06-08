@@ -29,12 +29,12 @@ namespace net.r_eg.vsSBE.API
     public class EventLevel: IEventLevel, Bridge.IBuild, Bridge.IEvent
     {
         /// <summary>
-        /// The solution has been opened
+        /// When the solution has been opened
         /// </summary>
         public event EventHandler OpenedSolution = delegate(object sender, EventArgs e) { };
 
         /// <summary>
-        /// The solution has been closed
+        /// When the solution has been closed
         /// </summary>
         public event EventHandler ClosedSolution = delegate(object sender, EventArgs e) { };
 
@@ -276,7 +276,7 @@ namespace net.r_eg.vsSBE.API
         /// <param name="type"></param>
         public void updateBuildType(Bridge.BuildType type)
         {
-            Action.updateContext(type);
+            Environment.BuildType = type;
         }
 
         public EventLevel(DTE2 dte2, bool debug = false)

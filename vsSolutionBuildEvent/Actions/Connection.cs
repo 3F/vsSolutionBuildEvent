@@ -52,11 +52,6 @@ namespace net.r_eg.vsSBE.Actions
         protected ICommand cmd;
 
         /// <summary>
-        /// Type of build action
-        /// </summary>
-        protected BuildType buildType;
-
-        /// <summary>
         /// Checks the allow state for action
         /// </summary>
         protected bool IsAllowActions
@@ -75,16 +70,6 @@ namespace net.r_eg.vsSBE.Actions
             this.cmd = cmd;
             projects = new Dictionary<string, ExecutionOrderType>();
             attachLoggingEvent();
-        }
-
-        /// <summary>
-        /// Updating context with the BuildType
-        /// </summary>
-        /// <param name="buildType">Type of build action</param>
-        public void updateContext(BuildType buildType)
-        {
-            this.buildType = buildType;
-            cmd.updateContext(buildType);
         }
 
         /// <summary>

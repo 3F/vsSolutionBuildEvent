@@ -628,7 +628,7 @@
             // 
             this.toolStripMenuChangelog.Name = "toolStripMenuChangelog";
             this.toolStripMenuChangelog.Size = new System.Drawing.Size(187, 22);
-            this.toolStripMenuChangelog.Text = "Change List";
+            this.toolStripMenuChangelog.Text = "Changelist";
             this.toolStripMenuChangelog.Click += new System.EventHandler(this.toolStripMenuChangelog_Click);
             // 
             // toolStripSeparator3

@@ -63,15 +63,6 @@ namespace net.r_eg.vsSBE.Actions
         }
         protected SolutionEventType type = SolutionEventType.General;
 
-        /// <summary>
-        /// Specified type of build action
-        /// </summary>
-        public BuildType BuildType
-        {
-            get { return buildType; }
-        }
-        protected BuildType buildType = BuildType.Common;
-
 
         /// <summary>
         /// Entry point for execution
@@ -84,8 +75,8 @@ namespace net.r_eg.vsSBE.Actions
             if(!evt.Enabled){
                 return false;
             }
-            if(evt.BuildType != BuildType.Common && evt.BuildType != buildType) {
-                Log.nlog.Debug("Ignored context. Build type '{0}' should be '{1}'", buildType, evt.BuildType);
+            if(evt.BuildType != BuildType.Common && evt.BuildType != Env.BuildType) {
+                Log.nlog.Debug("Ignored context. Build type '{0}' should be '{1}'", Env.BuildType, evt.BuildType);
                 return false;
             }
             this.type = type;
@@ -132,15 +123,6 @@ namespace net.r_eg.vsSBE.Actions
         public bool exec(ISolutionEvent evt)
         {
             return exec(evt, SolutionEventType.General);
-        }
-
-        /// <summary>
-        /// Updating context with the BuildType
-        /// </summary>
-        /// <param name="buildType">Type of build action</param>
-        public void updateContext(BuildType buildType)
-        {
-            this.buildType = buildType;
         }
 
         /// <param name="env">Used environment</param>

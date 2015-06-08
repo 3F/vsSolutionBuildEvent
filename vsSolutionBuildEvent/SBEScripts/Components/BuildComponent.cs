@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,10 +17,7 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using EnvDTE;
 using net.r_eg.vsSBE.Actions;
@@ -60,7 +57,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected DTEOperation dteo;
 
         /// <param name="env">Used environment</param>
-        public BuildComponent(IEnvironment env): base(env)
+        public BuildComponent(IEnvironment env)
+            : base(env)
         {
 
         }
@@ -89,13 +87,17 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             switch(subtype) {
                 case "cancel": {
-                    Log.nlog.Debug("BuildComponent: use stCancel");
+                    Log.nlog.Trace("BuildComponent: use stCancel");
                     return stCancel(ident);
                 }
                 case "projects": {
                     // is meant the SolutionContexts !
-                    Log.nlog.Debug("BuildComponent: use stProjects");
+                    Log.nlog.Trace("BuildComponent: use stProjects");
                     return stProjects(ident);
+                }
+                case "type": {
+                    Log.nlog.Trace("BuildComponent: use stType");
+                    return stType(ident);
                 }
             }
             throw new SubtypeNotFoundException("BuildComponent: not found subtype - '{0}'", subtype);
@@ -110,7 +112,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         [Property("cancel", "Immediately cancellation of the build projects.", CValueType.Boolean, CValueType.Boolean)]
         protected string stCancel(string data)
         {
-            Match m = Regex.Match(data, @"cancel\s*=\s*(false|true|1|0)\s*$", RegexOptions.IgnoreCase);
+            Match m = Regex.Match(data, @"cancel\s*=\s*(false|true|1|0)\s*$");
             if(!m.Success) {
                 throw new OperationNotFoundException("Failed stCancel - '{0}'", data);
             }
@@ -119,7 +121,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             if(Value.toBoolean(val))
             {
-                Log.nlog.Debug("stCancel: pushed true");
+                Log.nlog.Trace("stCancel: pushed true");
                 DTEO.exec("Build.Cancel");
             }
             return String.Empty;
@@ -262,6 +264,21 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 }
             }
             throw new OperationNotFoundException("stProjectConf: not found property - '{0}'", property);
+        }
+
+        /// <summary>
+        /// Work with type of build action
+        /// Sample: #[Build type]
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>current type</returns>
+        [Property("type", "Get type of current build action, or last used type if it already finished.", CValueType.Enum, CValueType.Void)]
+        protected string stType(string data)
+        {
+            if(!Regex.Match(data, @"type\s*$").Success) {
+                throw new OperationNotFoundException("Failed stType - '{0}'", data);
+            }
+            return env.BuildType.ToString();
         }
     }
 }

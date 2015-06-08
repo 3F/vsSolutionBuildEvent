@@ -24,6 +24,7 @@ using Microsoft.Build.Evaluation;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.MSBuild.Exceptions;
 
 namespace net.r_eg.vsSBE
@@ -80,6 +81,16 @@ namespace net.r_eg.vsSBE
                 return SolutionCfgFormat(SolutionActiveCfg);
             }
         }
+
+        /// <summary>
+        /// Specified type of current build action
+        /// </summary>
+        public BuildType BuildType
+        {
+            get { return buildType; }
+            set { buildType = value; }
+        }
+        protected BuildType buildType = BuildType.Common;
 
         /// <summary>
         /// All configurations for current solution
