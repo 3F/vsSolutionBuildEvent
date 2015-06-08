@@ -329,10 +329,11 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             try
             {
                 Provider.ILibrary library = loader.load(solutionFile, properties, libPath, false);
-                msg("Library: loaded from '{0}' :: v{1} [{2}] /'{3}':{4}", 
+                msg("Library: loaded from '{0}' :: v{1} [{2}] API: v{3} /'{4}':{5}", 
                                     library.Dllpath, 
                                     library.Version.Number.ToString(), 
                                     library.Version.BranchSha1,
+                                    library.Version.Bridge.Number.ToString(2),
                                     library.Version.BranchName,
                                     library.Version.BranchRevCount);
 

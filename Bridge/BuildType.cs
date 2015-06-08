@@ -69,6 +69,11 @@ namespace net.r_eg.vsSBE.Bridge
         StartNoDebug = 105,
 
         /// <summary>
+        /// 'Publish' action
+        /// </summary>
+        Publish = 106,
+
+        /// <summary>
         /// 'build' action for selection
         /// </summary>
         BuildSelection = 200,
@@ -117,5 +122,30 @@ namespace net.r_eg.vsSBE.Bridge
         /// 'Link only' action
         /// </summary>
         LinkOnly = 301,
+
+        /// <summary>
+        /// 'build' action for project
+        /// </summary>
+        BuildCtx = 302,
+
+        /// <summary>
+        /// 'rebuild' action for project
+        /// </summary>
+        RebuildCtx = 303,
+
+        /// <summary>
+        /// 'clean' action for project
+        /// </summary>
+        CleanCtx = 304,
+
+        /// <summary>
+        /// 'deploy' action for project
+        /// </summary>
+        DeployCtx = 305,
+
+        /// <summary>
+        /// 'Publish' action for project
+        /// </summary>
+        PublishCtx = 306,
     }
 }

@@ -100,9 +100,34 @@ namespace net.r_eg.vsSBE.UnifiedTypes.Build
             /// </summary>
             LinkOnly = VSConstants.VSStd2KCmdID.LINKONLY,
             /// <summary>
+            /// 'Publish' action
+            /// </summary>
+            Publish = VSConstants.VSStd2KCmdID.PUBLISH,
+            /// <summary>
             /// 'Publish' action for selection
             /// </summary>
             PublishSelection = VSConstants.VSStd2KCmdID.ECMD_PUBLISHSELECTION,
+
+            /// <summary>
+            /// 'build' action for project
+            /// </summary>
+            BuildCtx = VSConstants.VSStd97CmdID.BuildCtx,
+            /// <summary>
+            /// 'rebuild' action for project
+            /// </summary>
+            RebuildCtx = VSConstants.VSStd97CmdID.RebuildCtx,
+            /// <summary>
+            /// 'clean' action for project
+            /// </summary>
+            CleanCtx = VSConstants.VSStd97CmdID.CleanCtx,
+            /// <summary>
+            /// 'deploy' action for project
+            /// </summary>
+            DeployCtx = VSConstants.VSStd97CmdID.DeployCtx,
+            /// <summary>
+            /// 'Publish' action for project
+            /// </summary>
+            PublishCtx = VSConstants.VSStd2KCmdID.PUBLISHCTX,
         }
 
         /// <summary>

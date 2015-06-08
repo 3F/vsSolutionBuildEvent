@@ -24,35 +24,51 @@
 
 using System;
 using System.Runtime.InteropServices;
+using LibVersion = net.r_eg.vsSBE.Bridge.Version;
 
 namespace net.r_eg.vsSBE.Bridge
 {
-    [Guid("6F40D8EE-C79C-47EB-9EA0-5594C63779B0")]
-    public interface IVersion
+    [Guid("EB5D3D29-C0D2-4CFC-B927-D6F43DFF37AD")]
+    public class Info: IVersion
     {
         /// <summary>
         /// Main version number of library
         /// </summary>
-        System.Version Number { get; }
+        public System.Version Number
+        {
+            get { return LibVersion.number; }
+        }
 
         /// <summary>
         /// Branch name from SCM
         /// </summary>
-        string BranchName { get; }
+        public string BranchName
+        {
+            get { return LibVersion.branchName; }
+        }
 
         /// <summary>
         /// SHA1 revision number from SCM
         /// </summary>
-        string BranchSha1 { get; }
+        public string BranchSha1
+        {
+            get { return LibVersion.branchSha1; }
+        }
 
         /// <summary>
         /// Count of revisions to used branch from SCM
         /// </summary>
-        string BranchRevCount { get; }
+        public string BranchRevCount
+        {
+            get { return LibVersion.branchRevCount; }
+        }
 
         /// <summary>
         /// About Bridge to library if used
         /// </summary>
-        IVersion Bridge { get; }
+        public IVersion Bridge
+        {
+            get { return null; }
+        }
     }
 }

@@ -145,10 +145,11 @@ namespace net.r_eg.vsSBE.Devenv
             try
             {
                 library = loader.load(application, _addIn.SatelliteDllPath, _dte2.RegistryRoot);
-                msg("Library: loaded from '{0}' :: v{1} [{2}] /'{3}':{4}", 
+                msg("Library: loaded from '{0}' :: v{1} [{2}] API: v{3} /'{4}':{5}", 
                                                     library.Dllpath, 
                                                     library.Version.Number.ToString(), 
                                                     library.Version.BranchSha1,
+                                                    library.Version.Bridge.Number.ToString(2),
                                                     library.Version.BranchName,
                                                     library.Version.BranchRevCount);
 

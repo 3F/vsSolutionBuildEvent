@@ -21,24 +21,44 @@ namespace net.r_eg.vsSBE.API
 {
     public class Version: Bridge.IVersion
     {
+        /// <summary>
+        /// Main version number of library
+        /// </summary>
         public System.Version Number
         {
             get { return LibVersion.number; }
         }
 
+        /// <summary>
+        /// Branch name from SCM
+        /// </summary>
         public string BranchName
         {
             get { return LibVersion.branchName; }
         }
 
+        /// <summary>
+        /// SHA1 revision number from SCM
+        /// </summary>
         public string BranchSha1
         {
             get { return LibVersion.branchSha1; }
         }
 
+        /// <summary>
+        /// Count of revisions to used branch from SCM
+        /// </summary>
         public string BranchRevCount
         {
             get { return LibVersion.branchRevCount; }
+        }
+
+        /// <summary>
+        /// About Bridge to library if used
+        /// </summary>
+        public Bridge.IVersion Bridge
+        {
+            get { return new Bridge.Info(); }
         }
     }
 }

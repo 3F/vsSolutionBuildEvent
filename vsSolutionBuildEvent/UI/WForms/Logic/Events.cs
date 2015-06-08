@@ -354,6 +354,9 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             buildType.Add(BuildType.StartNoDebug);
             combo.Items.Add("Start Without Debugging");
 
+            buildType.Add(BuildType.Publish);
+            combo.Items.Add("Publish");
+
             buildType.Add(BuildType.BuildSelection);
             combo.Items.Add("Build Selection");
 
@@ -365,6 +368,9 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
 
             buildType.Add(BuildType.DeploySelection);
             combo.Items.Add("Deploy Selection");
+
+            buildType.Add(BuildType.PublishSelection);
+            combo.Items.Add("Publish Selection");
 
             buildType.Add(BuildType.BuildOnlyProject);
             combo.Items.Add("Build Project");
@@ -381,8 +387,20 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             buildType.Add(BuildType.LinkOnly);
             combo.Items.Add("Link Only");
 
-            buildType.Add(BuildType.PublishSelection);
-            combo.Items.Add("Publish Selection");
+            buildType.Add(BuildType.BuildCtx);
+            combo.Items.Add("BuildCtx");
+
+            buildType.Add(BuildType.RebuildCtx);
+            combo.Items.Add("RebuildCtx");
+
+            buildType.Add(BuildType.CleanCtx);
+            combo.Items.Add("CleanCtx");
+
+            buildType.Add(BuildType.DeployCtx);
+            combo.Items.Add("DeployCtx");
+
+            buildType.Add(BuildType.PublishCtx);
+            combo.Items.Add("PublishCtx");
 
             combo.SelectedIndex = 0;
         }

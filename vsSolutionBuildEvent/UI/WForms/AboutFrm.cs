@@ -190,17 +190,19 @@ namespace net.r_eg.vsSBE.UI.WForms
             InitializeComponent();
             space = new DeepSpace(pictureBoxSpace.CreateGraphics(), pictureBoxSpace.Width, pictureBoxSpace.Height);
 
-            labelCopyright.Text = String.Format("Copyright (c) 2013-{0}  Denis Kuzmin (reg) < entry.reg@gmail.com >", DateTime.Now.Year);
+            labelCopyright.Text = String.Format("Copyright (c) 2013-{0}  Denis Kuzmin (reg) < entry.reg@gmail.com >", Math.Max(2015, DateTime.Now.Year));
+            string vAPIString   = (new API.Version()).Bridge.Number.ToString(2);
 
 #if !DEBUG
-            labelVersionVal.Text = String.Format("v{0} [ {1} ]", Version.numberWithRevString, Version.branchSha1);
+            labelVersionVal.Text = String.Format("v{0} [ {1} ] API: v{2}", Version.numberWithRevString, Version.branchSha1, vAPIString);
             if(Version.branchName.ToLower() != "releases") {
                 labelVersionVal.Text += String.Format(" /\"{0}\":{1}", Version.branchName, Version.branchRevCount);
             }
 #else
-            labelVersionVal.Text = String.Format("v{0} Debug [ {1} ] /\"{2}\":{3}",
+            labelVersionVal.Text = String.Format("v{0} Debug [ {1} ] API: v{2} /\"{3}\":{4}",
                                                     Version.numberWithRevString,
                                                     Version.branchSha1,
+                                                    vAPIString,
                                                     Version.branchName,
                                                     Version.branchRevCount);
 #endif
