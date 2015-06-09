@@ -289,9 +289,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         {
             foreach(INodeInfo info in Inspector.Root)
             {
-                if(info.Type != InfoType.Component && info.Type != InfoType.Definition) {
+                if(info.Type != InfoType.Component && info.Type != InfoType.AliasToComponent
+                    && info.Type != InfoType.Definition && info.Type != InfoType.AliasToDefinition)
+                {
                     continue;
                 }
+
                 if(data.StartsWith(String.Format("#[{0}", info.Name))) { //TODO: IComponent <- Condition
                     return info;
                 }

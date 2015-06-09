@@ -49,22 +49,51 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
             protected set;
         }
 
-        /// <param name="name">Componen name</param>
-        /// <param name="description">About component</param>
-        public ComponentAttribute(string name, string description)
+        /// <summary>
+        /// Aliases for primary name if used
+        /// </summary>
+        public string[] Aliases
         {
-            Name        = name;
-            Description = description;
+            get;
+            protected set;
         }
+
 
         /// <param name="name">Componen name</param>
         /// <param name="description">About component</param>
         /// <param name="parent">Name of parent specification if exist or null</param>
-        public ComponentAttribute(string name, string description, string parent = null)
+        public ComponentAttribute(string name, string description, string parent)
         {
             Name        = name;
             Description = description;
             Parent      = parent;
+        }
+
+        /// <param name="name">Componen name</param>
+        /// <param name="description">About component</param>
+        public ComponentAttribute(string name, string description)
+            : this(name, description, null)
+        {
+
+        }
+
+        /// <param name="name">Componen name</param>
+        /// <param name="aliases">Aliases for primary name</param>
+        /// <param name="description">About component</param>
+        /// <param name="parent">Name of parent specification if exist or null</param>
+        public ComponentAttribute(string name, string[] aliases, string description, string parent)
+            : this(name, description, null)
+        {
+            Aliases = aliases;
+        }
+
+        /// <param name="name">Componen name</param>
+        /// <param name="aliases">Aliases for primary name</param>
+        /// <param name="description">About component</param>
+        public ComponentAttribute(string name, string[] aliases, string description)
+            : this(name, aliases, description, null)
+        {
+
         }
     }
 }

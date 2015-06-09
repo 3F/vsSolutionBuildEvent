@@ -104,6 +104,18 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
                 Log.nlog.Trace("Inspector: extracting from '{0}'", c.GetType().Name);
                 extract(c, data);
             }
+
+            // Aliases to components
+
+            foreach(var root in data[new NodeIdent()])
+            {
+                if(root.Aliases == null) {
+                    continue;
+                }
+                foreach(string alias in root.Aliases) {
+                    data[new NodeIdent(alias, root.Link.method)] = data[root.Link]; //shallow copies
+                }
+            }
         }
 
         /// <param name="c">From</param>
@@ -176,9 +188,33 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
                 return;
             }
 
-            if(attr.GetType() == typeof(ComponentAttribute)) {
-                data[ident].Add(new NodeInfo((ComponentAttribute)attr));
+            if(attr.GetType() == typeof(ComponentAttribute))
+            {
+                INodeInfo node = new NodeInfo((ComponentAttribute)attr);
+                data[ident].Add(node);
+                aliasesToNodeLevelA(node, data[ident]);
                 return;
+            }
+        }
+
+        /// <summary>
+        /// Work with aliases to components and to definitions.
+        /// </summary>
+        /// <param name="node">Node with aliases</param>
+        /// <param name="data">All nodes</param>
+        protected void aliasesToNodeLevelA(INodeInfo node, List<INodeInfo> data)
+        {
+            if(node.Aliases == null || node.Aliases.Length < 1) {
+                return;
+            }
+            InfoType aliasType = (node.Type == InfoType.Component)? InfoType.AliasToComponent : InfoType.AliasToDefinition;
+            
+            foreach(string alias in node.Aliases)
+            {
+                data.Add(new NodeInfo(alias, 
+                                        String.Format("Alias to '{0}' {1}\n{2}", node.Name, node.Type, node.Description), 
+                                        new NodeIdent(node.Name, null), 
+                                        aliasType));
             }
         }
 

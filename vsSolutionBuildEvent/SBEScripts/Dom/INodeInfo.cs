@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -39,6 +39,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// In general this useful for code completion
         /// </summary>
         string Displaying { get; }
+
+        /// <summary>
+        /// Aliases for primary name if used
+        /// </summary>
+        string[] Aliases { get; }
 
         /// <summary>
         /// Element type

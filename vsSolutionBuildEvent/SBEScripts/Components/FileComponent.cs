@@ -31,7 +31,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// Support file operations
     /// I/O, call, etc.
     /// </summary>
-    [Component("File", "I/O operations")]
+    [Component("File", new string[]{ "IO" }, "I/O operations")]
     public class FileComponent: Component, IComponent
     {
         /// <summary>
@@ -44,7 +44,15 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         public override string Condition
         {
-            get { return "File "; }
+            get { return @"(?:File|IO)\s"; }
+        }
+
+        /// <summary>
+        /// Use regex engine for the Condition property
+        /// </summary>
+        public override bool CRegex
+        {
+            get { return true; }
         }
 
         /// <summary>
@@ -78,16 +86,17 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns>prepared and evaluated data</returns>
         public override string parse(string data)
         {
-            Match m = Regex.Match(data, @"^\[File
-                                              \s+
-                                              (                  #1 - full ident
-                                                ([A-Za-z_0-9]+)  #2 - subtype
-                                                \s*
-                                                [.(=]
-                                                .*
-                                              )
-                                           \]$", 
-                                           RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+            Match m = Regex.Match(data, 
+                                    String.Format(@"^\[{0}
+                                                       \s*
+                                                       (                  #1 - full ident
+                                                         ([A-Za-z_0-9]+)  #2 - subtype
+                                                         \s*
+                                                         [.(=]
+                                                         .*
+                                                       )
+                                                    \]$", Condition
+                                    ), RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
 
             if(!m.Success) {
                 throw new SyntaxIncorrectException("Failed FileComponent - '{0}'", data);

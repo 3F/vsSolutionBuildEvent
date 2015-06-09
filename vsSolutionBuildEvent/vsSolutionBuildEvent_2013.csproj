@@ -393,6 +393,7 @@
     <None Include="Resources\components\property.png" />
     <None Include="Resources\components\function.png" />
     <None Include="Resources\components\definition.png" />
+    <None Include="Resources\components\alias.png" />
     <Content Include="Resources\Package.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

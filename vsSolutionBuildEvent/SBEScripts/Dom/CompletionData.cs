@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,8 +19,6 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ICSharpCode.AvalonEdit.CodeCompletion;
@@ -170,6 +168,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
                 }
                 case InfoType.Method: {
                     return imageFrom(Icon.function);
+                }
+                case InfoType.AliasToDefinition:
+                case InfoType.AliasToComponent: {
+                    return imageFrom(Icon.alias);
                 }
             }
             return null;

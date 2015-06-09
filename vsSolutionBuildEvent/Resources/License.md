@@ -69,6 +69,13 @@
 * * http://p.yusukekamiyamane.com
 * url: https://www.iconfinder.com/icons/58203/blue_folders_stack_icon#size=16
 
+# ./components/alias.png
+
+* License: Free for commercial use
+* By: Maxim Basinski
+* * https://www.iconfinder.com/vasabii
+* url: https://www.iconfinder.com/icons/473641/#size=16
+
 # ./lgplv3-88x31.png
 
 * License: CC BY-ND 3.0 US

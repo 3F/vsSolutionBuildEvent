@@ -61,6 +61,15 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         protected string displaying;
 
         /// <summary>
+        /// Aliases for primary name if used
+        /// </summary>
+        public string[] Aliases
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
         /// Element type
         /// </summary>
         public InfoType Type
@@ -134,7 +143,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         public NodeInfo(ComponentAttribute attr, string displaying = null)
             : this(attr.Name, attr.Description, new NodeIdent(attr.Name, null), InfoType.Component, displaying)
         {
-
+            Aliases = attr.Aliases;
         }
 
         /// <param name="attr">Attribute of method</param>
