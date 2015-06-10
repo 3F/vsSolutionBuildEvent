@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -38,5 +38,15 @@ namespace net.r_eg.vsSBE.Events
             set { hidden = value; }
         }
         private bool hidden = true;
+
+        /// <summary>
+        /// How long to wait the execution, in seconds. 0 value - infinitely
+        /// </summary>
+        public int TimeLimit
+        {
+            get { return timeLimit; }
+            set { timeLimit = value; }
+        }
+        private int timeLimit = 30;
     }
 }

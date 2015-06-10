@@ -197,7 +197,7 @@ namespace net.r_eg.vsSBE.Actions
             Log.nlog.Info("Prepared command: '{0}'",  cmd);
 
             HProcess p = new HProcess(Settings.WorkingPath);
-            p.useShell(cmd, evt.Process.Waiting, evt.Process.Hidden);
+            p.useShell(cmd, evt.Process.Waiting, evt.Process.Hidden, evt.Process.TimeLimit);
         }
 
         protected virtual void parse(ISolutionEvent evt, ref string data)
@@ -222,7 +222,7 @@ namespace net.r_eg.vsSBE.Actions
             if(!evt.Confirmation) {
                 return true;
             }
-            Log.nlog.Debug("Ask the user about action [{0}]:{1} '{2}'", type, evt.Name, evt.Caption);
+            Log.nlog.Debug("Ask user about action [{0}]:{1} '{2}'", type, evt.Name, evt.Caption);
 
             string msg = String.Format("Execute the next action ?\n  [{0}]:{1} '{2}'\n\n* Cancel - to disable current action", 
                                         type, evt.Name, evt.Caption);

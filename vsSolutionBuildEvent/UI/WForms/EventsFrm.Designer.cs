@@ -116,6 +116,9 @@
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabPageSettings = new System.Windows.Forms.TabPage();
             this.panelSettingsMain = new System.Windows.Forms.Panel();
+            this.panelTimeLimit = new System.Windows.Forms.Panel();
+            this.numericTimeLimit = new System.Windows.Forms.NumericUpDown();
+            this.labelTimeLimit = new System.Windows.Forms.Label();
             this.groupBoxSettings = new System.Windows.Forms.GroupBox();
             this.panelControl = new System.Windows.Forms.Panel();
             this.chkConfirmation = new System.Windows.Forms.CheckBox();
@@ -202,6 +205,8 @@
             this.tabControl.SuspendLayout();
             this.tabPageSettings.SuspendLayout();
             this.panelSettingsMain.SuspendLayout();
+            this.panelTimeLimit.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericTimeLimit)).BeginInit();
             this.groupBoxSettings.SuspendLayout();
             this.panelControl.SuspendLayout();
             this.panelControlByOperation.SuspendLayout();
@@ -337,9 +342,9 @@
             this.toolStripMenuHelp,
             this.toolStripMenuBug,
             this.toolStripMenuVersion});
-            this.statusStrip.Location = new System.Drawing.Point(111, 7);
+            this.statusStrip.Location = new System.Drawing.Point(142, 7);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(189, 22);
+            this.statusStrip.Size = new System.Drawing.Size(158, 22);
             this.statusStrip.TabIndex = 81;
             // 
             // toolStripMenuSpring
@@ -371,7 +376,7 @@
             // 
             this.toolStripMenuApply.Name = "toolStripMenuApply";
             this.toolStripMenuApply.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.toolStripMenuApply.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuApply.Size = new System.Drawing.Size(145, 22);
             this.toolStripMenuApply.Text = "Apply";
             this.toolStripMenuApply.Click += new System.EventHandler(this.toolStripMenuApply_Click);
             // 
@@ -379,14 +384,14 @@
             // 
             this.toolStripMenuReset.Name = "toolStripMenuReset";
             this.toolStripMenuReset.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.toolStripMenuReset.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuReset.Size = new System.Drawing.Size(145, 22);
             this.toolStripMenuReset.Text = "Reset";
             this.toolStripMenuReset.Click += new System.EventHandler(this.toolStripMenuReset_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(142, 6);
             // 
             // toolStripMenuTools
             // 
@@ -397,7 +402,7 @@
             this.toolStripMenuDTECmdExec,
             this.menuSBEScript});
             this.toolStripMenuTools.Name = "toolStripMenuTools";
-            this.toolStripMenuTools.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuTools.Size = new System.Drawing.Size(145, 22);
             this.toolStripMenuTools.Text = "Tools";
             // 
             // toolStripMenuMSBuildProp
@@ -443,7 +448,7 @@
             this.toolStripSeparator12,
             this.toolStripMenuPlugin});
             this.toolStripMenuCI.Name = "toolStripMenuCI";
-            this.toolStripMenuCI.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuCI.Size = new System.Drawing.Size(145, 22);
             this.toolStripMenuCI.Text = "CI Utilities";
             // 
             // toolStripMenuCIMSBuild
@@ -491,19 +496,19 @@
             // toolStripMenuAPI
             // 
             this.toolStripMenuAPI.Name = "toolStripMenuAPI";
-            this.toolStripMenuAPI.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuAPI.Size = new System.Drawing.Size(145, 22);
             this.toolStripMenuAPI.Text = "API";
             this.toolStripMenuAPI.Click += new System.EventHandler(this.toolStripMenuAPI_Click);
             // 
             // toolStripSeparator11
             // 
             this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator11.Size = new System.Drawing.Size(142, 6);
             // 
             // toolStripMenuSBEPanel
             // 
             this.toolStripMenuSBEPanel.Name = "toolStripMenuSBEPanel";
-            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(145, 22);
             this.toolStripMenuSBEPanel.Text = "vsSBE Panel";
             this.toolStripMenuSBEPanel.Click += new System.EventHandler(this.toolStripMenuSBEPanel_Click);
             // 
@@ -937,6 +942,7 @@
             // 
             // panelSettingsMain
             // 
+            this.panelSettingsMain.Controls.Add(this.panelTimeLimit);
             this.panelSettingsMain.Controls.Add(this.groupBoxSettings);
             this.panelSettingsMain.Controls.Add(this.groupBoxPMode);
             this.panelSettingsMain.Controls.Add(this.panelCommand);
@@ -952,6 +958,46 @@
             this.panelSettingsMain.Name = "panelSettingsMain";
             this.panelSettingsMain.Size = new System.Drawing.Size(776, 471);
             this.panelSettingsMain.TabIndex = 44;
+            // 
+            // panelTimeLimit
+            // 
+            this.panelTimeLimit.Controls.Add(this.numericTimeLimit);
+            this.panelTimeLimit.Controls.Add(this.labelTimeLimit);
+            this.panelTimeLimit.Location = new System.Drawing.Point(209, 197);
+            this.panelTimeLimit.Name = "panelTimeLimit";
+            this.panelTimeLimit.Size = new System.Drawing.Size(127, 24);
+            this.panelTimeLimit.TabIndex = 31;
+            // 
+            // numericTimeLimit
+            // 
+            this.numericTimeLimit.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.numericTimeLimit.Location = new System.Drawing.Point(55, 0);
+            this.numericTimeLimit.Margin = new System.Windows.Forms.Padding(0);
+            this.numericTimeLimit.Maximum = new decimal(new int[] {
+            10000000,
+            0,
+            0,
+            0});
+            this.numericTimeLimit.Name = "numericTimeLimit";
+            this.numericTimeLimit.Size = new System.Drawing.Size(70, 20);
+            this.numericTimeLimit.TabIndex = 29;
+            this.toolTip.SetToolTip(this.numericTimeLimit, "How long to wait the execution, in seconds. 0 value - infinitely");
+            this.numericTimeLimit.Value = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            // 
+            // labelTimeLimit
+            // 
+            this.labelTimeLimit.AutoSize = true;
+            this.labelTimeLimit.Location = new System.Drawing.Point(4, 1);
+            this.labelTimeLimit.Margin = new System.Windows.Forms.Padding(0);
+            this.labelTimeLimit.Name = "labelTimeLimit";
+            this.labelTimeLimit.Size = new System.Drawing.Size(53, 13);
+            this.labelTimeLimit.TabIndex = 30;
+            this.labelTimeLimit.Text = "Time limit:";
+            this.toolTip.SetToolTip(this.labelTimeLimit, "How long to wait the execution, in seconds. 0 value - infinitely");
             // 
             // groupBoxSettings
             // 
@@ -1092,6 +1138,7 @@
             this.checkBoxWaitForExit.TabIndex = 16;
             this.checkBoxWaitForExit.Text = "Waiting for completion";
             this.checkBoxWaitForExit.UseVisualStyleBackColor = true;
+            this.checkBoxWaitForExit.CheckedChanged += new System.EventHandler(this.checkBoxWaitForExit_CheckedChanged);
             // 
             // checkBoxProcessHide
             // 
@@ -1234,15 +1281,15 @@
             "()",
             "{}",
             "[]"});
-            this.comboBoxWrapper.Location = new System.Drawing.Point(104, 69);
+            this.comboBoxWrapper.Location = new System.Drawing.Point(225, 69);
             this.comboBoxWrapper.Name = "comboBoxWrapper";
-            this.comboBoxWrapper.Size = new System.Drawing.Size(463, 21);
+            this.comboBoxWrapper.Size = new System.Drawing.Size(342, 21);
             this.comboBoxWrapper.TabIndex = 28;
             // 
             // labelWrapper
             // 
             this.labelWrapper.AutoSize = true;
-            this.labelWrapper.Location = new System.Drawing.Point(14, 69);
+            this.labelWrapper.Location = new System.Drawing.Point(135, 69);
             this.labelWrapper.Name = "labelWrapper";
             this.labelWrapper.Size = new System.Drawing.Size(48, 13);
             this.labelWrapper.TabIndex = 27;
@@ -1251,7 +1298,7 @@
             // labelTreatNewline
             // 
             this.labelTreatNewline.AutoSize = true;
-            this.labelTreatNewline.Location = new System.Drawing.Point(14, 47);
+            this.labelTreatNewline.Location = new System.Drawing.Point(135, 47);
             this.labelTreatNewline.Name = "labelTreatNewline";
             this.labelTreatNewline.Size = new System.Drawing.Size(84, 13);
             this.labelTreatNewline.TabIndex = 26;
@@ -1267,9 +1314,9 @@
             "",
             "\\",
             "&echo.&echo "});
-            this.comboBoxNewline.Location = new System.Drawing.Point(104, 44);
+            this.comboBoxNewline.Location = new System.Drawing.Point(225, 44);
             this.comboBoxNewline.Name = "comboBoxNewline";
-            this.comboBoxNewline.Size = new System.Drawing.Size(463, 21);
+            this.comboBoxNewline.Size = new System.Drawing.Size(342, 21);
             this.comboBoxNewline.TabIndex = 25;
             // 
             // comboBoxInterpreter
@@ -1897,6 +1944,9 @@
             this.tabPageSettings.ResumeLayout(false);
             this.panelSettingsMain.ResumeLayout(false);
             this.panelSettingsMain.PerformLayout();
+            this.panelTimeLimit.ResumeLayout(false);
+            this.panelTimeLimit.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericTimeLimit)).EndInit();
             this.groupBoxSettings.ResumeLayout(false);
             this.panelControl.ResumeLayout(false);
             this.panelControl.PerformLayout();
@@ -2081,6 +2131,9 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuAPI;
         private System.Windows.Forms.ToolStripMenuItem tsMenuItemExamples;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
+        private System.Windows.Forms.Label labelTimeLimit;
+        private System.Windows.Forms.NumericUpDown numericTimeLimit;
+        private System.Windows.Forms.Panel panelTimeLimit;
 
     }
 }

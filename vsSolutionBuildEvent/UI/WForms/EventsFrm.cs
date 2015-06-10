@@ -168,6 +168,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             evt.IgnoreIfBuildFailed     = checkBoxIgnoreIfFailed.Checked;
             evt.Process.Waiting         = checkBoxWaitForExit.Checked;
             evt.Process.Hidden          = checkBoxProcessHide.Checked;
+            evt.Process.TimeLimit       = (int)numericTimeLimit.Value;
             evt.Confirmation            = chkConfirmation.Checked;
             evt.ToConfiguration         = checkedListBoxSpecCfg.CheckedItems.OfType<string>().ToArray();
             evt.ExecutionOrder          = getExecutionOrder();
@@ -287,6 +288,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             checkBoxSBEScriptSupport.Checked    = evt.SupportSBEScripts;
             checkBoxIgnoreIfFailed.Checked      = evt.IgnoreIfBuildFailed;
             checkBoxWaitForExit.Checked         = evt.Process.Waiting;
+            numericTimeLimit.Value              = evt.Process.TimeLimit;
             checkBoxProcessHide.Checked         = evt.Process.Hidden;
             chkConfirmation.Checked             = evt.Confirmation;
             buildTypeSelect(evt.BuildType);
@@ -457,6 +459,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             panelControlByOperation.Enabled     = true;
             checkBoxOperationsAbort.Enabled     = false;
             checkBoxSBEScriptSupport.Enabled    = true;
+            updateTimeLimitField();
 
             if(type == ModeType.Interpreter)
             {
@@ -483,6 +486,17 @@ namespace net.r_eg.vsSBE.UI.WForms
                 checkBoxOperationsAbort.Enabled = true;
                 return;
             }
+        }
+
+        protected void updateTimeLimitField()
+        {
+            if(checkBoxWaitForExit.Checked 
+                && (radioModeFiles.Checked || radioModeInterpreter.Checked))
+            {
+                numericTimeLimit.Enabled = true;
+                return;
+            }
+            numericTimeLimit.Enabled = false;
         }
 
         protected void operationsList(ListBox list)
@@ -772,6 +786,11 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void chkBuildContext_CheckedChanged(object sender, EventArgs e)
         {
             comboBoxBuildContext.Enabled = chkBuildContext.Checked;
+        }
+
+        private void checkBoxWaitForExit_CheckedChanged(object sender, EventArgs e)
+        {
+            updateTimeLimitField();
         }
 
         private void dataGridViewOutput_CellClick(object sender, DataGridViewCellEventArgs e)

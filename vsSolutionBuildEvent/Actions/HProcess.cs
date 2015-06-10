@@ -114,7 +114,8 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="cmd">Command to execute</param>
         /// <param name="waiting">Waiting for completion</param>
         /// <param name="hidden">Hiding result</param>
-        public void useShell(string cmd, bool waiting, bool hidden)
+        /// <param name="timeout">How long to wait the execution, in seconds. 0 value - infinitely</param>
+        public void useShell(string cmd, bool waiting, bool hidden, int timeout = 0)
         {
             Process p = prepareProcessFor("cmd", String.Format("/C {0}", cmd), true);
 
@@ -139,10 +140,21 @@ namespace net.r_eg.vsSBE.Actions
                 return;
             }
 
-            p.WaitForExit();
+            Log.nlog.Trace("time limit is '{0}'sec :: HProcess.useShell", timeout);
+            if(timeout != 0) {
+                p.WaitForExit(timeout * 1000);
+                if(!p.HasExited) {
+                    Log.nlog.Warn("sigkill to - '{0}': limit in {1}sec for time is reached. Use any other value or 0 for unlimited time.", cmd, timeout);
+                    killProcessesFor(p.Id);
+                }
+            }
+            else {
+                p.WaitForExit();
+            }
+
             string errors = p.StandardError.ReadToEnd();
             if(errors.Length > 0) {
-                throw new ComponentException(reEncodeString(errors));
+                throw new SBEException(reEncodeString(errors));
             }
         }
 
