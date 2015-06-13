@@ -257,6 +257,45 @@ namespace net.r_eg.vsSBE.API
         }
 
         /// <summary>
+        /// Before executing Command ID for EnvDTE.
+        /// </summary>
+        /// <param name="guid">The GUID.</param>
+        /// <param name="id">The command ID.</param>
+        /// <param name="customIn">Custom input parameters.</param>
+        /// <param name="customOut">Custom output parameters.</param>
+        /// <param name="cancelDefault">Whether the command has been cancelled.</param>
+        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        public int onCommandDtePre(string guid, int id, object customIn, object customOut, ref bool cancelDefault)
+        {
+            try {
+                return Action.bindCommandDtePre(guid, id, customIn, customOut, ref cancelDefault);
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Failed EnvDTE.Command-binding/Before: '{0}'", ex.Message);
+            }
+            return VSConstants.S_FALSE;
+        }
+
+        /// <summary>
+        /// After executed Command ID for EnvDTE.
+        /// </summary>
+        /// <param name="guid">The GUID.</param>
+        /// <param name="id">The command ID.</param>
+        /// <param name="customIn">Custom input parameters.</param>
+        /// <param name="customOut">Custom output parameters.</param>
+        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        public int onCommandDtePost(string guid, int id, object customIn, object customOut)
+        {
+            try {
+                return Action.bindCommandDtePost(guid, id, customIn, customOut);
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Failed EnvDTE.Command-binding/After: '{0}'", ex.Message);
+            }
+            return VSConstants.S_FALSE;
+        }
+
+        /// <summary>
         /// During assembly.
         /// </summary>
         /// <param name="data">Raw data of building process</param>
@@ -320,8 +359,10 @@ namespace net.r_eg.vsSBE.API
 
             cmdEvents = Environment.Events.CommandEvents; // protection from garbage collector
             lock(_lock) {
-                cmdEvents.BeforeExecute -= new EnvDTE._dispCommandEvents_BeforeExecuteEventHandler(_cmdBeforeExecute);
-                cmdEvents.BeforeExecute += new EnvDTE._dispCommandEvents_BeforeExecuteEventHandler(_cmdBeforeExecute);
+                cmdEvents.BeforeExecute -= _cmdBeforeExecute;
+                cmdEvents.BeforeExecute += _cmdBeforeExecute;
+                cmdEvents.AfterExecute  -= _cmdAfterExecute;
+                cmdEvents.AfterExecute  += _cmdAfterExecute;
             }
         }
 
@@ -331,7 +372,8 @@ namespace net.r_eg.vsSBE.API
                 return;
             }
             lock(_lock) {
-                cmdEvents.BeforeExecute -= new EnvDTE._dispCommandEvents_BeforeExecuteEventHandler(_cmdBeforeExecute);
+                cmdEvents.BeforeExecute -= _cmdBeforeExecute;
+                cmdEvents.AfterExecute  -= _cmdAfterExecute;
             }
         }
 
@@ -352,6 +394,12 @@ namespace net.r_eg.vsSBE.API
             if(UnifiedTypes.Build.VSCommand.existsById(id)) {
                 updateBuildType(UnifiedTypes.Build.VSCommand.getByCommandId(id));
             }
+            onCommandDtePre(guidString, id, customIn, customOut, ref cancelDefault);
+        }
+
+        private void _cmdAfterExecute(string guid, int id, object customIn, object customOut)
+        {
+            onCommandDtePost(guid, id, customIn, customOut);
         }
     }
 }

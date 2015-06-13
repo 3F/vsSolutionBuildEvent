@@ -125,6 +125,17 @@ namespace net.r_eg.vsSBE
         private SBETransmitter[] transmitter = new SBETransmitter[] { new SBETransmitter() };
 
         /// <summary>
+        /// Provides command events from EnvDTE
+        /// </summary>
+        public CommandEvent[] CommandEvent
+        {
+            get { return commandEvent; }
+            set { commandEvent = value; }
+        }
+        [NonSerialized]
+        private CommandEvent[] commandEvent = new CommandEvent[] { new CommandEvent() };
+
+        /// <summary>
         /// All processes with internal logging
         /// </summary>
         public LoggingEvent[] Logging
@@ -170,6 +181,9 @@ namespace net.r_eg.vsSBE
                 }
                 case SolutionEventType.Transmitter: {
                     return Transmitter;
+                }
+                case SolutionEventType.CommandEvent: {
+                    return CommandEvent;
                 }
                 case SolutionEventType.Logging: {
                     return Logging;

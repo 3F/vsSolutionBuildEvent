@@ -15,38 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using net.r_eg.vsSBE.Events.CommandEvents;
+
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
-    /// General types of available events for all components
+    /// Specifies work with CommandEvents from EnvDTE
     /// </summary>
-    public enum SolutionEventType
+    public interface ICommandEvent: ISolutionEvent 
     {
-        Pre, Post, Cancel, Warnings, Errors, OWP, Transmitter, 
         /// <summary>
-        /// Processes with internal logging
+        /// Conditions of work Commands
         /// </summary>
-        Logging,
-        /// <summary>
-        /// Without identification - all ISolutionEvent
-        /// </summary>
-        General,
-        /// <summary>
-        /// Errors + Warnings
-        /// </summary>
-        EW,
-        /// <summary>
-        /// By individual projects
-        /// </summary>
-        ProjectPre,
-        ProjectPost,
-        /// <summary>
-        /// The 'PRE' as deferred action of existing projects
-        /// </summary>
-        DeferredPre,
-        /// <summary>
-        /// CommandEvents from EnvDTE
-        /// </summary>
-        CommandEvent,
+        IFilter[] Filters { get; set; }
     }
 }

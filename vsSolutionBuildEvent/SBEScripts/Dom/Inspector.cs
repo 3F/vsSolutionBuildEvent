@@ -242,6 +242,19 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
                         return false;
                     }
                 }
+
+                // aliases
+                object attr = getCustomAttribute(type, typeof(ComponentAttribute), false);
+                if(attr == null) {
+                    continue;
+                }
+                string[] aliases = ((ComponentAttribute)attr).Aliases;
+                if(aliases != null && aliases.Any(a => a == elementName))
+                {
+                    if(!c.Enabled) {
+                        return false;
+                    }
+                }
             }
             return true;
         }
@@ -267,11 +280,27 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <returns>Original name by class name or what is specified with the ComponentAttribute</returns>
         protected string getComponentName(Type type)
         {
-            object[] attr = type.GetCustomAttributes(typeof(ComponentAttribute), false);
-            if(attr != null && attr.Length > 0) {
-                return ((ComponentAttribute)attr[0]).Name;
+            object attr = getCustomAttribute(type, typeof(ComponentAttribute), false);
+            if(attr != null) {
+                return ((ComponentAttribute)attr).Name;
             }
             return type.Name;
+        }
+
+        /// <summary>
+        /// Get the first custom attribute.
+        /// note: the GetCustomAttribute - allowed only with v4.5 from CustomAttributeExtensions
+        /// </summary>
+        /// <param name="attributeType"></param>
+        /// <param name="inherit"></param>
+        /// <returns></returns>
+        private object getCustomAttribute(Type type, Type attributeType, bool inherit)
+        {
+            object[] attr = type.GetCustomAttributes(attributeType, inherit);
+            if(attr == null || attr.Length < 1) {
+                return null;
+            }
+            return attr[0];
         }
     }
 }

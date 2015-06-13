@@ -104,6 +104,10 @@
     <Compile Include="API\Version.cs" />
     <Compile Include="Configuration\Component.cs" />
     <Compile Include="Environment.cs" />
+    <Compile Include="Events\CommandEvents\Filter.cs" />
+    <Compile Include="Events\CommandEvent.cs" />
+    <Compile Include="Events\CommandEvents\IFilter.cs" />
+    <Compile Include="Events\ICommandEvent.cs" />
     <Compile Include="UnifiedTypes\Build\VSCommand.cs" />
     <Compile Include="Events\LoggingEvent.cs" />
     <Compile Include="Events\ILoggingEvent.cs" />

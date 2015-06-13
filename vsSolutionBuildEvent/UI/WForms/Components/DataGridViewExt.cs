@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,12 +16,7 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace net.r_eg.vsSBE.UI.WForms.Components
@@ -42,6 +37,21 @@ namespace net.r_eg.vsSBE.UI.WForms.Components
 
     public class DataGridViewExt: DataGridView
     {
+        /// <summary>
+        /// Custom column: for work with numeric formats with standard TextBoxCell 
+        /// </summary>
+        public class NumericColumn: DataGridViewColumn
+        {
+            public bool Decimal { get; set; }
+            public bool Negative { get; set; }
+
+            public NumericColumn()
+                : base(new DataGridViewTextBoxCell())
+            {
+
+            }
+        }
+
         /// <summary>
         /// Shows total count of rows and current position for each row
         /// </summary>
@@ -95,10 +105,38 @@ namespace net.r_eg.vsSBE.UI.WForms.Components
         /// </summary>
         private Object _eLock = new Object();
 
+
         public DataGridViewExt()
         {
             this.CellPainting       += new DataGridViewCellPaintingEventHandler(onNumberingCellPainting);
             this.SelectionChanged   += new EventHandler(onAlwaysSelected);
+            EditingControlShowing   += (object sender, DataGridViewEditingControlShowingEventArgs e) =>
+                                        {
+                                            if(e.Control == null) {
+                                                return;
+                                            }
+                                            lock(_eLock) {
+                                                e.Control.KeyPress -= onControlKeyPress;
+                                                e.Control.KeyPress += onControlKeyPress;
+                                            }
+                                        };
+        }
+
+        protected void onControlKeyPress(object sender, KeyPressEventArgs e)
+        {
+            if(sender == null || sender.GetType() != typeof(DataGridViewTextBoxEditingControl)) {
+                return;
+            }
+            DataGridView dgv = ((DataGridViewTextBoxEditingControl)sender).EditingControlDataGridView;
+
+            if(dgv.CurrentCell.OwningColumn.GetType() != typeof(NumericColumn)) {
+                return;
+            }
+            //(NumericColumn)dgv.CurrentCell.OwningColumn;
+
+            if(!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar)) {
+                e.Handled = true;
+            }
         }
 
         protected void onNumberingCellPainting(object sender, DataGridViewCellPaintingEventArgs e)

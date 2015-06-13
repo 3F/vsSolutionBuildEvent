@@ -112,5 +112,26 @@ namespace net.r_eg.vsSBE.Bridge
         /// <param name="fSuccess">Flag indicating success.</param>
         /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
         int onProjectPost(string project, int fSuccess);
+
+        /// <summary>
+        /// Before executing Command ID for EnvDTE.
+        /// </summary>
+        /// <param name="guid">The GUID.</param>
+        /// <param name="id">The command ID.</param>
+        /// <param name="customIn">Custom input parameters.</param>
+        /// <param name="customOut">Custom output parameters.</param>
+        /// <param name="cancelDefault">Whether the command has been cancelled.</param>
+        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        int onCommandDtePre(string guid, int id, object customIn, object customOut, ref bool cancelDefault);
+
+        /// <summary>
+        /// After executed Command ID for EnvDTE.
+        /// </summary>
+        /// <param name="guid">The GUID.</param>
+        /// <param name="id">The command ID.</param>
+        /// <param name="customIn">Custom input parameters.</param>
+        /// <param name="customOut">Custom output parameters.</param>
+        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        int onCommandDtePost(string guid, int id, object customIn, object customOut);
     }
 }

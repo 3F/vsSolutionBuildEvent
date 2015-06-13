@@ -22,11 +22,11 @@ using System.Linq;
 using System.Windows.Forms;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
+using net.r_eg.vsSBE.Events.CommandEvents;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.UI.WForms.Components;
 using net.r_eg.vsSBE.UI.WForms.Controls;
-using net.r_eg.vsSBE.UI.WForms.Logic;
 
 namespace net.r_eg.vsSBE.UI.WForms
 {
@@ -106,6 +106,8 @@ namespace net.r_eg.vsSBE.UI.WForms
             Util.fixDGVRowHeight(dataGridViewOrder);
             Util.fixDGVRowHeight(dgvActions);
             Util.fixDGVRowHeight(dgvComponents);
+            Util.fixDGVRowHeight(dgvCEFilters);
+            Util.fixDGVRowHeight(dgvCESniffer);
         }
 
         /// <summary>
@@ -148,6 +150,10 @@ namespace net.r_eg.vsSBE.UI.WForms
                     }
                     case SolutionEventType.OWP: {
                         saveData((SBEEventOWP)logic.SBEItem);
+                        break;
+                    }
+                    case SolutionEventType.CommandEvent: {
+                        saveData((CommandEvent)logic.SBEItem);
                         break;
                     }
                 }
@@ -236,6 +242,30 @@ namespace net.r_eg.vsSBE.UI.WForms
             evt.Match = list.ToArray();
         }
 
+        protected void saveData(CommandEvent evt)
+        {
+            List<Filter> list = new List<Filter>();
+            foreach(DataGridViewRow row in dgvCEFilters.Rows)
+            {
+                if(row.IsNewRow) {
+                    continue;
+                }
+
+                list.Add(new Filter()
+                {
+                    Guid        = (string)row.Cells[dgvCEFiltersColumnGuid.Name].Value,
+                    CustomIn    = (string)row.Cells[dgvCEFiltersColumnCustomIn.Name].Value,
+                    CustomOut   = (string)row.Cells[dgvCEFiltersColumnCustomOut.Name].Value,
+                    Description = (string)row.Cells[dgvCEFiltersColumnDescription.Name].Value,
+                    Id          = Convert.ToInt32(row.Cells[dgvCEFiltersColumnId.Name].Value),
+                    Cancel      = Convert.ToBoolean(row.Cells[dgvCEFiltersColumnCancel.Name].Value),
+                    Pre         = Convert.ToBoolean(row.Cells[dgvCEFiltersColumnPre.Name].Value),
+                    Post        = Convert.ToBoolean(row.Cells[dgvCEFiltersColumnPost.Name].Value),
+                });
+            }
+            evt.Filters = list.ToArray();
+        }
+
         protected void renderData()
         {
             //foreach(RadioButton rb in Util.getControls(groupBoxPMode, c => c.GetType() == typeof(RadioButton))) {
@@ -248,6 +278,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             groupBoxEW.Enabled              = false;
             checkBoxWaitForExit.Enabled     = true;
             pictureBoxWarnWait.Visible      = true;
+            groupBoxCommandEvents.Enabled   = false;
 
             switch(logic.SBE.type)
             {
@@ -275,6 +306,11 @@ namespace net.r_eg.vsSBE.UI.WForms
                 case SolutionEventType.Logging:
                 {
                     checkBoxWaitForExit.Enabled = false;
+                    break;
+                }
+                case SolutionEventType.CommandEvent: {
+                    renderData((CommandEvent)logic.SBEItem);
+                    groupBoxCommandEvents.Enabled = true;
                     break;
                 }
             }
@@ -360,6 +396,17 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
+        protected void renderData(CommandEvent evt)
+        {
+            dgvCEFilters.Rows.Clear();
+            if(evt.Filters == null) {
+                return;
+            }
+            foreach(IFilter f in evt.Filters) {
+                dgvCEFilters.Rows.Add(f.Guid, f.Id, f.CustomIn, f.CustomOut, f.Description, f.Cancel, f.Pre, f.Post);
+            }
+        }
+
         protected void fillActionsList()
         {
             dgvActions.Rows.Clear();
@@ -425,7 +472,11 @@ namespace net.r_eg.vsSBE.UI.WForms
         protected void componentApply()
         {
             List<Configuration.Component> list = new List<Configuration.Component>();
-            foreach(DataGridViewRow row in dgvComponents.Rows) {
+            foreach(DataGridViewRow row in dgvComponents.Rows)
+            {
+                if(row.ReadOnly) {
+                    continue;
+                }
                 list.Add(new Configuration.Component() { 
                     ClassName   = (row.Cells[dgvComponentsClass.Name].Value == null)? "" : row.Cells[dgvComponentsClass.Name].Value.ToString(),
                     Enabled     = Boolean.Parse(row.Cells[dgvComponentsEnabled.Name].Value.ToString()),
@@ -439,6 +490,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             textBoxEW.Text = String.Empty;
             listBoxEW.Items.Clear();
             dataGridViewOutput.Rows.Clear();
+            dgvCEFilters.Rows.Clear();
         }
 
         protected void notice(bool isOn)
@@ -617,6 +669,47 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
+        protected void snifferEnabled(bool status)
+        {
+            if(status) {
+                logic.attachCommandEvents(commandEventBefore, commandEventAfter);
+                return;
+            }
+            logic.detachCommandEvents(commandEventBefore, commandEventAfter);
+        }
+
+        protected void commandEventBefore(string guid, int id, object customIn, object customOut, ref bool cancelDefault)
+        {
+            commandEvent(true, guid, id, customIn, customOut);
+        }
+
+        protected void commandEventAfter(string guid, int id, object customIn, object customOut)
+        {
+            commandEvent(false, guid, id, customIn, customOut);
+        }
+
+        protected void commandEvent(bool pre, string guid, int id, object customIn, object customOut)
+        {
+            if(dgvCESniffer == null) {
+                return;
+            }
+            string tFormat = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern + " .fff";
+            dgvCESniffer.Rows.Add(DateTime.Now.ToString(tFormat), pre, guid, id, customIn, customOut, logic.enumViewBy(guid, id));
+        }
+
+        protected void addFilterFromSniffer(DataGridView sniffer, DataGridView filter)
+        {
+            if(sniffer.Rows.Count < 1 || sniffer.SelectedRows.Count < 1 || !filter.Enabled) {
+                return;
+            }
+            DataGridViewRow rc = sniffer.SelectedRows[0];
+            filter.Rows.Add(rc.Cells[dgvCESnifferColumnGuid.Name].Value,
+                            rc.Cells[dgvCESnifferColumnId.Name].Value, 
+                            rc.Cells[dgvCESnifferColumnCustomIn.Name].Value,
+                            rc.Cells[dgvCESnifferColumnCustomOut.Name].Value,
+                            rc.Cells[dgvCESnifferColumnEnum.Name].Value);
+        }
+
         protected void envVariablesUIHelper()
         {
             if(Util.focusForm(frmProperties)) {
@@ -736,8 +829,10 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void btnApply_Click(object sender, EventArgs e)
         {
-            dgvComponents.EndEdit();
             dgvActions.EndEdit();
+            dgvComponents.EndEdit();
+            dgvCEFilters.EndEdit();
+            
             saveData();
             refreshActions();
             notice(false);
@@ -795,7 +890,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void dataGridViewOutput_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if(e.ColumnIndex == 2 && e.RowIndex + 1 < dataGridViewOutput.Rows.Count) {
+            if(e.ColumnIndex == dataGridViewOutput.ColumnCount - 1 && e.RowIndex < dataGridViewOutput.Rows.Count - 1) {
                 dataGridViewOutput.Rows.Remove(dataGridViewOutput.Rows[e.RowIndex]);
             }
         }
@@ -1102,6 +1197,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void EventsFrm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            snifferEnabled(false);
             Util.closeTool(frmProperties);
             Util.closeTool(frmPropertyCheck);
             Util.closeTool(frmDTECommands);
@@ -1244,6 +1340,46 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void dgvActions_DragDropSortedRow(MovingRow index)
         {
             logic.moveEventItem(index.from, index.to);
+        }
+
+        private void dgvCEFilters_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if(e.RowIndex == -1 || e.ColumnIndex == -1) {
+                return; //headers
+            }
+            if(e.ColumnIndex == dgvCEFilters.ColumnCount - 1 && e.RowIndex < dgvCEFilters.Rows.Count - 1) {
+                dgvCEFilters.Rows.Remove(dgvCEFilters.Rows[e.RowIndex]);
+            }
+        }
+
+        private void checkBoxCESniffer_CheckedChanged(object sender, EventArgs e)
+        {
+            snifferEnabled(checkBoxCESniffer.Checked);
+        }
+
+        private void menuSnifferAdd_Click(object sender, EventArgs e)
+        {
+            addFilterFromSniffer(dgvCESniffer, dgvCEFilters);
+        }
+
+        private void menuSnifferFlush_Click(object sender, EventArgs e)
+        {
+            dgvCESniffer.Rows.Clear();
+        }
+
+        private void menuSnifferActivateCE_Click(object sender, EventArgs e)
+        {
+            int pos = logic.getDefIndexByEventType(SolutionEventType.CommandEvent);
+            if(pos == -1) {
+                Log.nlog.Trace("UI.Activation the CommandEvent: -1");
+                return;
+            }
+            comboBoxEvents.SelectedIndex = pos;
+        }
+
+        private void contextMenuSniffer_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            menuSnifferAdd.Enabled = dgvCEFilters.Enabled;
         }
     }
 }

@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using net.r_eg.vsSBE.Bridge;
@@ -27,6 +28,8 @@ using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Dom;
+using CEAfterEventHandler   = EnvDTE._dispCommandEvents_AfterExecuteEventHandler;
+using CEBeforeEventHandler  = EnvDTE._dispCommandEvents_BeforeExecuteEventHandler;
 
 namespace net.r_eg.vsSBE.UI.WForms.Logic
 {
@@ -167,6 +170,17 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         /// Mapper of the available components
         /// </summary>
         protected IInspector inspector;
+
+        /// <summary>
+        /// Provides command events for automation clients
+        /// </summary>
+        protected EnvDTE.CommandEvents cmdEvents;
+
+        /// <summary>
+        /// object synch.
+        /// </summary>
+        private Object _lock = new Object();
+
 
         public void addEvent(SBEWrap evt)
         {
@@ -322,6 +336,9 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             addEvent(new SBEWrap(SolutionEventType.Transmitter));
             combo.Items.Add(":: Transmitter :: Transmission of the build-data to outer handler");
 
+            addEvent(new SBEWrap(SolutionEventType.CommandEvent));
+            combo.Items.Add(":: CommandEvent :: All Command Events from EnvDTE");
+
             addEvent(new SBEWrap(SolutionEventType.Logging));
             combo.Items.Add(":: Logging :: All processes with internal logging");
 
@@ -437,37 +454,38 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                     }
                 }
 
+                cInfo[className] = new List<INodeInfo>();
                 bool withoutAttr = true;
+
                 foreach(Attribute attr in type.GetCustomAttributes(true))
                 {
-                    if(attr.GetType() == typeof(ComponentAttribute))
-                    {
+                    if(attr.GetType() == typeof(ComponentAttribute) || attr.GetType() == typeof(DefinitionAttribute)) {
                         withoutAttr = false;
-                        grid.Rows.Add(
-                                    DomIcon.package,
-                                    enabled, 
-                                    ((ComponentAttribute)attr).Name,
-                                    className,
-                                    ((ComponentAttribute)attr).Description);
                     }
 
-                    if(attr.GetType() == typeof(DefinitionAttribute))
+                    if(attr.GetType() == typeof(ComponentAttribute) && ((ComponentAttribute)attr).Parent == null)
                     {
-                        withoutAttr = false;
-                        grid.Rows.Add(
-                                    DomIcon.definition,
-                                    enabled,
-                                    ((DefinitionAttribute)attr).Name,
-                                    className,
-                                    ((DefinitionAttribute)attr).Description);
+                        fillComponents((ComponentAttribute)attr, enabled, className, grid);
+                    }
+                    else if(attr.GetType() == typeof(DefinitionAttribute) && ((DefinitionAttribute)attr).Parent == null)
+                    {
+                        DefinitionAttribute def = (DefinitionAttribute)attr;
+                        grid.Rows.Add(DomIcon.definition, enabled, def.Name, className, def.Description);
+                    }
+                    else if(((DefinitionAttribute)attr).Parent != null)
+                    {
+                        cInfo[className].Add(new NodeInfo((DefinitionAttribute)attr));
+                    }
+                    else if(((ComponentAttribute)attr).Parent != null)
+                    {
+                        cInfo[className].Add(new NodeInfo((ComponentAttribute)attr));
                     }
                 }
 
                 if(withoutAttr) {
                     grid.Rows.Add(DomIcon.package, enabled, String.Empty, className, String.Empty);
                 }
-
-                cInfo[className] = new List<INodeInfo>(domElemsBy(className));
+                cInfo[className].AddRange(new List<INodeInfo>(domElemsBy(className)));
             }
             grid.Sort(grid.Columns[2], System.ComponentModel.ListSortDirection.Descending);
         }
@@ -521,6 +539,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                 }
                 case SolutionEventType.Transmitter: {
                     Config._.Data.Transmitter = Config._.Data.Transmitter.GetWithAdded(new SBETransmitter());
+                    break;
+                }
+                case SolutionEventType.CommandEvent: {
+                    Config._.Data.CommandEvent = Config._.Data.CommandEvent.GetWithAdded(new CommandEvent());
                     break;
                 }
                 case SolutionEventType.Logging: {
@@ -582,6 +604,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                     Config._.Data.Transmitter = Config._.Data.Transmitter.GetWithMoved(from, to);
                     break;
                 }
+                case SolutionEventType.CommandEvent: {
+                    Config._.Data.CommandEvent = Config._.Data.CommandEvent.GetWithMoved(from, to);
+                    break;
+                }
                 case SolutionEventType.Logging: {
                     Config._.Data.Logging = Config._.Data.Logging.GetWithMoved(from, to);
                     break;
@@ -623,12 +649,106 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                     Config._.Data.Transmitter = Config._.Data.Transmitter.GetWithRemoved(index);
                     break;
                 }
+                case SolutionEventType.CommandEvent: {
+                    Config._.Data.CommandEvent = Config._.Data.CommandEvent.GetWithRemoved(index);
+                    break;
+                }
                 case SolutionEventType.Logging: {
                     Config._.Data.Logging = Config._.Data.Logging.GetWithRemoved(index);
                     break;
                 }
             }
             SBE.update();
+        }
+
+        /// <summary>
+        /// Gets index from defined events
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns>current position in list of definition</returns>
+        public int getDefIndexByEventType(SolutionEventType type)
+        {
+            int idx = 0;
+            foreach(SBEWrap evt in events)
+            {
+                if(evt.type == type) {
+                    return idx;
+                }
+                ++idx;
+            }
+            return -1;
+        }
+
+        /// <summary>
+        /// Find the enum definition by Guid string & Id
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public string enumViewBy(string guid, int id)
+        {
+            return enumViewBy(new Guid(guid), id);
+        }
+
+        /// <summary>
+        /// Find the enum definition by Guid & Id
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public string enumViewBy(Guid guid, int id)
+        {
+            Assembly[] asm = AppDomain.CurrentDomain.GetAssemblies();
+            foreach(Type type in asm.SelectMany(a => 
+                                                {
+                                                    try {
+                                                        return a.GetTypes();
+                                                    }
+                                                    catch(ReflectionTypeLoadException ex) {
+                                                        Log.nlog.Trace("Enum parser: types cannot be loaded.. so we don't know what is it - '{0}':{1} ", guid, id);
+                                                        return ex.Types.Where(t => t != null);
+                                                    }
+                                                })
+                                                .Where(t => t.IsEnum))
+            {
+                if(guid != type.GUID) {
+                    continue;
+                }
+
+                string prefix   = type.ToString();
+                string value    = id.ToString();
+
+                try {
+                    value = Enum.Parse(type, value).ToString();
+                }
+                catch(Exception ex) {
+                    Log.nlog.Debug("Enum parser failed: guid({0}), id({1}) -> '{2}' /error: '{3}'", guid, id, prefix, ex.Message);
+                }
+                return String.Format("{0}.{1}", prefix, value);
+            }
+            return null;
+        }
+
+        public void attachCommandEvents(CEBeforeEventHandler before, CEAfterEventHandler after)
+        {
+            cmdEvents = Env.Events.CommandEvents;
+            lock(_lock) {
+                cmdEvents.BeforeExecute -= before;
+                cmdEvents.BeforeExecute += before;
+                cmdEvents.AfterExecute  -= after;
+                cmdEvents.AfterExecute  += after;
+            }
+        }
+
+        public void detachCommandEvents(CEBeforeEventHandler before, CEAfterEventHandler after)
+        {
+            if(cmdEvents == null) {
+                return;
+            }
+            lock(_lock) {
+                cmdEvents.BeforeExecute -= before;
+                cmdEvents.AfterExecute  -= after;
+            }
         }
 
         public Events(IBootloader bootloader, IInspector inspector = null)
@@ -665,6 +785,24 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                 }
             }
             return ++maxId;
+        }
+
+        protected void fillComponents(ComponentAttribute attr, bool enabled, string className, DataGridView grid)
+        {
+            grid.Rows.Add(DomIcon.package, enabled, attr.Name, className, attr.Description);
+
+            if(attr.Aliases == null) {
+                return;
+            }
+            foreach(string alias in attr.Aliases)
+            {
+                int idx = grid.Rows.Add(DomIcon.alias, enabled, alias, className, String.Format("Alias to '{0}' Component", attr.Name));
+
+                grid.Rows[idx].ReadOnly = true;
+                grid.Rows[idx].Cells[1] = new DataGridViewCheckBoxCell() { Style = { 
+                                                                               ForeColor = System.Drawing.Color.Transparent, 
+                                                                               SelectionForeColor = System.Drawing.Color.Transparent }};
+            }
         }
 
         protected IEnumerable<INodeInfo> domElemsBy(string className)

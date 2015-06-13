@@ -15,38 +15,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace net.r_eg.vsSBE.Events
+namespace net.r_eg.vsSBE.Events.CommandEvents
 {
     /// <summary>
-    /// General types of available events for all components
+    /// Specifies filters for ICommandEvent
     /// </summary>
-    public enum SolutionEventType
+    public interface IFilter
     {
-        Pre, Post, Cancel, Warnings, Errors, OWP, Transmitter, 
         /// <summary>
-        /// Processes with internal logging
+        /// For work with command ID
         /// </summary>
-        Logging,
+        int Id { get; set; }
+
         /// <summary>
-        /// Without identification - all ISolutionEvent
+        /// Scope by GUID
         /// </summary>
-        General,
+        string Guid { get; set; }
+
         /// <summary>
-        /// Errors + Warnings
+        /// Filter by Custom input parameters
         /// </summary>
-        EW,
+        string CustomIn { get; set; }
+
         /// <summary>
-        /// By individual projects
+        /// Filter by Custom output parameters
         /// </summary>
-        ProjectPre,
-        ProjectPost,
+        string CustomOut { get; set; }
+
         /// <summary>
-        /// The 'PRE' as deferred action of existing projects
+        /// Cancel command if it's possible
         /// </summary>
-        DeferredPre,
+        bool Cancel { get; set; }
+
         /// <summary>
-        /// CommandEvents from EnvDTE
+        /// Use Before executing command
         /// </summary>
-        CommandEvent,
+        bool Pre { get; set; }
+
+        /// <summary>
+        /// Use After executed command
+        /// </summary>
+        bool Post { get; set; }
+
+        /// <summary>
+        /// About filter
+        /// </summary>
+        string Description { get; set; }
     }
 }

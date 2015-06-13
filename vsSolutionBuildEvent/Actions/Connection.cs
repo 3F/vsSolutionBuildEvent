@@ -276,6 +276,34 @@ namespace net.r_eg.vsSBE.Actions
         }
 
         /// <summary>
+        /// Binding of the execution Command ID for EnvDTE /Before.
+        /// </summary>
+        /// <param name="guid">The GUID.</param>
+        /// <param name="id">The command ID.</param>
+        /// <param name="customIn">Custom input parameters.</param>
+        /// <param name="customOut">Custom output parameters.</param>
+        /// <param name="cancelDefault">Whether the command has been cancelled.</param>
+        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        public int bindCommandDtePre(string guid, int id, object customIn, object customOut, ref bool cancelDefault)
+        {
+            return commandEvent(true, guid, id, customIn, customOut, ref cancelDefault);
+        }
+
+        /// <summary>
+        /// Binding of the execution Command ID for EnvDTE /After.
+        /// </summary>
+        /// <param name="guid">The GUID.</param>
+        /// <param name="id">The command ID.</param>
+        /// <param name="customIn">Custom input parameters.</param>
+        /// <param name="customOut">Custom output parameters.</param>
+        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        public int bindCommandDtePost(string guid, int id, object customIn, object customOut)
+        {
+            bool cancelDefault = false;
+            return commandEvent(false, guid, id, customIn, customOut, ref cancelDefault);
+        }
+
+        /// <summary>
         /// Resetting all progress of handling events
         /// </summary>
         /// <returns>true value if successful resetted</returns>
@@ -343,6 +371,88 @@ namespace net.r_eg.vsSBE.Actions
                 Log.nlog.Error("SBE 'Output' error: {0}", ex.Message);
             }
             return VSConstants.S_FALSE;
+        }
+
+        /// <param name="pre">Flag of Before/After execution.</param>
+        /// <param name="guid">The GUID.</param>
+        /// <param name="id">The command ID.</param>
+        /// <param name="customIn">Custom input parameters.</param>
+        /// <param name="customOut">Custom output parameters.</param>
+        /// <param name="cancelDefault">Whether the command has been cancelled.</param>
+        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        protected int commandEvent(bool pre, string guid, int id, object customIn, object customOut, ref bool cancelDefault)
+        {
+            if(Config._.Data == null) { // activation of this event type can be before opening solution
+                return VSConstants.S_FALSE;
+            }
+            CommandEvent[] evt = Config._.Data.CommandEvent;
+
+            if(isDisabledAll(evt)) {
+                return VSConstants.S_OK;
+            }
+
+            if(!IsAllowActions) {
+                return _ignoredAction(SolutionEventType.CommandEvent);
+            }
+
+            foreach(CommandEvent item in evt)
+            {
+                if(item.Filters == null) {
+                    // well, should be some protection for user if we will listen all events... otherwise we can lose control
+                    continue;
+                }
+
+                var Is = item.Filters.Where(f => 
+                            (
+                              ((pre && f.Pre == true) || (!pre && f.Post == true))
+                                && 
+                                (
+                                  (f.Id == id && f.Guid == guid) 
+                                   && 
+                                   (
+                                     (
+                                       (!String.IsNullOrEmpty(f.CustomIn) && f.CustomIn == (string)customIn)
+                                       || (String.IsNullOrEmpty(f.CustomIn) && String.IsNullOrEmpty((string)customIn))
+                                     )
+                                     &&
+                                     (
+                                       (!String.IsNullOrEmpty(f.CustomOut) && f.CustomOut == (string)customOut)
+                                       || (String.IsNullOrEmpty(f.CustomOut) && String.IsNullOrEmpty((string)customOut))
+                                     )
+                                   )
+                                )
+                            )).Select(f => f.Cancel);
+
+                if(Is.Count() < 1) {
+                    continue;
+                }
+
+                Log.nlog.Trace("[CommandEvent] catched: '{0}', '{1}', '{2}', '{3}', '{4}' /'{5}'",
+                                                        guid, id, customIn, customOut, cancelDefault, pre);
+
+                commandEvent(item);
+
+                if(pre && Is.Any(f => f)) {
+                    cancelDefault = true;
+                    Log.nlog.Info("[CommandEvent] original command has been canceled for action: '{0}'", item.Caption);
+                }
+            }
+            return Status._.contains(SolutionEventType.CommandEvent, StatusType.Fail)? VSConstants.S_FALSE : VSConstants.S_OK;
+        }
+
+        protected void commandEvent(CommandEvent item)
+        {
+            try
+            {
+                if(cmd.exec(item, SolutionEventType.CommandEvent)) {
+                    Log.nlog.Info("[CommandEvent] finished: '{0}'", item.Caption);
+                }
+                Status._.add(SolutionEventType.CommandEvent, StatusType.Success);
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("CommandEvent error: '{0}'", ex.Message);
+            }
+            Status._.add(SolutionEventType.CommandEvent, StatusType.Fail);
         }
 
         /// <summary>
