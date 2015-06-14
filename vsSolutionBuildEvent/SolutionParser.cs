@@ -160,23 +160,23 @@ namespace net.r_eg.vsSBE
         protected void hProject(string line, ref List<Project> projects)
         {
             // Pattern from Microsoft.Build.BuildEngine.Shared.SolutionParser !
-            string pattern = "^Project\\(\"(?<PROJECTTYPEGUID>.*)\"\\)\\s*=\\s*\"(?<PROJECTNAME>.*)\"\\s*,\\s*\"(?<RELATIVEPATH>.*)\"\\s*,\\s*\"(?<PROJECTGUID>.*)\"$";
+            string pattern = "^Project\\(\"(?<TypeGuid>.*)\"\\)\\s*=\\s*\"(?<Name>.*)\"\\s*,\\s*\"(?<Path>.*)\"\\s*,\\s*\"(?<Guid>.*)\"$";
             Match m = Regex.Match(line, pattern);
             if(!m.Success) {
                 Log.nlog.Debug("SolutionParser: incorrect line for pattern :: '{0}'", line);
                 return;
             }
 
-            string pType = m.Groups["PROJECTTYPEGUID"].Value.Trim();
+            string pType = m.Groups["TypeGuid"].Value.Trim();
             
             if(String.Equals("{2150E333-8FDC-42A3-9474-1A3956D46DE8}", pType, StringComparison.OrdinalIgnoreCase)) {
                 Log.nlog.Trace("SolutionParser: ignored as SolutionFolder");
                 return;
             }
 
-            string pName = m.Groups["PROJECTNAME"].Value.Trim();
-            string pPath = m.Groups["RELATIVEPATH"].Value.Trim();
-            string pGuid = m.Groups["PROJECTGUID"].Value.Trim();
+            string pName = m.Groups["Name"].Value.Trim();
+            string pPath = m.Groups["Path"].Value.Trim();
+            string pGuid = m.Groups["Guid"].Value.Trim();
 
             string fullPath;
             if(Path.IsPathRooted(pPath)) {

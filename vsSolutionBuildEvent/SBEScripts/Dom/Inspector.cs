@@ -106,14 +106,13 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
             }
 
             // Aliases to components
-
             foreach(var root in data[new NodeIdent()])
             {
                 if(root.Aliases == null) {
                     continue;
                 }
                 foreach(string alias in root.Aliases) {
-                    data[new NodeIdent(alias, root.Link.method)] = data[root.Link]; //shallow copies
+                    data[new NodeIdent(alias, root.Link.method, root.Link.className)] = data[root.Link]; //shallow copies
                 }
             }
         }
@@ -148,19 +147,21 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
             }
             
             IAttrDomLevelB levB = (IAttrDomLevelB)attr;
-            NodeIdent ident     = new NodeIdent((levB.Parent)?? getComponentName(type), levB.Method);
+            string className    = method.DeclaringType.FullName;
+            NodeIdent ident     = new NodeIdent((levB.Parent)?? getComponentName(type), levB.Method, (levB.Method == null)? null : className);
 
             if(!data.ContainsKey(ident)) {
                 data[ident] = new List<INodeInfo>();
             }
+            className = (method.Name == null)? null : className;
 
             if(attr.GetType() == typeof(PropertyAttribute)) {
-                data[ident].Add(new NodeInfo((PropertyAttribute)attr, method.Name));
+                data[ident].Add(new NodeInfo((PropertyAttribute)attr, method.Name, className));
                 return;
             }
 
             if(attr.GetType() == typeof(MethodAttribute)) {
-                data[ident].Add(new NodeInfo((MethodAttribute)attr, method.Name));
+                data[ident].Add(new NodeInfo((MethodAttribute)attr, method.Name, className));
                 return;
             }
         }

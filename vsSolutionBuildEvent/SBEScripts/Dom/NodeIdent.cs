@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,17 +23,33 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// Name of the parent specification (property/method/etc.)
         /// </summary>
         public string parent;
+
         /// <summary>
         /// Actual/real method name of the parent specification
         /// </summary>
         public string method;
 
+        /// <summary>
+        /// Actual class name if exists information
+        /// </summary>
+        public string className;
+
+        /// <param name="parent">Name of the parent specification (property/method/etc.)</param>
+        /// <param name="method">Actual/real method name of the parent specification</param>
+        /// <param name="className">Actual class name</param>
+        public NodeIdent(string parent, string method, string className)
+        {
+            this.parent     = parent;
+            this.method     = method;
+            this.className  = className;
+        }
+
         /// <param name="parent">Name of the parent specification (property/method/etc.)</param>
         /// <param name="method">Actual/real method name of the parent specification</param>
         public NodeIdent(string parent, string method)
+            : this(parent, method, null)
         {
-            this.parent = parent;
-            this.method = method;
+
         }
     }
 }

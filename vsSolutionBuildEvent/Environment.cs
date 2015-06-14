@@ -53,7 +53,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public EnvDTE.Events Events
         {
-            get { return Dte2.Events; }
+            get { return (Dte2 == null)? null : Dte2.Events; }
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public EnvDTE.Commands Commands
         {
-            get { return Dte2.Commands; }
+            get { return (Dte2 == null)? null : Dte2.Commands; }
         }
 
         /// <summary>

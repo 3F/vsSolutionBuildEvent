@@ -112,8 +112,9 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
 
         /// <param name="attr">Attribute of property</param>
         /// <param name="method">Current actual/real method name</param>
-        public NodeInfo(PropertyAttribute attr, string method)
-            : this(attr.Name, attr.Description, new NodeIdent(attr.Name, method), InfoType.Property)
+        /// <param name="className">Actual class name</param>
+        public NodeInfo(PropertyAttribute attr, string method, string className = null)
+            : this(attr.Name, attr.Description, new NodeIdent(attr.Name, method, className), InfoType.Property)
         {
             try {
                 Signature   = aboutProperty(attr.Get, attr.Set);
@@ -148,8 +149,9 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
 
         /// <param name="attr">Attribute of method</param>
         /// <param name="method">Current actual/real method name</param>
-        public NodeInfo(MethodAttribute attr, string method)
-            : this(attr.Name, attr.Description, new NodeIdent(attr.Name, method), InfoType.Method)
+        /// <param name="className">Actual class name</param>
+        public NodeInfo(MethodAttribute attr, string method, string className = null)
+            : this(attr.Name, attr.Description, new NodeIdent(attr.Name, method, className), InfoType.Method)
         {
             try {
                 Signature   = aboutMethod(attr.Return, attr.Arguments);

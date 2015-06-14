@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events;
+using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
@@ -87,6 +88,118 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         }
 
         /// <summary>
+        ///A test for parse - events.LastCommand
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(OperandNotFoundException))]
+        public void parseLastCommandTest1()
+        {
+            DTEComponentAccessor target = new DTEComponentAccessor();
+            target.emulateAfterExecute("{5EFC7975-14BC-11CF-9B2B-00AA00573819}", 264, (object)"In", (object)"Out");
+            target.parse("[DTE events.LastCommand]");
+        }
+
+        /// <summary>
+        ///A test for parse - events.LastCommand
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(NotSupportedOperationException))]
+        public void parseLastCommandTest2()
+        {
+            DTEComponent target = new DTEComponent((IEnvironment)null);
+            target.parse("[DTE events.LastCommand]");
+        }
+
+        /// <summary>
+        ///A test for parse - events.LastCommand
+        ///</summary>
+        [TestMethod()]
+        public void parseLastCommandTest3()
+        {
+            DTEComponentAccessor target = new DTEComponentAccessor();
+
+            string guid         = "{5EFC7975-14BC-11CF-9B2B-00AA00573819}";
+            int id              = 264;
+            object customIn     = (object)"In";
+            object customOut    = (object)"Out";
+            bool pre            = true;
+            target.emulateBeforeExecute(guid, id, customIn, customOut, false);
+
+            Assert.AreEqual(guid, target.parse("[DTE events.LastCommand.Guid]"));
+            Assert.AreEqual(Value.from(id), target.parse("[DTE events.LastCommand.Id]"));
+            Assert.AreEqual(customIn, target.parse("[DTE events.LastCommand.CustomIn]"));
+            Assert.AreEqual(customOut, target.parse("[DTE events.LastCommand.CustomOut]"));
+            Assert.AreEqual(Value.from(pre), target.parse("[DTE events.LastCommand.Pre]"));
+        }
+
+        /// <summary>
+        ///A test for parse - events.LastCommand
+        ///</summary>
+        [TestMethod()]
+        public void parseLastCommandTest4()
+        {
+            DTEComponentAccessor target = new DTEComponentAccessor();
+
+            string guid         = "{5EFC7975-14BC-11CF-9B2B-00AA00573819}";
+            int id              = 264;
+            object customIn     = (object)"In";
+            object customOut    = (object)"Out";
+            bool pre            = false;
+            target.emulateAfterExecute(guid, id, customIn, customOut);
+
+            Assert.AreEqual(guid, target.parse("[DTE events.LastCommand.Guid]"));
+            Assert.AreEqual(Value.from(id), target.parse("[DTE events.LastCommand.Id]"));
+            Assert.AreEqual(customIn, target.parse("[DTE events.LastCommand.CustomIn]"));
+            Assert.AreEqual(customOut, target.parse("[DTE events.LastCommand.CustomOut]"));
+            Assert.AreEqual(Value.from(pre), target.parse("[DTE events.LastCommand.Pre]"));
+        }
+
+        /// <summary>
+        ///A test for parse - events.LastCommand
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(OperationNotFoundException))]
+        public void parseLastCommandTest5()
+        {
+            DTEComponentAccessor target = new DTEComponentAccessor();
+            target.emulateAfterExecute("{5EFC7975-14BC-11CF-9B2B-00AA00573819}", 264, (object)"In", (object)"Out");
+
+            target.parse("[DTE events.LastCommand.NotRealPropStub]");
+        }
+
+        /// <summary>
+        ///A test for parse - events.LastCommand
+        ///</summary>
+        [TestMethod()]
+        public void parseLastCommandTest6()
+        {
+            DTEComponentAccessor target = new DTEComponentAccessor();
+
+            string guid = "{5EFC7975-14BC-11CF-9B2B-00AA00573819}";
+            target.emulateBeforeExecute(guid, 264, (object)"", (object)"", false);
+            target.emulateAfterExecute(guid, 264, (object)"", (object)"");
+
+            Assert.AreEqual(guid, target.parse("[DTE events . LastCommand . Guid]"));
+        }
+
+        /// <summary>
+        ///A test for parse - events.LastCommand
+        ///</summary>
+        [TestMethod()]
+        public void parseLastCommandTest7()
+        {
+            DTEComponentAccessor target = new DTEComponentAccessor();
+
+            string expectedGuid = "{5EFC7975-14BC-11CF-9B2B-00AA00573819}";
+            string otherGuid    = "{1496A755-94DE-11D0-8C3F-00C04FC2AAE2}";
+
+            target.emulateBeforeExecute(otherGuid, 1627, (object)"", (object)"", false);
+            target.emulateAfterExecute(expectedGuid, 264, (object)"", (object)"");
+
+            Assert.AreEqual(expectedGuid, target.parse("[DTE events.LastCommand.Guid]"));
+        }
+
+        /// <summary>
         ///A test for parse
         ///</summary>
         [TestMethod()]
@@ -99,26 +212,46 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 
         private class DTEComponentAccessor: DTEComponent
         {
-            public static IEnvironment MockOfIEnvironment
+            protected Mock<IEnvironment> mEnv;
+            protected Mock<EnvDTE.CommandEvents> mEnvCE;
+
+            public void emulateBeforeExecute(string guid, int id, object customIn, object customOut, bool cancelDefault)
             {
-                get {
-                    return new Environment((EnvDTE80.DTE2)null);
-                    //var mockEnv = new Mock<IEnvironment>();
-                    //mockEnv.SetupGet(p => p.Dte2).Returns((EnvDTE80.DTE2)null);
-                    //return mockEnv.Object;
-                }
+                mEnvCE.Raise(e => e.BeforeExecute += null, guid, id, customIn, customOut, cancelDefault);
             }
 
-            public DTEComponentAccessor(): base(MockOfIEnvironment)
+            public void emulateAfterExecute(string guid, int id, object customIn, object customOut)
             {
-                var mock = new Mock<DTEOperation>((IEnvironment)null, SolutionEventType.General);
-                mock.Setup(m => m.exec(It.IsAny<string[]>(), It.IsAny<bool>()));
-                dteo = mock.Object;
+                mEnvCE.Raise(e => e.AfterExecute += null, guid, id, customIn, customOut);
             }
 
-            public DTEComponentAccessor(IEnvironment env): base(env)
+            public DTEComponentAccessor() 
+                : base((IEnvironment)null)
             {
+                init();
+                attachCommandEvents();
+            }
 
+            protected void init()
+            {
+                this.mEnv   = new Mock<IEnvironment>();
+                this.env    = mEnv.Object;
+
+                initCommandEvents();
+                initDTEO();
+            }
+
+            protected void initCommandEvents()
+            {
+                this.mEnvCE = new Mock<EnvDTE.CommandEvents>();
+                mEnv.Setup(p => p.Events.get_CommandEvents("{00000000-0000-0000-0000-000000000000}", 0)).Returns(mEnvCE.Object);
+            }
+
+            protected void initDTEO()
+            {
+                var mDTEO = new Mock<DTEOperation>(env, SolutionEventType.General);
+                mDTEO.Setup(m => m.exec(It.IsAny<string[]>(), It.IsAny<bool>()));
+                this.dteo = mDTEO.Object;
             }
         }
     }
