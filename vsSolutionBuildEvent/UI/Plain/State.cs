@@ -46,6 +46,7 @@ namespace net.r_eg.vsSBE.UI.Plain
             sb.Append(about(data.PreBuild,      "Pre-Build     "));
             sb.Append(about(data.PostBuild,     "Post-Build    "));
             sb.Append(about(data.CancelBuild,   "Cancel-Build  "));
+            sb.Append(about(data.CommandEvent,  "CommandEvent  "));
             sb.Append(about(data.WarningsBuild, "Warnings-Build"));
             sb.Append(about(data.ErrorsBuild,   "Errors-Build  "));
             sb.Append(about(data.OWPBuild,      "Output-Build  "));

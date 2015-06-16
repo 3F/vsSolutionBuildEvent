@@ -81,6 +81,9 @@ namespace net.r_eg.vsSBE.UI.Xaml.Logic
                 case SolutionEventType.OWP: {
                     return "Output";
                 }
+                case SolutionEventType.CommandEvent: {
+                    return "DTE";
+                }
             }
             return type.ToString();
         }

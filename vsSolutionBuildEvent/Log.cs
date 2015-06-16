@@ -18,9 +18,7 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using Microsoft.VisualStudio.Shell.Interop;
-using net.r_eg.vsSBE.Exceptions;
 using NLog;
 
 namespace net.r_eg.vsSBE
@@ -150,7 +148,7 @@ namespace net.r_eg.vsSBE
                 _paneDTE = dte2.ToolWindows.OutputWindow.OutputWindowPanes.Add(name);
             }
             catch(Exception ex) {
-                Log.nlog.Error("Log :: inner exception", ex);
+                Log.nlog.Error("Log :: inner exception: '{0}'", ex.ToString());
             }
         }
 

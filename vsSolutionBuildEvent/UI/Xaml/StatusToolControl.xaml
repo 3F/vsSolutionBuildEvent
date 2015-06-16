@@ -3,27 +3,28 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" d:DesignHeight="23" d:DesignWidth="628">
-    <Grid Name="grid" Width="624" HorizontalAlignment="Left" VerticalAlignment="Top">
-        <ToggleButton Content="Pre" Height="23" HorizontalAlignment="Left" Margin="84,0,0,0" Name="btnPre" VerticalAlignment="Top" Width="47" Click="btnPre_Click" MouseEnter="btnPre_MouseEnter" MouseLeave="btnPre_MouseLeave" MouseUp="btnPre_MouseUp" />
-        <ToggleButton Content="Post" Height="23" HorizontalAlignment="Left" Margin="132,0,0,0" Name="btnPost" VerticalAlignment="Top" Width="53" Click="btnPost_Click" MouseEnter="btnPost_MouseEnter" MouseLeave="btnPost_MouseLeave" MouseUp="btnPost_MouseUp" />
-        <ToggleButton Content="Cancel" Height="23" HorizontalAlignment="Left" Margin="186,0,0,0" Name="btnCancel" VerticalAlignment="Top" Width="64" Click="btnCancel_Click" MouseEnter="btnCancel_MouseEnter" MouseLeave="btnCancel_MouseLeave" MouseUp="btnCancel_MouseUp" />
-        <ToggleButton Content="Warnings" Height="23" HorizontalAlignment="Left" Margin="251,0,0,0" Name="btnWarnings" VerticalAlignment="Top" Click="btnWarnings_Click" Width="79" MouseEnter="btnWarnings_MouseEnter" MouseLeave="btnWarnings_MouseLeave" MouseUp="btnWarnings_MouseUp" />
-        <ToggleButton Content="Errors" Height="23" HorizontalAlignment="Left" Margin="331,0,0,0" Name="btnErrors" VerticalAlignment="Top" Width="59" Click="btnErrors_Click" MouseEnter="btnErrors_MouseEnter" MouseLeave="btnErrors_MouseLeave" MouseUp="btnErrors_MouseUp" />
-        <ToggleButton Content="Output" Height="23" HorizontalAlignment="Left" Margin="391,0,0,0" Name="btnOutput" VerticalAlignment="Top" Width="66" Click="btnOutput_Click" MouseEnter="btnOutput_MouseEnter" MouseLeave="btnOutput_MouseLeave" MouseUp="btnOutput_MouseUp" />
-        <ToggleButton Content="Transmitter" Height="23" HorizontalAlignment="Left" Margin="458,0,0,0" Name="btnTransmitter" VerticalAlignment="Top" Width="88" Click="btnTransmitter_Click" MouseEnter="btnTransmitter_MouseEnter" MouseLeave="btnTransmitter_MouseLeave" MouseUp="btnTransmitter_MouseUp" />
-        <ToggleButton Content="Logging" Height="23" HorizontalAlignment="Left" Margin="547,0,0,0" Name="btnLogging" VerticalAlignment="Top" Width="72" Click="btnLogging_Click" MouseEnter="btnLogging_MouseEnter" MouseLeave="btnLogging_MouseLeave" MouseUp="btnLogging_MouseUp" />
+             mc:Ignorable="d" d:DesignHeight="23" d:DesignWidth="666">
+    <Grid Name="grid" Width="664" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <ToggleButton Content="Pre" Height="23" HorizontalAlignment="Left" Margin="76,0,0,0" Name="btnPre" VerticalAlignment="Top" Width="47" Click="btnPre_Click" MouseEnter="btnPre_MouseEnter" MouseLeave="btnPre_MouseLeave" MouseUp="btnPre_MouseUp" />
+        <ToggleButton Content="Post" Height="23" HorizontalAlignment="Left" Margin="124,0,0,0" Name="btnPost" VerticalAlignment="Top" Width="53" Click="btnPost_Click" MouseEnter="btnPost_MouseEnter" MouseLeave="btnPost_MouseLeave" MouseUp="btnPost_MouseUp" />
+        <ToggleButton Content="Cancel" Height="23" HorizontalAlignment="Left" Margin="178,0,0,0" Name="btnCancel" VerticalAlignment="Top" Width="64" Click="btnCancel_Click" MouseEnter="btnCancel_MouseEnter" MouseLeave="btnCancel_MouseLeave" MouseUp="btnCancel_MouseUp" />
+        <ToggleButton Content="DTE" Height="23" HorizontalAlignment="Left" Margin="243,0,0,0" x:Name="btnDTE" VerticalAlignment="Top" Width="50" Click="btnDTE_Click" MouseEnter="btnDTE_MouseEnter" MouseLeave="btnDTE_MouseLeave" MouseUp="btnDTE_MouseUp" />
+        <ToggleButton Content="Warnings" Height="23" HorizontalAlignment="Left" Margin="294,0,0,0" Name="btnWarnings" VerticalAlignment="Top" Click="btnWarnings_Click" Width="79" MouseEnter="btnWarnings_MouseEnter" MouseLeave="btnWarnings_MouseLeave" MouseUp="btnWarnings_MouseUp" />
+        <ToggleButton Content="Errors" Height="23" HorizontalAlignment="Left" Margin="374,0,0,0" Name="btnErrors" VerticalAlignment="Top" Width="59" Click="btnErrors_Click" MouseEnter="btnErrors_MouseEnter" MouseLeave="btnErrors_MouseLeave" MouseUp="btnErrors_MouseUp" />
+        <ToggleButton Content="Output" Height="23" HorizontalAlignment="Left" Margin="434,0,0,0" Name="btnOutput" VerticalAlignment="Top" Width="66" Click="btnOutput_Click" MouseEnter="btnOutput_MouseEnter" MouseLeave="btnOutput_MouseLeave" MouseUp="btnOutput_MouseUp" />
+        <ToggleButton Content="Transmitter" Height="23" HorizontalAlignment="Left" Margin="501,0,0,0" Name="btnTransmitter" VerticalAlignment="Top" Width="88" Click="btnTransmitter_Click" MouseEnter="btnTransmitter_MouseEnter" MouseLeave="btnTransmitter_MouseLeave" MouseUp="btnTransmitter_MouseUp" />
+        <ToggleButton Content="Logging" Height="23" HorizontalAlignment="Left" Margin="590,0,0,0" Name="btnLogging" VerticalAlignment="Top" Width="72" Click="btnLogging_Click" MouseEnter="btnLogging_MouseEnter" MouseLeave="btnLogging_MouseLeave" MouseUp="btnLogging_MouseUp" />
         <Button Height="23" HorizontalAlignment="Left" Name="btnSettings" VerticalAlignment="Top" Width="20" Padding="0" Click="btnSettings_Click">
             <StackPanel>
                 <Image Source="/vsSolutionBuildEvent;component/Resources/Settings_16.png" Height="20" Width="20" Stretch="None" />
             </StackPanel>
         </Button>
-        <Button Height="23" HorizontalAlignment="Left" Margin="24,0,0,0" Name="btnInfo" VerticalAlignment="Top" Width="46" Click="btnInfo_Click">
+        <Button Height="23" HorizontalAlignment="Left" Margin="21,0,0,0" Name="btnInfo" VerticalAlignment="Top" Width="46" Click="btnInfo_Click">
             <StackPanel Orientation="Horizontal">
                 <Image Source="/vsSolutionBuildEvent;component/Resources/Exclamation_16.png" HorizontalAlignment="Left" VerticalAlignment="Center" Height="20" Width="20" Stretch="None" />
                 <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Name="textInfo" Foreground="#FF2B0000">0</TextBlock>
-            </StackPanel>            
+            </StackPanel>
         </Button>
-        <Label Content="::" Height="28" HorizontalAlignment="Left" Margin="70,0,0,0" Name="labelEvents" VerticalAlignment="Top" />
+        <Label Content="::" Height="28" HorizontalAlignment="Left" Margin="64,-2,0,-3" Name="labelEvents" VerticalAlignment="Top" />
     </Grid>
 </UserControl>

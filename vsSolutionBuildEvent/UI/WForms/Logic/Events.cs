@@ -324,6 +324,9 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             addEvent(new SBEWrap(SolutionEventType.Cancel));
             combo.Items.Add(":: Cancel-Build :: by user or when an error occurs");
 
+            addEvent(new SBEWrap(SolutionEventType.CommandEvent));
+            combo.Items.Add(":: CommandEvent (DTE) :: All Command Events from EnvDTE");
+
             addEvent(new SBEWrap(SolutionEventType.Warnings));
             combo.Items.Add(":: Warnings-Build :: Warnings during assembly processing");
 
@@ -335,9 +338,6 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
 
             addEvent(new SBEWrap(SolutionEventType.Transmitter));
             combo.Items.Add(":: Transmitter :: Transmission of the build-data to outer handler");
-
-            addEvent(new SBEWrap(SolutionEventType.CommandEvent));
-            combo.Items.Add(":: CommandEvent :: All Command Events from EnvDTE");
 
             addEvent(new SBEWrap(SolutionEventType.Logging));
             combo.Items.Add(":: Logging :: All processes with internal logging");

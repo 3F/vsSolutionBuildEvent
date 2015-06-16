@@ -69,6 +69,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
             update(btnPre, SolutionEventType.Pre);
             update(btnPost, SolutionEventType.Post);
             update(btnCancel, SolutionEventType.Cancel);
+            update(btnDTE, SolutionEventType.CommandEvent);
             update(btnWarnings, SolutionEventType.Warnings);
             update(btnErrors, SolutionEventType.Errors);
             update(btnOutput, SolutionEventType.OWP);
@@ -208,6 +209,11 @@ namespace net.r_eg.vsSBE.UI.Xaml
             toggleRestored(SolutionEventType.Cancel, btnCancel.IsChecked.Value);
         }
 
+        private void btnDTE_Click(object sender, RoutedEventArgs e)
+        {
+            toggleRestored(SolutionEventType.CommandEvent, btnDTE.IsChecked.Value);
+        }
+
         private void btnWarnings_Click(object sender, RoutedEventArgs e)
         {
             toggleRestored(SolutionEventType.Warnings, btnWarnings.IsChecked.Value);
@@ -261,6 +267,16 @@ namespace net.r_eg.vsSBE.UI.Xaml
         private void btnCancel_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             btnCancel.Content = caption(SolutionEventType.Cancel, false);
+        }
+
+        private void btnDTE_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            btnDTE.Content = caption(SolutionEventType.CommandEvent, true);
+        }
+
+        private void btnDTE_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            btnDTE.Content = caption(SolutionEventType.CommandEvent, false);
         }
 
         private void btnWarnings_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
@@ -331,6 +347,13 @@ namespace net.r_eg.vsSBE.UI.Xaml
         {
             if(e.ChangedButton == System.Windows.Input.MouseButton.Middle) {
                 btnCancel.IsChecked = toggleEnabled(SolutionEventType.Cancel, btnCancel.IsChecked.Value);
+            }
+        }
+
+        private void btnDTE_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if(e.ChangedButton == System.Windows.Input.MouseButton.Middle) {
+                btnDTE.IsChecked = toggleEnabled(SolutionEventType.CommandEvent, btnDTE.IsChecked.Value);
             }
         }
 
