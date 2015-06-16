@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -48,6 +48,8 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
             InterpreterMode,
             ScriptMode,            
             SBEScript,
+            MSBuildTargets,
+            CSharpLang,
         }
 
         /// <summary>
@@ -144,6 +146,14 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
                     def = HighlightingManager.Instance.GetDefinition("InterpreterMode");
                     break;
                 }
+                case ColorSchema.MSBuildTargets: {
+                    def = HighlightingManager.Instance.GetDefinition("MSBuildTargets");
+                    break;
+                }
+                case ColorSchema.CSharpLang: {
+                    def = HighlightingManager.Instance.GetDefinition("CSharpLang");
+                    break;
+                }
                 default: {
                     Log.nlog.Debug("colorize: schema '{0}' is invalid", schema);
                     return;
@@ -182,6 +192,8 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
             loadXshdSchema(xshd.XshdResource.FilesMode, "FilesMode");
             loadXshdSchema(xshd.XshdResource.OperationMode, "OperationMode");
             loadXshdSchema(xshd.XshdResource.InterpreterMode, "InterpreterMode");
+            loadXshdSchema(xshd.XshdResource.MSBuildTargets, "MSBuildTargets");
+            loadXshdSchema(xshd.XshdResource.CSharpLang, "CSharpLang");
 
             colorize(ColorSchema.Default);
             ContextMenuStrip = contextMenuEditor;

@@ -18,9 +18,9 @@
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
-    /// Processing with some scripts
+    /// Processing with MSBuild targets
     /// </summary>
-    public interface IModeScript: ICommand
+    public interface IModeTargets: ICommand
     {
 
     }

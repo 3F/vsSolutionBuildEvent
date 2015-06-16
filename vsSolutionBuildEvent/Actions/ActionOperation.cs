@@ -15,21 +15,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace net.r_eg.vsSBE.Events
+using net.r_eg.vsSBE.Events;
+
+namespace net.r_eg.vsSBE.Actions
 {
     /// <summary>
-    /// Processing with environment of Visual Studio
+    /// Action for Operation Mode
     /// </summary>
-    public interface IModeOperation: ICommandArray
+    public class ActionOperation: Action, IAction
     {
         /// <summary>
-        /// Caption for atomic commands
+        /// Process for specified event.
         /// </summary>
-        string Caption { get; set; }
+        /// <param name="evt">Configured event.</param>
+        /// <returns>Result of handling.</returns>
+        public override bool process(ISolutionEvent evt)
+        {
+            IModeOperation operation = (IModeOperation)evt.Mode;
+            if(operation.Command == null || operation.Command.Length < 1) {
+                return true;
+            }
+            (new DTEOperation(cmd.Env, cmd.EventType)).exec(operation.Command, operation.AbortOnFirstError);
+            return true;
+        }
 
-        /// <summary>
-        /// Abort operations on the first error
-        /// </summary>
-        bool AbortOnFirstError { get; set; }
+        /// <param name="cmd"></param>
+        public ActionOperation(ICommand cmd)
+            : base(cmd)
+        {
+
+        }
     }
 }

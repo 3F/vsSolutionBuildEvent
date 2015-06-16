@@ -18,10 +18,13 @@
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
-    /// Processing with some scripts
+    /// Specifies basic fields for array of commands
     /// </summary>
-    public interface IModeScript: ICommand
+    public interface ICommandArray
     {
-
+        /// <summary>
+        /// Main atomic commands for handling
+        /// </summary>
+        string[] Command { get; set; }
     }
 }

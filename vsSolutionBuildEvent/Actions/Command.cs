@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
@@ -63,6 +64,11 @@ namespace net.r_eg.vsSBE.Actions
         }
         protected SolutionEventType type = SolutionEventType.General;
 
+        /// <summary>
+        /// Predefined actions.
+        /// </summary>
+        protected volatile Dictionary<ModeType, IAction> actions = new Dictionary<ModeType, IAction>();
+
 
         /// <summary>
         /// Entry point for execution
@@ -96,23 +102,7 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             Log.nlog.Info("Launching action '{0}' :: Configuration - '{1}'", evt.Caption, cfg);
-            switch(evt.Mode.Type)
-            {
-                case ModeType.Operation: {
-                    Log.nlog.Info("Use Operation Mode");
-                    return hModeOperation(evt);
-                }
-                case ModeType.Interpreter: {
-                    Log.nlog.Info("Use Interpreter Mode");
-                    return hModeInterpreter(evt);
-                }
-                case ModeType.Script: {
-                    Log.nlog.Info("Use Script Mode");
-                    return hModeScript(evt);
-                }
-            }
-            Log.nlog.Info("Use File Mode");
-            return hModeFile(evt);
+            return actionBy(evt);
         }
 
         /// <summary>
@@ -133,82 +123,37 @@ namespace net.r_eg.vsSBE.Actions
             Env         = env;
             SBEScript   = script;
             MSBuild     = msbuild;
+
+            actions[ModeType.Operation]     = new ActionOperation(this);
+            actions[ModeType.Interpreter]   = new ActionInterpreter(this);
+            actions[ModeType.Script]        = new ActionScript(this);
+            actions[ModeType.File]          = new ActionFile(this);
+            actions[ModeType.Targets]       = new ActionTargets(this);
         }
 
-        protected bool hModeFile(ISolutionEvent evt)
+        protected bool actionBy(ISolutionEvent evt)
         {
-            string cFiles = ((IModeFile)evt.Mode).Command;
-
-            parse(evt, ref cFiles);
-            useShell(evt, treatNewlineAs(" & ", cFiles));
-
-            return true;
-        }
-
-        protected bool hModeOperation(ISolutionEvent evt)
-        {
-            IModeOperation operation = (IModeOperation)evt.Mode;
-            if(operation.Command == null || operation.Command.Length < 1) {
-                return true;
-            }
-            (new DTEOperation(Env, type)).exec(operation.Command, operation.AbortOnFirstError);
-            return true;
-        }
-
-        protected bool hModeInterpreter(ISolutionEvent evt)
-        {
-            if(((IModeInterpreter)evt.Mode).Handler.Trim().Length < 1) {
-                throw new NotFoundException("Interpreter: Handler is empty or not selected.");
-            }
-
-            string script   = ((IModeInterpreter)evt.Mode).Command;
-            string wrapper  = ((IModeInterpreter)evt.Mode).Wrapper;
-
-            parse(evt, ref script);
-            script = treatNewlineAs(((IModeInterpreter)evt.Mode).Newline, script);
-
-            switch(wrapper.Length) {
-                case 1: {
-                    script = string.Format("{0}{1}{0}", wrapper, script.Replace(wrapper, "\\" + wrapper));
-                    break;
+            switch(evt.Mode.Type)
+            {
+                case ModeType.Operation: {
+                    Log.nlog.Info("Use Operation Mode");
+                    return actions[ModeType.Operation].process(evt);
                 }
-                case 2: {
-                    //pair as: (), {}, [] ...
-                    //e.g.: (echo str&echo.&echo str) >> out
-                    string wL = wrapper.ElementAt(0).ToString();
-                    string wR = wrapper.ElementAt(1).ToString();
-                    script = string.Format("{0}{1}{2}", wL, script.Replace(wL, "\\" + wL).Replace(wR, "\\" + wR), wR);
-                    break;
+                case ModeType.Interpreter: {
+                    Log.nlog.Info("Use Interpreter Mode");
+                    return actions[ModeType.Interpreter].process(evt);
+                }
+                case ModeType.Script: {
+                    Log.nlog.Info("Use Script Mode");
+                    return actions[ModeType.Script].process(evt);
+                }
+                case ModeType.Targets: {
+                    Log.nlog.Info("Use Targets Mode");
+                    return actions[ModeType.Targets].process(evt);
                 }
             }
-            useShell(evt, string.Format("{0} {1}", ((IModeInterpreter)evt.Mode).Handler, script));
-            return true;
-        }
-
-        protected bool hModeScript(ISolutionEvent evt)
-        {
-            string script = ((IModeScript)evt.Mode).Command;
-            parse(evt, ref script);
-            return true;
-        }
-
-        protected virtual void useShell(ISolutionEvent evt, string cmd)
-        {
-            Log.nlog.Info("Prepared command: '{0}'",  cmd);
-
-            HProcess p = new HProcess(Settings.WorkingPath);
-            p.useShell(cmd, evt.Process.Waiting, evt.Process.Hidden, evt.Process.TimeLimit);
-        }
-
-        protected virtual void parse(ISolutionEvent evt, ref string data)
-        {
-            if(evt.SupportSBEScripts) {
-                data = SBEScript.parse(data, evt.SupportMSBuild);
-            }
-
-            if(evt.SupportMSBuild) {
-                data = MSBuild.parse(data);
-            }
+            Log.nlog.Info("Use Files Mode");
+            return actions[ModeType.File].process(evt);
         }
 
         /// <summary>
@@ -243,14 +188,6 @@ namespace net.r_eg.vsSBE.Actions
                 }
             }
             return false;
-        }
-
-        protected string treatNewlineAs(string str, string data)
-        {
-            if(String.IsNullOrEmpty(data)) {
-                return String.Empty;
-            }
-            return data.Trim(new char[]{'\r', '\n'}).Replace("\r", "").Replace("\n", str);
         }
     }
 }

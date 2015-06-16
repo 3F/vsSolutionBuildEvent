@@ -18,10 +18,13 @@
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
-    /// Processing with some scripts
+    /// Specifies basic fields for command
     /// </summary>
-    public interface IModeScript: ICommand
+    public interface ICommand
     {
-
+        /// <summary>
+        /// Main command for handling
+        /// </summary>
+        string Command { get; set; }
     }
 }

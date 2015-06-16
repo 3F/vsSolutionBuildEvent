@@ -15,21 +15,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace net.r_eg.vsSBE.Events
+using net.r_eg.vsSBE.Events;
+
+namespace net.r_eg.vsSBE.Actions
 {
-    /// <summary>
-    /// Processing with environment of Visual Studio
-    /// </summary>
-    public interface IModeOperation: ICommandArray
+    public interface IAction
     {
         /// <summary>
-        /// Caption for atomic commands
+        /// Process for specified event.
         /// </summary>
-        string Caption { get; set; }
+        /// <param name="evt">Configured event.</param>
+        /// <returns>Result of handling.</returns>
+        bool process(ISolutionEvent evt);
 
         /// <summary>
-        /// Abort operations on the first error
+        /// Access to shell for event data.
         /// </summary>
-        bool AbortOnFirstError { get; set; }
+        /// <param name="evt">Configured event.</param>
+        /// <param name="cmd">Formatted command to shell.</param>
+        void shell(ISolutionEvent evt, string cmd);
+
+        /// <summary>
+        /// Access to parsers for event data.
+        /// </summary>
+        /// <param name="evt">Configured event.</param>
+        /// <param name="data">Data to analysing.</param>
+        void parse(ISolutionEvent evt, string data);
     }
 }

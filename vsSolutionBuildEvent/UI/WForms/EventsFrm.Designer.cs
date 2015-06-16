@@ -139,6 +139,7 @@
             this.checkBoxProcessHide = new System.Windows.Forms.CheckBox();
             this.checkBoxStatus = new System.Windows.Forms.CheckBox();
             this.groupBoxPMode = new System.Windows.Forms.GroupBox();
+            this.radioModeTargets = new System.Windows.Forms.RadioButton();
             this.radioModeScript = new System.Windows.Forms.RadioButton();
             this.radioModeOperation = new System.Windows.Forms.RadioButton();
             this.radioModeInterpreter = new System.Windows.Forms.RadioButton();
@@ -1116,6 +1117,7 @@
             this.checkBoxSBEScriptSupport.TabIndex = 21;
             this.checkBoxSBEScriptSupport.Text = "SBE-Scripts support";
             this.checkBoxSBEScriptSupport.UseVisualStyleBackColor = true;
+            this.checkBoxSBEScriptSupport.CheckedChanged += new System.EventHandler(this.checkBoxSBEScriptSupport_CheckedChanged);
             // 
             // checkBoxOperationsAbort
             // 
@@ -1213,6 +1215,7 @@
             // 
             // groupBoxPMode
             // 
+            this.groupBoxPMode.Controls.Add(this.radioModeTargets);
             this.groupBoxPMode.Controls.Add(this.radioModeScript);
             this.groupBoxPMode.Controls.Add(this.radioModeOperation);
             this.groupBoxPMode.Controls.Add(this.radioModeInterpreter);
@@ -1223,6 +1226,17 @@
             this.groupBoxPMode.TabIndex = 67;
             this.groupBoxPMode.TabStop = false;
             this.groupBoxPMode.Text = "Processing mode";
+            // 
+            // radioModeTargets
+            // 
+            this.radioModeTargets.AutoSize = true;
+            this.radioModeTargets.Location = new System.Drawing.Point(6, 113);
+            this.radioModeTargets.Name = "radioModeTargets";
+            this.radioModeTargets.Size = new System.Drawing.Size(91, 17);
+            this.radioModeTargets.TabIndex = 27;
+            this.radioModeTargets.Text = "Targets Mode";
+            this.radioModeTargets.UseVisualStyleBackColor = true;
+            this.radioModeTargets.CheckedChanged += new System.EventHandler(this.radioModeTargets_CheckedChanged);
             // 
             // radioModeScript
             // 
@@ -2629,6 +2643,7 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn dgvCEFiltersColumnPost;
         private System.Windows.Forms.DataGridViewButtonColumn dgvCEFiltersColumnRemove;
         private System.Windows.Forms.ToolStripMenuItem menuSnifferActivateCE;
+        private System.Windows.Forms.RadioButton radioModeTargets;
 
     }
 }

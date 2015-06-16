@@ -15,13 +15,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace net.r_eg.vsSBE.Events
+using net.r_eg.vsSBE.Events;
+
+namespace net.r_eg.vsSBE.Actions
 {
     /// <summary>
-    /// Processing with some scripts
+    /// Action for Files Mode
     /// </summary>
-    public interface IModeScript: ICommand
+    public class ActionFile: Action, IAction
     {
+        /// <summary>
+        /// Process for specified event.
+        /// </summary>
+        /// <param name="evt">Configured event.</param>
+        /// <returns>Result of handling.</returns>
+        public override bool process(ISolutionEvent evt)
+        {
+            string cFiles = ((IModeFile)evt.Mode).Command;
 
+            parse(evt, cFiles);
+            shell(evt, treatNewlineAs(" & ", cFiles));
+
+            return true;
+        }
+
+        /// <param name="cmd"></param>
+        public ActionFile(ICommand cmd)
+            : base(cmd)
+        {
+
+        }
     }
 }

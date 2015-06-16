@@ -201,6 +201,11 @@ namespace net.r_eg.vsSBE.UI.WForms
                     Command = textEditor.Text
                 };
             }
+            else if(radioModeTargets.Checked) {
+                evt.Mode = new ModeTargets() {
+                    Command = textEditor.Text
+                };
+            }
             else if(radioModeOperation.Checked)
             {
                 string[] command;
@@ -353,6 +358,11 @@ namespace net.r_eg.vsSBE.UI.WForms
                 case ModeType.Script: {
                     radioModeScript.Checked = true;
                     textEditor.Text = ((IModeScript)evt.Mode).Command;
+                    return;
+                }
+                case ModeType.Targets: {
+                    radioModeTargets.Checked = true;
+                    textEditor.Text = ((IModeTargets)evt.Mode).Command;
                     return;
                 }
                 case ModeType.Operation:
@@ -528,6 +538,13 @@ namespace net.r_eg.vsSBE.UI.WForms
                 labelToCommandBox.Text = "Script:";
                 checkBoxSBEScriptSupport.Enabled = false;
                 checkBoxSBEScriptSupport.Checked = true;
+                return;
+            }
+            if(type == ModeType.Targets) {
+                labelToCommandBox.Text = ".targets:";
+                if(textEditor.Text.Length < 1) {
+                    textEditor.Text = Resource.StringDefaultValueForTargetsMode;
+                }
                 return;
             }
             if(type == ModeType.Operation)
@@ -724,7 +741,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             checkBoxStatus.BackColor = (checkBoxStatus.Checked)? Color.FromArgb(242, 250, 241) : Color.FromArgb(248, 243, 243);
             panelCommand.BackColor   = (checkBoxStatus.Checked)? Color.FromArgb(111, 145, 6) : Color.FromArgb(168, 47, 17);
 
-            if(radioModeScript.Checked) {
+            if(radioModeScript.Checked || radioModeTargets.Checked) {
                 textEditor.setBackgroundFromString("#FFFFFF");
                 return;
             }
@@ -848,39 +865,63 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void radioModeFiles_CheckedChanged(object sender, EventArgs e)
         {
+            if(!radioModeFiles.Checked) {
+                return;
+            }
             uiViewMode(ModeType.File);
             textEditor.colorize(TextEditor.ColorSchema.FilesMode);
-            textEditor._.ShowLineNumbers        = false;
-            textEditor.CodeCompletionEnabled    = true;
+            textEditor._.ShowLineNumbers = false;
         }
 
         private void radioModeOperation_CheckedChanged(object sender, EventArgs e)
         {
+            if(!radioModeOperation.Checked) {
+                return;
+            }
             uiViewMode(ModeType.Operation);
             textEditor.colorize(TextEditor.ColorSchema.OperationMode);
-            textEditor._.ShowLineNumbers        = false;
-            textEditor.CodeCompletionEnabled    = false;
+            textEditor._.ShowLineNumbers = false;
         }
 
         private void radioModeInterpreter_CheckedChanged(object sender, EventArgs e)
         {
+            if(!radioModeInterpreter.Checked) {
+                return;
+            }
             uiViewMode(ModeType.Interpreter);
             textEditor.colorize(TextEditor.ColorSchema.InterpreterMode);
-            textEditor._.ShowLineNumbers        = false;
-            textEditor.CodeCompletionEnabled    = true;
+            textEditor._.ShowLineNumbers = false;
         }
 
         private void radioModeScript_CheckedChanged(object sender, EventArgs e)
         {
+            if(!radioModeScript.Checked) {
+                return;
+            }
             uiViewMode(ModeType.Script);
             textEditor.colorize(TextEditor.ColorSchema.SBEScript);
             textEditor._.ShowLineNumbers        = true;
             textEditor.CodeCompletionEnabled    = true;
         }
 
+        private void radioModeTargets_CheckedChanged(object sender, EventArgs e)
+        {
+            if(!radioModeTargets.Checked) {
+                return;
+            }
+            uiViewMode(ModeType.Targets);
+            textEditor.colorize(TextEditor.ColorSchema.MSBuildTargets);
+            textEditor._.ShowLineNumbers = true;
+        }
+
         private void chkBuildContext_CheckedChanged(object sender, EventArgs e)
         {
             comboBoxBuildContext.Enabled = chkBuildContext.Checked;
+        }
+
+        private void checkBoxSBEScriptSupport_CheckedChanged(object sender, EventArgs e)
+        {
+            textEditor.CodeCompletionEnabled = checkBoxSBEScriptSupport.Checked;
         }
 
         private void checkBoxWaitForExit_CheckedChanged(object sender, EventArgs e)

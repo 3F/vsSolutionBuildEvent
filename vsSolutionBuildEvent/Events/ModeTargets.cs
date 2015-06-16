@@ -18,10 +18,26 @@
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
-    /// Processing with some scripts
+    /// Processing with MSBuild targets
     /// </summary>
-    public interface IModeScript: ICommand
+    public class ModeTargets: IMode, IModeTargets
     {
+        /// <summary>
+        /// Type of implementation
+        /// </summary>
+        public ModeType Type
+        {
+            get { return ModeType.Targets; }
+        }
 
+        /// <summary>
+        /// Command for handling
+        /// </summary>
+        public string Command
+        {
+            get { return command; }
+            set { command = value; }
+        }
+        private string command = string.Empty;
     }
 }

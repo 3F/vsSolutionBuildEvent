@@ -223,6 +223,9 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                 case ModeType.Script: {
                     return new ModeScript();
                 }
+                case ModeType.Targets: {
+                    return new ModeTargets();
+                }
                 case ModeType.Operation: {
                     return new ModeOperation();
                 }

@@ -61,6 +61,18 @@ namespace net.r_eg.vsSBE.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+        ///&lt;Project DefaultTargets=&quot;Build&quot; ToolsVersion=&quot;12.0&quot; xmlns=&quot;http://schemas.microsoft.com/developer/msbuild/2003&quot;&gt;
+        ///    &lt;!-- ... --&gt;
+        ///&lt;/Project&gt;.
+        /// </summary>
+        internal static string StringDefaultValueForTargetsMode {
+            get {
+                return ResourceManager.GetString("StringDefaultValueForTargetsMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to #[&quot;
         ///      Example
         ///&quot;]

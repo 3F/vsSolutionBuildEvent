@@ -38,6 +38,7 @@
       <HintPath>..\packages\AvalonEdit.5.0.2\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Build" />
+    <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="Microsoft.VisualStudio.OLE.Interop" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.8.0" />
@@ -94,9 +95,16 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\Action.cs" />
+    <Compile Include="Actions\ActionFile.cs" />
+    <Compile Include="Actions\ActionOperation.cs" />
+    <Compile Include="Actions\ActionTargets.cs" />
+    <Compile Include="Actions\ActionScript.cs" />
+    <Compile Include="Actions\ActionInterpreter.cs" />
     <Compile Include="Actions\Connection.cs" />
     <Compile Include="Actions\DTEOperation.cs" />
     <Compile Include="Actions\HProcess.cs" />
+    <Compile Include="Actions\IAction.cs" />
     <Compile Include="Actions\ICommand.cs" />
     <Compile Include="API\EventLevel.cs" />
     <Compile Include="API\IEventLevel.cs" />
@@ -107,7 +115,11 @@
     <Compile Include="Events\CommandEvents\Filter.cs" />
     <Compile Include="Events\CommandEvent.cs" />
     <Compile Include="Events\CommandEvents\IFilter.cs" />
+    <Compile Include="Events\ICommandArray.cs" />
     <Compile Include="Events\ICommandEvent.cs" />
+    <Compile Include="Events\ICommand.cs" />
+    <Compile Include="Events\IModeTargets.cs" />
+    <Compile Include="Events\ModeTargets.cs" />
     <Compile Include="UnifiedTypes\Build\VSCommand.cs" />
     <Compile Include="Events\LoggingEvent.cs" />
     <Compile Include="Events\ILoggingEvent.cs" />
@@ -378,8 +390,10 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="$(SolutionDir).version" />
+    <None Include="xshd\CSharpLang.xshd" />
     <None Include="xshd\FilesMode.xshd" />
     <None Include="xshd\InterpreterMode.xshd" />
+    <None Include="xshd\MSBuildTargets.xshd" />
     <None Include="xshd\OperationMode.xshd" />
     <None Include="xshd\SBEScripts.xshd" />
     <Resource Include="Resources\Exclamation_16.png" />

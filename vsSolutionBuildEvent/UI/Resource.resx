@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="StringDefaultValueForTargetsMode" xml:space="preserve">
+    <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"&gt;
+    &lt;!-- ... --&gt;
+&lt;/Project&gt;</value>
+  </data>
   <data name="StringScriptExampleSBE" xml:space="preserve">
     <value>#["
       Example

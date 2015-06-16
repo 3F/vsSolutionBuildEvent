@@ -112,5 +112,9 @@ namespace net.r_eg.vsSBE.Events
         /// generally, it's internal handling with MSBuild / SBE-Scripts cores, and similar
         /// </summary>
         Script,
+        /// <summary>
+        /// MSBuild targets
+        /// </summary>
+        Targets,
     }
 }
