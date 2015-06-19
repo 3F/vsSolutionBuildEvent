@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Runtime.InteropServices;
 using net.r_eg.vsSBE.Bridge;
 
 namespace net.r_eg.vsSBE.Events
@@ -22,6 +23,7 @@ namespace net.r_eg.vsSBE.Events
     /// <summary>
     /// Main container of the Solution Events
     /// </summary>
+    [Guid("552AA0E0-9EFC-4394-B18B-41CF2F549FB3")]
     public interface ISolutionEvent
     {
         /// <summary>
@@ -116,5 +118,9 @@ namespace net.r_eg.vsSBE.Events
         /// MSBuild targets
         /// </summary>
         Targets,
+        /// <summary>
+        /// C# code
+        /// </summary>
+        CSharp,
     }
 }

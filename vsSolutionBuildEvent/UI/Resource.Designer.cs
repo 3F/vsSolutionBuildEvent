@@ -61,6 +61,28 @@ namespace net.r_eg.vsSBE.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using ICommand = net.r_eg.vsSBE.Actions.ICommand;
+        ///using ISolutionEvent = net.r_eg.vsSBE.Events.ISolutionEvent;
+        ///
+        ///namespace vsSolutionBuildEvent
+        ///{
+        ///    public class CSharpMode
+        ///    {
+        ///        public static int Init(ICommand cmd, ISolutionEvent evt)
+        ///        {
+        ///            return 0;
+        ///        }
+        ///    }
+        ///}.
+        /// </summary>
+        internal static string StringCSharpModeCodeByDefault {
+            get {
+                return ResourceManager.GetString("StringCSharpModeCodeByDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
         ///&lt;Project DefaultTargets=&quot;Build&quot; ToolsVersion=&quot;12.0&quot; xmlns=&quot;http://schemas.microsoft.com/developer/msbuild/2003&quot;&gt;
         ///    &lt;!-- ... --&gt;

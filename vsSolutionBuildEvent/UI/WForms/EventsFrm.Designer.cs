@@ -73,6 +73,11 @@
             this.toolStripMenuPlugin = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuCopyPath = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuPluginDir = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuTpl = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuTplTargets = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuTplTargetsDefault = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuTplCSharp = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuTplCSharpDefault = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuAPI = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuSBEPanel = new System.Windows.Forms.ToolStripMenuItem();
@@ -139,6 +144,7 @@
             this.checkBoxProcessHide = new System.Windows.Forms.CheckBox();
             this.checkBoxStatus = new System.Windows.Forms.CheckBox();
             this.groupBoxPMode = new System.Windows.Forms.GroupBox();
+            this.radioModeCSharp = new System.Windows.Forms.RadioButton();
             this.radioModeTargets = new System.Windows.Forms.RadioButton();
             this.radioModeScript = new System.Windows.Forms.RadioButton();
             this.radioModeOperation = new System.Windows.Forms.RadioButton();
@@ -225,6 +231,9 @@
             this.dgvCompInfoName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvCompInfoSignature = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvCompInfoDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.tabPageCSharp = new System.Windows.Forms.TabPage();
+            this.btnActivateCSharp = new System.Windows.Forms.Button();
+            this.pGridCompilerCfg = new System.Windows.Forms.PropertyGrid();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuActions.SuspendLayout();
             this.panelStatusBR.SuspendLayout();
@@ -276,6 +285,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvComponents)).BeginInit();
             this.groupBoxComponentsMembers.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvComponentInfo)).BeginInit();
+            this.tabPageCSharp.SuspendLayout();
             this.SuspendLayout();
             // 
             // contextMenuActions
@@ -410,6 +420,7 @@
             this.toolStripSeparator6,
             this.toolStripMenuTools,
             this.toolStripMenuCI,
+            this.toolStripMenuTpl,
             this.toolStripMenuAPI,
             this.toolStripSeparator11,
             this.toolStripMenuSBEPanel});
@@ -540,6 +551,45 @@
             this.toolStripMenuPluginDir.Size = new System.Drawing.Size(216, 22);
             this.toolStripMenuPluginDir.Text = "Open directory with plugin";
             this.toolStripMenuPluginDir.Click += new System.EventHandler(this.toolStripMenuPluginDir_Click);
+            // 
+            // toolStripMenuTpl
+            // 
+            this.toolStripMenuTpl.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuTplTargets,
+            this.menuTplCSharp});
+            this.toolStripMenuTpl.Name = "toolStripMenuTpl";
+            this.toolStripMenuTpl.Size = new System.Drawing.Size(145, 22);
+            this.toolStripMenuTpl.Text = "Templates";
+            // 
+            // menuTplTargets
+            // 
+            this.menuTplTargets.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuTplTargetsDefault});
+            this.menuTplTargets.Name = "menuTplTargets";
+            this.menuTplTargets.Size = new System.Drawing.Size(147, 22);
+            this.menuTplTargets.Text = "Targets Mode";
+            // 
+            // menuTplTargetsDefault
+            // 
+            this.menuTplTargetsDefault.Name = "menuTplTargetsDefault";
+            this.menuTplTargetsDefault.Size = new System.Drawing.Size(143, 22);
+            this.menuTplTargetsDefault.Text = "Blank Project";
+            this.menuTplTargetsDefault.Click += new System.EventHandler(this.menuTplTargetsDefault_Click);
+            // 
+            // menuTplCSharp
+            // 
+            this.menuTplCSharp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuTplCSharpDefault});
+            this.menuTplCSharp.Name = "menuTplCSharp";
+            this.menuTplCSharp.Size = new System.Drawing.Size(147, 22);
+            this.menuTplCSharp.Text = "C# Mode";
+            // 
+            // menuTplCSharpDefault
+            // 
+            this.menuTplCSharpDefault.Name = "menuTplCSharpDefault";
+            this.menuTplCSharpDefault.Size = new System.Drawing.Size(173, 22);
+            this.menuTplCSharpDefault.Text = "Default Entry point";
+            this.menuTplCSharpDefault.Click += new System.EventHandler(this.menuTplCSharpDefault_Click);
             // 
             // toolStripMenuAPI
             // 
@@ -970,6 +1020,7 @@
             this.tabControl.Controls.Add(this.tabPageSettings);
             this.tabControl.Controls.Add(this.tabPageFilters);
             this.tabControl.Controls.Add(this.tabPageComponents);
+            this.tabControl.Controls.Add(this.tabPageCSharp);
             this.tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl.Location = new System.Drawing.Point(0, 0);
             this.tabControl.Margin = new System.Windows.Forms.Padding(0);
@@ -1215,6 +1266,7 @@
             // 
             // groupBoxPMode
             // 
+            this.groupBoxPMode.Controls.Add(this.radioModeCSharp);
             this.groupBoxPMode.Controls.Add(this.radioModeTargets);
             this.groupBoxPMode.Controls.Add(this.radioModeScript);
             this.groupBoxPMode.Controls.Add(this.radioModeOperation);
@@ -1227,10 +1279,21 @@
             this.groupBoxPMode.TabStop = false;
             this.groupBoxPMode.Text = "Processing mode";
             // 
+            // radioModeCSharp
+            // 
+            this.radioModeCSharp.AutoSize = true;
+            this.radioModeCSharp.Location = new System.Drawing.Point(6, 119);
+            this.radioModeCSharp.Name = "radioModeCSharp";
+            this.radioModeCSharp.Size = new System.Drawing.Size(69, 17);
+            this.radioModeCSharp.TabIndex = 28;
+            this.radioModeCSharp.Text = "C# Mode";
+            this.radioModeCSharp.UseVisualStyleBackColor = true;
+            this.radioModeCSharp.CheckedChanged += new System.EventHandler(this.radioModeCSharp_CheckedChanged);
+            // 
             // radioModeTargets
             // 
             this.radioModeTargets.AutoSize = true;
-            this.radioModeTargets.Location = new System.Drawing.Point(6, 113);
+            this.radioModeTargets.Location = new System.Drawing.Point(6, 99);
             this.radioModeTargets.Name = "radioModeTargets";
             this.radioModeTargets.Size = new System.Drawing.Size(91, 17);
             this.radioModeTargets.TabIndex = 27;
@@ -1241,7 +1304,7 @@
             // radioModeScript
             // 
             this.radioModeScript.AutoSize = true;
-            this.radioModeScript.Location = new System.Drawing.Point(6, 90);
+            this.radioModeScript.Location = new System.Drawing.Point(6, 79);
             this.radioModeScript.Name = "radioModeScript";
             this.radioModeScript.Size = new System.Drawing.Size(82, 17);
             this.radioModeScript.TabIndex = 26;
@@ -1252,7 +1315,7 @@
             // radioModeOperation
             // 
             this.radioModeOperation.AutoSize = true;
-            this.radioModeOperation.Location = new System.Drawing.Point(6, 43);
+            this.radioModeOperation.Location = new System.Drawing.Point(6, 39);
             this.radioModeOperation.Name = "radioModeOperation";
             this.radioModeOperation.Size = new System.Drawing.Size(101, 17);
             this.radioModeOperation.TabIndex = 25;
@@ -1264,7 +1327,7 @@
             // radioModeInterpreter
             // 
             this.radioModeInterpreter.AutoSize = true;
-            this.radioModeInterpreter.Location = new System.Drawing.Point(6, 67);
+            this.radioModeInterpreter.Location = new System.Drawing.Point(6, 59);
             this.radioModeInterpreter.Name = "radioModeInterpreter";
             this.radioModeInterpreter.Size = new System.Drawing.Size(103, 17);
             this.radioModeInterpreter.TabIndex = 23;
@@ -2369,6 +2432,39 @@
             this.dgvCompInfoDescription.Name = "dgvCompInfoDescription";
             this.dgvCompInfoDescription.ReadOnly = true;
             // 
+            // tabPageCSharp
+            // 
+            this.tabPageCSharp.Controls.Add(this.btnActivateCSharp);
+            this.tabPageCSharp.Controls.Add(this.pGridCompilerCfg);
+            this.tabPageCSharp.Location = new System.Drawing.Point(4, 25);
+            this.tabPageCSharp.Name = "tabPageCSharp";
+            this.tabPageCSharp.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageCSharp.Size = new System.Drawing.Size(776, 471);
+            this.tabPageCSharp.TabIndex = 4;
+            this.tabPageCSharp.Text = "Compiler";
+            this.tabPageCSharp.UseVisualStyleBackColor = true;
+            // 
+            // btnActivateCSharp
+            // 
+            this.btnActivateCSharp.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnActivateCSharp.Location = new System.Drawing.Point(92, 7);
+            this.btnActivateCSharp.Name = "btnActivateCSharp";
+            this.btnActivateCSharp.Size = new System.Drawing.Size(103, 23);
+            this.btnActivateCSharp.TabIndex = 1;
+            this.btnActivateCSharp.Text = "Activate C# Mode";
+            this.btnActivateCSharp.UseVisualStyleBackColor = true;
+            this.btnActivateCSharp.Click += new System.EventHandler(this.btnActivateCSharp_Click);
+            // 
+            // pGridCompilerCfg
+            // 
+            this.pGridCompilerCfg.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pGridCompilerCfg.Location = new System.Drawing.Point(6, 6);
+            this.pGridCompilerCfg.Name = "pGridCompilerCfg";
+            this.pGridCompilerCfg.Size = new System.Drawing.Size(767, 435);
+            this.pGridCompilerCfg.TabIndex = 0;
+            // 
             // toolTip
             // 
             this.toolTip.AutoPopDelay = 15000;
@@ -2453,6 +2549,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvComponents)).EndInit();
             this.groupBoxComponentsMembers.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvComponentInfo)).EndInit();
+            this.tabPageCSharp.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -2644,6 +2741,15 @@
         private System.Windows.Forms.DataGridViewButtonColumn dgvCEFiltersColumnRemove;
         private System.Windows.Forms.ToolStripMenuItem menuSnifferActivateCE;
         private System.Windows.Forms.RadioButton radioModeTargets;
+        private System.Windows.Forms.RadioButton radioModeCSharp;
+        private System.Windows.Forms.TabPage tabPageCSharp;
+        private System.Windows.Forms.PropertyGrid pGridCompilerCfg;
+        private System.Windows.Forms.Button btnActivateCSharp;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuTpl;
+        private System.Windows.Forms.ToolStripMenuItem menuTplTargets;
+        private System.Windows.Forms.ToolStripMenuItem menuTplTargetsDefault;
+        private System.Windows.Forms.ToolStripMenuItem menuTplCSharp;
+        private System.Windows.Forms.ToolStripMenuItem menuTplCSharpDefault;
 
     }
 }

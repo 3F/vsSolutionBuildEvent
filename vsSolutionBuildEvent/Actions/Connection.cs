@@ -17,42 +17,23 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
-using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.SBEScripts.Components;
 
 namespace net.r_eg.vsSBE.Actions
 {
+    /// <summary>
+    /// Binder / Coordinator of main routes.
+    /// </summary>
     public class Connection
     {
         /// <summary>
-        /// Activation of the ILoggingEvent.
-        /// Special delays for internal services.
-        /// </summary>
-        public bool loggingEventActivated = false;
-
-        /// <summary>
-        /// Execution order support.
-        /// Contains the current states of all projects
-        /// </summary>
-        protected Dictionary<string, ExecutionOrderType> projects;
-
-        /// <summary>
-        /// Contains the current incoming project
-        /// </summary>
-        protected IExecutionOrder current = new ExecutionOrder();
-
-        /// <summary>
-        /// Connection handler
-        /// </summary>
-        protected ICommand cmd;
-
-        /// <summary>
-        /// Checks the allow state for action
+        /// Flag of permission for any actions.
         /// </summary>
         protected bool IsAllowActions
         {
@@ -60,17 +41,26 @@ namespace net.r_eg.vsSBE.Actions
         }
 
         /// <summary>
-        /// synch. of logging-event
+        /// To support the 'execution order' features.
+        /// Contains the current states of all projects.
         /// </summary>
-        private Object _lockLog = new Object();
+        protected Dictionary<string, ExecutionOrderType> projects;
 
+        /// <summary>
+        /// Contains current incoming project.
+        /// </summary>
+        protected IExecutionOrder current = new ExecutionOrder();
 
-        public Connection(ICommand cmd)
-        {
-            this.cmd = cmd;
-            projects = new Dictionary<string, ExecutionOrderType>();
-            attachLoggingEvent();
-        }
+        /// <summary>
+        /// Used handler.
+        /// </summary>
+        protected ICommand cmd;
+
+        /// <summary>
+        /// object synch.
+        /// </summary>
+        private Object _lock = new Object();
+
 
         /// <summary>
         /// Binding 'PRE' of Solution
@@ -317,6 +307,14 @@ namespace net.r_eg.vsSBE.Actions
             Status._.flush();
             return true;
         }
+
+        public Connection(ICommand cmd)
+        {
+            this.cmd = cmd;
+            projects = new Dictionary<string, ExecutionOrderType>();
+            attachLoggingEvent();
+        }
+
 
         /// <summary>
         /// Entry point to Errors/Warnings
@@ -638,39 +636,29 @@ namespace net.r_eg.vsSBE.Actions
         }
 
         /// <summary>
-        /// TODO: not comfortable with static
+        /// TODO: static!
         /// </summary>
         private void attachLoggingEvent()
         {
-            Log.Message -= new Log.MessageEvent(onLogging);
-            Log.Message += new Log.MessageEvent(onLogging);
+            lock(_lock) {
+                Log.Message -= new Log.MessageEvent(onLogging);
+                Log.Message += new Log.MessageEvent(onLogging);
+            }
         }
 
         /// <summary>
-        /// Works with all processes of internal logging
+        /// Works with all processes of internal logging.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="level"></param>
         private void onLogging(string message, string level)
         {
-            if(!loggingEventActivated) {
-                return;
+            if(Config._.Data == null) {
+                return; // can be early initialization
             }
 
-            lock(_lockLog)
-            {
-                // performance of this block is similar with System.Environment.StackTrace
-                StackFrame[] stack = (new StackTrace()).GetFrames();
-                for(int i = 1; i < stack.Length; ++i) {
-                    if(_ident(stack[0]) == _ident(stack[i])) {
-                        return; //already pushed with onLogging
-                    }
-                }
-            }
-
-            IComponent component = cmd.SBEScript.Bootloader.getComponentByType(typeof(OWPComponent));
-            if(component != null) {
-                ((ILogData)component).updateLogData(message, level);
+            if(Thread.CurrentThread.Name == Events.LoggingEvent.IDENT_TH) {
+                return; // self protection
             }
 
             if(isDisabledAll(Config._.Data.Logging)) {
@@ -682,36 +670,40 @@ namespace net.r_eg.vsSBE.Actions
                 return;
             }
 
-            foreach(LoggingEvent evt in Config._.Data.Logging)
-            {
-                if(!isExecute(evt, current)) {
-                    Log.nlog.Info("[Logging] ignored action '{0}' :: by execution order", evt.Caption);
-                }
-                else {
-                    try {
-                        if(cmd.exec(evt, SolutionEventType.Logging)) {
-                            //Log.nlog.Trace("[Logging]: " + evt.Caption);
+            (new Task(() => {
+                
+                Thread.CurrentThread.Name = Events.LoggingEvent.IDENT_TH;
+                lock(_lock)
+                {
+                    IComponent component = cmd.SBEScript.Bootloader.getComponentByType(typeof(OWPComponent));
+                    if(component != null) {
+                        ((ILogData)component).updateLogData(message, level);
+                    }
+
+                    foreach(LoggingEvent evt in Config._.Data.Logging)
+                    {
+                        if(!isExecute(evt, current)) {
+                            Log.nlog.Info("[Logging] ignored action '{0}' :: by execution order", evt.Caption);
+                            continue;
+                        }
+
+                        try {
+                            if(cmd.exec(evt, SolutionEventType.Logging)) {
+                                Log.nlog.Trace("[Logging]: " + evt.Caption);
+                            }
+                        }
+                        catch(Exception ex) {
+                            Log.nlog.Error("LoggingEvent error: {0}", ex.Message);
                         }
                     }
-                    catch(Exception ex) {
-                        Log.nlog.Error("LoggingEvent error: {0}", ex.Message);
-                    }
                 }
-            }
-        }
 
-        private string _ident(StackFrame frame)
-        {
-            string path = frame.GetMethod().ReflectedType.ToString();
-            string name = frame.GetMethod().Name;
-            string args = String.Join(",", frame.GetMethod().GetParameters().Select(p => p.ToString()));
-
-            return String.Format("{0}{1}{2}", path, name, args);
+            })).Start();
         }
 
         private int _ignoredAction(SolutionEventType type)
         {
-            Log.nlog.Trace("[{0}] ignored action. Is already started from another VSprocess.", type);
+            Log.nlog.Trace("[{0}] Ignored action. It's already started in other processes of VS.", type);
             return VSConstants.S_OK;
         }
     }

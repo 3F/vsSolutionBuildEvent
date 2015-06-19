@@ -15,16 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Runtime.InteropServices;
+using System.CodeDom.Compiler;
 
-namespace net.r_eg.vsSBE.Events
+namespace net.r_eg.vsSBE.Exceptions
 {
-    /// <summary>
-    /// Processing with MSBuild targets
-    /// </summary>
-    [Guid("98564100-241E-4AB5-8B87-DB3C2523B71C")]
-    public interface IModeTargets: ICommand
+    public class CompilerException: SBEException
     {
+        public CompilerException(string message)
+            : base(message)
+        {
 
+        }
+
+        public CompilerException(CompilerError error)
+            : base(error.ToString())
+        {
+
+        }
+
+        public CompilerException(string message, params object[] args)
+            : base(message, args)
+        {
+
+        }
     }
 }

@@ -288,7 +288,7 @@ namespace net.r_eg.vsSBE.Scripts
             lock(_lock) {
                 definitions.Clear();
             }
-            Log.nlog.Debug("Reseted all User-variables");
+            Log.nlog.Trace("Reseted all User-variables");
         }
 
         /// <summary>

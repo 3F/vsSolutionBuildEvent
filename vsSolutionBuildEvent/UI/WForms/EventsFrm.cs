@@ -206,6 +206,11 @@ namespace net.r_eg.vsSBE.UI.WForms
                     Command = textEditor.Text
                 };
             }
+            else if(radioModeCSharp.Checked) {
+                evt.Mode = (IMode)pGridCompilerCfg.SelectedObject;
+                ((IModeCSharp)evt.Mode).Command     = textEditor.Text;
+                ((IModeCSharp)evt.Mode).LastTime    = 0; //TODO: flushing only for some settings, like for Command (cmp by hash) etc.
+            }
             else if(radioModeOperation.Checked)
             {
                 string[] command;
@@ -281,9 +286,11 @@ namespace net.r_eg.vsSBE.UI.WForms
             checkBoxIgnoreIfFailed.Enabled  = false;
             groupBoxOutputControl.Enabled   = false;
             groupBoxEW.Enabled              = false;
-            checkBoxWaitForExit.Enabled     = true;
             pictureBoxWarnWait.Visible      = true;
             groupBoxCommandEvents.Enabled   = false;
+
+            toolTip.SetToolTip(checkBoxWaitForExit, String.Empty);
+            checkBoxWaitForExit.Cursor = Cursors.Default;
 
             switch(logic.SBE.type)
             {
@@ -310,7 +317,8 @@ namespace net.r_eg.vsSBE.UI.WForms
                 }
                 case SolutionEventType.Logging:
                 {
-                    checkBoxWaitForExit.Enabled = false;
+                    toolTip.SetToolTip(checkBoxWaitForExit, "Enable, Only if you know what you're doing with Logging event!");
+                    checkBoxWaitForExit.Cursor = Cursors.Help;
                     break;
                 }
                 case SolutionEventType.CommandEvent: {
@@ -338,6 +346,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                 Log.nlog.Warn("The Mode is corrupt, reinitialized with default type");
                 evt.Mode = logic.DefaultMode;
             }
+            pGridCompilerCfg.SelectedObject = (evt.Mode.Type == ModeType.CSharp)? (IModeCSharp)evt.Mode : new ModeCSharp();
 
             switch(evt.Mode.Type) {
                 case ModeType.Interpreter:
@@ -363,6 +372,11 @@ namespace net.r_eg.vsSBE.UI.WForms
                 case ModeType.Targets: {
                     radioModeTargets.Checked = true;
                     textEditor.Text = ((IModeTargets)evt.Mode).Command;
+                    return;
+                }
+                case ModeType.CSharp: {
+                    radioModeCSharp.Checked = true;
+                    textEditor.Text = ((IModeCSharp)evt.Mode).Command;
                     return;
                 }
                 case ModeType.Operation:
@@ -518,9 +532,11 @@ namespace net.r_eg.vsSBE.UI.WForms
             groupBoxInterpreter.Enabled         = false;
             listBoxOperation.Enabled            = false;
             textEditor.Enabled                  = true;
-            panelControlByOperation.Enabled     = true;
+            checkBoxProcessHide.Enabled         = true;
             checkBoxOperationsAbort.Enabled     = false;
             checkBoxSBEScriptSupport.Enabled    = true;
+            pGridCompilerCfg.Enabled            = false;
+            btnActivateCSharp.Visible           = true;
             updateTimeLimitField();
 
             if(type == ModeType.Interpreter)
@@ -538,6 +554,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                 labelToCommandBox.Text = "Script:";
                 checkBoxSBEScriptSupport.Enabled = false;
                 checkBoxSBEScriptSupport.Checked = true;
+                checkBoxProcessHide.Enabled      = false;
                 return;
             }
             if(type == ModeType.Targets) {
@@ -547,12 +564,22 @@ namespace net.r_eg.vsSBE.UI.WForms
                 }
                 return;
             }
+            if(type == ModeType.CSharp) {
+                labelToCommandBox.Text = "C# code:";
+                pGridCompilerCfg.Enabled    = true;
+                btnActivateCSharp.Visible   = false;
+                checkBoxProcessHide.Enabled = false;
+                if(textEditor.Text.Length < 1) {
+                    textEditor.Text = Resource.StringCSharpModeCodeByDefault;
+                }
+                return;
+            }
             if(type == ModeType.Operation)
             {
                 operationsAction(listBoxOperation);
                 listBoxOperation.Enabled        = true;
-                panelControlByOperation.Enabled = false;
                 checkBoxOperationsAbort.Enabled = true;
+                checkBoxProcessHide.Enabled     = false;
                 return;
             }
         }
@@ -741,7 +768,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             checkBoxStatus.BackColor = (checkBoxStatus.Checked)? Color.FromArgb(242, 250, 241) : Color.FromArgb(248, 243, 243);
             panelCommand.BackColor   = (checkBoxStatus.Checked)? Color.FromArgb(111, 145, 6) : Color.FromArgb(168, 47, 17);
 
-            if(radioModeScript.Checked || radioModeTargets.Checked) {
+            if(radioModeScript.Checked || radioModeTargets.Checked || radioModeCSharp.Checked) {
                 textEditor.setBackgroundFromString("#FFFFFF");
                 return;
             }
@@ -911,6 +938,16 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
             uiViewMode(ModeType.Targets);
             textEditor.colorize(TextEditor.ColorSchema.MSBuildTargets);
+            textEditor._.ShowLineNumbers = true;
+        }
+
+        private void radioModeCSharp_CheckedChanged(object sender, EventArgs e)
+        {
+            if(!radioModeCSharp.Checked) {
+                return;
+            }
+            uiViewMode(ModeType.CSharp);
+            textEditor.colorize(TextEditor.ColorSchema.CSharpLang);
             textEditor._.ShowLineNumbers = true;
         }
 
@@ -1421,6 +1458,23 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void contextMenuSniffer_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             menuSnifferAdd.Enabled = dgvCEFilters.Enabled;
+        }
+
+        private void btnActivateCSharp_Click(object sender, EventArgs e)
+        {
+            radioModeCSharp.Checked = true;
+        }
+
+        private void menuTplTargetsDefault_Click(object sender, EventArgs e)
+        {
+            radioModeTargets.Checked = true;
+            textEditor.Text = Resource.StringDefaultValueForTargetsMode;
+        }
+
+        private void menuTplCSharpDefault_Click(object sender, EventArgs e)
+        {
+            radioModeCSharp.Checked = true;
+            textEditor.Text = Resource.StringCSharpModeCodeByDefault;
         }
     }
 }

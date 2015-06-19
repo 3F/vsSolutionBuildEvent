@@ -31,15 +31,25 @@ namespace net.r_eg.vsSBE.Actions
     {
         protected class MSBuildLogger: ILogger
         {
+            public bool Silent { get; set; }
             public string Parameters { get; set; }
             public LoggerVerbosity Verbosity { get; set; }
-            public void Shutdown() {}
+            public void Shutdown() { }
 
             public void Initialize(IEventSource eventSource)
             {
-                Verbosity = LoggerVerbosity.Quiet;
+                Verbosity = (Silent)? LoggerVerbosity.Quiet : LoggerVerbosity.Normal;
                 eventSource.WarningRaised   += warningRaised;
                 eventSource.ErrorRaised     += errorRaised;
+
+                if(!Silent) {
+                    eventSource.AnyEventRaised += anyEventRaised;
+                }
+            }
+
+            protected void anyEventRaised(object sender, BuildEventArgs e)
+            {
+                Log.nlog.Info(e.Message);
             }
 
             protected void warningRaised(object sender, BuildWarningEventArgs e)
@@ -60,10 +70,16 @@ namespace net.r_eg.vsSBE.Actions
         /// <returns>Result of handling.</returns>
         public override bool process(ISolutionEvent evt)
         {
-            ProjectRootElement root = getXml(((IModeTargets)evt.Mode).Command);
+            string command = ((IModeTargets)evt.Mode).Command;
+            ProjectRootElement root = getXml(parse(evt, command));
 
             Project p = new Project(root, cmd.Env.getProject(null).GlobalProperties, root.ToolsVersion, ProjectCollection.GlobalProjectCollection);
-            return p.Build(cmd.Env.BuildType.ToString(), new List<ILogger>() { new MSBuildLogger() });
+            return p.Build(cmd.Env.BuildType.ToString(), 
+                            new List<ILogger>() {
+                                new MSBuildLogger() {
+                                    Silent = evt.Process.Hidden
+                                }
+                            });
         }
 
         /// <param name="cmd"></param>

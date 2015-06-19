@@ -100,7 +100,6 @@ namespace net.r_eg.vsSBE.API
                     Log.nlog.Warn("Used the [Unofficial release]");
                 }
 #endif
-                Action.loggingEventActivated = true;
 
                 OpenedSolution(this, new EventArgs());
                 return VSConstants.S_OK;

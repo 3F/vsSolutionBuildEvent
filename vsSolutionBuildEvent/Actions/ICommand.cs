@@ -15,12 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Runtime.InteropServices;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts;
 
 namespace net.r_eg.vsSBE.Actions
 {
+    [Guid("8E774159-2221-4435-A6C9-A40B78A369FD")]
     public interface ICommand
     {
         /// <summary>

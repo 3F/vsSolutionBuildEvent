@@ -33,7 +33,7 @@ namespace net.r_eg.vsSBE.Actions
         {
             string cFiles = ((IModeFile)evt.Mode).Command;
 
-            parse(evt, cFiles);
+            cFiles = parse(evt, cFiles);
             shell(evt, treatNewlineAs(" & ", cFiles));
 
             return true;

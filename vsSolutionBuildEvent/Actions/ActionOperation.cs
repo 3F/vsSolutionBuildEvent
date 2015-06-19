@@ -35,7 +35,14 @@ namespace net.r_eg.vsSBE.Actions
             if(operation.Command == null || operation.Command.Length < 1) {
                 return true;
             }
-            (new DTEOperation(cmd.Env, cmd.EventType)).exec(operation.Command, operation.AbortOnFirstError);
+
+            string[] parsed = new string[operation.Command.Length];
+
+            for(int i = 0; i < operation.Command.Length; ++i) {
+                parsed[i] = parse(evt, operation.Command[i]);
+            }
+            (new DTEOperation(cmd.Env, cmd.EventType)).exec(parsed, operation.AbortOnFirstError);
+
             return true;
         }
 

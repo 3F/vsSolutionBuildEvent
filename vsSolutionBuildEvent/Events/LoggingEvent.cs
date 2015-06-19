@@ -22,6 +22,9 @@ namespace net.r_eg.vsSBE.Events
     /// </summary>
     public class LoggingEvent: SBEEvent, ISolutionEvent, ILoggingEvent
     {
-
+        /// <summary>
+        /// The unique label for any splitting from others.
+        /// </summary>
+        public const string IDENT_TH = "InternalLoggingAction";
     }
 }

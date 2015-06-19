@@ -40,7 +40,7 @@ namespace net.r_eg.vsSBE.Actions
             string script   = ((IModeInterpreter)evt.Mode).Command;
             string wrapper  = ((IModeInterpreter)evt.Mode).Wrapper;
 
-            parse(evt, script);
+            script = parse(evt, script);
             script = treatNewlineAs(((IModeInterpreter)evt.Mode).Newline, script);
 
             switch(wrapper.Length) {

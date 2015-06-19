@@ -18,6 +18,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
@@ -129,6 +131,7 @@ namespace net.r_eg.vsSBE.Actions
             actions[ModeType.Script]        = new ActionScript(this);
             actions[ModeType.File]          = new ActionFile(this);
             actions[ModeType.Targets]       = new ActionTargets(this);
+            actions[ModeType.CSharp]        = new ActionCSharp(this);
         }
 
         protected bool actionBy(ISolutionEvent evt)
@@ -137,23 +140,51 @@ namespace net.r_eg.vsSBE.Actions
             {
                 case ModeType.Operation: {
                     Log.nlog.Info("Use Operation Mode");
-                    return actions[ModeType.Operation].process(evt);
+                    return actionBy(ModeType.Operation, evt);
                 }
                 case ModeType.Interpreter: {
                     Log.nlog.Info("Use Interpreter Mode");
-                    return actions[ModeType.Interpreter].process(evt);
+                    return actionBy(ModeType.Interpreter, evt);
                 }
                 case ModeType.Script: {
                     Log.nlog.Info("Use Script Mode");
-                    return actions[ModeType.Script].process(evt);
+                    return actionBy(ModeType.Script, evt);
                 }
                 case ModeType.Targets: {
                     Log.nlog.Info("Use Targets Mode");
-                    return actions[ModeType.Targets].process(evt);
+                    return actionBy(ModeType.Targets, evt);
+                }
+                case ModeType.CSharp: {
+                    Log.nlog.Info("Use C# Mode");
+                    return actionBy(ModeType.CSharp, evt);
                 }
             }
             Log.nlog.Info("Use Files Mode");
-            return actions[ModeType.File].process(evt);
+            return actionBy(ModeType.File, evt);
+        }
+
+        protected bool actionBy(ModeType type, ISolutionEvent evt)
+        {
+            if(evt.Process.Waiting) {
+                return actions[type].process(evt);
+            }
+            
+            string marker = null;
+            if(Thread.CurrentThread.Name == Events.LoggingEvent.IDENT_TH) {
+                marker = Events.LoggingEvent.IDENT_TH;
+            }
+
+            (new Task(() => {
+
+                if(marker != null && Thread.CurrentThread.Name != marker) {
+                    Thread.CurrentThread.Name = marker;
+                }
+                Log.nlog.Trace("Task for another thread is started for '{0}' /{1}", evt.Name, type);
+                actions[type].process(evt);
+
+            })).Start();
+
+            return true;
         }
 
         /// <summary>

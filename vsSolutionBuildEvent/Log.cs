@@ -18,7 +18,9 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Threading;
 using Microsoft.VisualStudio.Shell.Interop;
+using net.r_eg.vsSBE.Events;
 using NLog;
 
 namespace net.r_eg.vsSBE
@@ -89,7 +91,9 @@ namespace net.r_eg.vsSBE
 
         public static void print(string message, string level = null)
         {
-            Message(message, level?? String.Empty);
+            if(Thread.CurrentThread.Name != LoggingEvent.IDENT_TH) {
+                Message(message, (level)?? String.Empty);
+            }
 
             if(_paneDTE != null) {
                 _paneDTE.OutputString(message);

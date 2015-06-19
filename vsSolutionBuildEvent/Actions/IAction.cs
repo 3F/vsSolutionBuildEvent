@@ -15,10 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Runtime.InteropServices;
 using net.r_eg.vsSBE.Events;
 
 namespace net.r_eg.vsSBE.Actions
 {
+    [Guid("3DA65163-3C80-4F75-BDFA-BFA5C1865128")]
     public interface IAction
     {
         /// <summary>
@@ -40,6 +42,7 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         /// <param name="evt">Configured event.</param>
         /// <param name="data">Data to analysing.</param>
-        void parse(ISolutionEvent evt, string data);
+        /// <returns>Parsed data.</returns>
+        string parse(ISolutionEvent evt, string data);
     }
 }

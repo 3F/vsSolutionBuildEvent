@@ -52,7 +52,8 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         /// <param name="evt">Configured event.</param>
         /// <param name="data">Data to analysing.</param>
-        public virtual void parse(ISolutionEvent evt, string data)
+        /// <returns>Parsed data.</returns>
+        public virtual string parse(ISolutionEvent evt, string data)
         {
             if(evt.SupportSBEScripts) {
                 data = cmd.SBEScript.parse(data, evt.SupportMSBuild);
@@ -61,6 +62,8 @@ namespace net.r_eg.vsSBE.Actions
             if(evt.SupportMSBuild) {
                 data = cmd.MSBuild.parse(data);
             }
+
+            return data;
         }
 
         /// <param name="cmd"></param>
