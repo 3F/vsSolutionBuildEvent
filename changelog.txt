@@ -1,6 +1,34 @@
 vsSolutionBuildEvent
 ____________________
 
+[v0.12] 2015.06.20
+    * NEW: Processing Mode: 'Targets Mode' - for work with the msbuild targets/tasks etc. 'as is' (classic compatible mode).
+    * NEW: Processing Mode: 'C# Mode' with caching of bytecode.
+           For using the compiler as new action type for any available event.
+           Allows access to ICommand & ISolutionEvent - feel free with all available events & actions.
+           /Entry point for user code and how to use it, see in our documentation.
+           
+    * NEW: The CommandEvent as the new experimental event type, for work with command-events from EnvDTE.
+    * NEW: The LastCommand property for DTEComponent. As part of getting latest command from EnvDTE. (SBE-Scripts)
+           Samples:
+            * #[DTE events.LastCommand.Guid]
+            * #[DTE events.LastCommand.Id]
+            ...
+
+    * NEW: Sniffer as helper for listening all commands from EnvDTE. To listening and adding of all what you want. Simply configure it after, and use.
+    * NEW: The property 'type' for BuildComponent. Gets current type of the build action type, or last used type if it already finished. (SBE-Scripts)
+    * NEW: The 'Time Limit' option for Interpreter & Files Mode. It means - How long to wait the execution, in seconds. 0 value - infinitely.
+    * CHANGED: Added Ctx types for context of the build action type. (Thanks: Konstantin Erman)
+    * CHANGED: IO alias to the FileComponent.
+    * CHANGED: Allowed 'Waiting for completion' option for Logging event type.
+    * CHANGED: Updated NLog v4.0.1
+    * FIXED: Custom threads for all action with option 'Waiting for completion'.
+    * FIXED: Non-working parsing for the Operation Mode.
+    * FIXED: Possible loop problem for Logging event type.
+    * FIXED: Incorrect messages for #[OWP log.Level] & #[OWP log.Message] (SBE-Scripts)
+    * FIXED: Removed sub-definitions of available components. Problem for UI & configuration file.
+    * OTHER: trivial changes and bug fixes for UI like a Templates items for new processing modes etc.
+
 [v0.11.4] 2015.05.06
     * CHANGED: Parser of MSBuild core. Fixes the order and moving of evaluation steps.
     * CHANGED: Incompatible changes for post-evaluation e.g.: 

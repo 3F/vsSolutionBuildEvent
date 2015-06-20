@@ -1,6 +1,10 @@
 vsSolutionBuildEvent API
 ________________________
 
+[v1.2] 2015.06.20
+    * IEvent: Added the onCommandDtePre & onCommandDtePost as part of CommandEvent.
+    * BuildType: Added Ctx types for context of the build action type. (Thanks: Konstantin Erman)
+
 [v1.1] 2015.05.06
     * Added BuildType enumeration - Represents available types of the build for any actions.
     * IBuild: added void updateBuildType(BuildType type) - Sets current type of the build.
