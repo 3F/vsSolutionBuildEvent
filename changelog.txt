@@ -1,7 +1,7 @@
 vsSolutionBuildEvent
 ____________________
 
-[v0.12] 2015.06.20
+[v0.12.1] 2015.06.20
     * NEW: Processing Mode: 'Targets Mode' - for work with the msbuild targets/tasks etc. 'as is' (classic compatible mode).
     * NEW: Processing Mode: 'C# Mode' with caching of bytecode.
            For using the compiler as new action type for any available event.
