@@ -133,6 +133,7 @@
     <Compile Include="Events\IModeTargets.cs" />
     <Compile Include="Events\ModeCSharp.cs" />
     <Compile Include="Events\ModeTargets.cs" />
+    <Compile Include="Events\ModeType.cs" />
     <Compile Include="Exceptions\CompilerException.cs" />
     <Compile Include="GAC.cs" />
     <Compile Include="UnifiedTypes\Build\VSCommand.cs" />

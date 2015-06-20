@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,11 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Runtime.InteropServices;
+
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
-    /// Support the OutputWindowPane
+    /// Support of the OutputWindowPane
     /// </summary>
+    [Guid("8DA8E950-40F4-49A2-8018-E9AC666AD752")]
     public interface ISolutionEventOWP: ISolutionEvent
     {
         /// <summary>

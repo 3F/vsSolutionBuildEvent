@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,12 +16,14 @@
 */
 
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
-    /// Support of the Errors & Warnings Event type
+    /// Support of the Errors / Warnings from the build data
     /// </summary>
+    [Guid("EC820CA4-75F1-4A99-B7BF-57448A7C01E6")]
     public interface ISolutionEventEW: ISolutionEvent
     {
         /// <summary>

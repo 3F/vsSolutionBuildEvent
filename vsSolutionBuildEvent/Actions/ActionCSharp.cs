@@ -344,9 +344,14 @@ namespace net.r_eg.vsSBE.Actions
             string req = (args.RequestingAssembly == null)? "-" : args.RequestingAssembly.FullName;
             Log.nlog.Trace("Assembly resolver: '{0}' /requesting from '{1}'", args.Name, req);
 
-            return Assembly.LoadFrom(String.Format("{0}\\{1}.dll", 
-                                                    Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), 
-                                                    args.Name.Substring(0, args.Name.IndexOf(","))));
+            try {
+                return Assembly.LoadFrom(String.Format("{0}\\{1}.dll",
+                                                        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                                                        args.Name.Substring(0, args.Name.IndexOf(","))));
+            }
+            catch { //TODO:
+                return Assembly.LoadFile(args.Name);
+            }
         }
     }
 }

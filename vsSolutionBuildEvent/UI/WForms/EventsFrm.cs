@@ -538,6 +538,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             pGridCompilerCfg.Enabled            = false;
             btnActivateCSharp.Visible           = true;
             updateTimeLimitField();
+            updateCodeCompletionStatus();
 
             if(type == ModeType.Interpreter)
             {
@@ -593,6 +594,11 @@ namespace net.r_eg.vsSBE.UI.WForms
                 return;
             }
             numericTimeLimit.Enabled = false;
+        }
+
+        protected void updateCodeCompletionStatus()
+        {
+            textEditor.CodeCompletionEnabled = checkBoxSBEScriptSupport.Checked;
         }
 
         protected void operationsList(ListBox list)
@@ -958,7 +964,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void checkBoxSBEScriptSupport_CheckedChanged(object sender, EventArgs e)
         {
-            textEditor.CodeCompletionEnabled = checkBoxSBEScriptSupport.Checked;
+            updateCodeCompletionStatus();
         }
 
         private void checkBoxWaitForExit_CheckedChanged(object sender, EventArgs e)

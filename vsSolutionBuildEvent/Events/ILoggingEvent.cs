@@ -20,6 +20,9 @@ using System.Runtime.InteropServices;
 
 namespace net.r_eg.vsSBE.Events
 {
+    /// <summary>
+    /// Public events of internal logging
+    /// </summary>
     [Guid("E01CD0C6-E9C1-4FAB-A9F0-B6AF4F159C38")]
     public interface ILoggingEvent: ISolutionEvent
     {

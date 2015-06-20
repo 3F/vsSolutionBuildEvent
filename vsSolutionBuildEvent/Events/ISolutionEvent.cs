@@ -21,7 +21,7 @@ using net.r_eg.vsSBE.Bridge;
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
-    /// Main container of the Solution Events
+    /// Main container of the 'Solution Events'
     /// </summary>
     [Guid("552AA0E0-9EFC-4394-B18B-41CF2F549FB3")]
     public interface ISolutionEvent
@@ -89,38 +89,5 @@ namespace net.r_eg.vsSBE.Events
         /// Processing mode
         /// </summary>
         IMode Mode { get; set; }
-    }
-
-    /// <summary>
-    /// Type of available processing modes
-    /// </summary>
-    public enum ModeType
-    {
-        /// <summary>
-        /// External handling with files.
-        /// </summary>
-        File,
-        /// <summary>
-        /// Processing with external interpreter.
-        /// generally, it's a stream processor etc.
-        /// </summary>
-        Interpreter,
-        /// <summary>
-        /// DTE-commands - operations with EnvDTE.
-        /// </summary>
-        Operation,
-        /// <summary>
-        /// Script processing.
-        /// generally, it's internal handling with MSBuild / SBE-Scripts cores, and similar
-        /// </summary>
-        Script,
-        /// <summary>
-        /// MSBuild targets
-        /// </summary>
-        Targets,
-        /// <summary>
-        /// C# code
-        /// </summary>
-        CSharp,
     }
 }
