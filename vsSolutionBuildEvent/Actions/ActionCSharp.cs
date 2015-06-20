@@ -44,6 +44,11 @@ namespace net.r_eg.vsSBE.Actions
         public const string ENTRY_POINT = "Init";
 
         /// <summary>
+        /// Prefix to cached bytecode.
+        /// </summary>
+        protected const string PREFIX_CACHE = "cached_vssbe.";
+
+        /// <summary>
         /// Where to look cache.
         /// </summary>
         protected string BasePathToCache
@@ -126,7 +131,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <returns></returns>
         protected virtual string assemblyName(ISolutionEvent evt)
         {
-            return String.Format("cached_{0}.{1}", cmd.EventType, evt.Name);
+            return String.Format("{0}{1}.{2}", PREFIX_CACHE, cmd.EventType, evt.Name);
         }
 
         /// <summary>
@@ -341,16 +346,18 @@ namespace net.r_eg.vsSBE.Actions
 
         private Assembly assemblyResolver(object sender, ResolveEventArgs args)
         {
-            string req = (args.RequestingAssembly == null)? "-" : args.RequestingAssembly.FullName;
-            Log.nlog.Trace("Assembly resolver: '{0}' /requesting from '{1}'", args.Name, req);
+            if(args.RequestingAssembly == null || !args.RequestingAssembly.FullName.StartsWith(PREFIX_CACHE)) {
+                return null;
+            }
 
+            Log.nlog.Trace("Assembly resolver: '{0}' /requesting from '{1}'", args.Name, args.RequestingAssembly.FullName);
             try {
                 return Assembly.LoadFrom(String.Format("{0}\\{1}.dll",
                                                         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
                                                         args.Name.Substring(0, args.Name.IndexOf(","))));
             }
-            catch { //TODO:
-                return Assembly.LoadFile(args.Name);
+            catch {
+                return null;
             }
         }
     }
