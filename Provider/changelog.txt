@@ -1,6 +1,9 @@
 vsSolutionBuildEvent Provider
 _____________________________
 
+[v2.1] 2015.06.21
+    * Updated API - Bridge v1.2
+
 [v2.0] 2015.05.06
     * Updated Bridge v1.1
     * ILoader: incompatible changes with signatures for load() methods - as part of removing the heavy dependencies:

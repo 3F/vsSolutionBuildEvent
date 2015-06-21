@@ -21,7 +21,7 @@ MSBuild & SBE-Scripts engine for advanced usage.
 
 *Components*:
 
-* [![nuget vsSBE.CI.MSBuild](https://img.shields.io/nuget/v/vsSBE.CI.MSBuild.svg)](https://www.nuget.org/packages/vsSBE.CI.MSBuild/) [![CI.MSBuild](https://img.shields.io/badge/CI.MSBuild-v1.1-8080C0.svg?style=flat)](http://sourceforge.net/projects/vssbe/files/CI-Utilities/CI.MSBuild/) [![Devenv](https://img.shields.io/badge/Devenv-v1.1-B5B5D7.svg?style=flat)](http://sourceforge.net/projects/vssbe/files/CI-Utilities/Devenv/)  [![Provider](https://img.shields.io/badge/Provider-v2.0-BAC5C0.svg?style=flat)](https://sourceforge.net/projects/vssbe/files/API/Provider/) [![API](https://img.shields.io/badge/API-v1.2-AFCFBE.svg?style=flat)](https://sourceforge.net/projects/vssbe/files/API/Bridge/)
+* [![nuget vsSBE.CI.MSBuild](https://img.shields.io/nuget/v/vsSBE.CI.MSBuild.svg)](https://www.nuget.org/packages/vsSBE.CI.MSBuild/) [![CI.MSBuild](https://img.shields.io/badge/CI.MSBuild-v1.2-8080C0.svg?style=flat)](http://sourceforge.net/projects/vssbe/files/CI-Utilities/CI.MSBuild/) [![Devenv](https://img.shields.io/badge/Devenv-v1.2-B5B5D7.svg?style=flat)](http://sourceforge.net/projects/vssbe/files/CI-Utilities/Devenv/)  [![Provider](https://img.shields.io/badge/Provider-v2.1-BAC5C0.svg?style=flat)](https://sourceforge.net/projects/vssbe/files/API/Provider/) [![API](https://img.shields.io/badge/API-v1.2-AFCFBE.svg?style=flat)](https://sourceforge.net/projects/vssbe/files/API/Bridge/)
 
 -------
 [![Short Overview](https://bitbucket.org/3F/vssolutionbuildevent/wiki/Resources/examples/overview-youtube.png)](http://youtu.be/FX5GiMX0ulI)

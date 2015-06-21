@@ -1,6 +1,9 @@
 vsSolutionBuildEvent CI.MSBuild
 _______________________________
 
+[v1.2] 2015.06.21
+    * Updated API - Bridge v1.2
+
 [v1.1] 2015.05.06
     * Updated references with API - Bridge v1.1
     * Implemented limited types from msbuild targets for context of build action type or the build type for Isolated Environments.
