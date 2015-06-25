@@ -56,6 +56,13 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         }
 
+        /// <param name="loader">Initialization with loader</param>
+        public UserVariableComponent(IBootloader loader)
+            : base(loader)
+        {
+
+        }
+
         /// <summary>
         /// Handler for current data
         /// </summary>

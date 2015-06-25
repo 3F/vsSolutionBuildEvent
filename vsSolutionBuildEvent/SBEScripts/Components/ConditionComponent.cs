@@ -39,6 +39,22 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
+        /// Forced post analysis
+        /// </summary>
+        public override bool PostParse
+        {
+            get { return true; }
+        }
+
+        /// <summary>
+        /// Should be located before deepening
+        /// </summary>
+        public override bool BeforeDeepen
+        {
+            get { return true; }
+        }
+
+        /// <summary>
         /// Maximum of nesting level for brackets
         /// </summary>
         protected const int DEPTH_BRACKETS_LIMIT = 40;
@@ -61,12 +77,18 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
 
         /// <param name="env">Used environment</param>
-        /// <param name="uvariable">Used instance of user-variables</param>
+        /// <param name="uvariable">Instance of user-variables</param>
         public ConditionComponent(IEnvironment env, IUserVariable uvariable)
             : base(env, uvariable)
         {
-            beforeDeepen    = true; // Should be located before deepening
-            postParse       = true; // Forced post analysis
+
+        }
+
+        /// <param name="loader">Initialization with loader</param>
+        public ConditionComponent(IBootloader loader)
+            : base(loader)
+        {
+
         }
 
         /// <summary>

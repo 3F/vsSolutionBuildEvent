@@ -38,7 +38,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// Allows post-processing with MSBuild core.
         /// In general, some components can require immediate processing with evaluation, before passing control to next level
         /// </summary>
-        public bool PostProcessingMSBuild
+        public virtual bool PostProcessingMSBuild
         {
             get { return postProcessingMSBuild; }
             set { postProcessingMSBuild = value; }
@@ -48,7 +48,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <summary>
         /// Activation status
         /// </summary>
-        public bool Enabled
+        public virtual bool Enabled
         {
             get { return enabled; }
             set { enabled = value; }
@@ -58,7 +58,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <summary>
         /// Sets location "as is" - after deepening
         /// </summary>
-        public bool BeforeDeepen
+        public virtual bool BeforeDeepen
         {
             get { return beforeDeepen; }
         }
@@ -67,7 +67,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <summary>
         /// Disabled the forced post analysis
         /// </summary>
-        public bool PostParse
+        public virtual bool PostParse
         {
             get { return postParse; }
         }
@@ -103,17 +103,36 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected IUserVariable uvariable;
 
         /// <param name="env">Used environment</param>
-        /// <param name="uvariable">Used instance of user-variables</param>
-        public Component(IEnvironment env, IUserVariable uvariable): this()
+        /// <param name="uvariable">Instance of user-variables</param>
+        public Component(IEnvironment env, IUserVariable uvariable)
+            : this()
         {
-            this.env        = env;
-            this.uvariable  = uvariable;
-            script          = new Script(env, uvariable);
-            msbuild         = new MSBuild.Parser(env, uvariable);
+            init(env, uvariable);
+            script = new Script(env, uvariable);
+        }
+
+        /// <param name="loader">Initialization with loader</param>
+        public Component(IBootloader loader)
+            : this()
+        {
+            init(loader.Env, loader.UVariable);
+            script = new Script(loader);
+        }
+
+        /// <param name="script">Instance of SBE-Scripts core</param>
+        /// <param name="msbuild">Instance of MSBuild core</param>
+        public Component(ISBEScript script, IMSBuild msbuild)
+            : this()
+        {
+            env             = script.Bootloader.Env;
+            uvariable       = script.Bootloader.UVariable;
+            this.script     = script;
+            this.msbuild    = msbuild;
         }
 
         /// <param name="env">Used environment</param>
-        public Component(IEnvironment env): this()
+        public Component(IEnvironment env)
+            : this()
         {
             this.env = env;
         }
@@ -121,6 +140,13 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         public Component()
         {
             Log.nlog.Trace("init: '{0}'", this.ToString());
+        }
+
+        protected void init(IEnvironment env, IUserVariable uvariable)
+        {
+            this.env        = env;
+            this.uvariable  = uvariable;
+            msbuild         = new MSBuild.Parser(env, uvariable);
         }
     }
 }

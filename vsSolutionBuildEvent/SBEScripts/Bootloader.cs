@@ -101,8 +101,8 @@ namespace net.r_eg.vsSBE.SBEScripts
         protected virtual void init()
         {
             register(new CommentComponent());
-            register(new ConditionComponent(Env, UVariable));
-            register(new UserVariableComponent(Env, UVariable));
+            register(new ConditionComponent(this));
+            register(new UserVariableComponent(this));
             register(new OWPComponent(Env));
             register(new DTEComponent(Env));
             register(new InternalComponent());
