@@ -245,7 +245,9 @@ namespace net.r_eg.vsSBE.Actions
                 CompilerOptions         = cfg.CompilerOptions,
                 TreatWarningsAsErrors   = cfg.TreatWarningsAsErrors,
                 WarningLevel            = cfg.WarningLevel,
-                OutputAssembly          = (cfg.GenerateInMemory)? null : output
+
+                // use prefix from fileName() to avoid random names if used GenerateInMemory
+                OutputAssembly = (cfg.GenerateInMemory)? fileName(evt) : output
             };
             
             GAC gac = new GAC();
@@ -290,6 +292,12 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="evt">Where to update.</param>
         protected void updateTimeTo(string pathToAssembly, ISolutionEvent evt)
         {
+            if(pathToAssembly == null) {
+                Log.nlog.Warn("[Cache] Ignore caching. Binary file is not found. /GenerateInMemory: '{0}'", 
+                                                                                ((IModeCSharp)evt.Mode).GenerateInMemory);
+                return;
+            }
+
             FileInfo f = new FileInfo(pathToAssembly);
             if(!f.Exists) {
                 Log.nlog.Warn("[Cache] Can't find compiled '{0}' for caching.", pathToAssembly);

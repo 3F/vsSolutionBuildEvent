@@ -123,6 +123,16 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         }
 
         /// <summary>
+        /// Next unique name for action
+        /// </summary>
+        public string UniqueNameForAction
+        {
+            get {
+                return genUniqueName(ACTION_PREFIX, SBE.evt);
+            }
+        }
+
+        /// <summary>
         /// Predefined operations
         /// TODO:
         /// </summary>

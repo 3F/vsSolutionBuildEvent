@@ -168,6 +168,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         protected void saveData(ISolutionEvent evt)
         {
             evt.Enabled                 = checkBoxStatus.Checked;
+            evt.Name                    = (String.IsNullOrWhiteSpace(evt.Name))? logic.UniqueNameForAction : evt.Name;
             evt.Caption                 = textBoxCaption.Text;
             evt.SupportMSBuild          = checkBoxMSBuildSupport.Checked;
             evt.SupportSBEScripts       = checkBoxSBEScriptSupport.Checked;
