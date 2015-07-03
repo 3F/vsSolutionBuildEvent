@@ -118,8 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="StringCSharpModeCodeByDefault" xml:space="preserve">
-    <value>using System;
-using ICommand = net.r_eg.vsSBE.Actions.ICommand;
+    <value>using ICommand = net.r_eg.vsSBE.Actions.ICommand;
 using ISolutionEvent = net.r_eg.vsSBE.Events.ISolutionEvent;
 
 namespace vsSolutionBuildEvent

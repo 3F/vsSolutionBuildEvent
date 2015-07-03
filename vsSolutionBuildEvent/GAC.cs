@@ -109,7 +109,7 @@ namespace net.r_eg.vsSBE
                     }
                 }
             }
-            return null;
+            return findInUsedSys(filename);
         }
 
         /// <summary>
@@ -156,6 +156,16 @@ namespace net.r_eg.vsSBE
                 return null;
             }
             return m.Groups[1].Value;
+        }
+
+        /// <param name="fname">File name</param>
+        /// <returns>Absolute path or null value if not found</returns>
+        protected string findInUsedSys(string fname)
+        {
+            string location = Path.GetDirectoryName(typeof(System.String).Assembly.Location);
+            string absolute = Path.Combine(location, fname);
+
+            return File.Exists(absolute)? absolute : null;
         }
     }
 }

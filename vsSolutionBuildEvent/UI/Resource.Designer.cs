@@ -61,8 +61,7 @@ namespace net.r_eg.vsSBE.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to using System;
-        ///using ICommand = net.r_eg.vsSBE.Actions.ICommand;
+        ///   Looks up a localized string similar to using ICommand = net.r_eg.vsSBE.Actions.ICommand;
         ///using ISolutionEvent = net.r_eg.vsSBE.Events.ISolutionEvent;
         ///
         ///namespace vsSolutionBuildEvent
