@@ -127,15 +127,17 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public string SolutionPath
         {
-            get {
-                if(solutionPath != null) {
-                    return solutionPath;
+            get
+            {
+                // the state of the DTE2 object are always should be in modification
+                string dir = Path.GetDirectoryName(getFullPathToSln(Dte2));
+
+                if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
+                    dir += Path.DirectorySeparatorChar;
                 }
-                solutionPath = extractPath(Dte2);
-                return solutionPath;
+                return dir;
             }
         }
-        protected string solutionPath = null;
 
         /// <summary>
         /// Name of used solution file without extension
@@ -143,14 +145,9 @@ namespace net.r_eg.vsSBE
         public string SolutionFileName
         {
             get {
-                if(solutionFileName != null) {
-                    return solutionFileName;
-                }
-                solutionFileName = extractFileName(Dte2);
-                return solutionFileName;
+                return Path.GetFileNameWithoutExtension(getFullPathToSln(Dte2));
             }
         }
-        protected string solutionFileName = null;
 
         /// <summary>
         /// Access to OutputWindowPane through IOW
@@ -322,30 +319,13 @@ namespace net.r_eg.vsSBE
             Dte2 = dte2;
         }
 
-        /// <summary>
-        /// Extracts the solution path from the DTE-context
-        /// </summary>
-        /// <param name="dte2">DTE2 context</param>
-        protected virtual string extractPath(DTE2 dte2)
-        {
-            string dir = Path.GetDirectoryName(_getFullPathFrom(dte2));
-
-            if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
-                dir += Path.DirectorySeparatorChar;
-            }
-            return dir;
-        }
 
         /// <summary>
-        /// Extracts the solution file name from the DTE-context
+        /// Checks equality of projects from different types.
         /// </summary>
-        /// <param name="dte2">DTE2 context</param>
-        /// <returns>File name without extension</returns>
-        protected virtual string extractFileName(DTE2 dte2)
-        {
-            return Path.GetFileNameWithoutExtension(_getFullPathFrom(dte2));
-        }
-
+        /// <param name="dteProject">The instance for EnvDTE</param>
+        /// <param name="eProject">The instance for Build.Evaluation</param>
+        /// <returns></returns>
         protected bool isEquals(EnvDTE.Project dteProject, Project eProject)
         {
             string ePrgName         = getProjectNameFrom(eProject);
@@ -504,14 +484,14 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Gets full path to solution file
+        /// Gets full path to solution file.
         /// </summary>
         /// <param name="dte2">DTE2 context</param>
         /// <returns></returns>
-        private string _getFullPathFrom(DTE2 dte2)
+        protected string getFullPathToSln(DTE2 dte2)
         {
-            string path = dte2.Solution.FullName; // empty if used the new solution 
-            if(String.IsNullOrEmpty(path)) {
+            string path = dte2.Solution.FullName; // can be is empty if it's a new solution
+            if(String.IsNullOrWhiteSpace(path)) {
                 return dte2.Solution.Properties.Item("Path").Value.ToString();
             }
             return path;
