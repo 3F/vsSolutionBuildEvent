@@ -54,12 +54,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
             protected set;
         }
 
-        protected IEnumerable<CompletionData> ListEmpty
+        protected IEnumerable<ICompletionData> ListEmpty
         {
             get { yield break; }
         }
 
-        protected IEnumerable<CompletionData> ListNull
+        protected IEnumerable<ICompletionData> ListNull
         {
             get { return null; }
         }
@@ -237,7 +237,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
 
         /// <param name="name">Component name</param>
         /// <returns></returns>
-        protected IEnumerable<CompletionData> listComponents(string name)
+        protected IEnumerable<ICompletionData> listComponents(string name)
         {
             foreach(INodeInfo info in Inspector.Root) {
                 if(!String.IsNullOrEmpty(name) && !info.Name.Contains(name)) {
@@ -247,11 +247,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
             }
         }
 
-        protected IEnumerable<CompletionData> list(NodeIdent ident, string name = null)
+        protected IEnumerable<ICompletionData> list(NodeIdent ident, string name = null)
         {
             INodeInfo hidden = isHiddenLevel(ident);
             if(hidden != null) {
-                foreach(CompletionData inf in list(hidden.Link, name)) {
+                foreach(ICompletionData inf in list(hidden.Link, name)) {
                     yield return inf;
                 }
             }

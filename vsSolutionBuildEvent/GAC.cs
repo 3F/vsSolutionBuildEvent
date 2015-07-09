@@ -26,11 +26,11 @@ namespace net.r_eg.vsSBE
     public class GAC
     {
         /// <summary>
-        /// The fusion API.
+        /// NativeMethods of the Fusion API.
         /// ASM_CACHE_FLAGS Enumeration: https://msdn.microsoft.com/en-us/library/ms231621.aspx
         /// Global Assembly Cache (GAC) APIs: https://support.microsoft.com/en-us/kb/317540
         /// </summary>
-        internal static class Fusion
+        internal static class NativeMethods
         {
             /// <summary>
             /// Indicates that the GetCachePath function should return the path to the global assembly cache for CLR version 2.0. 
@@ -66,7 +66,7 @@ namespace net.r_eg.vsSBE
             StringBuilder path  = new StringBuilder(MAX_PATH);
             uint size           = MAX_PATH;
 
-            Fusion.GetCachePath((clrV4)? Fusion.ASM_CACHE_ROOT_EX : Fusion.ASM_CACHE_ROOT, path, ref size);
+            NativeMethods.GetCachePath((clrV4)? NativeMethods.ASM_CACHE_ROOT_EX : NativeMethods.ASM_CACHE_ROOT, path, ref size);
             return path.ToString();
         }
 

@@ -243,8 +243,8 @@ namespace net.r_eg.vsSBE
         /// <param name="properties">Solution properties / global properties for all project collection</param>
         public IsolatedEnv(string solutionFile, Dictionary<string, string> properties)
         {
-            SolutionPath        = extractPath(solutionFile);
-            SolutionFileName    = extractFileName(solutionFile);
+            SolutionPath        = Path.GetDirectoryName(solutionFile);
+            SolutionFileName    = Path.GetFileNameWithoutExtension(solutionFile);
 
             this.properties = propertiesByDefault(properties);
             foreach(KeyValuePair<string, string> property in properties) {
@@ -257,26 +257,6 @@ namespace net.r_eg.vsSBE
             }
         }
 
-        protected string extractPath(string file)
-        {
-            string dir = Path.GetDirectoryName(file);
-
-            if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
-                dir += Path.DirectorySeparatorChar;
-            }
-            return dir;
-        }
-
-        /// <summary>
-        /// Extracts the solution file name without extension
-        /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        protected string extractFileName(string file)
-        {
-            return Path.GetFileNameWithoutExtension(file);
-        }
-
         /// <summary>
         /// Gets project name from Microsoft.Build.Evaluation.Project
         /// </summary>
@@ -287,7 +267,7 @@ namespace net.r_eg.vsSBE
             return eProject.GetPropertyValue("ProjectName");
         }
 
-        protected virtual Dictionary<string, string> propertiesByDefault(Dictionary<string, string> properties)
+        protected Dictionary<string, string> propertiesByDefault(Dictionary<string, string> properties)
         {
             if(!properties.ContainsKey("Configuration"))
             {

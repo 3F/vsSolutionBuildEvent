@@ -47,7 +47,7 @@ namespace net.r_eg.vsSBE
     // Package Guid
     [Guid(GuidList.PACKAGE_STRING)]
 
-    public sealed class vsSolutionBuildEventPackage: Package, IVsSolutionEvents, IVsUpdateSolutionEvents2
+    public sealed class vsSolutionBuildEventPackage: Package, IDisposable, IVsSolutionEvents, IVsUpdateSolutionEvents2
     {
         /// <summary>
         /// DTE2 Context
@@ -176,6 +176,16 @@ namespace net.r_eg.vsSBE
         public int UpdateProjectCfg_Done(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
         {
             return Event.onProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
+        }
+
+        /// <summary>
+        /// CA1001: well, the VisualStudio.Shell.Package is already uses `void Dispose(bool disposing)`
+        ///         And this will never be used at all... but in addition and for CA we also implement IDisposable
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         private void init()
@@ -320,9 +330,10 @@ namespace net.r_eg.vsSBE
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_configFrm")]
         protected override void Dispose(bool disposing)
         {
-            UI.Util.closeTool(_configFrm);
+            UI.Util.closeTool(_configFrm); //CA2213: we use Util for all System.Windows.Forms
 
             if(spSolutionBM != null && _pdwCookieSolutionBM != 0) {
                 spSolutionBM.UnadviseUpdateSolutionEvents(_pdwCookieSolutionBM);

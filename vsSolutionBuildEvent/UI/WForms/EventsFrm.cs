@@ -1422,7 +1422,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             refreshSettings();
         }
 
-        private void dgvActions_DragDropSortedRow(MovingRow index)
+        private void dgvActions_DragDropSortedRow(object sender, DataGridViewExt.MovingRow index)
         {
             logic.moveEventItem(index.from, index.to);
         }

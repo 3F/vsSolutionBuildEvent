@@ -341,6 +341,7 @@ namespace net.r_eg.vsSBE.API
         {
             attachCommandEvents();
             this.Bootloader = new Bootloader(Environment, uvariable);
+            this.Bootloader.register();
 
             Action = new Actions.Connection(
                             new Actions.Command(Environment,

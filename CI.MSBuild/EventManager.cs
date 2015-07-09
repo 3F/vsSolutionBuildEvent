@@ -82,19 +82,25 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         protected Dictionary<int, Project> projects = new Dictionary<int, Project>();
 
         /// <summary>
-        /// Abort the all msbuild operations
-        /// TODO: variant of normal termination !
+        /// Internal logging
         /// </summary>
-        protected class AbortException: Exception { }
+        internal ILog log;
 
         /// <summary>
         /// Reserved for future use with IVsSolutionEvents
         /// </summary>
         private object pUnkReserved = new object();
 
-
+        /// <summary>
+        /// Initializer of the Build.Framework.ILogger objects.
+        /// Subscribes to specific events etc.
+        /// </summary>
+        /// <param name="evt"></param>
         public override void Initialize(IEventSource evt)
         {
+            log = new Log(Verbosity);
+
+            setCulture("en-US"); //TODO: key for user
             args = extractArguments(Parameters);
 
             evt.TargetStarted   += new TargetStartedEventHandler(onTargetStarted);
@@ -122,19 +128,6 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                 msg(ex.Message);
             }
         }
-
-        public EventManager()
-        {
-            msg(new String('=', 60));
-            msg("[[ vsSolutionBuildEvent CI.MSBuild ]] Welcomes You!");
-            msg(new String('=', 60));
-            msg("Version: v{0}", System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
-            msg("Feedback: entry.reg@gmail.com");
-            msg(new String('_', 60));
-
-            setCulture("en-US"); //TODO: set with params to logger
-        }
-
 
         /// <summary>
         /// Initialize library with ProjectStarted event.
@@ -355,7 +348,8 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                 msg("Minimum requirements: vsSolutionBuildEvent.dll v{0}", loader.MinVersion.ToString());
                 msg(new String('=', 80));
             }
-            catch(ReflectionTypeLoadException ex) {
+            catch(ReflectionTypeLoadException ex)
+            {
                 foreach(FileNotFoundException le in ex.LoaderExceptions) {
                     msg("{2} {0}{3} {0}{0}{4} {0}{1}",
                                         Environment.NewLine, new String('~', 80),
@@ -365,20 +359,9 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             catch(Exception ex) {
                 msg("Error with loading: '{0}'", ex.ToString());
             }
+
+            // Abort all msbuild operations
             throw new AbortException();
-        }
-
-        //TODO: new lightweight logger or main NLog for all projects. New reference with NLog very large for simple wrappers..
-        protected virtual void msg(string data, params object[] args)
-        {
-            Console.WriteLine(data, args);
-        }
-
-        protected virtual void debug(string data, params object[] args)
-        {
-            if(Verbosity == LoggerVerbosity.Diagnostic) {
-                msg(data, args);
-            }
         }
 
         /// <summary>
@@ -412,6 +395,26 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                         .Select(p => p.Split('='))
                         .Select(p => new KeyValuePair<string, string>(p[0], (p.Length < 2)? null : p[1]))
                         .ToDictionary(k => k.Key, v => v.Value);
+        }
+
+        private void header()
+        {
+            msg(new String('=', 60));
+            msg("[[ vsSolutionBuildEvent CI.MSBuild ]] Welcomes You!");
+            msg(new String('=', 60));
+            msg("Version: v{0}", System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
+            msg("Feedback: entry.reg@gmail.com");
+            msg(new String('_', 60));
+        }
+
+        private void msg(string data, params object[] args)
+        {
+            log.info(data, args);
+        }
+
+        private void debug(string data, params object[] args)
+        {
+            log.debug(data, args);
         }
     }
 }

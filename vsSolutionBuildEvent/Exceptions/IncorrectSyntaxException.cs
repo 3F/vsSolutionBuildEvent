@@ -15,8 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace net.r_eg.vsSBE.Exceptions
 {
+    [Serializable]
     public class IncorrectSyntaxException: SBEException
     {
         public IncorrectSyntaxException(string message)

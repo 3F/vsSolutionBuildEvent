@@ -85,7 +85,9 @@ namespace net.r_eg.vsSBE.SBEScripts
                 {
                     Debug.Assert(env != null);
                     Debug.Assert(uvariable != null);
+
                     bootloader = new Bootloader(env, uvariable);
+                    bootloader.register();
                 }
                 return bootloader;
             }

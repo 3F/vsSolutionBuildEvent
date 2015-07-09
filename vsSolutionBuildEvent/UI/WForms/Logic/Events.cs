@@ -452,7 +452,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         public void fillComponents(DataGridView grid)
         {
             grid.Rows.Clear();
-            foreach(IComponent c in bootloader.ComponentsAll)
+            foreach(IComponent c in bootloader.Registered)
             {
                 Type type = c.GetType();
                 if(!Inspector.isComponent(type)) {
@@ -509,7 +509,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         public void updateComponents(Configuration.Component[] components)
         {
             Config._.Data.Components = components;
-            foreach(IComponent c in bootloader.ComponentsAll) {
+            foreach(IComponent c in bootloader.Registered) {
                 Configuration.Component found = components.Where(p => p.ClassName == c.GetType().Name).FirstOrDefault();
                 if(found != null) {
                     c.Enabled = found.Enabled;
@@ -829,7 +829,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             }
 
             List<INodeInfo> ret = new List<INodeInfo>();
-            foreach(IComponent c in bootloader.ComponentsAll)
+            foreach(IComponent c in bootloader.Registered)
             {
                 if(c.GetType().Name != className) {
                     continue;

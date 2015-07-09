@@ -154,7 +154,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
 
         }
 
-        protected virtual ImageSource imageFrom(InfoType type)
+        protected ImageSource imageFrom(InfoType type)
         {
             switch(type) {
                 case InfoType.Component: {

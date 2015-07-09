@@ -15,10 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using net.r_eg.vsSBE.Exceptions;
 
 namespace net.r_eg.vsSBE.MSBuild.Exceptions
 {
+    [Serializable]
     public class MSBPropertyParseException: SBEException
     {
         public MSBPropertyParseException(string message)

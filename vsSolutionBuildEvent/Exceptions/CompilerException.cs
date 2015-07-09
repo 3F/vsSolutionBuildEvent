@@ -15,10 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.CodeDom.Compiler;
 
 namespace net.r_eg.vsSBE.Exceptions
 {
+    [Serializable]
     public class CompilerException: SBEException
     {
         public CompilerException(string message)

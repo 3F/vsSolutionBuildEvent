@@ -17,11 +17,15 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using net.r_eg.vsSBE.Exceptions;
 
 namespace net.r_eg.vsSBE
 {
+    /// <summary>
+    /// TODO:
+    /// </summary>
     public static class Settings
     {
         /// <summary>
@@ -45,9 +49,10 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public static string LibPath
         {
-            get {
-                if(String.IsNullOrEmpty(_libPath)) {
-                    _libPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar;
+            get
+            {
+                if(String.IsNullOrWhiteSpace(_libPath)) {
+                    _libPath = formatPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
                 }
                 return _libPath;
             }
@@ -61,17 +66,36 @@ namespace net.r_eg.vsSBE
         {
             get
             {
-                if(String.IsNullOrEmpty(_workingPath)) {
+                if(String.IsNullOrWhiteSpace(_workingPath)) {
                     throw new SBEException("WorkingPath is empty or null");
                 }
                 return _workingPath;
             }
         }
-        private static string _workingPath = null;
+        private static string _workingPath;
 
+
+        /// <summary>
+        /// Sets new root path.
+        /// </summary>
+        /// <param name="path"></param>
         public static void setWorkingPath(string path)
         {
-            _workingPath = path;
+            _workingPath = formatPath(path);
+        }
+
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private static string formatPath(string path)
+        {
+            if(String.IsNullOrWhiteSpace(path)) {
+                return String.Empty;
+            }
+
+            if(path.ElementAt(path.Length - 1) != Path.DirectorySeparatorChar) {
+                path += Path.DirectorySeparatorChar;
+            }
+            return path;
         }
     }
 }

@@ -176,7 +176,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <param name="get">Value type for getting</param>
         /// <param name="set">Value type for setting</param>
         /// <returns></returns>
-        protected virtual string aboutProperty(CValueType get, CValueType set)
+        private string aboutProperty(CValueType get, CValueType set)
         {
             return String.Format("Get: {0}\nSet: {1}", _type(get), _type(set));
         }
@@ -187,7 +187,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <param name="get">Value type for getting</param>
         /// <param name="set">Value type for setting</param>
         /// <returns></returns>
-        protected virtual string displayProperty(CValueType get, CValueType set)
+        private string displayProperty(CValueType get, CValueType set)
         {
             return Name;
         }
@@ -198,7 +198,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <param name="ret">Return value</param>
         /// <param name="args">Arguments of method</param>
         /// <returns></returns>
-        protected virtual string aboutMethod(CValueType ret, MethodAttribute.TArguments[] args)
+        private string aboutMethod(CValueType ret, MethodAttribute.TArguments[] args)
         {
             string retString = _type(ret);
 
@@ -222,7 +222,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <param name="ret">Return value</param>
         /// <param name="args">Arguments of method</param>
         /// <returns></returns>
-        protected virtual string displayMethod(CValueType ret, MethodAttribute.TArguments[] args)
+        private string displayMethod(CValueType ret, MethodAttribute.TArguments[] args)
         {
             string aStr = (args != null && args.Length > 0)? String.Join(", ", args.Select(p => p.name)) : _type(CValueType.Void);
             return String.Format("{0}({1})", Name, aStr);

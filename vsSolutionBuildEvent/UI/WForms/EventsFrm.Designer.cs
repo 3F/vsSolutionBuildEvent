@@ -962,7 +962,7 @@
             this.dgvActions.ShowEditingIcon = false;
             this.dgvActions.Size = new System.Drawing.Size(202, 500);
             this.dgvActions.TabIndex = 46;
-            this.dgvActions.DragDropSortedRow += new net.r_eg.vsSBE.UI.WForms.Components.DGVSortEventHandler(this.dgvActions_DragDropSortedRow);
+            this.dgvActions.DragDropSortedRow += new System.EventHandler<net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt.MovingRow>(this.dgvActions_DragDropSortedRow);
             this.dgvActions.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvActions_CellContentClick);
             this.dgvActions.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dgvActions_CellParsing);
             this.dgvActions.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvActions_CellValueChanged);

@@ -100,9 +100,13 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         public Inspector(IBootloader bootloader)
         {
             this.bootloader = bootloader;
-            foreach(IComponent c in bootloader.ComponentsAll) {
+            foreach(IComponent c in bootloader.Registered) {
                 Log.nlog.Trace("Inspector: extracting from '{0}'", c.GetType().Name);
                 extract(c, data);
+            }
+
+            if(data.Count < 1) {
+                return;
             }
 
             // Aliases to components
@@ -226,7 +230,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <returns></returns>
         protected bool isEnabled(string elementName)
         {
-            foreach(IComponent c in bootloader.ComponentsAll)
+            foreach(IComponent c in bootloader.Registered)
             {
                 Type type = c.GetType();
                 

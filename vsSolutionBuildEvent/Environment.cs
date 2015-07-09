@@ -127,15 +127,9 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public string SolutionPath
         {
-            get
-            {
+            get {
                 // the state of the DTE2 object are always should be in modification
-                string dir = Path.GetDirectoryName(getFullPathToSln(Dte2));
-
-                if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
-                    dir += Path.DirectorySeparatorChar;
-                }
-                return dir;
+                return Path.GetDirectoryName(getFullPathToSln(Dte2));
             }
         }
 

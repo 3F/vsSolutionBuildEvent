@@ -19,6 +19,7 @@ using System;
 
 namespace net.r_eg.vsSBE.Exceptions
 {
+    [Serializable]
     public class SBEException: NotSupportedException
     {
         public SBEException()

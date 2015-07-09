@@ -139,7 +139,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         public Component()
         {
-            Log.nlog.Trace("init: '{0}'", this.ToString());
+            Log.nlog.Trace("init: '{0}'", GetType().FullName);
         }
 
         protected void init(IEnvironment env, IUserVariable uvariable)

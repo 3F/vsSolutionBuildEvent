@@ -41,6 +41,9 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public event UpdateEvent Update = delegate { };
 
+        /// <summary>
+        /// Entity of configuration data.
+        /// </summary>
         public struct Entity
         {
             /// <summary>
@@ -86,7 +89,6 @@ namespace net.r_eg.vsSBE
         /// Specified for .sln if used
         /// </summary>
         private string _solution;
-
 
         /// <summary>
         /// Initializing settings from file
@@ -170,7 +172,7 @@ namespace net.r_eg.vsSBE
 
         public void updateActivation(IBootloader bootloader)
         {
-            foreach(IComponent c in bootloader.ComponentsAll)
+            foreach(IComponent c in bootloader.Registered)
             {
                 if(Data.Components == null || Data.Components.Length < 1) {
                     //c.Enabled = true;
@@ -224,7 +226,7 @@ namespace net.r_eg.vsSBE
         /// <returns></returns>
         protected string _formatLink(string path, string name, string prefix = null)
         {
-            return String.Format("{0}{1}{2}", path, prefix, name);
+            return Path.Combine(path, String.Format("{0}{1}", prefix, name));
         }
 
         /// <summary>

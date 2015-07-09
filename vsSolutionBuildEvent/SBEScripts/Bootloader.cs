@@ -44,7 +44,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <summary>
         /// All registered components
         /// </summary>
-        public IEnumerable<IComponent> ComponentsAll
+        public IEnumerable<IComponent> Registered
         {
             get {
                 foreach(KeyValuePair<Type, IComponent> component in components) {
@@ -89,16 +89,27 @@ namespace net.r_eg.vsSBE.SBEScripts
             return null;
         }
 
-        /// <param name="env">Used environment</param>
-        /// <param name="uvariable">Used instance of user-variable</param>
-        public Bootloader(IEnvironment env, IUserVariable uvariable)
+        /// <summary>
+        /// Register new component.
+        /// </summary>
+        /// <param name="c">component</param>
+        public void register(IComponent c)
         {
-            Env         = env;
-            UVariable   = uvariable;
-            init();
+            if(String.IsNullOrEmpty(c.Condition)) {
+                throw new ComponentException("Condition for '{0}' is null or empty.", c.ToString());
+            }
+
+            Type ident = c.GetType();
+            if(components.ContainsKey(ident)) {
+                throw new ComponentException("IComponent '{0}:{1}' is already registered.", ident, c.ToString());
+            }
+            components[ident] = c;
         }
 
-        protected virtual void init()
+        /// <summary>
+        /// Register the all default components.
+        /// </summary>
+        public virtual void register()
         {
             register(new CommentComponent());
             register(new ConditionComponent(this));
@@ -110,13 +121,32 @@ namespace net.r_eg.vsSBE.SBEScripts
             register(new FileComponent());
         }
 
-        protected void register(IComponent c)
+        /// <summary>
+        /// Unregister specific component.
+        /// </summary>
+        /// <param name="c">component</param>
+        public void unregister(IComponent c)
         {
-            Type ident = c.GetType();
-            if(String.IsNullOrEmpty(c.Condition) || components.ContainsKey(ident)) {
-                throw new ComponentException("IComponent '{0}:{1}' is empty or is already registered", ident, c.ToString());
+            IComponent v;
+            if(!components.TryRemove(c.GetType(), out v)) {
+                throw new SBEException("Cannot remove component '{0}'", c.ToString());
             }
-            components[ident] = c;
+        }
+
+        /// <summary>
+        /// Unregister all available components.
+        /// </summary>
+        public void unregister()
+        {
+            components.Clear();
+        }
+
+        /// <param name="env">Used environment</param>
+        /// <param name="uvariable">Used instance of user-variable</param>
+        public Bootloader(IEnvironment env, IUserVariable uvariable)
+        {
+            Env         = env;
+            UVariable   = uvariable;
         }
     }
 }

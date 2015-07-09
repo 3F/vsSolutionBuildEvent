@@ -32,7 +32,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <summary>
         /// All registered components
         /// </summary>
-        IEnumerable<IComponent> ComponentsAll { get; }
+        IEnumerable<IComponent> Registered { get; }
 
         /// <summary>
         /// Operations with environment
@@ -50,5 +50,27 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <param name="type"></param>
         /// <returns></returns>
         IComponent getComponentByType(Type type);
+
+        /// <summary>
+        /// To register new component.
+        /// </summary>
+        /// <param name="c">component</param>
+        void register(IComponent c);
+
+        /// <summary>
+        /// To register the all default components.
+        /// </summary>
+        void register();
+
+        /// <summary>
+        /// To unregister specific component.
+        /// </summary>
+        /// <param name="c">component</param>
+        void unregister(IComponent c);
+
+        /// <summary>
+        /// To unregister all available components.
+        /// </summary>
+        void unregister();
     }
 }

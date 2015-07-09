@@ -21,22 +21,22 @@ using System.Windows.Forms;
 
 namespace net.r_eg.vsSBE.UI.WForms.Components
 {
-    /// <summary>
-    /// hooking up notifications for moved rows
-    /// </summary>
-    public delegate void DGVSortEventHandler(MovingRow index);
-
-    /// <summary>
-    /// The old / new index in sorted row
-    /// </summary>
-    public struct MovingRow
-    {
-        public int from;
-        public int to;
-    }
-
     public class DataGridViewExt: DataGridView
     {
+        /// <summary>
+        /// After drag & drop sorting
+        /// </summary>
+        public event EventHandler<MovingRow> DragDropSortedRow = delegate(object sender, MovingRow index) { };
+
+        /// <summary>
+        /// The old / new index in sorted row
+        /// </summary>
+        public sealed class MovingRow: EventArgs
+        {
+            public int from;
+            public int to;
+        }
+
         /// <summary>
         /// Custom column: for work with numeric formats with standard TextBoxCell 
         /// </summary>
@@ -76,11 +76,6 @@ namespace net.r_eg.vsSBE.UI.WForms.Components
         protected bool dragDropSortable = false;
 
         /// <summary>
-        /// Call after drag & drop sorting
-        /// </summary>
-        public event DGVSortEventHandler DragDropSortedRow = delegate(MovingRow index) { };
-
-        /// <summary>
         /// Always one row selected
         /// </summary>
         public bool AlwaysSelected
@@ -98,7 +93,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Components
         /// <summary>
         /// Support drag & drop for sortable rows
         /// </summary>
-        protected MovingRow ddSort;
+        protected MovingRow ddSort = new MovingRow();
 
         /// <summary>
         /// object synch.
@@ -166,7 +161,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Components
             this.ClearSelection();
             this.Rows[ddSort.to].Selected = true;
 
-            DragDropSortedRow(ddSort);
+            DragDropSortedRow(this, ddSort);
         }
 
         protected void onSortableMouseMove(object sender, MouseEventArgs e)

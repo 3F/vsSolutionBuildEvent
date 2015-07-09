@@ -71,8 +71,11 @@ namespace net.r_eg.vsSBE.UI.WForms
 
             public ToolContext(IEnvironment env)
             {
-                Log.nlog.Debug("Initialize the clean context for testing.");
-                bootloader  = new Bootloader(env, uvariable);
+                Log.nlog.Trace("Initialization of the clean context for testing.");
+
+                bootloader = new Bootloader(env, uvariable);
+                bootloader.register();
+
                 inspector   = new Inspector(bootloader);
                 script      = new Script(bootloader);
                 msbuild     = new MSBuild.Parser(env, uvariable);
@@ -115,7 +118,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         protected void fillComponents()
         {
             chkListComponents.Items.Clear();
-            foreach(IComponent c in context.bootloader.ComponentsAll)
+            foreach(IComponent c in context.bootloader.Registered)
             {
                 Type type = c.GetType();
                 if(!Inspector.isComponent(type)) {
@@ -130,7 +133,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             for(int i = 0; i < chkListComponents.Items.Count; ++i)
             {
                 string name = chkListComponents.Items[i].ToString();
-                IComponent found = context.bootloader.ComponentsAll.Where(c => c.GetType().Name == name).FirstOrDefault();
+                IComponent found = context.bootloader.Registered.Where(c => c.GetType().Name == name).FirstOrDefault();
                 if(found != null) {
                     found.Enabled = (index == i)? newValue : chkListComponents.GetItemChecked(i);
                 }

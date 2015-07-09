@@ -19,6 +19,7 @@ using System;
 
 namespace net.r_eg.vsSBE.Exceptions
 {
+    [Serializable]
     public class ComponentException: SBEException
     {
         public ComponentException(string message)
