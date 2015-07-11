@@ -58,6 +58,7 @@
             this.toolStripMenuSpring = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripMenuSettings = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripMenuApply = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuActionExec = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuReset = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuTools = new System.Windows.Forms.ToolStripMenuItem();
@@ -174,6 +175,7 @@
             this.owpType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.owpRemove = new System.Windows.Forms.DataGridViewButtonColumn();
             this.panelSettingsBottom = new System.Windows.Forms.Panel();
+            this.btnActionExec = new System.Windows.Forms.Button();
             this.checkedListBoxSpecCfg = new System.Windows.Forms.CheckedListBox();
             this.labelCaption = new System.Windows.Forms.Label();
             this.textBoxCaption = new System.Windows.Forms.TextBox();
@@ -416,6 +418,7 @@
             this.toolStripMenuSettings.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripMenuSettings.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuApply,
+            this.menuActionExec,
             this.toolStripMenuReset,
             this.toolStripSeparator6,
             this.toolStripMenuTools,
@@ -435,22 +438,31 @@
             // 
             this.toolStripMenuApply.Name = "toolStripMenuApply";
             this.toolStripMenuApply.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.toolStripMenuApply.Size = new System.Drawing.Size(145, 22);
+            this.toolStripMenuApply.Size = new System.Drawing.Size(154, 22);
             this.toolStripMenuApply.Text = "Apply";
             this.toolStripMenuApply.Click += new System.EventHandler(this.toolStripMenuApply_Click);
+            // 
+            // menuActionExec
+            // 
+            this.menuActionExec.Name = "menuActionExec";
+            this.menuActionExec.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
+            this.menuActionExec.Size = new System.Drawing.Size(154, 22);
+            this.menuActionExec.Text = "Execute";
+            this.menuActionExec.ToolTipText = "Try current action";
+            this.menuActionExec.Click += new System.EventHandler(this.menuActionExec_Click);
             // 
             // toolStripMenuReset
             // 
             this.toolStripMenuReset.Name = "toolStripMenuReset";
             this.toolStripMenuReset.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.toolStripMenuReset.Size = new System.Drawing.Size(145, 22);
+            this.toolStripMenuReset.Size = new System.Drawing.Size(154, 22);
             this.toolStripMenuReset.Text = "Reset";
             this.toolStripMenuReset.Click += new System.EventHandler(this.toolStripMenuReset_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(142, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(151, 6);
             // 
             // toolStripMenuTools
             // 
@@ -461,7 +473,7 @@
             this.toolStripMenuDTECmdExec,
             this.menuSBEScript});
             this.toolStripMenuTools.Name = "toolStripMenuTools";
-            this.toolStripMenuTools.Size = new System.Drawing.Size(145, 22);
+            this.toolStripMenuTools.Size = new System.Drawing.Size(154, 22);
             this.toolStripMenuTools.Text = "Tools";
             // 
             // toolStripMenuMSBuildProp
@@ -507,7 +519,7 @@
             this.toolStripSeparator12,
             this.toolStripMenuPlugin});
             this.toolStripMenuCI.Name = "toolStripMenuCI";
-            this.toolStripMenuCI.Size = new System.Drawing.Size(145, 22);
+            this.toolStripMenuCI.Size = new System.Drawing.Size(154, 22);
             this.toolStripMenuCI.Text = "CI Utilities";
             // 
             // toolStripMenuCIMSBuild
@@ -558,7 +570,7 @@
             this.menuTplTargets,
             this.menuTplCSharp});
             this.toolStripMenuTpl.Name = "toolStripMenuTpl";
-            this.toolStripMenuTpl.Size = new System.Drawing.Size(145, 22);
+            this.toolStripMenuTpl.Size = new System.Drawing.Size(154, 22);
             this.toolStripMenuTpl.Text = "Templates";
             // 
             // menuTplTargets
@@ -594,19 +606,19 @@
             // toolStripMenuAPI
             // 
             this.toolStripMenuAPI.Name = "toolStripMenuAPI";
-            this.toolStripMenuAPI.Size = new System.Drawing.Size(145, 22);
+            this.toolStripMenuAPI.Size = new System.Drawing.Size(154, 22);
             this.toolStripMenuAPI.Text = "API";
             this.toolStripMenuAPI.Click += new System.EventHandler(this.toolStripMenuAPI_Click);
             // 
             // toolStripSeparator11
             // 
             this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(142, 6);
+            this.toolStripSeparator11.Size = new System.Drawing.Size(151, 6);
             // 
             // toolStripMenuSBEPanel
             // 
             this.toolStripMenuSBEPanel.Name = "toolStripMenuSBEPanel";
-            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(145, 22);
+            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(154, 22);
             this.toolStripMenuSBEPanel.Text = "vsSBE Panel";
             this.toolStripMenuSBEPanel.Click += new System.EventHandler(this.toolStripMenuSBEPanel_Click);
             // 
@@ -1642,6 +1654,7 @@
             // 
             this.panelSettingsBottom.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelSettingsBottom.Controls.Add(this.btnActionExec);
             this.panelSettingsBottom.Controls.Add(this.checkedListBoxSpecCfg);
             this.panelSettingsBottom.Controls.Add(this.labelCaption);
             this.panelSettingsBottom.Controls.Add(this.textBoxCaption);
@@ -1655,6 +1668,23 @@
             this.panelSettingsBottom.Name = "panelSettingsBottom";
             this.panelSettingsBottom.Size = new System.Drawing.Size(770, 99);
             this.panelSettingsBottom.TabIndex = 71;
+            // 
+            // btnActionExec
+            // 
+            this.btnActionExec.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnActionExec.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnActionExec.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.btnActionExec.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(244)))), ((int)(((byte)(179)))));
+            this.btnActionExec.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(211)))), ((int)(((byte)(224)))), ((int)(((byte)(186)))));
+            this.btnActionExec.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnActionExec.Image = ((System.Drawing.Image)(resources.GetObject("btnActionExec.Image")));
+            this.btnActionExec.Location = new System.Drawing.Point(518, 2);
+            this.btnActionExec.Name = "btnActionExec";
+            this.btnActionExec.Size = new System.Drawing.Size(21, 23);
+            this.btnActionExec.TabIndex = 86;
+            this.toolTip.SetToolTip(this.btnActionExec, "Try current action");
+            this.btnActionExec.UseVisualStyleBackColor = true;
+            this.btnActionExec.Click += new System.EventHandler(this.btnActionExec_Click);
             // 
             // checkedListBoxSpecCfg
             // 
@@ -2750,6 +2780,8 @@
         private System.Windows.Forms.ToolStripMenuItem menuTplTargetsDefault;
         private System.Windows.Forms.ToolStripMenuItem menuTplCSharp;
         private System.Windows.Forms.ToolStripMenuItem menuTplCSharpDefault;
+        private System.Windows.Forms.Button btnActionExec;
+        private System.Windows.Forms.ToolStripMenuItem menuActionExec;
 
     }
 }

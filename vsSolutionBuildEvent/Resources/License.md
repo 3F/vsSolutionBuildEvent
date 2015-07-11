@@ -108,3 +108,9 @@ Modified by:
 
 * Denis Kuzmin (reg) <entry.reg@gmail.com> / r-eg.net
 
+# ./lightning.png
+
+* License: Free for commercial use (Do not redistribute)
+* By: Yannick Lung
+* * http://www.yanlu.de
+* url: https://www.iconfinder.com/icons/315946/lightning_icon#size=32

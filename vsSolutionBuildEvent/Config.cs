@@ -60,6 +60,7 @@ namespace net.r_eg.vsSBE
 
         /// <summary>
         /// SBE data at runtime
+        /// TODO: 
         /// </summary>
         public SolutionEvents Data
         {
@@ -79,35 +80,29 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Link to configuration file
         /// </summary>
-        private string _Link
-        {
-            get { return _formatLink(Settings.WorkingPath, Entity.NAME, _solution); }
-        }
+        protected string link;
 
         /// <summary>
-        /// Special version of configuration file.
-        /// Specified for .sln if used
-        /// </summary>
-        private string _solution;
-
-        /// <summary>
-        /// Initializing settings from file
+        /// Loads our data from file.
         /// </summary>
         /// <param name="path">Path to configuration file.</param>
         /// <param name="prefix">Special version of configuration file.</param>
         public void load(string path, string prefix = null)
         {
-            _solution = prefix;
-            if(!String.IsNullOrEmpty(prefix) && !File.Exists(_formatLink(path, Entity.NAME, prefix))) {
-                _solution = null;
-                Log.nlog.Debug("Configuration: Not found the special version of configuration file - '{0}'", prefix);
-            }
             Settings.setWorkingPath(path);
 
+            // check special version
+            link = _formatLink(path, Entity.NAME, prefix);
+            if(!File.Exists(link))
+            {
+                Log.nlog.Trace("Configuration: the special version is not found /'{0}':'{1}'", prefix, link);
+                link = _formatLink(path, Entity.NAME);
+            }
+
+            Log.nlog.Debug("Configuration: trying to load - '{0}'", link);
             try
             {
-                Log.nlog.Trace("Configuration: trying to load - '{0}'", _Link);
-                using(StreamReader stream = new StreamReader(_Link, Encoding.UTF8, true))
+                using(StreamReader stream = new StreamReader(link, Encoding.UTF8, true))
                 {
                     Data = deserialize(stream);
                     if(Data == null) {
@@ -117,28 +112,28 @@ namespace net.r_eg.vsSBE
                 }
                 Log.nlog.Info("Loaded settings (v{0}): '{1}'\n\nReady:", Data.Header.Compatibility, Settings.WorkingPath);
             }
-            catch(FileNotFoundException) {
+            catch(FileNotFoundException)
+            {
                 Data = new SolutionEvents();
-                Log.nlog.Info("Initialized with the new settings");
+                Log.nlog.Info("Initialized with new settings.");
             }
-            catch(JsonException ex) {
-                //Log.nlog.Warn("Incorrect configuration type: '{0}'", ex.Message);
-                Data = _xmlTryUpgrade(_Link, ex);
+            catch(JsonException ex)
+            {
+                Data = _xmlTryUpgrade(link, ex);
             }
             catch(Exception ex)
             {
-                Data = new SolutionEvents();
-                Log.nlog.Fatal("Configuration file is corrupt - '{0}'", ex.Message);
-                //TODO: provide actions with UI, e.g.: restore, new..
+                Log.nlog.Error("Configuration file is corrupt - '{0}'", ex.Message);
+                Data = new SolutionEvents(); //TODO: actions in UI, e.g.: restore, new..
             }
 
-            // now compatibility should be updated to the latest
+            // Now we work with latest version
             Data.Header.Compatibility = Entity.Version.ToString();
             Update();
         }
 
         /// <summary>
-        /// Initializing settings from object
+        /// Settings from other object.
         /// </summary>
         /// <param name="data"></param>
         public void load(SolutionEvents data)
@@ -147,7 +142,7 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// with changing path
+        /// Save settings with changing path.
         /// </summary>
         /// <param name="path">path to configuration file</param>
         public void save(string path)
@@ -159,14 +154,14 @@ namespace net.r_eg.vsSBE
         public void save()
         {
             try {
-                using(TextWriter stream = new StreamWriter(_Link, false, Encoding.UTF8)) {
+                using(TextWriter stream = new StreamWriter(link, false, Encoding.UTF8)) {
                     serialize(stream, Data);
                 }
-                Log.nlog.Debug("Configuration saved: {0}", Settings.WorkingPath);
+                Log.nlog.Trace("Configuration: saved into '{0}'", Settings.WorkingPath);
                 Update();
             }
             catch(Exception ex) {
-                Log.nlog.Error("Cannot apply configuration {0}", ex.Message);
+                Log.nlog.Error("Cannot apply configuration '{0}'", ex.Message);
             }
         }
 
@@ -220,15 +215,6 @@ namespace net.r_eg.vsSBE
             stream.Write(serialize(data));
         }
 
-        /// <param name="path">Full path to configuration file</param>
-        /// <param name="name">File name</param>
-        /// <param name="prefix">Special version of configuration file if used</param>
-        /// <returns></returns>
-        protected string _formatLink(string path, string name, string prefix = null)
-        {
-            return Path.Combine(path, String.Format("{0}{1}", prefix, name));
-        }
-
         /// <summary>
         /// Older versions support :: Check version and reorganize structure if needed..
         /// </summary>
@@ -253,8 +239,17 @@ namespace net.r_eg.vsSBE
             }
         }
 
+        /// <param name="path">Full path to configuration file</param>
+        /// <param name="name">File name</param>
+        /// <param name="prefix">Special version of configuration file if used</param>
+        /// <returns></returns>
+        private string _formatLink(string path, string name, string prefix = null)
+        {
+            return Path.Combine(path, String.Format("{0}{1}", prefix, name));
+        }
+
         /// <summary>
-        /// Support older versions
+        /// Upgrades from xml.
         /// </summary>
         /// <param name="file">Configuration file</param>
         /// <param name="innerException"></param>
@@ -267,11 +262,11 @@ namespace net.r_eg.vsSBE
                 return ret;
             }
             catch(Exception ex) {
-                Log.nlog.Error("Incorrect configuration type: '{0}' -> '{1}'", innerException.Message, ex.Message);
+                Log.nlog.Error("Incorrect configuration data: '{0}' -> '{1}'. Initialize new.", innerException.Message, ex.Message);
             }
             return new SolutionEvents();
         }
 
-        private Config(){}
+        private Config() { }
     }
 }

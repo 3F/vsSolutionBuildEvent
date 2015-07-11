@@ -767,6 +767,28 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             }
         }
 
+        /// <summary>
+        /// Execution by user.
+        /// </summary>
+        public void execAction()
+        {
+            Actions.ICommand cmd = new Actions.Command(bootloader.Env,
+                                                        new Script(bootloader),
+                                                        new MSBuild.Parser(bootloader.Env, bootloader.UVariable));
+
+            ISolutionEvent evt      = SBEItem;
+            SolutionEventType type  = SBE.type;
+            Log.nlog.Info("Action: execute action '{0}':'{1}' manually :: emulate '{2}' event", evt.Name, evt.Caption, type);
+
+            try {
+                bool res = cmd.exec(evt, type);
+                Log.nlog.Info("Action: '{0}':'{1}' completed as - '{2}'", evt.Name, evt.Caption, res.ToString());
+            }
+            catch(Exception ex) {
+                Log.nlog.Error("Action: '{0}':'{1}' is failed. Error: '{2}'", evt.Name, evt.Caption, ex.Message);
+            }
+        }
+
         public Events(IBootloader bootloader, IInspector inspector = null)
         {
             this.bootloader = bootloader;

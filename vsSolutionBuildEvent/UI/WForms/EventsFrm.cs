@@ -1483,5 +1483,15 @@ namespace net.r_eg.vsSBE.UI.WForms
             radioModeCSharp.Checked = true;
             textEditor.Text = Resource.StringCSharpModeCodeByDefault;
         }
+
+        private void btnActionExec_Click(object sender, EventArgs e)
+        {
+            menuActionExec_Click(sender, e);
+        }
+
+        private void menuActionExec_Click(object sender, EventArgs e)
+        {
+            logic.execAction();
+        }
     }
 }
