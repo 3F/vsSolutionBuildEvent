@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,7 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace net.r_eg.vsSBE.UI
@@ -191,6 +191,56 @@ namespace net.r_eg.vsSBE.UI
             if(frm != null && !frm.IsDisposed) {
                 frm.Close(); //+Dispose
             }
+        }
+
+        /// <summary>
+        /// Find the enum definition by Guid string & Id
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static string enumViewBy(string guid, int id)
+        {
+            return enumViewBy(new Guid(guid), id);
+        }
+
+        /// <summary>
+        /// Find the enum definition by Guid & Id
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static string enumViewBy(Guid guid, int id)
+        {
+            Assembly[] asm = AppDomain.CurrentDomain.GetAssemblies();
+            foreach(Type type in asm.SelectMany(a => 
+                                                {
+                                                    try {
+                                                        return a.GetTypes();
+                                                    }
+                                                    catch(ReflectionTypeLoadException ex) {
+                                                        Log.nlog.Trace("Enum parser: types cannot be loaded.. so we don't know what is it - '{0}':{1} ", guid, id);
+                                                        return ex.Types.Where(t => t != null);
+                                                    }
+                                                })
+                                                .Where(t => t.IsEnum))
+            {
+                if(guid != type.GUID) {
+                    continue;
+                }
+
+                string prefix   = type.ToString();
+                string value    = id.ToString();
+
+                try {
+                    value = Enum.Parse(type, value).ToString();
+                }
+                catch(Exception ex) {
+                    Log.nlog.Debug("Enum parser failed: guid({0}), id({1}) -> '{2}' /error: '{3}'", guid, id, prefix, ex.Message);
+                }
+                return String.Format("{0}.{1}", prefix, value);
+            }
+            return null;
         }
 
         protected static void defaultBrowserOpen(string url)

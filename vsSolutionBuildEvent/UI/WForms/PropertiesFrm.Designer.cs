@@ -243,7 +243,6 @@
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(390, 170);
             this.Name = "PropertiesFrm";
-            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "MSBuild Properties";
             this.TopMost = true;

@@ -18,13 +18,8 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using net.r_eg.vsSBE.MSBuild;
 
 namespace net.r_eg.vsSBE.UI.WForms
 {
@@ -53,6 +48,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         public PropertiesFrm(IEnvironment env, ITransferDataProperty pin)
         {
             InitializeComponent();
+            Icon = Resource.Package_32;
 
             _env                = env;
             _msbuild            = new MSBuild.Parser(_env);

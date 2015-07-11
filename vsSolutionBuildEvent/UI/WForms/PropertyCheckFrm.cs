@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,14 +16,8 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using net.r_eg.vsSBE.MSBuild;
 
 namespace net.r_eg.vsSBE.UI.WForms
 {
@@ -33,6 +27,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// Work with MSBuild
         /// </summary>
         private MSBuild.Parser _parser;
+
         /// <summary>
         /// Flag of sample
         /// </summary>
@@ -41,7 +36,9 @@ namespace net.r_eg.vsSBE.UI.WForms
         public PropertyCheckFrm(IEnvironment env)
         {
             _parser = new MSBuild.Parser(env);
+
             InitializeComponent();
+            Icon = Resource.Package_32;
         }
 
         private void btnEvaluate_Click(object sender, EventArgs e)

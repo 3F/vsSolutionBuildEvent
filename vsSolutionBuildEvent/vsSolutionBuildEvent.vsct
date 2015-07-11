@@ -52,6 +52,7 @@
 
       <Button guid="GUID_MAIN_CMD" id="CMD_MAIN" priority="0x0100" type="Button">
         <Parent guid="guidSHLMainMenu" id="IDG_VS_BUILD_SOLUTION" />
+        <Icon guid="guidImages" id="package16" />
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
         <Strings>
@@ -64,6 +65,7 @@
 
      <Button guid="GUID_PANEL_CMD" id="CMD_PANEL" priority="0x0100" type="Button">
        <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1" />
+       <Icon guid="guidImages" id="package16" />
        <Strings>
            <CommandName>CMD_PANEL</CommandName>
            <ButtonText>Solution Build-Events Panel</ButtonText>
@@ -73,6 +75,14 @@
      </Button>
 
     </Buttons>
+
+    <!--The bitmaps section is used to define the bitmaps that are used for the commands.-->
+    <Bitmaps>
+          
+        <!-- usedList="pic1 pic2" -->
+        <Bitmap guid="guidImages" href="Resources\Package_16.png" usedList="package16" />
+
+    </Bitmaps>
  
   </Commands>
 
@@ -91,6 +101,10 @@
 
     <GuidSymbol name="GUID_PANEL_CMD" value="{B53B115A-F433-44EB-85E0-94767FAA23E0}">
         <IDSymbol name="CMD_PANEL" value="0x0101" />
+    </GuidSymbol>
+
+    <GuidSymbol name="guidImages" value="{5B7F235E-F4E8-4175-98BF-F7DCCB3BFE73}" >
+        <IDSymbol name="package16" value="1" />
     </GuidSymbol>
         
   </Symbols>

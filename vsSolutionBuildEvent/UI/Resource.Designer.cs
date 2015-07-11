@@ -61,6 +61,16 @@ namespace net.r_eg.vsSBE.UI {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Package_32 {
+            get {
+                object obj = ResourceManager.GetObject("Package_32", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to using ICommand = net.r_eg.vsSBE.Actions.ICommand;
         ///using ISolutionEvent = net.r_eg.vsSBE.Events.ISolutionEvent;
         ///

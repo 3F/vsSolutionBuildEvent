@@ -117,7 +117,6 @@
             this.Controls.Add(this.groupBoxEvaluated);
             this.MinimumSize = new System.Drawing.Size(250, 160);
             this.Name = "PropertyCheckFrm";
-            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Testing Tool:  Evaluating Property";
             this.Load += new System.EventHandler(this.PropertyCheckFrm_Load);

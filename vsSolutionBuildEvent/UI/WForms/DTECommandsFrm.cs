@@ -23,7 +23,9 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             _commands = commands;
             this._pin = pin;
+
             InitializeComponent();
+            Icon = Resource.Package_32;
         }
 
         private void DTECommandsFrm_Load(object sender, EventArgs e)

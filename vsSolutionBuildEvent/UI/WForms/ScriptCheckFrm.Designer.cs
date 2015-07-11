@@ -30,6 +30,8 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ScriptCheckFrm));
             this.contextMenuUVariables = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mItemUVarEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.menuItemUVarUnsetSel = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemUVarUnsetAll = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainerMVertical = new System.Windows.Forms.SplitContainer();
@@ -49,8 +51,6 @@
             this.richTextBoxUVariables = new System.Windows.Forms.RichTextBox();
             this.groupBoxComponents = new System.Windows.Forms.GroupBox();
             this.chkListComponents = new System.Windows.Forms.CheckedListBox();
-            this.mItemUVarEdit = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.contextMenuUVariables.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMVertical)).BeginInit();
             this.splitContainerMVertical.Panel1.SuspendLayout();
@@ -84,6 +84,18 @@
             this.menuItemUVarUnsetAll});
             this.contextMenuUVariables.Name = "contextMenuUVariables";
             this.contextMenuUVariables.Size = new System.Drawing.Size(206, 76);
+            // 
+            // mItemUVarEdit
+            // 
+            this.mItemUVarEdit.Name = "mItemUVarEdit";
+            this.mItemUVarEdit.Size = new System.Drawing.Size(205, 22);
+            this.mItemUVarEdit.Text = "Edit with evaluated value";
+            this.mItemUVarEdit.Click += new System.EventHandler(this.mItemUVarEdit_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(202, 6);
             // 
             // menuItemUVarUnsetSel
             // 
@@ -334,18 +346,6 @@
             this.chkListComponents.TabIndex = 0;
             this.chkListComponents.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.chkListComponents_ItemCheck);
             // 
-            // mItemUVarEdit
-            // 
-            this.mItemUVarEdit.Name = "mItemUVarEdit";
-            this.mItemUVarEdit.Size = new System.Drawing.Size(205, 22);
-            this.mItemUVarEdit.Text = "Edit with evaluated value";
-            this.mItemUVarEdit.Click += new System.EventHandler(this.mItemUVarEdit_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(202, 6);
-            // 
             // ScriptCheckFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -354,7 +354,6 @@
             this.Controls.Add(this.splitContainerMVertical);
             this.MinimumSize = new System.Drawing.Size(400, 210);
             this.Name = "ScriptCheckFrm";
-            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Testing Tool:  SBE-Scripts";
             this.contextMenuUVariables.ResumeLayout(false);

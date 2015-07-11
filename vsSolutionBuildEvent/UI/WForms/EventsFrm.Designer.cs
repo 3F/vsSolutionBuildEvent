@@ -62,15 +62,16 @@
             this.toolStripMenuReset = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuTools = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuSBEScript = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuMSBuildProp = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuEvaluatingProperty = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuDTECmd = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuDTECmdExec = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuSBEScript = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuItemSniffer = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuCI = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuCIMSBuild = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuDevenv = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuPlugin = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuCopyPath = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuPluginDir = new System.Windows.Forms.ToolStripMenuItem();
@@ -86,16 +87,8 @@
             this.tsMenuItemExamples = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuDocItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuGalleryPage = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuWiki = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuDocDte = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuDocMSBuild = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuDocSBE = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuDocCI = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuDocDev = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuGalleryPage = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuChangelog = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuIssue = new System.Windows.Forms.ToolStripMenuItem();
@@ -402,9 +395,9 @@
             this.toolStripMenuHelp,
             this.toolStripMenuBug,
             this.toolStripMenuVersion});
-            this.statusStrip.Location = new System.Drawing.Point(142, 7);
+            this.statusStrip.Location = new System.Drawing.Point(111, 7);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(158, 22);
+            this.statusStrip.Size = new System.Drawing.Size(189, 22);
             this.statusStrip.TabIndex = 81;
             // 
             // toolStripMenuSpring
@@ -426,6 +419,7 @@
             this.toolStripMenuTpl,
             this.toolStripMenuAPI,
             this.toolStripSeparator11,
+            this.toolStripMenuPlugin,
             this.toolStripMenuSBEPanel});
             this.toolStripMenuSettings.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuSettings.Image")));
             this.toolStripMenuSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -467,57 +461,69 @@
             // toolStripMenuTools
             // 
             this.toolStripMenuTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuSBEScript,
+            this.toolStripSeparator9,
             this.toolStripMenuMSBuildProp,
             this.toolStripMenuEvaluatingProperty,
             this.toolStripMenuDTECmd,
             this.toolStripMenuDTECmdExec,
-            this.menuSBEScript});
+            this.menuItemSniffer});
             this.toolStripMenuTools.Name = "toolStripMenuTools";
             this.toolStripMenuTools.Size = new System.Drawing.Size(154, 22);
             this.toolStripMenuTools.Text = "Tools";
             // 
+            // menuSBEScript
+            // 
+            this.menuSBEScript.Name = "menuSBEScript";
+            this.menuSBEScript.Size = new System.Drawing.Size(216, 22);
+            this.menuSBEScript.Text = "SBE-Scripts Testing tool";
+            this.menuSBEScript.Click += new System.EventHandler(this.menuSBEScript_Click);
+            // 
+            // toolStripSeparator9
+            // 
+            this.toolStripSeparator9.Name = "toolStripSeparator9";
+            this.toolStripSeparator9.Size = new System.Drawing.Size(213, 6);
+            // 
             // toolStripMenuMSBuildProp
             // 
             this.toolStripMenuMSBuildProp.Name = "toolStripMenuMSBuildProp";
-            this.toolStripMenuMSBuildProp.Size = new System.Drawing.Size(214, 22);
+            this.toolStripMenuMSBuildProp.Size = new System.Drawing.Size(216, 22);
             this.toolStripMenuMSBuildProp.Text = "MSBuild Properties";
             this.toolStripMenuMSBuildProp.Click += new System.EventHandler(this.toolStripMenuMSBuildProp_Click);
             // 
             // toolStripMenuEvaluatingProperty
             // 
             this.toolStripMenuEvaluatingProperty.Name = "toolStripMenuEvaluatingProperty";
-            this.toolStripMenuEvaluatingProperty.Size = new System.Drawing.Size(214, 22);
+            this.toolStripMenuEvaluatingProperty.Size = new System.Drawing.Size(216, 22);
             this.toolStripMenuEvaluatingProperty.Text = "Evaluating Property";
             this.toolStripMenuEvaluatingProperty.Click += new System.EventHandler(this.toolStripMenuEvaluatingProperty_Click);
             // 
             // toolStripMenuDTECmd
             // 
             this.toolStripMenuDTECmd.Name = "toolStripMenuDTECmd";
-            this.toolStripMenuDTECmd.Size = new System.Drawing.Size(214, 22);
+            this.toolStripMenuDTECmd.Size = new System.Drawing.Size(216, 22);
             this.toolStripMenuDTECmd.Text = "DTE-Commands";
             this.toolStripMenuDTECmd.Click += new System.EventHandler(this.toolStripMenuDTECmd_Click);
             // 
             // toolStripMenuDTECmdExec
             // 
             this.toolStripMenuDTECmdExec.Name = "toolStripMenuDTECmdExec";
-            this.toolStripMenuDTECmdExec.Size = new System.Drawing.Size(214, 22);
-            this.toolStripMenuDTECmdExec.Text = "Execution DTE Commands";
+            this.toolStripMenuDTECmdExec.Size = new System.Drawing.Size(216, 22);
+            this.toolStripMenuDTECmdExec.Text = "Executing DTE-Commands";
             this.toolStripMenuDTECmdExec.Click += new System.EventHandler(this.toolStripMenuDTECmdExec_Click);
             // 
-            // menuSBEScript
+            // menuItemSniffer
             // 
-            this.menuSBEScript.Name = "menuSBEScript";
-            this.menuSBEScript.Size = new System.Drawing.Size(214, 22);
-            this.menuSBEScript.Text = "SBE-Scripts testing tool";
-            this.menuSBEScript.Click += new System.EventHandler(this.menuSBEScript_Click);
+            this.menuItemSniffer.Name = "menuItemSniffer";
+            this.menuItemSniffer.Size = new System.Drawing.Size(216, 22);
+            this.menuItemSniffer.Text = "EnvDTE Sniffer";
+            this.menuItemSniffer.Click += new System.EventHandler(this.menuItemSniffer_Click);
             // 
             // toolStripMenuCI
             // 
             this.toolStripMenuCI.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuCIMSBuild,
-            this.toolStripMenuDevenv,
-            this.toolStripSeparator12,
-            this.toolStripMenuPlugin});
+            this.toolStripMenuDevenv});
             this.toolStripMenuCI.Name = "toolStripMenuCI";
             this.toolStripMenuCI.Size = new System.Drawing.Size(154, 22);
             this.toolStripMenuCI.Text = "CI Utilities";
@@ -536,18 +542,13 @@
             this.toolStripMenuDevenv.Text = "Devenv Command-Line";
             this.toolStripMenuDevenv.Click += new System.EventHandler(this.toolStripMenuDevenv_Click);
             // 
-            // toolStripSeparator12
-            // 
-            this.toolStripSeparator12.Name = "toolStripSeparator12";
-            this.toolStripSeparator12.Size = new System.Drawing.Size(197, 6);
-            // 
             // toolStripMenuPlugin
             // 
             this.toolStripMenuPlugin.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuCopyPath,
             this.toolStripMenuPluginDir});
             this.toolStripMenuPlugin.Name = "toolStripMenuPlugin";
-            this.toolStripMenuPlugin.Size = new System.Drawing.Size(200, 22);
+            this.toolStripMenuPlugin.Size = new System.Drawing.Size(154, 22);
             this.toolStripMenuPlugin.Text = "Plugin";
             // 
             // toolStripMenuCopyPath
@@ -661,83 +662,25 @@
             // toolStripMenuDocItem
             // 
             this.toolStripMenuDocItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuGalleryPage,
             this.toolStripMenuWiki,
-            this.toolStripSeparator9,
-            this.toolStripMenuDocDte,
-            this.toolStripMenuDocMSBuild,
-            this.toolStripMenuDocSBE,
-            this.toolStripSeparator13,
-            this.toolStripMenuDocCI,
-            this.toolStripSeparator10,
-            this.toolStripMenuDocDev});
+            this.toolStripMenuGalleryPage});
             this.toolStripMenuDocItem.Name = "toolStripMenuDocItem";
             this.toolStripMenuDocItem.Size = new System.Drawing.Size(187, 22);
             this.toolStripMenuDocItem.Text = "Documentation";
             // 
-            // toolStripMenuGalleryPage
-            // 
-            this.toolStripMenuGalleryPage.Name = "toolStripMenuGalleryPage";
-            this.toolStripMenuGalleryPage.Size = new System.Drawing.Size(219, 22);
-            this.toolStripMenuGalleryPage.Text = "VS Gallery Page";
-            this.toolStripMenuGalleryPage.Click += new System.EventHandler(this.toolStripMenuGalleryPage_Click);
-            // 
             // toolStripMenuWiki
             // 
             this.toolStripMenuWiki.Name = "toolStripMenuWiki";
-            this.toolStripMenuWiki.Size = new System.Drawing.Size(219, 22);
+            this.toolStripMenuWiki.Size = new System.Drawing.Size(181, 22);
             this.toolStripMenuWiki.Text = "Wiki";
             this.toolStripMenuWiki.Click += new System.EventHandler(this.toolStripMenuWiki_Click);
             // 
-            // toolStripSeparator9
+            // toolStripMenuGalleryPage
             // 
-            this.toolStripSeparator9.Name = "toolStripSeparator9";
-            this.toolStripSeparator9.Size = new System.Drawing.Size(216, 6);
-            // 
-            // toolStripMenuDocDte
-            // 
-            this.toolStripMenuDocDte.Name = "toolStripMenuDocDte";
-            this.toolStripMenuDocDte.Size = new System.Drawing.Size(219, 22);
-            this.toolStripMenuDocDte.Text = "DTE-Commands";
-            this.toolStripMenuDocDte.Click += new System.EventHandler(this.toolStripMenuDocDte_Click);
-            // 
-            // toolStripMenuDocMSBuild
-            // 
-            this.toolStripMenuDocMSBuild.Name = "toolStripMenuDocMSBuild";
-            this.toolStripMenuDocMSBuild.Size = new System.Drawing.Size(219, 22);
-            this.toolStripMenuDocMSBuild.Text = "MSBuild";
-            this.toolStripMenuDocMSBuild.Click += new System.EventHandler(this.toolStripMenuDocMSBuild_Click);
-            // 
-            // toolStripMenuDocSBE
-            // 
-            this.toolStripMenuDocSBE.Name = "toolStripMenuDocSBE";
-            this.toolStripMenuDocSBE.Size = new System.Drawing.Size(219, 22);
-            this.toolStripMenuDocSBE.Text = "SBE-Scripts";
-            this.toolStripMenuDocSBE.Click += new System.EventHandler(this.toolStripMenuDocSBE_Click);
-            // 
-            // toolStripSeparator13
-            // 
-            this.toolStripSeparator13.Name = "toolStripSeparator13";
-            this.toolStripSeparator13.Size = new System.Drawing.Size(216, 6);
-            // 
-            // toolStripMenuDocCI
-            // 
-            this.toolStripMenuDocCI.Name = "toolStripMenuDocCI";
-            this.toolStripMenuDocCI.Size = new System.Drawing.Size(219, 22);
-            this.toolStripMenuDocCI.Text = "Continuous Integration (CI)";
-            this.toolStripMenuDocCI.Click += new System.EventHandler(this.toolStripMenuDocCI_Click);
-            // 
-            // toolStripSeparator10
-            // 
-            this.toolStripSeparator10.Name = "toolStripSeparator10";
-            this.toolStripSeparator10.Size = new System.Drawing.Size(216, 6);
-            // 
-            // toolStripMenuDocDev
-            // 
-            this.toolStripMenuDocDev.Name = "toolStripMenuDocDev";
-            this.toolStripMenuDocDev.Size = new System.Drawing.Size(219, 22);
-            this.toolStripMenuDocDev.Text = "For developers";
-            this.toolStripMenuDocDev.Click += new System.EventHandler(this.toolStripMenuDocDev_Click);
+            this.toolStripMenuGalleryPage.Name = "toolStripMenuGalleryPage";
+            this.toolStripMenuGalleryPage.Size = new System.Drawing.Size(181, 22);
+            this.toolStripMenuGalleryPage.Text = "Visual Studio Gallery";
+            this.toolStripMenuGalleryPage.Click += new System.EventHandler(this.toolStripMenuGalleryPage_Click);
             // 
             // toolStripMenuChangelog
             // 
@@ -2509,10 +2452,8 @@
             this.Controls.Add(this.panelStatusBR);
             this.Controls.Add(this.panelEventType);
             this.Controls.Add(this.splitContainer);
-            this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(815, 472);
             this.Name = "EventsFrm";
-            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Solution Build-Events";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.EventsFrm_FormClosing);
@@ -2692,12 +2633,6 @@
         private System.Windows.Forms.ToolStripMenuItem menuActionsReset;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuGalleryPage;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuWiki;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuDocDte;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuDocMSBuild;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuDocSBE;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuDocDev;
         private System.Windows.Forms.RadioButton radioModeScript;
         private System.Windows.Forms.ComboBox comboBoxBuildContext;
         private System.Windows.Forms.CheckBox chkBuildContext;
@@ -2717,12 +2652,9 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuSBEPanel;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuCIMSBuild;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuDevenv;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuPlugin;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuCopyPath;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuPluginDir;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuDocCI;
         private System.Windows.Forms.PictureBox pictureBoxWarnWait;
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuAPI;
@@ -2782,6 +2714,8 @@
         private System.Windows.Forms.ToolStripMenuItem menuTplCSharpDefault;
         private System.Windows.Forms.Button btnActionExec;
         private System.Windows.Forms.ToolStripMenuItem menuActionExec;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
+        private System.Windows.Forms.ToolStripMenuItem menuItemSniffer;
 
     }
 }

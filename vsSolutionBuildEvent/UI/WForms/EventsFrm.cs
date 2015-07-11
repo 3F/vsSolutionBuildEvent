@@ -64,6 +64,10 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// Testing tool - SBE-Scripts
         /// </summary>
         protected ScriptCheckFrm frmSBEScript;
+        /// <summary>
+        /// UI-helper - EnvDTE Sniffer
+        /// </summary>
+        protected EnvDteSniffer frmSniffer;
 
         /// <summary>
         /// Default sizes for controls
@@ -83,6 +87,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
             InitializeComponent();
 
+            Icon = Resource.Package_32;
             textEditor.codeCompletionInit(inspector);
             updateColors();
             defaultSizes();
@@ -745,7 +750,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                 return;
             }
             string tFormat = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern + " .fff";
-            dgvCESniffer.Rows.Add(DateTime.Now.ToString(tFormat), pre, guid, id, customIn, customOut, logic.enumViewBy(guid, id));
+            dgvCESniffer.Rows.Add(DateTime.Now.ToString(tFormat), pre, guid, id, customIn, customOut, Util.enumViewBy(guid, id));
         }
 
         protected void addFilterFromSniffer(DataGridView sniffer, DataGridView filter)
@@ -1019,31 +1024,6 @@ namespace net.r_eg.vsSBE.UI.WForms
             Util.openUrl("http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
         }
 
-        private void toolStripMenuDocDte_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Scripts_&_Commands/DTE-Commands");
-        }
-
-        private void toolStripMenuDocMSBuild_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Scripts_&_Commands/MSBuild");
-        }
-
-        private void toolStripMenuDocCI_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/CI");
-        }
-
-        private void toolStripMenuDocSBE_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Scripts_&_Commands/SBE-Scripts");
-        }
-
-        private void toolStripMenuDocDev_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Developer%20Zone");
-        }
-
         private void toolStripMenuChangelog_Click(object sender, EventArgs e)
         {
             Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/raw/master/changelog.txt");
@@ -1091,7 +1071,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void toolStripMenuReport_Click(object sender, EventArgs e)
         {
-            DialogResult ret = MessageBox.Show("Click 'Yes' if you found error or have a proposal", this.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult ret = MessageBox.Show("Seen error or have a suggestion - Click 'Yes'", Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if(ret == DialogResult.Yes) {
                 Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/issues/new");
@@ -1113,7 +1093,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void toolStripMenuCopyPath_Click(object sender, EventArgs e)
         {
             Clipboard.SetText(String.Format("\"{0}\"", Settings.LibPath));
-            MessageBox.Show(String.Format("Copied to clipboard: \n\n{0}\n\nUse this with the CI utilities", Settings.LibPath), 
+            MessageBox.Show(String.Format("Has been copied to clipboard:\n\n{0}\n\nUse this with CI utilities etc.", Settings.LibPath), 
                             "Full path to vsSolutionBuildEvent");
         }
 
@@ -1280,6 +1260,15 @@ namespace net.r_eg.vsSBE.UI.WForms
             frmSBEScript.Show();
         }
 
+        private void menuItemSniffer_Click(object sender, EventArgs e)
+        {
+            if(Util.focusForm(frmSniffer)) {
+                return;
+            }
+            frmSniffer = new EnvDteSniffer(logic.Env);
+            frmSniffer.Show();
+        }
+
         private void EventsFrm_FormClosing(object sender, FormClosingEventArgs e)
         {
             snifferEnabled(false);
@@ -1288,6 +1277,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             Util.closeTool(frmDTECommands);
             Util.closeTool(frmDTECheck);
             Util.closeTool(frmSBEScript);
+            Util.closeTool(frmSniffer);
             logic.restoreData();
         }
 

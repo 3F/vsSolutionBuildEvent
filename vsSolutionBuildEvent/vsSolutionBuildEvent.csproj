@@ -126,6 +126,18 @@
     <Compile Include="Events\ModeType.cs" />
     <Compile Include="Exceptions\CompilerException.cs" />
     <Compile Include="GAC.cs" />
+    <Compile Include="UI\WForms\Controls\Lights.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\WForms\Controls\Lights.Designer.cs">
+      <DependentUpon>Lights.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\WForms\EnvDteSniffer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\WForms\EnvDteSniffer.Designer.cs">
+      <DependentUpon>EnvDteSniffer.cs</DependentUpon>
+    </Compile>
     <Compile Include="UnifiedTypes\Build\VSCommand.cs" />
     <Compile Include="Events\LoggingEvent.cs" />
     <Compile Include="Events\ILoggingEvent.cs" />
@@ -351,8 +363,14 @@
     <EmbeddedResource Include="UI\WForms\AboutFrm.resx">
       <DependentUpon>AboutFrm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\WForms\Controls\Lights.resx">
+      <DependentUpon>Lights.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\WForms\Controls\TextEditor.resx">
       <DependentUpon>TextEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\WForms\EnvDteSniffer.resx">
+      <DependentUpon>EnvDteSniffer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\WForms\ScriptCheckFrm.resx">
       <DependentUpon>ScriptCheckFrm.cs</DependentUpon>
@@ -412,6 +430,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <None Include="Resources\Package_32.ico" />
+    <Content Include="Resources\Package_16.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="Resources\preview.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -425,6 +448,7 @@
   <ItemGroup>
     <VSCTCompile Include="vsSolutionBuildEvent.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
+      <SubType>Designer</SubType>
     </VSCTCompile>
   </ItemGroup>
   <ItemGroup>

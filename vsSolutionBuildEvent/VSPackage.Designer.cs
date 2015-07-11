@@ -70,7 +70,7 @@ namespace net.r_eg.vsSBE {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Flexible actions for all events.. +Supports the CI/Special Build Servers, Command-Line mode and many other features for build, tests, debugging, versioning, CI, logging(+logger for msbuild), works with files etc.,.
+        ///   Looks up a localized string similar to Flexible actions for all events.. +Supports the CI /Build Servers, Command-Line mode and many other features for build, tests, debugging, versioning, CI, logging(+logger for msbuild), work with files etc.,.
         /// </summary>
         internal static string _112 {
             get {

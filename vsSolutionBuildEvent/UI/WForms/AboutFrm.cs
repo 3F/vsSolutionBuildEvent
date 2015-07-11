@@ -188,6 +188,8 @@ namespace net.r_eg.vsSBE.UI.WForms
         public AboutFrm()
         {
             InitializeComponent();
+            Icon = Resource.Package_32;
+
             space = new DeepSpace(pictureBoxSpace.CreateGraphics(), pictureBoxSpace.Width, pictureBoxSpace.Height);
 
             labelCopyright.Text = String.Format("Copyright (c) 2013-{0}  Denis Kuzmin (reg) < entry.reg@gmail.com >", Math.Max(2015, DateTime.Now.Year));

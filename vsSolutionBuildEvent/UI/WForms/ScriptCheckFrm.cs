@@ -95,6 +95,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         public ScriptCheckFrm(IEnvironment env)
         {
             InitializeComponent();
+            Icon = Resource.Package_32;
 
             if(context == null) {
                 context = new ToolContext(env);

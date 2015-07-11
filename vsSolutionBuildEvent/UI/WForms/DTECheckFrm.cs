@@ -16,12 +16,7 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using net.r_eg.vsSBE.Actions;
 
@@ -46,7 +41,9 @@ namespace net.r_eg.vsSBE.UI.WForms
         public DTECheckFrm(IEnvironment env)
         {
             _dteo = new DTEOperation(env, vsSBE.Events.SolutionEventType.General);
+
             InitializeComponent();
+            Icon = Resource.Package_32;
         }
 
         private void btnExecute_Click(object sender, EventArgs e)
