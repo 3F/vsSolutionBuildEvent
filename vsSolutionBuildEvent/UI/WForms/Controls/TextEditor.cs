@@ -27,10 +27,14 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml;
 using ICSharpCode.AvalonEdit.CodeCompletion;
+using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using ICSharpCode.AvalonEdit.Rendering;
+using ICSharpCode.AvalonEdit.Search;
 using net.r_eg.vsSBE.SBEScripts.Dom;
-using AvalonEditWPF = ICSharpCode.AvalonEdit.TextEditor;
+using net.r_eg.vsSBE.UI.WForms.Controls.TextEditorElements;
+using AvalonEditorWPF = ICSharpCode.AvalonEdit.TextEditor;
 using InputModifierKeys = System.Windows.Input.ModifierKeys;
 
 namespace net.r_eg.vsSBE.UI.WForms.Controls
@@ -55,11 +59,11 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
         /// <summary>
         /// Accessor to AvalonEdit
         /// </summary>
-        public AvalonEditWPF _
+        public AvalonEditorWPF _
         {
             get { return editor; }
         }
-        protected AvalonEditWPF editor;
+        protected AvalonEditorWPF editor;
 
         /// <summary>
         /// Gets/Sets the text of the current document
@@ -110,6 +114,31 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
         protected double initFontSize;
 
         /// <summary>
+        /// Standard panel for searching
+        /// </summary>
+        protected SearchPanel searchPanel;
+
+        /// <summary>
+        /// Stores a list of foldings
+        /// </summary>
+        protected FoldingManager foldingManager;
+
+        /// <summary>
+        /// Current schema
+        /// </summary>
+        protected ColorSchema schema = ColorSchema.Default;
+
+        /// <summary>
+        /// Determines folds for an xml string
+        /// </summary>
+        protected XmlFoldingStrategy xmlFoldingStrategy;
+
+        /// <summary>
+        /// Determines folds for braces
+        /// </summary>
+        protected BraceFoldingStrategy braceFoldingStrategy;
+
+        /// <summary>
         /// object synch.
         /// </summary>
         private Object _lock = new Object();
@@ -126,8 +155,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
 
         public void colorize(ColorSchema schema)
         {
+            this.schema = schema;
             IHighlightingDefinition def = null;
-            switch(schema) {
+            switch(schema)
+            {
                 case ColorSchema.ScriptMode:
                 case ColorSchema.SBEScript: {
                     def = HighlightingManager.Instance.GetDefinition("SBEScripts");
@@ -160,11 +191,13 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
                 }
             }
             _.SyntaxHighlighting = def;
+            updateFoldings();
         }
 
         public void setBackgroundFromString(string color)
         {
             _.Background = brushColorFromString(color);
+            updateCurrentLineBackground(_.Background);
         }
 
         public void insertToSelection(string text, bool select = true)
@@ -181,38 +214,13 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
         {
             InitializeComponent();
 
-            editor = new AvalonEditWPF();
+            editor = new AvalonEditorWPF();
             attachWpfEditor(editor);
+
+            ContextMenuStrip    = contextMenuEditor;
+            foldingManager      = FoldingManager.Install(_.TextArea);
+            searchPanel         = SearchPanel.Install(_.TextArea);
             init();
-        }
-
-        protected void init()
-        {
-            loadXshdSchema(xshd.XshdResource.SBEScripts, "SBEScripts");
-            loadXshdSchema(xshd.XshdResource.FilesMode, "FilesMode");
-            loadXshdSchema(xshd.XshdResource.OperationMode, "OperationMode");
-            loadXshdSchema(xshd.XshdResource.InterpreterMode, "InterpreterMode");
-            loadXshdSchema(xshd.XshdResource.MSBuildTargets, "MSBuildTargets");
-            loadXshdSchema(xshd.XshdResource.CSharpLang, "CSharpLang");
-
-            colorize(ColorSchema.Default);
-            ContextMenuStrip = contextMenuEditor;
-
-            _.Options.ConvertTabsToSpaces                       = true;
-            _.Options.IndentationSize                           = 4;
-            _.Options.ShowTabs                                  = true;
-            _.ShowLineNumbers                                   = true;
-            _.TextArea.TextView.Options.HighlightCurrentLine    = true;
-            _.FontFamily                                        = new FontFamily("Consolas");
-
-            menuItemWordWrap.Checked = _.WordWrap = true;
-
-            _.TextArea.TextView.CurrentLineBackground = brushColorFromString("#F5F5F5");
-            _.TextArea.TextView.CurrentLineBorder = new Pen();
-
-            initFontSize = _.FontSize;
-            _.TextArea.MouseWheel += new System.Windows.Input.MouseWheelEventHandler(textEditor_MouseWheel);
-            menuComboBoxZoom.Text = zoomedValue(_.FontSize);
         }
 
         protected void attachCodeCompletionEvents()
@@ -232,6 +240,38 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
                 _.TextArea.TextEntering -= new TextCompositionEventHandler(editorTextArea_TextEntering);
                 _.TextArea.TextEntered  -= new TextCompositionEventHandler(editorTextArea_TextEntered);
             }
+        }
+
+        protected void updateFoldings()
+        {
+            if(foldingManager == null) {
+                Log.nlog.Debug("foldingManager is null");
+                return;
+            }
+
+            switch(schema)
+            {
+                case ColorSchema.MSBuildTargets:
+                {
+                    if(xmlFoldingStrategy == null) {
+                        xmlFoldingStrategy = new XmlFoldingStrategy();
+                    }
+                    xmlFoldingStrategy.UpdateFoldings(foldingManager, _.Document);
+                    return;
+                }
+                case ColorSchema.InterpreterMode:
+                case ColorSchema.ScriptMode:
+                case ColorSchema.SBEScript:
+                case ColorSchema.CSharpLang:
+                {
+                    if(braceFoldingStrategy == null) {
+                        braceFoldingStrategy = new BraceFoldingStrategy();
+                    }
+                    braceFoldingStrategy.UpdateFoldings(foldingManager, _.Document);
+                    return;
+                }
+            }
+            foldingManager.Clear();
         }
 
         protected void showCodeCompletion(DomParser.KeysCommand cmd)
@@ -260,7 +300,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
             completionWindow.Show();
         }
 
-        protected void attachWpfEditor(AvalonEditWPF editor)
+        protected void attachWpfEditor(AvalonEditorWPF editor)
         {
             Controls.Add(new ElementHost()
             {
@@ -278,9 +318,53 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
             }
         }
 
+        protected Brush brushColorFromString(string color)
+        {
+            return new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
+        }
+
         protected string zoomedValue(double fontSize)
         {
             return Math.Round((fontSize / Math.Max(1, initFontSize)) * 100) + " %";
+        }
+
+        private void init()
+        {
+            loadXshdSchema(xshd.XshdResource.SBEScripts, "SBEScripts");
+            loadXshdSchema(xshd.XshdResource.FilesMode, "FilesMode");
+            loadXshdSchema(xshd.XshdResource.OperationMode, "OperationMode");
+            loadXshdSchema(xshd.XshdResource.InterpreterMode, "InterpreterMode");
+            loadXshdSchema(xshd.XshdResource.MSBuildTargets, "MSBuildTargets");
+            loadXshdSchema(xshd.XshdResource.CSharpLang, "CSharpLang");
+            
+            colorize(ColorSchema.Default);
+
+            _.Options.ConvertTabsToSpaces                       = true;
+            _.Options.IndentationSize                           = 4;
+            _.Options.ShowTabs                                  = true;
+            _.ShowLineNumbers                                   = true;
+            _.WordWrap                                          = true;
+            _.TextArea.TextView.Options.HighlightCurrentLine    = true;
+            _.FontFamily                                        = new FontFamily("Consolas");
+            _.TextArea.TextView.CurrentLineBorder               = new Pen(brushColorFromString("#8E9BBC"), 0.3f);
+
+            updateCurrentLineBackground(_.Background);
+
+            _.TextArea.TextView.BackgroundRenderers.Add(new SimilarWordsRenderer(_));
+            _.TextArea.TextView.BackgroundRenderers.Add(new HighlightBracesRenderer(_));
+            _.TextArea.Caret.PositionChanged += (sender, e) => { _.TextArea.TextView.InvalidateLayer(KnownLayer.Selection); };
+
+            _.TextChanged               += textEditor_TextChanged;
+            menuItemWordWrap.Checked    = _.WordWrap;
+            initFontSize                = _.FontSize;
+            _.TextArea.MouseWheel       += new System.Windows.Input.MouseWheelEventHandler(textEditor_MouseWheel);
+            menuComboBoxZoom.Text       = zoomedValue(_.FontSize);
+        }
+
+        private void updateCurrentLineBackground(Brush brush)
+        {
+            _.TextArea.TextView.CurrentLineBackground = brush;
+            _.TextArea.TextView.InvalidateLayer(KnownLayer.Selection);
         }
 
         private void editorTextArea_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -354,9 +438,9 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
             menuComboBoxZoom.Text = zoomedValue(_.FontSize);
         }
 
-        protected Brush brushColorFromString(string color)
+        private void textEditor_TextChanged(object sender, EventArgs e)
         {
-            return new SolidColorBrush((Color)ColorConverter.ConvertFromString(color));
+            updateFoldings();
         }
 
         private void menuItemCut_Click(object sender, EventArgs e)
@@ -392,6 +476,11 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
         private void contextMenuEditor_Opened(object sender, EventArgs e)
         {
             menuComboBoxZoom.Text = zoomedValue(_.FontSize);
+        }
+
+        private void menuItemSearch_Click(object sender, EventArgs e)
+        {
+            searchPanel.Open();
         }
     }
 }

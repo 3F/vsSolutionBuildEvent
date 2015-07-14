@@ -39,6 +39,7 @@
             this.menuItemRedo = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.menuItemWordWrap = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuItemSearch = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuEditor.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -54,9 +55,10 @@
             this.menuItemUndo,
             this.menuItemRedo,
             this.toolStripSeparator3,
+            this.menuItemSearch,
             this.menuItemWordWrap});
             this.contextMenuEditor.Name = "contextMenuEditor";
-            this.contextMenuEditor.Size = new System.Drawing.Size(182, 203);
+            this.contextMenuEditor.Size = new System.Drawing.Size(182, 225);
             this.contextMenuEditor.Opened += new System.EventHandler(this.contextMenuEditor_Opened);
             // 
             // menuComboBoxZoom
@@ -131,6 +133,13 @@
             this.menuItemWordWrap.Text = "Word wrapping";
             this.menuItemWordWrap.Click += new System.EventHandler(this.menuItemWordWrap_Click);
             // 
+            // menuItemSearch
+            // 
+            this.menuItemSearch.Name = "menuItemSearch";
+            this.menuItemSearch.Size = new System.Drawing.Size(181, 22);
+            this.menuItemSearch.Text = "Search";
+            this.menuItemSearch.Click += new System.EventHandler(this.menuItemSearch_Click);
+            // 
             // TextEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -155,5 +164,6 @@
         private System.Windows.Forms.ToolStripMenuItem menuItemRedo;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem menuItemWordWrap;
+        private System.Windows.Forms.ToolStripMenuItem menuItemSearch;
     }
 }

@@ -142,6 +142,9 @@
     <Compile Include="UI\WForms\Controls\Lights.Designer.cs">
       <DependentUpon>Lights.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\WForms\Controls\TextEditorElements\BraceFoldingStrategy.cs" />
+    <Compile Include="UI\WForms\Controls\TextEditorElements\HighlightBracesRenderer.cs" />
+    <Compile Include="UI\WForms\Controls\TextEditorElements\SimilarWordsRenderer.cs" />
     <Compile Include="UI\WForms\EnvDteSniffer.cs">
       <SubType>Form</SubType>
     </Compile>
