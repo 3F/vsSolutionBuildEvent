@@ -1,6 +1,24 @@
 vsSolutionBuildEvent
 ____________________
 
+[v0.12.2] 2015.07.30
+    * FIXED: SBE-Scripts Core. Fixes with multiple component initialization.
+    * FIXED: C# Mode. Possible problem with loading assembly if used the GenerateInMemory property.
+    * FIXED: C# Mode. Possible problem with searching the mscorlib.dll, System.dll for References property.
+    * FIXED: The configuration file is always loading only from first loaded solution.
+    * FIXED: UI. Incorrect filtering (case sensitivity) in DTE-Commands tool.
+    * NEW: Added "Try current action" as part of testing tools.
+    * NEW: Additional EnvDTE Sniffer tool.
+    * CHANGED: Updated Json.NET v7.0.1.
+    * CHANGED: UI. Avoids empty name for action in action list after update.
+    * CHANGED: Improvements for editor:
+                * Foldings for: Targets Mode, C# Mode, Script Mode, Interpreter Mode
+                * Highlighting for braces: {}, [], ()
+                * Highlighting for similar words.
+                * Standard search panel.
+                
+    * CHANGED: others trivial changes for UI: items & Icons.
+
 [v0.12.1] 2015.06.20
     * NEW: Processing Mode: 'Targets Mode' - for work with the msbuild targets/tasks etc. 'as is' (classic compatible mode).
     * NEW: Processing Mode: 'C# Mode' with caching of bytecode.
