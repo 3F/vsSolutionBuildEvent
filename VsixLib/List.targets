@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+    
+The main VSPackage uses the VsixLib for including additional libraries from GAC etc.
+
+In general, the new VS2015 already includes by default some libraries (as dependencies) into .vsix even if the "Copy Local" set as false! 
+for example: Microsoft.VisualStudio.OLE.Interop.dll, Microsoft.VisualStudio.Shell.Interop.dll, etc.
+It different with other versions! (+ MSBuild tools) As solution we use like this:
+
+   <Content Include="bin\*.dll">
+     <Visible>false</Visible>
+     <Link>%(Filename)%(Extension)</Link>
+     <IncludeInVSIX>true</IncludeInVSIX>
+   </Content>
+
+However, we should use list of files instead of mask like above - *.dll (e.g.: Include="Lib1.dll;Lib2.dll;Lib3.dll..."), 
+because the VS will see this folder is too early and some libraries may not be included in vsix (partially is means), but definitely should included after first build operation.
+
+Therefore, we use VsixLib for equality between versions of VS (providing References into vsix) and for similar providing instead of including in main project.    
+  
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  
+    <ItemGroup>
+        <VsixLib Include="$(SolutionDir)\VsixLib\bin\EnvDTE.dll" />
+        <VsixLib Include="$(SolutionDir)\VsixLib\bin\EnvDTE80.dll" />
+        <VsixLib Include="$(SolutionDir)\VsixLib\bin\microsoft.msxml.dll" />
+        <VsixLib Include="$(SolutionDir)\VsixLib\bin\Microsoft.VisualStudio.OLE.Interop.dll" />
+        <VsixLib Include="$(SolutionDir)\VsixLib\bin\Microsoft.VisualStudio.ProjectAggregator.dll" />
+        <VsixLib Include="$(SolutionDir)\VsixLib\bin\Microsoft.VisualStudio.Settings.dll" />
+        <VsixLib Include="$(SolutionDir)\VsixLib\bin\Microsoft.VisualStudio.Shell.10.0.dll" />
+        <VsixLib Include="$(SolutionDir)\VsixLib\bin\Microsoft.VisualStudio.Shell.Immutable.10.0.dll" />
+        <VsixLib Include="$(SolutionDir)\VsixLib\bin\Microsoft.VisualStudio.Shell.Interop.8.0.dll" />
+        <VsixLib Include="$(SolutionDir)\VsixLib\bin\Microsoft.VisualStudio.Shell.Interop.9.0.dll" />
+        <VsixLib Include="$(SolutionDir)\VsixLib\bin\Microsoft.VisualStudio.Shell.Interop.10.0.dll" />
+        <VsixLib Include="$(SolutionDir)\VsixLib\bin\Microsoft.VisualStudio.Shell.Interop.dll" />
+        <VsixLib Include="$(SolutionDir)\VsixLib\bin\Microsoft.VisualStudio.TextManager.Interop.8.0.dll" />
+        <VsixLib Include="$(SolutionDir)\VsixLib\bin\Microsoft.VisualStudio.TextManager.Interop.dll" />
+        <VsixLib Include="$(SolutionDir)\VsixLib\bin\Microsoft.VisualStudio.VSHelp.dll" />
+        <VsixLib Include="$(SolutionDir)\VsixLib\bin\stdole.dll" />
+    </ItemGroup>
+  
+</Project>

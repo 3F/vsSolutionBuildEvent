@@ -13,10 +13,6 @@
       "Enabled": true
     },
     {
-      "ClassName": "UserVariableComponent",
-      "Enabled": true
-    },
-    {
       "ClassName": "OWPComponent",
       "Enabled": true
     },
@@ -59,7 +55,8 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true
+        "Hidden": true,
+        "TimeLimit": 30
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
@@ -84,7 +81,8 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true
+        "Hidden": true,
+        "TimeLimit": 30
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
@@ -109,7 +107,8 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true
+        "Hidden": true,
+        "TimeLimit": 30
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
@@ -141,12 +140,13 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true
+        "Hidden": true,
+        "TimeLimit": 30
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "script",
-        "Command": "#[($(Configuration) ~= \"Release\" && !$(Configuration) ~= \"CI_\") {\r\n    #[DTE exec: Test.RunAllTestsInSolution]\r\n}]"
+        "Command": "#[($([System.Convert]::ToInt32(\"$(VisualStudioVersion.Replace('.', ''))\")) < 120) {\r\n    #[($(Configuration) ^= \"Release\" && !$(Configuration) ^= \"CI_\") {\r\n        #[DTE exec: Test.RunAllTestsInSolution]\r\n    }]\r\n}]"
       }
     },
     {
@@ -166,12 +166,13 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true
+        "Hidden": true,
+        "TimeLimit": 30
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "script",
-        "Command": "#[var appzip    = $(SolutionDir)bin/7z/7za.exe]\r\n#[var odir      = $(SolutionDir)bin/Releases/]\r\n#[var cfg       = #[($(Configuration) ~= \"Release\"){Release}else{Debug}]]\r\n#[var cfgFull   = $(Configuration)]\r\n\r\n#[var netStamp      = net$(TargetFrameworkVersion.Replace(\".\", \"\").Replace(\"v\", \"\"))]\r\n#[var netVerString  = $(TargetFrameworkVersion)#[($(TargetFrameworkVersion) != v4.0){ (be careful - need a v4.0 to compatibility with VS2010)}]]\r\n\r\n#[File sout(\"cmd\", \"/C mkdir \\\"#[var odir]\\\" 2>&1\")]\r\n#[File sout(\"cmd\", \"/C del /F/Q \\\"#[var odir]\\\" 2>&1\")]"
+        "Command": "#[var appzip    = $(SolutionDir)bin/7z/7za.exe]\r\n#[var odir      = $(SolutionDir)bin/Releases/]\r\n#[var cfg       = #[($(Configuration) ~= \"Release\"){Release}else{Debug}]]\r\n#[var cfgFull   = $(Configuration)]\r\n#[var vsixLib   = $(SolutionDir)VsixLib\\bin\\]\r\n#[var CIMLib    = $(SolutionDir)CIMLib\\bin\\]\r\n\r\n#[var netStamp      = net$(TargetFrameworkVersion.Replace(\".\", \"\").Replace(\"v\", \"\"))]\r\n#[var netVerString  = $(TargetFrameworkVersion)#[($(TargetFrameworkVersion) != v4.0){ (be careful - need a v4.0 to compatibility with VS2010)}]]\r\n\r\n#[File sout(\"cmd\", \"/C mkdir \\\"#[var odir]\\\" 2>&1\")]\r\n#[File sout(\"cmd\", \"/C del /F/Q \\\"#[var odir]\\\" 2>&1\")]"
       }
     },
     {
@@ -191,7 +192,8 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true
+        "Hidden": true,
+        "TimeLimit": 30
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
@@ -216,12 +218,13 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true
+        "Hidden": true,
+        "TimeLimit": 30
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "script",
-        "Command": "#[File sout(\"cmd\", \"/C cd \\\"#[var pDirBridge]bin/#[var cfg]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]Bridge_v#[var numBridge]_[#[var branchSha1]][#[var netStamp]].zip\\\" *.*\")]"
+        "Command": "#[File sout(\"cmd\", \"/C cd \\\"#[var pDirBridge]bin/#[var cfg]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]Bridge_v#[var numBridge]_[#[var branchSha1]][#[var netStamp]].zip\\\" Bridge.dll Bridge.pdb\")]"
       }
     },
     {
@@ -241,12 +244,13 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true
+        "Hidden": true,
+        "TimeLimit": 30
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "script",
-        "Command": "#[File sout(\"cmd\", \"/C cd \\\"#[var pDirCIM]bin/#[var cfg]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]CI.MSBuild_v#[var numCIM]_[#[var branchSha1]][#[var netStamp]].zip\\\" *.*\")]"
+        "Command": "#[File sout(\"cmd\", \"/C cd \\\"#[var pDirCIM]bin/#[var cfg]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]CI.MSBuild_v#[var numCIM]_[#[var branchSha1]][#[var netStamp]].zip\\\" Bridge.dll Bridge.pdb Provider.dll Provider.pdb CI.MSBuild.dll CI.MSBuild.pdb\")]"
       }
     },
     {
@@ -266,12 +270,13 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true
+        "Hidden": true,
+        "TimeLimit": 30
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "script",
-        "Command": "#[File sout(\"cmd\", \"/C cd \\\"#[var pDirDevenv]bin/#[var cfg]/\\\" & xcopy *.dll Devenv /Y/R/I & xcopy *.pdb Devenv /Y/R/I\")]\r\n\r\n#[File sout(\"cmd\", \"/C cd \\\"#[var pDirDevenv]bin/#[var cfg]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]Devenv_v#[var numDevenv]_[#[var branchSha1]][#[var netStamp]].zip\\\" Devenv.AddIn Devenv/*.*\")]"
+        "Command": "#[var _DP = $(SolutionDir)$(pDirDevenv)bin\\#[var cfg]\\]\r\n\r\n#[IO cmd(\"del /F/Q \\\"#[var _DP]\\Devenv\\\" 2>&1\")]\r\n#[IO cmd(\"cd \\\"#[var _DP]\\\" & for %f in (Bridge.dll,Bridge.pdb,Devenv.dll,Devenv.pdb,Provider.dll,Provider.pdb) do xcopy %f Devenv\\ /Y/R/I\")]\r\n#[IO cmd(\"cd \\\"#[var _DP]\\\" & xcopy Extensibility.dll Devenv\\ /Y/R/I 2>&1\")]\r\n\r\n#[IO cmd(\"cd \\\"#[var _DP]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]Devenv_v#[var numDevenv]_[#[var branchSha1]][#[var netStamp]].zip\\\" Devenv.AddIn Devenv/*.*\")]"
       }
     },
     {
@@ -291,12 +296,13 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true
+        "Hidden": true,
+        "TimeLimit": 30
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "script",
-        "Command": "#[File sout(\"cmd\", \"/C cd \\\"#[var pDirProvider]bin/#[var cfg]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]Provider_v#[var numProvider]_[#[var branchSha1]][#[var netStamp]].zip\\\" *.*\")]"
+        "Command": "#[File sout(\"cmd\", \"/C cd \\\"#[var pDirProvider]bin/#[var cfg]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]Provider_v#[var numProvider]_[#[var branchSha1]][#[var netStamp]].zip\\\" Bridge.dll Bridge.pdb Provider.dll Provider.pdb\")]"
       }
     },
     {
@@ -316,7 +322,8 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true
+        "Hidden": true,
+        "TimeLimit": 30
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
@@ -348,7 +355,8 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true
+        "Hidden": true,
+        "TimeLimit": 30
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
@@ -373,12 +381,13 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true
+        "Hidden": true,
+        "TimeLimit": 30
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "script",
-        "Command": "#[var tplNuspecCIM  = #[File get(\"vsSBE.CI.MSBuild.nuspec.tpl\")]]\r\n#[var nupCIMdir     = $(odir)NuGet-CI.MSBuild-package]\r\n\r\n#[File sout(\"cmd\", \"/C mkdir \\\"#[var nupCIMdir]\\\" 2>&1\")]\r\n#[File sout(\"cmd\", \"/C del /F/Q \\\"#[var nupCIMdir]\\\" & del /F/Q \\\"#[var nupCIMdir]\\bin\\\" 2>&1\")]\r\n\r\n#[var nuspecCIM = $(tplNuspecCIM.Replace(%CIMVersion%, \"$(numCIM)\").Replace(%PackageVersion%, \"\").Replace(%vsSBEVersion%, \"$(numSBE)\"))]\r\n#[File write(\"#[var nupCIMdir]\\vsSBE.CI.MSBuild.nuspec\"):#[var nuspecCIM]]\r\n\r\n#[\" files for package \"]\r\n\r\n#[File sout(\"cmd\", \"/C cd \\\"#[var pDir]bin/#[var cfg]/\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I & xcopy NLog.dll.nlog \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]\r\n#[File sout(\"cmd\", \"/C cd \\\"#[var pDirCIM]bin/#[var cfg]/\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]\r\n#[File scall(\".nuget\\nuget.exe\", \"pack \\\"#[var nupCIMdir]\\vsSBE.CI.MSBuild.nuspec\\\" -OutputDirectory \\\"#[var nupCIMdir]\\..\\\" -NonInteractive\")]\r\n\r\n#[File sout(\"cmd\", \"/C rmdir /S/Q \\\"#[var nupCIMdir]\\\" 2>&1\")]"
+        "Command": "#[var tplNuspecCIM  = #[File get(\"vsSBE.CI.MSBuild.nuspec.tpl\")]]\r\n#[var nupCIMdir     = $(odir)NuGet-CI.MSBuild-package]\r\n\r\n#[File sout(\"cmd\", \"/C mkdir \\\"#[var nupCIMdir]\\\" 2>&1\")]\r\n#[File sout(\"cmd\", \"/C del /F/Q \\\"#[var nupCIMdir]\\\" & del /F/Q \\\"#[var nupCIMdir]\\bin\\\" 2>&1\")]\r\n\r\n#[var nuspecCIM = $(tplNuspecCIM.Replace(%CIMVersion%, \"$(numCIM)\").Replace(%PackageVersion%, \"\").Replace(%vsSBEVersion%, \"$(numSBE)\"))]\r\n#[File write(\"#[var nupCIMdir]\\vsSBE.CI.MSBuild.nuspec\"):#[var nuspecCIM]]\r\n\r\n#[\" files for package \"]\r\n\r\n#[File cmd(\"cd \\\"#[var CIMLib]\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]#[\" CIMLib custom \"]\r\n\r\n#[\" vsix dir \"]\r\n#[File cmd(\"cd \\\"#[var pDir]bin/#[var cfg]/\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I & xcopy NLog.dll.nlog \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]\r\n#[File cmd(\"cd \\\"#[var pDirCIM]bin/#[var cfg]/\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]\r\n#[File scall(\".nuget\\nuget.exe\", \"pack \\\"#[var nupCIMdir]\\vsSBE.CI.MSBuild.nuspec\\\" -OutputDirectory \\\"#[var nupCIMdir]\\..\\\" -NonInteractive -Verbosity quiet\")]\r\n\r\n#[File sout(\"cmd\", \"/C rmdir /S/Q \\\"#[var nupCIMdir]\\\" 2>&1\")]"
       }
     }
   ],
@@ -397,7 +406,8 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true
+        "Hidden": true,
+        "TimeLimit": 30
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
@@ -426,7 +436,8 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true
+        "Hidden": true,
+        "TimeLimit": 30
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
@@ -455,7 +466,8 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true
+        "Hidden": true,
+        "TimeLimit": 30
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
@@ -483,7 +495,8 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true
+        "Hidden": true,
+        "TimeLimit": 30
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
@@ -510,7 +523,8 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": true,
-        "Hidden": true
+        "Hidden": true,
+        "TimeLimit": 30
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
@@ -519,6 +533,32 @@
         "Handler": "",
         "Newline": "",
         "Wrapper": ""
+      }
+    }
+  ],
+  "CommandEvent": [
+    {
+      "Filters": null,
+      "Enabled": false,
+      "Name": null,
+      "Caption": "",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": false,
+      "BuildType": "common",
+      "Confirmation": false,
+      "ToConfiguration": null,
+      "ExecutionOrder": null,
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true,
+        "TimeLimit": 30
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeFile, vsSolutionBuildEvent",
+        "Type": "file",
+        "Command": ""
       }
     }
   ],
@@ -537,7 +577,8 @@
       "Process": {
         "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
         "Waiting": false,
-        "Hidden": true
+        "Hidden": true,
+        "TimeLimit": 30
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeFile, vsSolutionBuildEvent",
