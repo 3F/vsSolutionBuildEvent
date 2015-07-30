@@ -242,7 +242,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void linkLicense_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/raw/master/LICENSE");
+            Util.openUrl("http://vssbe.r-eg.net/License/");
         }
 
         private void linkPage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -252,7 +252,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void linkLabelDonationHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Donation");
+            Util.openUrl("http://vssbe.r-eg.net/Donation/");
         }
 
         private void pictureBoxDonation_Click(object sender, EventArgs e)

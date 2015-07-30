@@ -1031,12 +1031,12 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void toolStripMenuWiki_Click(object sender, EventArgs e)
         {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki");
+            Util.openUrl("http://vssbe.r-eg.net/");
         }
 
         private void tsMenuItemExamples_Click(object sender, EventArgs e)
         {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Examples");
+            Util.openUrl("http://vssbe.r-eg.net/doc/Examples/");
         }
 
         private void toolStripMenuIssue_Click(object sender, EventArgs e)
@@ -1061,7 +1061,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void toolStripMenuLicense_Click(object sender, EventArgs e)
         {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/raw/master/LICENSE");
+            Util.openUrl("http://vssbe.r-eg.net/License/");
         }
 
         private void toolStripMenuAbout_Click(object sender, EventArgs e)
@@ -1104,27 +1104,27 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void toolStripMenuCIMSBuild_Click(object sender, EventArgs e)
         {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/CI/CI.MSBuild");
+            Util.openUrl("http://vssbe.r-eg.net/doc/CI/CI.MSBuild/");
         }
 
         private void toolStripMenuDevenv_Click(object sender, EventArgs e)
         {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/CI/Devenv%20Command-Line");
+            Util.openUrl("http://vssbe.r-eg.net/doc/CI/Devenv%20Command-Line/");
         }
 
         private void toolStripMenuAPI_Click(object sender, EventArgs e)
         {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/API");
+            Util.openUrl("http://vssbe.r-eg.net/doc/API/");
         }
 
         private void componentInfo(string name)
         {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Scripts_&_Commands/SBE-Scripts/Components/" + name);
+            Util.openUrl(String.Format("http://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/Components/{0}/", name));
         }
 
         private void btnCompNew_Click(object sender, EventArgs e)
         {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Developer%20Zone/New%20Component");
+            Util.openUrl("http://vssbe.r-eg.net/doc/Dev/New%20Component/");
         }
 
         private void dgvComponents_CellDoubleClick(object sender, DataGridViewCellEventArgs e)

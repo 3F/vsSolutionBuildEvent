@@ -880,7 +880,6 @@
             // 
             this.dgvActions.AllowUserToAddRows = false;
             this.dgvActions.AllowUserToDeleteRows = false;
-            this.dgvActions.AllowUserToResizeColumns = false;
             this.dgvActions.AllowUserToResizeRows = false;
             this.dgvActions.AlwaysSelected = true;
             this.dgvActions.BackgroundColor = System.Drawing.SystemColors.Control;

@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using EnvDTE80;
 
 namespace net.r_eg.vsSBE.UI.WForms
 {
@@ -40,10 +35,15 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void fill(DataGridView grid, string filter = null)
         {
+            if(!String.IsNullOrWhiteSpace(filter)) {
+                filter = filter.ToLower();
+            }
+
             grid.SuspendLayout();
             grid.Rows.Clear();
-            foreach(EnvDTE.Command cmd in _commands) {
-                if(cmd.Name.Length < 1 || (filter != null && !cmd.Name.ToLower().Contains(filter))) {
+            foreach(EnvDTE.Command cmd in _commands)
+            {
+                if(String.IsNullOrWhiteSpace(cmd.Name) || (filter != null && !cmd.Name.ToLower().Contains(filter))) {
                     continue;
                 }
                 grid.Rows.Add(cmd.Name);

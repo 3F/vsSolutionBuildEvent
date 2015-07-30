@@ -50,7 +50,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls.TextEditorElements
         public KnownLayer Layer
         {
             get {
-                return KnownLayer.Background;
+                return KnownLayer.Selection;
             }
         }
 

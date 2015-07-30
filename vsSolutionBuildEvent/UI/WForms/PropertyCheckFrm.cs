@@ -76,7 +76,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void btnDoc_Click(object sender, EventArgs e)
         {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/wiki/Scripts_&_Commands/MSBuild");
+            Util.openUrl("http://vssbe.r-eg.net/doc/Scripts/MSBuild/");
         }
     }
 }
