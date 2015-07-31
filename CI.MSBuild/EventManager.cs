@@ -39,6 +39,24 @@ namespace net.r_eg.vsSBE.CI.MSBuild
     public class EventManager: Logger
     {
         /// <summary>
+        /// The key for logger: Path to library.
+        /// </summary>
+        public const string LKEY_LIB = "lib";
+
+        /// <summary>
+        /// The key for logger: 
+        /// Culture for the current thread.
+        /// </summary>
+        public const string LKEY_CULTURE = "culture";
+
+        /// <summary>
+        /// The key for logger: 
+        /// Culture used by the Resource Manager to look up culture-specific resources at run time. 
+        /// For example - console messages from msbuild engine etc.
+        /// </summary>
+        public const string LKEY_CULTURE_UI = "cultureUI";
+
+        /// <summary>
         /// Our the vsSolutionBuildEvent library
         /// </summary>
         protected Provider.ILibrary library;
@@ -50,8 +68,8 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         {
             get
             {
-                if(args.ContainsKey("lib")) {
-                    return args["lib"];
+                if(args.ContainsKey(LKEY_LIB)) {
+                    return args[LKEY_LIB];
                 }
                 return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar;
             }
@@ -100,8 +118,9 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         {
             log = new Log(Verbosity);
 
-            setCulture("en-US"); //TODO: key for user
+            header();
             args = extractArguments(Parameters);
+            setCulture(args);
 
             evt.TargetStarted   += new TargetStartedEventHandler(onTargetStarted);
             evt.ProjectStarted  += new ProjectStartedEventHandler(onProjectStarted);
@@ -118,11 +137,16 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             }
         }
 
-        public void setCulture(string name)
+        public void setCulture(string ui, string general = null)
         {
-            try {
-                Thread.CurrentThread.CurrentUICulture = new CultureInfo(name);
-                // also -> CurrentCulture - for time etc.
+            try
+            {
+                if(ui != null) {
+                    Thread.CurrentThread.CurrentUICulture = new CultureInfo(ui);
+                }
+                if(general != null) {
+                    Thread.CurrentThread.CurrentCulture = new CultureInfo(general);
+                }
             }
             catch(Exception ex) {
                 msg(ex.Message);
@@ -395,6 +419,17 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                         .Select(p => p.Split('='))
                         .Select(p => new KeyValuePair<string, string>(p[0], (p.Length < 2)? null : p[1]))
                         .ToDictionary(k => k.Key, v => v.Value);
+        }
+
+        protected void setCulture(Dictionary<string, string> keys)
+        {
+            string culture      = null;
+            string cultureUI    = (keys.ContainsKey(LKEY_CULTURE_UI))? keys[LKEY_CULTURE_UI] : "en-US";
+
+            if(keys.ContainsKey(LKEY_CULTURE)) {
+                culture = keys[LKEY_CULTURE];
+            }
+            setCulture(cultureUI, culture);
         }
 
         private void header()

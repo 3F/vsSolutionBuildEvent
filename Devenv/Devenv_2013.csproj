@@ -101,6 +101,7 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="changelog.txt" />
     <Content Include="Devenv.AddIn">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

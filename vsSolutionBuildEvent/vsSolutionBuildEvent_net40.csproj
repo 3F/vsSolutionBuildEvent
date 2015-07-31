@@ -433,6 +433,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="$(SolutionDir).version" />
+    <None Include="$(SolutionDir)changelog.txt" />
     <None Include="xshd\CSharpLang.xshd" />
     <None Include="xshd\FilesMode.xshd" />
     <None Include="xshd\InterpreterMode.xshd" />
