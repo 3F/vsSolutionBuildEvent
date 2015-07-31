@@ -1,6 +1,11 @@
 vsSolutionBuildEvent CI.MSBuild
 _______________________________
 
+[v1.3] 2015.07.31
+    * Added keys to logger:
+        * 'culture'   - Culture for the current thread.
+        * 'cultureUI' - Culture used by the Resource Manager to look up culture-specific resources at run time. For example - console messages from msbuild engine etc.
+
 [v1.2] 2015.06.21
     * Updated API - Bridge v1.2
 
