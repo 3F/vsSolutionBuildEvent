@@ -10,13 +10,15 @@
     <projectUrl>https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/</projectUrl>
     <iconUrl>https://bitbucket.org/3F/vssolutionbuildevent/raw/master/vsSolutionBuildEvent/Resources/Package.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Official package of the libraries to support the CI / Special Build Servers for plugin vsSolutionBuildEvent.
+    <description>Official package of libraries to support the CI /Build Servers for plugin vsSolutionBuildEvent.
     
     *!* See our documentation of How to use it !
     
-    * Documentation: https://bitbucket.org/3F/vssolutionbuildevent/wiki/CI/CI.MSBuild                        
-    * Plugin page: https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/      
-    * Sources &amp; Public Issue Tracker: https://bitbucket.org/3F/vssolutionbuildevent                      
+    * Documentation: http://vssbe.r-eg.net -> http://vssbe.r-eg.net/doc/CI/CI.MSBuild/
+    * VS Gallery Page: https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/
+    * Sources &amp; Public Issue Tracker: 
+        * https://github.com/3F/vsSolutionBuildEvent
+        * https://bitbucket.org/3F/vssolutionbuildevent
     
     </description>
     <releaseNotes>Updated the vsSolutionBuildEvent library: v%vsSBEVersion%</releaseNotes>

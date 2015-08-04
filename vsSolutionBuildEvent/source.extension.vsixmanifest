@@ -8,6 +8,7 @@
         <Locale>1033</Locale>
         <MoreInfoUrl>http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/</MoreInfoUrl>
         <License>Resources/vsixinfo</License>
+        <GettingStartedGuide>http://vssbe.r-eg.net</GettingStartedGuide>
         <Icon>Resources/Package.png</Icon>
         <PreviewImage>Resources/preview.png</PreviewImage>
         <InstalledByMsi>false</InstalledByMsi>
