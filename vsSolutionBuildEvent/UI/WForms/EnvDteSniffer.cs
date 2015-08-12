@@ -92,11 +92,15 @@ namespace net.r_eg.vsSBE.UI.WForms
             dgvCESniffer.Rows.Add(DateTime.Now.ToString(tFormat), pre, guid, id, customIn, customOut, Util.enumViewBy(guid, id));
         }
 
-        protected void flash(Lights.FlashType type, int delay = 500)
+        protected void flash(Lights.FlashType type, int delay = 250)
         {
             (new System.Threading.Tasks.Task(() =>
             {
                 System.Threading.Thread.Sleep(delay);
+                if(lightsTraffic.IsDisposed) {
+                    return;
+                }
+
                 lightsTraffic.BeginInvoke((MethodInvoker)delegate {
                     if(chkActivate.Checked) {
                         lightsTraffic.switchOn(type);

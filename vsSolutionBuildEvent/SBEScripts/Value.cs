@@ -33,6 +33,11 @@ namespace net.r_eg.vsSBE.SBEScripts
         public const string VFALSE  = "false";
 
         /// <summary>
+        /// Separator for array data.
+        /// </summary>
+        public const string ARRAY_SEPARATOR = ",";
+
+        /// <summary>
         /// Getting boolean value
         /// Boolean.Parse() - converts only true/false value from string
         /// </summary>
@@ -85,13 +90,28 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <returns></returns>
         public static string from(List<string> val)
         {
-            return String.Join(",", val);
+            return String.Join(ARRAY_SEPARATOR, val);
         }
 
         /// <param name="val"></param>
         /// <returns></returns>
         public static string from(int val)
         {
+            return val.ToString();
+        }
+
+        /// <param name="val">Including array of data</param>
+        /// <returns></returns>
+        public static string from(object val)
+        {
+            if(val == null) {
+                return String.Empty;
+            }
+
+            if(val.GetType().IsArray) {
+                string[] arr = Array.ConvertAll((object[])val, i => i.ToString());
+                return String.Join(ARRAY_SEPARATOR, arr);
+            }
             return val.ToString();
         }
 

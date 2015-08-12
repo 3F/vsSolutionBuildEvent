@@ -35,12 +35,12 @@ namespace net.r_eg.vsSBE.Events.CommandEvents
         /// <summary>
         /// Filter by Custom input parameters
         /// </summary>
-        string CustomIn { get; set; }
+        object CustomIn { get; set; }
 
         /// <summary>
         /// Filter by Custom output parameters
         /// </summary>
-        string CustomOut { get; set; }
+        object CustomOut { get; set; }
 
         /// <summary>
         /// Cancel command if it's possible

@@ -166,8 +166,10 @@ namespace net.r_eg.vsSBE
             else{
                 id = GuidList.OWP_SBE;
             }
-            ow.DeletePane(ref id);
 
+            if(ow != null) {
+                ow.DeletePane(ref id);
+            }
             paneDetach();
         }
 

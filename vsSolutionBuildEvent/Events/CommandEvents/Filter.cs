@@ -43,7 +43,7 @@ namespace net.r_eg.vsSBE.Events.CommandEvents
         /// <summary>
         /// Filter by Custom input parameters
         /// </summary>
-        public string CustomIn
+        public object CustomIn
         {
             get;
             set;
@@ -52,7 +52,7 @@ namespace net.r_eg.vsSBE.Events.CommandEvents
         /// <summary>
         /// Filter by Custom output parameters
         /// </summary>
-        public string CustomOut
+        public object CustomOut
         {
             get;
             set;
