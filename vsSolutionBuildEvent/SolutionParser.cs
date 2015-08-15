@@ -25,13 +25,14 @@ using System.Text.RegularExpressions;
 namespace net.r_eg.vsSBE
 {
     /// <summary>
-    /// Basic works with .sln for getting list of projects, available configurations etc.
+    /// For work with .sln files.
+    /// Gets list of projects, available configurations etc.
     /// Please note: it's necessary for working without DTE-context/IDE mode, for example with isolated enviroment.
     ///              Use the EnvDTE and ProjectCollection if it's possible!
     /// 
     /// Another variants:
     /// * Using deprecated Microsoft.Build.BuildEngine.Project - http://msdn.microsoft.com/en-us/library/microsoft.build.buildengine.project%28v=vs.100%29.aspx
-    /// * Or reflect the internal SolutionParser from Microsoft.Build.BuildEngine.Shared, for example for getting all projects:
+    /// * Or use reflection of the internal SolutionParser from Microsoft.Build.Construction/BuildEngine.Shared, for example for getting all projects:
     ///   -> void ParseProject(string firstLine)
     ///      -> void ParseFirstProjectLine(string firstLine, ProjectInSolution proj)
     ///      -> crackProjectLine -> PROJECTNAME + RELATIVEPATH
@@ -81,7 +82,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Provides the result of work
         /// </summary>
-        public class Result
+        public sealed class Result
         {
             /// <summary>
             /// Configurations with platforms in solution file
@@ -133,6 +134,11 @@ namespace net.r_eg.vsSBE
             return Data;
         }
 
+        /// <summary>
+        /// SolutionConfigurationPlatforms section
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="configuration"></param>
         protected void hConfiguration(StreamReader reader, ref List<SolutionCfg> configuration)
         {
             string line;
@@ -157,6 +163,11 @@ namespace net.r_eg.vsSBE
             }
         }
 
+        /// <summary>
+        /// Project section
+        /// </summary>
+        /// <param name="line"></param>
+        /// <param name="projects"></param>
         protected void hProject(string line, ref List<Project> projects)
         {
             // Pattern from Microsoft.Build.BuildEngine.Shared.SolutionParser !

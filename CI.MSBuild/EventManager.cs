@@ -36,7 +36,7 @@ using net.r_eg.vsSBE.Bridge;
 
 namespace net.r_eg.vsSBE.CI.MSBuild
 {
-    public class EventManager: Logger
+    public class EventManager: Logger, ILogger
     {
         /// <summary>
         /// The key for logger: Path to library.
@@ -122,12 +122,13 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             args = extractArguments(Parameters);
             setCulture(args);
 
-            evt.TargetStarted   += new TargetStartedEventHandler(onTargetStarted);
-            evt.ProjectStarted  += new ProjectStartedEventHandler(onProjectStarted);
-            evt.AnyEventRaised  += new AnyEventHandler(onAnyEventRaised);
-            evt.ErrorRaised     += new BuildErrorEventHandler(onErrorRaised);
-            evt.WarningRaised   += new BuildWarningEventHandler(onWarningRaised);
-            evt.BuildFinished   += new BuildFinishedEventHandler(onBuildFinished);
+            evt.TargetStarted   += onTargetStarted;
+            evt.ProjectStarted  += onProjectStarted;
+            evt.AnyEventRaised  += onAnyEventRaised;
+            evt.ErrorRaised     += onErrorRaised;
+            evt.WarningRaised   += onWarningRaised;
+            evt.BuildStarted    += onBuildStarted;
+            evt.BuildFinished   += onBuildFinished;
         }
 
         public override void Shutdown()
@@ -153,34 +154,9 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             }
         }
 
-        /// <summary>
-        /// Initialize library with ProjectStarted event.
-        /// This is the first event from all where we can define the SolutionFile
-        /// </summary>
-        /// <param name="e"></param>
-        /// <returns>true if loaded</returns>
-        protected bool initLibraryOnProjectStarted(ProjectStartedEventArgs e)
-        {
-            if(!e.ProjectFile.TrimEnd().ToLower().EndsWith(".sln")) {
-                debug("solutionOpened() has been ignored for '{0}'", e.ProjectFile);
-                return false;
-            }
-
-            SolutionFile    = e.ProjectFile; // should be .sln
-            library         = load(SolutionFile, getSolutionProperties(e.Properties), LibraryPath);
-            return true;
-        }
-
         protected void onProjectStarted(object sender, ProjectStartedEventArgs e)
         {
-            if(library == null || String.IsNullOrEmpty(SolutionFile)) {
-                if(initLibraryOnProjectStarted(e)) {
-                    onPre(e); // or use some target for delays as variant
-                }
-                return;
-            }
-
-            if(e.ProjectFile.ToLower().EndsWith(".metaproj")) {
+            if(e.ProjectFile.EndsWith(".metaproj", StringComparison.OrdinalIgnoreCase)) {
                 debug(".metaproj has been ignored for '{0}'", e.ProjectFile);
                 return;
             }
@@ -213,7 +189,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                 return;
             }
 
-            switch(e.TargetName) { //.Trim().ToLower()
+            switch(e.TargetName) {
                 case "PreBuildEvent": {
                     library.Event.onProjectPre(projects[e.BuildEventContext.ProjectInstanceId].Name);
                     break;
@@ -244,12 +220,56 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             }
         }
 
-        protected void onPre(ProjectStartedEventArgs e)
+        protected void onPre(string targets)
         {
-            updateBuildType(e.TargetNames);
+            updateBuildType(targets);
 
             int pfCancelUpdate = 0;
             library.Event.onPre(ref pfCancelUpdate);
+        }
+
+        protected void onBuildStarted(object sender, BuildStartedEventArgs e)
+        {
+            string targets  = null;
+            string property = null;
+            string sln      = findSln(out targets, out property);
+
+            if(sln == null) {
+                throw new AbortException("We can't detect .sln file in arguments.");
+            }
+
+            SolutionFile = sln;
+            SolutionProperties.Result slnData = (new SolutionProperties(log)).parse(sln);
+
+            // targets by default
+            
+            if(targets == null) {
+                targets = "Build";
+            }
+
+            // redefine Configuration & Platform from user switches if exists
+
+            Dictionary<string, string> pKeys = extractArguments(property);
+            Func<string, string> pValue = delegate(string key) {
+                return pKeys.Select(p => p.Key).FirstOrDefault(s => s.Equals(key, StringComparison.OrdinalIgnoreCase));
+            };
+
+            string Configuration    = pValue("Configuration");
+            string Platform         = pValue("Platform");
+
+            if(Configuration != null) {
+                slnData.properties["Configuration"] = Configuration;
+            }
+
+            if(Platform != null) {
+                slnData.properties["Platform"] = Platform;
+            }
+
+            // load with defined properties
+            library = load(SolutionFile, slnData.properties, LibraryPath);
+
+            // yes, we're ready
+            onPre(targets);
         }
 
         protected void onBuildFinished(object sender, BuildFinishedEventArgs e)
@@ -272,6 +292,57 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             if(library != null) {
                 library.Build.onBuildRaw(e.Message);
             }
+        }
+
+        /// <summary>
+        /// Find .sln file
+        /// </summary>
+        /// <param name="targets">Return the targets key if exists or null value</param>
+        /// <param name="property">Return the property key if exists or null value</param>
+        /// <returns>Full path to .sln file</returns>
+        protected string findSln(out string targets, out string property)
+        {
+            string sln  = null;
+            targets     = null;
+            property    = null;
+
+            foreach(string arg in Environment.GetCommandLineArgs())
+            {
+                if(sln != null && targets != null && property != null) {
+                    break;
+                }
+
+                if(sln == null && arg.EndsWith(".sln", StringComparison.OrdinalIgnoreCase)) {
+                    sln = arg;
+                    continue;
+                }
+
+                int vpos = arg.IndexOf(':', 2);
+                if(vpos == -1) {
+                    continue;
+                }
+
+                if(targets == null 
+                    && (
+                        arg.StartsWith("/target:", StringComparison.OrdinalIgnoreCase) 
+                        || arg.StartsWith("/t:", StringComparison.OrdinalIgnoreCase))
+                    )
+                {
+                    targets = arg.Substring(vpos + 1);
+                    continue;
+                }
+
+                if(property == null 
+                    && (
+                        arg.StartsWith("/property:", StringComparison.OrdinalIgnoreCase)
+                        || arg.StartsWith("/p:", StringComparison.OrdinalIgnoreCase))
+                    )
+                {
+                    property = arg.Substring(vpos + 1);
+                    continue;
+                }
+            }
+            return sln;
         }
 
         /// <summary>

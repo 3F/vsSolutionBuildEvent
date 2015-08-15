@@ -246,14 +246,14 @@ namespace net.r_eg.vsSBE
             SolutionPath        = Path.GetDirectoryName(solutionFile);
             SolutionFileName    = Path.GetFileNameWithoutExtension(solutionFile);
 
-            this.properties = propertiesByDefault(properties);
-            foreach(KeyValuePair<string, string> property in properties) {
-                ProjectCollection.GlobalProjectCollection.SetGlobalProperty(property.Key, property.Value);
-            }
-
             _sln = (new SolutionParser()).parse(solutionFile);
             if(String.IsNullOrEmpty(StartupProjectString) && _sln.projects.Count > 0) {
                 StartupProjectString = _sln.projects[0].Name;
+            }
+
+            this.properties = propertiesByDefault(properties);
+            foreach(KeyValuePair<string, string> property in properties) {
+                ProjectCollection.GlobalProjectCollection.SetGlobalProperty(property.Key, property.Value);
             }
         }
 

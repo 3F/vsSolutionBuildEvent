@@ -29,6 +29,15 @@ namespace net.r_eg.vsSBE.CI.MSBuild
     [Serializable]
     public class AbortException: Exception
     {
+        public AbortException()
+        {
 
+        }
+
+        public AbortException(string message)
+            : base(message)
+        {
+
+        }
     }
 }

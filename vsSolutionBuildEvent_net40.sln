@@ -1,16 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VsixLib_net40", "VsixLib\VsixLib_net40.csproj", "{4262A1DC-768F-43CC-85F5-A4ED9CD034CC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VsixLib_net40", "VsixLib\VsixLib_net40-spec.csproj", "{4262A1DC-768F-43CC-85F5-A4ED9CD034CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIMLib_net40", "CIMLib\CIMLib_net40.csproj", "{A7BF1F9C-F18D-423E-9354-859DC3CFAFD4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIMLib_net40", "CIMLib\CIMLib_net40-spec.csproj", "{A7BF1F9C-F18D-423E-9354-859DC3CFAFD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vsSolutionBuildEvent_net40", "vsSolutionBuildEvent\vsSolutionBuildEvent_net40.csproj", "{32E44995-F621-4E77-B46A-8F65D64E7FEA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vsSolutionBuildEvent_net40", "vsSolutionBuildEvent\vsSolutionBuildEvent_net40-spec.csproj", "{32E44995-F621-4E77-B46A-8F65D64E7FEA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{73919171-44B6-4536-B892-F1FCA653887C} = {73919171-44B6-4536-B892-F1FCA653887C}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vsSolutionBuildEventTest_net40", "vsSolutionBuildEventTest\vsSolutionBuildEventTest_net40.csproj", "{C00D04E8-8101-42F5-89DA-CBAD205CC1D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vsSolutionBuildEventTest_net40", "vsSolutionBuildEventTest\vsSolutionBuildEventTest_net40-spec.csproj", "{C00D04E8-8101-42F5-89DA-CBAD205CC1D3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7ADBBB81-2FA7-45CA-B97D-486C3A6624D3}"
 	ProjectSection(SolutionItems) = preProject
@@ -21,7 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bridge", "Bridge\Bridge.csproj", "{73919171-44B6-4536-B892-F1FCA653887C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Devenv_net40", "Devenv\Devenv_net40.csproj", "{56437CBB-4AE5-4405-B928-600009D60E2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Devenv_net40", "Devenv\Devenv_net40-spec.csproj", "{56437CBB-4AE5-4405-B928-600009D60E2D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{73919171-44B6-4536-B892-F1FCA653887C} = {73919171-44B6-4536-B892-F1FCA653887C}
 	EndProjectSection
