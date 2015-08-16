@@ -237,36 +237,18 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             if(sln == null) {
                 throw new AbortException("We can't detect .sln file in arguments.");
             }
+            sln = Path.Combine(Environment.CurrentDirectory, sln);
+            debug("Solution file: '{0}'", sln);
 
             SolutionFile = sln;
             SolutionProperties.Result slnData = (new SolutionProperties(log)).parse(sln);
 
-            // targets by default
-            
             if(targets == null) {
-                targets = "Build";
-            }
-
-            // redefine Configuration & Platform from user switches if exists
-
-            Dictionary<string, string> pKeys = extractArguments(property);
-            Func<string, string> pValue = delegate(string key) {
-                return pKeys.Select(p => p.Key).FirstOrDefault(s => s.Equals(key, StringComparison.OrdinalIgnoreCase));
-            };
-
-            string Configuration    = pValue("Configuration");
-            string Platform         = pValue("Platform");
-
-            if(Configuration != null) {
-                slnData.properties["Configuration"] = Configuration;
-            }
-
-            if(Platform != null) {
-                slnData.properties["Platform"] = Platform;
+                targets = "Build"; // targets by default
             }
 
             // load with defined properties
-            library = load(SolutionFile, slnData.properties, LibraryPath);
+            library = load(SolutionFile, finalizeProperties(property, slnData.properties), LibraryPath);
 
             // yes, we're ready
             onPre(targets);
@@ -306,14 +288,16 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             targets     = null;
             property    = null;
 
+            // multi-keys support: `/p:prop1=val1 /p:prop2=val2` same as `/p:prop1=val1;prop2=val2`
+            Func<string, string, string> _concat = delegate(string key, string val) {
+                return (key != null)? String.Format("{0};{1}", key, val) : val;
+            };
+
             foreach(string arg in Environment.GetCommandLineArgs())
             {
-                if(sln != null && targets != null && property != null) {
-                    break;
-                }
-
                 if(sln == null && arg.EndsWith(".sln", StringComparison.OrdinalIgnoreCase)) {
                     sln = arg;
+                    debug("findSln: .sln - '{0}'", sln);
                     continue;
                 }
 
@@ -322,27 +306,56 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                     continue;
                 }
 
-                if(targets == null 
-                    && (
-                        arg.StartsWith("/target:", StringComparison.OrdinalIgnoreCase) 
-                        || arg.StartsWith("/t:", StringComparison.OrdinalIgnoreCase))
-                    )
+                if(arg.StartsWith("/target:", StringComparison.OrdinalIgnoreCase)
+                    || arg.StartsWith("/t:", StringComparison.OrdinalIgnoreCase))
                 {
-                    targets = arg.Substring(vpos + 1);
+                    targets = _concat(targets, arg.Substring(vpos + 1));
+                    debug("findSln: targets - '{0}'", targets);
                     continue;
                 }
 
-                if(property == null 
-                    && (
-                        arg.StartsWith("/property:", StringComparison.OrdinalIgnoreCase)
-                        || arg.StartsWith("/p:", StringComparison.OrdinalIgnoreCase))
-                    )
+                if(arg.StartsWith("/property:", StringComparison.OrdinalIgnoreCase)
+                    || arg.StartsWith("/p:", StringComparison.OrdinalIgnoreCase))
                 {
-                    property = arg.Substring(vpos + 1);
+                    property = _concat(property, arg.Substring(vpos + 1));
+                    debug("findSln: property - '{0}'", property);
                     continue;
                 }
             }
             return sln;
+        }
+
+        /// <summary>
+        /// To redefinition Configuration and Platform from user switches if exists, etc.
+        /// </summary>
+        /// <param name="cmd">Property of command line</param>
+        /// <param name="init">Initial properties</param>
+        /// <returns></returns>
+        protected Dictionary<string, string> finalizeProperties(string cmd, Dictionary<string, string> init)
+        {
+            Dictionary<string, string> pKeys = extractArguments(cmd);
+            Func<string, string> pValue = delegate(string key) {
+                return pKeys.FirstOrDefault(p => p.Key.Equals(key, StringComparison.OrdinalIgnoreCase)).Value;
+            };
+
+            string Configuration    = pValue("Configuration");
+            string Platform         = pValue("Platform");
+
+            if(Configuration != null) {
+                init["Configuration"] = Configuration;
+            }
+
+            if(Platform != null) {
+                init["Platform"] = Platform;
+            }
+
+            if(Verbosity == LoggerVerbosity.Diagnostic)
+            {
+                foreach(KeyValuePair<string, string> p in init) {
+                    msg(String.Format("Solution property def: ['{0}' => '{1}']", p.Key, p.Value));
+                }
+            }
+            return init;
         }
 
         /// <summary>

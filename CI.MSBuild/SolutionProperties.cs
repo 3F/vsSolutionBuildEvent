@@ -133,7 +133,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             {
                 string left = line.Split('=')[0].Trim(); // Debug|Win32 = Debug|Win32
                 if(string.Compare(left, "DESCRIPTION", StringComparison.OrdinalIgnoreCase) == 0) {
-                    log.debug("SolutionParser: Configuration has been ignored for line '{0}'", line);
+                    log.debug("SolutionProperties: Configuration has been ignored for line '{0}'", line);
                     continue;
                 }
 
@@ -142,7 +142,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                     continue;
                 }
 
-                log.debug("SolutionParser: Configuration ->['{0}' ; '{1}']", cfg[0], cfg[1]);
+                log.debug("SolutionProperties: Configuration ->['{0}' ; '{1}']", cfg[0], cfg[1]);
                 configuration.Add(new SolutionCfg() {
                     Configuration   = cfg[0],
                     Platform        = cfg[1]
