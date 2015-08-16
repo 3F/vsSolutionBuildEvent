@@ -1,6 +1,11 @@
 vsSolutionBuildEvent CI.MSBuild
 _______________________________
 
+[v1.4] 2015.08.17
+    * Major fixes for Multi-Processor Environment. 
+      Solves problem when the all user actions of PRE-event is started too late. This means that the target is already started from other node.
+      As a special case, will solve problems like CS2001 etc.
+
 [v1.3] 2015.07.31
     * Added keys to logger:
         * 'culture'   - Culture for the current thread.
