@@ -43,7 +43,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// external logic
         /// </summary>
-        public static readonly Logger nlog = LogManager.GetCurrentClassLogger();
+        public static readonly Logger nlog = LogManager.GetLogger(GuidList.PACKAGE_LOGGER);
 
         /// <summary>
         /// Any receipt - only as signal
@@ -133,6 +133,19 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
+        /// Direct access from existing instance
+        /// </summary>
+        /// <param name="owp"></param>
+        public static void paneAttach(IVsOutputWindowPane owp)
+        {
+            if(_paneCOM != null || _paneDTE != null) {
+                Log.nlog.Debug("paneAttach-direct: to detach prev. first /skipped");
+                return;
+            }
+            _paneCOM = owp;
+        }
+
+        /// <summary>
         /// Initialization of the EnvDTE.OutputWindowPane
         /// </summary>
         /// <param name="name">Name of the pane</param>
@@ -166,8 +179,10 @@ namespace net.r_eg.vsSBE
             else{
                 id = GuidList.OWP_SBE;
             }
-            ow.DeletePane(ref id);
 
+            if(ow != null) {
+                ow.DeletePane(ref id);
+            }
             paneDetach();
         }
 

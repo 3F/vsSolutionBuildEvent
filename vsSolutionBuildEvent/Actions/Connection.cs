@@ -409,13 +409,13 @@ namespace net.r_eg.vsSBE.Actions
                                    && 
                                    (
                                      (
-                                       (!String.IsNullOrEmpty(f.CustomIn) && f.CustomIn == (string)customIn)
-                                       || (String.IsNullOrEmpty(f.CustomIn) && String.IsNullOrEmpty((string)customIn))
+                                       (f.CustomIn != null && f.CustomIn == customIn)
+                                       || (f.CustomIn == null && customIn == null)
                                      )
                                      &&
                                      (
-                                       (!String.IsNullOrEmpty(f.CustomOut) && f.CustomOut == (string)customOut)
-                                       || (String.IsNullOrEmpty(f.CustomOut) && String.IsNullOrEmpty((string)customOut))
+                                       (f.CustomOut != null && f.CustomOut == customOut)
+                                       || (f.CustomOut == null && customOut == null)
                                      )
                                    )
                                 )

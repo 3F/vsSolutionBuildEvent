@@ -193,10 +193,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     return Value.from(lastCommandEvent.Id);
                 }
                 case "CustomIn": {
-                    return (lastCommandEvent.CustomIn)?? String.Empty;
+                    return Value.from(lastCommandEvent.CustomIn);
                 }
                 case "CustomOut": {
-                    return (lastCommandEvent.CustomOut)?? String.Empty;
+                    return Value.from(lastCommandEvent.CustomOut);
                 }
                 case "Pre": {
                     return Value.from(lastCommandEvent.Pre); // see commandEvent below
@@ -247,8 +247,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             lastCommandEvent = new Filter() {
                 Guid        = guid,
                 Id          = id,
-                CustomIn    = (string)customIn,
-                CustomOut   = (string)customOut,
+                CustomIn    = customIn,
+                CustomOut   = customOut,
                 Pre         = pre // only as flag (Before / After) for DTEComponent
             };
         }

@@ -385,8 +385,9 @@ namespace net.r_eg.vsSBE.API
         /// </summary>
         private void _cmdBeforeExecute(string guidString, int id, object customIn, object customOut, ref bool cancelDefault)
         {
-            Guid guid = new Guid(guidString);
+            onCommandDtePre(guidString, id, customIn, customOut, ref cancelDefault);
 
+            Guid guid = new Guid(guidString);
             if(GuidList.VSStd97CmdID != guid && GuidList.VSStd2KCmdID != guid) {
                 return;
             }
@@ -394,7 +395,6 @@ namespace net.r_eg.vsSBE.API
             if(UnifiedTypes.Build.VSCommand.existsById(id)) {
                 updateBuildType(UnifiedTypes.Build.VSCommand.getByCommandId(id));
             }
-            onCommandDtePre(guidString, id, customIn, customOut, ref cancelDefault);
         }
 
         private void _cmdAfterExecute(string guid, int id, object customIn, object customOut)

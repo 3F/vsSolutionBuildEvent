@@ -17,15 +17,16 @@
 
 using System;
 using System.ComponentModel.Design;
+using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.InteropServices;
 using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
+using NLog;
+using NLog.Targets;
 
 namespace net.r_eg.vsSBE
 {
@@ -117,6 +118,7 @@ namespace net.r_eg.vsSBE
         {
             try {
                 FindToolWindow(typeof(UI.Xaml.StatusToolWindow), 0, true);
+                //Log.paneAttach(GetOutputPane(GuidList.OWP_SBE, Settings.OWP_ITEM_VSSBE)); // also may be problem with toolWindow as in other COM variant -_-
                 Log.paneAttach(Settings.OWP_ITEM_VSSBE, Dte2);
                 Log.show();
 
@@ -199,6 +201,20 @@ namespace net.r_eg.vsSBE
             });
         }
 
+        private MethodCallTarget configureLogger()
+        {
+            MethodCallTarget target = new MethodCallTarget() {
+                ClassName   = typeof(Log).AssemblyQualifiedName,
+                MethodName  = "nprint"
+            };
+            target.Parameters.Add(new MethodCallParameter("${level:uppercase=true}"));
+            target.Parameters.Add(new MethodCallParameter("${message}"));
+            target.Parameters.Add(new MethodCallParameter("${ticks}"));
+
+            NLog.Config.SimpleConfigurator.ConfigureForTargetLogging(target, LogLevel.Trace);
+            return target;
+        }
+
         /// <summary>
         /// to show the main window if clicked # Build/<pack> #
         /// </summary>
@@ -277,12 +293,16 @@ namespace net.r_eg.vsSBE
         #region maintenance
         protected override void Initialize()
         {
-            Log.nlog.Trace(string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
+            Trace.WriteLine(string.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
             base.Initialize();
 
             try
             {
+                MethodCallTarget target = configureLogger();
+                Log.nlog.Trace(string.Format(CultureInfo.CurrentCulture, "Log('{0}') is configured for: '{1}'", target.ClassName, ToString()));
+
                 init();
+
                 OleMenuCommandService mcs = (OleMenuCommandService)GetService(typeof(IMenuCommandService));
 
                 // Build / <Main App>
