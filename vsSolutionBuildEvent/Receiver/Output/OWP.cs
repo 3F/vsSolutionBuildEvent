@@ -17,27 +17,25 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using EnvDTE;
 
 namespace net.r_eg.vsSBE.Receiver.Output
 {
     /// <summary>
-    /// Work with the OutputWindowsPane
-    /// Forwards messages from VS component for own subscribers.
+    /// Forwards messages from VS component (OutputWindow) for own subscribers.
     /// </summary>
-    internal class OWP
+    public class OWP
     {
         public delegate void MessageEvent(string data);
 
         /// <summary>
-        /// Any message
+        /// Raw message
         /// </summary>
         public event MessageEvent raw = delegate(string data) { };
 
         /// <summary>
-        /// Used events of selected pane.
+        /// Events of selected pane/s.
         /// </summary>
         protected OutputWindowEvents evt;
 
@@ -69,9 +67,9 @@ namespace net.r_eg.vsSBE.Receiver.Output
 
             lock(_eLock) {
                 detachEvents();
-                evt.PaneUpdated      += new _dispOutputWindowEvents_PaneUpdatedEventHandler(evtPaneUpdated);
-                evt.PaneAdded        += new _dispOutputWindowEvents_PaneAddedEventHandler(evtPaneAdded);
-                evt.PaneClearing     += new _dispOutputWindowEvents_PaneClearingEventHandler(evtPaneClearing);
+                evt.PaneUpdated     += evtPaneUpdated;
+                evt.PaneAdded       += evtPaneAdded;
+                evt.PaneClearing    += evtPaneClearing;
             }
         }
 
@@ -82,9 +80,9 @@ namespace net.r_eg.vsSBE.Receiver.Output
             }
 
             lock(_eLock) {
-                evt.PaneUpdated      -= new _dispOutputWindowEvents_PaneUpdatedEventHandler(evtPaneUpdated);
-                evt.PaneAdded        -= new _dispOutputWindowEvents_PaneAddedEventHandler(evtPaneAdded);
-                evt.PaneClearing     -= new _dispOutputWindowEvents_PaneClearingEventHandler(evtPaneClearing);
+                evt.PaneUpdated     -= evtPaneUpdated;
+                evt.PaneAdded       -= evtPaneAdded;
+                evt.PaneClearing    -= evtPaneClearing;
             }
         }
 
@@ -97,8 +95,8 @@ namespace net.r_eg.vsSBE.Receiver.Output
         }
 
         /// <summary>
-        /// all collection must receive raw-data
-        /// TODO: fix me. Prevent Duplicate Data / bug with OutputWindowPane
+        /// All collection should receive raw data.
+        /// The envelope should avoid duplicate Data.
         /// </summary>
         protected void notifyRaw()
         {
@@ -106,6 +104,7 @@ namespace net.r_eg.vsSBE.Receiver.Output
                 return;
             }
 
+            //TODO: timer for splitting a long messages
             lock(_eLock)
             {
                 string envelope = String.Empty;

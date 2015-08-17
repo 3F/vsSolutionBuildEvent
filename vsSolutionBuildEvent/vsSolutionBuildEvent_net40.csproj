@@ -327,7 +327,7 @@
     <Compile Include="UI\WForms\EventsFrm.Designer.cs">
       <DependentUpon>EventsFrm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Guids.cs" />
+    <Compile Include="GuidList.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Events\ISolutionEvent.cs" />
     <Compile Include="Events\SBEEvent.cs" />
@@ -421,10 +421,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="NLog.dll.nlog">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <None Include="key.pfx" />
     <None Include="key.snk" />
     <None Include="packages.config" />
