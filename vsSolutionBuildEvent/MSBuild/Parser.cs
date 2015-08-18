@@ -157,8 +157,15 @@ namespace net.r_eg.vsSBE.MSBuild
         /// <returns>All evaluated values for data</returns>
         public virtual string parse(string data)
         {
-            StringHandler sh = new StringHandler();
+            if(String.IsNullOrEmpty(data)) {
+                return String.Empty; // convert to not null value
+            }
 
+            if(String.IsNullOrWhiteSpace(data)) {
+                return data; // save all white-space characters
+            }
+
+            StringHandler sh = new StringHandler();
             lock(_lock)
             {
                 return sh.recovery(

@@ -57,7 +57,13 @@ namespace net.r_eg.vsSBE.Actions
                     break;
                 }
             }
-            shell(evt, string.Format("{0} {1}", ((IModeInterpreter)evt.Mode).Handler, script));
+
+            string handler = ((IModeInterpreter)evt.Mode).Handler;
+            if(evt.SupportMSBuild) {
+                handler = cmd.MSBuild.parse(handler);
+            }
+
+            shell(evt, string.Format("{0} {1}", handler, script));
             return true;
         }
 

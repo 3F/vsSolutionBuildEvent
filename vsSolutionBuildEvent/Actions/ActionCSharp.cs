@@ -90,10 +90,8 @@ namespace net.r_eg.vsSBE.Actions
         public ActionCSharp(ICommand cmd)
             : base(cmd)
         {
-            lock(_lock) {
-                AppDomain.CurrentDomain.AssemblyResolve -= assemblyResolver;
-                AppDomain.CurrentDomain.AssemblyResolve += assemblyResolver;
-            }
+            AppDomain.CurrentDomain.AssemblyResolve -= assemblyResolver;
+            AppDomain.CurrentDomain.AssemblyResolve += assemblyResolver;
         }
 
         /// <summary>
@@ -251,9 +249,14 @@ namespace net.r_eg.vsSBE.Actions
             };
             
             GAC gac = new GAC();
-            if(cfg.References != null) {
-                //parameters.ReferencedAssemblies.AddRange(cfg.References);
-                parameters.ReferencedAssemblies.AddRange(cfg.References.Select(r => gac.getPathToAssembly(r)).ToArray());
+            if(cfg.References != null)
+            {
+                parameters.ReferencedAssemblies.AddRange(
+                                                        cfg.References.Select(r => 
+                                                                gac.getPathToAssembly(
+                                                                    (evt.SupportMSBuild)? cmd.MSBuild.parse(r) : r
+                                                                )
+                                                        ).ToArray());
             }
             parameters.ReferencedAssemblies.Add(Assembly.GetExecutingAssembly().Location); //to support ICommand & ISolutionEvent
 
@@ -349,7 +352,13 @@ namespace net.r_eg.vsSBE.Actions
         private string outputCacheFile(ISolutionEvent evt)
         {
             IModeCSharp cfg = (IModeCSharp)evt.Mode;
-            return Path.Combine(BasePathToCache, (cfg.OutputPath)?? String.Empty, fileName(evt));
+
+            string path = (cfg.OutputPath)?? String.Empty;
+            if(evt.SupportMSBuild) {
+                path = cmd.MSBuild.parse(path);
+            }
+
+            return Path.Combine(BasePathToCache, path, fileName(evt));
         }
 
         private Assembly assemblyResolver(object sender, ResolveEventArgs args)
