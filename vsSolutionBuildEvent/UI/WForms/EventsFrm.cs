@@ -27,12 +27,11 @@ using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.UI.WForms.Components;
 using net.r_eg.vsSBE.UI.WForms.Controls;
+using DomIcon = net.r_eg.vsSBE.SBEScripts.Dom.Icon;
 
 namespace net.r_eg.vsSBE.UI.WForms
 {
-    using DomIcon = net.r_eg.vsSBE.SBEScripts.Dom.Icon;
-
-    public partial class EventsFrm: Form, ITransferDataProperty, ITransferDataCommand
+    public partial class EventsFrm: Form, ITransferProperty, ITransferCommand
     {
         public const int WM_SYSCOMMAND  = 0x0112;
         public const int SC_RESTORE     = 0xF120;
@@ -48,22 +47,27 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// UI-helper for MSBuild Properties
         /// </summary>
         protected PropertiesFrm frmProperties;
+
         /// <summary>
         /// Testing tool - Evaluating Property
         /// </summary>
         protected PropertyCheckFrm frmPropertyCheck;
+
         /// <summary>
         /// UI-helper for DTE Commands
         /// </summary>
         protected DTECommandsFrm frmDTECommands;
+
         /// <summary>
         /// Testing tool - DTE Commands
         /// </summary>
         protected DTECheckFrm frmDTECheck;
+
         /// <summary>
         /// Testing tool - SBE-Scripts
         /// </summary>
         protected ScriptCheckFrm frmSBEScript;
+
         /// <summary>
         /// UI-helper - EnvDTE Sniffer
         /// </summary>
@@ -80,6 +84,18 @@ namespace net.r_eg.vsSBE.UI.WForms
         }
         protected MetricDefault metric;
 
+        /// <summary>
+        /// Flag of notification if it's required
+        /// </summary>
+        private bool requiresNotification;
+
+        /// <summary>
+        /// Is notified about changes
+        /// </summary>
+        private bool isNotified;
+
+
+        /// <param name="bootloader"></param>
         public EventsFrm(IBootloader bootloader)
         {
             IInspector inspector    = new Inspector(bootloader);
@@ -117,7 +133,6 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         /// <summary>
         /// Implements transport for MSBuild property
-        /// TODO: highlighting
         /// </summary>
         /// <param name="name"></param>
         /// <param name="project"></param>
@@ -142,7 +157,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             Focus();
         }
 
-        protected void saveData()
+        protected void saveData(bool onlyInRAM = false)
         {
             try {
                 saveData(logic.SBEItem);
@@ -163,7 +178,11 @@ namespace net.r_eg.vsSBE.UI.WForms
                     }
                 }
                 componentApply();
-                logic.saveData();
+
+                if(!onlyInRAM) {
+                    logic.saveData();
+                }
+                requiresNotification = onlyInRAM && isNotified;
             }
             catch(Exception ex) {
                 MessageBox.Show("Failed applying settings:\n" + ex.Message, "Configuration of event", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -247,12 +266,12 @@ namespace net.r_eg.vsSBE.UI.WForms
             List<MatchWords> list = new List<MatchWords>();
             foreach(DataGridViewRow row in dataGridViewOutput.Rows)
             {
-                if(row.Cells["owpTerm"].Value == null || row.Cells["owpType"].Value == null) {
+                if(row.Cells[owpTerm.Name].Value == null || row.Cells[owpType.Name].Value == null) {
                     continue;
                 }
                 MatchWords m  = new MatchWords();
-                m.Condition   = (row.Cells["owpTerm"].Value == null)? "" : row.Cells["owpTerm"].Value.ToString();
-                m.Type        = (ComparisonType)Enum.Parse(typeof(ComparisonType), row.Cells["owpType"].Value.ToString());
+                m.Condition   = (row.Cells[owpTerm.Name].Value == null)? "" : row.Cells[owpTerm.Name].Value.ToString();
+                m.Type        = (ComparisonType)Enum.Parse(typeof(ComparisonType), row.Cells[owpType.Name].Value.ToString());
                 list.Add(m);
             }
             evt.Match = list.ToArray();
@@ -453,7 +472,10 @@ namespace net.r_eg.vsSBE.UI.WForms
             renderData();
             onlyFor();
             executionOrder();
-            notice(false);
+            
+            if(!requiresNotification) {
+                notice(false);
+            }
         }
 
         protected void refreshActions(bool rememberIndex = true)
@@ -525,6 +547,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         protected void notice(bool isOn)
         {
+            isNotified = isOn;
             if(isOn) {
                 btnApply.FlatAppearance.BorderColor = Color.FromArgb(255, 0, 0);
                 return;
@@ -683,17 +706,17 @@ namespace net.r_eg.vsSBE.UI.WForms
             foreach(DataGridViewRow row in dataGridViewOrder.Rows)
             {
                 if(list == null || list.Length < 1) {
-                    row.Cells["dgvOrderEnabled"].Value  = false;
-                    row.Cells["dgvOrderType"].Value     = ExecutionOrderType.Before.ToString();
+                    row.Cells[dgvOrderEnabled.Name].Value   = false;
+                    row.Cells[dgvOrderType.Name].Value      = ExecutionOrderType.Before.ToString();
                     continue;
                 }
 
-                IExecutionOrder v = list.Where(s => s.Project == row.Cells["dgvOrderProject"].Value.ToString()).FirstOrDefault();
+                IExecutionOrder v = list.Where(s => s.Project == row.Cells[dgvOrderProject.Name].Value.ToString()).FirstOrDefault();
                 if(v == null) {
                     continue;
                 }
-                row.Cells["dgvOrderEnabled"].Value  = !String.IsNullOrEmpty(v.Project);
-                row.Cells["dgvOrderType"].Value     = v.Order.ToString();
+                row.Cells[dgvOrderEnabled.Name].Value = !String.IsNullOrEmpty(v.Project);
+                row.Cells[dgvOrderType.Name].Value = v.Order.ToString();
             }
         }
 
@@ -702,13 +725,13 @@ namespace net.r_eg.vsSBE.UI.WForms
             List<ExecutionOrder> ret = new List<ExecutionOrder>(dataGridViewOrder.Rows.Count);
             foreach(DataGridViewRow row in dataGridViewOrder.Rows)
             {
-                if(!Convert.ToBoolean(row.Cells["dgvOrderEnabled"].Value)) {
+                if(!Convert.ToBoolean(row.Cells[dgvOrderEnabled.Name].Value)) {
                     continue;
                 }
 
                 ret.Add(new ExecutionOrder() {
-                    Project = row.Cells["dgvOrderProject"].Value.ToString(),
-                    Order   = (ExecutionOrderType)Enum.Parse(typeof(ExecutionOrderType), row.Cells["dgvOrderType"].Value.ToString())
+                    Project = row.Cells[dgvOrderProject.Name].Value.ToString(),
+                    Order   = (ExecutionOrderType)Enum.Parse(typeof(ExecutionOrderType), row.Cells[dgvOrderType.Name].Value.ToString())
                 });
             }
             return ret.ToArray();
@@ -827,14 +850,15 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             EventHandler call = (csender, ce) => { notice(true); };
 
-            Util.noticeAboutChanges(typeof(CheckBox), this, call);
+            Util.noticeAboutChanges(typeof(CheckBox), this, call, new string[] { checkBoxCESniffer.Name });
             Util.noticeAboutChanges(typeof(RadioButton), this, call);
             Util.noticeAboutChanges(typeof(TextBox), this, call);
             Util.noticeAboutChanges(typeof(RichTextBox), this, call);
-            Util.noticeAboutChanges(typeof(ListBox), this, call, new string[] { "listBoxEW" });
-            Util.noticeAboutChanges(typeof(ComboBox), this, call);
+            Util.noticeAboutChanges(typeof(ListBox), this, call, new string[] { listBoxEW.Name });
+            Util.noticeAboutChanges(typeof(ComboBox), this, call, new string[] { comboBoxEvents.Name });
             Util.noticeAboutChanges(typeof(CheckedListBox), this, call);
-            Util.noticeAboutChanges(typeof(DataGridView), this, call);
+            Util.noticeAboutChanges(typeof(DataGridViewExt), this, call, new string[] { dgvCESniffer.Name });
+            Util.noticeAboutChanges(typeof(PropertyGrid), this, call);
             textEditor._.TextChanged += call;
 
             try {
@@ -846,11 +870,14 @@ namespace net.r_eg.vsSBE.UI.WForms
             catch(Exception ex) {
                 Log.nlog.Error("Failed to load form: {0}", ex.Message);
             }
+
+            notice(false);
         }
 
         private void comboBoxEvents_SelectedIndexChanged(object sender, EventArgs e)
         {
             try {
+                saveData(true); //TODO:
                 logic.setEventIndexes(comboBoxEvents.SelectedIndex, 0);
                 refreshActions(false);
                 refreshSettings();
@@ -897,9 +924,19 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void toolStripMenuReset_Click(object sender, EventArgs e)
         {
             logic.restoreData();
+
+            //TODO:
+            comboBoxEvents.SelectedIndexChanged -= comboBoxEvents_SelectedIndexChanged;
             logic.fillEvents(comboBoxEvents);
-            renderData();
-            comboBoxEvents_SelectedIndexChanged(sender, e);
+            comboBoxEvents.SelectedIndexChanged += comboBoxEvents_SelectedIndexChanged;
+
+            logic.fillComponents(dgvComponents);
+            logic.setEventIndexes(comboBoxEvents.SelectedIndex, 0);
+            refreshActions(false);
+            refreshSettings();
+
+            notice(false);
+            requiresNotification = false;
         }
 
         private void radioModeFiles_CheckedChanged(object sender, EventArgs e)
@@ -980,7 +1017,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void dataGridViewOutput_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if(e.ColumnIndex == dataGridViewOutput.ColumnCount - 1 && e.RowIndex < dataGridViewOutput.Rows.Count - 1) {
+            if(e.ColumnIndex == dataGridViewOutput.Columns.IndexOf(owpRemove) && e.RowIndex < dataGridViewOutput.Rows.Count - 1) {
                 dataGridViewOutput.Rows.Remove(dataGridViewOutput.Rows[e.RowIndex]);
             }
         }
@@ -1129,15 +1166,15 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void dgvComponents_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if(e.ColumnIndex == 1 || e.RowIndex < 0) {
+            if(e.ColumnIndex == dgvComponents.Columns.IndexOf(dgvComponentsEnabled) || e.RowIndex < 0) {
                 return;
             }
-            componentInfo(dgvComponents.Rows[e.RowIndex].Cells["dgvComponentsClass"].Value.ToString());
+            componentInfo(dgvComponents.Rows[e.RowIndex].Cells[dgvComponentsClass.Name].Value.ToString());
         }
 
         private void dgvComponents_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            if(e.RowIndex == -1 || e.ColumnIndex != 0) {
+            if(e.RowIndex == -1 || e.ColumnIndex != dgvComponents.Columns.IndexOf(dgvComponentsIcon)) {
                 return;
             }
             string name = dgvComponents.Rows[e.RowIndex].Cells[dgvComponentsClass.Name].Value.ToString();
@@ -1151,7 +1188,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void dgvComponents_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if(e.ColumnIndex == 0) {
+            if(e.ColumnIndex == dgvComponents.Columns.IndexOf(dgvComponentsIcon)) {
                 dgvComponents.EndEdit();
             }
         }
@@ -1189,7 +1226,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(dgvComponents.SelectedRows.Count < 1) {
                 return;
             }
-            componentInfo(dgvComponents.SelectedRows[0].Cells["dgvComponentsClass"].Value.ToString());
+            componentInfo(dgvComponents.SelectedRows[0].Cells[dgvComponentsClass.Name].Value.ToString());
         }
 
         private void menuItemCompNew_Click(object sender, EventArgs e)
@@ -1303,7 +1340,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void menuActionsEdit_Click(object sender, EventArgs e)
         {
-            dgvActions.CurrentCell = dgvActions.Rows[currentActionIndex()].Cells["dgvActionName"];
+            dgvActions.CurrentCell = dgvActions.Rows[currentActionIndex()].Cells[dgvActionName.Name];
             dgvActions.BeginEdit(true);
         }
 
@@ -1363,8 +1400,9 @@ namespace net.r_eg.vsSBE.UI.WForms
                 if(inf.RowIndex == -1) {
                     return;
                 }
+                saveData(true);
 
-                if(inf.ColumnIndex != 0) {
+                if(inf.ColumnIndex != dgvActions.Columns.IndexOf(dgvActionEnabled)) {
                     refreshSettingsWithIndex(inf.RowIndex);
                     return;
                 }
@@ -1374,7 +1412,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void dgvActions_MouseUp(object sender, MouseEventArgs e)
         {
-            if(dgvActions.HitTest(e.X, e.Y).ColumnIndex == 0) {
+            if(dgvActions.HitTest(e.X, e.Y).ColumnIndex == dgvActions.Columns.IndexOf(dgvActionEnabled)) {
                 refreshSettings();
             }
         }
@@ -1382,6 +1420,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void dgvActions_KeyUp(object sender, KeyEventArgs e)
         {
             if(e.KeyCode == Keys.Up || e.KeyCode == Keys.Down) {
+                saveData(true);
                 refreshSettingsWithIndex(currentActionIndex());
             }
         }
@@ -1395,7 +1434,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void dgvActions_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if(e.ColumnIndex == 0) {
+            if(e.ColumnIndex == dgvActions.Columns.IndexOf(dgvActionEnabled)) {
                 dgvActions.EndEdit();
             }
         }
@@ -1405,10 +1444,11 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(e.RowIndex < 0) {
                 return;
             }
-            bool enabled = Boolean.Parse(dgvActions.Rows[e.RowIndex].Cells["dgvActionEnabled"].Value.ToString());
-            object oname = dgvActions.Rows[e.RowIndex].Cells["dgvActionName"].Value;
+            bool enabled = Boolean.Parse(dgvActions.Rows[e.RowIndex].Cells[dgvActionEnabled.Name].Value.ToString());
+            object oname = dgvActions.Rows[e.RowIndex].Cells[dgvActionName.Name].Value;
 
             logic.updateInfo(e.RowIndex, (oname == null)? "" : oname.ToString(), enabled);
+            requiresNotification = true;
             refreshSettings();
         }
 
@@ -1422,7 +1462,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(e.RowIndex == -1 || e.ColumnIndex == -1) {
                 return; //headers
             }
-            if(e.ColumnIndex == dgvCEFilters.ColumnCount - 1 && e.RowIndex < dgvCEFilters.Rows.Count - 1) {
+            if(e.ColumnIndex == dgvCEFilters.Columns.IndexOf(dgvCEFiltersColumnRemove) && e.RowIndex < dgvCEFilters.Rows.Count - 1) {
                 dgvCEFilters.Rows.Remove(dgvCEFilters.Rows[e.RowIndex]);
             }
         }

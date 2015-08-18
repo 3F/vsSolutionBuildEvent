@@ -28,7 +28,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// <summary>
         /// Transport support
         /// </summary>
-        private ITransferDataProperty _pin;
+        private ITransferProperty _pin;
 
         /// <summary>
         /// Work with properties
@@ -45,7 +45,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// </summary>
         private ConcurrentDictionary<string, List<MSBuild.PropertyItem>> _cacheProperties;
 
-        public PropertiesFrm(IEnvironment env, ITransferDataProperty pin)
+        public PropertiesFrm(IEnvironment env, ITransferProperty pin)
         {
             InitializeComponent();
             Icon = Resource.Package_32;
@@ -263,9 +263,9 @@ namespace net.r_eg.vsSBE.UI.WForms
 
 
             foreach(DataGridViewRow row in dataGridViewVariables.Rows) {
-                sb.Append(String.Format("$({0}) = '{1}'\n{2}\n", 
-                                        row.Cells["colName"].Value, 
-                                        row.Cells["colValue"].Value,
+                sb.Append(String.Format("$({0}) = '{1}'\n{2}\n",
+                                        row.Cells[colName.Name].Value,
+                                        row.Cells[colValue.Name].Value,
                                         new String('_', 110)));
             }
 

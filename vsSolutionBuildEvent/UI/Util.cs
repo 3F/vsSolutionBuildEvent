@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using net.r_eg.vsSBE.UI.WForms.Components;
 
 namespace net.r_eg.vsSBE.UI
 {
@@ -112,10 +113,19 @@ namespace net.r_eg.vsSBE.UI
                     continue;
                 }
 
-                if(type == typeof(DataGridView)) {
+                if(type == typeof(DataGridView) || type == typeof(DataGridViewExt))
+                {
                     DataGridViewCellEventHandler call = (sender, e) => { callback(sender, (EventArgs)e); };
                     ((DataGridView)ctrl).CellValueChanged -= call;
                     ((DataGridView)ctrl).CellValueChanged += call;
+                    continue;
+                }
+
+                if(type == typeof(PropertyGrid))
+                {
+                    PropertyValueChangedEventHandler call = (sender, e) => { callback(sender, (EventArgs)e); };
+                    ((PropertyGrid)ctrl).PropertyValueChanged -= call;
+                    ((PropertyGrid)ctrl).PropertyValueChanged += call;
                     continue;
                 }
             }

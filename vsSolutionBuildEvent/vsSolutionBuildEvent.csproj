@@ -140,6 +140,7 @@
     <Compile Include="Events\ModeType.cs" />
     <Compile Include="Exceptions\CompilerException.cs" />
     <Compile Include="GAC.cs" />
+    <Compile Include="UI\ITransferCommand.cs" />
     <Compile Include="UI\WForms\Controls\Lights.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -332,7 +333,7 @@
     <Compile Include="Events\SBEEvent.cs" />
     <Compile Include="Configuration\Header.cs" />
     <Compile Include="SolutionEvents.cs" />
-    <Compile Include="UI\ITransferData.cs" />
+    <Compile Include="UI\ITransferProperty.cs" />
     <Compile Include="UI\WForms\PropertyCheckFrm.cs">
       <SubType>Form</SubType>
     </Compile>

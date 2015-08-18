@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,26 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace net.r_eg.vsSBE.UI
 {
-    public interface ITransferDataProperty
+    public interface ITransferProperty
     {
         /// <summary>
-        /// Standard output of property
+        /// Basic view of property
         /// </summary>
         void property(string name, string project);
-    }
-
-    public interface ITransferDataCommand
-    {
-        /// <summary>
-        /// Various commands such as DTE, etc.
-        /// </summary>
-        void command(string name);
     }
 }

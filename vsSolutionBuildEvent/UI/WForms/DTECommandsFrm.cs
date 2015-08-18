@@ -10,11 +10,11 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// <summary>
         /// Transport support
         /// </summary>
-        private ITransferDataCommand _pin;
+        private ITransferCommand _pin;
 
         IEnumerable<EnvDTE.Command> _commands;
 
-        public DTECommandsFrm(IEnumerable<EnvDTE.Command> commands, ITransferDataCommand pin)
+        public DTECommandsFrm(IEnumerable<EnvDTE.Command> commands, ITransferCommand pin)
         {
             _commands = commands;
             this._pin = pin;
