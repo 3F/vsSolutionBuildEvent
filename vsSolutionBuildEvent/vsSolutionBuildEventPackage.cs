@@ -25,6 +25,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.UI.Xaml;
 using NLog;
 using NLog.Targets;
 
@@ -55,11 +56,13 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public DTE2 Dte2
         {
-            get{ return (DTE2)Package.GetGlobalService(typeof(SDTE)); }
+            get {
+                return (DTE2)Package.GetGlobalService(typeof(SDTE)); 
+            }
         }
 
         /// <summary>
-        /// For work and supporting the all public events
+        /// Support the all public events
         /// </summary>
         public static API.IEventLevel Event
         {
@@ -97,12 +100,35 @@ namespace net.r_eg.vsSBE
         private Receiver.Output.OWP _owpListener;
 
         /// <summary>
-        /// VS IDE menu - Build / <Main App>
+        /// Gets instance of StatusToolWindow.
+        /// Ensures that the Frame of value is also != null
+        /// </summary>
+        private ToolWindowPane StatusTool
+        {
+            get
+            {
+                if(statusTool != null) {
+                    return statusTool;
+                }
+
+                ToolWindowPane window = FindToolWindow(typeof(UI.Xaml.StatusToolWindow), 0, true); // find or create
+                if(window == null || window.Frame == null) {
+                    return null;
+                }
+
+                statusTool = window;
+                return statusTool;
+            }
+        }
+        private ToolWindowPane statusTool;
+
+        /// <summary>
+        /// The command for menu - Build / Events Solution
         /// </summary>
         private MenuCommand _menuItemMain;
         
         /// <summary>
-        /// main form of settings
+        /// Main form of settings
         /// </summary>
         private UI.WForms.EventsFrm _configFrm;
 
@@ -117,7 +143,7 @@ namespace net.r_eg.vsSBE
         public int OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
         {
             try {
-                FindToolWindow(typeof(UI.Xaml.StatusToolWindow), 0, true);
+                eventsOfStatusTool(true);
                 //Log.paneAttach(GetOutputPane(GuidList.OWP_SBE, Settings.OWP_ITEM_VSSBE)); // also may be problem with toolWindow as in other COM variant -_-
                 Log.paneAttach(Settings.OWP_ITEM_VSSBE, Dte2);
                 Log.show();
@@ -142,15 +168,29 @@ namespace net.r_eg.vsSBE
         public int OnAfterCloseSolution(object pUnkReserved)
         {
             _menuItemMain.Visible = false;
-            Event.solutionClosed(pUnkReserved);
-            UI.Util.closeTool(_configFrm);
+            try {
+                Event.solutionClosed(pUnkReserved);
+                UI.Util.closeTool(_configFrm);
 
-            Log.paneDetach((IVsOutputWindow)GetGlobalService(typeof(SVsOutputWindow)));
-            return VSConstants.S_OK;
+                Log.paneDetach((IVsOutputWindow)GetGlobalService(typeof(SVsOutputWindow)));
+                eventsOfStatusTool(false);
+                return VSConstants.S_OK;
+            }
+            catch(Exception ex) {
+                Log.nlog.Fatal("Problem with closing solution: " + ex.Message);
+            }
+            return VSConstants.S_FALSE;
         }
 
         public int UpdateSolution_Begin(ref int pfCancelUpdate)
         {
+            try {
+                ((IStatusTool)StatusTool.Content).resetCounter();
+            }
+            catch(Exception ex) {
+                Log.nlog.Debug("Failed reset of warnings counter: '{0}'", ex.Message);
+            }
+
             return Event.onPre(ref pfCancelUpdate);
         }
 
@@ -167,7 +207,12 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public int UpdateSolution_Done(int fSucceeded, int fModified, int fCancelCommand)
         {
-            return Event.onPost(fSucceeded, fModified, fCancelCommand);
+            try {
+                return Event.onPost(fSucceeded, fModified, fCancelCommand);
+            }
+            finally {
+                UI.Plain.State.summaryWarn(StatusTool);
+            }
         }
 
         public int UpdateProjectCfg_Begin(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel)
@@ -182,7 +227,7 @@ namespace net.r_eg.vsSBE
 
         /// <summary>
         /// CA1001: well, the VisualStudio.Shell.Package is already uses `void Dispose(bool disposing)`
-        ///         And this will never be used at all... but in addition and for CA we also implement IDisposable
+        ///         And this will never be used at all... but in addition and for CA we also implemented IDisposable
         /// </summary>
         public void Dispose()
         {
@@ -190,7 +235,7 @@ namespace net.r_eg.vsSBE
             GC.SuppressFinalize(this);
         }
 
-        private void init()
+        private void initAppEvents()
         {
             Event = new API.EventLevel(Dte2);
 
@@ -216,7 +261,26 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// to show the main window if clicked # Build/<pack> #
+        /// Control of events for status tool - Solution Build-Events
+        /// </summary>
+        /// <param name="attach"></param>
+        private void eventsOfStatusTool(bool attach)
+        {
+            if(StatusTool == null) {
+                Log.nlog.Debug("Cannot find or create UI.StatusToolWindow");
+                return;
+            }
+            IStatusToolEvents ste = (IStatusToolEvents)StatusTool;
+
+            if(attach) {
+                ste.attachEvents(Event).attachEvents(Config._).attachEvents();
+                return;
+            }
+            ste.detachEvents().detachEvents(Config._).detachEvents(Event);
+        }
+
+        /// <summary>
+        /// Handler of showing the main window if clicked # Build / Events Solution
         /// </summary>
         private void _menuMainCallback(object sender, EventArgs e)
         {
@@ -227,13 +291,17 @@ namespace net.r_eg.vsSBE
             _configFrm.Show();
         }
 
+        /// <summary>
+        /// Handler of showing the status-tool window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void _menuPanelCallback(object sender, EventArgs e)
         {
-            ToolWindowPane window = FindToolWindow(typeof(UI.Xaml.StatusToolWindow), 0, true); // find or create
-            if(window == null || window.Frame == null) {
+            if(StatusTool == null) {
                 throw new ComponentException("Cannot create UI.StatusToolWindow");
             }
-            ErrorHandler.ThrowOnFailure(((IVsWindowFrame)window.Frame).Show());
+            ErrorHandler.ThrowOnFailure(((IVsWindowFrame)StatusTool.Frame).Show());
         }
 
         #region unused
@@ -301,7 +369,7 @@ namespace net.r_eg.vsSBE
                 MethodCallTarget target = configureLogger();
                 Log.nlog.Trace(string.Format(CultureInfo.CurrentCulture, "Log('{0}') is configured for: '{1}'", target.ClassName, ToString()));
 
-                init();
+                initAppEvents();
 
                 OleMenuCommandService mcs = (OleMenuCommandService)GetService(typeof(IMenuCommandService));
 
@@ -313,19 +381,19 @@ namespace net.r_eg.vsSBE
                 // View / Other Windows / <Status Panel>
                 mcs.AddCommand(new MenuCommand(_menuPanelCallback, new CommandID(GuidList.PANEL_CMD_SET, (int)PkgCmdIDList.CMD_PANEL)));
 
-                // To listen events fires from IVsSolutionEvents
+                // To listen events that fired as a IVsSolutionEvents
                 spSolution = (IVsSolution)ServiceProvider.GlobalProvider.GetService(typeof(SVsSolution));
                 spSolution.AdviseSolutionEvents(this, out _pdwCookieSolution);
 
-                // To listen events fires from IVsUpdateSolutionEvents2
+                // To listen events that fired as a IVsUpdateSolutionEvents2
                 spSolutionBM = (IVsSolutionBuildManager2)ServiceProvider.GlobalProvider.GetService(typeof(SVsSolutionBuildManager));
                 spSolutionBM.AdviseUpdateSolutionEvents(this, out _pdwCookieSolutionBM);
             }
             catch(Exception ex)
             {
                 string msg = string.Format("{0}\n{1}\n\n-----\n{2}", 
-                                "Something went wrong -_-", 
-                                "Try also to restart a VS IDE or reinstall current plugin in the Extension Manager...", 
+                                "Something went wrong -_-",
+                                "Try to restart IDE or reinstall current plugin in Extension Manager.", 
                                 ex.ToString());
 
                 Log.nlog.Fatal(msg);

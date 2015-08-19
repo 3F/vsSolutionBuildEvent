@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,40 +16,56 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using EnvDTE80;
 using net.r_eg.vsSBE.Events;
 
 namespace net.r_eg.vsSBE.UI.Xaml
 {
-    public partial class StatusToolControl: UserControl
+    public partial class StatusToolControl: UserControl, IStatusTool
     {
         /// <summary>
-        /// Logic for this UI
-        /// TODO:
+        /// Get number from Warnings counter
         /// </summary>
-        public Logic.StatusTool logic
+        public int Warnings
         {
-            get;
-            protected set;
-        }
-
-        public StatusToolControl()
-        {
-            logic = new Logic.StatusTool();
-            InitializeComponent();
-            enabledPanel(false);
+            get {
+                return logic.Warnings;
+            }
         }
 
         /// <summary>
-        /// Called with any warnings / errors
+        /// Logic for this UI
         /// </summary>
-        public void notify()
+        protected Logic.StatusTool logic;
+
+
+        /// <summary>
+        /// Availability of main panel for user
+        /// </summary>
+        /// <param name="enabled"></param>
+        public void enabledPanel(bool enabled)
+        {
+            if(!enabled) {
+                resetCounter();
+            }
+            grid.IsEnabled = enabled;
+        }
+
+        /// <summary>
+        /// Resets the Warnings counter
+        /// </summary>
+        public void resetCounter()
+        {
+            logic.resetWarnings();
+            textInfo.Text = "0";
+        }
+
+        /// <summary>
+        /// Notification about any warnings
+        /// </summary>
+        public void warn()
         {
             try {
                 Application.Current.Dispatcher.BeginInvoke(new Action(() => {
@@ -62,9 +78,9 @@ namespace net.r_eg.vsSBE.UI.Xaml
         }
 
         /// <summary>
-        /// Called with updating config
+        /// Updates data for controls
         /// </summary>
-        public void updateData()
+        public void refresh()
         {
             update(btnPre, SolutionEventType.Pre);
             update(btnPost, SolutionEventType.Post);
@@ -77,12 +93,11 @@ namespace net.r_eg.vsSBE.UI.Xaml
             update(btnLogging, SolutionEventType.Logging);
         }
 
-        /// <summary>
-        /// Enabling all controls for current panel
-        /// </summary>
-        public void enabledPanel(bool flag)
+        public StatusToolControl()
         {
-            grid.IsEnabled = flag;
+            logic = new Logic.StatusTool();
+            InitializeComponent();
+            enabledPanel(false);
         }
 
         /// <summary>
@@ -190,8 +205,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
         private void btnInfo_Click(object sender, RoutedEventArgs e)
         {
             Log.show();
-            logic.resetWarnings();
-            textInfo.Text = "0";
+            resetCounter();
         }
 
         private void btnPre_Click(object sender, RoutedEventArgs e)

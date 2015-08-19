@@ -17,6 +17,7 @@
 
 using System;
 using System.Linq;
+using Microsoft.VisualStudio.Shell;
 using net.r_eg.vsSBE.Events;
 
 namespace net.r_eg.vsSBE.UI.Plain
@@ -54,6 +55,19 @@ namespace net.r_eg.vsSBE.UI.Plain
             sb.Append(about(data.Logging,       "Logging       "));
             sb.Append("\n---\n");
             Log.print(sb.ToString());
+        }
+
+        public static void summaryWarn(ToolWindowPane tool)
+        {
+            try {
+                Log.print(String.Format("========== Build-Events completed: {0} Warnings ==========", ((UI.Xaml.IStatusTool)tool.Content).Warnings));
+                //Log.print(String.Format("{0}{1}", new String('=', 80), System.Environment.NewLine));
+                //Log.print(String.Format("Warnings: {0}", ((UI.Xaml.IStatusTool)tool.Content).Warnings));
+                Log.print(String.Format("{0}{0}", System.Environment.NewLine));
+            }
+            catch(Exception ex) {
+                Log.nlog.Debug("Failed summaryWarn: '{0}'", ex.ToString());
+            }
         }
     }
 }

@@ -166,6 +166,8 @@
     <Compile Include="UI\WForms\EnvDteSniffer.Designer.cs">
       <DependentUpon>EnvDteSniffer.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\Xaml\IStatusToolEvents.cs" />
+    <Compile Include="UI\Xaml\IStatusTool.cs" />
     <Compile Include="UnifiedTypes\Build\VSCommand.cs" />
     <Compile Include="Events\LoggingEvent.cs" />
     <Compile Include="Events\ILoggingEvent.cs" />
