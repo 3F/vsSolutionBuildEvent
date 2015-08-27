@@ -25,79 +25,29 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Threading;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using net.r_eg.vsSBE.Bridge;
+using net.r_eg.vsSBE.Bridge.CoreCommand;
 
 namespace net.r_eg.vsSBE.CI.MSBuild
 {
     public class EventManager: Logger, ILogger
     {
         /// <summary>
-        /// The key for logger: Path to library.
-        /// </summary>
-        public const string LKEY_LIB = "lib";
-
-        /// <summary>
-        /// The key for logger: 
-        /// Culture for the current thread.
-        /// </summary>
-        public const string LKEY_CULTURE = "culture";
-
-        /// <summary>
-        /// The key for logger: 
-        /// Culture used by the Resource Manager to look up culture-specific resources at run time. 
-        /// For example - console messages from msbuild engine etc.
-        /// </summary>
-        public const string LKEY_CULTURE_UI = "cultureUI";
-
-        /// <summary>
-        /// Our the vsSolutionBuildEvent library
-        /// </summary>
-        protected Provider.ILibrary library;
-
-        /// <summary>
-        /// Find & get path to library
-        /// </summary>
-        protected string LibraryPath
-        {
-            get
-            {
-                if(args.ContainsKey(LKEY_LIB)) {
-                    return args[LKEY_LIB];
-                }
-                return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + Path.DirectorySeparatorChar;
-            }
-        }
-
-        /// <summary>
         /// Full path to solution file
         /// </summary>
-        protected string SolutionFile
+        public string SolutionFile
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// Specified type of build action
+        /// Our the vsSolutionBuildEvent library
         /// </summary>
-        protected volatile BuildType buildType = BuildType.Common;
-
-        /// <summary>
-        /// Logger parameters
-        /// </summary>
-        protected Dictionary<string, string> args = new Dictionary<string, string>();
-
-        /// <summary>
-        /// About projects by ident
-        /// </summary>
-        protected Dictionary<int, Project> projects = new Dictionary<int, Project>();
+        public Provider.ILibrary library;
 
         /// <summary>
         /// Internal logging
@@ -105,9 +55,40 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         internal ILog log;
 
         /// <summary>
+        /// Initializer of library
+        /// </summary>
+        internal Initializer initializer;
+
+        /// <summary>
+        /// Specified type of build action
+        /// </summary>
+        protected volatile BuildType buildType = BuildType.Common;
+
+        /// <summary>
+        /// About projects by ident
+        /// </summary>
+        protected Dictionary<int, Project> projects = new Dictionary<int, Project>();
+
+        /// <summary>
+        /// All received CoreCommand from library.
+        /// </summary>
+        protected Stack<ICoreCommand> receivedCommands = new Stack<ICoreCommand>();
+
+        /// <summary>
         /// Reserved for future use with IVsSolutionEvents
         /// </summary>
         private object pUnkReserved = new object();
+
+        /// <summary>
+        /// To abort all processes as soon as possible
+        /// </summary>
+        private volatile bool abort = false;
+
+        /// <summary>
+        /// Object synch.
+        /// </summary>
+        private Object _lock = new Object();
+
 
         /// <summary>
         /// Initializer of the Build.Framework.ILogger objects.
@@ -116,11 +97,8 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         /// <param name="evt"></param>
         public override void Initialize(IEventSource evt)
         {
-            log = new Log(Verbosity);
-
-            header();
-            args = extractArguments(Parameters);
-            setCulture(args);
+            log         = new Log(Verbosity);
+            initializer = new Initializer(Parameters, log);
 
             evt.TargetStarted   += onTargetStarted;
             evt.ProjectStarted  += onProjectStarted;
@@ -135,27 +113,14 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         {
             if(library != null) {
                 library.Event.solutionClosed(pUnkReserved);
-            }
-        }
-
-        public void setCulture(string ui, string general = null)
-        {
-            try
-            {
-                if(ui != null) {
-                    Thread.CurrentThread.CurrentUICulture = new CultureInfo(ui);
-                }
-                if(general != null) {
-                    Thread.CurrentThread.CurrentCulture = new CultureInfo(general);
-                }
-            }
-            catch(Exception ex) {
-                msg(ex.Message);
+                detachCoreCommandListener();
             }
         }
 
         protected void onProjectStarted(object sender, ProjectStartedEventArgs e)
         {
+            termination(); // This is first place where we can use it
+
             if(e.ProjectFile.EndsWith(".metaproj", StringComparison.OrdinalIgnoreCase)) {
                 debug(".metaproj has been ignored for '{0}'", e.ProjectFile);
                 return;
@@ -228,30 +193,28 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             library.Event.onPre(ref pfCancelUpdate);
         }
 
+        /// <summary>
+        /// Note with msbuild: 
+        /// Be careful - the onBuildStarted(i.e. all before onTargetStarted) is not safe for any unhandled exceptions!
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         protected void onBuildStarted(object sender, BuildStartedEventArgs e)
         {
-            string targets  = null;
-            string property = null;
-            string sln      = findSln(out targets, out property);
+            try {
+                // load with properties by default
+                library = initializer.load();
 
-            if(sln == null) {
-                throw new AbortException("We can't detect .sln file in arguments.");
+                attachCoreCommandListener();
+                library.Event.solutionOpened(pUnkReserved, 0);
+
+                // yes, we're ready
+                onPre(initializer.Properties.Targets);
             }
-            sln = Path.Combine(Environment.CurrentDirectory, sln);
-            debug("Solution file: '{0}'", sln);
-
-            SolutionFile = sln;
-            SolutionProperties.Result slnData = (new SolutionProperties(log)).parse(sln);
-
-            if(targets == null) {
-                targets = "Build"; // targets by default
+            catch(Exception ex) {
+                debug("Error onBuildStarted: '{0}'", ex.Message);
+                abort = true;
             }
-
-            // load with defined properties
-            library = load(SolutionFile, finalizeProperties(property, slnData.properties), LibraryPath);
-
-            // yes, we're ready
-            onPre(targets);
         }
 
         protected void onBuildFinished(object sender, BuildFinishedEventArgs e)
@@ -277,129 +240,68 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         }
 
         /// <summary>
-        /// Find .sln file
+        /// Handler of core commands.
         /// </summary>
-        /// <param name="targets">Return the targets key if exists or null value</param>
-        /// <param name="property">Return the property key if exists or null value</param>
-        /// <returns>Full path to .sln file</returns>
-        protected string findSln(out string targets, out string property)
+        /// <param name="sender"></param>
+        /// <param name="c"></param>
+        protected void command(object sender, CoreCommandArgs c)
         {
-            string sln  = null;
-            targets     = null;
-            property    = null;
-
-            // multi-keys support: `/p:prop1=val1 /p:prop2=val2` same as `/p:prop1=val1;prop2=val2`
-            Func<string, string, string> _concat = delegate(string key, string val) {
-                return (key != null)? String.Format("{0};{1}", key, val) : val;
-            };
-
-            foreach(string arg in Environment.GetCommandLineArgs())
+            switch(c.Type)
             {
-                if(sln == null && arg.EndsWith(".sln", StringComparison.OrdinalIgnoreCase)) {
-                    sln = arg;
-                    debug("findSln: .sln - '{0}'", sln);
-                    continue;
+                case CoreCommandType.AbortCommand: {
+                    abortCommand(c);
+                    break;
                 }
-
-                int vpos = arg.IndexOf(':', 2);
-                if(vpos == -1) {
-                    continue;
+                case CoreCommandType.BuildCancel: {
+                    abort = true;
+                    break;
                 }
-
-                if(arg.StartsWith("/target:", StringComparison.OrdinalIgnoreCase)
-                    || arg.StartsWith("/t:", StringComparison.OrdinalIgnoreCase))
-                {
-                    targets = _concat(targets, arg.Substring(vpos + 1));
-                    debug("findSln: targets - '{0}'", targets);
-                    continue;
-                }
-
-                if(arg.StartsWith("/property:", StringComparison.OrdinalIgnoreCase)
-                    || arg.StartsWith("/p:", StringComparison.OrdinalIgnoreCase))
-                {
-                    property = _concat(property, arg.Substring(vpos + 1));
-                    debug("findSln: property - '{0}'", property);
-                    continue;
+                case CoreCommandType.Nop: {
+                    break;
                 }
             }
-            return sln;
+            receivedCommands.Push(c);
         }
 
         /// <summary>
-        /// To redefinition Configuration and Platform from user switches if exists, etc.
+        /// Aborts latest command if it's possible
         /// </summary>
-        /// <param name="cmd">Property of command line</param>
-        /// <param name="init">Initial properties</param>
-        /// <returns></returns>
-        protected Dictionary<string, string> finalizeProperties(string cmd, Dictionary<string, string> init)
+        /// <param name="c"></param>
+        protected void abortCommand(ICoreCommand c)
         {
-            Dictionary<string, string> pKeys = extractArguments(cmd);
-            Func<string, string> pValue = delegate(string key) {
-                return pKeys.FirstOrDefault(p => p.Key.Equals(key, StringComparison.OrdinalIgnoreCase)).Value;
-            };
-
-            string Configuration    = pValue("Configuration");
-            string Platform         = pValue("Platform");
-
-            if(Configuration != null) {
-                init["Configuration"] = Configuration;
+            if(receivedCommands.Count < 1) {
+                return;
             }
+            ICoreCommand last = receivedCommands.Peek();
 
-            if(Platform != null) {
-                init["Platform"] = Platform;
+            if(last.Type == CoreCommandType.BuildCancel) {
+                abort = false;
             }
-
-            if(Verbosity == LoggerVerbosity.Diagnostic)
-            {
-                foreach(KeyValuePair<string, string> p in init) {
-                    msg(String.Format("Solution property def: ['{0}' => '{1}']", p.Key, p.Value));
-                }
-            }
-            return init;
         }
 
-        /// <summary>
-        /// Gets solution properties (global properties for all projects)
-        /// 
-        /// Note: ProjectStartedEventArgs.GlobalProperties available only with .NET 4.5
-        /// http://msdn.microsoft.com/en-us/library/microsoft.build.framework.projectstartedeventargs.globalproperties%28v=vs.110%29.aspx
-        /// </summary>
-        /// <param name="properties">DictionaryEntry properties</param>
-        /// <returns></returns>
-        protected Dictionary<string, string> getSolutionProperties(IEnumerable properties)
+        protected bool attachCoreCommandListener()
         {
-            Dictionary<string, string> _properties = properties.OfType<DictionaryEntry>().ToDictionary(k => k.Key.ToString(), v => v.Value.ToString());
-
-            Dictionary<string, string> ret = new Dictionary<string, string>();
-            if(_properties.ContainsKey("Configuration")) {
-                ret["Configuration"] = _properties["Configuration"];
-            }
-            if(_properties.ContainsKey("Platform")) {
-                ret["Platform"] = _properties["Platform"];
-            }
-            if(_properties.ContainsKey("SolutionDir")) {
-                ret["SolutionDir"] = _properties["SolutionDir"];
-            }
-            if(_properties.ContainsKey("SolutionName")) {
-                ret["SolutionName"] = _properties["SolutionName"];
-            }
-            if(_properties.ContainsKey("SolutionFileName")) {
-                ret["SolutionFileName"] = _properties["SolutionFileName"];
-            }
-            if(_properties.ContainsKey("SolutionExt")) {
-                ret["SolutionExt"] = _properties["SolutionExt"];
-            }
-            if(_properties.ContainsKey("SolutionPath")) {
-                ret["SolutionPath"] = _properties["SolutionPath"];
+            if(library == null) {
+                return false;
             }
 
-            if(Verbosity == LoggerVerbosity.Diagnostic)
-            {
-                foreach(KeyValuePair<string, string> p in ret) {
-                    msg(String.Format("SolutionProperty found: ['{0}' => '{1}']", p.Key, p.Value));
-                }
+            lock(_lock) {
+                detachCoreCommandListener();
+                library.EntryPoint.CoreCommand += command;
             }
-            return ret;
+            return true;
+        }
+
+        protected bool detachCoreCommandListener()
+        {
+            if(library == null) {
+                return false;
+            }
+
+            lock(_lock) {
+                library.EntryPoint.CoreCommand -= command;
+            }
+            return true;
         }
 
         /// <summary>
@@ -421,59 +323,25 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             }
         }
 
-        protected Provider.ILibrary load(string solutionFile, Dictionary<string, string> properties, string libPath)
+        /// <summary>
+        /// Logic of termination the msbuild job
+        /// </summary>
+        protected void termination()
         {
-            debug("Loading: '{0}' /'{1}'", solutionFile, libPath);
-
-            Provider.ILoader loader     = new Provider.Loader();
-            loader.Settings.DebugMode   = (Verbosity == LoggerVerbosity.Diagnostic);
-            try
-            {
-                Provider.ILibrary library = loader.load(solutionFile, properties, libPath, false);
-                msg("Library: loaded from '{0}' :: v{1} [{2}] API: v{3} /'{4}':{5}", 
-                                    library.Dllpath, 
-                                    library.Version.Number.ToString(), 
-                                    library.Version.BranchSha1,
-                                    library.Version.Bridge.Number.ToString(2),
-                                    library.Version.BranchName,
-                                    library.Version.BranchRevCount);
-
-                library.Event.solutionOpened(pUnkReserved, 0);
-                return library;
-            }
-            catch(DllNotFoundException ex)
-            {
-                msg(ex.Message);
-                msg("* You can install vsSolutionBuildEvent as plugin for Visual Studio(if it's possible)");
-                msg(
-                    "* Or try manually place the {0} into directory with current logger({1})", 
-                    "vsSolutionBuildEvent.dll with dependencies",
-                    Assembly.GetExecutingAssembly().Location);
-                msg("* Or set any path to library for this logger, e.g.: /l:CI.MSBuild.dll;lib=<path_to_vsSolutionBuildEvent.dll>");
-
-                msg("See our documentation for more details.");
-                msg("https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
-                msg("Minimum requirements: vsSolutionBuildEvent.dll v{0}", loader.MinVersion.ToString());
-                msg(new String('=', 80));
-            }
-            catch(ReflectionTypeLoadException ex)
-            {
-                foreach(FileNotFoundException le in ex.LoaderExceptions) {
-                    msg("{2} {0}{3} {0}{0}{4} {0}{1}",
-                                        Environment.NewLine, new String('~', 80),
-                                        le.FileName, le.Message, le.FusionLog);
-                }
-            }
-            catch(Exception ex) {
-                msg("Error with loading: '{0}'", ex.ToString());
+            if(!abort) {
+                return;
             }
 
-            // Abort all msbuild operations
-            throw new AbortException();
+            //TODO: Another way ? fix me
+            throw new LoggerException(
+                            String.Format(
+                                "The build has been canceled{0}.", 
+                                (receivedCommands.Count < 1)? "" : " by user script"
+                            ));
         }
 
         /// <summary>
-        /// Format specification: http://msdn.microsoft.com/en-us/library/yxkt8b26.aspx
+        /// Specification of this format: http://msdn.microsoft.com/en-us/library/yxkt8b26.aspx
         /// </summary>
         /// <param name="type">Type of message</param>
         /// <param name="code">code####</param>
@@ -484,46 +352,6 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         protected virtual string formatEW(string type, string code, string msg, string file, int line)
         {
             return String.Format("{0}({1}): {2} {3}: {4}", file, line, type, code, msg);
-        }
-
-        /// <summary>
-        /// Extract arguments from format: 
-        /// name1=value1;name2=value2;name3=value3
-        /// http://msdn.microsoft.com/en-us/library/ms164311.aspx
-        /// </summary>
-        /// <param name="raw">raw line from params to logger</param>
-        /// <returns></returns>
-        protected Dictionary<string, string> extractArguments(string raw)
-        {
-            if(String.IsNullOrEmpty(raw)) {
-                return new Dictionary<string, string>();
-            }
-
-            return raw.Split(';')
-                        .Select(p => p.Split('='))
-                        .Select(p => new KeyValuePair<string, string>(p[0], (p.Length < 2)? null : p[1]))
-                        .ToDictionary(k => k.Key, v => v.Value);
-        }
-
-        protected void setCulture(Dictionary<string, string> keys)
-        {
-            string culture      = null;
-            string cultureUI    = (keys.ContainsKey(LKEY_CULTURE_UI))? keys[LKEY_CULTURE_UI] : "en-US";
-
-            if(keys.ContainsKey(LKEY_CULTURE)) {
-                culture = keys[LKEY_CULTURE];
-            }
-            setCulture(cultureUI, culture);
-        }
-
-        private void header()
-        {
-            msg(new String('=', 60));
-            msg("[[ vsSolutionBuildEvent CI.MSBuild ]] Welcomes You!");
-            msg(new String('=', 60));
-            msg("Version: v{0}", System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
-            msg("Feedback: entry.reg@gmail.com");
-            msg(new String('_', 60));
         }
 
         private void msg(string data, params object[] args)

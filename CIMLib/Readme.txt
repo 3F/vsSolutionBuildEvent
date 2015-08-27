@@ -1,4 +1,4 @@
-﻿
 
-Similarly as VsixLib (see VsixLib\List.targets).
+
+Similarly as VsixLib (see VsixLib\Readme.txt).
 For NuGet Package - CI.MSBuild

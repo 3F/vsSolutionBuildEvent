@@ -20,14 +20,23 @@ using System.Collections.Generic;
 using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
-using net.r_eg.vsSBE.Events;
+using net.r_eg.vsSBE.API.Commands;
+using net.r_eg.vsSBE.Bridge;
+using net.r_eg.vsSBE.Bridge.CoreCommand;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.Scripts;
+using NLog;
+using NLog.Targets;
 
 namespace net.r_eg.vsSBE.API
 {
-    public class EventLevel: IEventLevel, Bridge.IBuild, Bridge.IEvent
+    public class EventLevel: IEventLevel, IEntryPointCore, IFireCoreCommand
     {
+        /// <summary>
+        /// Event of core commands.
+        /// </summary>
+        public event CoreCommandHandler CoreCommand = delegate(object sender, CoreCommandArgs e) { };
+
         /// <summary>
         /// When the solution has been opened
         /// </summary>
@@ -80,45 +89,53 @@ namespace net.r_eg.vsSBE.API
         /// </summary>
         private Object _lock = new Object();
 
+
         /// <summary>
-        /// Solution has been opened.
+        /// Load with DTE2 context
         /// </summary>
-        /// <param name="pUnkReserved">Reserved for future use.</param>
-        /// <param name="fNewSolution">true if the solution is being created. false if the solution was created previously or is being loaded.</param>
-        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
-        public int solutionOpened(object pUnkReserved, int fNewSolution)
+        /// <param name="dte2">Unspecified EnvDTE80.DTE2 from EnvDTE80.dll</param>
+        /// <param name="debug">Optional flag of debug mode</param>
+        public void load(object dte2, bool debug = false)
         {
-            try {
-                Config._.load(Environment.SolutionPath, Environment.SolutionFileName);
-                Config._.updateActivation(Bootloader);
-
-                UI.Plain.State.print(Config._.Data);
-#if DEBUG
-                Log.nlog.Warn("Used the [Debug version]");
-#else
-                if(vsSBE.Version.branchName.ToLower() != "releases") {
-                    Log.nlog.Warn("Used the [Unofficial release]");
-                }
-#endif
-
-                OpenedSolution(this, new EventArgs());
-                return VSConstants.S_OK;
-            }
-            catch(Exception ex) {
-                Log.nlog.Fatal("Cannot load configuration: " + ex.Message);
-            }
-            return VSConstants.S_FALSE;
+            load(dte2, new Settings() { DebugMode = debug });
         }
 
         /// <summary>
-        /// Solution has been closed.
+        /// Load with DTE2 context
         /// </summary>
-        /// <param name="pUnkReserved">Reserved for future use.</param>
-        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
-        public int solutionClosed(object pUnkReserved)
+        /// <param name="dte2">Unspecified EnvDTE80.DTE2 from EnvDTE80.dll</param>
+        /// <param name="cfg">Specific settings</param>
+        public void load(object dte2, ISettings cfg)
         {
-            ClosedSolution(this, new EventArgs());
-            return VSConstants.S_OK;
+            configure(cfg);
+            
+            this.Environment = new Environment((DTE2)dte2);
+            init();
+        }
+
+        /// <summary>
+        /// Load with isolated environment
+        /// </summary>
+        /// <param name="sln">Full path to solution file</param>
+        /// <param name="properties">Global properties for solution</param>
+        /// <param name="debug">Optional flag of debug mode</param>
+        public void load(string sln, Dictionary<string, string> properties, bool debug = false)
+        {
+            load(sln, properties, new Settings() { DebugMode = debug });
+        }
+
+        /// <summary>
+        /// Load with isolated environment
+        /// </summary>
+        /// <param name="sln">Full path to solution file</param>
+        /// <param name="properties">Global properties for solution</param>
+        /// <param name="cfg">Specific settings</param>
+        public void load(string sln, Dictionary<string, string> properties, ISettings cfg)
+        {
+            configure(cfg);
+
+            this.Environment = new IsolatedEnv(sln, properties);
+            init();
         }
 
         /// <summary>
@@ -309,6 +326,47 @@ namespace net.r_eg.vsSBE.API
         }
 
         /// <summary>
+        /// Solution has been opened.
+        /// </summary>
+        /// <param name="pUnkReserved">Reserved for future use.</param>
+        /// <param name="fNewSolution">true if the solution is being created. false if the solution was created previously or is being loaded.</param>
+        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        public int solutionOpened(object pUnkReserved, int fNewSolution)
+        {
+            try {
+                Config._.load(Environment.SolutionPath, Environment.SolutionFileName);
+                Config._.updateActivation(Bootloader);
+
+                UI.Plain.State.print(Config._.Data);
+#if DEBUG
+                Log.nlog.Warn("Used the [Debug version]");
+#else
+                if(vsSBE.Version.branchName.ToLower() != "releases") {
+                    Log.nlog.Warn("Used the [Unofficial release]");
+                }
+#endif
+
+                OpenedSolution(this, new EventArgs());
+                return VSConstants.S_OK;
+            }
+            catch(Exception ex) {
+                Log.nlog.Fatal("Cannot load configuration: " + ex.Message);
+            }
+            return VSConstants.S_FALSE;
+        }
+
+        /// <summary>
+        /// Solution has been closed.
+        /// </summary>
+        /// <param name="pUnkReserved">Reserved for future use.</param>
+        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        public int solutionClosed(object pUnkReserved)
+        {
+            ClosedSolution(this, new EventArgs());
+            return VSConstants.S_OK;
+        }
+
+        /// <summary>
         /// Sets current type of the build
         /// </summary>
         /// <param name="type"></param>
@@ -317,29 +375,23 @@ namespace net.r_eg.vsSBE.API
             Environment.BuildType = type;
         }
 
-        public EventLevel(DTE2 dte2, bool debug = false)
+        /// <summary>
+        /// Send the core command for all clients.
+        /// </summary>
+        /// <param name="c"></param>
+        public void fire(CoreCommandArgs c)
         {
-            vsSBE.Settings.debugMode = debug;
-            this.Environment = new Environment(dte2);
-            init();
+            CoreCommand(this, c);
         }
 
-        public EventLevel(object dte2, bool debug = false)
-            : this((DTE2)dte2, debug)
-        {
-
-        }
-
-        public EventLevel(string solutionFile, Dictionary<string, string> properties, bool debug = false)
-        {
-            vsSBE.Settings.debugMode = debug;
-            this.Environment = new IsolatedEnv(solutionFile, properties);
-            init();
-        }
-
+        /// <summary>
+        /// Initialize level
+        /// </summary>
         protected void init()
         {
+            Environment.CoreCmdSender = this;
             attachCommandEvents();
+
             this.Bootloader = new Bootloader(Environment, uvariable);
             this.Bootloader.register();
 
@@ -348,6 +400,34 @@ namespace net.r_eg.vsSBE.API
                                          new Script(Bootloader),
                                          new MSBuild.Parser(Environment, uvariable))
             );
+        }
+
+        /// <summary>
+        /// Defines configuration with ISettings
+        /// </summary>
+        /// <param name="cfg"></param>
+        protected void configure(ISettings cfg)
+        {
+            MethodCallTarget target = configureLogger();
+            Log.nlog.Trace(String.Format("Log('{0}') is configured for: '{1}'", target.ClassName, ToString()));
+
+            vsSBE.Settings.debugMode = cfg.DebugMode;
+            // ...
+        }
+
+        /// <returns>Entry point for messages of logger</returns>
+        protected virtual MethodCallTarget configureLogger()
+        {
+            MethodCallTarget target = new MethodCallTarget() {
+                ClassName   = typeof(Log).AssemblyQualifiedName,
+                MethodName  = "nprint"
+            };
+            target.Parameters.Add(new MethodCallParameter("${level:uppercase=true}"));
+            target.Parameters.Add(new MethodCallParameter("${message}"));
+            target.Parameters.Add(new MethodCallParameter("${ticks}"));
+
+            NLog.Config.SimpleConfigurator.ConfigureForTargetLogging(target, LogLevel.Trace);
+            return target;
         }
 
         protected void attachCommandEvents()

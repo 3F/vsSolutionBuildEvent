@@ -22,14 +22,15 @@
  * THE SOFTWARE.
 */
 
-using System;
-
 namespace net.r_eg.vsSBE.Provider
 {
-    internal sealed class Settings: ISettings
+    /// <summary>
+    /// Provider settings
+    /// </summary>
+    public struct Settings: ISettings
     {
         /// <summary>
-        /// Additional details for all elements in provider namespace
+        /// Additional details for all provider elements
         /// </summary>
         public bool DebugMode
         {
@@ -38,14 +39,12 @@ namespace net.r_eg.vsSBE.Provider
         }
 
         /// <summary>
-        /// Thread-safe getting the instance of the Settings class
+        /// Settings for library
         /// </summary>
-        public static ISettings _
+        public Bridge.ISettings LibSettings
         {
-            get { return _lazy.Value; }
+            get;
+            set;
         }
-        private static readonly Lazy<ISettings> _lazy = new Lazy<ISettings>(() => new Settings());
-
-        private Settings() { }
     }
 }

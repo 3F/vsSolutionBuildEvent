@@ -23,47 +23,51 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using net.r_eg.vsSBE.Bridge;
+using net.r_eg.vsSBE.Bridge.CoreCommand;
 
-namespace net.r_eg.vsSBE.Provider
+namespace net.r_eg.vsSBE.Bridge
 {
-    [Guid("536FFC0D-8BC1-4347-B4B4-694308F9E396")]
-    public interface ILibrary
+    /// <summary>
+    /// Specifies work with core library
+    /// </summary>
+    [Guid("FF4EA5B6-61F6-43F7-8528-01CF4A482A37")]
+    public interface IEntryPointCore
     {
         /// <summary>
-        /// Absolute path to used library
+        /// Event of core commands.
         /// </summary>
-        string Dllpath { get; }
+        event CoreCommandHandler CoreCommand;
 
         /// <summary>
-        /// Name of used library with full path
+        /// Load with DTE2 context
         /// </summary>
-        string FullName { get; }
+        /// <param name="dte2">Unspecified EnvDTE80.DTE2 from EnvDTE80.dll</param>
+        /// <param name="debug">Optional flag of debug mode</param>
+        void load(object dte2, bool debug = false);
 
         /// <summary>
-        /// Version of used library
+        /// Load with DTE2 context
         /// </summary>
-        Bridge.IVersion Version { get; }
+        /// <param name="dte2">Unspecified EnvDTE80.DTE2 from EnvDTE80.dll</param>
+        /// <param name="cfg">Specific settings</param>
+        void load(object dte2, ISettings cfg);
 
         /// <summary>
-        /// All public events of used library
+        /// Load with isolated environment
         /// </summary>
-        IEvent Event { get; }
+        /// <param name="sln">Full path to solution file</param>
+        /// <param name="properties">Global properties for solution</param>
+        /// <param name="debug">Optional flag of debug mode</param>
+        void load(string sln, Dictionary<string, string> properties, bool debug = false);
 
         /// <summary>
-        /// The Build operations of used library
+        /// Load with isolated environment
         /// </summary>
-        IBuild Build { get; }
-
-        /// <summary>
-        /// Settings of used library
-        /// </summary>
-        Bridge.ISettings Settings { get; }
-
-        /// <summary>
-        /// Entry point for core library
-        /// </summary>
-        IEntryPointCore EntryPoint { get; }
+        /// <param name="sln">Full path to solution file</param>
+        /// <param name="properties">Global properties for solution</param>
+        /// <param name="cfg">Specific settings</param>
+        void load(string sln, Dictionary<string, string> properties, ISettings cfg);
     }
 }

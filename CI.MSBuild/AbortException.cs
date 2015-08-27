@@ -23,11 +23,12 @@
 */
 
 using System;
+using Microsoft.Build.Framework;
 
 namespace net.r_eg.vsSBE.CI.MSBuild
 {
     [Serializable]
-    public class AbortException: Exception
+    public class AbortException: LoggerException
     {
         public AbortException()
         {

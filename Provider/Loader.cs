@@ -33,8 +33,9 @@ namespace net.r_eg.vsSBE.Provider
 {
     public class Loader: ILoader
     {
-        public const string GUID = "94ecd13f-15f3-4f51-9afd-17f0275c6266";
-
+        /// <summary>
+        /// Access to library connector
+        /// </summary>
         public ILibrary Library
         {
             get;
@@ -46,15 +47,18 @@ namespace net.r_eg.vsSBE.Provider
         /// </summary>
         public System.Version MinVersion
         {
-            get { return new System.Version(0, 11, 4); }
+            get {
+                return new System.Version(0, 12, 3);
+            }
         }
 
         /// <summary>
-        /// Access to settings
+        /// Provider settings
         /// </summary>
         public ISettings Settings
         {
-            get { return Provider.Settings._; }
+            get;
+            set;
         }
 
         /// <summary>
@@ -62,8 +66,9 @@ namespace net.r_eg.vsSBE.Provider
         /// </summary>
         protected AppDomain domain = null;
 
+
         /// <summary>
-        /// Load library with DTE2-context & Add-In
+        /// Load library with DTE2-context + Add-In
         /// </summary>
         /// <param name="dte2">DTE2-context</param>
         /// <param name="pathAddIn">Path to Add-in.</param>
@@ -74,7 +79,7 @@ namespace net.r_eg.vsSBE.Provider
             if(!Provider.Library.existsIn(path)) {
                 path = findWithRegistry(registryRoot);
             }
-            this.Library = new Library(path, dte2);
+            this.Library = new Library(path, dte2, Settings);
             return Library;
         }
 
@@ -84,13 +89,13 @@ namespace net.r_eg.vsSBE.Provider
         /// <param name="dte2">DTE2-context</param>
         /// <param name="path">Specific path to library.</param>
         /// <param name="createDomain">Create new domain for loading new references into current domain</param>
-        public ILibrary load(object dte2, string path, bool createDomain = false)
+        public ILibrary load(object dte2, string path, bool createDomain)
         {
             if(createDomain) {
-                this.Library = createInNewDomain(path, dte2);
+                this.Library = createInNewDomain(path, dte2, Settings);
             }
             else {
-                this.Library = new Library(path, dte2);
+                this.Library = new Library(path, dte2, Settings);
             }
             return Library;
         }
@@ -102,15 +107,57 @@ namespace net.r_eg.vsSBE.Provider
         /// <param name="properties">Solution properties</param>
         /// <param name="libPath">Specific path to library.</param>
         /// <param name="createDomain">Create new domain for loading new references into current domain</param>
-        public ILibrary load(string solutionFile, Dictionary<string, string> properties, string libPath, bool createDomain = false)
+        public ILibrary load(string solutionFile, Dictionary<string, string> properties, string libPath, bool createDomain)
         {
             if(createDomain) {
-                this.Library = createInNewDomain(libPath, solutionFile, properties);
+                this.Library = createInNewDomain(libPath, solutionFile, properties, Settings);
             }
             else {
-                this.Library = new Library(libPath, solutionFile, properties);
+                this.Library = new Library(libPath, solutionFile, properties, Settings);
             }
             return Library;
+        }
+
+        /// <summary>
+        /// Load library from path with Isolated Environments.
+        /// </summary>
+        /// <param name="solutionFile">Path to .sln file</param>
+        /// <param name="properties">Solution properties</param>
+        /// <param name="libPath">Specific path to library.</param>
+        public ILibrary load(string solutionFile, Dictionary<string, string> properties, string libPath)
+        {
+            return load(solutionFile, properties, libPath, false);
+        }
+
+        /// <summary>
+        /// Load library with DTE2-context from path.
+        /// </summary>
+        /// <param name="dte2">DTE2-context</param>
+        /// <param name="path">Specific path to library.</param>
+        public ILibrary load(object dte2, string path)
+        {
+            return load(dte2, path, false);
+        }
+
+        /// <summary>
+        /// Load library from path with Isolated Environments into domain.
+        /// </summary>
+        /// <param name="domain">Specific domain</param>
+        /// <param name="sln">Full path to .sln file</param>
+        /// <param name="properties">Solution properties</param>
+        /// <param name="lib">Full path to library.</param>
+        public ILibrary loadIn(AppDomain domain, string sln, Dictionary<string, string> properties, string lib)
+        {
+            throw new NotSupportedException("Not implemented for current version.");
+        }
+
+        /// <summary>
+        /// Unload library from selected domain.
+        /// </summary>
+        /// <param name="domain">Specific domain</param>
+        public void unload(AppDomain domain)
+        {
+            throw new NotSupportedException("Not implemented for current version.");
         }
 
         /// <summary>
@@ -123,22 +170,39 @@ namespace net.r_eg.vsSBE.Provider
                 domain = null;
                 return;
             }
-            throw new InvalidOperationException("Not available for this instance. Use the 'createDomain' flag");
+            throw new InvalidOperationException("Not available for this instance. Use another domain.");
         }
 
-        // TODO:
-        protected virtual ILibrary createInNewDomain(params Object[] arguments)
+        public Loader()
         {
-            domain = AppDomain.CreateDomain(String.Format("Library_{0}", GUID), null, new AppDomainSetup() {
-                ApplicationBase = Environment.CurrentDirectory
-            });
 
-            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler((object sender, ResolveEventArgs args) => {
-                return Assembly.LoadFrom(String.Format("{0}\\{1}.dll", 
-                                                        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), 
-                                                        args.Name.Substring(0, args.Name.IndexOf(","))));
-            });
-            return (Library)domain.CreateInstanceAndUnwrap(
+        }
+
+        public Loader(ISettings cfg)
+        {
+            Settings = cfg;
+        }
+
+        /// <summary>
+        /// TODO: Complete remotable objects
+        /// </summary>
+        /// <param name="domain"></param>
+        /// <param name="arguments"></param>
+        /// <returns></returns>
+        protected virtual ILibrary createInDomain(AppDomain domain, params Object[] arguments)
+        {
+            if(domain == null) {
+                throw new Bridge.Exceptions.InitializeException("Domain is empty");
+            }
+
+            //AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler((object sender, ResolveEventArgs args) =>
+            //{
+            //    return Assembly.LoadFrom(String.Format("{0}\\{1}.dll", 
+            //                                            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), 
+            //                                            args.Name.Substring(0, args.Name.IndexOf(","))));
+            //});
+
+            return (ILibrary)domain.CreateInstanceAndUnwrap(
                                         typeof(Library).Assembly.FullName,
                                         typeof(Library).FullName,
                                         false,
@@ -150,28 +214,47 @@ namespace net.r_eg.vsSBE.Provider
                                    );
         }
 
+        protected virtual ILibrary createInNewDomain(params Object[] arguments)
+        {
+            return createInDomain(
+                        AppDomain.CreateDomain(
+                            String.Format("Library_{0}", Provider.Library.GUID), 
+                            null, 
+                            new AppDomainSetup() {
+                                ApplicationBase = Environment.CurrentDirectory
+                            }
+                        ), 
+                        arguments);
+        }
+
         protected string findWithRegistry(string root)
         {
-            if(String.IsNullOrEmpty(root)) {
-                throw new DllNotFoundException(String.Format("Not found '{0}' root is empty for search. Use specific path or provide registryRoot", GUID));
+            if(String.IsNullOrEmpty(root))
+            {
+                throw new DllNotFoundException(
+                    String.Format(
+                        "Not found '{0}' root is empty for search. Use specific path or provide registryRoot",
+                        Provider.Library.GUID
+                    )
+                );
             }
 
             string keypath = String.Format(@"{0}\ExtensionManager\EnabledExtensions", root);
             using(RegistryKey rk = Registry.CurrentUser.OpenSubKey(keypath))
             {
-                string name = rk.GetValueNames().FirstOrDefault(x => x.Contains(GUID));
+                string name = rk.GetValueNames().FirstOrDefault(x => x.Contains(Provider.Library.GUID));
                 if(!String.IsNullOrEmpty(name)) {
                     return extractPath(rk.GetValue(name).ToString());
                 }
             }
-            throw new DllNotFoundException(String.Format("Not found '{0}' with Registry", GUID));
+            throw new DllNotFoundException(String.Format("Not found '{0}' with Registry", Provider.Library.GUID));
         }
 
         protected string extractPath(string file)
         {
             string dir = Path.GetDirectoryName(file);
 
-            if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
+            if(dir[dir.Length - 1] != Path.DirectorySeparatorChar) {
                 dir += Path.DirectorySeparatorChar;
             }
             return dir;

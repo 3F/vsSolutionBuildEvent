@@ -15,19 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
-namespace net.r_eg.vsSBE.API
+namespace net.r_eg.vsSBE.UnifiedTypes
 {
-    public class Settings: Bridge.ISettings
+    /// <summary>
+    /// Represents a unified commands for used environment with commands from DTE
+    /// </summary>
+    public sealed class DTEC
     {
         /// <summary>
-        /// Flag of Debug mode
+        /// Cancel build operation
         /// </summary>
-        public bool DebugMode
-        {
-            get;
-            set;
-        }
+        public const string BuildCancel = "Build.Cancel";
     }
 }

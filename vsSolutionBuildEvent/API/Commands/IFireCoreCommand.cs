@@ -16,18 +16,18 @@
 */
 
 using System;
+using System.Runtime.InteropServices;
+using net.r_eg.vsSBE.Bridge.CoreCommand;
 
-namespace net.r_eg.vsSBE.API
+namespace net.r_eg.vsSBE.API.Commands
 {
-    public class Settings: Bridge.ISettings
+    [Guid("28286176-B1A7-4725-AD38-384D58BC1C29")]
+    public interface IFireCoreCommand
     {
         /// <summary>
-        /// Flag of Debug mode
+        /// Send the core command for all clients.
         /// </summary>
-        public bool DebugMode
-        {
-            get;
-            set;
-        }
+        /// <param name="c"></param>
+        void fire(CoreCommandArgs c);
     }
 }

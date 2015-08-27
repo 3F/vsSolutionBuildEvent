@@ -23,16 +23,22 @@
 */
 
 using System;
-using System.Runtime.InteropServices;
 
-namespace net.r_eg.vsSBE.Bridge
+namespace net.r_eg.vsSBE.Bridge.Exceptions
 {
-    [Guid("D087BD0B-536F-4B21-A86D-973509318200")]
-    public interface ISettings
+    [Serializable]
+    public class InvalidArgumentException: GeneralException
     {
-        /// <summary>
-        /// Control of debug mode.
-        /// </summary>
-        bool DebugMode { get; set; }
+        public InvalidArgumentException(string message)
+            : base(message)
+        {
+
+        }
+
+        public InvalidArgumentException(string message, params object[] args)
+            : base(message, args)
+        {
+
+        }
     }
 }

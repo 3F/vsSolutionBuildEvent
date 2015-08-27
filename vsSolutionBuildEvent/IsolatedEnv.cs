@@ -20,8 +20,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.Build.Evaluation;
+using net.r_eg.vsSBE.API.Commands;
 using net.r_eg.vsSBE.Bridge;
+using net.r_eg.vsSBE.Bridge.CoreCommand;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.UnifiedTypes;
 
 namespace net.r_eg.vsSBE
 {
@@ -106,6 +109,15 @@ namespace net.r_eg.vsSBE
                 Log.nlog.Debug("Accessing to property 'Events' has been disabled in Isolated environment.");
                 return null; 
             }
+        }
+
+        /// <summary>
+        /// Sender of the core commands.
+        /// </summary>
+        public IFireCoreCommand CoreCmdSender
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -236,6 +248,11 @@ namespace net.r_eg.vsSBE
         /// <param name="args">Command arguments</param>
         public void exec(string name, string args = "")
         {
+            if(name == DTEC.BuildCancel) {
+                CoreCmdSender.fire(new CoreCommandArgs() { Type = CoreCommandType.BuildCancel });
+                return;
+            }
+
             Log.nlog.Warn("Disabled for this Environment. Command: '{0}', args: '{1}'", name, args);
         }
 

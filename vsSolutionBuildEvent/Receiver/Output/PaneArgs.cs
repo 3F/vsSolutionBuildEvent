@@ -17,14 +17,15 @@
 
 using System;
 
-namespace net.r_eg.vsSBE.API
+namespace net.r_eg.vsSBE.Receiver.Output
 {
-    public class Settings: Bridge.ISettings
+    [Serializable]
+    public class PaneArgs: EventArgs
     {
         /// <summary>
-        /// Flag of Debug mode
+        /// Raw message
         /// </summary>
-        public bool DebugMode
+        public string Raw
         {
             get;
             set;

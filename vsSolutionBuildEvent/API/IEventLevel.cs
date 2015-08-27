@@ -20,7 +20,7 @@ using net.r_eg.vsSBE.SBEScripts;
 
 namespace net.r_eg.vsSBE.API
 {
-    public interface IEventLevel: Bridge.IEvent
+    public interface IEventLevel: Bridge.IEvent, Bridge.IBuild
     {
         /// <summary>
         /// When the solution has been opened or created

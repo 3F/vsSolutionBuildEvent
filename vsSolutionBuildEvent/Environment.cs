@@ -24,8 +24,11 @@ using Microsoft.Build.Evaluation;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using net.r_eg.vsSBE.API.Commands;
 using net.r_eg.vsSBE.Bridge;
+using net.r_eg.vsSBE.Bridge.CoreCommand;
 using net.r_eg.vsSBE.MSBuild.Exceptions;
+using net.r_eg.vsSBE.UnifiedTypes;
 
 namespace net.r_eg.vsSBE
 {
@@ -54,6 +57,15 @@ namespace net.r_eg.vsSBE
         public EnvDTE.Events Events
         {
             get { return (Dte2 == null)? null : Dte2.Events; }
+        }
+
+        /// <summary>
+        /// Sender of the core commands.
+        /// </summary>
+        public IFireCoreCommand CoreCmdSender
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -305,6 +317,10 @@ namespace net.r_eg.vsSBE
         /// <param name="args">Command arguments</param>
         public virtual void exec(string name, string args = "")
         {
+            if(name == DTEC.BuildCancel) {
+                CoreCmdSender.fire(new CoreCommandArgs() { Type = CoreCommandType.BuildCancel });
+            }
+
             ((EnvDTE.DTE)Dte2).ExecuteCommand(name, (args == null)? String.Empty : args);
         }
 
@@ -422,7 +438,7 @@ namespace net.r_eg.vsSBE
                 if(String.IsNullOrEmpty(dir)) {
                     prop["DevEnvDir"] = MSBuild.Parser.PROP_VALUE_DEFAULT;
                 }
-                else if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
+                else if(dir[dir.Length - 1] != Path.DirectorySeparatorChar) {
                     dir += Path.DirectorySeparatorChar;
                 }
                 prop["DevEnvDir"] = dir;

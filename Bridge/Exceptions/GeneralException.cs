@@ -23,16 +23,44 @@
 */
 
 using System;
-using System.Runtime.InteropServices;
 
-namespace net.r_eg.vsSBE.Bridge
+namespace net.r_eg.vsSBE.Bridge.Exceptions
 {
-    [Guid("D087BD0B-536F-4B21-A86D-973509318200")]
-    public interface ISettings
+    [Serializable]
+    public class GeneralException: NotSupportedException
     {
-        /// <summary>
-        /// Control of debug mode.
-        /// </summary>
-        bool DebugMode { get; set; }
+        public GeneralException()
+        {
+
+        }
+
+        public GeneralException(string message)
+            : base(message)
+        {
+
+        }
+
+        public GeneralException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+
+        }
+
+        public GeneralException(string message, params object[] args)
+            : base(format(ref message, args))
+        {
+
+        }
+
+        public GeneralException(string message, Exception innerException, params object[] args)
+            : base(format(ref message, args), innerException)
+        {
+
+        }
+
+        protected static string format(ref string message, params object[] args)
+        {
+            return String.Format(message, args);
+        }
     }
 }

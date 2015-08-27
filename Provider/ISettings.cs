@@ -31,8 +31,13 @@ namespace net.r_eg.vsSBE.Provider
     public interface ISettings
     {
         /// <summary>
-        /// Additional details for all elements in provider namespace
+        /// Additional details for all provider elements
         /// </summary>
         bool DebugMode { get; set; }
+
+        /// <summary>
+        /// Settings for library
+        /// </summary>
+        Bridge.ISettings LibSettings { get; set; }
     }
 }

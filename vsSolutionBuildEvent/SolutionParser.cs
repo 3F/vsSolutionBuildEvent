@@ -211,7 +211,7 @@ namespace net.r_eg.vsSBE
         protected string getPathFrom(string file)
         {
             string dir = Path.GetDirectoryName(file);
-            if(dir.ElementAt(dir.Length - 1) != Path.DirectorySeparatorChar) {
+            if(dir[dir.Length - 1] != Path.DirectorySeparatorChar) {
                 dir += Path.DirectorySeparatorChar;
             }
             return dir;

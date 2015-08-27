@@ -51,8 +51,8 @@ namespace net.r_eg.vsSBE.Actions
                 case 2: {
                     //pair as: (), {}, [] ...
                     //e.g.: (echo str&echo.&echo str) >> out
-                    string wL = wrapper.ElementAt(0).ToString();
-                    string wR = wrapper.ElementAt(1).ToString();
+                    string wL = wrapper[0].ToString();
+                    string wR = wrapper[1].ToString();
                     script = string.Format("{0}{1}{2}", wL, script.Replace(wL, "\\" + wL).Replace(wR, "\\" + wR), wR);
                     break;
                 }

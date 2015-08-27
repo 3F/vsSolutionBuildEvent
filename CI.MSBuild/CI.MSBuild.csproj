@@ -45,6 +45,9 @@
   <ItemGroup>
     <Compile Include="AbortException.cs" />
     <Compile Include="EventManager.cs" />
+    <Compile Include="InitializerProperties.cs" />
+    <Compile Include="Initializer.cs" />
+    <Compile Include="LibSettings.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="ILog.cs" />
     <Compile Include="Project.cs" />

@@ -24,10 +24,9 @@ using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.UI.Xaml;
-using NLog;
-using NLog.Targets;
 
 namespace net.r_eg.vsSBE
 {
@@ -237,27 +236,14 @@ namespace net.r_eg.vsSBE
 
         private void initAppEvents()
         {
-            Event = new API.EventLevel(Dte2);
+            Event = new API.EventLevel();
+            ((IEntryPointCore)Event).load(Dte2);
 
             _owpListener = new Receiver.Output.OWP(Event.Environment, "Build");
             _owpListener.attachEvents();
-            _owpListener.raw += new Receiver.Output.OWP.MessageEvent((string raw) => {
-                ((Bridge.IBuild)Event).onBuildRaw(raw);
-            });
-        }
-
-        private MethodCallTarget configureLogger()
-        {
-            MethodCallTarget target = new MethodCallTarget() {
-                ClassName   = typeof(Log).AssemblyQualifiedName,
-                MethodName  = "nprint"
+            _owpListener.Receiving += (object sender, Receiver.Output.PaneArgs e) => {
+                ((Bridge.IBuild)Event).onBuildRaw(e.Raw);
             };
-            target.Parameters.Add(new MethodCallParameter("${level:uppercase=true}"));
-            target.Parameters.Add(new MethodCallParameter("${message}"));
-            target.Parameters.Add(new MethodCallParameter("${ticks}"));
-
-            NLog.Config.SimpleConfigurator.ConfigureForTargetLogging(target, LogLevel.Trace);
-            return target;
         }
 
         /// <summary>
@@ -366,9 +352,6 @@ namespace net.r_eg.vsSBE
 
             try
             {
-                MethodCallTarget target = configureLogger();
-                Log.nlog.Trace(string.Format(CultureInfo.CurrentCulture, "Log('{0}') is configured for: '{1}'", target.ClassName, ToString()));
-
                 initAppEvents();
 
                 OleMenuCommandService mcs = (OleMenuCommandService)GetService(typeof(IMenuCommandService));

@@ -22,17 +22,40 @@
  * THE SOFTWARE.
 */
 
-using System;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
-namespace net.r_eg.vsSBE.Bridge
+namespace net.r_eg.vsSBE.CI.MSBuild
 {
-    [Guid("D087BD0B-536F-4B21-A86D-973509318200")]
-    public interface ISettings
+    internal struct InitializerProperties
     {
         /// <summary>
-        /// Control of debug mode.
+        /// Full path to solution file.
         /// </summary>
-        bool DebugMode { get; set; }
+        public string SolutionFile;
+
+        /// <summary>
+        /// Specifies properties for solution.
+        /// </summary>
+        public Dictionary<string, string> Properties;
+
+        /// <summary>
+        /// Specifies raw Property from MSBuild Command-Line.
+        /// </summary>
+        public string PropertyCmdRaw;
+
+        /// <summary>
+        /// The targets for msbuild job.
+        /// </summary>
+        public string Targets;
+
+        /// <summary>
+        /// Full path to library.
+        /// </summary>
+        public string LibraryPath;
+
+        /// <summary>
+        /// User-defined arguments to CIM manager.
+        /// </summary>
+        public Dictionary<string, string> Args;
     }
 }

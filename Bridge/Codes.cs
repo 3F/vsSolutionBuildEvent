@@ -22,17 +22,21 @@
  * THE SOFTWARE.
 */
 
-using System;
-using System.Runtime.InteropServices;
-
 namespace net.r_eg.vsSBE.Bridge
 {
-    [Guid("D087BD0B-536F-4B21-A86D-973509318200")]
-    public interface ISettings
+    /// <summary>
+    /// Represents a different codes for our library
+    /// </summary>
+    public sealed class Codes
     {
         /// <summary>
-        /// Control of debug mode.
+        /// Unspecified Success operation
         /// </summary>
-        bool DebugMode { get; set; }
+        public const int Success = 0;
+
+        /// <summary>
+        /// Unspecified Failed operation
+        /// </summary>
+        public const int Failed = 1;
     }
 }

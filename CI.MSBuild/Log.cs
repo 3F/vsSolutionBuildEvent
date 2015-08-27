@@ -33,6 +33,16 @@ namespace net.r_eg.vsSBE.CI.MSBuild
     internal class Log: ILog
     {
         /// <summary>
+        /// Flag of Diagnostic mode
+        /// </summary>
+        public bool IsDiagnostic
+        {
+            get {
+                return (level == LoggerVerbosity.Diagnostic);
+            }
+        }
+
+        /// <summary>
         /// Level for this instance.
         /// </summary>
         protected LoggerVerbosity level;
@@ -54,7 +64,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         /// <param name="args"></param>
         public void debug(string message, params object[] args)
         {
-            if(level == LoggerVerbosity.Diagnostic) {
+            if(IsDiagnostic) {
                 info(message, args);
             }
         }

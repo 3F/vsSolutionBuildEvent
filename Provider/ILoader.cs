@@ -42,12 +42,12 @@ namespace net.r_eg.vsSBE.Provider
         System.Version MinVersion { get; }
 
         /// <summary>
-        /// Access to settings
+        /// Access to provider settings
         /// </summary>
-        ISettings Settings { get; }
+        ISettings Settings { get; set; }
 
         /// <summary>
-        /// Load library with DTE2-context & Add-In
+        /// Load library with DTE2-context + Add-In
         /// </summary>
         /// <param name="dte2">DTE2-context</param>
         /// <param name="pathAddIn">Path to Add-in.</param>
@@ -61,8 +61,16 @@ namespace net.r_eg.vsSBE.Provider
         /// <param name="dte2">DTE2-context</param>
         /// <param name="path">Specific path to library.</param>
         /// <param name="createDomain">Create new domain for loading new references into current domain</param>
-        ILibrary load(object dte2, string path, bool createDomain = false);
+        [Obsolete("Deprecated and can be removed in new versions.")]
+        ILibrary load(object dte2, string path, bool createDomain);
         ////ILibrary load(EnvDTE80.DTE2 dte2, string path, bool createDomain = false); // deprecated - heavy dependencies
+
+        /// <summary>
+        /// Load library with DTE2-context from path.
+        /// </summary>
+        /// <param name="dte2">DTE2-context</param>
+        /// <param name="path">Specific path to library.</param>
+        ILibrary load(object dte2, string path);
 
         /// <summary>
         /// Load library from path with Isolated Environments.
@@ -71,13 +79,37 @@ namespace net.r_eg.vsSBE.Provider
         /// <param name="properties">Solution properties</param>
         /// <param name="libPath">Specific path to library.</param>
         /// <param name="createDomain">Create new domain for loading new references into current domain</param>
-        ILibrary load(string solutionFile, Dictionary<string, string> properties, string libPath, bool createDomain = false);
+        [Obsolete("Deprecated and can be removed in new versions.")]
+        ILibrary load(string solutionFile, Dictionary<string, string> properties, string libPath, bool createDomain);
 
         /// <summary>
-        /// Unload the loaded library.
+        /// Load library from path with Isolated Environments.
+        /// </summary>
+        /// <param name="solutionFile">Path to .sln file</param>
+        /// <param name="properties">Solution properties</param>
+        /// <param name="libPath">Specific path to library.</param>
+        ILibrary load(string solutionFile, Dictionary<string, string> properties, string libPath);
+
+        /// <summary>
+        /// Load library from path with Isolated Environments into domain.
+        /// </summary>
+        /// <param name="domain">Specific domain</param>
+        /// <param name="sln">Full path to .sln file</param>
+        /// <param name="properties">Solution properties</param>
+        /// <param name="lib">Full path to library.</param>
+        ILibrary loadIn(AppDomain domain, string sln, Dictionary<string, string> properties, string lib);
+
+        /// <summary>
+        /// Unload of the loaded library.
         /// Some methods of loading may use additional domain for loading new references,
-        /// some not.. so this method can also throwing a some exception
+        /// some not.. so this method is also should throw some exception
         /// </summary>
         void unload();
+
+        /// <summary>
+        /// Unload library from selected domain.
+        /// </summary>
+        /// <param name="domain">Specific domain</param>
+        void unload(AppDomain domain);
     }
 }

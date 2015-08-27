@@ -25,14 +25,42 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace net.r_eg.vsSBE.Bridge
+namespace net.r_eg.vsSBE.Bridge.CoreCommand
 {
-    [Guid("D087BD0B-536F-4B21-A86D-973509318200")]
-    public interface ISettings
+    /// <summary>
+    /// Represents available commands for core library
+    /// </summary>
+    [Guid("52F17F05-7097-4E5E-8263-0696C9EA4205")]
+    public enum CoreCommandType
     {
         /// <summary>
-        /// Control of debug mode.
+        /// Command by default
         /// </summary>
-        bool DebugMode { get; set; }
+        Default = Nop,
+
+        /// <summary>
+        /// No Operation
+        /// </summary>
+        Nop = 0x90,
+
+        /// <summary>
+        /// Returns latest pushed command
+        /// </summary>
+        LastCommand = 0x100,
+
+        /// <summary>
+        /// To abort latest command if it's possible
+        /// </summary>
+        AbortCommand = 0x101,
+
+        /// <summary>
+        /// Unspecified raw command
+        /// </summary>
+        RawCommand = 0x110,
+
+        /// <summary>
+        /// Cancel build operation if it's available for abort
+        /// </summary>
+        BuildCancel = 0x200,
     }
 }

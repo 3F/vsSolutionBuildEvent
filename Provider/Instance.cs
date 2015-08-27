@@ -23,16 +23,25 @@
 */
 
 using System;
-using System.Runtime.InteropServices;
+using System.Linq;
+using System.Reflection;
 
-namespace net.r_eg.vsSBE.Bridge
+namespace net.r_eg.vsSBE.Provider
 {
-    [Guid("D087BD0B-536F-4B21-A86D-973509318200")]
-    public interface ISettings
+    /// <summary>
+    /// Helper for getting instance
+    /// </summary>
+    /// <typeparam name="T">Type of the instance</typeparam>
+    public struct Instance<T>
     {
-        /// <summary>
-        /// Control of debug mode.
-        /// </summary>
-        bool DebugMode { get; set; }
+        public static T from(Assembly asm, params object[] args)
+        {
+            foreach(Type type in asm.GetTypes()) {
+                if(type.IsClass && !type.IsAbstract && type.GetInterfaces().Contains(typeof(T))) {
+                    return (T)Activator.CreateInstance(type, args);
+                }
+            }
+            throw new DllNotFoundException(String.Format("Incorrect Assembly('{0}') for type '{1}'", asm.FullName, typeof(T)));
+        }
     }
 }

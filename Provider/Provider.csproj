@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ILibrary.cs" />
+    <Compile Include="Instance.cs" />
     <Compile Include="ILoader.cs" />
     <Compile Include="ISettings.cs" />
     <Compile Include="Library.cs" />

@@ -25,14 +25,22 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace net.r_eg.vsSBE.Bridge
+namespace net.r_eg.vsSBE.Bridge.CoreCommand
 {
-    [Guid("D087BD0B-536F-4B21-A86D-973509318200")]
-    public interface ISettings
+    /// <summary>
+    /// Specifies work for commands from core library
+    /// </summary>
+    [Guid("9DD00E57-3ED9-4561-84B3-895ACEA3166C")]
+    public interface ICoreCommand
     {
         /// <summary>
-        /// Control of debug mode.
+        /// Standard available commands.
         /// </summary>
-        bool DebugMode { get; set; }
+        CoreCommandType Type { get; set; }
+
+        /// <summary>
+        /// Arguments for current command.
+        /// </summary>
+        object[] Args { get; set; }
     }
 }

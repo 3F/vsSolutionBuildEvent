@@ -25,13 +25,21 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
+using net.r_eg.vsSBE.Bridge;
 
 namespace net.r_eg.vsSBE.Provider
 {
     internal class Library: MarshalByRefObject, ILibrary
     {
+        /// <summary>
+        /// The Guid of main Package
+        /// </summary>
+        public const string GUID = "94ecd13f-15f3-4f51-9afd-17f0275c6266";
+
+        /// <summary>
+        /// The file name of library
+        /// </summary>
         public const string NAME = "vsSolutionBuildEvent.dll";
 
         /// <summary>
@@ -63,7 +71,7 @@ namespace net.r_eg.vsSBE.Provider
         /// <summary>
         /// All public events of used library
         /// </summary>
-        public Bridge.IEvent Event
+        public IEvent Event
         {
             get;
             protected set;
@@ -72,7 +80,7 @@ namespace net.r_eg.vsSBE.Provider
         /// <summary>
         /// The Build operations of used library
         /// </summary>
-        public Bridge.IBuild Build
+        public IBuild Build
         {
             get;
             protected set;
@@ -88,34 +96,29 @@ namespace net.r_eg.vsSBE.Provider
         }
 
         /// <summary>
-        /// Helper for getting instance
+        /// Entry point for core library
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        protected struct Instance<T>
+        public IEntryPointCore EntryPoint
         {
-            public static T from(Assembly asm, params object[] args)
-            {
-                foreach(Type type in asm.GetTypes()) {
-                    if(type.IsClass && !type.IsAbstract && type.GetInterfaces().Contains(typeof(T))) {
-                        return (T)Activator.CreateInstance(type, args);
-                    }
-                }
-                throw new DllNotFoundException(String.Format("incorrect library for type '{0}'", typeof(T)));
-            }
-        }
-
-        /// <summary>
-        /// Access to provider settings
-        /// </summary>
-        protected ISettings PSettings
-        {
-            get { return Provider.Settings._; }
+            get;
+            protected set;
         }
 
         /// <summary>
         /// Current Domain
         /// </summary>
         protected AppDomain domain;
+
+        /// <summary>
+        /// Provider settings
+        /// </summary>
+        protected Provider.ISettings config;
+
+        /// <summary>
+        /// Object synch.
+        /// </summary>
+        private Object _lock = new Object();
+
 
         /// <summary>
         /// Checking existence of library for specific path
@@ -134,25 +137,75 @@ namespace net.r_eg.vsSBE.Provider
         /// <param name="dte2">DTE2 instance</param>
         public Library(string libpath, object dte2)
         {
-            initLib(prepare(libpath), dte2, PSettings.DebugMode);
+            config = new Settings();
+
+            initLib(prepare(libpath));
+            EntryPoint.load(dte2);
+        }
+
+        /// <summary>
+        /// Init library with full environment
+        /// </summary>
+        /// <param name="libpath">Path to library</param>
+        /// <param name="dte2">DTE2 instance</param>
+        /// <param name="cfg">Provider settings</param>
+        public Library(string libpath, object dte2, ISettings cfg)
+        {
+            config = cfg;
+            initLib(prepare(libpath));
+
+            if(cfg.LibSettings != null) {
+                EntryPoint.load(dte2, cfg.LibSettings);
+            }
+            else {
+                EntryPoint.load(dte2);
+            }
         }
 
         /// <summary>
         /// Init library with isolated environment
         /// </summary>
-        /// <param name="libpath">Path to library</param>
-        /// <param name="solutionFile">Path to .sln file</param>
+        /// <param name="lib">Path to library</param>
+        /// <param name="sln">Path to .sln file</param>
         /// <param name="properties">Solution properties</param>
-        public Library(string libpath, string solutionFile, Dictionary<string, string> properties)
+        public Library(string lib, string sln, Dictionary<string, string> properties)
         {
-            initLib(prepare(libpath), solutionFile, properties, PSettings.DebugMode);
+            config = new Settings();
+
+            initLib(prepare(lib));
+            EntryPoint.load(sln, properties);
         }
 
-        protected void initLib(Assembly lib, params object[] args)
+        /// <summary>
+        /// Init library with isolated environment
+        /// </summary>
+        /// <param name="lib">Path to library</param>
+        /// <param name="sln">Path to .sln file</param>
+        /// <param name="properties">Solution properties</param>
+        /// <param name="cfg">Provider settings</param>
+        public Library(string lib, string sln, Dictionary<string, string> properties, ISettings cfg)
         {
-            Event       = Instance<Bridge.IEvent>.from(lib, args);
-            Build       = (Bridge.IBuild)Event;
-            Settings    = Instance<Bridge.ISettings>.from(lib);
+            config = cfg;
+            initLib(prepare(lib));
+
+            if(cfg.LibSettings != null) {
+                EntryPoint.load(sln, properties, cfg.LibSettings);
+            }
+            else {
+                EntryPoint.load(sln, properties);
+            }
+        }
+
+        /// <summary>
+        /// Initialize library
+        /// </summary>
+        /// <param name="lib"></param>
+        protected void initLib(Assembly lib)
+        {
+            Event       = Instance<IEvent>.from(lib);
+            EntryPoint  = (IEntryPointCore)Event;
+            Build       = (IBuild)Event;
+            Settings    = config.LibSettings;
             Version     = Instance<Bridge.IVersion>.from(lib);
         }
 
@@ -166,27 +219,35 @@ namespace net.r_eg.vsSBE.Provider
             Dllpath = path;
 
             domain = AppDomain.CurrentDomain;
-            domain.AssemblyResolve += new ResolveEventHandler((object sender, ResolveEventArgs args) =>
-            {
-                if(String.IsNullOrEmpty(args.Name)) {
-                    return null;
-                }
-
-                try {
-                    int split = args.Name.IndexOf(",");
-                    return Assembly.LoadFrom(String.Format("{0}{1}.dll", 
-                                                            path, 
-                                                            args.Name.Substring(0, (split == -1)? args.Name.Length : split)));
-                }
-                catch(Exception ex) {
-                    if(PSettings.DebugMode) {
-                        Console.WriteLine("Use other resolver for '{0}' :: {1}", args.Name, ex.Message);
-                    }
-                }
-                return null;
-            });
+            lock(_lock) {
+                domain.AssemblyResolve -= asmResolver;
+                domain.AssemblyResolve += asmResolver;
+            }
 
             return Assembly.LoadFile(FullName);
+        }
+
+        private Assembly asmResolver(object sender, ResolveEventArgs args)
+        {
+            if(String.IsNullOrEmpty(args.Name)) {
+                return null;
+            }
+
+            try {
+                int split = args.Name.IndexOf(",");
+                return Assembly.LoadFrom(String.Format("{0}{1}.dll",
+                                                        Dllpath, 
+                                                        args.Name.Substring(0, (split == -1)? args.Name.Length : split)));
+            }
+            catch(Exception ex)
+            {
+                //TODO: logger
+                if(config.DebugMode) {
+                    Console.WriteLine("Use other resolver for '{0}' :: {1}", args.Name, ex.Message);
+                }
+            }
+
+            return null;
         }
     }
 }

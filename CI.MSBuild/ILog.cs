@@ -27,6 +27,11 @@ namespace net.r_eg.vsSBE.CI.MSBuild
     internal interface ILog
     {
         /// <summary>
+        /// Flag of Diagnostic mode
+        /// </summary>
+        bool IsDiagnostic { get; }
+
+        /// <summary>
         /// Message for information level.
         /// </summary>
         /// <param name="message"></param>

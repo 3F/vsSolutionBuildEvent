@@ -22,17 +22,19 @@
  * THE SOFTWARE.
 */
 
-using System;
-using System.Runtime.InteropServices;
+using net.r_eg.vsSBE.Bridge;
 
-namespace net.r_eg.vsSBE.Bridge
+namespace net.r_eg.vsSBE.CI.MSBuild
 {
-    [Guid("D087BD0B-536F-4B21-A86D-973509318200")]
-    public interface ISettings
+    internal struct LibSettings: ISettings
     {
         /// <summary>
         /// Control of debug mode.
         /// </summary>
-        bool DebugMode { get; set; }
+        public bool DebugMode
+        {
+            get;
+            set;
+        }
     }
 }

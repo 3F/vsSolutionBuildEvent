@@ -25,14 +25,24 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace net.r_eg.vsSBE.Bridge
+namespace net.r_eg.vsSBE.Bridge.CoreCommand
 {
-    [Guid("D087BD0B-536F-4B21-A86D-973509318200")]
-    public interface ISettings
+    [Serializable]
+    [ComVisible(true)]
+    public class CoreCommandRawArgs: CoreCommandArgs, ICoreCommand, ICoreCommandRaw
     {
         /// <summary>
-        /// Control of debug mode.
+        /// Unspecified mixed raw command.
         /// </summary>
-        bool DebugMode { get; set; }
+        public object Raw
+        {
+            get;
+            set;
+        }
+
+        public CoreCommandRawArgs()
+        {
+            Type = CoreCommandType.RawCommand;
+        }
     }
 }

@@ -16,10 +16,13 @@
 */
 
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using net.r_eg.vsSBE.API.Commands;
 using net.r_eg.vsSBE.Bridge;
 
 namespace net.r_eg.vsSBE
 {
+    [Guid("27F04A53-A0B9-431B-83FE-827AC09FB127")]
     public interface IEnvironment
     {
         /// <summary>
@@ -56,6 +59,11 @@ namespace net.r_eg.vsSBE
         /// Events in the extensibility model
         /// </summary>
         EnvDTE.Events Events { get; }
+
+        /// <summary>
+        /// Sender of the core commands.
+        /// </summary>
+        IFireCoreCommand CoreCmdSender { get; set; }
 
         /// <summary>
         /// Path to solution file

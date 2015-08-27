@@ -27,12 +27,10 @@ namespace net.r_eg.vsSBE.Receiver.Output
     /// </summary>
     public class OWP
     {
-        public delegate void MessageEvent(string data);
-
         /// <summary>
-        /// Raw message
+        /// When is receiving data from pane
         /// </summary>
-        public event MessageEvent raw = delegate(string data) { };
+        public event EventHandler<PaneArgs> Receiving = delegate(object sender, PaneArgs e) { };
 
         /// <summary>
         /// Events of selected pane/s.
@@ -113,7 +111,7 @@ namespace net.r_eg.vsSBE.Receiver.Output
                     dataList.RemoveAt(0);
                 }
 
-                raw(envelope);
+                Receiving(this, new PaneArgs() { Raw = envelope });
             }
 
             if(dataList.Count > 0) {

@@ -92,7 +92,7 @@ namespace net.r_eg.vsSBE
                 return String.Empty;
             }
 
-            if(path.ElementAt(path.Length - 1) != Path.DirectorySeparatorChar) {
+            if(path[path.Length - 1] != Path.DirectorySeparatorChar) {
                 path += Path.DirectorySeparatorChar;
             }
             return path;
