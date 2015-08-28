@@ -202,9 +202,9 @@ namespace net.r_eg.vsSBE.Provider
         /// <param name="lib"></param>
         protected void initLib(Assembly lib)
         {
-            Event       = Instance<IEvent>.from(lib);
-            EntryPoint  = (IEntryPointCore)Event;
-            Build       = (IBuild)Event;
+            EntryPoint  = Instance<IEntryPointCore>.from(lib);
+            Event       = (IEvent)EntryPoint;
+            Build       = (IBuild)EntryPoint;
             Settings    = config.LibSettings;
             Version     = Instance<Bridge.IVersion>.from(lib);
         }

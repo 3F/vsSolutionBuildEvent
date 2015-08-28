@@ -24,36 +24,35 @@
 
 using System;
 using System.Runtime.InteropServices;
-using Microsoft.VisualStudio.Shell.Interop;
 
 namespace net.r_eg.vsSBE.Bridge
 {
-    [Guid("FD4E35DB-9509-4353-9F2A-C31B7B1E63B8")]
-    public interface IEvent: IEventLight, IEventLight2
+    [Guid("7631EC6E-A74C-464E-AEA2-19EB6F8A6780")]
+    public interface IEvent2: IEventLight, IEventLight2
     {
         /// <summary>
         /// 'PRE' of Project.
         /// Before a project configuration begins to build.
         /// </summary>
-        /// <param name="pHierProj">Pointer to a hierarchy project object.</param>
-        /// <param name="pCfgProj">Pointer to a configuration project object.</param>
-        /// <param name="pCfgSln">Pointer to a configuration solution object.</param>
+        /// <param name="pHierProj">Unspecified IVsHierarchy (Microsoft.VisualStudio.Shell.Interop.dll) Pointer to a hierarchy project object.</param>
+        /// <param name="pCfgProj">Unspecified IVsCfg (Microsoft.VisualStudio.Shell.Interop.dll) Pointer to a configuration project object.</param>
+        /// <param name="pCfgSln">Unspecified IVsCfg (Microsoft.VisualStudio.Shell.Interop.dll) Pointer to a configuration solution object.</param>
         /// <param name="dwAction">Double word containing the action.</param>
         /// <param name="pfCancel">Pointer to a flag indicating cancel.</param>
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
-        int onProjectPre(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel);
+        int onProjectPre(object pHierProj, object pCfgProj, object pCfgSln, uint dwAction, ref int pfCancel);
 
         /// <summary>
         /// 'POST' of Project.
         /// After a project configuration is finished building.
         /// </summary>
-        /// <param name="pHierProj">Pointer to a hierarchy project object.</param>
-        /// <param name="pCfgProj">Pointer to a configuration project object.</param>
-        /// <param name="pCfgSln">Pointer to a configuration solution object.</param>
+        /// <param name="pHierProj">Unspecified IVsHierarchy (Microsoft.VisualStudio.Shell.Interop.dll) Pointer to a hierarchy project object.</param>
+        /// <param name="pCfgProj">Unspecified IVsCfg (Microsoft.VisualStudio.Shell.Interop.dll) Pointer to a configuration project object.</param>
+        /// <param name="pCfgSln">Unspecified IVsCfg (Microsoft.VisualStudio.Shell.Interop.dll) Pointer to a configuration solution object.</param>
         /// <param name="dwAction">Double word containing the action.</param>
         /// <param name="fSuccess">Flag indicating success.</param>
         /// <param name="fCancel">Flag indicating cancel.</param>
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
-        int onProjectPost(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel);
+        int onProjectPost(object pHierProj, object pCfgProj, object pCfgSln, uint dwAction, int fSuccess, int fCancel);
     }
 }

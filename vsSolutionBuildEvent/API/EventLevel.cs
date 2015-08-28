@@ -18,11 +18,11 @@
 using System;
 using System.Collections.Generic;
 using EnvDTE80;
-using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.API.Commands;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Bridge.CoreCommand;
+using net.r_eg.vsSBE.Clients;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.Scripts;
 using NLog;
@@ -30,6 +30,9 @@ using NLog.Targets;
 
 namespace net.r_eg.vsSBE.API
 {
+    /// <summary>
+    /// TODO: add events for client library instead of direct call
+    /// </summary>
     public class EventLevel: IEventLevel, IEntryPointCore, IFireCoreCommand
     {
         /// <summary>
@@ -85,6 +88,11 @@ namespace net.r_eg.vsSBE.API
         protected EnvDTE.CommandEvents cmdEvents;
 
         /// <summary>
+        /// Access to client library
+        /// </summary>
+        protected IClientLibrary clientLib = new ClientLibrary();
+
+        /// <summary>
         /// object synch.
         /// </summary>
         private Object _lock = new Object();
@@ -111,6 +119,8 @@ namespace net.r_eg.vsSBE.API
             
             this.Environment = new Environment((DTE2)dte2);
             init();
+
+            clientLib.tryLoad(this, dte2);
         }
 
         /// <summary>
@@ -136,6 +146,8 @@ namespace net.r_eg.vsSBE.API
 
             this.Environment = new IsolatedEnv(sln, properties);
             init();
+
+            clientLib.tryLoad(this, sln, properties);
         }
 
         /// <summary>
@@ -143,32 +155,38 @@ namespace net.r_eg.vsSBE.API
         /// Called before any build actions have begun.
         /// </summary>
         /// <param name="pfCancelUpdate">Pointer to a flag indicating cancel update.</param>
-        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onPre(ref int pfCancelUpdate)
         {
             try {
-                return Action.bindPre(ref pfCancelUpdate);
+                int ret = Action.bindPre(ref pfCancelUpdate);
+
+                clientLib.Event.onPre(ref pfCancelUpdate);
+                return ret;
             }
             catch(Exception ex) {
                 Log.nlog.Error("Failed Solution.Pre-binding: '{0}'", ex.Message);
             }
-            return VSConstants.S_FALSE;
+            return Codes.Failed;
         }
 
         /// <summary>
         /// 'Cancel/Abort' of the solution.
         /// Called when a build is being cancelled.
         /// </summary>
-        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onCancel()
         {
             try {
-                return Action.bindCancel();
+                int ret = Action.bindCancel();
+
+                clientLib.Event.onCancel();
+                return ret;
             }
             catch(Exception ex) {
                 Log.nlog.Error("Failed Solution.Cancel-binding: '{0}'", ex.Message);
             }
-            return VSConstants.S_FALSE;
+            return Codes.Failed;
         }
 
         /// <summary>
@@ -178,20 +196,23 @@ namespace net.r_eg.vsSBE.API
         /// <param name="fSucceeded">true if no update actions failed.</param>
         /// <param name="fModified">true if any update action succeeded.</param>
         /// <param name="fCancelCommand">true if update actions were canceled.</param>
-        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onPost(int fSucceeded, int fModified, int fCancelCommand)
         {
-            try {
+            try
+            {
                 int ret = Action.bindPost(fSucceeded, fModified, fCancelCommand);
                 if(Action.reset()) {
                     uvariable.unsetAll();
                 }
+
+                clientLib.Event.onPost(fSucceeded, fModified, fCancelCommand);
                 return ret;
             }
             catch(Exception ex) {
                 Log.nlog.Error("Failed Solution.Post-binding: '{0}'", ex.Message);
             }
-            return VSConstants.S_FALSE;
+            return Codes.Failed;
         }
 
         /// <summary>
@@ -203,16 +224,19 @@ namespace net.r_eg.vsSBE.API
         /// <param name="pCfgSln">Pointer to a configuration solution object.</param>
         /// <param name="dwAction">Double word containing the action.</param>
         /// <param name="pfCancel">Pointer to a flag indicating cancel.</param>
-        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onProjectPre(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel)
         {
             try {
-                return Action.bindProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel);
+                int ret = Action.bindProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel);
+
+                clientLib.Event.onProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel);
+                return ret;
             }
             catch(Exception ex) {
                 Log.nlog.Error("Failed Project.Pre-binding: '{0}'", ex.Message);
             }
-            return VSConstants.S_FALSE;
+            return Codes.Failed;
         }
 
         /// <summary>
@@ -220,16 +244,19 @@ namespace net.r_eg.vsSBE.API
         /// Before a project configuration begins to build.
         /// </summary>
         /// <param name="project">Project name.</param>
-        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onProjectPre(string project)
         {
             try {
-                return Action.bindProjectPre(project);
+                int ret = Action.bindProjectPre(project);
+
+                clientLib.Event.onProjectPre(project);
+                return ret;
             }
             catch(Exception ex) {
                 Log.nlog.Error("Failed Project.Pre-binding/simple: '{0}'", ex.Message);
             }
-            return VSConstants.S_FALSE;
+            return Codes.Failed;
         }
 
         /// <summary>
@@ -242,16 +269,19 @@ namespace net.r_eg.vsSBE.API
         /// <param name="dwAction">Double word containing the action.</param>
         /// <param name="fSuccess">Flag indicating success.</param>
         /// <param name="fCancel">Flag indicating cancel.</param>
-        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onProjectPost(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
         {
             try {
-                return Action.bindProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
+                int ret = Action.bindProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
+
+                clientLib.Event.onProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
+                return ret;
             }
             catch(Exception ex) {
                 Log.nlog.Error("Failed Project.Post-binding: '{0}'", ex.Message);
             }
-            return VSConstants.S_FALSE;
+            return Codes.Failed;
         }
 
         /// <summary>
@@ -260,16 +290,19 @@ namespace net.r_eg.vsSBE.API
         /// </summary>
         /// <param name="project">Project name.</param>
         /// <param name="fSuccess">Flag indicating success.</param>
-        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onProjectPost(string project, int fSuccess)
         {
             try {
-                return Action.bindProjectPost(project, fSuccess);
+                int ret = Action.bindProjectPost(project, fSuccess);
+
+                clientLib.Event.onProjectPost(project, fSuccess);
+                return ret;
             }
             catch(Exception ex) {
                 Log.nlog.Error("Failed Project.Post-binding/simple: '{0}'", ex.Message);
             }
-            return VSConstants.S_FALSE;
+            return Codes.Failed;
         }
 
         /// <summary>
@@ -280,16 +313,19 @@ namespace net.r_eg.vsSBE.API
         /// <param name="customIn">Custom input parameters.</param>
         /// <param name="customOut">Custom output parameters.</param>
         /// <param name="cancelDefault">Whether the command has been cancelled.</param>
-        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onCommandDtePre(string guid, int id, object customIn, object customOut, ref bool cancelDefault)
         {
             try {
-                return Action.bindCommandDtePre(guid, id, customIn, customOut, ref cancelDefault);
+                int ret = Action.bindCommandDtePre(guid, id, customIn, customOut, ref cancelDefault);
+
+                clientLib.Event.onCommandDtePre(guid, id, customIn, customOut, ref cancelDefault);
+                return ret;
             }
             catch(Exception ex) {
                 Log.nlog.Error("Failed EnvDTE.Command-binding/Before: '{0}'", ex.Message);
             }
-            return VSConstants.S_FALSE;
+            return Codes.Failed;
         }
 
         /// <summary>
@@ -299,16 +335,19 @@ namespace net.r_eg.vsSBE.API
         /// <param name="id">The command ID.</param>
         /// <param name="customIn">Custom input parameters.</param>
         /// <param name="customOut">Custom output parameters.</param>
-        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onCommandDtePost(string guid, int id, object customIn, object customOut)
         {
             try {
-                return Action.bindCommandDtePost(guid, id, customIn, customOut);
+                int ret = Action.bindCommandDtePost(guid, id, customIn, customOut);
+
+                clientLib.Event.onCommandDtePost(guid, id, customIn, customOut);
+                return ret;
             }
             catch(Exception ex) {
                 Log.nlog.Error("Failed EnvDTE.Command-binding/After: '{0}'", ex.Message);
             }
-            return VSConstants.S_FALSE;
+            return Codes.Failed;
         }
 
         /// <summary>
@@ -319,6 +358,8 @@ namespace net.r_eg.vsSBE.API
         {
             try {
                 Action.bindBuildRaw(data);
+
+                clientLib.Build.onBuildRaw(data);
             }
             catch(Exception ex) {
                 Log.nlog.Error("Failed build-raw: '{0}'", ex.Message);
@@ -330,7 +371,7 @@ namespace net.r_eg.vsSBE.API
         /// </summary>
         /// <param name="pUnkReserved">Reserved for future use.</param>
         /// <param name="fNewSolution">true if the solution is being created. false if the solution was created previously or is being loaded.</param>
-        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int solutionOpened(object pUnkReserved, int fNewSolution)
         {
             try {
@@ -347,23 +388,27 @@ namespace net.r_eg.vsSBE.API
 #endif
 
                 OpenedSolution(this, new EventArgs());
-                return VSConstants.S_OK;
+
+                clientLib.Event.solutionOpened(pUnkReserved, fNewSolution);
+                return Codes.Success;
             }
             catch(Exception ex) {
                 Log.nlog.Fatal("Cannot load configuration: " + ex.Message);
             }
-            return VSConstants.S_FALSE;
+            return Codes.Failed;
         }
 
         /// <summary>
         /// Solution has been closed.
         /// </summary>
         /// <param name="pUnkReserved">Reserved for future use.</param>
-        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int solutionClosed(object pUnkReserved)
         {
+            clientLib.Event.solutionClosed(pUnkReserved);
+
             ClosedSolution(this, new EventArgs());
-            return VSConstants.S_OK;
+            return Codes.Success;
         }
 
         /// <summary>
@@ -373,6 +418,8 @@ namespace net.r_eg.vsSBE.API
         public void updateBuildType(Bridge.BuildType type)
         {
             Environment.BuildType = type;
+            
+            clientLib.Build.updateBuildType(type);
         }
 
         /// <summary>

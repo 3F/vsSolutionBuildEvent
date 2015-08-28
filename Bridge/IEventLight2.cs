@@ -24,36 +24,31 @@
 
 using System;
 using System.Runtime.InteropServices;
-using Microsoft.VisualStudio.Shell.Interop;
 
 namespace net.r_eg.vsSBE.Bridge
 {
-    [Guid("FD4E35DB-9509-4353-9F2A-C31B7B1E63B8")]
-    public interface IEvent: IEventLight, IEventLight2
+    [Guid("039BD612-A304-4D24-BBDD-BE2DC0075E02")]
+    public interface IEventLight2
     {
         /// <summary>
-        /// 'PRE' of Project.
-        /// Before a project configuration begins to build.
+        /// Before executing Command ID for EnvDTE.
         /// </summary>
-        /// <param name="pHierProj">Pointer to a hierarchy project object.</param>
-        /// <param name="pCfgProj">Pointer to a configuration project object.</param>
-        /// <param name="pCfgSln">Pointer to a configuration solution object.</param>
-        /// <param name="dwAction">Double word containing the action.</param>
-        /// <param name="pfCancel">Pointer to a flag indicating cancel.</param>
+        /// <param name="guid">The GUID.</param>
+        /// <param name="id">The command ID.</param>
+        /// <param name="customIn">Custom input parameters.</param>
+        /// <param name="customOut">Custom output parameters.</param>
+        /// <param name="cancelDefault">Whether the command has been cancelled.</param>
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
-        int onProjectPre(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel);
+        int onCommandDtePre(string guid, int id, object customIn, object customOut, ref bool cancelDefault);
 
         /// <summary>
-        /// 'POST' of Project.
-        /// After a project configuration is finished building.
+        /// After executed Command ID for EnvDTE.
         /// </summary>
-        /// <param name="pHierProj">Pointer to a hierarchy project object.</param>
-        /// <param name="pCfgProj">Pointer to a configuration project object.</param>
-        /// <param name="pCfgSln">Pointer to a configuration solution object.</param>
-        /// <param name="dwAction">Double word containing the action.</param>
-        /// <param name="fSuccess">Flag indicating success.</param>
-        /// <param name="fCancel">Flag indicating cancel.</param>
+        /// <param name="guid">The GUID.</param>
+        /// <param name="id">The command ID.</param>
+        /// <param name="customIn">Custom input parameters.</param>
+        /// <param name="customOut">Custom output parameters.</param>
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
-        int onProjectPost(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel);
+        int onCommandDtePost(string guid, int id, object customIn, object customOut);
     }
 }

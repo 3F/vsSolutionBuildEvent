@@ -22,6 +22,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
+using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.SBEScripts.Components;
 
@@ -68,7 +69,7 @@ namespace net.r_eg.vsSBE.Actions
         public int bindPre(ref int pfCancelUpdate)
         {
             if(isDisabledAll(Config._.Data.PreBuild)) {
-                return VSConstants.S_OK;
+                return Codes.Success;
             }
 
             if(!IsAllowActions) {
@@ -82,10 +83,10 @@ namespace net.r_eg.vsSBE.Actions
                     Status._.add(SolutionEventType.Pre, StatusType.Deferred);
                 }
                 else {
-                    Status._.add(SolutionEventType.Pre, (execPre(item) == VSConstants.S_OK)? StatusType.Success : StatusType.Fail);
+                    Status._.add(SolutionEventType.Pre, (execPre(item) == Codes.Success)? StatusType.Success : StatusType.Fail);
                 }
             }
-            return Status._.contains(SolutionEventType.Pre, StatusType.Fail)? VSConstants.S_FALSE : VSConstants.S_OK;
+            return Status._.contains(SolutionEventType.Pre, StatusType.Fail)? Codes.Failed : Codes.Success;
         }
 
         /// <summary>
@@ -96,7 +97,7 @@ namespace net.r_eg.vsSBE.Actions
             SBEEvent[] evt = Config._.Data.PostBuild;
 
             if(isDisabledAll(evt)) {
-                return VSConstants.S_OK;
+                return Codes.Success;
             }
 
             if(!IsAllowActions) {
@@ -126,7 +127,7 @@ namespace net.r_eg.vsSBE.Actions
                     Status._.add(SolutionEventType.Post, StatusType.Fail);
                 }
             }
-            return Status._.contains(SolutionEventType.Post, StatusType.Fail)? VSConstants.S_FALSE : VSConstants.S_OK;
+            return Status._.contains(SolutionEventType.Post, StatusType.Fail)? Codes.Failed : Codes.Success;
         }
 
         /// <summary>
@@ -135,7 +136,7 @@ namespace net.r_eg.vsSBE.Actions
         public int bindProjectPre(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel)
         {
             onProject(pHierProj, ExecutionOrderType.Before);
-            return VSConstants.S_OK;
+            return Codes.Success;
         }
 
         /// <summary>
@@ -144,7 +145,7 @@ namespace net.r_eg.vsSBE.Actions
         public int bindProjectPre(string project)
         {
             onProject(project, ExecutionOrderType.Before);
-            return VSConstants.S_OK;
+            return Codes.Success;
         }
 
         /// <summary>
@@ -153,7 +154,7 @@ namespace net.r_eg.vsSBE.Actions
         public int bindProjectPost(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
         {
             onProject(pHierProj, ExecutionOrderType.After, fSuccess == 1 ? true : false);
-            return VSConstants.S_OK;
+            return Codes.Success;
         }
 
         /// <summary>
@@ -162,7 +163,7 @@ namespace net.r_eg.vsSBE.Actions
         public int bindProjectPost(string project, int fSuccess)
         {
             onProject(project, ExecutionOrderType.After, fSuccess == 1 ? true : false);
-            return VSConstants.S_OK;
+            return Codes.Success;
         }
 
         /// <summary>
@@ -173,7 +174,7 @@ namespace net.r_eg.vsSBE.Actions
             SBEEvent[] evt = Config._.Data.CancelBuild;
 
             if(isDisabledAll(evt)) {
-                return VSConstants.S_OK;
+                return Codes.Success;
             }
 
             if(!IsAllowActions) {
@@ -198,7 +199,7 @@ namespace net.r_eg.vsSBE.Actions
                     Status._.add(SolutionEventType.Cancel, StatusType.Fail);
                 }
             }
-            return Status._.contains(SolutionEventType.Cancel, StatusType.Fail)? VSConstants.S_FALSE : VSConstants.S_OK;
+            return Status._.contains(SolutionEventType.Cancel, StatusType.Fail)? Codes.Failed : Codes.Success;
         }
 
         /// <summary>
@@ -273,7 +274,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="customIn">Custom input parameters.</param>
         /// <param name="customOut">Custom output parameters.</param>
         /// <param name="cancelDefault">Whether the command has been cancelled.</param>
-        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int bindCommandDtePre(string guid, int id, object customIn, object customOut, ref bool cancelDefault)
         {
             return commandEvent(true, guid, id, customIn, customOut, ref cancelDefault);
@@ -286,7 +287,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="id">The command ID.</param>
         /// <param name="customIn">Custom input parameters.</param>
         /// <param name="customOut">Custom output parameters.</param>
-        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int bindCommandDtePost(string guid, int id, object customIn, object customOut)
         {
             bool cancelDefault = false;
@@ -325,24 +326,24 @@ namespace net.r_eg.vsSBE.Actions
 
             // TODO: capture code####, message..
             if(!info.checkRule(type, evt.IsWhitelist, evt.Codes)) {
-                return VSConstants.S_OK;
+                return Codes.Success;
             }
 
             if(!isExecute(evt, current)) {
                 Log.nlog.Info("[{0}] ignored action '{1}' :: by execution order", type, evt.Caption);
-                return VSConstants.S_OK;
+                return Codes.Success;
             }
 
             try {
                 if(cmd.exec(evt, (type == Receiver.Output.BuildItem.Type.Warnings)? SolutionEventType.Warnings : SolutionEventType.Errors)) {
                     Log.nlog.Info("[{0}] finished SBE: {1}", type, evt.Caption);
                 }
-                return VSConstants.S_OK;
+                return Codes.Success;
             }
             catch(Exception ex) {
                 Log.nlog.Error("SBE '{0}' error: {1}", type, ex.Message);
             }
-            return VSConstants.S_FALSE;
+            return Codes.Failed;
         }
 
         /// <summary>
@@ -351,24 +352,24 @@ namespace net.r_eg.vsSBE.Actions
         protected int sbeOutput(ISolutionEventOWP evt, ref string raw)
         {
             if(!(new Receiver.Output.Matcher()).match(evt.Match, raw)) {
-                return VSConstants.S_OK;
+                return Codes.Success;
             }
 
             if(!isExecute(evt, current)) {
                 Log.nlog.Info("[Output] ignored action '{0}' :: by execution order", evt.Caption);
-                return VSConstants.S_OK;
+                return Codes.Success;
             }
 
             try {
                 if(cmd.exec(evt, SolutionEventType.OWP)) {
                     Log.nlog.Info("[Output] finished SBE: {0}", evt.Caption);
                 }
-                return VSConstants.S_OK;
+                return Codes.Success;
             }
             catch(Exception ex) {
                 Log.nlog.Error("SBE 'Output' error: {0}", ex.Message);
             }
-            return VSConstants.S_FALSE;
+            return Codes.Failed;
         }
 
         /// <param name="pre">Flag of Before/After execution.</param>
@@ -377,16 +378,16 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="customIn">Custom input parameters.</param>
         /// <param name="customOut">Custom output parameters.</param>
         /// <param name="cancelDefault">Whether the command has been cancelled.</param>
-        /// <returns>If the method succeeds, it returns VSConstants.S_OK. If it fails, it returns an error code.</returns>
+        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         protected int commandEvent(bool pre, string guid, int id, object customIn, object customOut, ref bool cancelDefault)
         {
             if(Config._.Data == null) { // activation of this event type can be before opening solution
-                return VSConstants.S_FALSE;
+                return Codes.Failed;
             }
             CommandEvent[] evt = Config._.Data.CommandEvent;
 
             if(isDisabledAll(evt)) {
-                return VSConstants.S_OK;
+                return Codes.Success;
             }
 
             if(!IsAllowActions) {
@@ -435,7 +436,7 @@ namespace net.r_eg.vsSBE.Actions
                     Log.nlog.Info("[CommandEvent] original command has been canceled for action: '{0}'", item.Caption);
                 }
             }
-            return Status._.contains(SolutionEventType.CommandEvent, StatusType.Fail)? VSConstants.S_FALSE : VSConstants.S_OK;
+            return Status._.contains(SolutionEventType.CommandEvent, StatusType.Fail)? Codes.Failed : Codes.Success;
         }
 
         protected void commandEvent(CommandEvent item)
@@ -462,12 +463,12 @@ namespace net.r_eg.vsSBE.Actions
                 if(cmd.exec(evt, SolutionEventType.Pre)) {
                     Log.nlog.Info("[Pre] finished SBE: {0}", evt.Caption);
                 }
-                return VSConstants.S_OK;
+                return Codes.Success;
             }
             catch(Exception ex) {
                 Log.nlog.Error("Pre-Build error: {0}", ex.Message);
             }
-            return VSConstants.S_FALSE;
+            return Codes.Failed;
         }
 
         protected int execPre()
@@ -475,11 +476,11 @@ namespace net.r_eg.vsSBE.Actions
             int idx = 0;
             foreach(SBEEvent item in Config._.Data.PreBuild) {
                 if(hasExecutionOrder(item)) {
-                    Status._.update(SolutionEventType.Pre, idx, (execPre(item) == VSConstants.S_OK)? StatusType.Success : StatusType.Fail);
+                    Status._.update(SolutionEventType.Pre, idx, (execPre(item) == Codes.Success)? StatusType.Success : StatusType.Fail);
                 }
                 ++idx;
             }
-            return Status._.contains(SolutionEventType.Pre, StatusType.Fail)? VSConstants.S_FALSE : VSConstants.S_OK;
+            return Status._.contains(SolutionEventType.Pre, StatusType.Fail)? Codes.Failed : Codes.Success;
         }
 
         protected string getProjectName(IVsHierarchy pHierProj)
@@ -610,7 +611,7 @@ namespace net.r_eg.vsSBE.Actions
 
                 if(evt[i].ExecutionOrder.Any(o => o.Project == project && o.Order == type)) {
                     Log.nlog.Info("Incoming '{0}'({1}) :: Execute the deferred action: '{2}'", project, type, evt[i].Caption);
-                    Status._.update(SolutionEventType.Pre, i, (execPre(evt[i]) == VSConstants.S_OK)? StatusType.Success : StatusType.Fail);
+                    Status._.update(SolutionEventType.Pre, i, (execPre(evt[i]) == Codes.Success)? StatusType.Success : StatusType.Fail);
                 }
             }
         }
@@ -704,7 +705,7 @@ namespace net.r_eg.vsSBE.Actions
         private int _ignoredAction(SolutionEventType type)
         {
             Log.nlog.Trace("[{0}] Ignored action. It's already started in other processes of VS.", type);
-            return VSConstants.S_OK;
+            return Codes.Success;
         }
     }
 }

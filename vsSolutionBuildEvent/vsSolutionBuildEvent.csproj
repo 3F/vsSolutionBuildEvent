@@ -126,6 +126,13 @@
     <Compile Include="API\IEventLevel.cs" />
     <Compile Include="API\Settings.cs" />
     <Compile Include="API\Version.cs" />
+    <Compile Include="Clients\SEvent2.cs" />
+    <Compile Include="Clients\SEvent2Empty.cs" />
+    <Compile Include="Clients\SBuildEmpty.cs" />
+    <Compile Include="Clients\SBuild.cs" />
+    <Compile Include="Clients\IClientLibrary.cs" />
+    <Compile Include="Clients\Instance.cs" />
+    <Compile Include="Clients\ClientLibrary.cs" />
     <Compile Include="Configuration\Component.cs" />
     <Compile Include="Environment.cs" />
     <Compile Include="Events\CommandEvents\Filter.cs" />

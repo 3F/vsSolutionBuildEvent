@@ -57,7 +57,12 @@
     <Compile Include="CoreCommand\CoreCommandHandler.cs" />
     <Compile Include="CoreCommand\ICoreCommandRaw.cs" />
     <Compile Include="CoreCommand\ICoreCommand.cs" />
+    <Compile Include="ClientType.cs" />
+    <Compile Include="IEntryPointClient.cs" />
     <Compile Include="IEntryPointCore.cs" />
+    <Compile Include="IEvent2.cs" />
+    <Compile Include="IEventLight2.cs" />
+    <Compile Include="IEventLight.cs" />
     <Compile Include="ISettings.cs" />
     <Compile Include="IBuild.cs" />
     <Compile Include="IEvent.cs" />
