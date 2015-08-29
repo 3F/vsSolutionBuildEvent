@@ -184,6 +184,7 @@ namespace net.r_eg.vsSBE
         public int UpdateSolution_Begin(ref int pfCancelUpdate)
         {
             try {
+                UI.Plain.State.lineBegin();
                 ((IStatusTool)StatusTool.Content).resetCounter();
             }
             catch(Exception ex) {

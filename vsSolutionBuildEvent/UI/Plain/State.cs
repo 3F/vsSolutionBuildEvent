@@ -57,6 +57,11 @@ namespace net.r_eg.vsSBE.UI.Plain
             Log.print(sb.ToString());
         }
 
+        public static void lineBegin()
+        {
+            Log.print(String.Format("{0}========== Build-Events started =========={0}", System.Environment.NewLine));
+        }
+
         public static void summaryWarn(ToolWindowPane tool)
         {
             try {

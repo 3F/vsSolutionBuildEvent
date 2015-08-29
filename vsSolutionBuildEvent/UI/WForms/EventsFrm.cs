@@ -31,6 +31,10 @@ using DomIcon = net.r_eg.vsSBE.SBEScripts.Dom.Icon;
 
 namespace net.r_eg.vsSBE.UI.WForms
 {
+    /// <summary>
+    /// Please don't forget - it's older version /outbuilding from ~v0.5
+    /// This only contains the all manipulation with UI elements, 'as is'.
+    /// </summary>
     public partial class EventsFrm: Form, ITransferProperty, ITransferCommand
     {
         public const int WM_SYSCOMMAND  = 0x0112;
@@ -38,7 +42,6 @@ namespace net.r_eg.vsSBE.UI.WForms
         public const int SC_RESTORE2    = 0xF122; //double-click on caption
 
         /// <summary>
-        /// Logic for this UI
         /// Operations with events etc.,
         /// </summary>
         protected Logic.Events logic;
@@ -95,42 +98,6 @@ namespace net.r_eg.vsSBE.UI.WForms
         private bool isNotified;
 
 
-        /// <param name="bootloader"></param>
-        public EventsFrm(IBootloader bootloader)
-        {
-            IInspector inspector    = new Inspector(bootloader);
-            logic                   = new Logic.Events(bootloader, inspector);
-
-            InitializeComponent();
-
-            Icon = Resource.Package_32;
-            textEditor.codeCompletionInit(inspector);
-            updateColors();
-            defaultSizes();
-
-            toolTip.SetToolTip(pictureBoxWarnWait, Resource.StringWarnForWaiting);
-
-#if DEBUG
-            this.Text                       += " [Debug version]";
-            toolStripMenuDebugMode.Checked  = true;
-            toolStripMenuDebugMode.Enabled  = false;
-            toolStripMenuVersion.Text       = string.Format("based on {0}", Version.branchSha1);
-#else
-            if(Version.branchName.ToLower() != "releases") {
-                this.Text += " [Unofficial release]";
-            }
-            toolStripMenuDebugMode.Checked  = Settings.debugMode;
-            toolStripMenuVersion.Text       = string.Format("v{0} [ {1} ]", Version.numberString, Version.branchSha1);
-#endif
-
-            Util.fixDGVRowHeight(dataGridViewOutput);
-            Util.fixDGVRowHeight(dataGridViewOrder);
-            Util.fixDGVRowHeight(dgvActions);
-            Util.fixDGVRowHeight(dgvComponents);
-            Util.fixDGVRowHeight(dgvCEFilters);
-            Util.fixDGVRowHeight(dgvCESniffer);
-        }
-
         /// <summary>
         /// Implements transport for MSBuild property
         /// </summary>
@@ -157,6 +124,47 @@ namespace net.r_eg.vsSBE.UI.WForms
             Focus();
         }
 
+        /// <param name="bootloader"></param>
+        public EventsFrm(IBootloader bootloader)
+        {
+            InitializeComponent();
+
+            IInspector inspector    = new Inspector(bootloader);
+            logic                   = new Logic.Events(bootloader, inspector);
+            textEditor.codeCompletionInit(inspector);
+
+            updateColors();
+            defaultSizes();
+            
+            Icon = Resource.Package_32;
+            toolTip.SetToolTip(pictureBoxWarnWait, Resource.StringWarnForWaiting);
+
+#if DEBUG
+            this.Text                       += " [Debug version]";
+            toolStripMenuDebugMode.Checked  = true;
+            toolStripMenuDebugMode.Enabled  = false;
+            toolStripMenuVersion.Text       = String.Format("based on {0}", Version.branchSha1);
+#else
+            if(Version.branchName.ToLower() != "releases") {
+                this.Text += " [Unofficial release]";
+            }
+            toolStripMenuDebugMode.Checked  = Settings.debugMode;
+            toolStripMenuVersion.Text       = String.Format("v{0} [ {1} ]", Version.numberString, Version.branchSha1);
+#endif
+
+            // Fixes for dataGridView component with the height property
+            Util.fixDGVRowHeight(dataGridViewOutput);
+            Util.fixDGVRowHeight(dataGridViewOrder);
+            Util.fixDGVRowHeight(dgvActions);
+            Util.fixDGVRowHeight(dgvComponents);
+            Util.fixDGVRowHeight(dgvCEFilters);
+            Util.fixDGVRowHeight(dgvCESniffer);
+        }
+
+        /// <summary>
+        /// Retrieve data from UI
+        /// </summary>
+        /// <param name="onlyInRAM"></param>
         protected void saveData(bool onlyInRAM = false)
         {
             try {
@@ -301,6 +309,9 @@ namespace net.r_eg.vsSBE.UI.WForms
             evt.Filters = list.ToArray();
         }
 
+        /// <summary>
+        /// Rendering data into UI elements
+        /// </summary>
         protected void renderData()
         {
             //foreach(RadioButton rb in Util.getControls(groupBoxPMode, c => c.GetType() == typeof(RadioButton))) {
@@ -555,6 +566,10 @@ namespace net.r_eg.vsSBE.UI.WForms
             btnApply.FlatAppearance.BorderColor = Color.FromArgb(0, 0, 0);
         }
 
+        /// <summary>
+        /// UI Selector of modes
+        /// </summary>
+        /// <param name="type"></param>
         protected void uiViewMode(ModeType type)
         {
             updateColors();
@@ -835,6 +850,23 @@ namespace net.r_eg.vsSBE.UI.WForms
             metric.formCollapsed = new Size(Width - (metric.splitter), Height);
         }
 
+        protected void fillEvents(ComboBox combo)
+        {
+            //TODO: exclude saveData(true) for event:
+            comboBoxEvents.SelectedIndexChanged -= comboBoxEvents_SelectedIndexChanged;
+            logic.fillEvents(comboBoxEvents);
+            comboBoxEvents.SelectedIndexChanged += comboBoxEvents_SelectedIndexChanged;
+
+            fillCfgForSelectedEvent();
+        }
+
+        protected void fillCfgForSelectedEvent()
+        {
+            logic.setEventIndexes(comboBoxEvents.SelectedIndex, 0);
+            refreshActions(false);
+            refreshSettings();
+        }
+
         protected override void WndProc(ref Message mes)
         {
             if(mes.Msg == WM_SYSCOMMAND)
@@ -861,11 +893,12 @@ namespace net.r_eg.vsSBE.UI.WForms
             Util.noticeAboutChanges(typeof(PropertyGrid), this, call);
             textEditor._.TextChanged += call;
 
+            // Load data
             try {
                 expandActionsList(false);
                 logic.fillComponents(dgvComponents);
                 logic.fillBuildTypes(comboBoxBuildContext);
-                logic.fillEvents(comboBoxEvents);
+                fillEvents(comboBoxEvents);
             }
             catch(Exception ex) {
                 Log.nlog.Error("Failed to load form: {0}", ex.Message);
@@ -877,10 +910,8 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void comboBoxEvents_SelectedIndexChanged(object sender, EventArgs e)
         {
             try {
-                saveData(true); //TODO:
-                logic.setEventIndexes(comboBoxEvents.SelectedIndex, 0);
-                refreshActions(false);
-                refreshSettings();
+                saveData(true); //TODO: exclude from 'reset' & for 'load'
+                fillCfgForSelectedEvent();
             }
             catch(Exception ex) {
                 Log.nlog.Error("Failed to select event type: {0}", ex.Message);
@@ -924,12 +955,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void toolStripMenuReset_Click(object sender, EventArgs e)
         {
             logic.restoreData();
-
-            //TODO:
-            comboBoxEvents.SelectedIndexChanged -= comboBoxEvents_SelectedIndexChanged;
-            logic.fillEvents(comboBoxEvents);
-            comboBoxEvents.SelectedIndexChanged += comboBoxEvents_SelectedIndexChanged;
-
+            fillEvents(comboBoxEvents);
             logic.fillComponents(dgvComponents);
             logic.setEventIndexes(comboBoxEvents.SelectedIndex, 0);
             refreshActions(false);

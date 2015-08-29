@@ -205,7 +205,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
         private void btnInfo_Click(object sender, RoutedEventArgs e)
         {
             Log.show();
-            resetCounter();
+            //resetCounter();
         }
 
         private void btnPre_Click(object sender, RoutedEventArgs e)
