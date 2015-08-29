@@ -1,13 +1,23 @@
 vsSolutionBuildEvent API
 ________________________
 
+[v1.3] 2015.08.29
+
+    * NEW: Added CoreCommand for work with commands from core library by subscription.
+    * NEW: Added IEntryPointCore as main entry point for core library.
+    * NEW: Added IEntryPointClient - as part of public API for work with client libraries (client.vssbe.dll). Use our ClientDemo project as Template project for this features.
+    * NEW: Added IEvent2 with unspecified IVsHierarchy & IVsCfg types.
+
 [v1.2] 2015.06.20
-    * IEvent: Added the onCommandDtePre & onCommandDtePost as part of CommandEvent.
-    * BuildType: Added Ctx types for context of the build action type. (Thanks: Konstantin Erman)
+
+    * NEW: IEvent: Added the onCommandDtePre & onCommandDtePost as part of CommandEvent.
+    * CHANGED: BuildType: Added Ctx types for context of the build action type. (Thanks: Konstantin Erman)
 
 [v1.1] 2015.05.06
-    * Added BuildType enumeration - Represents available types of the build for any actions.
-    * IBuild: added void updateBuildType(BuildType type) - Sets current type of the build.
+
+    * NEW: Added BuildType enumeration - Represents available types of the build for any actions.
+    * NEW: IBuild: added void updateBuildType(BuildType type) - Sets current type of the build.
 
 [v1.0] 2015.02.02
+
     * First release with vsSolutionBuildEvent v0.11

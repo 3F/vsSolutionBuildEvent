@@ -1,14 +1,24 @@
 vsSolutionBuildEvent Provider
 _____________________________
 
+[v3.0] 2015.08.29
+
+    * CHANGED: API Support v1.3
+    * CHANGED: vsSolutionBuildEvent Support v0.12.3
+    * NEW: Signatures of load methods for ILoader.
+           All with the createDomain flag are marked as deprecated and can be removed in new versions.
+
 [v2.1] 2015.06.21
-    * Updated API - Bridge v1.2
+
+    * CHANGED: Updated API - Bridge v1.2
 
 [v2.0] 2015.05.06
-    * Updated Bridge v1.1
-    * ILoader: incompatible changes with signatures for load() methods - as part of removing the heavy dependencies:
-               + ILibrary load(object dte2, string pathAddIn, string registryRoot = null);
-               + ILibrary load(object dte2, string path, bool createDomain = false);
+
+    * CHANGED: Updated Bridge v1.1
+    * CHANGED: ILoader: incompatible changes with signatures for load() methods - as part of removing the heavy dependencies:
+                   + ILibrary load(object dte2, string pathAddIn, string registryRoot = null);
+                   + ILibrary load(object dte2, string path, bool createDomain = false);
 
 [v1.0] 2015.02.02
+
     * First release for vsSolutionBuildEvent API v1.0

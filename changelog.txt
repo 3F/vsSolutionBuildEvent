@@ -1,6 +1,28 @@
 vsSolutionBuildEvent
 ____________________
 
+[v0.12.3] 2015.08.29
+    * NEW: Added support of the Build.Cancel command for CI.MSBuild via SBE-Scripts (BuildComponent).
+    * NEW: Added support of client libraries (client.vssbe.dll) for work with events from our core library. 
+           Use our ClientDemo project as Template project for this features.
+            
+    * FIXED: Limited range VSStd97CmdID & VSStd2KCmdID for all actions of CommandEvent.
+    * FIXED: Possible crash for some value of CustomIn & CustomOut arguments in CommandEvent context.
+    * FIXED: UI. Possible crash when closing Sniffer tool.
+    * FIXED: UI. Fixed notification about changes.
+    * FIXED: Problems with logger:
+             * Overlapping with other panes.
+             * Disappearing of some messages.
+            
+    * CHANGED: Resetting of warnings counter between build + summary line.
+    * CHANGED: Added evaluation of MSBuild properties for next places if enabled support:
+               * Interpreter Mode: Handler field
+               * C# Mode - Compiler Settings: References & OutputPath fields
+                
+    * CHANGED: UI. Saving properties in ram before choosing other events/actions.
+    * CHANGED: API Support v1.3
+    * CHANGED: API. Requires Provider (v3.0+) or API v1.3+
+
 [v0.12.2] 2015.07.30
     * FIXED: SBE-Scripts Core. Fixes with multiple component initialization.
     * FIXED: C# Mode. Possible problem with loading assembly if used the GenerateInMemory property.
