@@ -56,7 +56,7 @@ namespace net.r_eg.vsSBE
         {
             get {
                 //TODO:
-                Log.nlog.Debug("Accessing to property 'SolutionActiveCfg' has been disabled in Isolated environment.");
+                Log.Debug("Accessing to property 'SolutionActiveCfg' has been disabled in Isolated environment.");
                 return null; 
             }
         }
@@ -86,7 +86,7 @@ namespace net.r_eg.vsSBE
         {
             get {
                 //TODO: only list see in .sln -> SolutionConfigurationPlatforms
-                Log.nlog.Debug("Accessing to property 'SolutionConfigurations' has been disabled in Isolated environment.");
+                Log.Debug("Accessing to property 'SolutionConfigurations' has been disabled in Isolated environment.");
                 yield break;
             }
         }
@@ -106,7 +106,7 @@ namespace net.r_eg.vsSBE
         public EnvDTE.Events Events
         {
             get {
-                Log.nlog.Debug("Accessing to property 'Events' has been disabled in Isolated environment.");
+                Log.Debug("Accessing to property 'Events' has been disabled in Isolated environment.");
                 return null; 
             }
         }
@@ -144,7 +144,7 @@ namespace net.r_eg.vsSBE
         public EnvDTE.Commands Commands
         {
             get {
-                Log.nlog.Debug("Accessing to property 'Commands' has been disabled in Isolated environment.");
+                Log.Debug("Accessing to property 'Commands' has been disabled in Isolated environment.");
                 return null; 
             }
         }
@@ -155,7 +155,7 @@ namespace net.r_eg.vsSBE
         public IOW OutputWindowPane
         {
             get {
-                Log.nlog.Debug("Accessing to property 'OutputWindowPane' has been disabled in Isolated environment.");
+                Log.Debug("Accessing to property 'OutputWindowPane' has been disabled in Isolated environment.");
                 return null;
             }
         }
@@ -178,11 +178,11 @@ namespace net.r_eg.vsSBE
         /// <returns>Microsoft.Build.Evaluation.Project</returns>
         public virtual Project getProject(string name = null)
         {
-            Log.nlog.Trace("getProject: started with '{0}'", name);
+            Log.Trace("getProject: started with '{0}'", name);
 
             if(String.IsNullOrEmpty(name)) {
                 name = StartupProjectString;
-                Log.nlog.Trace("getProject: use the StartupProject '{0}'", name);
+                Log.Trace("getProject: use the StartupProject '{0}'", name);
             }
             SolutionParser.Project project = _sln.projects.Find(p => p.Name == name);
 
@@ -191,7 +191,7 @@ namespace net.r_eg.vsSBE
                 string pName = getProjectNameFrom(eProject);
                 string pCfg  = formatCfg(eProject.GetPropertyValue("Configuration"), eProject.GetPropertyValue("Platform"));
 
-                Log.nlog.Trace("find in projects collection: project '{0}' == '{1}', '{2}' == '{3}' [{4} = {5}]",
+                Log.Trace("find in projects collection: project '{0}' == '{1}', '{2}' == '{3}' [{4} = {5}]",
                                 eProject.FullPath, project.FullPath, pName, name, SolutionActiveCfgString, pCfg);
 
                 if(SolutionActiveCfgString != pCfg) {
@@ -203,12 +203,12 @@ namespace net.r_eg.vsSBE
                 }
             }
 
-            Log.nlog.Trace("trying to load project :: '{0}' ('{1}')", project.Name, project.FullPath);
+            Log.Trace("trying to load project :: '{0}' ('{1}')", project.Name, project.FullPath);
             if(String.IsNullOrEmpty(project.FullPath)) {
                 throw new NotFoundException("Missed path to project '{0}' ['{1}', '{2}']", name, project.Name, project.Guid);
             }
 
-            Log.nlog.Debug("-> ['{0}' ; '{1}']", properties["Configuration"], properties["Platform"]);
+            Log.Debug("-> ['{0}' ; '{1}']", properties["Configuration"], properties["Platform"]);
             return new Project(project.FullPath, properties, null, ProjectCollection.GlobalProjectCollection);
         }
 
@@ -253,7 +253,7 @@ namespace net.r_eg.vsSBE
                 return;
             }
 
-            Log.nlog.Warn("Disabled for this Environment. Command: '{0}', args: '{1}'", name, args);
+            Log.Warn("Disabled for this Environment. Command: '{0}', args: '{1}'", name, args);
         }
 
         /// <param name="solutionFile">Full path to solution file (.sln)</param>

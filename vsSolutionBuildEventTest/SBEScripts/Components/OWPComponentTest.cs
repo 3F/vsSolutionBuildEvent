@@ -152,8 +152,8 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void stLogParseTest3()
         {
             OWPComponent target = new OWPComponent((IEnvironment)null);
-            Assert.AreEqual(null, target.parse("[OWP log.Message]"));
-            Assert.AreEqual(null, target.parse("[OWP log.Level]"));
+            Assert.AreEqual(String.Empty, target.parse("[OWP log.Message]"));
+            Assert.AreEqual(String.Empty, target.parse("[OWP log.Level]"));
         }
 
         /// <summary>

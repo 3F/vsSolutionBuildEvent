@@ -45,7 +45,7 @@ namespace net.r_eg.vsSBE.Clients
                 return link.solutionOpened(pUnkReserved, fNewSolution);
             }
             catch(Exception ex) {
-                Log.nlog.Error("[Client library] Failed solutionOpened: '{0}'", ex.Message);
+                Log.Error("[Client library] Failed solutionOpened: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }
@@ -61,7 +61,7 @@ namespace net.r_eg.vsSBE.Clients
                 return link.solutionClosed(pUnkReserved);
             }
             catch(Exception ex) {
-                Log.nlog.Error("[Client library] Failed solutionClosed: '{0}'", ex.Message);
+                Log.Error("[Client library] Failed solutionClosed: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }
@@ -78,7 +78,7 @@ namespace net.r_eg.vsSBE.Clients
                 return link.onPre(ref pfCancelUpdate);
             }
             catch(Exception ex) {
-                Log.nlog.Error("[Client library] Failed onPre: '{0}'", ex.Message);
+                Log.Error("[Client library] Failed onPre: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }
@@ -94,7 +94,7 @@ namespace net.r_eg.vsSBE.Clients
                 return link.onCancel();
             }
             catch(Exception ex) {
-                Log.nlog.Error("[Client library] Failed onCancel: '{0}'", ex.Message);
+                Log.Error("[Client library] Failed onCancel: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }
@@ -113,7 +113,7 @@ namespace net.r_eg.vsSBE.Clients
                 return link.onPost(fSucceeded, fModified, fCancelCommand);
             }
             catch(Exception ex) {
-                Log.nlog.Error("[Client library] Failed onPost: '{0}'", ex.Message);
+                Log.Error("[Client library] Failed onPost: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }
@@ -134,7 +134,7 @@ namespace net.r_eg.vsSBE.Clients
                 return link.onProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel);
             }
             catch(Exception ex) {
-                Log.nlog.Error("[Client library] Failed onProjectPre: '{0}'", ex.Message);
+                Log.Error("[Client library] Failed onProjectPre: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }
@@ -151,7 +151,7 @@ namespace net.r_eg.vsSBE.Clients
                 return link.onProjectPre(project);
             }
             catch(Exception ex) {
-                Log.nlog.Error("[Client library] Failed onProjectPre: '{0}'", ex.Message);
+                Log.Error("[Client library] Failed onProjectPre: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }
@@ -173,7 +173,7 @@ namespace net.r_eg.vsSBE.Clients
                 return link.onProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
             }
             catch(Exception ex) {
-                Log.nlog.Error("[Client library] Failed onProjectPost: '{0}'", ex.Message);
+                Log.Error("[Client library] Failed onProjectPost: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }
@@ -191,7 +191,7 @@ namespace net.r_eg.vsSBE.Clients
                 return link.onProjectPost(project, fSuccess);
             }
             catch(Exception ex) {
-                Log.nlog.Error("[Client library] Failed onProjectPost: '{0}'", ex.Message);
+                Log.Error("[Client library] Failed onProjectPost: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }
@@ -211,7 +211,7 @@ namespace net.r_eg.vsSBE.Clients
                 return link.onCommandDtePre(guid, id, customIn, customOut, ref cancelDefault);
             }
             catch(Exception ex) {
-                Log.nlog.Error("[Client library] Failed onCommandDtePre: '{0}'", ex.Message);
+                Log.Error("[Client library] Failed onCommandDtePre: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }
@@ -230,7 +230,7 @@ namespace net.r_eg.vsSBE.Clients
                 return link.onCommandDtePost(guid, id, customIn, customOut);
             }
             catch(Exception ex) {
-                Log.nlog.Error("[Client library] Failed onCommandDtePost: '{0}'", ex.Message);
+                Log.Error("[Client library] Failed onCommandDtePost: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }

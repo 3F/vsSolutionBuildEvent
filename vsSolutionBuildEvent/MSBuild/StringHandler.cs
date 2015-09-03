@@ -51,7 +51,7 @@ namespace net.r_eg.vsSBE.MSBuild
                 {
                     uint ident      = IdentNext;
                     strings[ident]  = "$" + m.Groups[1].Value;
-                    Log.nlog.Trace("StringHandler: protect the escaped outer container '{0}' :: '{1}'", strings[ident], ident);
+                    Log.Trace("StringHandler: protect the escaped outer container '{0}' :: '{1}'", strings[ident], ident);
                     return replacementIn(ident);
                 },
                 RegexOptions.IgnorePatternWhitespace);

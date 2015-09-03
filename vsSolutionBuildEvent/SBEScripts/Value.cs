@@ -115,6 +115,13 @@ namespace net.r_eg.vsSBE.SBEScripts
             return val.ToString();
         }
 
+        /// <param name="val"></param>
+        /// <returns></returns>
+        public static string from(string val)
+        {
+            return (val)?? String.Empty;
+        }
+
         /// <summary>
         /// Comparing values
         /// </summary>
@@ -173,17 +180,17 @@ namespace net.r_eg.vsSBE.SBEScripts
         {
             int lNumber, rNumber;
             if(Int32.TryParse(left, out lNumber) && Int32.TryParse(right, out rNumber)) {
-                Log.nlog.Trace("Values-isEqual: as numeric '{0}' == '{1}'", left, right);
+                Log.Trace("Values-isEqual: as numeric '{0}' == '{1}'", left, right);
                 return (lNumber == rNumber);
             }
 
             try {
                 bool ret = (toBoolean(left) == toBoolean(right));
-                Log.nlog.Trace("Values-isEqual: as boolean '{0}' == '{1}'", left, right);
+                Log.Trace("Values-isEqual: as boolean '{0}' == '{1}'", left, right);
                 return ret;
             }
             catch(IncorrectSyntaxException) {
-                Log.nlog.Trace("Values-isEqual: as string '{0}' == '{1}'", left, right);
+                Log.Trace("Values-isEqual: as string '{0}' == '{1}'", left, right);
             }
             return (left == right);
         }

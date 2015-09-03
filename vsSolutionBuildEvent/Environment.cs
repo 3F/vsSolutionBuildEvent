@@ -45,7 +45,7 @@ namespace net.r_eg.vsSBE
                     return DTEProjects.Select(p => getProjectNameFrom(p)).ToList<string>();
                 }
                 catch(Exception ex) {
-                    Log.nlog.Error("Failed getting project from EnvDTE: {0}", ex.Message);
+                    Log.Error("Failed getting project from EnvDTE: {0}", ex.Message);
                 }
                 return new List<string>();
             }
@@ -185,7 +185,7 @@ namespace net.r_eg.vsSBE
                 foreach(EnvDTE.Project project in DTEProjectsRaw)
                 {
                     if(project.Kind == "{67294A52-A4F0-11D2-AA88-00C04F688DDE}" || project.ConfigurationManager == null) {
-                        Log.nlog.Debug("Unloaded project '{0}' has ignored", project.Name);
+                        Log.Debug("Unloaded project '{0}' has ignored", project.Name);
                         continue; // skip for all unloaded projects
                     }
                     yield return project;
@@ -226,7 +226,7 @@ namespace net.r_eg.vsSBE
             string startup          = StartupProjectString;
 
             if(name == null) {
-                Log.nlog.Debug("default project is a '{0}'", startup);
+                Log.Debug("default project is a '{0}'", startup);
             }
 
             foreach(EnvDTE.Project dteProject in DTEProjects)
@@ -238,7 +238,7 @@ namespace net.r_eg.vsSBE
                     continue;
                 }
                 selected = dteProject;
-                Log.nlog.Trace("selected = dteProject: '{0}'", dteProject.FullName);
+                Log.Trace("selected = dteProject: '{0}'", dteProject.FullName);
 
                 foreach(Project eProject in ProjectCollection.GlobalProjectCollection.LoadedProjects)
                 {
@@ -250,7 +250,7 @@ namespace net.r_eg.vsSBE
             }
 
             if(selected != null) {
-                Log.nlog.Debug("getProject->selected '{0}'", selected.FullName);
+                Log.Debug("getProject->selected '{0}'", selected.FullName);
                 return tryLoadPCollection(selected);
             }
             throw new MSBProjectNotFoundException("not found project: '{0}' [sturtup: '{1}']", name, startup);
@@ -346,7 +346,7 @@ namespace net.r_eg.vsSBE
             string dtePrgCfg        = dteProject.ConfigurationManager.ActiveConfiguration.ConfigurationName;
             string dtePrgPlatform   = dteProject.ConfigurationManager.ActiveConfiguration.PlatformName;
 
-            Log.nlog.Trace("isEquals for '{0}' : '{1}' [{2} = {3} ; {4} = {5}]",
+            Log.Trace("isEquals for '{0}' : '{1}' [{2} = {3} ; {4} = {5}]",
                             eProject.FullPath, dtePrgName, dtePrgCfg, ePrgCfg, dtePrgPlatform, ePrgPlatform);
 
             // see MS Connect Issue #503935 & https://bitbucket.org/3F/vssolutionbuildevent/issue/14/empty-property-outdir
@@ -354,7 +354,7 @@ namespace net.r_eg.vsSBE
 
             if(dtePrgName.Equals(ePrgName) && dtePrgCfg.Equals(ePrgCfg) && isEqualPlatforms)
             {
-                Log.nlog.Trace("isEquals: matched");
+                Log.Trace("isEquals: matched");
                 return true;
             }
             return false;
@@ -368,7 +368,7 @@ namespace net.r_eg.vsSBE
         {
             Dictionary<string, string> prop = getGlobalProperties(dteProject);
 
-            Log.nlog.Debug("tryLoadPCollection :: '{0}' [{1} ; {2}]", dteProject.FullName, prop["Configuration"], prop["Platform"]);
+            Log.Debug("tryLoadPCollection :: '{0}' [{1} ; {2}]", dteProject.FullName, prop["Configuration"], prop["Platform"]);
             //ProjectCollection.GlobalProjectCollection.LoadProject(dteProject.FullName, prop, null);
             return new Project(dteProject.FullName, prop, null, ProjectCollection.GlobalProjectCollection);
         }

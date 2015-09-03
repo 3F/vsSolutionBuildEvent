@@ -130,15 +130,15 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         protected string parse(string condition, string ifTrue, string ifFalse)
         {
-            Log.nlog.Debug("Condition-parse: started with - '{0}' :: '{1}' :: '{2}'", condition, ifTrue, ifFalse);
+            Log.Debug("Condition-parse: started with - '{0}' :: '{1}' :: '{2}'", condition, ifTrue, ifFalse);
             return (disclosure(condition) == Value.VTRUE)? ifTrue : ifFalse;
         }
 
         protected bool calculate(string data)
         {
-            Log.nlog.Debug("Condition->calculate: started with - '{0}'", data);
+            Log.Debug("Condition->calculate: started with - '{0}'", data);
             data = _hString.recovery(data);
-            Log.nlog.Debug("Condition->calculate: after recovery - '{0}'", data);
+            Log.Debug("Condition->calculate: after recovery - '{0}'", data);
 
             Match m = Regex.Match(data.Trim(), 
                                               @"^\s*
@@ -197,7 +197,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 }
                 right = spaces(right);
             }
-            Log.nlog.Debug("Condition->calculate: left: '{0}', right: '{1}', operator: '{2}', invert: {3}", left, right, coperator, invert);
+            Log.Debug("Condition->calculate: left: '{0}', right: '{1}', operator: '{2}', invert: {3}", left, right, coperator, invert);
 
             left = evaluate(left);
 
@@ -207,7 +207,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             else {
                 result = Value.cmp((left == "1")? Value.VTRUE : (left == "0")? Value.VFALSE : left);
             }
-            Log.nlog.Debug("Condition->calculate: result is: '{0}'", result);
+            Log.Debug("Condition->calculate: result is: '{0}'", result);
             return ((invert)? !result : result);
         }
 
@@ -240,14 +240,14 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="data">mixed</param>
         protected string evaluate(string data)
         {
-            Log.nlog.Trace("Condition-evaluate: started with '{0}'", data);
+            Log.Trace("Condition-evaluate: started with '{0}'", data);
 
             data = script.parse(data);
-            Log.nlog.Trace("Condition-evaluate: evaluated data: '{0}' :: ISBEScript", data);
+            Log.Trace("Condition-evaluate: evaluated data: '{0}' :: ISBEScript", data);
 
             if(PostProcessingMSBuild) {
                 data = msbuild.parse(data);
-                Log.nlog.Trace("Condition-evaluate: evaluated data: '{0}' :: IMSBuild", data);
+                Log.Trace("Condition-evaluate: evaluated data: '{0}' :: IMSBuild", data);
             }
             return data;
         }
@@ -275,7 +275,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             delegate(Match m)
             {
                 string exp = m.Groups[1].Value.Trim();
-                Log.nlog.Trace("Condition-disclosure: expression - '{0}' /level: {1}", exp, _depthBracketsLevel);
+                Log.Trace("Condition-disclosure: expression - '{0}' /level: {1}", exp, _depthBracketsLevel);
 
                 if(String.IsNullOrEmpty(exp)) {
                     throw new SyntaxIncorrectException("Condition-disclosure: empty brackets are not allowed.");
@@ -286,7 +286,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             if(ret.IndexOf('(') != -1)
             {
-                Log.nlog.Trace("Condition-disclosure: found a new bracket - '{0}'", ret);
+                Log.Trace("Condition-disclosure: found a new bracket - '{0}'", ret);
 
                 ++_depthBracketsLevel;
                 string dret = disclosure(ret); // not all disclosed
@@ -304,12 +304,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns></returns>
         protected string composite(string data)
         {
-            Log.nlog.Trace("Condition-composite: started with - '{0}'", data);
+            Log.Trace("Condition-composite: started with - '{0}'", data);
 
             //if(data.IndexOfAny(new char[] { '=', '>', '<', '!', '|', '&' }) == -1) {
             //    //TODO: without expression e.g.: 1 > (7) -> 1 > 7
             //}
-            //Log.nlog.Trace("Condition-composite: finding operators..");
+            //Log.Trace("Condition-composite: finding operators..");
 
             int left = 0;
             for(int i = 0, len = data.Length - 1; i < len; )

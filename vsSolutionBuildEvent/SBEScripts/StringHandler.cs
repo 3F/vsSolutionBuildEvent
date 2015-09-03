@@ -54,7 +54,7 @@ namespace net.r_eg.vsSBE.SBEScripts
                         {
                             uint ident      = IdentNext;
                             strings[ident]  = m.Groups[1].Value;
-                            Log.nlog.Trace("StringHandler: protect cores '{0}' :: '{1}'", strings[ident], ident);
+                            Log.Trace("StringHandler: protect cores '{0}' :: '{1}'", strings[ident], ident);
                             return replacementIn(ident);
                         },
                         RegexOptions.IgnorePatternWhitespace);

@@ -91,7 +91,7 @@ namespace net.r_eg.vsSBE.Scripts
                 string evaluated = definitions[ident].evaluated;
 
                 if(evaluated == null) {
-                    Log.nlog.Debug("getValue: evaluated value of '{0}' is null", ident);
+                    Log.Debug("getValue: evaluated value of '{0}' is null", ident);
                     evaluated = String.Empty;
                 }
                 return evaluated;
@@ -125,7 +125,7 @@ namespace net.r_eg.vsSBE.Scripts
                     prev        = (definitions.ContainsKey(defindex))? definitions[defindex] : new TUserVariable(),
                     evaluated   = null
                 };
-                Log.nlog.Debug("User-variable: defined '{0}' = '{1}'", defindex, unevaluated);
+                Log.Debug("User-variable: defined '{0}' = '{1}'", defindex, unevaluated);
             }
         }
 
@@ -174,7 +174,7 @@ namespace net.r_eg.vsSBE.Scripts
                 }
                 var.status          = TUserVariable.StatusType.Evaluated;
                 definitions[ident]  = var;
-                Log.nlog.Debug("Completed evaluation of variable with IEvaluator :: '{0}'", ident);
+                Log.Debug("Completed evaluation of variable with IEvaluator :: '{0}'", ident);
             }
         }
 
@@ -273,11 +273,11 @@ namespace net.r_eg.vsSBE.Scripts
             lock(_lock)
             {
                 if(definitions.Remove(ident)) {
-                    Log.nlog.Debug("User-variable is successfully unset '{0}'", ident);
+                    Log.Debug("User-variable is successfully unset '{0}'", ident);
                     return;
                 }
             }
-            Log.nlog.Debug("Cannot unset the user-variable '{0}'", ident);
+            Log.Debug("Cannot unset the user-variable '{0}'", ident);
         }
 
         /// <summary>
@@ -288,7 +288,7 @@ namespace net.r_eg.vsSBE.Scripts
             lock(_lock) {
                 definitions.Clear();
             }
-            Log.nlog.Trace("Reseted all User-variables");
+            Log.Trace("Reseted all User-variables");
         }
 
         /// <summary>
@@ -311,7 +311,7 @@ namespace net.r_eg.vsSBE.Scripts
                     prev        = (definitions.ContainsKey(ident))? definitions[ident] : new TUserVariable(),
                     evaluated   = evaluated
                 };
-                Log.nlog.Debug("User-variable(Debug service): updated '{0}' with evaluated value '{1}'", ident, evaluated);
+                Log.Debug("User-variable(Debug service): updated '{0}' with evaluated value '{1}'", ident, evaluated);
             }
         }
 

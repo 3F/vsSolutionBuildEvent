@@ -73,7 +73,7 @@ namespace net.r_eg.vsSBE.MSBuild
         public virtual string getProperty(string name, string projectName)
         {
             if(uvariable.isExist(name, projectName)) {
-                Log.nlog.Debug("Evaluate: use '{0}:{1}' from user-variable", name, projectName);
+                Log.Debug("Evaluate: use '{0}:{1}' from user-variable", name, projectName);
                 return getUVariableValue(name, projectName);
             }
 
@@ -81,7 +81,7 @@ namespace net.r_eg.vsSBE.MSBuild
             {
                 string slnProp = env.getSolutionProperty(name);
                 if(slnProp != null) {
-                    Log.nlog.Debug("Solution-context for getProperty - '{0}' = '{1}'", name, slnProp);
+                    Log.Debug("Solution-context for getProperty - '{0}' = '{1}'", name, slnProp);
                     return slnProp;
                 }
             }
@@ -92,7 +92,7 @@ namespace net.r_eg.vsSBE.MSBuild
             if(prop != null) {
                 return prop.EvaluatedValue;
             }
-            Log.nlog.Debug("getProperty: return default value");
+            Log.Debug("getProperty: return default value");
             return PROP_VALUE_DEFAULT;
             //throw new MSBPropertyNotFoundException("variable - '{0}' : project - '{1}'", name, (projectName == null)? "<default>" : projectName);
         }
@@ -114,7 +114,7 @@ namespace net.r_eg.vsSBE.MSBuild
                 {
                     string slnProp = env.getSolutionProperty(property.Name);
                     if(slnProp != null) {
-                        Log.nlog.Debug("Solution-context for listProperties - '{0}' = '{1}'", property.Name, slnProp);
+                        Log.Debug("Solution-context for listProperties - '{0}' = '{1}'", property.Name, slnProp);
                         eValue = slnProp;
                     }
                 }
@@ -135,7 +135,7 @@ namespace net.r_eg.vsSBE.MSBuild
         {
             const string container  = "vsSBE_latestEvaluated";
             Project project         = env.getProject(projectName);
-            Log.nlog.Trace("evaluate: '{0}' -> [{1}]", unevaluated, projectName);
+            Log.Trace("evaluate: '{0}' -> [{1}]", unevaluated, projectName);
 
             lock(_lock)
             {
@@ -265,7 +265,7 @@ namespace net.r_eg.vsSBE.MSBuild
                 data = con.Replace(data, delegate(Match m)
                         {
                             string raw = m.Groups[1].Value;
-                            Log.nlog.Trace("containerIn: raw - '{0}'", raw);
+                            Log.Trace("containerIn: raw - '{0}'", raw);
                             return evaluate(prepare(sh.recovery(raw)));
                         }, maxRep);
 
@@ -324,7 +324,7 @@ namespace net.r_eg.vsSBE.MSBuild
                     raw = raw
                 }
             };
-            //Log.nlog.Trace("prepare: raw '{0}'", raw);
+            //Log.Trace("prepare: raw '{0}'", raw);
 
 
             /* Variable */
@@ -333,7 +333,7 @@ namespace net.r_eg.vsSBE.MSBuild
                 ret.variable.name = rVariable.Value;
                 // all $() in right operand cannot be evaluated because it's escaped and already unwrapped property.
                 // i.e. this already should be evaluated with prev. steps - because we are moving upward from deepest container !
-                Log.nlog.Trace("prepare: variable name = '{0}'", ret.variable.name);
+                Log.Trace("prepare: variable name = '{0}'", ret.variable.name);
             }
 
 
@@ -354,8 +354,8 @@ namespace net.r_eg.vsSBE.MSBuild
 
             ret.property.complex = !isPropertySimple(ref ret.property.unevaluated);
 
-            Log.nlog.Trace("prepare: value = '{0}'({1})", ret.property.unevaluated, ret.variable.type);
-            Log.nlog.Trace("prepare: complex {0}", ret.property.complex);
+            Log.Trace("prepare: value = '{0}'({1})", ret.property.unevaluated, ret.variable.type);
+            Log.Trace("prepare: complex {0}", ret.property.complex);
 
 
             /* Project */
@@ -373,7 +373,7 @@ namespace net.r_eg.vsSBE.MSBuild
                 }
             }
 
-            Log.nlog.Trace("prepare: project [v:'{0}'; p:'{1}']", ret.variable.project, ret.property.project);
+            Log.Trace("prepare: project [v:'{0}'; p:'{1}']", ret.variable.project, ret.property.project);
             return ret;
         }
 
@@ -387,7 +387,7 @@ namespace net.r_eg.vsSBE.MSBuild
         protected virtual string customRule(string left, string right)
         {
             if(left == "registry" && !String.IsNullOrEmpty(right)) { // Registry Properties :: https://msdn.microsoft.com/en-us/library/vstudio/ms171458.aspx
-                Log.nlog.Trace("Rule: Registry Property");
+                Log.Trace("Rule: Registry Property");
                 return String.Format("{0}:{1}", left, right);
             }
             return null;
@@ -404,7 +404,7 @@ namespace net.r_eg.vsSBE.MSBuild
             string custom = customRule(prepared.property.unevaluated, prepared.property.project);
             if(custom != null)
             {
-                Log.nlog.Trace("Evaluate: custom '{0}'", custom);
+                Log.Trace("Evaluate: custom '{0}'", custom);
                 evaluated = evaluate(custom, null);
             }
             else if(prepared.variable.type == PreparedData.ValueType.StringFromDouble 
@@ -413,26 +413,26 @@ namespace net.r_eg.vsSBE.MSBuild
             {
                 //Note: * content from double quotes should be already evaluated in prev. steps.
                 //      * content from single quotes shouldn't be evaluated because uses protector for current type above.
-                Log.nlog.Trace("Evaluate: use content from string or use escaped property");
+                Log.Trace("Evaluate: use content from string or use escaped property");
                 evaluated = prepared.property.unevaluated;
             }
             else if(!prepared.property.complex)
             {
-                Log.nlog.Trace("Evaluate: use getProperty");
+                Log.Trace("Evaluate: use getProperty");
                 evaluated = getProperty(prepared.property.unevaluated, prepared.property.project);
             }
             else
             {
-                Log.nlog.Trace("Evaluate: use evaluation with msbuild engine");
+                Log.Trace("Evaluate: use evaluation with msbuild engine");
                 evaluated = evaluate(prepared.property.unevaluated, prepared.property.project);
             }
-            Log.nlog.Debug("Evaluated: '{0}'", evaluated);
+            Log.Debug("Evaluated: '{0}'", evaluated);
 
 
             // alternative to SBE-Scripts
             if(!String.IsNullOrEmpty(prepared.variable.name))
             {
-                Log.nlog.Debug("Evaluate: ready to define variable - '{0}':'{1}'", 
+                Log.Debug("Evaluate: ready to define variable - '{0}':'{1}'", 
                                                                         prepared.variable.name, 
                                                                         prepared.variable.project);
 
@@ -504,7 +504,7 @@ namespace net.r_eg.vsSBE.MSBuild
         {
             if(!data.StartsWith("$("))
             {
-                Log.nlog.Trace("wrap: '{0}'", data);
+                Log.Trace("wrap: '{0}'", data);
                 return String.Format("$({0})", data);
             }
             return data;

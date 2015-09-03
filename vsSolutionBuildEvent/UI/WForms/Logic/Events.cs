@@ -66,7 +66,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             {
                 evt = new List<ISolutionEvent>(Config._.Data.getEvent(type));
                 if(evt == null) {
-                    Log.nlog.Debug("SBEWrap: evt is null for type '{0}'", type);
+                    Log.Debug("SBEWrap: evt is null for type '{0}'", type);
                     evt = new List<ISolutionEvent>();
                 }
             }
@@ -265,7 +265,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         public virtual void protectMinEventItems()
         {
             if(SBE.evt == null || SBE.evt.Count < 1) {
-                Log.nlog.Warn("Event-item < 1 for type '{0}'", SBE.type);
+                Log.Warn("Event-item < 1 for type '{0}'", SBE.type);
                 addEventItem(); // simply to work with new container
             }
         }
@@ -727,14 +727,14 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
 
             ISolutionEvent evt      = SBEItem;
             SolutionEventType type  = SBE.type;
-            Log.nlog.Info("Action: execute action '{0}':'{1}' manually :: emulate '{2}' event", evt.Name, evt.Caption, type);
+            Log.Info("Action: execute action '{0}':'{1}' manually :: emulate '{2}' event", evt.Name, evt.Caption, type);
 
             try {
                 bool res = cmd.exec(evt, type);
-                Log.nlog.Info("Action: '{0}':'{1}' completed as - '{2}'", evt.Name, evt.Caption, res.ToString());
+                Log.Info("Action: '{0}':'{1}' completed as - '{2}'", evt.Name, evt.Caption, res.ToString());
             }
             catch(Exception ex) {
-                Log.nlog.Error("Action: '{0}':'{1}' is failed. Error: '{2}'", evt.Name, evt.Caption, ex.Message);
+                Log.Error("Action: '{0}':'{1}' is failed. Error: '{2}'", evt.Name, evt.Caption, ex.Message);
             }
         }
 
@@ -768,7 +768,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                     }
                 }
                 catch(Exception ex) {
-                    Log.nlog.Debug("{0} ::'{1}'", ex.ToString(), prefix);
+                    Log.Debug("{0} ::'{1}'", ex.ToString(), prefix);
                 }
             }
             return ++maxId;
@@ -795,7 +795,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         protected IEnumerable<INodeInfo> domElemsBy(string className)
         {
             if(inspector == null) {
-                Log.nlog.Debug("domElemsBy: Inspector is null");
+                Log.Debug("domElemsBy: Inspector is null");
                 yield break;
             }
 

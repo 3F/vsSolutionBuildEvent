@@ -379,7 +379,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             buildTypeSelect(evt.BuildType);
 
             if(evt.Mode == null) {
-                Log.nlog.Warn("The Mode is corrupt, reinitialized with default type");
+                Log.Warn("The Mode is corrupt, reinitialized with default type");
                 evt.Mode = logic.DefaultMode;
             }
             pGridCompilerCfg.SelectedObject = (evt.Mode.Type == ModeType.CSharp)? (IModeCSharp)evt.Mode : new ModeCSharp();
@@ -528,7 +528,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                 selectAction(dgvActions.Rows.Count - 1, true);
             }
             catch(Exception ex) {
-                Log.nlog.Error("Failed to add event-item: '{0}'", ex.Message);
+                Log.Error("Failed to add event-item: '{0}'", ex.Message);
             }
         }
 
@@ -901,7 +901,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                 fillEvents(comboBoxEvents);
             }
             catch(Exception ex) {
-                Log.nlog.Error("Failed to load form: {0}", ex.Message);
+                Log.Error("Failed to load form: {0}", ex.Message);
             }
 
             notice(false);
@@ -914,7 +914,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                 fillCfgForSelectedEvent();
             }
             catch(Exception ex) {
-                Log.nlog.Error("Failed to select event type: {0}", ex.Message);
+                Log.Error("Failed to select event type: {0}", ex.Message);
             }
         }
 
@@ -1512,7 +1512,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             int pos = logic.getDefIndexByEventType(SolutionEventType.CommandEvent);
             if(pos == -1) {
-                Log.nlog.Trace("UI.Activation the CommandEvent: -1");
+                Log.Trace("UI.Activation the CommandEvent: -1");
                 return;
             }
             comboBoxEvents.SelectedIndex = pos;

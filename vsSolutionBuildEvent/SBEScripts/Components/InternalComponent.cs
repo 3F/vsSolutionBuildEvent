@@ -65,7 +65,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             switch(m.Groups[2].Value) {
                 case "events": {
-                    Log.nlog.Debug("InternalComponent: use stEvents");
+                    Log.Debug("InternalComponent: use stEvents");
                     return stEvents(m.Groups[1].Value);
                 }
             }
@@ -127,7 +127,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 throw new OperandNotFoundException("Event type not found - '{0}' :: ", typeString, ex.Message);
             }
 
-            Log.nlog.Debug("stEvents: type - '{0}', index - '{1}', name - '{2}'", type, index, name);
+            Log.Debug("stEvents: type - '{0}', index - '{1}', name - '{2}'", type, index, name);
             return stEventItem(type, index, name, operation);
         }
 
@@ -189,7 +189,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string property     = m.Groups[1].Value;
             string operation    = m.Groups[3].Value.Trim();
 
-            Log.nlog.Debug("stEventItem: property - '{0}', operation - '{1}'", property, operation);
+            Log.Debug("stEventItem: property - '{0}', operation - '{1}'", property, operation);
             int sIndex = -1;
             ISolutionEvent evt = (name != null)? getEventByName(type, name, out sIndex) : getEventByIndex(type, index, out sIndex);
 
@@ -230,7 +230,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(property == "HasErrors")
             {
                 string status = (Status._.get(type, index) == StatusType.Fail).ToString().ToLower();
-                Log.nlog.Debug("pStatus: status - '{0}'", status);
+                Log.Debug("pStatus: status - '{0}'", status);
                 return status;
             }
 
@@ -258,7 +258,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
             evt.Enabled = Value.toBoolean(m.Groups[1].Value);
 
-            Log.nlog.Debug("pEnabled: setted as '{0}' for '{1}'", evt.Enabled, evt.Name);
+            Log.Debug("pEnabled: setted as '{0}' for '{1}'", evt.Enabled, evt.Name);
             return String.Empty;
         }
 

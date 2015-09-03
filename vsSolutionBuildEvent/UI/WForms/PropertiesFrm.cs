@@ -65,7 +65,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                 comboBoxProjects.Items.AddRange(_env.ProjectsList.ToArray());
             }
             catch(Exception ex) {
-                Log.nlog.Error("Error with getting projects: " + ex.Message);
+                Log.Error("Error with getting projects: " + ex.Message);
             }
 
             comboBoxProjects.SelectedIndex = 0;
@@ -88,7 +88,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                 }
             }
             catch(Exception ex) {
-                Log.nlog.Error("Error with getting properties for '{0}': {1}", project, ex.Message);
+                Log.Error("Error with getting properties for '{0}': {1}", project, ex.Message);
             }
         }
 
@@ -159,7 +159,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(!_cacheProperties.ContainsKey(key))
             {
                 _cacheProperties[key] = _msbuild.listProperties(project);
-                Log.nlog.Debug("Properties has been saved in the cache. ['{0}']", key);
+                Log.Debug("Properties has been saved in the cache. ['{0}']", key);
             }
             return _cacheProperties[key];
         }

@@ -90,15 +90,15 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             switch(subtype) {
                 case "out": {
-                    Log.nlog.Debug("OWPComponent: use stOut");
+                    Log.Debug("OWPComponent: use stOut");
                     return stOut(ident);
                 }
                 case "log": {
-                    Log.nlog.Debug("OWPComponent: use stLog");
+                    Log.Debug("OWPComponent: use stLog");
                     return stLog(ident);
                 }
                 case "item": {
-                    Log.nlog.Debug("OWPComponent: use stItem");
+                    Log.Debug("OWPComponent: use stItem");
                     return stItem(ident);
                 }
             }
@@ -131,10 +131,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             switch(property) {
                 case "Message": {
-                    return logcopy.Message;
+                    return Value.from(logcopy.Message);
                 }
                 case "Level": {
-                    return logcopy.Level;
+                    return Value.from(logcopy.Level);
                 }
             }
             throw new OperationNotFoundException("OWPComponent-stLog: not found property - '{0}'", property);
@@ -181,7 +181,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string operation    = m.Groups[2].Value;
             string raw          = (m.Groups[3].Success)? m.Groups[3].Value : null;
 
-            Log.nlog.Debug("stItem: '{0}', '{1}', '{2}'", name, operation, raw);
+            Log.Debug("stItem: '{0}', '{1}', '{2}'", name, operation, raw);
 
             if(String.IsNullOrEmpty(name) 
                 || name.Trim().Equals(Settings.OWP_ITEM_VSSBE, StringComparison.OrdinalIgnoreCase))
@@ -304,12 +304,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         )]
         protected string stItemDelete(string name, string raw)
         {
-            Log.nlog.Trace("stItemDelete: started");
+            Log.Trace("stItemDelete: started");
             if(!_booleanValueFromRaw(ref raw)) {
                 return Value.from(false);
             }
             
-            Log.nlog.Debug("stItemDelete: removing the item '{0}'", name);
+            Log.Debug("stItemDelete: removing the item '{0}'", name);
             try {
                 env.OutputWindowPane.deleteByName(name);
                 return Value.from(true);
@@ -337,12 +337,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         )]
         protected string stItemClear(string name, string raw)
         {
-            Log.nlog.Trace("stItemClear: started");
+            Log.Trace("stItemClear: started");
             if(!_booleanValueFromRaw(ref raw)) {
                 return Value.from(false);
             }
 
-            Log.nlog.Debug("stItemClear: clearing the item '{0}'", name);
+            Log.Debug("stItemClear: clearing the item '{0}'", name);
             try {
                 env.OutputWindowPane.getByName(name, false).Clear();
                 return Value.from(true);
@@ -370,12 +370,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         )]
         protected string stItemActivate(string name, string raw)
         {
-            Log.nlog.Trace("stItemActivate: started");
+            Log.Trace("stItemActivate: started");
             if(!_booleanValueFromRaw(ref raw)) {
                 return Value.from(false);
             }
 
-            Log.nlog.Debug("stItemActivate: activation the item '{0}'", name);
+            Log.Debug("stItemActivate: activation the item '{0}'", name);
             try {
                 env.OutputWindowPane.getByName(name, false).Activate();
                 return Value.from(true);
@@ -431,7 +431,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(m.Groups[1].Success)
             {
                 string item = StringHandler.normalize(m.Groups[1].Value);
-                Log.nlog.Debug("stOut: item = '{0}'", item);
+                Log.Debug("stOut: item = '{0}'", item);
 
                 if(item == "Build") {
                     //used by default - #[OWP out("Build")] / #[OWP out]
@@ -441,7 +441,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 }
             }
             string property = m.Groups[2].Value.Trim();
-            Log.nlog.Debug("stOut: property = '{0}'", property);
+            Log.Debug("stOut: property = '{0}'", property);
 
             string raw = StringHandler.escapeQuotes(Receiver.Output.Item._.Build.Raw);
 
@@ -491,7 +491,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
             string val = m.Groups[1].Value;
 
-            Log.nlog.Debug("Extracted boolean value: is '{0}'", val);
+            Log.Debug("Extracted boolean value: is '{0}'", val);
             return Value.toBoolean(val);
         }
     }

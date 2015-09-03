@@ -133,13 +133,13 @@ namespace net.r_eg.vsSBE.Scripts
                     uint index = uint.Parse(m.Groups[1].Value);
                     strings.TryRemove(index, out removed); // deallocate protected string
 
-                    Log.nlog.Trace("StringHandler: recovery string '{0}' :: '{1}' /level: {2}", removed, index, _recoveryLevel);
+                    Log.Trace("StringHandler: recovery string '{0}' :: '{1}' /level: {2}", removed, index, _recoveryLevel);
                     return removed;
                 });
 
                 if(Regex.IsMatch(ret, replacementOut()))
                 {
-                    Log.nlog.Trace("StringHandler->recovery: found the new protected data - '{0}'", ret);
+                    Log.Trace("StringHandler->recovery: found the new protected data - '{0}'", ret);
                     ++_recoveryLevel;
                     ret = recovery(ret);
                     --_recoveryLevel;
@@ -171,7 +171,7 @@ namespace net.r_eg.vsSBE.Scripts
                 {
                     uint ident      = IdentNext;
                     strings[ident]  = m.Groups[1].Value;
-                    Log.nlog.Trace("MSBuild-StringHandler: protect string '{0}' :: '{1}'", strings[ident], ident);
+                    Log.Trace("MSBuild-StringHandler: protect string '{0}' :: '{1}'", strings[ident], ident);
                     return replacementIn(ident);
                 },
                 RegexOptions.IgnorePatternWhitespace);

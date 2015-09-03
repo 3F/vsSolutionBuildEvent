@@ -18,6 +18,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell;
+using NLog;
 
 namespace net.r_eg.vsSBE.UI.Xaml
 {
@@ -57,11 +58,8 @@ namespace net.r_eg.vsSBE.UI.Xaml
         /// <returns>self reference</returns>
         public IStatusToolEvents detachEvents(API.IEventLevel evt)
         {
-            lock(_eLock)
-            {
-                evt.OpenedSolution -= onOpenSolution;
-                evt.ClosedSolution -= onCloseSolution;
-            }
+            evt.OpenedSolution -= onOpenSolution;
+            evt.ClosedSolution -= onCloseSolution;
             return this;
         }
 
@@ -87,10 +85,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
         /// <returns>self reference</returns>
         public IStatusToolEvents detachEvents(Config evt)
         {
-            lock(_eLock)
-            {
-                evt.Update -= tool.refresh;
-            }
+            evt.Update -= tool.refresh;
             return this;
         }
 
@@ -102,7 +97,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
         {
             lock(_eLock) {
                 detachEvents();
-                Log.Receipt += tool.warn;
+                Log._.Receiving += onReceiving;
             }
             return this;
         }
@@ -113,9 +108,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
         /// <returns>self reference</returns>
         public IStatusToolEvents detachEvents()
         {
-            lock(_eLock) {
-                Log.Receipt -= tool.warn;
-            }
+            Log._.Receiving -= onReceiving;
             return this;
         }
 
@@ -127,14 +120,29 @@ namespace net.r_eg.vsSBE.UI.Xaml
             tool            = (IStatusTool)base.Content;
         }
 
-        protected void onCloseSolution(object sender, EventArgs e)
+        private void onCloseSolution(object sender, EventArgs e)
         {
             tool.enabledPanel(false);
         }
 
-        protected void onOpenSolution(object sender, EventArgs e)
+        private void onOpenSolution(object sender, EventArgs e)
         {
             tool.enabledPanel(true);
+        }
+
+        private void onReceiving(object sender, Logger.MessageArgs e)
+        {
+            if(String.IsNullOrEmpty(e.Level)) {
+                return; // raw message
+            }
+
+            LogLevel oLevel = LogLevel.FromString(e.Level);
+            if(oLevel < LogLevel.Warn) {
+                return;
+            }
+            
+            // Notify about warning
+            tool.warn();
         }
     }
 }

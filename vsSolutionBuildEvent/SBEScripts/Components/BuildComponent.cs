@@ -87,16 +87,16 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             switch(subtype) {
                 case "cancel": {
-                    Log.nlog.Trace("BuildComponent: use stCancel");
+                    Log.Trace("BuildComponent: use stCancel");
                     return stCancel(ident);
                 }
                 case "projects": {
                     // is meant the SolutionContexts !
-                    Log.nlog.Trace("BuildComponent: use stProjects");
+                    Log.Trace("BuildComponent: use stProjects");
                     return stProjects(ident);
                 }
                 case "type": {
-                    Log.nlog.Trace("BuildComponent: use stType");
+                    Log.Trace("BuildComponent: use stType");
                     return stType(ident);
                 }
             }
@@ -117,11 +117,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 throw new OperationNotFoundException("Failed stCancel - '{0}'", data);
             }
             string val = m.Groups[1].Value;
-            Log.nlog.Debug("stCancel: value is {0}", val);
+            Log.Debug("stCancel: value is {0}", val);
 
             if(Value.toBoolean(val))
             {
-                Log.nlog.Trace("stCancel: pushed true");
+                Log.Trace("stCancel: pushed true");
                 DTEO.exec("Build.Cancel");
             }
             return String.Empty;
@@ -244,7 +244,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string property = m.Groups[1].Value;
             string value    = (m.Groups[2].Success)? m.Groups[2].Value : null;
 
-            Log.nlog.Debug("stProjectConf: property - '{0}', value - '{1}'", property, value);
+            Log.Debug("stProjectConf: property - '{0}', value - '{1}'", property, value);
             switch(property) {
                 case "IsBuildable":
                 {

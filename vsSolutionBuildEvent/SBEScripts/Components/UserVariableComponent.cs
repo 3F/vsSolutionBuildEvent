@@ -89,16 +89,16 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string name     = m.Groups[2].Value;
             string project  = (m.Groups[3].Success)? m.Groups[3].Value.Trim() : null;
 
-            Log.nlog.Trace("UVariable: found '{0}' as operation", op);
+            Log.Trace("UVariable: found '{0}' as operation", op);
             switch(op)
             {
                 case "+": {
-                    Log.nlog.Debug("UVariable: set default value for variable - '{0}':'{1}'", name, project);
+                    Log.Debug("UVariable: set default value for variable - '{0}':'{1}'", name, project);
                     set(name, project, UVARIABLE_VALUE_DEFAULT);
                     return String.Empty;
                 }
                 case "-": {
-                    Log.nlog.Debug("UVariable: unset variable - '{0}':'{1}'", name, project);
+                    Log.Debug("UVariable: unset variable - '{0}':'{1}'", name, project);
                     unset(name, project);
                     return String.Empty;
                 }
@@ -113,7 +113,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns>prepared and evaluated data</returns>
         protected string std(string data)
         {
-            Log.nlog.Trace("UVariable: use std handler");
+            Log.Trace("UVariable: use std handler");
             Match m = Regex.Match(data, @"^\[var
                                               \s+
                                               ([A-Za-z_0-9]+)  #1 - name 
@@ -136,7 +136,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string project  = (m.Groups[2].Success)? m.Groups[2].Value.Trim() : null;
             string value    = (m.Groups[3].Success)? m.Groups[3].Value : null;
 
-            Log.nlog.Trace("UVariable: found '{0}':'{1}' = '{2}'", name, project, value);
+            Log.Trace("UVariable: found '{0}':'{1}' = '{2}'", name, project, value);
             if(value != null) {
                 set(name, project, value);
                 return String.Empty;

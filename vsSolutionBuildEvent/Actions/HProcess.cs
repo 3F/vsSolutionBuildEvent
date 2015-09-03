@@ -82,12 +82,12 @@ namespace net.r_eg.vsSBE.Actions
             Process p = prepareProcessFor(file, args, hidden);
             p.Start();
 
-            Log.nlog.Trace("time limit is '{0}'sec :: HProcess.run", timeout);
+            Log.Trace("time limit is '{0}'sec :: HProcess.run", timeout);
             if(timeout != 0)
             {
                 p.WaitForExit(timeout * 1000);
                 if(!p.HasExited) {
-                    Log.nlog.Warn("sigkill to the process - '{0}': limit in {1}sec for time is reached. Use any other value or 0 for unlimited time.", file, timeout);
+                    Log.Warn("sigkill to the process - '{0}': limit in {1}sec for time is reached. Use any other value or 0 for unlimited time.", file, timeout);
                     killProcessesFor(p.Id);
                 }
             }
@@ -123,12 +123,12 @@ namespace net.r_eg.vsSBE.Actions
                 if(String.IsNullOrEmpty(e.Data)) {
                     return;
                 }
-                Log.nlog.Warn("Command executed with error: '{0}'", reEncodeString(e.Data));
+                Log.Warn("Command executed with error: '{0}'", reEncodeString(e.Data));
             });
 
             p.OutputDataReceived += new DataReceivedEventHandler((object sender, DataReceivedEventArgs e) => {
                 if(!hidden) {
-                    Log.nlog.Info("Result of command: '{0}'", reEncodeString(e.Data));
+                    Log.Info("Result of command: '{0}'", reEncodeString(e.Data));
                 }
             });
 
@@ -140,11 +140,11 @@ namespace net.r_eg.vsSBE.Actions
                 return;
             }
 
-            Log.nlog.Trace("time limit is '{0}'sec :: HProcess.useShell", timeout);
+            Log.Trace("time limit is '{0}'sec :: HProcess.useShell", timeout);
             if(timeout != 0) {
                 p.WaitForExit(timeout * 1000);
                 if(!p.HasExited) {
-                    Log.nlog.Warn("sigkill to - '{0}': limit in {1}sec for time is reached. Use any other value or 0 for unlimited time.", cmd, timeout);
+                    Log.Warn("sigkill to - '{0}': limit in {1}sec for time is reached. Use any other value or 0 for unlimited time.", cmd, timeout);
                     killProcessesFor(p.Id);
                 }
             }
@@ -215,7 +215,7 @@ namespace net.r_eg.vsSBE.Actions
 
             Process p = Process.GetProcessById(pid);
             if(!p.HasExited) {
-                Log.nlog.Trace("sigkill: -> {0}", pid);
+                Log.Trace("sigkill: -> {0}", pid);
                 p.Kill();
             }
         }
@@ -239,19 +239,19 @@ namespace net.r_eg.vsSBE.Actions
             cdet.DataEnd();
 
             if(cdet.Charset == null) {
-                Log.nlog.Debug("reEncodeString: Problem with detection... use the original");
+                Log.Debug("reEncodeString: Problem with detection... use the original");
                 return str;
             }
-            Log.nlog.Debug("reEncodeString: charset '{0}' confidence: '{1}'", cdet.Charset, cdet.Confidence);
+            Log.Debug("reEncodeString: charset '{0}' confidence: '{1}'", cdet.Charset, cdet.Confidence);
 
             if(cdet.Confidence < 0.92f) {
-                Log.nlog.Debug("reEncodeString: Confidence < 0.92 /use the original");
+                Log.Debug("reEncodeString: Confidence < 0.92 /use the original");
                 return str;
             }
 
             Encoding to = Encoding.GetEncoding(cdet.Charset);
-            Log.nlog.Debug("reEncodeString: '{0}' -> '{1}'", from.EncodingName, to.EncodingName);
-            Log.nlog.Trace("reEncodeString: original - '{0}'", str);
+            Log.Debug("reEncodeString: '{0}' -> '{1}'", from.EncodingName, to.EncodingName);
+            Log.Trace("reEncodeString: original - '{0}'", str);
             return to.GetString(bytes);
         }
 

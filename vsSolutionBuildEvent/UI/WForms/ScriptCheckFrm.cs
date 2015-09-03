@@ -71,7 +71,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
             public ToolContext(IEnvironment env)
             {
-                Log.nlog.Trace("Initialization of the clean context for testing.");
+                Log.Trace("Initialization of the clean context for testing.");
 
                 bootloader = new Bootloader(env, uvariable);
                 bootloader.register();

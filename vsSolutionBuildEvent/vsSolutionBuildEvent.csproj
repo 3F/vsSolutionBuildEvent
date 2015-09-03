@@ -148,6 +148,9 @@
     <Compile Include="Events\ModeType.cs" />
     <Compile Include="Exceptions\CompilerException.cs" />
     <Compile Include="GAC.cs" />
+    <Compile Include="Logger\ILog.cs" />
+    <Compile Include="Logger\Initializer.cs" />
+    <Compile Include="Logger\MessageArgs.cs" />
     <Compile Include="UnifiedTypes\DTEC.cs" />
     <Compile Include="Receiver\Output\PaneArgs.cs" />
     <Compile Include="UI\ITransferCommand.cs" />

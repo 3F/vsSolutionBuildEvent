@@ -192,12 +192,12 @@ namespace net.r_eg.vsSBE.SBEScripts
             return Regex.Replace(data, ContainerPattern, delegate(Match m)
             {
                 if(m.Groups[1].Value.Length > 1) { //escape
-                    Log.nlog.Debug("SBEScripts: escape - '{0}'", m.Groups[2].Value);
+                    Log.Debug("SBEScripts: escape - '{0}'", m.Groups[2].Value);
                     return "#" + escapeMSBuildData(m.Groups[2].Value, true);
                 }
                 string raw = m.Groups[2].Value;
 
-                Log.nlog.Trace("SBEScripts-data: to parse '{0}'", raw);
+                Log.Trace("SBEScripts-data: to parse '{0}'", raw);
                 if(hString != null) {
                     return selector(hString.recovery(raw));
                 }
@@ -257,7 +257,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <returns>prepared & evaluated data</returns>
         protected string selector(string data)
         {
-            Log.nlog.Debug("SBEScripts-selector: started with '{0}'", data);
+            Log.Debug("SBEScripts-selector: started with '{0}'", data);
 
             foreach(IComponent c in Bootloader.Components)
             {

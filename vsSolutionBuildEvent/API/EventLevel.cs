@@ -25,8 +25,6 @@ using net.r_eg.vsSBE.Bridge.CoreCommand;
 using net.r_eg.vsSBE.Clients;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.Scripts;
-using NLog;
-using NLog.Targets;
 
 namespace net.r_eg.vsSBE.API
 {
@@ -165,7 +163,7 @@ namespace net.r_eg.vsSBE.API
                 return ret;
             }
             catch(Exception ex) {
-                Log.nlog.Error("Failed Solution.Pre-binding: '{0}'", ex.Message);
+                Log.Error("Failed Solution.Pre-binding: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }
@@ -184,7 +182,7 @@ namespace net.r_eg.vsSBE.API
                 return ret;
             }
             catch(Exception ex) {
-                Log.nlog.Error("Failed Solution.Cancel-binding: '{0}'", ex.Message);
+                Log.Error("Failed Solution.Cancel-binding: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }
@@ -210,7 +208,7 @@ namespace net.r_eg.vsSBE.API
                 return ret;
             }
             catch(Exception ex) {
-                Log.nlog.Error("Failed Solution.Post-binding: '{0}'", ex.Message);
+                Log.Error("Failed Solution.Post-binding: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }
@@ -234,7 +232,7 @@ namespace net.r_eg.vsSBE.API
                 return ret;
             }
             catch(Exception ex) {
-                Log.nlog.Error("Failed Project.Pre-binding: '{0}'", ex.Message);
+                Log.Error("Failed Project.Pre-binding: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }
@@ -254,7 +252,7 @@ namespace net.r_eg.vsSBE.API
                 return ret;
             }
             catch(Exception ex) {
-                Log.nlog.Error("Failed Project.Pre-binding/simple: '{0}'", ex.Message);
+                Log.Error("Failed Project.Pre-binding/simple: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }
@@ -279,7 +277,7 @@ namespace net.r_eg.vsSBE.API
                 return ret;
             }
             catch(Exception ex) {
-                Log.nlog.Error("Failed Project.Post-binding: '{0}'", ex.Message);
+                Log.Error("Failed Project.Post-binding: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }
@@ -300,7 +298,7 @@ namespace net.r_eg.vsSBE.API
                 return ret;
             }
             catch(Exception ex) {
-                Log.nlog.Error("Failed Project.Post-binding/simple: '{0}'", ex.Message);
+                Log.Error("Failed Project.Post-binding/simple: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }
@@ -323,7 +321,7 @@ namespace net.r_eg.vsSBE.API
                 return ret;
             }
             catch(Exception ex) {
-                Log.nlog.Error("Failed EnvDTE.Command-binding/Before: '{0}'", ex.Message);
+                Log.Error("Failed EnvDTE.Command-binding/Before: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }
@@ -345,7 +343,7 @@ namespace net.r_eg.vsSBE.API
                 return ret;
             }
             catch(Exception ex) {
-                Log.nlog.Error("Failed EnvDTE.Command-binding/After: '{0}'", ex.Message);
+                Log.Error("Failed EnvDTE.Command-binding/After: '{0}'", ex.Message);
             }
             return Codes.Failed;
         }
@@ -362,7 +360,7 @@ namespace net.r_eg.vsSBE.API
                 clientLib.Build.onBuildRaw(data);
             }
             catch(Exception ex) {
-                Log.nlog.Error("Failed build-raw: '{0}'", ex.Message);
+                Log.Error("Failed build-raw: '{0}'", ex.Message);
             }
         }
 
@@ -380,10 +378,10 @@ namespace net.r_eg.vsSBE.API
 
                 UI.Plain.State.print(Config._.Data);
 #if DEBUG
-                Log.nlog.Warn("Used the [Debug version]");
+                Log.Warn("Used the [Debug version]");
 #else
                 if(vsSBE.Version.branchName.ToLower() != "releases") {
-                    Log.nlog.Warn("Used the [Unofficial release]");
+                    Log.Warn("Used the [Unofficial release]");
                 }
 #endif
 
@@ -393,7 +391,7 @@ namespace net.r_eg.vsSBE.API
                 return Codes.Success;
             }
             catch(Exception ex) {
-                Log.nlog.Fatal("Cannot load configuration: " + ex.Message);
+                Log.Fatal("Cannot load configuration: " + ex.Message);
             }
             return Codes.Failed;
         }
@@ -455,32 +453,16 @@ namespace net.r_eg.vsSBE.API
         /// <param name="cfg"></param>
         protected void configure(ISettings cfg)
         {
-            MethodCallTarget target = configureLogger();
-            Log.nlog.Trace(String.Format("Log('{0}') is configured for: '{1}'", target.ClassName, ToString()));
+            (new Logger.Initializer()).configure();
 
             vsSBE.Settings.debugMode = cfg.DebugMode;
             // ...
         }
 
-        /// <returns>Entry point for messages of logger</returns>
-        protected virtual MethodCallTarget configureLogger()
-        {
-            MethodCallTarget target = new MethodCallTarget() {
-                ClassName   = typeof(Log).AssemblyQualifiedName,
-                MethodName  = "nprint"
-            };
-            target.Parameters.Add(new MethodCallParameter("${level:uppercase=true}"));
-            target.Parameters.Add(new MethodCallParameter("${message}"));
-            target.Parameters.Add(new MethodCallParameter("${ticks}"));
-
-            NLog.Config.SimpleConfigurator.ConfigureForTargetLogging(target, LogLevel.Trace);
-            return target;
-        }
-
         protected void attachCommandEvents()
         {
             if(Environment.Events == null) {
-                Log.nlog.Info("Context of build action: uses a limited types.");
+                Log.Info("Context of build action: uses a limited types.");
                 return; //this can be for emulated DTE2 context
             }
 

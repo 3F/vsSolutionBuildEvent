@@ -72,7 +72,7 @@ namespace net.r_eg.vsSBE.Receiver.Output
             }
             catch(Exception ex) {
                 // all incorrect syntax should be simply false
-                Log.nlog.Warn("OWPMatcher: {0}", ex.Message);
+                Log.Warn("OWPMatcher: {0}", ex.Message);
             }
             return false;
         }

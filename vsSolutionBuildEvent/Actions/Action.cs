@@ -41,7 +41,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="cmd">Formatted command to shell.</param>
         public virtual void shell(ISolutionEvent evt, string cmd)
         {
-            Log.nlog.Info("Prepared command: '{0}'", cmd);
+            Log.Info("Prepared command: '{0}'", cmd);
 
             HProcess p = new HProcess(Settings.WorkingPath);
             p.useShell(cmd, evt.Process.Waiting, evt.Process.Hidden, evt.Process.TimeLimit);

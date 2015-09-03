@@ -54,24 +54,24 @@ namespace net.r_eg.vsSBE.UI.Plain
             sb.Append(about(data.Transmitter,   "Transmitter   "));
             sb.Append(about(data.Logging,       "Logging       "));
             sb.Append("\n---\n");
-            Log.print(sb.ToString());
+            Log._.raw(sb.ToString());
         }
 
         public static void lineBegin()
         {
-            Log.print(String.Format("{0}========== Build-Events started =========={0}", System.Environment.NewLine));
+            Log._.raw(String.Format("{0}========== Build-Events started =========={0}", System.Environment.NewLine));
         }
 
         public static void summaryWarn(ToolWindowPane tool)
         {
             try {
-                Log.print(String.Format("========== Build-Events completed: {0} Warnings ==========", ((UI.Xaml.IStatusTool)tool.Content).Warnings));
-                //Log.print(String.Format("{0}{1}", new String('=', 80), System.Environment.NewLine));
-                //Log.print(String.Format("Warnings: {0}", ((UI.Xaml.IStatusTool)tool.Content).Warnings));
-                Log.print(String.Format("{0}{0}", System.Environment.NewLine));
+                Log._.raw(String.Format("========== Build-Events completed: {0} Warnings ==========", ((UI.Xaml.IStatusTool)tool.Content).Warnings));
+                //Log._.raw(String.Format("{0}{1}", new String('=', 80), System.Environment.NewLine));
+                //Log._.raw(String.Format("Warnings: {0}", ((UI.Xaml.IStatusTool)tool.Content).Warnings));
+                Log._.raw(String.Format("{0}{0}", System.Environment.NewLine));
             }
             catch(Exception ex) {
-                Log.nlog.Debug("Failed summaryWarn: '{0}'", ex.ToString());
+                Log.Debug("Failed summaryWarn: '{0}'", ex.ToString());
             }
         }
     }

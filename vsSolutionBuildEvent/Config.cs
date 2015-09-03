@@ -95,11 +95,11 @@ namespace net.r_eg.vsSBE
             link = _formatLink(path, Entity.NAME, prefix);
             if(!File.Exists(link))
             {
-                Log.nlog.Trace("Configuration: the special version is not found /'{0}':'{1}'", prefix, link);
+                Log.Trace("Configuration: the special version is not found /'{0}':'{1}'", prefix, link);
                 link = _formatLink(path, Entity.NAME);
             }
 
-            Log.nlog.Debug("Configuration: trying to load - '{0}'", link);
+            Log.Debug("Configuration: trying to load - '{0}'", link);
             try
             {
                 using(StreamReader stream = new StreamReader(link, Encoding.UTF8, true))
@@ -110,12 +110,12 @@ namespace net.r_eg.vsSBE
                     }
                     compatibility(stream);
                 }
-                Log.nlog.Info("Loaded settings (v{0}): '{1}'\n\nReady:", Data.Header.Compatibility, Settings.WorkingPath);
+                Log.Info("Loaded settings (v{0}): '{1}'\n\nReady:", Data.Header.Compatibility, Settings.WorkingPath);
             }
             catch(FileNotFoundException)
             {
                 Data = new SolutionEvents();
-                Log.nlog.Info("Initialized with new settings.");
+                Log.Info("Initialized with new settings.");
             }
             catch(JsonException ex)
             {
@@ -123,7 +123,7 @@ namespace net.r_eg.vsSBE
             }
             catch(Exception ex)
             {
-                Log.nlog.Error("Configuration file is corrupt - '{0}'", ex.Message);
+                Log.Error("Configuration file is corrupt - '{0}'", ex.Message);
                 Data = new SolutionEvents(); //TODO: actions in UI, e.g.: restore, new..
             }
 
@@ -157,11 +157,11 @@ namespace net.r_eg.vsSBE
                 using(TextWriter stream = new StreamWriter(link, false, Encoding.UTF8)) {
                     serialize(stream, Data);
                 }
-                Log.nlog.Trace("Configuration: saved into '{0}'", Settings.WorkingPath);
+                Log.Trace("Configuration: saved into '{0}'", Settings.WorkingPath);
                 Update();
             }
             catch(Exception ex) {
-                Log.nlog.Error("Cannot apply configuration '{0}'", ex.Message);
+                Log.Error("Cannot apply configuration '{0}'", ex.Message);
             }
         }
 
@@ -224,7 +224,7 @@ namespace net.r_eg.vsSBE
             System.Version cfg = System.Version.Parse(Data.Header.Compatibility);
 
             if(cfg.Major > Entity.Version.Major || (cfg.Major == Entity.Version.Major && cfg.Minor > Entity.Version.Minor)) {
-                Log.nlog.Warn(
+                Log.Warn(
                     "Version {0} of configuration file is higher supported version {1}. Please update application. Several settings may be not correctly loaded.",
                     cfg.ToString(2), Entity.Version.ToString(2)
                 );
@@ -232,10 +232,10 @@ namespace net.r_eg.vsSBE
 
             if(cfg.Major == 0 && cfg.Minor < 4)
             {
-                Log.show();
-                Log.nlog.Info("Upgrading configuration for <= v0.3.x");
+                Log._.show();
+                Log.Info("Upgrading configuration for <= v0.3.x");
                 //Upgrade.Migration03_04.migrate(stream);
-                Log.nlog.Warn("[Obsolete] Not supported. Use of any v0.4.x - v0.8.x for upgrading <= v0.3.x");
+                Log.Warn("[Obsolete] Not supported. Use of any v0.4.x - v0.8.x for upgrading <= v0.3.x");
             }
         }
 
@@ -258,11 +258,11 @@ namespace net.r_eg.vsSBE
         {
             try {
                 SolutionEvents ret = Upgrade.v08.Migration08_09.migrate(file);
-                Log.nlog.Info("Successfully upgraded settings. *Save manually! :: -> {0}", Entity.NAME);
+                Log.Info("Successfully upgraded settings. *Save manually! :: -> {0}", Entity.NAME);
                 return ret;
             }
             catch(Exception ex) {
-                Log.nlog.Error("Incorrect configuration data: '{0}' -> '{1}'. Initialize new.", innerException.Message, ex.Message);
+                Log.Error("Incorrect configuration data: '{0}' -> '{1}'. Initialize new.", innerException.Message, ex.Message);
             }
             return new SolutionEvents();
         }

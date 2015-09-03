@@ -24,6 +24,7 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
+using net.r_eg.vsSBE.Logger;
 using net.r_eg.vsSBE.SBEScripts.Components;
 
 namespace net.r_eg.vsSBE.Actions
@@ -79,7 +80,7 @@ namespace net.r_eg.vsSBE.Actions
             foreach(SBEEvent item in Config._.Data.PreBuild)
             {
                 if(hasExecutionOrder(item)) {
-                    Log.nlog.Info("[Pre] SBE has deferred action: '{0}' :: waiting... ", item.Caption);
+                    Log.Info("[Pre] SBE has deferred action: '{0}' :: waiting... ", item.Caption);
                     Status._.add(SolutionEventType.Pre, StatusType.Deferred);
                 }
                 else {
@@ -107,23 +108,23 @@ namespace net.r_eg.vsSBE.Actions
             foreach(SBEEvent item in evt)
             {
                 if(fSucceeded != 1 && item.IgnoreIfBuildFailed) {
-                    Log.nlog.Info("[Post] ignored action '{0}' :: Build FAILED. See option 'Ignore if the build failed'", item.Caption);
+                    Log.Info("[Post] ignored action '{0}' :: Build FAILED. See option 'Ignore if the build failed'", item.Caption);
                     continue;
                 }
 
                 if(!isReached(item)) {
-                    Log.nlog.Info("[Post] ignored action '{0}' ::  not reached selected projects in execution order", item.Caption);
+                    Log.Info("[Post] ignored action '{0}' ::  not reached selected projects in execution order", item.Caption);
                     continue;
                 }
 
                 try {
                     if(cmd.exec(item, SolutionEventType.Post)) {
-                        Log.nlog.Info("[Post] finished SBE: {0}", item.Caption);
+                        Log.Info("[Post] finished SBE: {0}", item.Caption);
                     }
                     Status._.add(SolutionEventType.Post, StatusType.Success);
                 }
                 catch(Exception ex) {
-                    Log.nlog.Error("Post-Build error: {0}", ex.Message);
+                    Log.Error("Post-Build error: {0}", ex.Message);
                     Status._.add(SolutionEventType.Post, StatusType.Fail);
                 }
             }
@@ -184,18 +185,18 @@ namespace net.r_eg.vsSBE.Actions
             foreach(SBEEvent item in evt)
             {
                 if(!isReached(item)) {
-                    Log.nlog.Info("[Cancel] ignored action '{0}' :: not reached selected projects in execution order", item.Caption);
+                    Log.Info("[Cancel] ignored action '{0}' :: not reached selected projects in execution order", item.Caption);
                     continue;
                 }
 
                 try {
                     if(cmd.exec(item, SolutionEventType.Cancel)) {
-                        Log.nlog.Info("[Cancel] finished SBE: {0}", item.Caption);
+                        Log.Info("[Cancel] finished SBE: {0}", item.Caption);
                     }
                     Status._.add(SolutionEventType.Cancel, StatusType.Success);
                 }
                 catch(Exception ex) {
-                    Log.nlog.Error("Cancel-Build error: {0}", ex.Message);
+                    Log.Error("Cancel-Build error: {0}", ex.Message);
                     Status._.add(SolutionEventType.Cancel, StatusType.Fail);
                 }
             }
@@ -231,16 +232,16 @@ namespace net.r_eg.vsSBE.Actions
             foreach(SBETransmitter evt in Config._.Data.Transmitter)
             {
                 if(!isExecute(evt, current)) {
-                    Log.nlog.Info("[Transmitter] ignored action '{0}' :: by execution order", evt.Caption);
+                    Log.Info("[Transmitter] ignored action '{0}' :: by execution order", evt.Caption);
                 }
                 else {
                     try {
                         if(cmd.exec(evt, SolutionEventType.Transmitter)) {
-                            //Log.nlog.Trace("[Transmitter]: " + Config._.Data.transmitter.caption);
+                            //Log.Trace("[Transmitter]: " + Config._.Data.transmitter.caption);
                         }
                     }
                     catch(Exception ex) {
-                        Log.nlog.Error("Transmitter error: {0}", ex.Message);
+                        Log.Error("Transmitter error: {0}", ex.Message);
                     }
                 }
             }
@@ -330,18 +331,18 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             if(!isExecute(evt, current)) {
-                Log.nlog.Info("[{0}] ignored action '{1}' :: by execution order", type, evt.Caption);
+                Log.Info("[{0}] ignored action '{1}' :: by execution order", type, evt.Caption);
                 return Codes.Success;
             }
 
             try {
                 if(cmd.exec(evt, (type == Receiver.Output.BuildItem.Type.Warnings)? SolutionEventType.Warnings : SolutionEventType.Errors)) {
-                    Log.nlog.Info("[{0}] finished SBE: {1}", type, evt.Caption);
+                    Log.Info("[{0}] finished SBE: {1}", type, evt.Caption);
                 }
                 return Codes.Success;
             }
             catch(Exception ex) {
-                Log.nlog.Error("SBE '{0}' error: {1}", type, ex.Message);
+                Log.Error("SBE '{0}' error: {1}", type, ex.Message);
             }
             return Codes.Failed;
         }
@@ -356,18 +357,18 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             if(!isExecute(evt, current)) {
-                Log.nlog.Info("[Output] ignored action '{0}' :: by execution order", evt.Caption);
+                Log.Info("[Output] ignored action '{0}' :: by execution order", evt.Caption);
                 return Codes.Success;
             }
 
             try {
                 if(cmd.exec(evt, SolutionEventType.OWP)) {
-                    Log.nlog.Info("[Output] finished SBE: {0}", evt.Caption);
+                    Log.Info("[Output] finished SBE: {0}", evt.Caption);
                 }
                 return Codes.Success;
             }
             catch(Exception ex) {
-                Log.nlog.Error("SBE 'Output' error: {0}", ex.Message);
+                Log.Error("SBE 'Output' error: {0}", ex.Message);
             }
             return Codes.Failed;
         }
@@ -426,14 +427,14 @@ namespace net.r_eg.vsSBE.Actions
                     continue;
                 }
 
-                Log.nlog.Trace("[CommandEvent] catched: '{0}', '{1}', '{2}', '{3}', '{4}' /'{5}'",
+                Log.Trace("[CommandEvent] catched: '{0}', '{1}', '{2}', '{3}', '{4}' /'{5}'",
                                                         guid, id, customIn, customOut, cancelDefault, pre);
 
                 commandEvent(item);
 
                 if(pre && Is.Any(f => f)) {
                     cancelDefault = true;
-                    Log.nlog.Info("[CommandEvent] original command has been canceled for action: '{0}'", item.Caption);
+                    Log.Info("[CommandEvent] original command has been canceled for action: '{0}'", item.Caption);
                 }
             }
             return Status._.contains(SolutionEventType.CommandEvent, StatusType.Fail)? Codes.Failed : Codes.Success;
@@ -444,12 +445,12 @@ namespace net.r_eg.vsSBE.Actions
             try
             {
                 if(cmd.exec(item, SolutionEventType.CommandEvent)) {
-                    Log.nlog.Info("[CommandEvent] finished: '{0}'", item.Caption);
+                    Log.Info("[CommandEvent] finished: '{0}'", item.Caption);
                 }
                 Status._.add(SolutionEventType.CommandEvent, StatusType.Success);
             }
             catch(Exception ex) {
-                Log.nlog.Error("CommandEvent error: '{0}'", ex.Message);
+                Log.Error("CommandEvent error: '{0}'", ex.Message);
             }
             Status._.add(SolutionEventType.CommandEvent, StatusType.Fail);
         }
@@ -461,12 +462,12 @@ namespace net.r_eg.vsSBE.Actions
         {
             try {
                 if(cmd.exec(evt, SolutionEventType.Pre)) {
-                    Log.nlog.Info("[Pre] finished SBE: {0}", evt.Caption);
+                    Log.Info("[Pre] finished SBE: {0}", evt.Caption);
                 }
                 return Codes.Success;
             }
             catch(Exception ex) {
-                Log.nlog.Error("Pre-Build error: {0}", ex.Message);
+                Log.Error("Pre-Build error: {0}", ex.Message);
             }
             return Codes.Failed;
         }
@@ -510,7 +511,7 @@ namespace net.r_eg.vsSBE.Actions
             if(!hasExecutionOrder(evt)) {
                 return true;
             }
-            Log.nlog.Debug("hasExecutionOrder(->isReached) for '{0}' is true", evt.Caption);
+            Log.Debug("hasExecutionOrder(->isReached) for '{0}' is true", evt.Caption);
 
             return evt.ExecutionOrder.Any(e =>
                                             projects.ContainsKey(e.Project)
@@ -533,7 +534,7 @@ namespace net.r_eg.vsSBE.Actions
             if(!hasExecutionOrder(evt)) {
                 return true;
             }
-            Log.nlog.Debug("hasExecutionOrder(->isExecute) for '{0}' is true", evt.Caption);
+            Log.Debug("hasExecutionOrder(->isExecute) for '{0}' is true", evt.Caption);
 
             foreach(IExecutionOrder eo in evt.ExecutionOrder)
             {
@@ -572,7 +573,7 @@ namespace net.r_eg.vsSBE.Actions
             current.Project     = project;
             current.Order       = type;
 
-            Log.nlog.Trace("onProject: '{0}':{1} == {2}", project, type, fSuccess);
+            Log.Trace("onProject: '{0}':{1} == {2}", project, type, fSuccess);
 
             if(Status._.contains(SolutionEventType.Pre, StatusType.Deferred)) {
                 monitoringPre(project, type, fSuccess);
@@ -600,17 +601,17 @@ namespace net.r_eg.vsSBE.Actions
                 }
 
                 if(!fSuccess && evt[i].IgnoreIfBuildFailed) {
-                    Log.nlog.Info("[PRE] ignored action '{0}' :: Build FAILED. See option 'Ignore if the build failed'", evt[i].Caption);
+                    Log.Info("[PRE] ignored action '{0}' :: Build FAILED. See option 'Ignore if the build failed'", evt[i].Caption);
                     continue;
                 }
 
                 if(!hasExecutionOrder(evt[i])) {
-                    Log.nlog.Trace("[PRE] deferred: executionOrder is null or not contains elements :: {0}", evt[i].Caption);
+                    Log.Trace("[PRE] deferred: executionOrder is null or not contains elements :: {0}", evt[i].Caption);
                     return;
                 }
 
                 if(evt[i].ExecutionOrder.Any(o => o.Project == project && o.Order == type)) {
-                    Log.nlog.Info("Incoming '{0}'({1}) :: Execute the deferred action: '{2}'", project, type, evt[i].Caption);
+                    Log.Info("Incoming '{0}'({1}) :: Execute the deferred action: '{2}'", project, type, evt[i].Caption);
                     Status._.update(SolutionEventType.Pre, i, (execPre(evt[i]) == Codes.Success)? StatusType.Success : StatusType.Fail);
                 }
             }
@@ -636,23 +637,25 @@ namespace net.r_eg.vsSBE.Actions
             return true;
         }
 
-        /// <summary>
-        /// TODO: static!
-        /// </summary>
-        private void attachLoggingEvent()
+        protected void attachLoggingEvent()
         {
             lock(_lock) {
-                Log.Message -= new Log.MessageEvent(onLogging);
-                Log.Message += new Log.MessageEvent(onLogging);
+                detachLoggingEvent();
+                Log._.Receiving += onLogging;
             }
         }
 
+        protected void detachLoggingEvent()
+        {
+            Log._.Receiving -= onLogging;
+        }
+        
         /// <summary>
         /// Works with all processes of internal logging.
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="level"></param>
-        private void onLogging(string message, string level)
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void onLogging(object sender, MessageArgs e)
         {
             if(Config._.Data == null) {
                 return; // can be early initialization
@@ -678,23 +681,23 @@ namespace net.r_eg.vsSBE.Actions
                 {
                     IComponent component = cmd.SBEScript.Bootloader.getComponentByType(typeof(OWPComponent));
                     if(component != null) {
-                        ((ILogData)component).updateLogData(message, level);
+                        ((ILogData)component).updateLogData(e.Message, e.Level);
                     }
 
                     foreach(LoggingEvent evt in Config._.Data.Logging)
                     {
                         if(!isExecute(evt, current)) {
-                            Log.nlog.Info("[Logging] ignored action '{0}' :: by execution order", evt.Caption);
+                            Log.Info("[Logging] ignored action '{0}' :: by execution order", evt.Caption);
                             continue;
                         }
 
                         try {
                             if(cmd.exec(evt, SolutionEventType.Logging)) {
-                                Log.nlog.Trace("[Logging]: " + evt.Caption);
+                                Log.Trace("[Logging]: " + evt.Caption);
                             }
                         }
                         catch(Exception ex) {
-                            Log.nlog.Error("LoggingEvent error: {0}", ex.Message);
+                            Log.Error("LoggingEvent error: {0}", ex.Message);
                         }
                     }
                 }
@@ -704,7 +707,7 @@ namespace net.r_eg.vsSBE.Actions
 
         private int _ignoredAction(SolutionEventType type)
         {
-            Log.nlog.Trace("[{0}] Ignored action. It's already started in other processes of VS.", type);
+            Log.Trace("[{0}] Ignored action. It's already started in other processes of VS.", type);
             return Codes.Success;
         }
     }

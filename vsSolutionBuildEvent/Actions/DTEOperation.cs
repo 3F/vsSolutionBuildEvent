@@ -106,7 +106,7 @@ namespace net.r_eg.vsSBE.Actions
                                                  $", RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                Log.nlog.Debug("Operation '{0}' is not correct", line);
+                Log.Debug("Operation '{0}' is not correct", line);
                 throw new IncorrectSyntaxException("prepare failed - '{0}'", line);
             }
             return new DTEPrepared(m.Groups[1].Value, m.Groups[2].Success ? m.Groups[2].Value.Trim() : String.Empty);
@@ -141,13 +141,13 @@ namespace net.r_eg.vsSBE.Actions
             lock(_eLock)
             {
                 if(queue.level == 0) {
-                    Log.nlog.Debug("DTE: init the queue");
+                    Log.Debug("DTE: init the queue");
                     queue.cmd = commands;
                     Settings.silentModeActions = true;
                 }
 
                 if(queue.cmd.Count < 1) {
-                    Log.nlog.Debug("DTE recursion: all pushed :: level {0}", queue.level);
+                    Log.Debug("DTE recursion: all pushed :: level {0}", queue.level);
                     return;
                 }
                 ++queue.level;
@@ -158,12 +158,12 @@ namespace net.r_eg.vsSBE.Actions
                 try {
                     // also error if command not available at current time
                     // * +causes recursion with Debug.Start, Debug.StartWithoutDebugging, etc.,
-                    Log.nlog.Info("DTE exec {0}: '{1}' [{2}]", progressCaption, current.name, current.args);
+                    Log.Info("DTE exec {0}: '{1}' [{2}]", progressCaption, current.name, current.args);
                     exec(current.name, current.args);
-                    Log.nlog.Debug("DTE exec {0}: done.", progressCaption);
+                    Log.Debug("DTE exec {0}: done.", progressCaption);
                 }
                 catch(Exception ex) {
-                    Log.nlog.Debug("DTE fail {0}: {1} :: '{2}'", progressCaption, ex.Message, current.name);
+                    Log.Debug("DTE fail {0}: {1} :: '{2}'", progressCaption, ex.Message, current.name);
                     terminated = ex;
                 }
 
@@ -171,10 +171,10 @@ namespace net.r_eg.vsSBE.Actions
                 {
                     // remaining commands
                     if(terminated != null && abortOnFirstError) {
-                        Log.nlog.Info("DTE exec {0}: Aborted", progressCaption);
+                        Log.Info("DTE exec {0}: Aborted", progressCaption);
                     }
                     else {
-                        Log.nlog.Debug("DTE {0}: step into", progressCaption);
+                        Log.Debug("DTE {0}: step into", progressCaption);
                         exec((Queue<DTEPrepared>)null, abortOnFirstError);
                     }
                 }
@@ -183,7 +183,7 @@ namespace net.r_eg.vsSBE.Actions
 
                 if(queue.level < 1)
                 {
-                    Log.nlog.Debug("DTE: all completed");
+                    Log.Debug("DTE: all completed");
                     Settings.silentModeActions = false;
                     if(terminated != null) {
                         throw new ComponentException(terminated.Message, terminated);

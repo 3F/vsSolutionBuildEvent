@@ -46,7 +46,7 @@ namespace net.r_eg.vsSBE.Scripts
 
             if(!limited) {
                 ret = Regex.Unescape(data);
-                Log.nlog.Trace("Tokens: processed characters '{0}'", ret);
+                Log.Trace("Tokens: processed characters '{0}'", ret);
                 return ret;
             }
 
@@ -66,7 +66,7 @@ namespace net.r_eg.vsSBE.Scripts
                                 }, 
                                 RegexOptions.IgnorePatternWhitespace);
 
-            Log.nlog.Trace("Tokens: limited processed characters '{0}'", ret);
+            Log.Trace("Tokens: limited processed characters '{0}'", ret);
             return ret;
         }
     }

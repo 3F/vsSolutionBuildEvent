@@ -80,7 +80,7 @@ namespace net.r_eg.vsSBE.Actions
             int ret = run(type, cmd, evt);
             if(ret != 0)
             {
-                Log.nlog.Warn("Return code '{0}'", ret);
+                Log.Warn("Return code '{0}'", ret);
                 return false;
             }
             return true;
@@ -104,19 +104,19 @@ namespace net.r_eg.vsSBE.Actions
             IModeCSharp cfg = ((IModeCSharp)evt.Mode);
             string cache    = fileName(evt);
 
-            Log.nlog.Trace("[Cache] Checks: '{0}','{1}','{2}','{3}'", cfg.GenerateInMemory, cfg.CachingBytecode, evt.Name, cache);
+            Log.Trace("[Cache] Checks: '{0}','{1}','{2}','{3}'", cfg.GenerateInMemory, cfg.CachingBytecode, evt.Name, cache);
             if(cfg.GenerateInMemory || !cfg.CachingBytecode || String.IsNullOrEmpty(cache)) {
                 return true;
             }
             
             FileInfo f = new FileInfo(outputCacheFile(evt));
             if(!f.Exists) {
-                Log.nlog.Info("[Cache] Binary '{0}' is not found in '{1}'.", cache, f.FullName);
+                Log.Info("[Cache] Binary '{0}' is not found in '{1}'.", cache, f.FullName);
                 return true;
             }
 
             if(cfg.LastTime != f.LastWriteTimeUtc.Ticks) {
-                Log.nlog.Debug("[Cache] Is outdated '{0}' for '{1}'", cfg.LastTime, f.LastWriteTimeUtc.Ticks);
+                Log.Debug("[Cache] Is outdated '{0}' for '{1}'", cfg.LastTime, f.LastWriteTimeUtc.Ticks);
                 return true;
             }
             return false;
@@ -150,7 +150,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <returns>The Type for work with user code.</returns>
         protected Type load(string file, string find = null)
         {
-            Log.nlog.Trace("[load] started with: '{0}' /'{1}'", file, find);
+            Log.Trace("[load] started with: '{0}' /'{1}'", file, find);
 
             if(find != null)
             {
@@ -163,7 +163,7 @@ namespace net.r_eg.vsSBE.Actions
                     }
                     
                     if(a.Substring(0, a.IndexOf(',')) == find) {
-                        Log.nlog.Trace("[load] use from loaded: '{0}'", a);
+                        Log.Trace("[load] use from loaded: '{0}'", a);
                         return asm[i].GetType(MAIN_CLASS);
                     }
                 }
@@ -203,7 +203,7 @@ namespace net.r_eg.vsSBE.Actions
                 CompilerResults compiled = onlyCompile(evt);
                 return load(compiled.PathToAssembly, null);
             }
-            Log.nlog.Trace("Uses memory for getting type.");
+            Log.Trace("Uses memory for getting type.");
 
             // be careful, this should automatically load assembly with blocking file if not used GenerateInMemory
             // therefore, use this only with GenerateInMemory == true
@@ -218,7 +218,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <returns>Compiled user code.</returns>
         protected CompilerResults onlyCompile(ISolutionEvent evt)
         {
-            Log.nlog.Trace("[Compiler] start new compilation.");
+            Log.Trace("[Compiler] start new compilation.");
 
             IModeCSharp cfg = (IModeCSharp)evt.Mode;
             string command  = cfg.Command;
@@ -229,10 +229,10 @@ namespace net.r_eg.vsSBE.Actions
             command = parse(evt, command);
 
             string output = outputCacheFile(evt);
-            Log.nlog.Debug("[Compiler] output: '{0}' /GenerateInMemory: {1}", output, cfg.GenerateInMemory);
+            Log.Debug("[Compiler] output: '{0}' /GenerateInMemory: {1}", output, cfg.GenerateInMemory);
 
             if(File.Exists(output)) {
-                Log.nlog.Trace("[Compiler] clear cache.");
+                Log.Trace("[Compiler] clear cache.");
                 File.Delete(output);
             }
 
@@ -265,7 +265,7 @@ namespace net.r_eg.vsSBE.Actions
 
             CompilerResults compiled;
             if(cfg.FilesMode) {
-                Log.nlog.Trace("[Compiler] use as list of files with source code.");
+                Log.Trace("[Compiler] use as list of files with source code.");
                 compiled = provider.CompileAssemblyFromFile(parameters, extractFiles(filesFromCommand(command)));
             }
             else {
@@ -274,7 +274,7 @@ namespace net.r_eg.vsSBE.Actions
 
             // messages about errors & warnings
             foreach(CompilerError msg in compiled.Errors) {
-                Log.nlog.Log((msg.IsWarning)? LogLevel.Warn : LogLevel.Error, "[Compiler] '{0}'", msg.ToString());
+                Log._.NLog.Log((msg.IsWarning)? LogLevel.Warn : LogLevel.Error, "[Compiler] '{0}'", msg.ToString());
             }
 
             if(compiled.Errors.HasErrors) {
@@ -296,19 +296,19 @@ namespace net.r_eg.vsSBE.Actions
         protected void updateTimeTo(string pathToAssembly, ISolutionEvent evt)
         {
             if(pathToAssembly == null) {
-                Log.nlog.Warn("[Cache] Ignore caching. Binary file is not found. /GenerateInMemory: '{0}'", 
+                Log.Warn("[Cache] Ignore caching. Binary file is not found. /GenerateInMemory: '{0}'", 
                                                                                 ((IModeCSharp)evt.Mode).GenerateInMemory);
                 return;
             }
 
             FileInfo f = new FileInfo(pathToAssembly);
             if(!f.Exists) {
-                Log.nlog.Warn("[Cache] Can't find compiled '{0}' for caching.", pathToAssembly);
+                Log.Warn("[Cache] Can't find compiled '{0}' for caching.", pathToAssembly);
                 return;
             }
 
             IModeCSharp cfg = (IModeCSharp)evt.Mode;
-            Log.nlog.Debug("[Cache] updating timestamp: '{0}' -> '{1}'", cfg.LastTime, f.LastWriteTimeUtc.Ticks);
+            Log.Debug("[Cache] updating timestamp: '{0}' -> '{1}'", cfg.LastTime, f.LastWriteTimeUtc.Ticks);
 
             cfg.LastTime = f.LastWriteTimeUtc.Ticks;
             Config._.save();
@@ -367,7 +367,7 @@ namespace net.r_eg.vsSBE.Actions
                 return null;
             }
 
-            Log.nlog.Trace("Assembly resolver: '{0}' /requesting from '{1}'", args.Name, args.RequestingAssembly.FullName);
+            Log.Trace("Assembly resolver: '{0}' /requesting from '{1}'", args.Name, args.RequestingAssembly.FullName);
             try {
                 return Assembly.LoadFrom(String.Format("{0}\\{1}.dll",
                                                         Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),

@@ -73,7 +73,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
                 }));
             }
             catch(Exception ex) {
-                Log.nlog.Debug("Failed StatusToolControl::notify: '{0}'", ex.Message);
+                Log.Debug("Failed StatusToolControl::notify: '{0}'", ex.Message);
             }
         }
 
@@ -111,7 +111,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
                 return logic.caption(type, selected);
             }
             catch(Exception ex){
-                Log.nlog.Warn("StatusToolControl: problem with caption '{0}'", ex.Message);
+                Log.Warn("StatusToolControl: problem with caption '{0}'", ex.Message);
             }
             return logic.caption(type);
         }
@@ -131,7 +131,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
                 }));
             }
             catch(Exception ex) {
-                Log.nlog.Warn("StatusToolControl: Failed update for type - '{0}' :: '{1}'", type, ex.Message);
+                Log.Warn("StatusToolControl: Failed update for type - '{0}' :: '{1}'", type, ex.Message);
             }
         }
 
@@ -141,7 +141,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
                 return logic.isDisabledAll(type);
             }
             catch(Exception ex) {
-                Log.nlog.Warn("StatusToolControl: Failed checking the Enabled status for type - '{0}' :: '{1}'", type, ex.Message);
+                Log.Warn("StatusToolControl: Failed checking the Enabled status for type - '{0}' :: '{1}'", type, ex.Message);
             }
             return true;
         }
@@ -178,7 +178,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
                 logic.enabled(type, status);
             }
             catch(Exception ex) {
-                Log.nlog.Warn("StatusToolControl: Failed - enabled() for type - '{0}' :: '{1}'", type, ex.Message);
+                Log.Warn("StatusToolControl: Failed - enabled() for type - '{0}' :: '{1}'", type, ex.Message);
             }
         }
 
@@ -188,7 +188,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
                 logic.restore(type);
             }
             catch(Exception ex) {
-                Log.nlog.Warn("StatusToolControl: Failed - restore() for type - '{0}' :: '{1}'", type, ex.Message);
+                Log.Warn("StatusToolControl: Failed - restore() for type - '{0}' :: '{1}'", type, ex.Message);
             }
         }
 
@@ -198,13 +198,13 @@ namespace net.r_eg.vsSBE.UI.Xaml
                 logic.executeCommand("Build.vsSBE.Settings");
             }
             catch(Exception ex) {
-                Log.nlog.Warn("Cannot open window with settings'{0}'", ex.Message);
+                Log.Warn("Cannot open window with settings'{0}'", ex.Message);
             }
         }
 
         private void btnInfo_Click(object sender, RoutedEventArgs e)
         {
-            Log.show();
+            Log._.show();
             //resetCounter();
         }
 

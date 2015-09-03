@@ -146,7 +146,7 @@ namespace net.r_eg.vsSBE
             {
                 string left = line.Split('=')[0].Trim(); // Debug|Win32 = Debug|Win32
                 if(string.Compare(left, "DESCRIPTION", StringComparison.OrdinalIgnoreCase) == 0) {
-                    Log.nlog.Trace("SolutionParser: Configuration has been ignored for line '{0}'", line);
+                    Log.Trace("SolutionParser: Configuration has been ignored for line '{0}'", line);
                     continue;
                 }
 
@@ -155,7 +155,7 @@ namespace net.r_eg.vsSBE
                     continue;
                 }
 
-                Log.nlog.Trace("SolutionParser: Configuration ->['{0}' ; '{1}']", cfg[0], cfg[1]);
+                Log.Trace("SolutionParser: Configuration ->['{0}' ; '{1}']", cfg[0], cfg[1]);
                 configuration.Add(new SolutionCfg() {
                     Configuration   = cfg[0],
                     Platform        = cfg[1]
@@ -174,14 +174,14 @@ namespace net.r_eg.vsSBE
             string pattern = "^Project\\(\"(?<TypeGuid>.*)\"\\)\\s*=\\s*\"(?<Name>.*)\"\\s*,\\s*\"(?<Path>.*)\"\\s*,\\s*\"(?<Guid>.*)\"$";
             Match m = Regex.Match(line, pattern);
             if(!m.Success) {
-                Log.nlog.Debug("SolutionParser: incorrect line for pattern :: '{0}'", line);
+                Log.Debug("SolutionParser: incorrect line for pattern :: '{0}'", line);
                 return;
             }
 
             string pType = m.Groups["TypeGuid"].Value.Trim();
             
             if(String.Equals("{2150E333-8FDC-42A3-9474-1A3956D46DE8}", pType, StringComparison.OrdinalIgnoreCase)) {
-                Log.nlog.Trace("SolutionParser: ignored as SolutionFolder");
+                Log.Trace("SolutionParser: ignored as SolutionFolder");
                 return;
             }
 
@@ -197,7 +197,7 @@ namespace net.r_eg.vsSBE
                 fullPath = (!String.IsNullOrEmpty(pPath))? Path.Combine(_solutionDir, pPath) : pPath;
             }
 
-            Log.nlog.Trace("SolutionParser: project ->[Type: '{0}'; Name: '{1}'; Path: '{2}'; GUID: '{3}'; FullPath: '{4}']",
+            Log.Trace("SolutionParser: project ->[Type: '{0}'; Name: '{1}'; Path: '{2}'; GUID: '{3}'; FullPath: '{4}']",
                                                             pType, pName, pPath, pGuid, fullPath);
             projects.Add(new Project() {
                 Type        = pType,

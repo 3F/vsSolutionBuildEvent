@@ -49,17 +49,17 @@ namespace net.r_eg.vsSBE.Actions
 
             protected void anyEventRaised(object sender, BuildEventArgs e)
             {
-                Log.nlog.Info(e.Message);
+                Log.Info(e.Message);
             }
 
             protected void warningRaised(object sender, BuildWarningEventArgs e)
             {
-                Log.nlog.Warn("[.targets:{0}]: {1} - '{2}'", e.LineNumber, e.Code, e.Message);
+                Log.Warn("[.targets:{0}]: {1} - '{2}'", e.LineNumber, e.Code, e.Message);
             }
 
             protected void errorRaised(object sender, BuildErrorEventArgs e)
             {
-                Log.nlog.Error("[.targets:{0}]: {1} - '{2}'", e.LineNumber, e.Code, e.Message);
+                Log.Error("[.targets:{0}]: {1} - '{2}'", e.LineNumber, e.Code, e.Message);
             }
         }
 

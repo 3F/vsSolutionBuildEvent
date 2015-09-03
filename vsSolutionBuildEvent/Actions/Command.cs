@@ -84,7 +84,7 @@ namespace net.r_eg.vsSBE.Actions
                 return false;
             }
             if(evt.BuildType != BuildType.Common && evt.BuildType != Env.BuildType) {
-                Log.nlog.Debug("Ignored context. Build type '{0}' should be '{1}'", Env.BuildType, evt.BuildType);
+                Log.Debug("Ignored context. Build type '{0}' should be '{1}'", Env.BuildType, evt.BuildType);
                 return false;
             }
             this.type = type;
@@ -94,16 +94,16 @@ namespace net.r_eg.vsSBE.Actions
             if(evt.ToConfiguration != null 
                 && evt.ToConfiguration.Length > 0 && evt.ToConfiguration.Where(s => s == cfg).Count() < 1)
             {
-                Log.nlog.Info("Action '{0}' is ignored for current configuration - '{1}'", evt.Caption, cfg);
+                Log.Info("Action '{0}' is ignored for current configuration - '{1}'", evt.Caption, cfg);
                 return false;
             }
 
             if(!confirm(evt)) {
-                Log.nlog.Debug("Skipped action by user");
+                Log.Debug("Skipped action by user");
                 return false;
             }
 
-            Log.nlog.Info("Launching action '{0}' :: Configuration - '{1}'", evt.Caption, cfg);
+            Log.Info("Launching action '{0}' :: Configuration - '{1}'", evt.Caption, cfg);
             return actionBy(evt);
         }
 
@@ -139,27 +139,27 @@ namespace net.r_eg.vsSBE.Actions
             switch(evt.Mode.Type)
             {
                 case ModeType.Operation: {
-                    Log.nlog.Info("Use Operation Mode");
+                    Log.Info("Use Operation Mode");
                     return actionBy(ModeType.Operation, evt);
                 }
                 case ModeType.Interpreter: {
-                    Log.nlog.Info("Use Interpreter Mode");
+                    Log.Info("Use Interpreter Mode");
                     return actionBy(ModeType.Interpreter, evt);
                 }
                 case ModeType.Script: {
-                    Log.nlog.Info("Use Script Mode");
+                    Log.Info("Use Script Mode");
                     return actionBy(ModeType.Script, evt);
                 }
                 case ModeType.Targets: {
-                    Log.nlog.Info("Use Targets Mode");
+                    Log.Info("Use Targets Mode");
                     return actionBy(ModeType.Targets, evt);
                 }
                 case ModeType.CSharp: {
-                    Log.nlog.Info("Use C# Mode");
+                    Log.Info("Use C# Mode");
                     return actionBy(ModeType.CSharp, evt);
                 }
             }
-            Log.nlog.Info("Use Files Mode");
+            Log.Info("Use Files Mode");
             return actionBy(ModeType.File, evt);
         }
 
@@ -179,7 +179,7 @@ namespace net.r_eg.vsSBE.Actions
                 if(marker != null && Thread.CurrentThread.Name != marker) {
                     Thread.CurrentThread.Name = marker;
                 }
-                Log.nlog.Trace("Task for another thread is started for '{0}' /{1}", evt.Name, type);
+                Log.Trace("Task for another thread is started for '{0}' /{1}", evt.Name, type);
                 actions[type].process(evt);
 
             })).Start();
@@ -198,7 +198,7 @@ namespace net.r_eg.vsSBE.Actions
             if(!evt.Confirmation) {
                 return true;
             }
-            Log.nlog.Debug("Ask user about action [{0}]:{1} '{2}'", type, evt.Name, evt.Caption);
+            Log.Debug("Ask user about action [{0}]:{1} '{2}'", type, evt.Name, evt.Caption);
 
             string msg = String.Format("Execute the next action ?\n  [{0}]:{1} '{2}'\n\n* Cancel - to disable current action", 
                                         type, evt.Name, evt.Caption);

@@ -127,7 +127,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
                 }
             }
             catch(Exception ex) {
-                Log.nlog.Warn("NodeInfo-PropertyAttribute: '{0}'", ex.Message);
+                Log.Warn("NodeInfo-PropertyAttribute: '{0}'", ex.Message);
             }
         }
 
@@ -166,7 +166,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
                 }
             }
             catch(Exception ex) {
-                Log.nlog.Warn("NodeInfo-MethodAttribute: '{0}'", ex.Message);
+                Log.Warn("NodeInfo-MethodAttribute: '{0}'", ex.Message);
             }
         }
 

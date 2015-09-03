@@ -83,7 +83,7 @@ namespace net.r_eg.vsSBE.Actions
                 states[tevent][index] = tstatus;
             }
             catch(Exception ex) {
-                Log.nlog.Debug("Updating status: '{0}'", ex.Message);
+                Log.Debug("Updating status: '{0}'", ex.Message);
             }
         }
 

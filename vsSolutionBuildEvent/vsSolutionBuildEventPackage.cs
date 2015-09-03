@@ -144,15 +144,15 @@ namespace net.r_eg.vsSBE
             try {
                 eventsOfStatusTool(true);
                 //Log.paneAttach(GetOutputPane(GuidList.OWP_SBE, Settings.OWP_ITEM_VSSBE)); // also may be problem with toolWindow as in other COM variant -_-
-                Log.paneAttach(Settings.OWP_ITEM_VSSBE, Dte2);
-                Log.show();
+                Log._.paneAttach(Settings.OWP_ITEM_VSSBE, Dte2);
+                Log._.show();
 
                 int ret = Event.solutionOpened(pUnkReserved, fNewSolution);
                 _menuItemMain.Visible = (ret == VSConstants.S_OK);
                 return ret;
             }
             catch(Exception ex) {
-                Log.nlog.Fatal("Problem with loading solution: " + ex.Message);
+                Log.Fatal("Problem with loading solution: " + ex.Message);
             }
             return VSConstants.S_FALSE;
         }
@@ -171,12 +171,12 @@ namespace net.r_eg.vsSBE
                 Event.solutionClosed(pUnkReserved);
                 UI.Util.closeTool(_configFrm);
 
-                Log.paneDetach((IVsOutputWindow)GetGlobalService(typeof(SVsOutputWindow)));
+                Log._.paneDetach((IVsOutputWindow)GetGlobalService(typeof(SVsOutputWindow)));
                 eventsOfStatusTool(false);
                 return VSConstants.S_OK;
             }
             catch(Exception ex) {
-                Log.nlog.Fatal("Problem with closing solution: " + ex.Message);
+                Log.Fatal("Problem with closing solution: " + ex.Message);
             }
             return VSConstants.S_FALSE;
         }
@@ -188,7 +188,7 @@ namespace net.r_eg.vsSBE
                 ((IStatusTool)StatusTool.Content).resetCounter();
             }
             catch(Exception ex) {
-                Log.nlog.Debug("Failed reset of warnings counter: '{0}'", ex.Message);
+                Log.Debug("Failed reset of warnings counter: '{0}'", ex.Message);
             }
 
             return Event.onPre(ref pfCancelUpdate);
@@ -254,7 +254,7 @@ namespace net.r_eg.vsSBE
         private void eventsOfStatusTool(bool attach)
         {
             if(StatusTool == null) {
-                Log.nlog.Debug("Cannot find or create UI.StatusToolWindow");
+                Log.Debug("Cannot find or create UI.StatusToolWindow");
                 return;
             }
             IStatusToolEvents ste = (IStatusToolEvents)StatusTool;
@@ -380,7 +380,7 @@ namespace net.r_eg.vsSBE
                                 "Try to restart IDE or reinstall current plugin in Extension Manager.", 
                                 ex.ToString());
 
-                Log.nlog.Fatal(msg);
+                Log.Fatal(msg);
                 
                 int res;
                 Guid id = Guid.Empty;

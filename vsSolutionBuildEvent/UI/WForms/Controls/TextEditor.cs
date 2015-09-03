@@ -150,7 +150,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
         public void codeCompletionInit(IInspector inspector)
         {
             dom = new DomParser(inspector);
-            Log.nlog.Trace("Code completion has been initialized for '{0}'", Name);
+            Log.Trace("Code completion has been initialized for '{0}'", Name);
         }
 
         public void colorize(ColorSchema schema)
@@ -186,7 +186,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
                     break;
                 }
                 default: {
-                    Log.nlog.Debug("colorize: schema '{0}' is invalid", schema);
+                    Log.Debug("colorize: schema '{0}' is invalid", schema);
                     return;
                 }
             }
@@ -245,7 +245,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
         protected void updateFoldings()
         {
             if(foldingManager == null) {
-                Log.nlog.Debug("foldingManager is null");
+                Log.Debug("foldingManager is null");
                 return;
             }
 
@@ -280,7 +280,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
                 return;
             }
             if(dom == null) {
-                Log.nlog.Debug("Use the codeCompletionInit() for work with Code Completion");
+                Log.Debug("Use the codeCompletionInit() for work with Code Completion");
                 return;
             }
 
@@ -417,7 +417,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
                 menuComboBoxZoom.Text = nval + " %";
             }
             catch(Exception ex){
-                Log.nlog.Debug("Failed change font size: '{0}'", ex.Message);
+                Log.Debug("Failed change font size: '{0}'", ex.Message);
             }
         }
 

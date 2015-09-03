@@ -169,7 +169,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         ]
         protected string stGet(string data)
         {
-            Log.nlog.Trace("FileComponent: use stGet");
+            Log.Trace("FileComponent: use stGet");
             Match m = Regex.Match(data, 
                                     String.Format(@"get
                                                     \s*
@@ -182,7 +182,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             string file = location(StringHandler.normalize(m.Groups[1].Value.Trim()));
-            Log.nlog.Debug("FileComponent: ready for '{0}'", file);
+            Log.Debug("FileComponent: ready for '{0}'", file);
 
             try {
                 return readToEnd(file, detectEncodingFromFile(file));
@@ -281,7 +281,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         )]
         protected string stCall(string data, bool stdOut, bool silent)
         {
-            Log.nlog.Trace("FileComponent: use stCall");
+            Log.Trace("FileComponent: use stCall");
             Match m = Regex.Match(data, 
                                     String.Format(@"
                                                     \s*
@@ -308,7 +308,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string args     = StringHandler.normalize(m.Groups[2].Value);
             uint timeout    = (m.Groups[3].Success)? Value.toUInt32(m.Groups[3].Value) : STCALL_TIMEOUT_DEFAULT;
 
-            Log.nlog.Debug("stCall: '{0}', '{1}' :: stdOut {2}, silent {3}", file, args, stdOut, silent);
+            Log.Debug("stCall: '{0}', '{1}' :: stdOut {2}, silent {3}", file, args, stdOut, silent);
 
             string pfile = findFile(file);
             if(String.IsNullOrEmpty(pfile)) {
@@ -317,7 +317,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             try {
                 string ret = run(pfile, args, silent, stdOut, (int)timeout);
-                Log.nlog.Debug("FileComponent: successful stCall - '{0}'", pfile);
+                Log.Debug("FileComponent: successful stCall - '{0}'", pfile);
                 return ret;
             }
             catch(Exception ex) {
@@ -350,11 +350,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         )]
         protected string stCmd(string data)
         {
-            Log.nlog.Trace("FileComponent: use stCmd");
-            Log.nlog.Trace("stCmd redirect to stCall");
+            Log.Trace("FileComponent: use stCmd");
+            Log.Trace("stCmd redirect to stCall");
             string rmod = String.Format("(\"cmd\", \"/C {0}", Regex.Match(data, @"\(\s*""(.*)$").Groups[1].Value);
 
-            Log.nlog.Debug("stCmd: '{0}' -> '{1}'", data, rmod);
+            Log.Debug("stCmd: '{0}' -> '{1}'", data, rmod);
             return stCall(rmod, true, true);
         }
 
@@ -426,7 +426,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         )]
         protected void stWrite(string data, bool append, bool writeLine, Encoding enc)
         {
-            Log.nlog.Trace("FileComponent: use stWrite [{0}, {1}]", append, writeLine);
+            Log.Trace("FileComponent: use stWrite [{0}, {1}]", append, writeLine);
             Match m = Regex.Match(data, 
                                     String.Format(@"
                                                     (\S+)        #1 - type
@@ -467,18 +467,18 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     throw new SyntaxIncorrectException("Failed stWrite :: write - '{0}'", data);
                 }
 
-                Log.nlog.Debug("FileComponent: user params: append={0}; line={1}; enc={2};", appendUser, lineUser, encUser);
+                Log.Debug("FileComponent: user params: append={0}; line={1}; enc={2};", appendUser, lineUser, encUser);
                 append      = Value.toBoolean(appendUser);
                 writeLine   = Value.toBoolean(lineUser);
                 enc         = Encoding.GetEncoding(encUser);
             }
 
-            Log.nlog.Debug("FileComponent: stWrite started for '{0}'({1})", file, stdStream);
+            Log.Debug("FileComponent: stWrite started for '{0}'({1})", file, stdStream);
             try
             {
                 if(!stdStream) {
                     writeToFile(file, fdata, append, writeLine, enc);
-                    Log.nlog.Trace("FileComponent: successful stWrite - '{0}'", file);
+                    Log.Trace("FileComponent: successful stWrite - '{0}'", file);
                     return;
                 }
 
@@ -518,7 +518,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         ]
         protected void stReplace(string data)
         {
-            Log.nlog.Trace("FileComponent: use stReplace");
+            Log.Trace("FileComponent: use stReplace");
             Match m = Regex.Match(data, 
                                     String.Format(@"replace
                                                     (?:
@@ -545,16 +545,16 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string pattern      = StringHandler.normalize(m.Groups[3].Value);
             string replacement  = Scripts.Tokens.characters(StringHandler.normalize(m.Groups[4].Value));
 
-            Log.nlog.Debug("stReplace: found file '{0}',  pattern '{1}',  replacement '{2}'", file, pattern, replacement);
+            Log.Debug("stReplace: found file '{0}',  pattern '{1}',  replacement '{2}'", file, pattern, replacement);
 
             Encoding enc = detectEncodingFromFile(file);
             string content = readToEnd(file, enc);
 
-            Log.nlog.Debug("stReplace: type '{0}' :: received '{1}', Encoding '{2}'", type, content.Length, enc);
+            Log.Debug("stReplace: type '{0}' :: received '{1}', Encoding '{2}'", type, content.Length, enc);
             content = stReplaceEngine(type, ref content, pattern, replacement);
 
             writeToFile(file, content, false, enc);
-            Log.nlog.Debug("stReplace: successful :: {0}, Encoding '{1}'", content.Length, enc);
+            Log.Debug("stReplace: successful :: {0}, Encoding '{1}'", content.Length, enc);
         }
 
         /// <summary>
@@ -693,7 +693,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         ]
         protected string stExists(string data)
         {
-            Log.nlog.Trace("FileComponent: use stExists");
+            Log.Trace("FileComponent: use stExists");
             Match m = Regex.Match(data,
                                     String.Format(@"exists
                                                     \s*\.\s*
@@ -757,7 +757,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="enc">The character encoding to use</param>
         protected virtual void writeToFile(string file, string data, bool append, bool writeLine, Encoding enc)
         {
-            Log.nlog.Debug("writeToFile: Encoding '{0}'", enc.EncodingName);
+            Log.Debug("writeToFile: Encoding '{0}'", enc.EncodingName);
             using(TextWriter stream = new StreamWriter(file, append, enc)) {
                 if(writeLine) {
                     stream.WriteLine(data);
@@ -823,11 +823,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
                 if(cdet.Charset == null) {
                     //throw new ComponentException("Ude: Detection failed for '{0}'", file);
-                    Log.nlog.Warn("Problem with detection of encoding for '{0}'", file);
+                    Log.Warn("Problem with detection of encoding for '{0}'", file);
                     return Encoding.UTF8; // good luck
                 }
 
-                Log.nlog.Debug("Ude: charset '{0}' confidence: '{1}'", cdet.Charset, cdet.Confidence);
+                Log.Debug("Ude: charset '{0}' confidence: '{1}'", cdet.Charset, cdet.Confidence);
                 return Encoding.GetEncoding(cdet.Charset);
             }
         }
@@ -858,14 +858,14 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(File.Exists(lfile)) {
                 return lfile;
             }
-            Log.nlog.Trace("trying to find the file '{0}' with environment PATH :: '{1}'", file, lfile);
+            Log.Trace("trying to find the file '{0}' with environment PATH :: '{1}'", file, lfile);
 
             string[] exts = System.Environment.GetEnvironmentVariable("PATHEXT").Split(';');
             foreach(string dir in EnvPath)
             {
                 lfile = location(file, dir);
                 if(File.Exists(lfile) || exts.Any(ext => File.Exists(lfile + ext))) {
-                    Log.nlog.Trace("found in: '{0}' :: '{1}'", dir, lfile);
+                    Log.Trace("found in: '{0}' :: '{1}'", dir, lfile);
                     return lfile;
                 }
             }

@@ -16,11 +16,11 @@
 */
 
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Events;
+using net.r_eg.vsSBE.Logger;
 using NLog;
 
 namespace net.r_eg.vsSBE
@@ -28,86 +28,48 @@ namespace net.r_eg.vsSBE
     /// <summary>
     /// Main logger for Package
     /// </summary>
-    internal static class Log
+    internal class Log: ILog
     {
         /// <summary>
-        /// Notification about any receiving
+        /// When is receiving message.
         /// </summary>
-        public delegate void ReceiptEvent();
+        public event EventHandler<MessageArgs> Receiving = delegate(object sender, MessageArgs e) { };
 
         /// <summary>
-        /// Notification about receiving of message
+        /// Get instance of the NLog logger
         /// </summary>
-        public delegate void MessageEvent(string message, string level);
+        public NLog.Logger NLog
+        {
+            get {
+                return nlog;
+            }
+        }
+        protected NLog.Logger nlog = LogManager.GetLogger(GuidList.PACKAGE_LOGGER);
 
         /// <summary>
-        /// external logic
+        /// Thread-safe getting the instance of Log class
         /// </summary>
-        public static readonly Logger nlog = LogManager.GetLogger(GuidList.PACKAGE_LOGGER);
-
-        /// <summary>
-        /// Any receipt - only as signal
-        /// </summary>
-        public static event ReceiptEvent Receipt = delegate { };
-
-        /// <summary>
-        /// Received message
-        /// </summary>
-        public static event MessageEvent Message = delegate(string message, string level) { };
+        public static Log _
+        {
+            get { return _lazy.Value; }
+        }
+        private static readonly Lazy<Log> _lazy = new Lazy<Log>(() => new Log());
 
         /// <summary>
         /// DTE context
         /// </summary>
-        private static EnvDTE.DTE dte;
-        
+        protected EnvDTE.DTE dte;
+
         /// <summary>
         /// To displaying messages on the OutputWindowPane by SVsOutputWindow
         /// </summary>
-        private static IVsOutputWindowPane _paneCOM = null;
+        protected IVsOutputWindowPane _paneCOM = null;
 
         /// <summary>
         /// To displaying messages on the OutputWindowPane by EnvDTE
         /// </summary>
-        private static EnvDTE.OutputWindowPane _paneDTE = null;
+        protected EnvDTE.OutputWindowPane _paneDTE = null;
 
-        /// <summary>
-        /// NLog :: static "MethodCall"
-        /// use with nlog
-        /// https://github.com/nlog/nlog/wiki/MethodCall-target
-        /// </summary>
-        public static void nprint(string level, string message, string stamp)
-        {
-            LogLevel oLevel = LogLevel.FromString(level);
-
-#if !DEBUG
-            if(oLevel < LogLevel.Info && !Settings.debugMode) {
-                return;
-            }
-#endif
-
-            _notify(oLevel);
-            print(_format(level, message, stamp), level);
-        }
-
-        public static void print(string message, string level = null)
-        {
-            if(Thread.CurrentThread.Name != LoggingEvent.IDENT_TH) {
-                Message(message, (level)?? String.Empty);
-            }
-
-            if(_paneDTE != null) {
-                _paneDTE.OutputString(message);
-                return;
-            }
-
-            if(_paneCOM != null) {
-                _paneCOM.OutputString(message);
-                return;
-            }
-
-            Console.Write(message);
-            Debug.Write(message);
-        }
 
         /// <summary>
         /// Initialization of the IVsOutputWindowPane
@@ -119,11 +81,11 @@ namespace net.r_eg.vsSBE
         /// <param name="name">Name of the pane</param>
         /// <param name="ow"></param>
         /// <param name="dteContext"></param>
-        public static void paneAttach(string name, IVsOutputWindow ow, EnvDTE.DTE dteContext)
+        public void paneAttach(string name, IVsOutputWindow ow, EnvDTE.DTE dteContext)
         {
             dte = dteContext;
             if(_paneCOM != null || _paneDTE != null) {
-                Log.nlog.Debug("paneAttach-COM: skipped");
+                Log.Debug("paneAttach-COM: skipped");
                 return; // currently we work only with one pane
             }
 
@@ -136,10 +98,10 @@ namespace net.r_eg.vsSBE
         /// Direct access from existing instance
         /// </summary>
         /// <param name="owp"></param>
-        public static void paneAttach(IVsOutputWindowPane owp)
+        public void paneAttach(IVsOutputWindowPane owp)
         {
             if(_paneCOM != null || _paneDTE != null) {
-                Log.nlog.Debug("paneAttach-direct: to detach prev. first /skipped");
+                Log.Debug("paneAttach-direct: to detach prev. first /skipped");
                 return;
             }
             _paneCOM = owp;
@@ -150,11 +112,11 @@ namespace net.r_eg.vsSBE
         /// </summary>
         /// <param name="name">Name of the pane</param>
         /// <param name="dte2"></param>
-        public static void paneAttach(string name, EnvDTE80.DTE2 dte2)
+        public void paneAttach(string name, EnvDTE80.DTE2 dte2)
         {
             dte = (EnvDTE.DTE)dte2;
             if(_paneCOM != null || _paneDTE != null) {
-                Log.nlog.Debug("paneAttach-DTE: skipped");
+                Log.Debug("paneAttach-DTE: skipped");
                 return; // currently we work only with one pane
             }
 
@@ -165,16 +127,20 @@ namespace net.r_eg.vsSBE
                 _paneDTE = dte2.ToolWindows.OutputWindow.OutputWindowPanes.Add(name);
             }
             catch(Exception ex) {
-                Log.nlog.Error("Log :: inner exception: '{0}'", ex.ToString());
+                Log.Error("Log :: inner exception: '{0}'", ex.ToString());
             }
         }
 
-        public static void paneDetach(IVsOutputWindow ow)
+        /// <summary>
+        /// Detaching OWP by IVsOutputWindow.
+        /// </summary>
+        /// <param name="ow"></param>
+        public void paneDetach(IVsOutputWindow ow)
         {
             Guid id;
             if(_paneDTE != null) {
                 id = new Guid(_paneDTE.Guid);
-                _paneDTE.Clear();
+                //_paneDTE.Clear();
             }
             else{
                 id = GuidList.OWP_SBE;
@@ -186,7 +152,10 @@ namespace net.r_eg.vsSBE
             paneDetach();
         }
 
-        public static void paneDetach()
+        /// <summary>
+        /// Detaching OWP.
+        /// </summary>
+        public void paneDetach()
         {
             _paneCOM = null;
             _paneDTE = null;
@@ -194,9 +163,30 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Opening the Output window and activate pane
+        /// Writes raw message.
         /// </summary>
-        public static void show()
+        /// <param name="message"></param>
+        /// <returns>self reference</returns>
+        public ILog raw(string message)
+        {
+            _.write(message);
+            return this;
+        }
+
+        /// <summary>
+        /// Writes raw message + line terminator.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns>self reference</returns>
+        public ILog rawLn(string message)
+        {
+            return raw(message + System.Environment.NewLine);
+        }
+
+        /// <summary>
+        /// Show messages if it's possible.
+        /// </summary>
+        public void show()
         {
             try
             {
@@ -212,11 +202,96 @@ namespace net.r_eg.vsSBE
                 }
             }
             catch(Exception ex) {
-                Log.nlog.Debug("Log: error of the showing {0}", ex.Message);
+                Log.Debug("Log: error of showing '{0}'", ex.Message);
             }
         }
 
-        private static string _format(string level, string message, string stamp)
+
+        /// <summary>
+        /// Entry point for NLog messages.
+        /// https://github.com/nlog/nlog/wiki/MethodCall-target
+        /// </summary>
+        public static void nprint(string level, string message, string stamp)
+        {
+            LogLevel oLevel = LogLevel.FromString(level);
+
+#if !DEBUG
+            if(oLevel < LogLevel.Info && !Settings.debugMode) {
+                return;
+            }
+#endif
+
+            _.write(_.format(level, message, stamp), level);
+        }
+
+        /// <summary>
+        /// Writes message at the Trace level.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="args"></param>
+        public static void Trace(string message, params object[] args)
+        {
+            _.NLog.Trace(message, args);
+        }
+
+        /// <summary>
+        /// Writes message at the Debug level.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="args"></param>
+        public static void Debug(string message, params object[] args)
+        {
+            _.NLog.Debug(message, args);
+        }
+
+        /// <summary>
+        /// Writes message at the Warn level.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="args"></param>
+        public static void Warn(string message, params object[] args)
+        {
+            _.NLog.Warn(message, args);
+        }
+
+        /// <summary>
+        /// Writes message at the Info level.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="args"></param>
+        public static void Info(string message, params object[] args)
+        {
+            _.NLog.Info(message, args);
+        }
+
+        /// <summary>
+        /// Writes message at the Error level.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="args"></param>
+        public static void Error(string message, params object[] args)
+        {
+            _.NLog.Error(message, args);
+        }
+
+        /// <summary>
+        /// Writes message at the Fatal level.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="args"></param>
+        public static void Fatal(string message, params object[] args)
+        {
+            _.NLog.Fatal(message, args);
+        }
+
+        /// <summary>
+        /// Used format for messages.
+        /// </summary>
+        /// <param name="level"></param>
+        /// <param name="message"></param>
+        /// <param name="stamp"></param>
+        /// <returns>formatted</returns>
+        protected virtual string format(string level, string message, string stamp)
         {
             return String.Format("{0} [{1}]: {2}{3}",
                                 (new DateTime(long.Parse(stamp))).ToString(CultureInfo.CurrentCulture.DateTimeFormat),
@@ -225,12 +300,31 @@ namespace net.r_eg.vsSBE
                                 System.Environment.NewLine);
         }
 
-        private static void _notify(LogLevel level)
+        /// <summary>
+        /// Where to write.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="level"></param>
+        protected virtual void write(string message, string level = null)
         {
-            if(level < LogLevel.Warn) {
+            if(Thread.CurrentThread.Name != LoggingEvent.IDENT_TH) {
+                Receiving(this, new MessageArgs() { Message =  message,  Level = (level)?? String.Empty });
+            }
+
+            if(_paneDTE != null) {
+                _paneDTE.OutputString(message);
                 return;
             }
-            Receipt();
+
+            if(_paneCOM != null) {
+                _paneCOM.OutputString(message);
+                return;
+            }
+
+            Console.Write(message);
+            System.Diagnostics.Debug.Write(message);
         }
+
+        private Log() { }
     }
 }

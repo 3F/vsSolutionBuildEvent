@@ -145,7 +145,7 @@ namespace net.r_eg.vsSBE.Clients
         protected bool init()
         {
             if(!Exists) {
-                Log.nlog.Debug(String.Format("The Client library '{0}' is not found.", FullName));
+                Log.Debug(String.Format("The Client library '{0}' is not found.", FullName));
                 return false;
             }
 
@@ -187,7 +187,7 @@ namespace net.r_eg.vsSBE.Clients
                 return init();
             }
             catch(Exception ex) {
-                Log.nlog.Warn(String.Format("Client library: problem with initialization '{0}'", ex.ToString()));
+                Log.Warn(String.Format("Client library: problem with initialization '{0}'", ex.ToString()));
                 return false;
             }
         }
@@ -214,7 +214,7 @@ namespace net.r_eg.vsSBE.Clients
                 return null;
             }
 
-            Log.nlog.Trace("Assembly resolver for client library: '{0}' /requesting from '{1}'", args.Name, args.RequestingAssembly.FullName);
+            Log.Trace("Assembly resolver for client library: '{0}' /requesting from '{1}'", args.Name, args.RequestingAssembly.FullName);
             try {
                 int split = args.Name.IndexOf(",");
                 return Assembly.LoadFrom(String.Format("{0}{1}.dll",
@@ -222,7 +222,7 @@ namespace net.r_eg.vsSBE.Clients
                                                         args.Name.Substring(0, (split == -1)? args.Name.Length : split)));
             }
             catch(Exception ex) {
-                Log.nlog.Debug("Use other resolver for '{0}' :: {1}", args.Name, ex.Message);
+                Log.Debug("Use other resolver for '{0}' :: {1}", args.Name, ex.Message);
             }
 
             return null;

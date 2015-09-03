@@ -100,11 +100,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             switch(subtype)
             {
                 case "exec": {
-                    Log.nlog.Trace("DTEComponent: use stExec");
+                    Log.Trace("DTEComponent: use stExec");
                     return stExec(ident);
                 }
                 case "events": {
-                    Log.nlog.Trace("DTEComponent: use stEvents");
+                    Log.Trace("DTEComponent: use stEvents");
                     return stEvents(ident);
                 }
             }
@@ -125,7 +125,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 throw new OperandNotFoundException("Failed stExec - '{0}'", data);
             }
             string cmd = m.Groups[1].Value.Trim();
-            Log.nlog.Debug("Found '{0}' to execution", cmd);
+            Log.Debug("Found '{0}' to execution", cmd);
 
             dteo.exec(new string[] { cmd }, false);
             return String.Empty;
@@ -154,7 +154,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             switch(subtype)
             {
                 case "LastCommand": {
-                    Log.nlog.Trace("stEvents: use stLastCommand");
+                    Log.Trace("stEvents: use stLastCommand");
                     return stLastCommand(ident);
                 }
             }
@@ -208,7 +208,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected void attachCommandEvents()
         {
             if(!IsAvaialbleCommandEvent) {
-                Log.nlog.Info("CommandEvents: aren't available for current context.");
+                Log.Info("CommandEvents: aren't available for current context.");
                 return; //this can be for emulated DTE2 context
             }
 

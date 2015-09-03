@@ -147,7 +147,7 @@ namespace net.r_eg.vsSBE.UI
                 defaultBrowserOpen(url);
             }
             catch(Exception ex) {
-                Log.nlog.Warn(ex.Message);
+                Log.Warn(ex.Message);
             }
         }
 
@@ -229,7 +229,7 @@ namespace net.r_eg.vsSBE.UI
                                                         return a.GetTypes();
                                                     }
                                                     catch(ReflectionTypeLoadException ex) {
-                                                        Log.nlog.Trace("Enum parser: types cannot be loaded.. so we don't know what is it - '{0}':{1} ", guid, id);
+                                                        Log.Trace("Enum parser: types cannot be loaded.. so we don't know what is it - '{0}':{1} ", guid, id);
                                                         return ex.Types.Where(t => t != null);
                                                     }
                                                 })
@@ -246,7 +246,7 @@ namespace net.r_eg.vsSBE.UI
                     value = Enum.Parse(type, value).ToString();
                 }
                 catch(Exception ex) {
-                    Log.nlog.Debug("Enum parser failed: guid({0}), id({1}) -> '{2}' /error: '{3}'", guid, id, prefix, ex.Message);
+                    Log.Debug("Enum parser failed: guid({0}), id({1}) -> '{2}' /error: '{3}'", guid, id, prefix, ex.Message);
                 }
                 return String.Format("{0}.{1}", prefix, value);
             }

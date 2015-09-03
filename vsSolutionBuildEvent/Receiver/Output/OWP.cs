@@ -59,7 +59,7 @@ namespace net.r_eg.vsSBE.Receiver.Output
         public void attachEvents()
         {
             if(evt == null) {
-                Log.nlog.Warn("OWP: Disabled for current Environment.");
+                Log.Warn("OWP: Disabled for current Environment.");
                 return;
             }
 
@@ -142,7 +142,7 @@ namespace net.r_eg.vsSBE.Receiver.Output
                     tUpdated.Start();
                 }
                 catch(Exception e) {
-                    Log.nlog.Warn("notifyRaw() {0}", e.Message);
+                    Log.Warn("notifyRaw() {0}", e.Message);
                 }
             }
         }
