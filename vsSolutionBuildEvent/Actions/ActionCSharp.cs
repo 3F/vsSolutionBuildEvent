@@ -245,20 +245,17 @@ namespace net.r_eg.vsSBE.Actions
                 WarningLevel            = cfg.WarningLevel,
 
                 // use prefix from fileName() to avoid random names if used GenerateInMemory
-                OutputAssembly = (cfg.GenerateInMemory)? fileName(evt) : output
+                OutputAssembly = (!cfg.GenerateInMemory)? output : Path.Combine(Path.GetTempPath(), fileName(evt))
             };
-            
-            GAC gac = new GAC();
-            if(cfg.References != null)
-            {
-                parameters.ReferencedAssemblies.AddRange(
-                                                        cfg.References.Select(r => 
-                                                                gac.getPathToAssembly(
-                                                                    (evt.SupportMSBuild)? cmd.MSBuild.parse(r) : r
-                                                                )
-                                                        ).ToArray());
-            }
-            parameters.ReferencedAssemblies.Add(Assembly.GetExecutingAssembly().Location); //to support ICommand & ISolutionEvent
+
+            // Assembly references
+
+            string[] references = constructReferences(cfg, evt.SupportMSBuild);
+            Log.Trace("[Compiler] final references: '{0}'", String.Join("; ", references));
+
+            parameters.ReferencedAssemblies.AddRange(references);
+            parameters.ReferencedAssemblies.Add(typeof(ISolutionEvent).Assembly.Location); // to support ICommand & ISolutionEvent
+            parameters.ReferencedAssemblies.Add(typeof(Bridge.IEvent).Assembly.Location); // to support Bridge
 
             // ready to work with provider
             CSharpCodeProvider provider = new CSharpCodeProvider();
@@ -286,6 +283,35 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             return compiled;
+        }
+
+        /// <param name="cfg">IModeCSharp configuration</param>
+        /// <param name="msbuild">Flag of supporting MSBuild properties.</param>
+        /// <returns>Prepared list of references</returns>
+        protected string[] constructReferences(IModeCSharp cfg, bool msbuild)
+        {
+            if(cfg.References == null) {
+                return new string[] { };
+            }
+
+            if(!cfg.SmartReferences)
+            {
+                return cfg.References
+                            .Where(r => !String.IsNullOrEmpty(r))
+                            .Select(r => (msbuild)? cmd.MSBuild.parse(r) : r)
+                            .ToArray();
+            }
+            
+            GAC gac = new GAC();
+            return cfg.References
+                        .Where(r => !String.IsNullOrEmpty(r))
+                        .Select(r =>
+                                    gac.getPathToAssembly(
+                                            (msbuild)? cmd.MSBuild.parse(r) : r,
+                                            true
+                                    )
+                                )
+                        .ToArray();
         }
 
         /// <summary>

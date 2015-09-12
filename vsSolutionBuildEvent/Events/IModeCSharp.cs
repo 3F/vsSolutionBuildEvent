@@ -31,6 +31,11 @@ namespace net.r_eg.vsSBE.Events
         string[] References { get; set; }
 
         /// <summary>
+        /// Advanced searching of assemblies in 'References' set.
+        /// </summary>
+        bool SmartReferences { get; set; }
+
+        /// <summary>
         /// Whether to generate the output in memory.
         /// </summary>
         bool GenerateInMemory { get; set; }

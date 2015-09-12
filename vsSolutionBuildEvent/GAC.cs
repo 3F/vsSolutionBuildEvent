@@ -17,6 +17,7 @@
 
 using System;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -122,7 +123,7 @@ namespace net.r_eg.vsSBE
         ///     * EnvDTE, Version=8.0.0.0, PublicKeyToken=b03f5f7f11d50a3a
         /// </summary>
         /// <param name="ident">Supported formats.</param>
-        /// <returns></returns>
+        /// <returns>null value if not found</returns>
         public string getPathToAssembly(string ident)
         {
             if(Path.IsPathRooted(ident)) {
@@ -141,6 +142,55 @@ namespace net.r_eg.vsSBE
                 return absolutePathToAssemblyName(name);
             }
             return absolutePathToAssemblyName(name, version, extractKey("PublicKeyToken", ident));
+        }
+
+        /// <summary>
+        /// Gets path to assembly with `string getPathToAssembly(string ident)`
+        /// And use CurrentDomain for searching unfound assemblies on demand.
+        /// </summary>
+        /// <param name="ident">Supported formats.</param>
+        /// <param name="findInDomain">Use current domain to finding if true</param>
+        /// <returns>null value if not found</returns>
+        public string getPathToAssembly(string ident, bool findInDomain)
+        {
+            string path = getPathToAssembly(ident);
+
+            if(!(String.IsNullOrEmpty(path) && findInDomain)) {
+                return path;
+            }
+            Log.Trace("GAC: ready to find in CurrentDomain");
+
+            const char _SEPARATOR = ','; // Bridge, Version=1.3.0.0, Culture=neutral, PublicKeyToken=02ea4573bad9630f
+
+            int comma       = ident.IndexOf(_SEPARATOR);
+            string name     = (comma == -1)? ident : ident.Substring(0, comma);
+            string version  = extractKey("Version", ident);
+            string key      = extractKey("PublicKeyToken", ident);
+
+            foreach(Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if(!asm.FullName.StartsWith(name + _SEPARATOR, StringComparison.OrdinalIgnoreCase)) {
+                    continue;
+                }
+                Log.Trace("GAC: start checking '{0}' ~ '{1}'", asm.FullName, ident);
+
+                if(key == null && version == null) {
+                    return asm.Location; // without details
+                }
+
+                if(key != null && key != extractKey("PublicKeyToken", asm.FullName)) {
+                    continue;
+                }
+
+                if(version != null && version != extractKey("Version", asm.FullName)) {
+                    continue;
+                }
+
+                return asm.Location;
+            }
+
+            Log.Trace("GAC: still not found also in current domain");
+            return null;
         }
 
         /// <summary>

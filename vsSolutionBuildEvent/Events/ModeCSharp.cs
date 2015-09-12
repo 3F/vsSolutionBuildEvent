@@ -48,13 +48,33 @@ namespace net.r_eg.vsSBE.Events
         /// Additional assembly names that are referenced by the source to compile.
         /// </summary>
         [Category("General")]
-        [Description(@"Additional assembly names that are referenced by the source to compile. Formats, for example:
+        [Description(@"Additional assembly names that are referenced by the source to compile. Formats for SmartReferences:
         `EnvDTE.dll`; `C:\WINDOWS\assembly\GAC\EnvDTE\<ver>\EnvDTE.dll`; `EnvDTE`; `EnvDTE, Version=8.0.0.0, PublicKeyToken=b03f5f7f11d50a3a`")]
         public string[] References
         {
-            get;
-            set;
+            get {
+                return references;
+            }
+            set {
+                references = value;
+            }
         }
+        /// <summary>
+        /// The assembly names for user actions by default
+        /// </summary>
+        private string[] references = new string[] { "System.dll" };
+
+        /// <summary>
+        /// Advanced searching of assemblies in 'References' set.
+        /// </summary>
+        [Category("General")]
+        [Description("Use advanced search of assemblies in 'References' set.")]
+        public bool SmartReferences
+        {
+            get { return smartReferences; }
+            set { smartReferences = value; }
+        }
+        private bool smartReferences = true;
         
         /// <summary>
         /// Whether to generate the output in memory.
