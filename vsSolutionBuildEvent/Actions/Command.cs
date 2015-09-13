@@ -92,7 +92,7 @@ namespace net.r_eg.vsSBE.Actions
             string cfg = Env.SolutionActiveCfgString;
 
             if(evt.ToConfiguration != null 
-                && evt.ToConfiguration.Length > 0 && evt.ToConfiguration.Where(s => s == cfg).Count() < 1)
+                && evt.ToConfiguration.Length > 0 && !evt.ToConfiguration.Any(s => cmpConfig(s, cfg)))
             {
                 Log.Info("Action '{0}' is ignored for current configuration - '{1}'", evt.Caption, cfg);
                 return false;
@@ -217,6 +217,31 @@ namespace net.r_eg.vsSBE.Actions
                     Config._.save();
                     throw new SBEException("Aborted by user");
                 }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Compare configurations.
+        /// 
+        /// Compatible format: 'configname'|'platformname'
+        /// http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivscfg.get_displayname.aspx
+        /// 
+        /// note: both variants 'Any CPU' & 'AnyCPU' as an awesome features from MS - see also Connect Issue #503935.
+        /// </summary>
+        /// <param name="left"></param>
+        /// <param name="right"></param>
+        /// <param name="anycpuCheck">Special case for checking 'Any CPU' & 'AnyCPU' platform</param>
+        /// <returns>same or not</returns>
+        private bool cmpConfig(string left, string right, bool anycpuCheck = true)
+        {
+            if(left.Equals(right, StringComparison.OrdinalIgnoreCase)) {
+                return true;
+            }
+
+            // 'Any CPU' & 'AnyCPU' platform
+            if(anycpuCheck) {
+                return cmpConfig(left.Replace(" ", ""), right.Replace(" ", ""), false);
             }
             return false;
         }
