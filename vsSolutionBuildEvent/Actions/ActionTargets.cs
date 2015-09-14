@@ -15,10 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
+using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
 using net.r_eg.vsSBE.Events;
 
@@ -29,6 +31,14 @@ namespace net.r_eg.vsSBE.Actions
     /// </summary>
     public class ActionTargets: Action, IAction
     {
+        /// <summary>
+        /// Entry point for user code.
+        /// </summary>
+        public const string ENTRY_POINT = "Init";
+
+        /// <summary>
+        /// Logger of the build process.
+        /// </summary>
         protected class MSBuildLogger: ILogger
         {
             public bool Silent { get; set; }
@@ -64,6 +74,13 @@ namespace net.r_eg.vsSBE.Actions
         }
 
         /// <summary>
+        /// Additional BuildManager for build user-action.
+        /// Most important for our post-build operations with msbuild tool.
+        /// Only for Visual Studio we may safe begin simple from Evaluation.Project.Build(...)
+        /// </summary>
+        protected BuildManager buildManager = new BuildManager();
+
+        /// <summary>
         /// Process for specified event.
         /// </summary>
         /// <param name="evt">Configured event.</param>
@@ -72,14 +89,25 @@ namespace net.r_eg.vsSBE.Actions
         {
             string command = ((IModeTargets)evt.Mode).Command;
             ProjectRootElement root = getXml(parse(evt, command));
+            
+            BuildRequestData request = new BuildRequestData(
+                                            new ProjectInstance(root, propertiesByDefault(evt), root.ToolsVersion, ProjectCollection.GlobalProjectCollection), 
+                                            new string[] { ENTRY_POINT }, 
+                                            new HostServices()
+                                       );
 
-            Project p = new Project(root, cmd.Env.getProject(null).GlobalProperties, root.ToolsVersion, ProjectCollection.GlobalProjectCollection);
-            return p.Build(cmd.Env.BuildType.ToString(), 
-                            new List<ILogger>() {
-                                new MSBuildLogger() {
-                                    Silent = evt.Process.Hidden
-                                }
-                            });
+            BuildResult result = buildManager.Build(new BuildParameters()
+                                                    {
+                                                        //MaxNodeCount = 12,
+                                                        Loggers = new List<ILogger>() {
+                                                                        new MSBuildLogger() {
+                                                                            Silent = evt.Process.Hidden
+                                                                        }
+                                                                  }
+                                                    }, 
+                                                    request);
+
+            return (result.OverallResult == BuildResultCode.Success);
         }
 
         /// <param name="cmd"></param>
@@ -94,6 +122,22 @@ namespace net.r_eg.vsSBE.Actions
             using(StringReader reader = new StringReader(data)) {
                 return ProjectRootElement.Create(System.Xml.XmlReader.Create(reader));
             }
+        }
+
+        protected Dictionary<string, string> propertiesByDefault(ISolutionEvent evt)
+        {
+            Dictionary<string, string> prop = new Dictionary<string, string>(cmd.Env.getProject(null).GlobalProperties);
+            
+            prop.Add("ProjectName", String.Format("_{0}", evt.Name));
+            prop.Add("ActionName", evt.Name);
+            prop.Add("BuildType", cmd.Env.BuildType.ToString());
+            prop.Add("EventType", cmd.EventType.ToString());
+            prop.Add("SupportMSBuild", evt.SupportMSBuild.ToString());
+            prop.Add("SupportSBEScripts", evt.SupportSBEScripts.ToString());
+            prop.Add("SolutionActiveCfg", cmd.Env.SolutionActiveCfgString);
+            prop.Add("StartupProject", cmd.Env.StartupProjectString);
+
+            return prop;
         }
     }
 }

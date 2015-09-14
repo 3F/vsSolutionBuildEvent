@@ -211,8 +211,22 @@ namespace vsSolutionBuildEvent
   </data>
   <data name="StringDefaultValueForTargetsMode" xml:space="preserve">
     <value>&lt;?xml version="1.0" encoding="utf-8"?&gt;
-&lt;Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"&gt;
-    &lt;!-- ... --&gt;
+&lt;Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003"&gt;
+
+    &lt;Target Name="Init"&gt;
+        &lt;!-- ... --&gt;
+    &lt;/Target&gt;
+
+    &lt;!--
+        Additional properties:
+            $(ActionName)
+            $(BuildType)
+            $(EventType)
+            $(SupportMSBuild)
+            $(SupportSBEScripts)
+            $(SolutionActiveCfg)
+            $(StartupProject)
+    --&gt;
 &lt;/Project&gt;</value>
   </data>
   <data name="StringScriptExampleSBE" xml:space="preserve">
