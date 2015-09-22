@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,10 +23,10 @@ using net.r_eg.vsSBE.Exceptions;
 namespace net.r_eg.vsSBE
 {
     [Serializable]
-    public class SolutionEvents
+    public class SolutionEvents: ISolutionEvents
     {
         /// <summary>
-        /// Additional information for configuration
+        /// Header of information.
         /// </summary>
         public Header Header
         {
@@ -37,7 +37,7 @@ namespace net.r_eg.vsSBE
         private Header header = new Header();
 
         /// <summary>
-        /// 
+        /// Configuration of components.
         /// </summary>
         public Component[] Components
         {
@@ -48,7 +48,7 @@ namespace net.r_eg.vsSBE
         private Component[] components = null;
 
         /// <summary>
-        /// Before assembling
+        /// Before assembling.
         /// </summary>
         public SBEEvent[] PreBuild
         {
@@ -59,7 +59,7 @@ namespace net.r_eg.vsSBE
         private SBEEvent[] preBuild = new SBEEvent[] { new SBEEvent() };
 
         /// <summary>
-        /// After assembling
+        /// After assembling.
         /// </summary>
         public SBEEvent[] PostBuild
         {
@@ -67,10 +67,10 @@ namespace net.r_eg.vsSBE
             set { postBuild = value; }
         }
         [NonSerialized]
-        private SBEEvent[] postBuild = new SBEEvent[] { new SBEEvent() };
+        private SBEEvent[] postBuild = new SBEEvent[] { };
 
         /// <summary>
-        /// When user cancelled the building or when an error occurs
+        /// When build has been canceled by user or when occurs error.
         /// </summary>
         public SBEEvent[] CancelBuild
         {
@@ -78,10 +78,10 @@ namespace net.r_eg.vsSBE
             set { cancelBuild = value; }
         }
         [NonSerialized]
-        private SBEEvent[] cancelBuild = new SBEEvent[] { new SBEEvent() };
+        private SBEEvent[] cancelBuild = new SBEEvent[] { };
 
         /// <summary>
-        /// Warnings during assembly processing
+        /// Warnings during assembly processing.
         /// </summary>
         public SBEEventEW[] WarningsBuild
         {
@@ -89,10 +89,10 @@ namespace net.r_eg.vsSBE
             set { warningsBuild = value; }
         }
         [NonSerialized]
-        private SBEEventEW[] warningsBuild = new SBEEventEW[] { new SBEEventEW() };
+        private SBEEventEW[] warningsBuild = new SBEEventEW[] { };
 
         /// <summary>
-        /// Errors during assembly processing
+        /// Errors during assembly processing.
         /// </summary>
         public SBEEventEW[] ErrorsBuild
         {
@@ -100,10 +100,10 @@ namespace net.r_eg.vsSBE
             set { errorsBuild = value; }
         }
         [NonSerialized]
-        private SBEEventEW[] errorsBuild = new SBEEventEW[] { new SBEEventEW() };
+        private SBEEventEW[] errorsBuild = new SBEEventEW[] { };
 
         /// <summary>
-        /// Customization from the Output
+        /// Customization from the Output.
         /// </summary>
         public SBEEventOWP[] OWPBuild
         {
@@ -111,10 +111,10 @@ namespace net.r_eg.vsSBE
             set { owpBuild = value; }
         }
         [NonSerialized]
-        private SBEEventOWP[] owpBuild = new SBEEventOWP[] { new SBEEventOWP() };
+        private SBEEventOWP[] owpBuild = new SBEEventOWP[] { };
 
         /// <summary>
-        /// Transmission building-data to outer handler
+        /// Transmission of the build-data to outer handler.
         /// </summary>
         public SBETransmitter[] Transmitter
         {
@@ -122,10 +122,10 @@ namespace net.r_eg.vsSBE
             set { transmitter = value; }
         }
         [NonSerialized]
-        private SBETransmitter[] transmitter = new SBETransmitter[] { new SBETransmitter() };
+        private SBETransmitter[] transmitter = new SBETransmitter[] { };
 
         /// <summary>
-        /// Provides command events from EnvDTE
+        /// Provides command events from EnvDTE.
         /// </summary>
         public CommandEvent[] CommandEvent
         {
@@ -133,10 +133,10 @@ namespace net.r_eg.vsSBE
             set { commandEvent = value; }
         }
         [NonSerialized]
-        private CommandEvent[] commandEvent = new CommandEvent[] { new CommandEvent() };
+        private CommandEvent[] commandEvent = new CommandEvent[] { };
 
         /// <summary>
-        /// All processes with internal logging
+        /// All processes with internal logging.
         /// </summary>
         public LoggingEvent[] Logging
         {
@@ -144,23 +144,18 @@ namespace net.r_eg.vsSBE
             set { logging = value; }
         }
         [NonSerialized]
-        private LoggingEvent[] logging = new LoggingEvent[] { 
-            new LoggingEvent(){ 
-                Process = new EventProcess(){ 
-                    Waiting = false // is better for performance
-                }
-            } 
-        };
+        private LoggingEvent[] logging = new LoggingEvent[] { };
 
 
         /// <summary>
-        /// Getting event by type
+        /// Getting event by type.
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="type">Available event.</param>
         /// <exception cref="NotFoundException"></exception>
         public ISolutionEvent[] getEvent(SolutionEventType type)
         {
-            switch(type) {
+            switch(type)
+            {
                 case SolutionEventType.Pre: {
                     return PreBuild;
                 }

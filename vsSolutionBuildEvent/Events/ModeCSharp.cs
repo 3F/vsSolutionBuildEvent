@@ -15,14 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel;
+using net.r_eg.vsSBE.Configuration.User;
+using net.r_eg.vsSBE.Events.Mapping.Json;
+using Newtonsoft.Json;
 
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
     /// Mode of compilation C# code
     /// </summary>
-    public class ModeCSharp: IMode, IModeCSharp
+    public class ModeCSharp: ModeCommand, IMode, IModeCSharp
     {
         /// <summary>
         /// Type of implementation
@@ -32,17 +36,6 @@ namespace net.r_eg.vsSBE.Events
         {
             get { return ModeType.CSharp; }
         }
-
-        /// <summary>
-        /// Source code or list of files with sources.
-        /// </summary>
-        [Browsable(false)]
-        public string Command
-        {
-            get { return command; }
-            set { command = value; }
-        }
-        private string command = string.Empty;
 
         /// <summary>
         /// Additional assembly names that are referenced by the source to compile.
@@ -160,10 +153,32 @@ namespace net.r_eg.vsSBE.Events
         /// UTC
         /// </summary>
         [Browsable(false)]
+        [Obsolete("Deprecated and will be removed soon. Use CacheData instead.")]
         public long LastTime
         {
             get;
             set;
         }
+
+        /// <summary>
+        /// Cache data from user settings.
+        /// </summary>
+        [Browsable(false)]
+        [JsonProperty(TypeNameHandling = TypeNameHandling.All)]
+        public IUserValue CacheData
+        {
+            get {
+                return cacheData;
+            }
+
+            set
+            {
+                if(value == null && cacheData != null) {
+                    //cacheData.Manager.unset(); // can be from cloned object
+                }
+                cacheData = value;
+            }
+        }
+        private IUserValue cacheData;
     }
 }

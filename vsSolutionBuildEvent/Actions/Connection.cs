@@ -39,7 +39,15 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         protected bool IsAllowActions
         {
-            get { return !Settings.silentModeActions; }
+            get { return !Settings._.IgnoreActions; }
+        }
+
+        /// <summary>
+        /// Access to available events.
+        /// </summary>
+        protected ISolutionEvents SlnEvents
+        {
+            get { return Settings.Cfg; }
         }
 
         /// <summary>
@@ -69,7 +77,7 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         public int bindPre(ref int pfCancelUpdate)
         {
-            if(isDisabledAll(Config._.Data.PreBuild)) {
+            if(isDisabledAll(SlnEvents.PreBuild)) {
                 return Codes.Success;
             }
 
@@ -77,7 +85,7 @@ namespace net.r_eg.vsSBE.Actions
                 return _ignoredAction(SolutionEventType.Pre);
             }
 
-            foreach(SBEEvent item in Config._.Data.PreBuild)
+            foreach(SBEEvent item in SlnEvents.PreBuild)
             {
                 if(hasExecutionOrder(item)) {
                     Log.Info("[Pre] SBE has deferred action: '{0}' :: waiting... ", item.Caption);
@@ -95,7 +103,7 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         public int bindPost(int fSucceeded, int fModified, int fCancelCommand)
         {
-            SBEEvent[] evt = Config._.Data.PostBuild;
+            SBEEvent[] evt = SlnEvents.PostBuild;
 
             if(isDisabledAll(evt)) {
                 return Codes.Success;
@@ -172,7 +180,7 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         public int bindCancel()
         {
-            SBEEvent[] evt = Config._.Data.CancelBuild;
+            SBEEvent[] evt = SlnEvents.CancelBuild;
 
             if(isDisabledAll(evt)) {
                 return Codes.Success;
@@ -212,24 +220,24 @@ namespace net.r_eg.vsSBE.Actions
             Receiver.Output.Item._.Build.updateRaw(data); //TODO:
             if(!IsAllowActions)
             {
-                if(!isDisabledAll(Config._.Data.Transmitter)) {
+                if(!isDisabledAll(SlnEvents.Transmitter)) {
                     _ignoredAction(SolutionEventType.Transmitter);
                 }
-                else if(!isDisabledAll(Config._.Data.WarningsBuild)) {
+                else if(!isDisabledAll(SlnEvents.WarningsBuild)) {
                     _ignoredAction(SolutionEventType.Warnings);
                 }
-                else if(!isDisabledAll(Config._.Data.ErrorsBuild)) {
+                else if(!isDisabledAll(SlnEvents.ErrorsBuild)) {
                     _ignoredAction(SolutionEventType.Errors);
                 }
-                else if(!isDisabledAll(Config._.Data.OWPBuild)) {
+                else if(!isDisabledAll(SlnEvents.OWPBuild)) {
                     _ignoredAction(SolutionEventType.OWP);
                 }
                 return;
             }
 
             //TODO: IStatus
-            
-            foreach(SBETransmitter evt in Config._.Data.Transmitter)
+
+            foreach(SBETransmitter evt in SlnEvents.Transmitter)
             {
                 if(!isExecute(evt, current)) {
                     Log.Info("[Transmitter] ignored action '{0}' :: by execution order", evt.Caption);
@@ -237,7 +245,7 @@ namespace net.r_eg.vsSBE.Actions
                 else {
                     try {
                         if(cmd.exec(evt, SolutionEventType.Transmitter)) {
-                            //Log.Trace("[Transmitter]: " + Config._.Data.transmitter.caption);
+                            //Log.Trace("[Transmitter]: " + SlnEvents.transmitter.caption);
                         }
                     }
                     catch(Exception ex) {
@@ -248,19 +256,19 @@ namespace net.r_eg.vsSBE.Actions
 
             //TODO: ExecStateType
 
-            foreach(SBEEventEW evt in Config._.Data.WarningsBuild) {
+            foreach(SBEEventEW evt in SlnEvents.WarningsBuild) {
                 if(evt.Enabled) {
                     sbeEW(evt, Receiver.Output.BuildItem.Type.Warnings);
                 }
             }
 
-            foreach(SBEEventEW evt in Config._.Data.ErrorsBuild) {
+            foreach(SBEEventEW evt in SlnEvents.ErrorsBuild) {
                 if(evt.Enabled) {
                     sbeEW(evt, Receiver.Output.BuildItem.Type.Errors);
                 }
             }
 
-            foreach(SBEEventOWP evt in Config._.Data.OWPBuild) {
+            foreach(SBEEventOWP evt in SlnEvents.OWPBuild) {
                 if(evt.Enabled) {
                     sbeOutput(evt, ref data);
                 }
@@ -382,10 +390,10 @@ namespace net.r_eg.vsSBE.Actions
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         protected int commandEvent(bool pre, string guid, int id, object customIn, object customOut, ref bool cancelDefault)
         {
-            if(Config._.Data == null) { // activation of this event type can be before opening solution
+            if(SlnEvents == null) { // activation of this event type can be before opening solution
                 return Codes.Failed;
             }
-            CommandEvent[] evt = Config._.Data.CommandEvent;
+            CommandEvent[] evt = SlnEvents.CommandEvent;
 
             if(isDisabledAll(evt)) {
                 return Codes.Success;
@@ -475,7 +483,7 @@ namespace net.r_eg.vsSBE.Actions
         protected int execPre()
         {
             int idx = 0;
-            foreach(SBEEvent item in Config._.Data.PreBuild) {
+            foreach(SBEEvent item in SlnEvents.PreBuild) {
                 if(hasExecutionOrder(item)) {
                     Status._.update(SolutionEventType.Pre, idx, (execPre(item) == Codes.Success)? StatusType.Success : StatusType.Fail);
                 }
@@ -588,7 +596,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="fSuccess">Flag indicating success</param>
         protected void monitoringPre(string project, ExecutionOrderType type, bool fSuccess)
         {
-            SBEEvent[] evt = Config._.Data.PreBuild;
+            SBEEvent[] evt = SlnEvents.PreBuild;
             for(int i = 0; i < evt.Length; ++i)
             {
                 if(!evt[i].Enabled || Status._.get(SolutionEventType.Pre, i) != StatusType.Deferred) {
@@ -657,7 +665,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="e"></param>
         private void onLogging(object sender, MessageArgs e)
         {
-            if(Config._.Data == null) {
+            if(SlnEvents == null) {
                 return; // can be early initialization
             }
 
@@ -665,7 +673,7 @@ namespace net.r_eg.vsSBE.Actions
                 return; // self protection
             }
 
-            if(isDisabledAll(Config._.Data.Logging)) {
+            if(isDisabledAll(SlnEvents.Logging)) {
                 return;
             }
 
@@ -684,7 +692,7 @@ namespace net.r_eg.vsSBE.Actions
                         ((ILogData)component).updateLogData(e.Message, e.Level);
                     }
 
-                    foreach(LoggingEvent evt in Config._.Data.Logging)
+                    foreach(LoggingEvent evt in SlnEvents.Logging)
                     {
                         if(!isExecute(evt, current)) {
                             Log.Info("[Logging] ignored action '{0}' :: by execution order", evt.Caption);

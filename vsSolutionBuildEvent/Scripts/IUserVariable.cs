@@ -22,6 +22,16 @@ namespace net.r_eg.vsSBE.Scripts
     public interface IUserVariable
     {
         /// <summary>
+        /// Exposes the enumerable for defined names of user-variables
+        /// </summary>
+        IEnumerable<string> Definitions { get; }
+
+        /// <summary>
+        /// Exposes the enumerable for defined user-variables
+        /// </summary>
+        IEnumerable<TUserVariable> Variables { get; }
+
+        /// <summary>
         /// Getting value of user-variable by using scope of project
         /// </summary>
         /// <param name="name">variable name</param>
@@ -117,15 +127,5 @@ namespace net.r_eg.vsSBE.Scripts
         /// Removes all user-variables
         /// </summary>
         void unsetAll();
-
-        /// <summary>
-        /// Exposes the enumerable for defined names of user-variables
-        /// </summary>
-        IEnumerable<string> Definitions { get; }
-
-        /// <summary>
-        /// Exposes the enumerable for defined user-variables
-        /// </summary>
-        IEnumerable<TUserVariable> Variables { get; }
     }
 }

@@ -216,7 +216,7 @@ namespace net.r_eg.vsSBE
             LogLevel oLevel = LogLevel.FromString(level);
 
 #if !DEBUG
-            if(oLevel < LogLevel.Info && !Settings.debugMode) {
+            if(oLevel < LogLevel.Info && !Settings._.DebugMode) {
                 return;
             }
 #endif

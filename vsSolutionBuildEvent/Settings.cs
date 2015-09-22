@@ -17,73 +17,175 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.Configuration;
+using IUserData = net.r_eg.vsSBE.Configuration.User.IData;
 
 namespace net.r_eg.vsSBE
 {
-    /// <summary>
-    /// TODO:
-    /// </summary>
-    public static class Settings
+    internal sealed class Settings: IAppSettings
     {
         /// <summary>
-        /// Name of vsSBE log item in OutputWindowPane
+        /// Name of item in VS OutputWindow
         /// </summary>
-        public const string OWP_ITEM_VSSBE = "Solution Build-Events";
+        public const string OWP_ITEM_VSSBE = "vsSolutionBuildEvent";
 
         /// <summary>
-        /// Debug mode for this application
+        /// Name of application.
         /// </summary>
-        public static bool debugMode = false;
+        public const string APP_NAME = "vsSolutionBuildEvent";
 
         /// <summary>
-        /// Ignores all actions if value as true
-        /// Support of cycle control, e.g.: PRE -> POST [recursive DTE: PRE -> POST] -> etc.
+        /// Short name of application.
         /// </summary>
-        public static volatile bool silentModeActions = false;
+        public const string APP_NAME_SHORT = "vsSBE";
+        
+        /// <summary>
+        /// When DebugMode is updated.
+        /// Useful for clients, for example with IEntryPointClient.
+        /// </summary>
+        public event EventHandler<DataArgs<bool>> DebugModeUpdated = delegate(object sender, DataArgs<bool> e) { };
 
         /// <summary>
-        /// Path to this library
+        /// Debug mode for application.
         /// </summary>
-        public static string LibPath
+        public bool DebugMode
+        {
+            get {
+                return debugMode;
+            }
+            set {
+                debugMode = value;
+                DebugModeUpdated(this, new DataArgs<bool>() { Data = debugMode });
+            }
+        }
+        private bool debugMode = false;
+
+        /// <summary>
+        /// Ignores all actions if value set as true.
+        /// To support of cycle control, e.g.: PRE -> POST [recursive DTE: PRE -> POST] -> etc.
+        /// </summary>
+        public bool IgnoreActions
+        {
+            get { return ignoreActions; }
+            set { ignoreActions = value; }
+        }
+        private volatile bool ignoreActions = false;
+
+        /// <summary>
+        /// Full path to library.
+        /// </summary>
+        public string LibPath
         {
             get
             {
-                if(String.IsNullOrWhiteSpace(_libPath)) {
-                    _libPath = formatPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                if(String.IsNullOrWhiteSpace(libPath)) {
+                    libPath = formatPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
                 }
-                return _libPath;
+                return libPath;
             }
         }
-        private static string _libPath;
+        private string libPath;
 
         /// <summary>
-        /// Root path for all operations
+        /// Working path for library.
         /// </summary>
-        public static string WorkingPath
+        public string WorkPath
         {
             get
             {
-                if(String.IsNullOrWhiteSpace(_workingPath)) {
-                    throw new SBEException("WorkingPath is empty or null");
+                if(String.IsNullOrWhiteSpace(workPath)) {
+                    workPath = "/";
+                    Log.Trace("WorkPath is empty or null, use '{0}' by default.", workPath);
+                    //throw new SBEException("WorkPath is empty or null");
                 }
-                return _workingPath;
+                return workPath;
             }
         }
-        private static string _workingPath;
-
+        private string workPath;
 
         /// <summary>
-        /// Sets new root path.
+        /// Main configuration data.
         /// </summary>
-        /// <param name="path"></param>
-        public static void setWorkingPath(string path)
+        public ISolutionEvents Config
         {
-            _workingPath = formatPath(path);
+            get { return net.r_eg.vsSBE.Config._.Data; }
         }
 
+        /// <summary>
+        /// User configuration data.
+        /// </summary>
+        public IUserData UserConfig
+        {
+            get { return net.r_eg.vsSBE.UserConfig._.Data; }
+        }
+
+        /// <summary>
+        /// Global configuration data.
+        /// </summary>
+        public IUserData GlobalConfig
+        {
+            get { return net.r_eg.vsSBE.GlobalConfig._.Data; }
+        }
+
+        /// <summary>
+        /// Updates working path for library.
+        /// </summary>
+        /// <param name="path">New path.</param>
+        public void setWorkPath(string path)
+        {
+            workPath = formatPath(path);
+        }
+
+        /// <summary>
+        /// Static alias. Main configuration data.
+        /// </summary>
+        public static ISolutionEvents Cfg
+        {
+            get { return _.Config; }
+        }
+
+        /// <summary>
+        /// Static alias. User configuration data.
+        /// </summary>
+        public static IUserData CfgUser
+        {
+            get { return _.UserConfig; }
+        }
+
+        /// <summary>
+        /// Static alias. Global configuration data.
+        /// </summary>
+        public static IUserData CfgGlobal
+        {
+            get { return _.GlobalConfig; }
+        }
+
+        /// <summary>
+        /// Static alias. Working path for library.
+        /// </summary>
+        public static string WPath
+        {
+            get { return _.WorkPath; }
+        }
+
+        /// <summary>
+        /// Static alias. Full path to library.
+        /// </summary>
+        public static string LPath
+        {
+            get { return _.libPath; }
+        }
+
+        /// <summary>
+        /// Thread-safe getting instance from Settings.
+        /// </summary>
+        public static Settings _
+        {
+            get { return _lazy.Value; }
+        }
+        private static readonly Lazy<Settings> _lazy = new Lazy<Settings>(() => new Settings());
+        
         /// <param name="path"></param>
         /// <returns></returns>
         private static string formatPath(string path)
@@ -97,5 +199,7 @@ namespace net.r_eg.vsSBE
             }
             return path;
         }
+
+        private Settings() { }
     }
 }

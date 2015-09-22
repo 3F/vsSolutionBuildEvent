@@ -22,18 +22,19 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using net.r_eg.vsSBE.Bridge;
+using net.r_eg.vsSBE.Configuration.User;
 using net.r_eg.vsSBE.Events;
+using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Dom;
-using CEAfterEventHandler   = EnvDTE._dispCommandEvents_AfterExecuteEventHandler;
-using CEBeforeEventHandler  = EnvDTE._dispCommandEvents_BeforeExecuteEventHandler;
+using CEAfterEventHandler = EnvDTE._dispCommandEvents_AfterExecuteEventHandler;
+using CEBeforeEventHandler = EnvDTE._dispCommandEvents_BeforeExecuteEventHandler;
+using DomIcon = net.r_eg.vsSBE.SBEScripts.Dom.Icon;
 
 namespace net.r_eg.vsSBE.UI.WForms.Logic
 {
-    using DomIcon = net.r_eg.vsSBE.SBEScripts.Dom.Icon;
-
     public class Events
     {
         /// <summary>
@@ -48,11 +49,13 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             /// Wrapped event
             /// </summary>
             public List<ISolutionEvent> evt;
+
             /// <summary>
             /// Specific type
             /// </summary>
             public SolutionEventType type;
 
+            /// <param name="type"></param>
             public SBEWrap(SolutionEventType type)
             {
                 this.type = type;
@@ -64,11 +67,13 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             /// </summary>
             public void update()
             {
-                evt = new List<ISolutionEvent>(Config._.Data.getEvent(type));
-                if(evt == null) {
-                    Log.Debug("SBEWrap: evt is null for type '{0}'", type);
-                    evt = new List<ISolutionEvent>();
+                if(Settings.Cfg.getEvent(type) != null) {
+                    evt = new List<ISolutionEvent>(Settings.Cfg.getEvent(type));
+                    return;
                 }
+
+                Log.Debug("SBEWrap: evt is null for type '{0}'", type);
+                evt = new List<ISolutionEvent>();
             }
         }
 
@@ -96,20 +101,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         public ISolutionEvent SBEItem
         {
             get {
-                if(currentEventItem == -1) {
-                    return new SBEEvent();
+                if(SBE.evt.Count < 1) {
+                    return null;
                 }
-                return SBE.evt[currentEventItem];
-            }
-        }
-
-        /// <summary>
-        /// Current Mode from SBE-item
-        /// </summary>
-        public IMode SBEItemMode
-        {
-            get {
-                return (SBEItem.Mode == null) ? DefaultMode : SBEItem.Mode;
+                return SBE.evt[Math.Max(0, Math.Min(currentEventItem, SBE.evt.Count - 1))];
             }
         }
 
@@ -119,6 +114,14 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         public virtual IMode DefaultMode
         {
             get { return new ModeFile(); }
+        }
+
+        /// <summary>
+        /// Access to available events.
+        /// </summary>
+        public ISolutionEvents SlnEvents
+        {
+            get { return Settings.Cfg; }
         }
 
         /// <summary>
@@ -164,7 +167,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         /// <summary>
         /// Used for restoring settings
         /// </summary>
-        protected SolutionEvents toRestoring;
+        protected ISolutionEvents toRestoring;
 
         /// <summary>
         /// Information by existing components
@@ -256,21 +259,6 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         }
 
         /// <summary>
-        /// Protection, if not exist the all items for some reason.
-        /// 
-        /// This probably can be if the configuration is:
-        ///   * corrupted or incorrectly modified manually or there is an incompatibility, etc.
-        /// Therefore, we should have the some fixes for current problem
-        /// </summary>
-        public virtual void protectMinEventItems()
-        {
-            if(SBE.evt == null || SBE.evt.Count < 1) {
-                Log.Warn("Event-item < 1 for type '{0}'", SBE.type);
-                addEventItem(); // simply to work with new container
-            }
-        }
-
-        /// <summary>
         /// Getting the operations as array
         /// </summary>
         /// <param name="data"></param>
@@ -316,13 +304,16 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
 
         public void saveData()
         {
-            Config._.save(); // all changes have been passed by reference
-            toRestoring = Config._.Data.CloneBySerialization(); // update the deep copy
+            UserConfig._.save();
+            GlobalConfig._.save();
+            Config._.save(); // all changes has been passed by reference
+            toRestoring = SlnEvents.CloneBySerializationWithType<ISolutionEvents, SolutionEvents>(); // updating of deep copies
         }
 
         public void restoreData()
         {
-            Config._.load(toRestoring.CloneBySerialization());
+            Settings.CfgUser.avoidRemovingFromCache();
+            Config._.load(toRestoring.CloneBySerializationWithType<ISolutionEvents, SolutionEvents>());
         }
 
         public void fillEvents(ComboBox combo)
@@ -337,7 +328,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             combo.Items.Add(":: Post-Build :: After assembling");
 
             addEvent(new SBEWrap(SolutionEventType.Cancel));
-            combo.Items.Add(":: Cancel-Build :: by user or when an error occurs");
+            combo.Items.Add(":: Cancel-Build :: by user or when occurs error");
 
             addEvent(new SBEWrap(SolutionEventType.CommandEvent));
             combo.Items.Add(":: CommandEvent (DTE) :: All Command Events from EnvDTE");
@@ -461,7 +452,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                 bool enabled        = c.Enabled;
                 string className    = c.GetType().Name;
 
-                Configuration.Component[] cfg = Config._.Data.Components;
+                Configuration.Component[] cfg = SlnEvents.Components;
                 if(cfg != null && cfg.Length > 0) {
                     Configuration.Component v = cfg.Where(p => p.ClassName == className).FirstOrDefault();
                     if(v != null) {
@@ -507,7 +498,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
 
         public void updateComponents(Configuration.Component[] components)
         {
-            Config._.Data.Components = components;
+            SlnEvents.Components = components;
             foreach(IComponent c in bootloader.Registered) {
                 Configuration.Component found = components.Where(p => p.ClassName == c.GetType().Name).FirstOrDefault();
                 if(found != null) {
@@ -523,63 +514,93 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             }
         }
 
-        /// <param name="copyFrom">Cloning the event-item at the specified index</param>
+        /// <param name="copy">Cloning the event-item at the specified index</param>
         /// <returns>added item</returns>
-        public ISolutionEvent addEventItem(int copyFrom = -1)
+        public ISolutionEvent addEventItem(int copy = -1)
         {
-            switch(SBE.type) {
+            ISolutionEvent added;
+            bool isNew = (copy >= SBE.evt.Count || copy < 0);
+
+            switch(SBE.type)
+            {
                 case SolutionEventType.Pre: {
-                    Config._.Data.PreBuild = Config._.Data.PreBuild.GetWithAdded(new SBEEvent());
+                    var evt = (isNew)? new SBEEvent() : SBE.evt[copy].CloneBySerializationWithType<ISolutionEvent, SBEEvent>();
+                    SlnEvents.PreBuild = SlnEvents.PreBuild.GetWithAdded(evt);
+                    added = evt;
                     break;
                 }
                 case SolutionEventType.Post: {
-                    Config._.Data.PostBuild = Config._.Data.PostBuild.GetWithAdded(new SBEEvent());
+                    var evt = (isNew)? new SBEEvent() : SBE.evt[copy].CloneBySerializationWithType<ISolutionEvent, SBEEvent>();
+                    SlnEvents.PostBuild = SlnEvents.PostBuild.GetWithAdded(evt);
+                    added = evt;
                     break;
                 }
                 case SolutionEventType.Cancel: {
-                    Config._.Data.CancelBuild = Config._.Data.CancelBuild.GetWithAdded(new SBEEvent());
+                    var evt = (isNew) ? new SBEEvent() : SBE.evt[copy].CloneBySerializationWithType<ISolutionEvent, SBEEvent>();
+                    SlnEvents.CancelBuild = SlnEvents.CancelBuild.GetWithAdded(evt);
+                    added = evt;
                     break;
                 }
                 case SolutionEventType.OWP: {
-                    Config._.Data.OWPBuild = Config._.Data.OWPBuild.GetWithAdded(new SBEEventOWP());
+                    var evt = (isNew)? new SBEEventOWP() : SBE.evt[copy].CloneBySerializationWithType<ISolutionEvent, SBEEventOWP>();
+                    SlnEvents.OWPBuild = SlnEvents.OWPBuild.GetWithAdded(evt);
+                    added = evt;
                     break;
                 }
                 case SolutionEventType.Warnings: {
-                    Config._.Data.WarningsBuild = Config._.Data.WarningsBuild.GetWithAdded(new SBEEventEW());
+                    var evt = (isNew)? new SBEEventEW() : SBE.evt[copy].CloneBySerializationWithType<ISolutionEvent, SBEEventEW>();
+                    SlnEvents.WarningsBuild = SlnEvents.WarningsBuild.GetWithAdded(evt);
+                    added = evt;
                     break;
                 }
                 case SolutionEventType.Errors: {
-                    Config._.Data.ErrorsBuild = Config._.Data.ErrorsBuild.GetWithAdded(new SBEEventEW());
+                    var evt = (isNew)? new SBEEventEW() : SBE.evt[copy].CloneBySerializationWithType<ISolutionEvent, SBEEventEW>();
+                    SlnEvents.ErrorsBuild = SlnEvents.ErrorsBuild.GetWithAdded(evt);
+                    added = evt;
                     break;
                 }
                 case SolutionEventType.Transmitter: {
-                    Config._.Data.Transmitter = Config._.Data.Transmitter.GetWithAdded(new SBETransmitter());
+                    var evt = (isNew)? new SBETransmitter() : SBE.evt[copy].CloneBySerializationWithType<ISolutionEvent, SBETransmitter>();
+                    SlnEvents.Transmitter = SlnEvents.Transmitter.GetWithAdded(evt);
+                    added = evt;
                     break;
                 }
                 case SolutionEventType.CommandEvent: {
-                    Config._.Data.CommandEvent = Config._.Data.CommandEvent.GetWithAdded(new CommandEvent());
+                    var evt = (isNew)? new CommandEvent() : SBE.evt[copy].CloneBySerializationWithType<ISolutionEvent, CommandEvent>();
+                    SlnEvents.CommandEvent = SlnEvents.CommandEvent.GetWithAdded(evt);
+                    added = evt;
                     break;
                 }
-                case SolutionEventType.Logging: {
-                    Config._.Data.Logging = Config._.Data.Logging.GetWithAdded(new LoggingEvent());
+                case SolutionEventType.Logging:
+                {
+                    var evt = (isNew)? new LoggingEvent() {
+                                                Process = new EventProcess() {
+                                                    Waiting = false // is better for performance
+                                                }
+                                            } 
+                                     : SBE.evt[copy].CloneBySerializationWithType<ISolutionEvent, LoggingEvent>();
+
+                    SlnEvents.Logging = SlnEvents.Logging.GetWithAdded(evt);
+                    added = evt;
                     break;
+                }
+                default: {
+                    throw new InvalidArgumentException("Unsupported SolutionEventType: '{0}'", SBE.type);
                 }
             }
             SBE.update();
+            
+            // fix new data
 
-            // we already have added item in main storage, 
-            // and we can working with any updating by shallow copy
-
-            ISolutionEvent added = SBE.evt[SBE.evt.Count - 1];
-
-            if(copyFrom >= SBE.evt.Count || copyFrom < 0) {
+            if(isNew) {
                 added.Name = genUniqueName(ACTION_PREFIX, SBE.evt);
+                return added;
             }
-            else {
-                SBE.evt[copyFrom].CloneByReflectionInto(added);
-                added.Caption   = String.Format("Copy of '{0}' - {1}", added.Name, added.Caption);
-                added.Name      = genUniqueName(ACTION_PREFIX_CLONE + added.Name, SBE.evt);
-            }
+
+            added.Caption   = String.Format("Copy of '{0}' - {1}", added.Name, added.Caption);
+            added.Name      = genUniqueName(ACTION_PREFIX_CLONE + added.Name, SBE.evt);
+            cacheUnlink(added.Mode);
+            
             return added;
         }
 
@@ -592,39 +613,39 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
 
             switch(SBE.type) {
                 case SolutionEventType.Pre: {
-                    Config._.Data.PreBuild = Config._.Data.PreBuild.GetWithMoved(from, to);
+                    SlnEvents.PreBuild = SlnEvents.PreBuild.GetWithMoved(from, to);
                     break;
                 }
                 case SolutionEventType.Post: {
-                    Config._.Data.PostBuild = Config._.Data.PostBuild.GetWithMoved(from, to);
+                    SlnEvents.PostBuild = SlnEvents.PostBuild.GetWithMoved(from, to);
                     break;
                 }
                 case SolutionEventType.Cancel: {
-                    Config._.Data.CancelBuild = Config._.Data.CancelBuild.GetWithMoved(from, to);
+                    SlnEvents.CancelBuild = SlnEvents.CancelBuild.GetWithMoved(from, to);
                     break;
                 }
                 case SolutionEventType.OWP: {
-                    Config._.Data.OWPBuild = Config._.Data.OWPBuild.GetWithMoved(from, to);
+                    SlnEvents.OWPBuild = SlnEvents.OWPBuild.GetWithMoved(from, to);
                     break;
                 }
                 case SolutionEventType.Warnings: {
-                    Config._.Data.WarningsBuild = Config._.Data.WarningsBuild.GetWithMoved(from, to);
+                    SlnEvents.WarningsBuild = SlnEvents.WarningsBuild.GetWithMoved(from, to);
                     break;
                 }
                 case SolutionEventType.Errors: {
-                    Config._.Data.ErrorsBuild = Config._.Data.ErrorsBuild.GetWithMoved(from, to);
+                    SlnEvents.ErrorsBuild = SlnEvents.ErrorsBuild.GetWithMoved(from, to);
                     break;
                 }
                 case SolutionEventType.Transmitter: {
-                    Config._.Data.Transmitter = Config._.Data.Transmitter.GetWithMoved(from, to);
+                    SlnEvents.Transmitter = SlnEvents.Transmitter.GetWithMoved(from, to);
                     break;
                 }
                 case SolutionEventType.CommandEvent: {
-                    Config._.Data.CommandEvent = Config._.Data.CommandEvent.GetWithMoved(from, to);
+                    SlnEvents.CommandEvent = SlnEvents.CommandEvent.GetWithMoved(from, to);
                     break;
                 }
                 case SolutionEventType.Logging: {
-                    Config._.Data.Logging = Config._.Data.Logging.GetWithMoved(from, to);
+                    SlnEvents.Logging = SlnEvents.Logging.GetWithMoved(from, to);
                     break;
                 }
             }
@@ -635,45 +656,106 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public void removeEventItem(int index)
         {
+            cacheToRemove(SBE.evt[index].Mode);
+
             switch(SBE.type) {
                 case SolutionEventType.Pre: {
-                    Config._.Data.PreBuild = Config._.Data.PreBuild.GetWithRemoved(index);
+                    SlnEvents.PreBuild = SlnEvents.PreBuild.GetWithRemoved(index);
                     break;
                 }
                 case SolutionEventType.Post: {
-                    Config._.Data.PostBuild = Config._.Data.PostBuild.GetWithRemoved(index);
+                    SlnEvents.PostBuild = SlnEvents.PostBuild.GetWithRemoved(index);
                     break;
                 }
                 case SolutionEventType.Cancel: {
-                    Config._.Data.CancelBuild = Config._.Data.CancelBuild.GetWithRemoved(index);
+                    SlnEvents.CancelBuild = SlnEvents.CancelBuild.GetWithRemoved(index);
                     break;
                 }
                 case SolutionEventType.OWP: {
-                    Config._.Data.OWPBuild = Config._.Data.OWPBuild.GetWithRemoved(index);
+                    SlnEvents.OWPBuild = SlnEvents.OWPBuild.GetWithRemoved(index);
                     break;
                 }
                 case SolutionEventType.Warnings: {
-                    Config._.Data.WarningsBuild = Config._.Data.WarningsBuild.GetWithRemoved(index);
+                    SlnEvents.WarningsBuild = SlnEvents.WarningsBuild.GetWithRemoved(index);
                     break;
                 }
                 case SolutionEventType.Errors: {
-                    Config._.Data.ErrorsBuild = Config._.Data.ErrorsBuild.GetWithRemoved(index);
+                    SlnEvents.ErrorsBuild = SlnEvents.ErrorsBuild.GetWithRemoved(index);
                     break;
                 }
                 case SolutionEventType.Transmitter: {
-                    Config._.Data.Transmitter = Config._.Data.Transmitter.GetWithRemoved(index);
+                    SlnEvents.Transmitter = SlnEvents.Transmitter.GetWithRemoved(index);
                     break;
                 }
                 case SolutionEventType.CommandEvent: {
-                    Config._.Data.CommandEvent = Config._.Data.CommandEvent.GetWithRemoved(index);
+                    SlnEvents.CommandEvent = SlnEvents.CommandEvent.GetWithRemoved(index);
                     break;
                 }
                 case SolutionEventType.Logging: {
-                    Config._.Data.Logging = Config._.Data.Logging.GetWithRemoved(index);
+                    SlnEvents.Logging = SlnEvents.Logging.GetWithRemoved(index);
                     break;
                 }
             }
             SBE.update();
+        }
+
+        /// <summary>
+        /// Prepare data to removing from cache.
+        /// </summary>
+        /// <param name="mode">Data from used mode.</param>
+        public void cacheToRemove(IMode mode)
+        {
+            if(mode.Type == ModeType.CSharp)
+            {
+                IModeCSharp cfg = (IModeCSharp)mode;
+                if(cfg.CacheData == null) {
+                    return;
+                }
+
+                Settings.CfgUser.toRemoveFromCache(cfg.CacheData);
+                cacheUnlink(mode);
+            }
+        }
+
+        /// <summary>
+        /// Unlink data from cache container.
+        /// </summary>
+        /// <param name="mode">Data from used mode.</param>
+        public void cacheUnlink(IMode mode)
+        {
+            if(mode.Type == ModeType.CSharp) {
+                ((IModeCSharp)mode).CacheData = null;
+            }
+        }
+
+        /// <summary>
+        /// To reset cache data.
+        /// </summary>
+        /// <param name="mode"></param>
+        public void cacheReset(IMode mode)
+        {
+            if(mode.Type == ModeType.CSharp)
+            {
+                IModeCSharp cfg = (IModeCSharp)mode;
+                if(cfg.CacheData != null) {
+                    cfg.CacheData.Manager.reset();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets current ICommon configuration.
+        /// </summary>
+        /// <returns></returns>
+        public ICommon getCommonCfg(ModeType type)
+        {
+            var data    = Settings.CfgUser.Common;
+            Route route = new Route() { Event = SBE.type, Mode = type };
+
+            if(!data.ContainsKey(route)) {
+                data[route] = new Common();
+            }
+            return data[route];
         }
 
         /// <summary>
@@ -721,6 +803,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         /// </summary>
         public void execAction()
         {
+            if(SBEItem == null) {
+                Log.Info("No actions to execution. Add new, then try again.");
+                return;
+            }
             Actions.ICommand cmd = new Actions.Command(bootloader.Env,
                                                         new Script(bootloader),
                                                         new MSBuild.Parser(bootloader.Env, bootloader.UVariable));
@@ -743,7 +829,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             this.bootloader = bootloader;
             this.inspector  = inspector;
             Env             = bootloader.Env;
-            toRestoring     = Config._.Data.CloneBySerialization();
+            toRestoring     = SlnEvents.CloneBySerializationWithType<ISolutionEvents, SolutionEvents>();
         }
 
         /// <summary>

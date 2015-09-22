@@ -18,6 +18,8 @@
 using System;
 using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.Shell;
+using net.r_eg.vsSBE.API;
+using net.r_eg.vsSBE.Configuration;
 using NLog;
 
 namespace net.r_eg.vsSBE.UI.Xaml
@@ -40,7 +42,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
         /// </summary>
         /// <param name="evt"></param>
         /// <returns>self reference</returns>
-        public IStatusToolEvents attachEvents(API.IEventLevel evt)
+        public IStatusToolEvents attachEvents(IEventLevel evt)
         {
             lock(_eLock)
             {
@@ -56,7 +58,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
         /// </summary>
         /// <param name="evt"></param>
         /// <returns>self reference</returns>
-        public IStatusToolEvents detachEvents(API.IEventLevel evt)
+        public IStatusToolEvents detachEvents(IEventLevel evt)
         {
             evt.OpenedSolution -= onOpenSolution;
             evt.ClosedSolution -= onCloseSolution;
@@ -68,12 +70,12 @@ namespace net.r_eg.vsSBE.UI.Xaml
         /// </summary>
         /// <param name="evt"></param>
         /// <returns>self reference</returns>
-        public IStatusToolEvents attachEvents(Config evt)
+        public IStatusToolEvents attachEvents(IConfig<ISolutionEvents> evt)
         {
             lock(_eLock)
             {
                 detachEvents(evt);
-                evt.Update += tool.refresh;
+                evt.Updated += onUpdated;
             }
             return this;
         }
@@ -83,9 +85,9 @@ namespace net.r_eg.vsSBE.UI.Xaml
         /// </summary>
         /// <param name="evt"></param>
         /// <returns>self reference</returns>
-        public IStatusToolEvents detachEvents(Config evt)
+        public IStatusToolEvents detachEvents(IConfig<ISolutionEvents> evt)
         {
-            evt.Update -= tool.refresh;
+            evt.Updated -= onUpdated;
             return this;
         }
 
@@ -128,6 +130,11 @@ namespace net.r_eg.vsSBE.UI.Xaml
         private void onOpenSolution(object sender, EventArgs e)
         {
             tool.enabledPanel(true);
+        }
+
+        private void onUpdated(object sender, DataArgs<ISolutionEvents> e)
+        {
+            tool.refresh();
         }
 
         private void onReceiving(object sender, Logger.MessageArgs e)

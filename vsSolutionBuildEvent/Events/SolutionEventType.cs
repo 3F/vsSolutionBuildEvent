@@ -15,38 +15,99 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Runtime.InteropServices;
+
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
-    /// General types of available events for all components
+    /// General types of available events.
     /// </summary>
+    [Guid("DA764E72-5823-4DB9-AEB8-FD756BFEF67D")]
     public enum SolutionEventType
     {
-        Pre, Post, Cancel, Warnings, Errors, OWP, Transmitter, 
         /// <summary>
-        /// Processes with internal logging
+        /// Unspecified event.
         /// </summary>
-        Logging,
+        Common = 0x10,
+
         /// <summary>
-        /// Without identification - all ISolutionEvent
+        /// Alias to Common.
         /// </summary>
-        General,
+        General = Common,
+
         /// <summary>
-        /// Errors + Warnings
+        /// 'Pre-Build' event.
         /// </summary>
-        EW,
+        Pre = 0x100, 
+        
         /// <summary>
-        /// By individual projects
+        /// 'Post-Build' event.
         /// </summary>
-        ProjectPre,
-        ProjectPost,
+        Post = 0x101, 
+        
         /// <summary>
-        /// The 'PRE' as deferred action of existing projects
+        /// 'Cancel-Build' event.
         /// </summary>
-        DeferredPre,
+        Cancel = 0x102, 
+        
         /// <summary>
-        /// CommandEvents from EnvDTE
+        /// 'Warnings-Build' event.
         /// </summary>
-        CommandEvent,
+        Warnings = 0x103, 
+        
+        /// <summary>
+        /// 'Errors-Build' event.
+        /// </summary>
+        Errors = 0x104, 
+        
+        /// <summary>
+        /// 'Output-Build' event.
+        /// </summary>
+        Output = 0x105,
+
+        /// <summary>
+        /// Alias to Output.
+        /// </summary>
+        OWP = Output,
+        
+        /// <summary>
+        /// Transmitter of the build-data.
+        /// </summary>
+        Transmitter = 0x106, 
+
+        /// <summary>
+        /// All processes with internal logging.
+        /// </summary>
+        Logging = 0x107,
+
+        /// <summary>
+        /// CommandEvents from EnvDTE.
+        /// </summary>
+        CommandEvent = 0x108,
+
+        /// <summary>
+        /// 'Pre-Build' by individual project.
+        /// </summary>
+        ProjectPre = 0x200,
+
+        /// <summary>
+        /// 'Post-Build' by individual project.
+        /// </summary>
+        ProjectPost = 0x201,
+
+        /// <summary>
+        /// The deferred 'Pre-Build' action for specific project.
+        /// </summary>
+        DeferredPre = 0x202,
+
+        /// <summary>
+        /// Errors + Warnings.
+        /// </summary>
+        EW = 0x207,
+
+        /// <summary>
+        /// Alias to EW.
+        /// </summary>
+        ErrorsWarnings = EW,
     }
 }

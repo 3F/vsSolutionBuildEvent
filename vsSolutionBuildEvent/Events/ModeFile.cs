@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,12 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using net.r_eg.vsSBE.Events.Mapping.Json;
+
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
     /// Processing with files
     /// </summary>
-    public class ModeFile: IMode, IModeFile
+    public class ModeFile: ModeCommand, IMode, IModeFile
     {
         /// <summary>
         /// Type of implementation
@@ -29,15 +31,5 @@ namespace net.r_eg.vsSBE.Events
         {
             get { return ModeType.File; }
         }
-
-        /// <summary>
-        /// Command for handling
-        /// </summary>
-        public string Command
-        {
-            get { return command; }
-            set { command = value; }
-        }
-        private string command = string.Empty;
     }
 }

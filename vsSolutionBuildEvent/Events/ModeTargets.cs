@@ -15,12 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using net.r_eg.vsSBE.Events.Mapping.Json;
+
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
     /// Processing with MSBuild targets
     /// </summary>
-    public class ModeTargets: IMode, IModeTargets
+    public class ModeTargets: ModeCommand, IMode, IModeTargets
     {
         /// <summary>
         /// Type of implementation
@@ -29,15 +31,5 @@ namespace net.r_eg.vsSBE.Events
         {
             get { return ModeType.Targets; }
         }
-
-        /// <summary>
-        /// Command for handling
-        /// </summary>
-        public string Command
-        {
-            get { return command; }
-            set { command = value; }
-        }
-        private string command = string.Empty;
     }
 }

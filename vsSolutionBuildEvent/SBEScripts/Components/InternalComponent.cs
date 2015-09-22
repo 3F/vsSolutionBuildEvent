@@ -297,7 +297,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected virtual ISolutionEvent[] getEvent(SolutionEventType type)
         {
             try {
-                return Config._.Data.getEvent(type);
+                return Settings.Cfg.getEvent(type);
             }
             catch(Exception) {
                 throw new NotSupportedOperationException("getEvent: Not yet supported event type - '{0}'", type);

@@ -32,6 +32,7 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Search;
+using net.r_eg.vsSBE.Configuration.User;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.UI.WForms.Controls.TextEditorElements;
 using AvalonEditorWPF = ICSharpCode.AvalonEdit.TextEditor;
@@ -139,6 +140,11 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
         protected BraceFoldingStrategy braceFoldingStrategy;
 
         /// <summary>
+        /// Common user configuration.
+        /// </summary>
+        protected ICommon commonCfg;
+
+        /// <summary>
         /// object synch.
         /// </summary>
         private Object _lock = new Object();
@@ -198,6 +204,18 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
         {
             _.Background = brushColorFromString(color);
             updateCurrentLineBackground(_.Background);
+        }
+
+        public void config(ICommon cfg)
+        {
+            commonCfg = cfg;
+
+            if(commonCfg.Zoomed <= 0) {
+                commonCfg.Zoomed = 100;
+            }
+
+            _.WordWrap              = commonCfg.WordWrap;
+            menuComboBoxZoom.Text   = String.Format("{0} %", commonCfg.Zoomed);
         }
 
         public void insertToSelection(string text, bool select = true)
@@ -342,9 +360,14 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
             _.Options.ConvertTabsToSpaces                       = true;
             _.Options.IndentationSize                           = 4;
             _.Options.ShowTabs                                  = true;
+            _.Options.EnableRectangularSelection                = true;
             _.ShowLineNumbers                                   = true;
             _.WordWrap                                          = true;
             _.TextArea.TextView.Options.HighlightCurrentLine    = true;
+            _.TextArea.SelectionCornerRadius                    = 0.2f;
+            _.TextArea.SelectionBrush                           = brushColorFromString("#E5EBF1");
+            _.TextArea.SelectionBorder                          = new Pen(brushColorFromString("#D0DBE6"), 0.3f);               
+            _.TextArea.SelectionForeground                      = brushColorFromString("#000000");
             _.FontFamily                                        = new FontFamily("Consolas");
             _.TextArea.TextView.CurrentLineBorder               = new Pen(brushColorFromString("#8E9BBC"), 0.3f);
 
@@ -412,9 +435,14 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
                 if(!m.Groups[1].Success) {
                     return;
                 }
-                string nval = m.Groups[1].Value;
-                _.FontSize = initFontSize * (Math.Max(1, Math.Min(int.Parse(nval), 10000)) / 100f);
+
+                int nval    = int.Parse(m.Groups[1].Value);
+                _.FontSize  = initFontSize * (Math.Max(1, Math.Min(nval, 10000)) / 100f);
                 menuComboBoxZoom.Text = nval + " %";
+
+                if(commonCfg != null) {
+                    commonCfg.Zoomed = nval;
+                }
             }
             catch(Exception ex){
                 Log.Debug("Failed change font size: '{0}'", ex.Message);
@@ -426,6 +454,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
             if(Keyboard.Modifiers != InputModifierKeys.Control) {
                 return;
             }
+            e.Handled = true;
 
             double nval = _.FontSize;
             if(e.Delta > 0) {
@@ -471,11 +500,15 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
         private void menuItemWordWrap_Click(object sender, EventArgs e)
         {
             menuItemWordWrap.Checked = _.WordWrap = !_.WordWrap;
+            if(commonCfg != null) {
+                commonCfg.WordWrap = _.WordWrap;
+            }
         }
 
         private void contextMenuEditor_Opened(object sender, EventArgs e)
         {
-            menuComboBoxZoom.Text = zoomedValue(_.FontSize);
+            menuComboBoxZoom.Text       = zoomedValue(_.FontSize);
+            menuItemWordWrap.Checked    = _.WordWrap;
         }
 
         private void menuItemSearch_Click(object sender, EventArgs e)

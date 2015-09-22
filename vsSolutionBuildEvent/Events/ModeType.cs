@@ -27,35 +27,45 @@ namespace net.r_eg.vsSBE.Events
     public enum ModeType
     {
         /// <summary>
+        /// Unspecified mode.
+        /// </summary>
+        Common = 0x10,
+
+        /// <summary>
+        /// Alias to Common.
+        /// </summary>
+        General = Common,
+
+        /// <summary>
         /// External handling with files.
         /// </summary>
-        File,
+        File = 0x100,
 
         /// <summary>
         /// Processing with external interpreter.
         /// generally, it's a stream processor etc.
         /// </summary>
-        Interpreter,
+        Interpreter = 0x101,
 
         /// <summary>
         /// DTE-commands - operations with EnvDTE.
         /// </summary>
-        Operation,
+        Operation = 0x102,
 
         /// <summary>
         /// Script processing.
         /// generally, it's internal handling with MSBuild / SBE-Scripts cores, and similar
         /// </summary>
-        Script,
+        Script = 0x103,
 
         /// <summary>
         /// MSBuild targets
         /// </summary>
-        Targets,
+        Targets = 0x104,
 
         /// <summary>
         /// C# code
         /// </summary>
-        CSharp,
+        CSharp = 0x105,
     }
 }

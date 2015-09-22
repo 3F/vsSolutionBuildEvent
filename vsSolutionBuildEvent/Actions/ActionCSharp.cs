@@ -18,12 +18,16 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using Microsoft.CSharp;
+using net.r_eg.vsSBE.Configuration.User;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.Extensions;
 using NLog;
 
 namespace net.r_eg.vsSBE.Actions
@@ -53,7 +57,35 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         protected string BasePathToCache
         {
-            get { return Settings.WorkingPath; }
+            get { return Settings.WPath; }
+        }
+
+        /// <summary>
+        /// Generate a temporary AssemblyInfo.
+        /// </summary>
+        protected sealed class TempAssemblyInfo: IDisposable
+        {
+            /// <summary>
+            /// Full path to AssemblyInfo.
+            /// </summary>
+            public string FullPath { get; private set; }
+
+            public TempAssemblyInfo(string data)
+            {
+                FullPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+
+                using(TextWriter stream = new StreamWriter(FullPath, false, Encoding.UTF8)) {
+                    stream.Write(data);
+                }
+            }
+
+            public void Dispose()
+            {
+                try {
+                    File.Delete(FullPath);
+                }
+                catch { /* we work in temp directory with unique name, so it's not important */ }
+            }
         }
 
         /// <summary>
@@ -108,18 +140,54 @@ namespace net.r_eg.vsSBE.Actions
             if(cfg.GenerateInMemory || !cfg.CachingBytecode || String.IsNullOrEmpty(cache)) {
                 return true;
             }
-            
-            FileInfo f = new FileInfo(outputCacheFile(evt));
-            if(!f.Exists) {
-                Log.Info("[Cache] Binary '{0}' is not found in '{1}'.", cache, f.FullName);
+
+            if(cfg.CacheData == null) {
+                Log.Trace("[Cache] hash data is empty.");
                 return true;
             }
 
-            if(cfg.LastTime != f.LastWriteTimeUtc.Ticks) {
-                Log.Debug("[Cache] Is outdated '{0}' for '{1}'", cfg.LastTime, f.LastWriteTimeUtc.Ticks);
+            FileInfo f = new FileInfo(outputCacheFile(evt));
+            if(!f.Exists) {
+                Log.Info("[Cache] Binary '{0}' is not found in '{1}'. Compile new.", cache, f.FullName);
                 return true;
             }
+
+            string actual = cfg.CacheData.Manager.CacheHeader.Hash;
+            if(!hashEquals(f.FullName, actual)) {
+                Log.Info("[Cache] hash code '{0}' is invalid. Compile new.", actual);
+                return true;
+            }
+
             return false;
+        }
+
+        /// <summary>
+        /// Recalculate hash for IModeCSharp mode and save in user settings.
+        /// </summary>
+        /// <param name="mode"></param>
+        protected void updateHash(IModeCSharp mode)
+        {
+            if(mode.CacheData == null) {
+                mode.CacheData = new UserValue(LinkType.CacheHeader);
+            }
+
+            // calculate hash only for objects below
+
+            object[] toHash = new object[]
+            {
+                mode.Command,
+                mode.References,
+                mode.OutputPath,
+                mode.CompilerOptions,
+                mode.TreatWarningsAsErrors,
+                mode.WarningLevel,
+                mode.FilesMode
+            };
+
+            mode.CacheData.Manager.CacheHeader.Hash         = toHash.MD5Hash();
+            mode.CacheData.Manager.CacheHeader.Algorithm    = HashType.MD5;
+            mode.CacheData.Manager.CacheHeader.Updated      = DateTime.Now.ToFileTimeUtc();
+            UserConfig._.save();
         }
 
         /// <summary>
@@ -258,16 +326,7 @@ namespace net.r_eg.vsSBE.Actions
             parameters.ReferencedAssemblies.Add(typeof(Bridge.IEvent).Assembly.Location); // to support Bridge
 
             // ready to work with provider
-            CSharpCodeProvider provider = new CSharpCodeProvider();
-
-            CompilerResults compiled;
-            if(cfg.FilesMode) {
-                Log.Trace("[Compiler] use as list of files with source code.");
-                compiled = provider.CompileAssemblyFromFile(parameters, extractFiles(filesFromCommand(command)));
-            }
-            else {
-                compiled = provider.CompileAssemblyFromSource(parameters, command);
-            }
+            CompilerResults compiled = toBinary(command, parameters, cfg);
 
             // messages about errors & warnings
             foreach(CompilerError msg in compiled.Errors) {
@@ -278,11 +337,33 @@ namespace net.r_eg.vsSBE.Actions
                 throw new CompilerException("[Compiler] found errors. abort;");
             }
 
-            if(cfg.CachingBytecode) {
-                updateTimeTo(compiled.PathToAssembly, evt);
+            return compiled;
+        }
+
+        /// <summary>
+        /// Final step to generate binary.
+        /// </summary>
+        /// <param name="source">Source code or list of files.</param>
+        /// <param name="parameters">Compiler settings.</param>
+        /// <param name="cfg">Settings of IModeCSharp.</param>
+        /// <returns></returns>
+        protected CompilerResults toBinary(string source, CompilerParameters parameters, IModeCSharp cfg)
+        {
+            string hash = formatHashForAsm(cfg);
+            CSharpCodeProvider provider = new CSharpCodeProvider();
+            
+            if(!cfg.FilesMode) {
+                return provider.CompileAssemblyFromSource(parameters, source, hash);
             }
 
-            return compiled;
+            Log.Trace("[Compiler] use as list of files with source code.");
+            if(String.IsNullOrEmpty(hash)) {
+                return provider.CompileAssemblyFromFile(parameters, extractFiles(filesFromCommand(source)));
+            }
+
+            using(TempAssemblyInfo f = new TempAssemblyInfo(hash)) {
+                return provider.CompileAssemblyFromFile(parameters, extractFiles(filesFromCommand(String.Format("{0}\n{1}", source, f.FullPath))));
+            }
         }
 
         /// <param name="cfg">IModeCSharp configuration</param>
@@ -315,29 +396,42 @@ namespace net.r_eg.vsSBE.Actions
         }
 
         /// <summary>
-        /// Should update the LastTime field for current event.
+        /// How to store hash value in assembly.
         /// </summary>
-        /// <param name="pathToAssembly">Full path to assembly for getting timestamp.</param>
-        /// <param name="evt">Where to update.</param>
-        protected void updateTimeTo(string pathToAssembly, ISolutionEvent evt)
+        /// <param name="cfg">IModeCSharp configuration.</param>
+        /// <returns>Formatted hash value for assembly.</returns>
+        protected virtual string formatHashForAsm(IModeCSharp cfg)
         {
-            if(pathToAssembly == null) {
-                Log.Warn("[Cache] Ignore caching. Binary file is not found. /GenerateInMemory: '{0}'", 
-                                                                                ((IModeCSharp)evt.Mode).GenerateInMemory);
-                return;
+            if(!cfg.CachingBytecode) {
+                return String.Empty;
             }
 
-            FileInfo f = new FileInfo(pathToAssembly);
-            if(!f.Exists) {
-                Log.Warn("[Cache] Can't find compiled '{0}' for caching.", pathToAssembly);
-                return;
+            if(cfg.CacheData == null || String.IsNullOrEmpty(cfg.CacheData.Manager.CacheHeader.Hash)) {
+                updateHash(cfg);
             }
 
-            IModeCSharp cfg = (IModeCSharp)evt.Mode;
-            Log.Debug("[Cache] updating timestamp: '{0}' -> '{1}'", cfg.LastTime, f.LastWriteTimeUtc.Ticks);
+            string hash = cfg.CacheData.Manager.CacheHeader.Hash;
+            if(String.IsNullOrEmpty(hash)) {
+                return String.Empty;
+            }
+            return String.Format("[assembly: System.Reflection.AssemblyProduct(\"{0}\")]", hash);
+        }
 
-            cfg.LastTime = f.LastWriteTimeUtc.Ticks;
-            Config._.save();
+        /// <summary>
+        /// Compare hash values from assembly file and actual.
+        /// </summary>
+        /// <param name="file">Full path to assembly file.</param>
+        /// <param name="actual">Actual hash value for comparison.</param>
+        /// <returns>Equals or not.</returns>
+        protected virtual bool hashEquals(string file, string actual)
+        {
+            string h1 = FileVersionInfo.GetVersionInfo(file).ProductName;
+            if(String.IsNullOrEmpty(h1)) {
+                Log.Trace("[Cache] hash code from '{0}' is null or empty", file);
+                return false;
+            }
+            Log.Trace("[Cache] compare hash values '{0}' / '{1}'", h1, actual);
+            return h1.Equals(actual, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -364,7 +458,7 @@ namespace net.r_eg.vsSBE.Actions
             foreach(string file in files)
             {
                 string mask     = Path.GetFileName(file);
-                string fullname = Path.Combine(Settings.WorkingPath, file);
+                string fullname = Path.Combine(Settings.WPath, file);
 
                 if(mask.IndexOf('*') != -1) {
                     ret.AddRange(Directory.GetFiles(Path.GetDirectoryName(fullname), mask));

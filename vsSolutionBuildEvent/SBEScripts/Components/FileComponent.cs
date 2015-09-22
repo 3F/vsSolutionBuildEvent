@@ -843,7 +843,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns></returns>
         protected virtual string run(string file, string args, bool silent, bool stdOut, int timeout = 0)
         {
-            string ret = (new Actions.HProcess(Settings.WorkingPath)).run(file, args, silent, timeout);
+            string ret = (new Actions.HProcess(Settings.WPath)).run(file, args, silent, timeout);
             return (stdOut)? ret : String.Empty;
         }
 
@@ -890,7 +890,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns>Absolute path to file</returns>
         protected string location(string file)
         {
-            return Path.Combine(Settings.WorkingPath, file);
+            return Path.Combine(Settings.WPath, file);
         }
     }
 }

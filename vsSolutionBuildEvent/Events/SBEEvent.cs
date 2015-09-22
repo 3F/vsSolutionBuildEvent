@@ -149,5 +149,17 @@ namespace net.r_eg.vsSBE.Events
             set { mode = value; }
         }
         private IMode mode = new ModeFile();
+
+        /// <summary>
+        /// Unique identifier at runtime.
+        /// </summary>
+        [JsonIgnore]
+        public Guid Id
+        {
+            get {
+                return id;
+            }
+        }
+        private Guid id = Guid.NewGuid();
     }
 }

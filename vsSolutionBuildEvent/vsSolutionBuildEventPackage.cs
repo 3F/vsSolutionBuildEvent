@@ -237,8 +237,10 @@ namespace net.r_eg.vsSBE
 
         private void initAppEvents()
         {
+            GlobalConfig._.load(null, null);
+            
             Event = new API.EventLevel();
-            ((IEntryPointCore)Event).load(Dte2);
+            ((IEntryPointCore)Event).load(Dte2, GlobalConfig._.Data.Global.DebugMode);
 
             _owpListener = new Receiver.Output.OWP(Event.Environment, "Build");
             _owpListener.attachEvents();

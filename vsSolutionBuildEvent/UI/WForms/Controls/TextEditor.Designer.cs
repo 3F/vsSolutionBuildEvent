@@ -65,13 +65,13 @@
             // 
             this.menuComboBoxZoom.FlatStyle = System.Windows.Forms.FlatStyle.Standard;
             this.menuComboBoxZoom.Items.AddRange(new object[] {
-            "20 %",
-            "50 %",
-            "70 %",
-            "100 %",
-            "150 %",
+            "400 %",
             "200 %",
-            "400 %"});
+            "150 %",
+            "100 %",
+            "70 %",
+            "50 %",
+            "20 %"});
             this.menuComboBoxZoom.Name = "menuComboBoxZoom";
             this.menuComboBoxZoom.Size = new System.Drawing.Size(121, 23);
             this.menuComboBoxZoom.TextChanged += new System.EventHandler(this.menuComboBoxZoom_TextChanged);

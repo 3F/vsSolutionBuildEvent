@@ -15,6 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using net.r_eg.vsSBE.API;
+using net.r_eg.vsSBE.Configuration;
+
 namespace net.r_eg.vsSBE.UI.Xaml
 {
     internal interface IStatusToolEvents
@@ -24,28 +27,28 @@ namespace net.r_eg.vsSBE.UI.Xaml
         /// </summary>
         /// <param name="evt"></param>
         /// <returns>self reference</returns>
-        IStatusToolEvents attachEvents(API.IEventLevel evt);
+        IStatusToolEvents attachEvents(IEventLevel evt);
 
         /// <summary>
         /// Remove handler for all events from API.IEventLevel
         /// </summary>
         /// <param name="evt"></param>
         /// <returns>self reference</returns>
-        IStatusToolEvents detachEvents(API.IEventLevel evt);
+        IStatusToolEvents detachEvents(IEventLevel evt);
 
         /// <summary>
         /// Add handler for all events from Config
         /// </summary>
         /// <param name="evt"></param>
         /// <returns>self reference</returns>
-        IStatusToolEvents attachEvents(Config evt);
+        IStatusToolEvents attachEvents(IConfig<ISolutionEvents> evt);
 
         /// <summary>
         /// Remove handler for all events from Config
         /// </summary>
         /// <param name="evt"></param>
         /// <returns>self reference</returns>
-        IStatusToolEvents detachEvents(Config evt);
+        IStatusToolEvents detachEvents(IConfig<ISolutionEvents> evt);
 
         /// <summary>
         /// Add handler for all available events

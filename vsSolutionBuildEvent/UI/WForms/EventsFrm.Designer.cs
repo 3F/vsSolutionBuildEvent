@@ -72,9 +72,6 @@
             this.toolStripMenuCI = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuCIMSBuild = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuDevenv = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuPlugin = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuCopyPath = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuPluginDir = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuTpl = new System.Windows.Forms.ToolStripMenuItem();
             this.menuTplTargets = new System.Windows.Forms.ToolStripMenuItem();
             this.menuTplTargetsDefault = new System.Windows.Forms.ToolStripMenuItem();
@@ -82,6 +79,9 @@
             this.menuTplCSharpDefault = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuAPI = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuPlugin = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuCopyPath = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuPluginDir = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuSBEPanel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuHelp = new System.Windows.Forms.ToolStripSplitButton();
             this.tsMenuItemExamples = new System.Windows.Forms.ToolStripMenuItem();
@@ -179,7 +179,7 @@
             this.dgvOrderType = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.labelOnlyFor = new System.Windows.Forms.Label();
             this.labelOrder = new System.Windows.Forms.Label();
-            this.panel2 = new System.Windows.Forms.Panel();
+            this.panelToolButtons = new System.Windows.Forms.Panel();
             this.buttonEnvVariables = new System.Windows.Forms.Button();
             this.btnDteCmd = new System.Windows.Forms.Button();
             this.tabPageFilters = new System.Windows.Forms.TabPage();
@@ -260,7 +260,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOutput)).BeginInit();
             this.panelSettingsBottom.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrder)).BeginInit();
-            this.panel2.SuspendLayout();
+            this.panelToolButtons.SuspendLayout();
             this.tabPageFilters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerCE)).BeginInit();
             this.splitContainerCE.Panel1.SuspendLayout();
@@ -395,9 +395,9 @@
             this.toolStripMenuHelp,
             this.toolStripMenuBug,
             this.toolStripMenuVersion});
-            this.statusStrip.Location = new System.Drawing.Point(111, 7);
+            this.statusStrip.Location = new System.Drawing.Point(142, 7);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(189, 22);
+            this.statusStrip.Size = new System.Drawing.Size(158, 22);
             this.statusStrip.TabIndex = 81;
             // 
             // toolStripMenuSpring
@@ -542,29 +542,6 @@
             this.toolStripMenuDevenv.Text = "Devenv Command-Line";
             this.toolStripMenuDevenv.Click += new System.EventHandler(this.toolStripMenuDevenv_Click);
             // 
-            // toolStripMenuPlugin
-            // 
-            this.toolStripMenuPlugin.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuCopyPath,
-            this.toolStripMenuPluginDir});
-            this.toolStripMenuPlugin.Name = "toolStripMenuPlugin";
-            this.toolStripMenuPlugin.Size = new System.Drawing.Size(154, 22);
-            this.toolStripMenuPlugin.Text = "Plugin";
-            // 
-            // toolStripMenuCopyPath
-            // 
-            this.toolStripMenuCopyPath.Name = "toolStripMenuCopyPath";
-            this.toolStripMenuCopyPath.Size = new System.Drawing.Size(216, 22);
-            this.toolStripMenuCopyPath.Text = "Copy path to plugin";
-            this.toolStripMenuCopyPath.Click += new System.EventHandler(this.toolStripMenuCopyPath_Click);
-            // 
-            // toolStripMenuPluginDir
-            // 
-            this.toolStripMenuPluginDir.Name = "toolStripMenuPluginDir";
-            this.toolStripMenuPluginDir.Size = new System.Drawing.Size(216, 22);
-            this.toolStripMenuPluginDir.Text = "Open directory with plugin";
-            this.toolStripMenuPluginDir.Click += new System.EventHandler(this.toolStripMenuPluginDir_Click);
-            // 
             // toolStripMenuTpl
             // 
             this.toolStripMenuTpl.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -615,6 +592,29 @@
             // 
             this.toolStripSeparator11.Name = "toolStripSeparator11";
             this.toolStripSeparator11.Size = new System.Drawing.Size(151, 6);
+            // 
+            // toolStripMenuPlugin
+            // 
+            this.toolStripMenuPlugin.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuCopyPath,
+            this.toolStripMenuPluginDir});
+            this.toolStripMenuPlugin.Name = "toolStripMenuPlugin";
+            this.toolStripMenuPlugin.Size = new System.Drawing.Size(154, 22);
+            this.toolStripMenuPlugin.Text = "Plugin";
+            // 
+            // toolStripMenuCopyPath
+            // 
+            this.toolStripMenuCopyPath.Name = "toolStripMenuCopyPath";
+            this.toolStripMenuCopyPath.Size = new System.Drawing.Size(216, 22);
+            this.toolStripMenuCopyPath.Text = "Copy path to plugin";
+            this.toolStripMenuCopyPath.Click += new System.EventHandler(this.toolStripMenuCopyPath_Click);
+            // 
+            // toolStripMenuPluginDir
+            // 
+            this.toolStripMenuPluginDir.Name = "toolStripMenuPluginDir";
+            this.toolStripMenuPluginDir.Size = new System.Drawing.Size(216, 22);
+            this.toolStripMenuPluginDir.Text = "Open directory with plugin";
+            this.toolStripMenuPluginDir.Click += new System.EventHandler(this.toolStripMenuPluginDir_Click);
             // 
             // toolStripMenuSBEPanel
             // 
@@ -1604,7 +1604,7 @@
             this.panelSettingsBottom.Controls.Add(this.dataGridViewOrder);
             this.panelSettingsBottom.Controls.Add(this.labelOnlyFor);
             this.panelSettingsBottom.Controls.Add(this.labelOrder);
-            this.panelSettingsBottom.Controls.Add(this.panel2);
+            this.panelSettingsBottom.Controls.Add(this.panelToolButtons);
             this.panelSettingsBottom.Location = new System.Drawing.Point(6, 376);
             this.panelSettingsBottom.Margin = new System.Windows.Forms.Padding(0);
             this.panelSettingsBottom.Name = "panelSettingsBottom";
@@ -1757,16 +1757,16 @@
             this.labelOrder.TabIndex = 84;
             this.labelOrder.Text = "Execution order:";
             // 
-            // panel2
+            // panelToolButtons
             // 
-            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel2.Controls.Add(this.buttonEnvVariables);
-            this.panel2.Controls.Add(this.btnDteCmd);
-            this.panel2.Location = new System.Drawing.Point(543, 0);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(223, 32);
-            this.panel2.TabIndex = 85;
+            this.panelToolButtons.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelToolButtons.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelToolButtons.Controls.Add(this.buttonEnvVariables);
+            this.panelToolButtons.Controls.Add(this.btnDteCmd);
+            this.panelToolButtons.Location = new System.Drawing.Point(543, 0);
+            this.panelToolButtons.Name = "panelToolButtons";
+            this.panelToolButtons.Size = new System.Drawing.Size(223, 32);
+            this.panelToolButtons.TabIndex = 85;
             // 
             // buttonEnvVariables
             // 
@@ -2432,6 +2432,7 @@
             this.pGridCompilerCfg.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.pGridCompilerCfg.CategoryForeColor = System.Drawing.SystemColors.InactiveCaptionText;
             this.pGridCompilerCfg.Location = new System.Drawing.Point(6, 6);
             this.pGridCompilerCfg.Name = "pGridCompilerCfg";
             this.pGridCompilerCfg.Size = new System.Drawing.Size(767, 435);
@@ -2498,7 +2499,7 @@
             this.panelSettingsBottom.ResumeLayout(false);
             this.panelSettingsBottom.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrder)).EndInit();
-            this.panel2.ResumeLayout(false);
+            this.panelToolButtons.ResumeLayout(false);
             this.tabPageFilters.ResumeLayout(false);
             this.splitContainerCE.Panel1.ResumeLayout(false);
             this.splitContainerCE.Panel2.ResumeLayout(false);
@@ -2598,7 +2599,7 @@
         private System.Windows.Forms.Label labelOnlyFor;
         private System.Windows.Forms.CheckedListBox checkedListBoxSpecCfg;
         private System.Windows.Forms.Label labelOrder;
-        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel panelToolButtons;
         private System.Windows.Forms.Button buttonEnvVariables;
         private System.Windows.Forms.Button btnDteCmd;
         private WForms.Components.DataGridViewExt dataGridViewOutput;

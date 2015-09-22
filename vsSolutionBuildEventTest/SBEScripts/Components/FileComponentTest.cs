@@ -428,7 +428,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 
             public FileComponentAccessor(bool throwError = false)
             {
-                Settings.setWorkingPath("/");
                 this.throwError = throwError;
             }
 

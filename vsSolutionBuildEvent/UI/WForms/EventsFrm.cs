@@ -148,7 +148,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(Version.branchName.ToLower() != "releases") {
                 this.Text += " [Unofficial release]";
             }
-            toolStripMenuDebugMode.Checked  = Settings.debugMode;
+            toolStripMenuDebugMode.Checked  = Settings._.DebugMode;
             toolStripMenuVersion.Text       = String.Format("v{0} [ {1} ]", Version.numberString, Version.branchSha1);
 #endif
 
@@ -167,6 +167,14 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// <param name="onlyInRAM"></param>
         protected void saveData(bool onlyInRAM = false)
         {
+            if(logic.SBEItem == null)
+            {
+                if(!onlyInRAM) {
+                    logic.saveData();
+                }
+                return;
+            }
+
             try {
                 saveData(logic.SBEItem);
 
@@ -213,6 +221,10 @@ namespace net.r_eg.vsSBE.UI.WForms
             evt.ExecutionOrder          = getExecutionOrder();
             evt.BuildType               = (chkBuildContext.Checked)? logic.getBuildTypeBy(comboBoxBuildContext.SelectedIndex) : BuildType.Common;
 
+            if(evt.Mode.Type == ModeType.CSharp && !radioModeCSharp.Checked) {
+                logic.cacheToRemove(evt.Mode);
+            }
+
             if(radioModeInterpreter.Checked)
             {
                 evt.Mode = new ModeInterpreter() {
@@ -239,10 +251,19 @@ namespace net.r_eg.vsSBE.UI.WForms
                     Command = textEditor.Text
                 };
             }
-            else if(radioModeCSharp.Checked) {
-                evt.Mode = (IMode)pGridCompilerCfg.SelectedObject;
-                ((IModeCSharp)evt.Mode).Command     = textEditor.Text;
-                ((IModeCSharp)evt.Mode).LastTime    = 0; //TODO: flushing only for some settings, like for Command (cmp by hash) etc.
+            else if(radioModeCSharp.Checked)
+            {
+                evt.Mode        = (IMode)pGridCompilerCfg.SelectedObject;
+                IModeCSharp cfg = (IModeCSharp)evt.Mode;
+
+                cfg.Command = textEditor.Text;
+                if(!cfg.CachingBytecode) {
+                    logic.cacheToRemove(evt.Mode);
+                }
+                else {
+                    // probably a new data - reset for recalculation later.
+                    logic.cacheReset(evt.Mode);
+                }
             }
             else if(radioModeOperation.Checked)
             {
@@ -314,9 +335,12 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// </summary>
         protected void renderData()
         {
-            //foreach(RadioButton rb in Util.getControls(groupBoxPMode, c => c.GetType() == typeof(RadioButton))) {
-            //    rb.Checked = false; // see renderData(SBEEvent evt)
-            //}
+            if(logic.SBEItem == null) {
+                controlsLock(true);
+                return;
+            }
+            controlsLock(false);
+
             renderData(logic.SBEItem);
 
             checkBoxIgnoreIfFailed.Enabled  = false;
@@ -379,12 +403,18 @@ namespace net.r_eg.vsSBE.UI.WForms
             buildTypeSelect(evt.BuildType);
 
             if(evt.Mode == null) {
-                Log.Warn("The Mode is corrupt, reinitialized with default type");
+                Log.Warn("Mode is corrupt, reinitialized with default type - '{0}'", logic.DefaultMode.Type);
                 evt.Mode = logic.DefaultMode;
             }
             pGridCompilerCfg.SelectedObject = (evt.Mode.Type == ModeType.CSharp)? (IModeCSharp)evt.Mode : new ModeCSharp();
 
-            switch(evt.Mode.Type) {
+            // update settings for editor
+            if(!isChangingMode(evt.Mode.Type)) {
+                textEditor.config(logic.getCommonCfg(evt.Mode.Type));
+            }
+
+            switch(evt.Mode.Type)
+            {
                 case ModeType.Interpreter:
                 {
                     radioModeInterpreter.Checked    = true;
@@ -470,7 +500,6 @@ namespace net.r_eg.vsSBE.UI.WForms
         protected void fillActionsList()
         {
             dgvActions.Rows.Clear();
-            logic.protectMinEventItems();
             foreach(SBEEvent item in logic.SBE.evt) {
                 dgvActions.Rows.Add(item.Enabled, item.Name, item.Caption);
             }
@@ -498,6 +527,10 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         protected void selectAction(int index, bool refreshSettings = false)
         {
+            if(dgvActions.Rows.Count < 1) {
+                return;
+            }
+
             index = Math.Max(0, Math.Min(index, dgvActions.Rows.Count - 1));
             dgvActions.ClearSelection();
             dgvActions.Rows[index].Selected = true;
@@ -556,6 +589,28 @@ namespace net.r_eg.vsSBE.UI.WForms
             dgvCEFilters.Rows.Clear();
         }
 
+        protected void controlsLock(bool disabled)
+        {
+            //foreach(Control c in Util.getControls(splitContainer.Panel2, c => true)) {
+            //    c.Enabled = false;
+            //}
+            groupBoxSettings.Enabled 
+                = groupBoxPMode.Enabled 
+                = groupBoxEW.Enabled
+                = groupBoxOutputControl.Enabled
+                = groupBoxVariants.Enabled
+                = groupBoxInterpreter.Enabled
+                = panelCommand.Enabled
+                = checkedListBoxSpecCfg.Enabled
+                = dataGridViewOrder.Enabled
+                = btnActionExec.Enabled
+                = panelToolButtons.Enabled
+                = textBoxCaption.Enabled
+                = !disabled;
+            
+            btnApply.Enabled = true;
+        }
+
         protected void notice(bool isOn)
         {
             isNotified = isOn;
@@ -572,6 +627,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// <param name="type"></param>
         protected void uiViewMode(ModeType type)
         {
+            textEditor.config(logic.getCommonCfg(type));
             updateColors();
             groupBoxInterpreter.Enabled         = false;
             listBoxOperation.Enabled            = false;
@@ -629,6 +685,19 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
+        protected bool isChangingMode(ModeType current)
+        {
+            switch(current) {
+                case ModeType.Interpreter: { return !radioModeInterpreter.Checked; }
+                case ModeType.File: { return !radioModeFiles.Checked; }
+                case ModeType.Script: { return !radioModeScript.Checked; }
+                case ModeType.Targets: { return !radioModeTargets.Checked; }
+                case ModeType.CSharp: { return !radioModeCSharp.Checked; }
+                case ModeType.Operation: { return !radioModeOperation.Checked; }
+            }
+            return true;
+        }
+
         protected void updateTimeLimitField()
         {
             if(checkBoxWaitForExit.Checked 
@@ -656,7 +725,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
 
             list.SelectedIndex = list.Items.Count - 1;
-            if(logic.SBEItem.Mode.Type != ModeType.Operation) {
+            if(logic.SBEItem == null || logic.SBEItem.Mode.Type != ModeType.Operation) {
                 return;
             }
 
@@ -700,6 +769,10 @@ namespace net.r_eg.vsSBE.UI.WForms
                 }
             }
 
+            if(logic.SBEItem == null) {
+                return;
+            }
+
             string[] toConf = logic.SBEItem.ToConfiguration;
             for(int i = 0; i < checkedListBoxSpecCfg.Items.Count; ++i)
             {
@@ -715,6 +788,10 @@ namespace net.r_eg.vsSBE.UI.WForms
                 foreach(string name in logic.Env.ProjectsList) {
                     dataGridViewOrder.Rows.Add(false, name, dgvOrderType.Items[0]);
                 }
+            }
+
+            if(logic.SBEItem == null) {
+                return;
             }
 
             IExecutionOrder[] list = logic.SBEItem.ExecutionOrder;
@@ -1144,7 +1221,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void toolStripMenuDebugMode_Click(object sender, EventArgs e)
         {
 #if !DEBUG
-            Settings.debugMode = (toolStripMenuDebugMode.Checked = !toolStripMenuDebugMode.Checked);
+            Settings.CfgUser.Global.DebugMode = Settings._.DebugMode = toolStripMenuDebugMode.Checked = !toolStripMenuDebugMode.Checked;
 #endif
         }
 
@@ -1155,14 +1232,14 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void toolStripMenuCopyPath_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(String.Format("\"{0}\"", Settings.LibPath));
-            MessageBox.Show(String.Format("Has been copied to clipboard:\n\n{0}\n\nUse this with CI utilities etc.", Settings.LibPath), 
+            Clipboard.SetText(String.Format("\"{0}\"", Settings.LPath));
+            MessageBox.Show(String.Format("Has been copied to clipboard:\n\n{0}\n\nUse this with CI utilities etc.", Settings.LPath), 
                             "Full path to vsSolutionBuildEvent");
         }
 
         private void toolStripMenuPluginDir_Click(object sender, EventArgs e)
         {
-            Util.openUrl(String.Format("\"{0}\"", Settings.LibPath));
+            Util.openUrl(String.Format("\"{0}\"", Settings.LPath));
         }
 
         private void toolStripMenuCIMSBuild_Click(object sender, EventArgs e)
@@ -1361,11 +1438,14 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void menuActionsClone_Click(object sender, EventArgs e)
         {
-            addAction(currentActionIndex());
+            addAction((dgvActions.Rows.Count < 1)? -1 : currentActionIndex());
         }
 
         private void menuActionsEdit_Click(object sender, EventArgs e)
         {
+            if(dgvActions.Rows.Count < 1) {
+                return;
+            }
             dgvActions.CurrentCell = dgvActions.Rows[currentActionIndex()].Cells[dgvActionName.Name];
             dgvActions.BeginEdit(true);
         }
@@ -1382,10 +1462,10 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void menuActionsRemove_Click(object sender, EventArgs e)
         {
-            int index = currentActionIndex();
-            if(dgvActions.Rows.Count < 2) {
-                addAction();
+            if(dgvActions.Rows.Count < 1) {
+                return;
             }
+            int index = currentActionIndex();
             dgvActions.Rows.RemoveAt(index);
             logic.removeEventItem(index);
             refreshSettingsWithIndex(currentActionIndex());

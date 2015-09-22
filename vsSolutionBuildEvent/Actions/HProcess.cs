@@ -166,7 +166,7 @@ namespace net.r_eg.vsSBE.Actions
 
         public HProcess()
         {
-            initDir = Settings.WorkingPath;
+            initDir = Settings.WPath;
         }
 
         /// <summary>

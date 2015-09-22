@@ -15,11 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Runtime.InteropServices;
+
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
-    /// Processing with some scripts
+    /// Scripts from available engines like MSBuild, etc.
     /// </summary>
+    [Guid("4F1765E1-CED5-4AA9-B229-617EE7B0B09D")]
     public interface IModeScript: ICommand
     {
 

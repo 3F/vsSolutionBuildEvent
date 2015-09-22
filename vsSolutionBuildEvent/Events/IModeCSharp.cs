@@ -15,7 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Runtime.InteropServices;
+using net.r_eg.vsSBE.Configuration.User;
 
 namespace net.r_eg.vsSBE.Events
 {
@@ -74,6 +76,12 @@ namespace net.r_eg.vsSBE.Events
         /// When the binary data has been updated.
         /// UTC
         /// </summary>
+        [Obsolete("Deprecated and will be removed soon. Use CacheData instead.")]
         long LastTime { get; set; }
+
+        /// <summary>
+        /// Cache data from user settings.
+        /// </summary>
+        IUserValue CacheData { get; set; }
     }
 }

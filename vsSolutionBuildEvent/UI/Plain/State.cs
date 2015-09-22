@@ -27,7 +27,7 @@ namespace net.r_eg.vsSBE.UI.Plain
     /// </summary>
     public class State
     {
-        public static void print(SolutionEvents data)
+        public static void print(ISolutionEvents data)
         {
             Func<ISolutionEvent[], string, string> about = delegate(ISolutionEvent[] evt, string caption)
             {
@@ -42,6 +42,7 @@ namespace net.r_eg.vsSBE.UI.Plain
                 }
                 return info.ToString();
             };
+            Log._.rawLn("\nReady:");
 
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             sb.Append(about(data.PreBuild,      "Pre-Build     "));

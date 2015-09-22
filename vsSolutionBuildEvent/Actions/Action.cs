@@ -43,7 +43,7 @@ namespace net.r_eg.vsSBE.Actions
         {
             Log.Info("Prepared command: '{0}'", cmd);
 
-            HProcess p = new HProcess(Settings.WorkingPath);
+            HProcess p = new HProcess(Settings.WPath);
             p.useShell(cmd, evt.Process.Waiting, evt.Process.Hidden, evt.Process.TimeLimit);
         }
 

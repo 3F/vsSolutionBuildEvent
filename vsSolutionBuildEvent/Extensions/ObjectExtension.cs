@@ -15,12 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.Cryptography;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -62,32 +60,73 @@ namespace net.r_eg.vsSBE.Extensions
         }
 
         /// <summary>
-        /// Deep copy through serialization (text format)
-        /// Slower than binary, however supports more objects by default
+        /// Deep copy through serialization.
+        /// Alias to CloneBySerializationWithType.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="obj">Object for cloning</param>
-        /// <returns>Cloned</returns>
+        /// <typeparam name="T">Base type of object.</typeparam>
+        /// <param name="obj">Object for cloning.</param>
+        /// <returns>The new object.</returns>
         public static T CloneBySerialization<T>(this T obj)
         {
-            return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(obj), new JsonSerializerSettings() { 
-                Binder = new JsonSerializationBinder()
-            });
+            return obj.CloneBySerializationWithType<T, T>();
         }
 
         /// <summary>
-        /// Deep copy with changing type through serialization (text format)
-        /// Useful, if need to cast of objects - Parent to Child
+        /// Deep copy with changing type via serialization (text format).
+        /// Supports a lot of objects by default than binary variant above.
+        /// The T + T2 useful if needed casting of object, e.g. Parent to Child
         /// </summary>
-        /// <typeparam name="T">Base type</typeparam>
-        /// <typeparam name="T2">Extended type</typeparam>
-        /// <param name="obj"></param>
-        /// <returns>Cloned with new type</returns>
+        /// <typeparam name="T">Base type of object.</typeparam>
+        /// <typeparam name="T2">Specific type for new object.</typeparam>
+        /// <param name="obj">Object for cloning.</param>
+        /// <returns>The new object with specific type.</returns>
         public static T2 CloneBySerializationWithType<T, T2>(this T obj)
         {
-            return JsonConvert.DeserializeObject<T2>(JsonConvert.SerializeObject(obj), new JsonSerializerSettings() {
-                Binder = new JsonSerializationBinder()
-            });
+            return JsonConvert.DeserializeObject<T2>(
+                                JsonConvert.SerializeObject(
+                                        obj, 
+                                        Formatting.None, 
+                                        new JsonSerializerSettings()
+                                        {
+                                            NullValueHandling   = NullValueHandling.Include,
+                                            Formatting          = Formatting.None,
+                                            TypeNameHandling    = TypeNameHandling.All,
+                                        }
+                                ),
+                                new JsonSerializerSettings() {
+                                    Binder = new JsonSerializationBinder(),
+                                });
+        }
+
+        /// <summary>
+        /// Calculate MD5 hash from object.
+        /// </summary>
+        /// <typeparam name="T">Base type of object.</typeparam>
+        /// <param name="obj">Object for calculating.</param>
+        /// <returns>MD5 Hash code.</returns>
+        public static string MD5Hash<T>(this T obj)
+        {
+            using(MD5 md5 = MD5.Create())
+            {
+                byte[] hash = md5.ComputeHash(
+                                        Encoding.UTF8.GetBytes(
+                                            JsonConvert.SerializeObject(
+                                                obj, 
+                                                Formatting.None, 
+                                                new JsonSerializerSettings()
+                                                {
+                                                    NullValueHandling   = NullValueHandling.Include,
+                                                    Formatting          = Formatting.None,
+                                                    TypeNameHandling    = TypeNameHandling.All,
+                                                }
+                                        )));
+                
+                StringBuilder ret = new StringBuilder();
+                foreach(byte b in hash) {
+                    ret.Append(b.ToString("X2"));
+                }
+                return ret.ToString();
+            }
         }
     }
 }

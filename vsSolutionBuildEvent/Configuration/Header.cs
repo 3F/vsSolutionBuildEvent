@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,8 +19,17 @@ namespace net.r_eg.vsSBE.Configuration
 {
     public class Header
     {
+        public string[] _ = new string[]
+        {
+            " Current file requires a vsSolutionBuildEvent engine.", 
+            " Free plugin for Visual Studio or MSBuild Tools:",
+            "  * http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/",
+            "  * http://vssbe.r-eg.net",
+            " Feedback: entry.reg@gmail.com"
+        };
+
         /// <summary>
-        /// To identification of compatibility between versions
+        /// Compatibility of configurations.
         /// </summary>
         public string Compatibility
         {
@@ -28,14 +37,9 @@ namespace net.r_eg.vsSBE.Configuration
             set { compatibility = value; }
         }
         /// <summary>
-        /// this value used by default if current attr not found after deserialize
-        /// :: v0.2.x/v0.1.x
+        /// The version below used by default if current attr is not found.
         /// </summary>
         private string compatibility = "0.1";
 
-        /// <summary>
-        /// What application is needed for work with the .vssbe if extension not installed
-        /// </summary>
-        public string application = "http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/";
     }
 }

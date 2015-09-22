@@ -103,7 +103,7 @@ namespace net.r_eg.vsSBE.API
         /// <param name="debug">Optional flag of debug mode</param>
         public void load(object dte2, bool debug = false)
         {
-            load(dte2, new Settings() { DebugMode = debug });
+            load(dte2, new API.Settings() { DebugMode = debug });
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace net.r_eg.vsSBE.API
         /// <param name="debug">Optional flag of debug mode</param>
         public void load(string sln, Dictionary<string, string> properties, bool debug = false)
         {
-            load(sln, properties, new Settings() { DebugMode = debug });
+            load(sln, properties, new API.Settings() { DebugMode = debug });
         }
 
         /// <summary>
@@ -375,13 +375,14 @@ namespace net.r_eg.vsSBE.API
             try {
                 Config._.load(Environment.SolutionPath, Environment.SolutionFileName);
                 Config._.updateActivation(Bootloader);
+                UserConfig._.load(Environment.SolutionPath, Environment.SolutionFileName);
 
                 UI.Plain.State.print(Config._.Data);
 #if DEBUG
-                Log.Warn("Used the [Debug version]");
+                Log.Warn("Used [Debug version]");
 #else
                 if(vsSBE.Version.branchName.ToLower() != "releases") {
-                    Log.Warn("Used the [Unofficial release]");
+                    Log.Warn("Used [Unofficial release]");
                 }
 #endif
 
@@ -455,7 +456,7 @@ namespace net.r_eg.vsSBE.API
         {
             (new Logger.Initializer()).configure();
 
-            vsSBE.Settings.debugMode = cfg.DebugMode;
+            vsSBE.Settings._.DebugMode = cfg.DebugMode;
             // ...
         }
 
