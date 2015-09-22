@@ -89,10 +89,25 @@ namespace net.r_eg.vsSBE.Actions
                                             new HostServices()
                                        );
 
-            using(BuildManager manager = new BuildManager())
-            {
+            // holy hedgehogs...
+
+#if !NET_40
+
+            // Using of BuildManager from Microsoft.Build.dll, v4.0.0.0 - .NETFramework\v4.5\Microsoft.Build.dll
+            // you should see IDisposable, and of course you can see CA1001 for block as in #else section below.
+            using(BuildManager manager = new BuildManager(Settings.APP_NAME_SHORT)) {
                 return build(manager, request, evt.Process.Hidden);
             }
+
+#else
+
+            // Using of BuildManager from Microsoft.Build.dll, v4.0.30319 - .NETFramework\v4.0\Microsoft.Build.dll
+            // Does not implement IDisposable, and voila:
+            // https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/build/build-103
+            return build(new BuildManager(Settings.APP_NAME_SHORT), request, evt.Process.Hidden);
+
+#endif
+
         }
 
         /// <param name="cmd"></param>
