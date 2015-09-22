@@ -74,13 +74,6 @@ namespace net.r_eg.vsSBE.Actions
         }
 
         /// <summary>
-        /// Additional BuildManager for build user-action.
-        /// Most important for our post-build operations with msbuild tool.
-        /// Only for Visual Studio we may safe begin simple from Evaluation.Project.Build(...)
-        /// </summary>
-        protected BuildManager buildManager = new BuildManager();
-
-        /// <summary>
         /// Process for specified event.
         /// </summary>
         /// <param name="evt">Configured event.</param>
@@ -96,18 +89,10 @@ namespace net.r_eg.vsSBE.Actions
                                             new HostServices()
                                        );
 
-            BuildResult result = buildManager.Build(new BuildParameters()
-                                                    {
-                                                        //MaxNodeCount = 12,
-                                                        Loggers = new List<ILogger>() {
-                                                                        new MSBuildLogger() {
-                                                                            Silent = evt.Process.Hidden
-                                                                        }
-                                                                  }
-                                                    }, 
-                                                    request);
-
-            return (result.OverallResult == BuildResultCode.Success);
+            using(BuildManager manager = new BuildManager())
+            {
+                return build(manager, request, evt.Process.Hidden);
+            }
         }
 
         /// <param name="cmd"></param>
@@ -117,11 +102,41 @@ namespace net.r_eg.vsSBE.Actions
 
         }
 
+        /// <summary>
+        /// Gets xml data as ProjectRootElement from string.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         protected ProjectRootElement getXml(string data)
         {
             using(StringReader reader = new StringReader(data)) {
                 return ProjectRootElement.Create(System.Xml.XmlReader.Create(reader));
             }
+        }
+
+        /// <summary>
+        /// Build user-action with additional BuildManager.
+        /// Most important for our post-build operations with msbuild tool.
+        /// Only for Visual Studio we may safe begin simple from Evaluation.Project.Build(...)
+        /// </summary>
+        /// <param name="manager">Build Manager.</param>
+        /// <param name="request">Configuration.</param>
+        /// <param name="silent"></param>
+        /// <returns></returns>
+        protected bool build(BuildManager manager, BuildRequestData request, bool silent = true)
+        {
+            BuildResult result = manager.Build(new BuildParameters()
+                                                    {
+                                                        //MaxNodeCount = 12,
+                                                        Loggers = new List<ILogger>() {
+                                                                        new MSBuildLogger() {
+                                                                            Silent = silent
+                                                                        }
+                                                                  }
+                                                    }, 
+                                                    request);
+
+            return (result.OverallResult == BuildResultCode.Success);
         }
 
         protected Dictionary<string, string> propertiesByDefault(ISolutionEvent evt)
