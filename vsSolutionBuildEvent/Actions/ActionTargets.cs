@@ -102,7 +102,7 @@ namespace net.r_eg.vsSBE.Actions
 #else
 
             // Using of BuildManager from Microsoft.Build.dll, v4.0.30319 - .NETFramework\v4.0\Microsoft.Build.dll
-            // Does not implement IDisposable, and voila:
+            // It doesn't implement IDisposable, and voila:
             // https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/build/build-103
             return build(new BuildManager(Settings.APP_NAME_SHORT), request, evt.Process.Hidden);
 

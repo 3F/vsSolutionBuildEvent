@@ -137,12 +137,22 @@ namespace net.r_eg.vsSBE.Receiver.Output
             //TODO: fix me. Prevent Duplicate Data / bug with OutputWindowPane
             if(tUpdated == null || tUpdated.ThreadState == ThreadState.Unstarted || tUpdated.ThreadState == ThreadState.Stopped)
             {
-                tUpdated = new System.Threading.Thread(() => { notifyRaw(); });
+                tUpdated = new System.Threading.Thread(() => 
+                {
+                    try {
+                        notifyRaw(); 
+                    }
+                    catch(Exception ex) {
+                        Log.Debug("notifyRaw: failed '{0}'", ex.Message);
+                    }
+                });
+
                 try {
                     tUpdated.Start();
                 }
-                catch(Exception e) {
-                    Log.Warn("notifyRaw() {0}", e.Message);
+                catch(Exception ex) {
+                    // ThreadStateException, OutOfMemoryException
+                    Log.Debug("notifyRaw: can't start '{0}'", ex.Message);
                 }
             }
         }

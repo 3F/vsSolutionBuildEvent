@@ -6,12 +6,12 @@
 <SyntaxDefinition name="C#" extensions=".cs" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
     <!-- The named colors 'Comment' and 'String' are used in SharpDevelop to detect if a line is inside a multiline string/comment -->
     <Color name="Comment" foreground="Green" exampleText="// comment" />
-    <Color name="String" foreground="Blue" exampleText="string text = &quot;Hello, World!&quot;"/>
+    <Color name="String" foreground="#FFA31515" exampleText="string text = &quot;Hello, World!&quot;"/>
     <Color name="Char" foreground="Magenta" exampleText="char linefeed = '\n';"/>
     <Color name="Preprocessor" foreground="Green" exampleText="#region Title" />
     <Color name="Punctuation" exampleText="a(b.c);" />
-    <Color name="ValueTypeKeywords" fontWeight="bold" foreground="Red" exampleText="bool b = true;" />
-    <Color name="ReferenceTypeKeywords" foreground="Red" exampleText="object o;" />
+    <Color name="ValueTypeKeywords" fontWeight="bold" foreground="#D00000FF" exampleText="bool b = true;" />
+    <Color name="ReferenceTypeKeywords" foreground="#EE0000FF" exampleText="object o;" />
     <Color name="MethodCall" foreground="MidnightBlue" fontWeight="bold" exampleText="o.ToString();"/>
     <Color name="NumberLiteral" foreground="DarkBlue" exampleText="3.1415f"/>
     <Color name="ThisOrBaseReference" fontWeight="bold" exampleText="this.Do(); base.Do();"/>
@@ -24,17 +24,17 @@
     <Color name="UnsafeKeywords" foreground="Olive" exampleText="unsafe { fixed (..) {} }"/>
     <Color name="OperatorKeywords" fontWeight="bold" foreground="Pink" exampleText="public static implicit operator..."/>
     <Color name="ParameterModifiers" fontWeight="bold" foreground="DeepPink" exampleText="(ref int a, params int[] b)"/>
-    <Color name="Modifiers" foreground="Brown" exampleText="static readonly int a;"/>
+    <Color name="Modifiers" foreground="#F00000FF" exampleText="static readonly int a;"/>
     <Color name="Visibility" fontWeight="bold" foreground="Blue" exampleText="public override void ToString();"/>
     <Color name="NamespaceKeywords" fontWeight="bold" foreground="Green" exampleText="namespace A.B { using System; }"/>
-    <Color name="GetSetAddRemove" foreground="SaddleBrown" exampleText="int Prop { get; set; }"/>
+    <Color name="GetSetAddRemove" foreground="#FF26648C" exampleText="int Prop { get; set; }"/>
     <Color name="TrueFalse" fontWeight="bold" foreground="DarkCyan" exampleText="b = false; a = true;" />
     <Color name="TypeKeywords" fontWeight="bold" foreground="DarkCyan" exampleText="if (x is int) { a = x as int; type = typeof(int); size = sizeof(int); c = new object(); }"/>
     
     <Property name="DocCommentMarker" value="///" />
     
     <RuleSet name="CommentMarkerSet">
-        <Keywords fontWeight="bold" foreground="Red">
+        <Keywords fontWeight="bold" foreground="#E034383A">
             <Word>TODO</Word>
             <Word>FIXME</Word>
         </Keywords>

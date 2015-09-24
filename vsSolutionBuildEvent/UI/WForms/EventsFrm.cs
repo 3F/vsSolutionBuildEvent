@@ -140,13 +140,13 @@ namespace net.r_eg.vsSBE.UI.WForms
             toolTip.SetToolTip(pictureBoxWarnWait, Resource.StringWarnForWaiting);
 
 #if DEBUG
-            this.Text                       += " [Debug version]";
+            this.Text                       = String.Format("{0} [Debug version]", Settings.APP_NAME);
             toolStripMenuDebugMode.Checked  = true;
             toolStripMenuDebugMode.Enabled  = false;
             toolStripMenuVersion.Text       = String.Format("based on {0}", Version.branchSha1);
 #else
             if(Version.branchName.ToLower() != "releases") {
-                this.Text += " [Unofficial release]";
+                this.Text = String.Format("{0}  [Unofficial release]", Settings.APP_NAME);
             }
             toolStripMenuDebugMode.Checked  = Settings._.DebugMode;
             toolStripMenuVersion.Text       = String.Format("v{0} [ {1} ]", Version.numberString, Version.branchSha1);
@@ -349,6 +349,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             pictureBoxWarnWait.Visible      = true;
             groupBoxCommandEvents.Enabled   = false;
 
+            textEditor._.Select(0, 0);
             toolTip.SetToolTip(checkBoxWaitForExit, String.Empty);
             checkBoxWaitForExit.Cursor = Cursors.Default;
 
@@ -1179,6 +1180,11 @@ namespace net.r_eg.vsSBE.UI.WForms
             Util.openUrl("http://vssbe.r-eg.net/doc/Examples/");
         }
 
+        private void menuDemo_Click(object sender, EventArgs e)
+        {
+            Util.openUrl("http://vssbe.r-eg.net/doc/Examples/Demo/");
+        }
+
         private void toolStripMenuIssue_Click(object sender, EventArgs e)
         {
             Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/issues");
@@ -1492,7 +1498,17 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void dgvActions_CellParsing(object sender, DataGridViewCellParsingEventArgs e)
         {
-            e.Value = logic.validateName(e.Value.ToString());
+            string origin = logic.SBE.evt[e.RowIndex].Name;
+            try
+            {
+                logic.SBE.evt[e.RowIndex].Name = null;
+                e.Value = logic.genUniqueName(logic.validateName(e.Value.ToString()), logic.SBE.evt);
+                logic.SBE.evt[e.RowIndex].Name = (string)e.Value;
+            }
+            catch(Exception ex) {
+                Log.Debug("Name for action: failed parsing - '{0}'", ex.Message);
+                e.Value = origin;
+            }
             e.ParsingApplied = true;
         }
 
@@ -1533,9 +1549,22 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void dgvActions_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Enter) {
-                e.SuppressKeyPress = true;
+            switch(e.KeyCode)
+            {
+                case Keys.F2: {
+                    menuActionsEdit_Click(this, e);
+                    break;
+                }
+                case Keys.Space: {
+                    dgvActions.Rows[currentActionIndex()].Cells[dgvActionEnabled.Name].Value = !logic.SBEItem.Enabled;
+                    break;
+                }
+                case Keys.Enter: {
+                    e.SuppressKeyPress = true;
+                    break;
+                }
             }
+            e.Handled = true;
         }
 
         private void dgvActions_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -1558,9 +1587,9 @@ namespace net.r_eg.vsSBE.UI.WForms
             refreshSettings();
         }
 
-        private void dgvActions_DragDropSortedRow(object sender, DataGridViewExt.MovingRow index)
+        private void dgvActions_DragDropSortedRow(object sender, DataArgs<DataGridViewExt.MovingRow> e)
         {
-            logic.moveEventItem(index.from, index.to);
+            logic.moveEventItem(e.Data.from, e.Data.to);
         }
 
         private void dgvCEFilters_CellClick(object sender, DataGridViewCellEventArgs e)

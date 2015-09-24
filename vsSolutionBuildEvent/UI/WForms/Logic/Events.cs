@@ -286,20 +286,28 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             return String.Format("$({0}:{1})", name, project);
         }
 
+        public string genUniqueName(string prefix, List<ISolutionEvent> scope)
+        {
+            int id = getUniqueId(prefix, scope);
+            return String.Format("{0}{1}", prefix, (id < 1) ? "" : id.ToString());
+        }
+
         public virtual string validateName(string name)
         {
-            if(String.IsNullOrEmpty(name)){
-                return String.Empty;
+            if(String.IsNullOrEmpty(name)) {
+                return UniqueNameForAction;
             }
 
-            return Regex.Replace(name, @"(?:
+            name = Regex.Replace(name, 
+                                    @"(?:
                                             ^([^a-z]+)
-                                          |
+                                        |
                                             ([^a-z_0-9]+)
-                                         )", delegate(Match m)
-            {
-                return String.Empty;
-            }, RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+                                        )", 
+                                    delegate(Match m) { return String.Empty; }, 
+                                    RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace);
+            
+            return String.IsNullOrEmpty(name)? UniqueNameForAction : name;
         }
 
         public void saveData()
@@ -593,7 +601,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             // fix new data
 
             if(isNew) {
-                added.Name = genUniqueName(ACTION_PREFIX, SBE.evt);
+                added.Name = UniqueNameForAction;
                 return added;
             }
 
@@ -847,17 +855,21 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                     continue;
                 }
 
-                try {
-                    Match m = Regex.Match(item.Name, String.Format("^{0}(\\d+)", prefix), RegexOptions.IgnoreCase);
-                    if(m.Groups[1].Success) {
-                        maxId = Math.Max(maxId, Int32.Parse(m.Groups[1].Value));
+                try
+                {
+                    Match m = Regex.Match(item.Name, String.Format(@"^{0}(\d*)$", prefix), RegexOptions.IgnoreCase);
+                    if(!m.Success) {
+                        continue;
                     }
+                    string num = m.Groups[1].Value;
+
+                    maxId = Math.Max(maxId, (num.Length > 0)? Int32.Parse(num) + 1 : 1);
                 }
                 catch(Exception ex) {
-                    Log.Debug("{0} ::'{1}'", ex.ToString(), prefix);
+                    Log.Debug("getUniqueId: {0} ::'{1}'", ex.ToString(), prefix);
                 }
             }
-            return ++maxId;
+            return maxId;
         }
 
         protected void fillComponents(ComponentAttribute attr, bool enabled, string className, DataGridView grid)
@@ -916,11 +928,6 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                     yield return child;
                 }
             }
-        }
-
-        protected virtual string genUniqueName(string prefix, List<ISolutionEvent> scope)
-        {
-            return String.Format("{0}{1}", prefix, getUniqueId(prefix, scope));
         }
     }
 }

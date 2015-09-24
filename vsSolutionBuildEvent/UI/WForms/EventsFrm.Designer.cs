@@ -69,14 +69,16 @@
             this.toolStripMenuDTECmd = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuDTECmdExec = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemSniffer = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuCI = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuCIMSBuild = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuDevenv = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuTpl = new System.Windows.Forms.ToolStripMenuItem();
             this.menuTplTargets = new System.Windows.Forms.ToolStripMenuItem();
             this.menuTplTargetsDefault = new System.Windows.Forms.ToolStripMenuItem();
             this.menuTplCSharp = new System.Windows.Forms.ToolStripMenuItem();
             this.menuTplCSharpDefault = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuCI = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuCIMSBuild = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuDevenv = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuDemo = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuAPI = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuPlugin = new System.Windows.Forms.ToolStripMenuItem();
@@ -415,8 +417,10 @@
             this.toolStripMenuReset,
             this.toolStripSeparator6,
             this.toolStripMenuTools,
-            this.toolStripMenuCI,
             this.toolStripMenuTpl,
+            this.toolStripSeparator10,
+            this.toolStripMenuCI,
+            this.menuDemo,
             this.toolStripMenuAPI,
             this.toolStripSeparator11,
             this.toolStripMenuPlugin,
@@ -519,29 +523,6 @@
             this.menuItemSniffer.Text = "EnvDTE Sniffer";
             this.menuItemSniffer.Click += new System.EventHandler(this.menuItemSniffer_Click);
             // 
-            // toolStripMenuCI
-            // 
-            this.toolStripMenuCI.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuCIMSBuild,
-            this.toolStripMenuDevenv});
-            this.toolStripMenuCI.Name = "toolStripMenuCI";
-            this.toolStripMenuCI.Size = new System.Drawing.Size(154, 22);
-            this.toolStripMenuCI.Text = "CI Utilities";
-            // 
-            // toolStripMenuCIMSBuild
-            // 
-            this.toolStripMenuCIMSBuild.Name = "toolStripMenuCIMSBuild";
-            this.toolStripMenuCIMSBuild.Size = new System.Drawing.Size(200, 22);
-            this.toolStripMenuCIMSBuild.Text = "CI.MSBuild";
-            this.toolStripMenuCIMSBuild.Click += new System.EventHandler(this.toolStripMenuCIMSBuild_Click);
-            // 
-            // toolStripMenuDevenv
-            // 
-            this.toolStripMenuDevenv.Name = "toolStripMenuDevenv";
-            this.toolStripMenuDevenv.Size = new System.Drawing.Size(200, 22);
-            this.toolStripMenuDevenv.Text = "Devenv Command-Line";
-            this.toolStripMenuDevenv.Click += new System.EventHandler(this.toolStripMenuDevenv_Click);
-            // 
             // toolStripMenuTpl
             // 
             this.toolStripMenuTpl.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -580,6 +561,41 @@
             this.menuTplCSharpDefault.Size = new System.Drawing.Size(173, 22);
             this.menuTplCSharpDefault.Text = "Default Entry point";
             this.menuTplCSharpDefault.Click += new System.EventHandler(this.menuTplCSharpDefault_Click);
+            // 
+            // toolStripSeparator10
+            // 
+            this.toolStripSeparator10.Name = "toolStripSeparator10";
+            this.toolStripSeparator10.Size = new System.Drawing.Size(151, 6);
+            // 
+            // toolStripMenuCI
+            // 
+            this.toolStripMenuCI.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuCIMSBuild,
+            this.toolStripMenuDevenv});
+            this.toolStripMenuCI.Name = "toolStripMenuCI";
+            this.toolStripMenuCI.Size = new System.Drawing.Size(154, 22);
+            this.toolStripMenuCI.Text = "CI Utilities";
+            // 
+            // toolStripMenuCIMSBuild
+            // 
+            this.toolStripMenuCIMSBuild.Name = "toolStripMenuCIMSBuild";
+            this.toolStripMenuCIMSBuild.Size = new System.Drawing.Size(200, 22);
+            this.toolStripMenuCIMSBuild.Text = "CI.MSBuild";
+            this.toolStripMenuCIMSBuild.Click += new System.EventHandler(this.toolStripMenuCIMSBuild_Click);
+            // 
+            // toolStripMenuDevenv
+            // 
+            this.toolStripMenuDevenv.Name = "toolStripMenuDevenv";
+            this.toolStripMenuDevenv.Size = new System.Drawing.Size(200, 22);
+            this.toolStripMenuDevenv.Text = "Devenv Command-Line";
+            this.toolStripMenuDevenv.Click += new System.EventHandler(this.toolStripMenuDevenv_Click);
+            // 
+            // menuDemo
+            // 
+            this.menuDemo.Name = "menuDemo";
+            this.menuDemo.Size = new System.Drawing.Size(154, 22);
+            this.menuDemo.Text = "Demo projects";
+            this.menuDemo.Click += new System.EventHandler(this.menuDemo_Click);
             // 
             // toolStripMenuAPI
             // 
@@ -916,7 +932,7 @@
             this.dgvActions.ShowEditingIcon = false;
             this.dgvActions.Size = new System.Drawing.Size(202, 500);
             this.dgvActions.TabIndex = 46;
-            this.dgvActions.DragDropSortedRow += new System.EventHandler<net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt.MovingRow>(this.dgvActions_DragDropSortedRow);
+            this.dgvActions.DragDropSortedRow += new System.EventHandler<net.r_eg.vsSBE.DataArgs<net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt.MovingRow>>(this.dgvActions_DragDropSortedRow);
             this.dgvActions.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvActions_CellContentClick);
             this.dgvActions.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dgvActions_CellParsing);
             this.dgvActions.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvActions_CellValueChanged);
@@ -2455,7 +2471,7 @@
             this.MinimumSize = new System.Drawing.Size(815, 472);
             this.Name = "EventsFrm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Solution Build-Events";
+            this.Text = "vsSolutionBuildEvent";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.EventsFrm_FormClosing);
             this.Load += new System.EventHandler(this.EventsFrm_Load);
             this.ClientSizeChanged += new System.EventHandler(this.EventsFrm_ClientSizeChanged);
@@ -2716,6 +2732,8 @@
         private System.Windows.Forms.ToolStripMenuItem menuActionExec;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolStripMenuItem menuItemSniffer;
+        private System.Windows.Forms.ToolStripMenuItem menuDemo;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
 
     }
 }
