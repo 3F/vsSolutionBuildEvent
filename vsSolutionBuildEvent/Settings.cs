@@ -174,7 +174,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public static string LPath
         {
-            get { return _.libPath; }
+            get { return _.LibPath; }
         }
 
         /// <summary>

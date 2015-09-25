@@ -34,7 +34,7 @@ namespace ClientDemo
         /// <param name="data">Raw data of building process</param>
         public void onBuildRaw(string data)
         {
-            Log._.info("Entering onBuildRaw(string data)");
+            Log._.info("Entering onBuildRaw(string data): '{0}'", (data.Length > 40)? data.Substring(0, 40) + "..." : data);
         }
 
         /// <summary>

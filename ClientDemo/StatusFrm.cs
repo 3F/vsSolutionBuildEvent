@@ -11,7 +11,7 @@ namespace ClientDemo
         /// <param name="message"></param>
         public void report(string message)
         {
-            richTextBoxMain.Text += message;
+            push(richTextBoxMain, message);
         }
 
         /// <summary>
@@ -19,12 +19,26 @@ namespace ClientDemo
         /// </summary>
         public void show()
         {
-            Show();
+            ShowDialog();
         }
 
         public StatusFrm()
         {
             InitializeComponent();
+        }
+
+        protected void push(RichTextBox box, string message)
+        {
+            // box.InvokeRequired may does not check properly
+            try {
+                box.Text += message;
+            }
+            catch
+            {
+                box.Invoke((MethodInvoker)delegate {
+                    box.Text += message;
+                });
+            }
         }
 
         private void btnAPI_Click(object sender, System.EventArgs e)

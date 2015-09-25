@@ -25,6 +25,7 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace ClientDemo
 {
@@ -45,9 +46,13 @@ namespace ClientDemo
         /// </summary>
         public void show()
         {
-            if(status != null) {
-                status.show();
+            if(status == null) {
+                return;
             }
+            
+            Task.Factory.StartNew(() => {
+                status.show();
+            });
         }
 
         /// <summary>

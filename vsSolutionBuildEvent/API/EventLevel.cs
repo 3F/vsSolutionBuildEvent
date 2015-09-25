@@ -25,6 +25,7 @@ using net.r_eg.vsSBE.Bridge.CoreCommand;
 using net.r_eg.vsSBE.Clients;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.Scripts;
+using AppSettings = net.r_eg.vsSBE.Settings;
 
 namespace net.r_eg.vsSBE.API
 {
@@ -456,7 +457,11 @@ namespace net.r_eg.vsSBE.API
         {
             (new Logger.Initializer()).configure();
 
-            vsSBE.Settings._.DebugMode = cfg.DebugMode;
+            // TODO: event with common settings for IEntryPointCore
+            AppSettings._.DebugModeUpdated -= onDebugModeUpdated;
+            AppSettings._.DebugModeUpdated += onDebugModeUpdated;
+
+            AppSettings._.DebugMode = cfg.DebugMode;
             // ...
         }
 
@@ -485,6 +490,20 @@ namespace net.r_eg.vsSBE.API
                 cmdEvents.BeforeExecute -= _cmdBeforeExecute;
                 cmdEvents.AfterExecute  -= _cmdAfterExecute;
             }
+        }
+
+        /// <summary>
+        /// TODO: event with common settings for IEntryPointCore
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void onDebugModeUpdated(object sender, DataArgs<bool> e)
+        {
+            fire(new CoreCommandArgs()
+            { 
+                Type = CoreCommandType.RawCommand,
+                Args = new object[] { new KeyValuePair<string, bool>("DebugMode", e.Data) }
+            });
         }
 
         /// <summary>

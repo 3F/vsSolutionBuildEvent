@@ -131,6 +131,7 @@ namespace net.r_eg.vsSBE.Clients
         /// <returns>true value if library exists and successfully loaded</returns>
         public bool tryLoad(IEntryPointCore core, string sln, Dictionary<string, string> properties)
         {
+            this.core       = core;
             solutionFile    = sln;
             this.properties = properties;
 
