@@ -151,6 +151,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             toolStripMenuDebugMode.Checked  = Settings._.DebugMode;
             toolStripMenuVersion.Text       = String.Format("v{0} [ {1} ]", Version.numberString, Version.branchSha1);
 #endif
+            menuCfgSuppressDualCmd.Checked = Settings.CfgUser.Global.SuppressDualCommand;
 
             // Fixes for dataGridView component with the height property
             Util.fixDGVRowHeight(dataGridViewOutput);
@@ -1229,6 +1230,11 @@ namespace net.r_eg.vsSBE.UI.WForms
 #if !DEBUG
             Settings.CfgUser.Global.DebugMode = Settings._.DebugMode = toolStripMenuDebugMode.Checked = !toolStripMenuDebugMode.Checked;
 #endif
+        }
+
+        private void menuCfgSuppressDualCmd_Click(object sender, EventArgs e)
+        {
+            Settings.CfgUser.Global.SuppressDualCommand = menuCfgSuppressDualCmd.Checked = !menuCfgSuppressDualCmd.Checked;
         }
 
         private void toolStripMenuSBEPanel_Click(object sender, EventArgs e)

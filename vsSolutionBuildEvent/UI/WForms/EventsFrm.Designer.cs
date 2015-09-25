@@ -232,6 +232,8 @@
             this.btnActivateCSharp = new System.Windows.Forms.Button();
             this.pGridCompilerCfg = new System.Windows.Forms.PropertyGrid();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuCfgSuppressDualCmd = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuActions.SuspendLayout();
             this.panelStatusBR.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -397,9 +399,9 @@
             this.toolStripMenuHelp,
             this.toolStripMenuBug,
             this.toolStripMenuVersion});
-            this.statusStrip.Location = new System.Drawing.Point(142, 7);
+            this.statusStrip.Location = new System.Drawing.Point(111, 7);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(158, 22);
+            this.statusStrip.Size = new System.Drawing.Size(189, 22);
             this.statusStrip.TabIndex = 81;
             // 
             // toolStripMenuSpring
@@ -613,7 +615,9 @@
             // 
             this.toolStripMenuPlugin.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuCopyPath,
-            this.toolStripMenuPluginDir});
+            this.toolStripMenuPluginDir,
+            this.toolStripSeparator12,
+            this.menuCfgSuppressDualCmd});
             this.toolStripMenuPlugin.Name = "toolStripMenuPlugin";
             this.toolStripMenuPlugin.Size = new System.Drawing.Size(154, 22);
             this.toolStripMenuPlugin.Text = "Plugin";
@@ -621,14 +625,14 @@
             // toolStripMenuCopyPath
             // 
             this.toolStripMenuCopyPath.Name = "toolStripMenuCopyPath";
-            this.toolStripMenuCopyPath.Size = new System.Drawing.Size(216, 22);
+            this.toolStripMenuCopyPath.Size = new System.Drawing.Size(245, 22);
             this.toolStripMenuCopyPath.Text = "Copy path to plugin";
             this.toolStripMenuCopyPath.Click += new System.EventHandler(this.toolStripMenuCopyPath_Click);
             // 
             // toolStripMenuPluginDir
             // 
             this.toolStripMenuPluginDir.Name = "toolStripMenuPluginDir";
-            this.toolStripMenuPluginDir.Size = new System.Drawing.Size(216, 22);
+            this.toolStripMenuPluginDir.Size = new System.Drawing.Size(245, 22);
             this.toolStripMenuPluginDir.Text = "Open directory with plugin";
             this.toolStripMenuPluginDir.Click += new System.EventHandler(this.toolStripMenuPluginDir_Click);
             // 
@@ -2460,6 +2464,20 @@
             this.toolTip.InitialDelay = 500;
             this.toolTip.ReshowDelay = 100;
             // 
+            // toolStripSeparator12
+            // 
+            this.toolStripSeparator12.Name = "toolStripSeparator12";
+            this.toolStripSeparator12.Size = new System.Drawing.Size(242, 6);
+            // 
+            // menuCfgSuppressDualCmd
+            // 
+            this.menuCfgSuppressDualCmd.Name = "menuCfgSuppressDualCmd";
+            this.menuCfgSuppressDualCmd.Size = new System.Drawing.Size(245, 22);
+            this.menuCfgSuppressDualCmd.Text = "Suppress \'Command__\' property";
+            this.menuCfgSuppressDualCmd.ToolTipText = "The \'Command__\' property in configuration file is temporary and used for compatib" +
+    "ility with format v0.9.\r\nHowever, you can disable this if needed.";
+            this.menuCfgSuppressDualCmd.Click += new System.EventHandler(this.menuCfgSuppressDualCmd_Click);
+            // 
             // EventsFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2734,6 +2752,8 @@
         private System.Windows.Forms.ToolStripMenuItem menuItemSniffer;
         private System.Windows.Forms.ToolStripMenuItem menuDemo;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
+        private System.Windows.Forms.ToolStripMenuItem menuCfgSuppressDualCmd;
 
     }
 }

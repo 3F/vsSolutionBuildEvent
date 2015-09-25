@@ -57,7 +57,11 @@ namespace net.r_eg.vsSBE.Events.Mapping.Json
         [JsonProperty(PropertyName = "Command__")]
         protected string[] _Command
         {
-            get {
+            get
+            {
+                if(Settings.CfgUser != null && Settings.CfgUser.Global.SuppressDualCommand) {
+                    return null;
+                }
                 return _command;
             }
             set {
