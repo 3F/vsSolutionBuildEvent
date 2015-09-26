@@ -128,13 +128,12 @@ namespace net.r_eg.vsSBE.UI.WForms
         public EventsFrm(IBootloader bootloader)
         {
             InitializeComponent();
+            defaultSizes();
+            updateColors();
 
             IInspector inspector    = new Inspector(bootloader);
             logic                   = new Logic.Events(bootloader, inspector);
             textEditor.codeCompletionInit(inspector);
-
-            updateColors();
-            defaultSizes();
             
             Icon = Resource.Package_32;
             toolTip.SetToolTip(pictureBoxWarnWait, Resource.StringWarnForWaiting);
@@ -910,16 +909,28 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
-        protected void expandActionsList(bool flag)
+        protected void expandActionsList(bool open)
         {
-            if(!flag) {
-                splitContainer.SplitterDistance = splitContainer.Panel1MinSize;
-                this.Size = metric.formCollapsed;
-                //this.Width = metric.formCollapsed.Width; // -> pictureBoxToggle
-                return;
+            // Possible next bug:
+            // The Width property may be unchangeable and less then Panel1MinSize or Panel2MinSize.
+            // For example: 160px (after click on preview box in taskbar on Win8.1 at least):
+            // Then! the next condition or requirements - 'SplitterDistance must be between Panel1MinSize and Width - Panel2MinSize' is unreachable at all.
+            // but, maybe it possible only for old logic of SC_RESTORE/2 (WndProc)... hmm,
+            try
+            {
+                if(!open) {
+                    splitContainer.SplitterDistance = splitContainer.Panel1MinSize; // yes, may exception, because Width may be unchangeable and equal to 160px see above
+                    Size = metric.formCollapsed;
+                    return;
+                }
+                Width = metric.form.Width;
+                splitContainer.SplitterDistance = Math.Max(splitContainer.Panel1MinSize, Math.Min(metric.splitter, Width - splitContainer.Panel2MinSize));
             }
-            this.Width = metric.form.Width;
-            splitContainer.SplitterDistance = metric.splitter;
+            catch(Exception ex) {
+                Log.Debug("UI. bug with splitContainer({0}) /Width: '{1}' :: '{2}' ", open, Width, ex.ToString());
+                //Size    = metric.formCollapsed; // we still can't resize, but we try...
+                //Width   = metric.form.Width;  // and try...
+            }
         }
 
         protected void defaultSizes()
@@ -948,13 +959,14 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         protected override void WndProc(ref Message mes)
         {
+            base.WndProc(ref mes); // should be before, otherwise may cause problem with Width property after restoring from taskbar (always 160px for example)
+
             if(mes.Msg == WM_SYSCOMMAND)
             {
                 if(mes.WParam == (IntPtr)SC_RESTORE || mes.WParam == (IntPtr)SC_RESTORE2) {
                     expandActionsList(false);
                 }
             }
-            base.WndProc(ref mes);
         }
 
         private void EventsFrm_Load(object sender, EventArgs e)
