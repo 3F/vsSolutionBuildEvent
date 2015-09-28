@@ -81,6 +81,8 @@
       <Project>{73919171-44b6-4536-b892-f1fca653887c}</Project>
       <Name>Bridge</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup Condition="$(SpecLibForEnvCI) != true">
     <ProjectReference Include="..\vsSolutionBuildEvent\vsSolutionBuildEvent.csproj">
       <Project>{32E44995-F621-4E77-B46A-8F65D64E7FEA}</Project>
       <Name>vsSolutionBuildEvent</Name>
