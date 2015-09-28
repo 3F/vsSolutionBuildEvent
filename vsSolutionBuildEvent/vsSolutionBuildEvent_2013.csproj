@@ -155,6 +155,14 @@
     <Compile Include="ISolutionEvents.cs" />
     <Compile Include="IAppSettings.cs" />
     <Compile Include="DataArgs.cs" />
+    <Compile Include="SBEScripts\Components\Build\ProjectsMap.cs" />
+    <Compile Include="SBEScripts\SNode\ArgumentType.cs" />
+    <Compile Include="SBEScripts\SNode\IPM.cs" />
+    <Compile Include="SBEScripts\SNode\Argument.cs" />
+    <Compile Include="SBEScripts\SNode\Level.cs" />
+    <Compile Include="SBEScripts\SNode\LevelType.cs" />
+    <Compile Include="SBEScripts\SNode\ILevel.cs" />
+    <Compile Include="SBEScripts\SNode\PM.cs" />
     <Compile Include="UserConfig.cs" />
     <Compile Include="Configuration\Component.cs" />
     <Compile Include="Configuration\User\HashType.cs" />

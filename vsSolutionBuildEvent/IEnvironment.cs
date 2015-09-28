@@ -66,9 +66,14 @@ namespace net.r_eg.vsSBE
         IFireCoreCommand CoreCmdSender { get; set; }
 
         /// <summary>
-        /// Path to solution file
+        /// Full path to directory where placed solution file.
         /// </summary>
         string SolutionPath { get; }
+
+        /// <summary>
+        /// Full path to solution file.
+        /// </summary>
+        string SolutionFile { get; }
 
         /// <summary>
         /// Name of used solution file without extension

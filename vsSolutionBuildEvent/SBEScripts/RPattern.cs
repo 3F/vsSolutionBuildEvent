@@ -147,19 +147,43 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
-        /// Float value from allowed syntax
+        /// Signed floating-point number with single-precision from allowed syntax
         /// </summary>
         public static string FloatContent
         {
-            get { return @"\s*(-?\d+(?:\.\d+)?)\s*"; }
+            get { return @"\s*(-?\d+(?:\.\d+)?)f\s*"; }
         }
 
         /// <summary>
-        /// Unsigned Float value from allowed syntax
+        /// Unsigned floating-point number with single-precision from allowed syntax
         /// </summary>
         public static string UnsignedFloatContent
         {
-            get { return @"\s*(\d+(?:\.\d+)?)\s*"; }
+            get { return @"\s*(\d+(?:\.\d+)?)f\s*"; }
+        }
+
+        /// <summary>
+        /// Signed floating-point number with double-precision from allowed syntax
+        /// </summary>
+        public static string DoubleContent
+        {
+            get { return @"\s*(-?\d+(?:\.\d+)?)d?\s*"; }
+        }
+
+        /// <summary>
+        /// Unsigned floating-point number with double-precision from allowed syntax
+        /// </summary>
+        public static string UnsignedDoubleContent
+        {
+            get { return @"\s*(\d+(?:\.\d+)?)d?\s*"; }
+        }
+
+        /// <summary>
+        /// Mixed Enum or Const value from allowed syntax
+        /// </summary>
+        public static string EnumOrConstContent
+        {
+            get { return @"\s*([A-Za-z_0-9.]+)\s*"; }
         }
 
         /// <summary>

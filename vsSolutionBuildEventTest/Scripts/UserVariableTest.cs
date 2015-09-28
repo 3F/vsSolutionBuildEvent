@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.Scripts;
 
-namespace net.r_eg.vsSBE.Test.SBEScripts
+namespace net.r_eg.vsSBE.Test.Scripts
 {
     /// <summary>
     ///This is a test class for UserVariableTest and is intended

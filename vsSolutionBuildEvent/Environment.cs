@@ -135,13 +135,23 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Solution path from the DTE-context
+        /// Full path to solution file.
+        /// </summary>
+        public string SolutionFile
+        {
+            get {
+                // the state of the DTE2 object are always should be in modification
+                return getFullPathToSln(Dte2);
+            }
+        }
+
+        /// <summary>
+        /// Full path to directory where placed solution file.
         /// </summary>
         public string SolutionPath
         {
             get {
-                // the state of the DTE2 object are always should be in modification
-                return Path.GetDirectoryName(getFullPathToSln(Dte2));
+                return Path.GetDirectoryName(SolutionFile);
             }
         }
 

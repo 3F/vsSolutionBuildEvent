@@ -17,10 +17,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Globalization;
 using net.r_eg.vsSBE.Exceptions;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts
 {
@@ -77,6 +75,26 @@ namespace net.r_eg.vsSBE.SBEScripts
         public static uint toUInt32(string val)
         {
             return UInt32.Parse(val.Trim());
+        }
+
+        /// <summary>
+        /// Getting of floating-point number with single-precision.
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        public static float toFloat(string val)
+        {
+            return Single.Parse(val.Trim(), CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Getting of floating-point number with double-precision.
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        public static double toDouble(string val)
+        {
+            return Double.Parse(val.Trim(), CultureInfo.InvariantCulture);
         }
 
         /// <param name="val"></param>

@@ -4,6 +4,7 @@ using EnvDTE80;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using net.r_eg.vsSBE.MSBuild;
+using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.Test.MSBuild
 {
@@ -878,7 +879,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
 
             public class ToUserVariables: StubEvaluatingProperty
             {
-                public new Scripts.IUserVariable uvariable
+                public new IUserVariable uvariable
                 {
                     get { return base.uvariable; }
                     set { base.uvariable = value; }

@@ -170,7 +170,7 @@ namespace net.r_eg.vsSBE
         /// <param name="projects"></param>
         protected void hProject(string line, ref List<Project> projects)
         {
-            // Pattern from Microsoft.Build.BuildEngine.Shared.SolutionParser !
+            // Pattern based on crackProjectLine from Microsoft.Build.BuildEngine.Shared.SolutionParser.
             string pattern = "^Project\\(\"(?<TypeGuid>.*)\"\\)\\s*=\\s*\"(?<Name>.*)\"\\s*,\\s*\"(?<Path>.*)\"\\s*,\\s*\"(?<Guid>.*)\"$";
             Match m = Regex.Match(line, pattern);
             if(!m.Success) {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -9,6 +10,7 @@ using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Components;
+using net.r_eg.vsSBE.SBEScripts.Components.Build;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts.Components
@@ -20,6 +22,9 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
     [TestClass()]
     public class BuildComponentTest
     {
+        private const string EXIST_GUID     = "{11111111-1111-1111-1111-111111111111}";
+        private const string NOTEXIST_GUID  = "{00000000-0000-0000-0000-000000000000}";
+
         private TestContext testContextInstance;
 
         /// <summary>
@@ -54,6 +59,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                     mockSolutionContexts.Setup(m => m.GetEnumerator()).Returns(SolutionContexts);
                     mockSolutionActiveConfiguration.SetupGet(p => p.SolutionContexts).Returns(mockSolutionContexts.Object);
                     mockEnv.SetupGet(p => p.SolutionActiveCfg).Returns(mockSolutionActiveConfiguration.Object);
+                    mockEnv.SetupGet(p => p.SolutionFile).Returns("stub.sln");
                     env = mockEnv.Object;
                 }
                 return env;
@@ -256,18 +262,299 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             Assert.AreEqual("false", target.parse("[Build projects.find(\"project2\").IsDeployable]"));
         }
 
+        /// <summary>
+        ///A test for parse -> stSolution
+        ///</summary>
+        [TestMethod()]
+        public void stSolutionTest1()
+        {
+            try {
+                BuildComponent target = new BuildComponentAccessor(Env);
+                Assert.AreEqual(String.Empty, target.parse("[Build solution.current]"));
+                Assert.Fail("1");
+            }
+            catch(OperationNotFoundException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                BuildComponent target = new BuildComponentAccessor(Env);
+                Assert.AreEqual(String.Empty, target.parse("[Build solution.path(\"path.sln\")]"));
+                Assert.Fail("2");
+            }
+            catch(OperationNotFoundException) {
+                Assert.IsTrue(true);
+            }
+        }
+
+        /// <summary>
+        ///A test for parse - stSolution
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(InvalidArgumentException))]
+        public void stSolutionTest2()
+        {
+            BuildComponent target = new BuildComponentAccessor(Env);
+            Assert.AreEqual(String.Empty, target.parse("[Build solution.path()]"));
+        }
+
+        /// <summary>
+        ///A test for parse - stSolution
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(OperationNotFoundException))]
+        public void stSolutionTest3()
+        {
+            BuildComponent target = new BuildComponent(Env);
+            Assert.AreEqual(String.Empty, target.parse("[Build solution.NotExistProperty]"));
+        }
+
+        /// <summary>
+        ///A test for parse - stSolution - stSlnPMap
+        ///</summary>
+        [TestMethod()]
+        public void stSlnPMapTest1()
+        {
+            try {
+                BuildComponent target = new BuildComponentAccessor(Env);
+                Assert.AreEqual(String.Empty, target.parse("[Build solution.current.NotExistProperty]"));
+                Assert.Fail("1");
+            }
+            catch(OperationNotFoundException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                BuildComponent target = new BuildComponentAccessor(Env);
+                Assert.AreEqual(String.Empty, target.parse("[Build solution.current.First]"));
+                Assert.Fail("2");
+            }
+            catch(OperationNotFoundException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                BuildComponent target = new BuildComponentAccessor(Env);
+                Assert.AreEqual(String.Empty, target.parse("[Build solution.current.Last]"));
+                Assert.Fail("3");
+            }
+            catch(OperationNotFoundException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                BuildComponent target = new BuildComponentAccessor(Env);
+                Assert.AreEqual(String.Empty, target.parse("[Build solution.current.LastRaw]"));
+                Assert.Fail("4");
+            }
+            catch(OperationNotFoundException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                BuildComponent target = new BuildComponentAccessor(Env);
+                Assert.AreEqual(String.Empty, target.parse("[Build solution.current.projectBy(\"" + EXIST_GUID + "\")]"));
+                Assert.Fail("5");
+            }
+            catch(OperationNotFoundException) {
+                Assert.IsTrue(true);
+            }
+        }
+
+        /// <summary>
+        ///A test for parse - stSolution - stSlnPMap
+        ///</summary>
+        [TestMethod()]
+        public void stSlnPMapTest2()
+        {
+            try {
+                BuildComponent target = new BuildComponentAccessor(Env);
+                Assert.AreEqual(String.Empty, target.parse("[Build solution.path(\"stub.sln\").First]"));
+                Assert.Fail("1");
+            }
+            catch(OperationNotFoundException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                BuildComponent target = new BuildComponentAccessor(Env);
+                Assert.AreEqual(String.Empty, target.parse("[Build solution.path(\"stub.sln\").Last]"));
+                Assert.Fail("2");
+            }
+            catch(OperationNotFoundException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                BuildComponent target = new BuildComponentAccessor(Env);
+                Assert.AreEqual(String.Empty, target.parse("[Build solution.path(\"stub.sln\").LastRaw]"));
+                Assert.Fail("3");
+            }
+            catch(OperationNotFoundException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                BuildComponent target = new BuildComponentAccessor(Env);
+                Assert.AreEqual(String.Empty, target.parse("[Build solution.path(\"stub.sln\").projectBy(\"" + EXIST_GUID + "\")]"));
+                Assert.Fail("4");
+            }
+            catch(OperationNotFoundException) {
+                Assert.IsTrue(true);
+            }
+        }
+
+        /// <summary>
+        ///A test for parse - stSolution  - stSlnPMap
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(KeyNotFoundException))]
+        public void stSlnPMapTest3()
+        {
+            BuildComponent target = new BuildComponentAccessor(Env);
+            Assert.AreEqual(String.Empty, target.parse("[Build solution.current.projectBy(\"" + NOTEXIST_GUID + "\")]"));
+        }
+
+        /// <summary>
+        ///A test for parse - stSolution  - stSlnPMap
+        ///</summary>
+        [TestMethod()]
+        public void stSlnPMapTest4()
+        {
+            BuildComponent target = new BuildComponentAccessor(Env);
+            Assert.AreEqual(EXIST_GUID, target.parse("[Build solution.current.GuidList]"));
+            Assert.AreEqual(EXIST_GUID, target.parse("[Build solution.path(\"stub.sln\").GuidList]"));
+        }
+
+        /// <summary>
+        ///A test for parse - stSolution  - stSlnPMap
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(InvalidArgumentException))]
+        public void stSlnPMapTest5()
+        {
+            BuildComponent target = new BuildComponentAccessor(Env);
+            Assert.AreEqual(String.Empty, target.parse("[Build solution.current.projectBy()]"));
+        }
+
+        /// <summary>
+        ///A test for parse - stSolution  - stSlnPMap - projectsMap
+        ///</summary>
+        [TestMethod()]
+        public void projectsMapTest1()
+        {
+            BuildComponent target = new BuildComponentAccessor(Env);
+
+            Func<string, string, bool> h = delegate(string l1, string l2)
+            {
+                Assert.AreEqual("Project1", target.parse(String.Format("[Build solution.{0}.{1}.name]", l1, l2)));
+                Assert.AreEqual("path\\to.sln", target.parse(String.Format("[Build solution.{0}.{1}.path]", l1, l2)));
+                Assert.AreEqual(EXIST_GUID, target.parse(String.Format("[Build solution.{0}.{1}.guid]", l1, l2)));
+                Assert.AreEqual("{22222222-2222-2222-2222-222222222222}", target.parse(String.Format("[Build solution.{0}.{1}.type]", l1, l2)));
+                return true;
+            };
+
+            h("current", "First");
+            h("current", "Last");
+            h("current", "FirstRaw");
+            h("current", "LastRaw");
+            h("current", "projectBy(\"" + EXIST_GUID + "\")");
+
+            h("path(\"path\\to.sln\")", "First");
+            h("path(\"path\\to.sln\")", "Last");
+            h("path(\"path\\to.sln\")", "FirstRaw");
+            h("path(\"path\\to.sln\")", "LastRaw");
+            h("path(\"path\\to.sln\")", "projectBy(\"" + EXIST_GUID + "\")");
+        }
+
+        /// <summary>
+        ///A test for parse - stSolution  - stSlnPMap - projectsMap
+        ///</summary>
+        [TestMethod()]
+        public void projectsMapTest2()
+        {
+            try {
+                BuildComponent target = new BuildComponentAccessor(Env);
+                Assert.AreEqual(String.Empty, target.parse("[Build solution.path(\"stub.sln\").First.NotRealProperty]"));
+                Assert.Fail("1");
+            }
+            catch(OperationNotFoundException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                BuildComponent target = new BuildComponentAccessor(Env);
+                Assert.AreEqual(String.Empty, target.parse("[Build solution.current.First.NotRealProperty]"));
+                Assert.Fail("2");
+            }
+            catch(OperationNotFoundException) {
+                Assert.IsTrue(true);
+            }
+        }
+
+        /// <summary>
+        ///A test for parse - stSolution  - stSlnPMap - projectsMap
+        ///</summary>
+        [TestMethod()]
+        public void projectsMapTest3()
+        {
+            BuildComponent target = new BuildComponentAccessor(Env);
+
+            Func<string, string, bool> h = delegate(string l1, string l2) {
+                Assert.AreEqual("Project1", target.parse(String.Format("[Build solution.{0}.{1}.name.RightProperty]", l1, l2)));
+                Assert.AreEqual("path\\to.sln", target.parse(String.Format("[Build solution.{0}.{1}.path.RightProperty]", l1, l2)));
+                Assert.AreEqual(EXIST_GUID, target.parse(String.Format("[Build solution.{0}.{1}.guid.RightProperty]", l1, l2)));
+                Assert.AreEqual("{22222222-2222-2222-2222-222222222222}", target.parse(String.Format("[Build solution.{0}.{1}.type.RightProperty]", l1, l2)));
+                return true;
+            };
+
+            try { h("current", "First"); Assert.Fail("1"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
+            try { h("current", "Last"); Assert.Fail("2"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
+            try { h("current", "FirstRaw"); Assert.Fail("3"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
+            try { h("current", "LastRaw"); Assert.Fail("4"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
+            try { h("current", "projectBy(\"" + EXIST_GUID + "\")"); Assert.Fail("5"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
+
+            try { h("path(\"path\\to.sln\")", "First"); Assert.Fail("6"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
+            try { h("path(\"path\\to.sln\")", "Last"); Assert.Fail("7"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
+            try { h("path(\"path\\to.sln\")", "FirstRaw"); Assert.Fail("8"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
+            try { h("path(\"path\\to.sln\")", "LastRaw"); Assert.Fail("9"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
+            try { h("path(\"path\\to.sln\")", "projectBy(\"" + EXIST_GUID + "\")"); Assert.Fail("10"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
+        }
+
         private class BuildComponentAccessor: BuildComponent
         {
-            public BuildComponentAccessor(): base((IEnvironment)null)
+            public BuildComponentAccessor()
+                : base((IEnvironment)null)
             {
                 var mock = new Mock<DTEOperation>((IEnvironment)null, SolutionEventType.General);
                 mock.Setup(m => m.exec(It.IsAny<string[]>(), It.IsAny<bool>()));
                 dteo = mock.Object;
             }
 
-            public BuildComponentAccessor(IEnvironment env): base(env)
+            public BuildComponentAccessor(IEnvironment env)
+                : base(env)
             {
 
+            }
+
+            protected class StubProjectsMap: ProjectsMap
+            {
+                public StubProjectsMap()
+                {
+                    projects[EXIST_GUID] = new Project()
+                    {
+                        guid = EXIST_GUID,
+                        name = "Project1",
+                        path = "path\\to.sln",
+                        type = "{22222222-2222-2222-2222-222222222222}",
+                    };
+                    order.Add(EXIST_GUID);
+                }
+            }
+
+            protected override ProjectsMap getProjectsMap(string sln)
+            {
+                return new StubProjectsMap();
             }
         }
     }

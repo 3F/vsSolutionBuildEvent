@@ -121,9 +121,18 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Path to solution file
+        /// Full path to directory where placed solution file.
         /// </summary>
         public string SolutionPath
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
+        /// Full path to solution file.
+        /// </summary>
+        public string SolutionFile
         {
             get;
             protected set;
@@ -260,10 +269,11 @@ namespace net.r_eg.vsSBE
         /// <param name="properties">Solution properties / global properties for all project collection</param>
         public IsolatedEnv(string solutionFile, Dictionary<string, string> properties)
         {
-            SolutionPath        = Path.GetDirectoryName(solutionFile);
-            SolutionFileName    = Path.GetFileNameWithoutExtension(solutionFile);
+            SolutionFile        = solutionFile;
+            SolutionPath        = Path.GetDirectoryName(SolutionFile);
+            SolutionFileName    = Path.GetFileNameWithoutExtension(SolutionFile);
 
-            _sln = (new SolutionParser()).parse(solutionFile);
+            _sln = (new SolutionParser()).parse(SolutionFile);
             if(String.IsNullOrEmpty(StartupProjectString) && _sln.projects.Count > 0) {
                 StartupProjectString = _sln.projects[0].Name;
             }

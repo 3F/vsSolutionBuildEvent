@@ -22,15 +22,17 @@ using System.Text.RegularExpressions;
 using EnvDTE;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.SBEScripts.Components.Build;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
+using net.r_eg.vsSBE.SBEScripts.SNode;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
     /// <summary>
     /// Component of operations with the build
     /// </summary>
-    [Component("Build", "Operations with the build")]
+    [Component("Build", "Operations with build processes.")]
     public class BuildComponent: Component, IComponent
     {
         /// <summary>
@@ -99,6 +101,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     Log.Trace("BuildComponent: use stType");
                     return stType(ident);
                 }
+                case "solution": {
+                    Log.Trace("BuildComponent: use stSolution");
+                    return stSolution(ident);
+                }
             }
             throw new SubtypeNotFoundException("BuildComponent: not found subtype - '{0}'", subtype);
         }
@@ -109,7 +115,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         /// <param name="data"></param>
         /// <returns>found command</returns>
-        [Property("cancel", "Immediately cancellation of the build projects.", CValueType.Boolean, CValueType.Boolean)]
+        [Property("cancel", "Cancel build immediately if true.", CValueType.Void, CValueType.Boolean)]
         protected string stCancel(string data)
         {
             Match m = Regex.Match(data, @"cancel\s*=\s*(false|true|1|0)\s*$");
@@ -143,7 +149,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        [Property("projects", "Work with configuration manager of projects through the SolutionContexts.")]
+        [Property("projects", "Work with configuration manager of projects through SolutionContexts.")]
         protected string stProjects(string data)
         {
             Match m = Regex.Match(data,
@@ -201,7 +207,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             Method
             (
                 "find", 
-                "The find() method compares as part of the name, and you can use simply like a find(\"ZenLib\") or for unique identification full \"Zenlib\\ZenLib.vcxproj\" etc.",
+                "The find() compares as part of name, and you can use simply like a find(\"ZenLib\") or for unique identification full \"Zenlib\\ZenLib.vcxproj\" etc.",
                 "projects",
                 "stProjects",
                 new string[] { "name" }, 
@@ -211,16 +217,16 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             ),
         ]
         [Property(
-            "IsBuildable", 
-            "Gets or Sets whether the project or project item configuration can be built.", 
+            "IsBuildable",
+            "Gets or Sets. Whether the project or item configuration of project can be built.\nAssociated with current SolutionContext.", 
             "find", 
             "stProjectConf", 
             CValueType.Boolean, 
             CValueType.Boolean
         )]
         [Property(
-            "IsDeployable", 
-            "Gets or Sets whether the current project is built when the solution configuration associated with this SolutionContext is selected.", 
+            "IsDeployable",
+            "Gets or Sets. Whether the current project or item configuration of project can be deployed.\nAssociated with current SolutionContext.", 
             "find", 
             "stProjectConf", 
             CValueType.Boolean, 
@@ -279,6 +285,148 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 throw new OperationNotFoundException("Failed stType - '{0}'", data);
             }
             return env.BuildType.ToString();
+        }
+
+        /// <summary>
+        /// Work with solution node.
+        /// Sample: #[Build solution]
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [Property("solution", "Work with solution data.")]
+        [Property("current", "Link to current used solution.", "solution", "stSolution"), Property("", "current", "stSolution")]
+        [Method("path",
+                "Use specific solution from selected path.",
+                "solution",
+                "stSolution",
+                new string[] { "sln" },
+                new string[] { "Full path to solution file." },
+                CValueType.Void,
+                CValueType.String), Property("", "path", "stSolution")]
+        protected string stSolution(string data)
+        {
+            Log.Trace("stSolution: started with '{0}'", data);
+            IPM pm = new PM(data);
+            
+            if(!pm.Is(0, LevelType.Property, "solution")) {
+                throw new SyntaxIncorrectException("Failed stSolution - '{0}'", data);
+            }
+
+            // solution.current.
+            if(pm.Is(1, LevelType.Property, "current")) {
+                return stSlnPMap(env.SolutionFile, pm.pinTo(2));
+            }
+
+            // solution.path("file").
+            if(pm.Is(1, LevelType.Method, "path"))
+            {
+                Argument[] args = pm.Levels[1].Args;
+                if(args.Length != 1 || args[0].type != ArgumentType.StringDouble) {
+                    throw new InvalidArgumentException("stSolution: incorrect arguments to `solution.path(string sln)`");
+                }
+                return stSlnPMap((string)args[0].data, pm.pinTo(2));
+            }
+            
+            throw new OperationNotFoundException("stSolution: not found - '{0}' /'{1}'", pm.Levels[1].Data, pm.Levels[1].Type);
+        }
+
+        /// <summary>
+        /// Work with ProjectsMap of solution node.
+        /// </summary>
+        /// <param name="sln"></param>
+        /// <param name="pm"></param>
+        /// <returns></returns>
+        [Property("First", "First project in Project Build Order.", "", "stSolution"), Property("", "First", "stSlnPMap")]
+        [Property("Last", "Last project in Project Build Order.", "", "stSolution"), Property("", "Last", "stSlnPMap")]
+        [Property("FirstRaw", "First project from defined list.\nIgnores used Build type.", "", "stSolution"), Property("", "FirstRaw", "stSlnPMap")]
+        [Property("LastRaw", "Last project from defined list.\nIgnores used Build type.", "", "stSolution"), Property("", "LastRaw", "stSlnPMap")]
+        [Property("GuidList", "Get list of project Guids.\nIn direct order of definition.", "", "stSolution", CValueType.List)]
+        [Method("projectBy",
+                "Get project by Guid string.",
+                "",
+                "stSolution",
+                new string[] { "guid" },
+                new string[] { "Identifier of project." },
+                CValueType.Void,
+                CValueType.String), Property("", "projectBy", "stSlnPMap")]
+        protected string stSlnPMap(string sln, IPM pm)
+        {
+            if(String.IsNullOrWhiteSpace(sln)) {
+                throw new InvalidArgumentException("Failed stSlnPMap: sln is empty");
+            }
+            ProjectsMap map = getProjectsMap(sln);
+
+            if(pm.Is(0, LevelType.Property, "First")) {
+                return projectsMap(map.FirstBy(env.BuildType), pm.pinTo(1));
+            }
+
+            if(pm.Is(0, LevelType.Property, "Last")) {
+                return projectsMap(map.LastBy(env.BuildType), pm.pinTo(1));
+            }
+
+            if(pm.Is(0, LevelType.Property, "FirstRaw")) {
+                return projectsMap(map.First, pm.pinTo(1));
+            }
+
+            if(pm.Is(0, LevelType.Property, "LastRaw")) {
+                return projectsMap(map.Last, pm.pinTo(1));
+            }
+
+            if(pm.FinalEmptyIs(0, LevelType.Property, "GuidList")) {
+                return Value.from(map.GuidList);
+            }
+
+            if(pm.Is(0, LevelType.Method, "projectBy"))
+            {
+                Argument[] args = pm.Levels[0].Args;
+                if(args.Length != 1 || args[0].type != ArgumentType.StringDouble) {
+                    throw new InvalidArgumentException("stSlnPMap: incorrect arguments to `projectBy(string guid)`");
+                }
+                return projectsMap(map.getProjectBy((string)args[0].data), pm.pinTo(1));
+            }
+
+            throw new OperationNotFoundException("stSlnPMap: not found - '{0}' /'{1}'", pm.Levels[0].Data, pm.Levels[0].Type);
+        }
+        
+        /// <summary>
+        /// Unpacks ProjectsMap.Project struct for user.
+        /// </summary>
+        /// <param name="project"></param>
+        /// <param name="pm"></param>
+        /// <returns></returns>
+        [Property("name", "The name of project.", "", "stSlnPMap")]
+        [Property("path", "Path to project.", "", "stSlnPMap")]
+        [Property("type", "Type of project.", "", "stSlnPMap")]
+        [Property("guid", "Guid of project.", "", "stSlnPMap")]
+        protected string projectsMap(ProjectsMap.Project project, IPM pm)
+        {
+            if(pm.FinalEmptyIs(0, LevelType.Property, "name")) {
+                return project.name;
+            }
+
+            if(pm.FinalEmptyIs(0, LevelType.Property, "path")) {
+                return project.path;
+            }
+
+            if(pm.FinalEmptyIs(0, LevelType.Property, "type")) {
+                return project.type;
+            }
+
+            if(pm.FinalEmptyIs(0, LevelType.Property, "guid")) {
+                return project.guid;
+            }
+
+            throw new OperationNotFoundException("Failed projectsMap - '{0}' /'{1}'", pm.Levels[0].Data, pm.Levels[0].Type);
+        }
+
+        /// <summary>
+        /// Gets instance of ProjectsMap by solution file.
+        /// </summary>
+        /// <param name="sln">Full path to solution file.</param>
+        /// <returns></returns>
+        protected virtual ProjectsMap getProjectsMap(string sln)
+        {
+            return new ProjectsMap(sln);
         }
     }
 }
