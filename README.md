@@ -4,7 +4,7 @@
 
 [![Build status - master](https://ci.appveyor.com/api/projects/status/l38xn0j2c5an28e1/branch/master?svg=true)](https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/branch/master)
 
-[![VSPackage](https://img.shields.io/badge/VSPackage-v0.12.3-68217A.svg)](http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/) [![Download vsSolutionBuildEvent](https://img.shields.io/sourceforge/dm/vssbe.svg)](https://sourceforge.net/projects/vssbe/files/latest/download) [![Download](https://img.shields.io/sourceforge/dt/vssbe.svg)](https://sourceforge.net/projects/vssbe/files/latest/download) [![LGPLv3](https://img.shields.io/badge/license-LGPLv3-008033.svg?style=flat-square)](http://vssbe.r-eg.net/License/) 
+[![VSPackage](https://img.shields.io/badge/VSPackage-v0.12.4-68217A.svg)](http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/) [![Download vsSolutionBuildEvent](https://img.shields.io/sourceforge/dm/vssbe.svg)](https://sourceforge.net/projects/vssbe/files/latest/download) [![Download](https://img.shields.io/sourceforge/dt/vssbe.svg)](https://sourceforge.net/projects/vssbe/files/latest/download) [![LGPLv3](https://img.shields.io/badge/license-LGPLv3-008033.svg?style=flat-square)](http://vssbe.r-eg.net/License/) 
 
 
 MSBuild & SBE-Scripts engine for advanced usage. 

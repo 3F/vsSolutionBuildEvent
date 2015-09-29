@@ -1,6 +1,48 @@
 vsSolutionBuildEvent
 ____________________
 
+[v0.12.4] 2015.09.29
+    * FIXED: C# Mode. Error CS1567 when used GenerateInMemory property.
+    * FIXED: "Action ... is ignored for current configuration" for AnyCPU platform if used MSBuild tool.
+    * FIXED: Targets Mode. "The operation cannot be completed because a build is already in progress." 
+             if used MSBuild tool instead of Visual Studio.
+             
+    * FIXED: Bug for client.vssbe.dll for using in Isolated Environments:
+             "Client library: problem with initialization 'System.NullReferenceException: ..."
+
+    * FIXED: UI. Possible crash: "SplitterDistance must be between Panel1MinSize and Width - Panel2MinSize"
+    * NEW: Added User-Configuration - `.vssbe.user`: DebugMode, CacheData of binaries for C# Mode etc.
+    * NEW: [BuildComponent] Definition of who is first or last project in selected solution.
+            Samples:
+                #[Build solution.current.First.path]
+                #[Build solution.path("D:\app.sln").Last.name]
+                ...
+                See documentation.
+
+    * NEW: [FunctionComponent] Hash calculation with MD5 & SHA-1.
+            Samples:
+                string #[Func hash.MD5(string data)]
+                string #[Func hash.SHA1(string data)]
+                ...
+                See documentation.
+            
+    * NEW: Added raw CoreCommand - "DebugMode" (When DebugMode is updated) for client.vssbe.dll users & others with API level.
+    * CHANGED: Targets Mode. New entry point for user code.
+               Now it simply: constantly called target "Init" and provide additional properties like a BuildType, EventType, etc.
+               http://vssbe.r-eg.net/doc/Modes/Targets/
+
+    * CHANGED: Configuration. The LastTime property has been replaced on CacheData with value from .vssbe.user. Solves inconvenience with SCM.
+    * CHANGED: Configuration. Optional `Command__` property for convenient using directly in file. See documentation.
+    * CHANGED: UI. Avoided actions by default for new configuration. Only Pre-Build event.
+    * CHANGED: Allowed empty container of events to support compact .vssbe
+    * CHANGED: C# Mode. Added our Bridge reference to complete internal using of our API layer in C# mode by default for simple user.
+    * CHANGED: C# Mode. Added 'System.dll' to 'References' list by default for new actions.
+    * CHANGED: C# Mode. New SmartReferences option for searching references with our GAC utility or using standrad list.
+    * CHANGED: C# Mode. GAC utility: added search of assemblies in CurrentDomain - by Name, Version, PublicKeyToken.
+    * CHANGED: C# Mode & API. IMSBuild: now has public access to IEnvironment & IUserVariable.
+    * CHANGED: Updated NLog v4.1.2
+    * CHANGED: UI. Trivial changes and fixes: validation of names in action list, handler of keys etc.
+
 [v0.12.3] 2015.08.29
     * NEW: Added support of the Build.Cancel command for CI.MSBuild via SBE-Scripts (BuildComponent).
     * NEW: Added support of client libraries (client.vssbe.dll) for work with events from our core library. 
