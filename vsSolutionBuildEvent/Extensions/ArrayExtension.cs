@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,9 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace net.r_eg.vsSBE.Extensions
@@ -94,6 +91,20 @@ namespace net.r_eg.vsSBE.Extensions
         {
             T moving = data[from];
             return GetWithInserted(data.GetWithRemoved(from), to, moving);
+        }
+
+        /// <summary>
+        /// To format bytes data to hex view.
+        /// </summary>
+        /// <param name="data">Bytes data.</param>
+        /// <returns>Hex view of bytes.</returns>
+        public static string BytesToHexView(this byte[] data)
+        {
+            StringBuilder ret = new StringBuilder();
+            foreach(byte b in data) {
+                ret.Append(b.ToString("X2"));
+            }
+            return ret.ToString();
         }
     }
 }

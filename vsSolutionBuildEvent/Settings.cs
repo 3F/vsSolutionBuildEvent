@@ -18,7 +18,7 @@
 using System;
 using System.IO;
 using System.Reflection;
-using net.r_eg.vsSBE.Configuration;
+using net.r_eg.vsSBE.Extensions;
 using IUserData = net.r_eg.vsSBE.Configuration.User.IData;
 
 namespace net.r_eg.vsSBE
@@ -80,7 +80,7 @@ namespace net.r_eg.vsSBE
             get
             {
                 if(String.IsNullOrWhiteSpace(libPath)) {
-                    libPath = formatPath(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                    libPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location).PathFormat();
                 }
                 return libPath;
             }
@@ -134,7 +134,7 @@ namespace net.r_eg.vsSBE
         /// <param name="path">New path.</param>
         public void setWorkPath(string path)
         {
-            workPath = formatPath(path);
+            workPath = (path == null)? String.Empty : path.PathFormat();
         }
 
         /// <summary>
@@ -185,20 +185,6 @@ namespace net.r_eg.vsSBE
             get { return _lazy.Value; }
         }
         private static readonly Lazy<Settings> _lazy = new Lazy<Settings>(() => new Settings());
-        
-        /// <param name="path"></param>
-        /// <returns></returns>
-        private static string formatPath(string path)
-        {
-            if(String.IsNullOrWhiteSpace(path)) {
-                return String.Empty;
-            }
-
-            if(path[path.Length - 1] != Path.DirectorySeparatorChar) {
-                path += Path.DirectorySeparatorChar;
-            }
-            return path;
-        }
 
         private Settings() { }
     }

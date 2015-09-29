@@ -54,6 +54,22 @@ namespace net.r_eg.vsSBE.MSBuild
 
 
         /// <summary>
+        /// Used environment.
+        /// </summary>
+        public IEnvironment Env
+        {
+            get { return env; }
+        }
+
+        /// <summary>
+        /// Container of user-variables.
+        /// </summary>
+        public IUserVariable UVariable
+        {
+            get { return uvariable; }
+        }
+
+        /// <summary>
         /// MSBuild Property from default Project
         /// </summary>
         /// <param name="name">key property</param>

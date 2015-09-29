@@ -394,10 +394,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="project"></param>
         /// <param name="pm"></param>
         /// <returns></returns>
-        [Property("name", "The name of project.", "", "stSlnPMap")]
-        [Property("path", "Path to project.", "", "stSlnPMap")]
-        [Property("type", "Type of project.", "", "stSlnPMap")]
-        [Property("guid", "Guid of project.", "", "stSlnPMap")]
+        [Property("name", "The name of project.", "", "stSlnPMap", CValueType.String)]
+        [Property("path", "Path to project.", "", "stSlnPMap", CValueType.String)]
+        [Property("type", "Type of project.", "", "stSlnPMap", CValueType.String)]
+        [Property("guid", "Guid of project.", "", "stSlnPMap", CValueType.String)]
         protected string projectsMap(ProjectsMap.Project project, IPM pm)
         {
             if(pm.FinalEmptyIs(0, LevelType.Property, "name")) {

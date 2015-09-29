@@ -16,11 +16,24 @@
 */
 
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.MSBuild
 {
+    [Guid("958B9A32-BE6F-4B74-A98A-AC99099A63A5")]
     public interface IMSBuild
     {
+        /// <summary>
+        /// Used environment.
+        /// </summary>
+        IEnvironment Env { get; }
+
+        /// <summary>
+        /// Container of user-variables.
+        /// </summary>
+        IUserVariable UVariable { get; }
+
         /// <summary>
         /// MSBuild Property from default Project
         /// </summary>

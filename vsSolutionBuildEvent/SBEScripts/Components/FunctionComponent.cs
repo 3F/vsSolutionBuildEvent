@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,18 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Text.RegularExpressions;
+using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
+using net.r_eg.vsSBE.SBEScripts.Exceptions;
+using net.r_eg.vsSBE.SBEScripts.SNode;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
     /// <summary>
     /// Mixed supported functions
     /// </summary>
-    [Component("Func", "Mixed functions")]
+    [Component("Func", "Mixed functions.")]
     public class FunctionComponent: Component, IComponent
     {
         /// <summary>
@@ -44,7 +45,85 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns>prepared and evaluated data</returns>
         public override string parse(string data)
         {
-            return data;
+            Match m = Regex.Match(data.Trim(), @"^\[Func
+                                                    \s+
+                                                    (                  #1 - full ident
+                                                      ([A-Za-z_0-9]+)  #2 - subtype
+                                                      .*
+                                                    )
+                                                 \]$", 
+                                                 RegexOptions.IgnorePatternWhitespace);
+
+            if(!m.Success) {
+                throw new SyntaxIncorrectException("Failed FunctionComponent - '{0}'", data);
+            }
+            string ident    = m.Groups[1].Value;
+            string subtype  = m.Groups[2].Value;
+
+            switch(subtype) {
+                case "hash": {
+                    Log.Trace("FunctionComponent: use stHash - '{0}'", ident);
+                    return stHash(ident);
+                }
+            }
+            throw new SubtypeNotFoundException("FunctionComponent: not found subtype - '{0}'", subtype);
+        }
+
+        /// <summary>
+        /// Work with hash.
+        /// 
+        /// Samples:
+        ///     #[Func hash.MD5("test")]
+        ///     #[Func hash.SHA1("test")]
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [Property("hash", "Work with hash.")]
+        [Method("MD5",
+                "Calculate hash value with MD5.",
+                "hash",
+                "stHash",
+                new string[] { "data" },
+                new string[] { "String for calculating." },
+                CValueType.String,
+                CValueType.String)]
+        [Method("SHA1",
+                "Calculate hash value with SHA-1.",
+                "hash",
+                "stHash",
+                new string[] { "data" },
+                new string[] { "String for calculating." },
+                CValueType.String,
+                CValueType.String)]
+        protected string stHash(string data)
+        {
+            IPM pm = new PM(data);
+
+            if(!pm.Is(0, LevelType.Property, "hash")) {
+                throw new SyntaxIncorrectException("Failed stHash - '{0}'", data);
+            }
+
+            // hash.MD5("data")
+            if(pm.FinalEmptyIs(1, LevelType.Method, "MD5"))
+            {
+                Argument[] args = pm.Levels[1].Args;
+                if(args.Length != 1 || args[0].type != ArgumentType.StringDouble) {
+                    throw new InvalidArgumentException("stHash: incorrect arguments to `hash.MD5(string data)`");
+                }
+                return ((string)args[0].data).MD5Hash();
+            }
+
+            // hash.SHA1("data")
+            if(pm.FinalEmptyIs(1, LevelType.Method, "SHA1"))
+            {
+                Argument[] args = pm.Levels[1].Args;
+                if(args.Length != 1 || args[0].type != ArgumentType.StringDouble) {
+                    throw new InvalidArgumentException("stHash: incorrect arguments to `hash.SHA1(string data)`");
+                }
+                return ((string)args[0].data).SHA1Hash();
+            }
+
+            throw new OperationNotFoundException("stHash: not found - '{0}' /'{1}'", pm.Levels[1].Data, pm.Levels[1].Type);
         }
     }
 }

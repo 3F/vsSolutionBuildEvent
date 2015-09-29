@@ -118,6 +118,7 @@ namespace net.r_eg.vsSBE.SBEScripts
             register(new DTEComponent(Env));
             register(new InternalComponent());
             register(new BuildComponent(Env));
+            register(new FunctionComponent());
             register(new FileComponent());
         }
 

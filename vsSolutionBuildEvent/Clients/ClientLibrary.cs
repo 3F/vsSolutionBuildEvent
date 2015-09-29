@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using net.r_eg.vsSBE.Bridge;
+using net.r_eg.vsSBE.Extensions;
 
 namespace net.r_eg.vsSBE.Clients
 {
@@ -43,14 +44,8 @@ namespace net.r_eg.vsSBE.Clients
         /// </summary>
         public string Dllpath
         {
-            get
-            {
-                string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-                if(path[path.Length - 1] != Path.DirectorySeparatorChar) {
-                    path += Path.DirectorySeparatorChar;
-                }
-                return path;
+            get {
+                return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location).PathFormat();
             }
         }
 

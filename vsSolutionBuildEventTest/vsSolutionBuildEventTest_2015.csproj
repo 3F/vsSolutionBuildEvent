@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="Actions\DTEOperationTest.cs" />
     <Compile Include="SBEScripts\Components\BuildComponentTest.cs" />
+    <Compile Include="SBEScripts\Components\FunctionComponentTest.cs" />
     <Compile Include="SBEScripts\Components\CommentComponentTest.cs" />
     <Compile Include="SBEScripts\Components\ConditionComponentTest.cs" />
     <Compile Include="SBEScripts\Components\DTEComponentTest.cs" />

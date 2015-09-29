@@ -151,6 +151,7 @@
     <Compile Include="Configuration\User\IManager.cs" />
     <Compile Include="Configuration\User\Manager.cs" />
     <Compile Include="Events\Mapping\Json\ModeCommand.cs" />
+    <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="GlobalConfig.cs" />
     <Compile Include="ISolutionEvents.cs" />
     <Compile Include="IAppSettings.cs" />

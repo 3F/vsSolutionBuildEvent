@@ -121,11 +121,7 @@ namespace net.r_eg.vsSBE.Extensions
                                                 }
                                         )));
                 
-                StringBuilder ret = new StringBuilder();
-                foreach(byte b in hash) {
-                    ret.Append(b.ToString("X2"));
-                }
-                return ret.ToString();
+                return hash.BytesToHexView();
             }
         }
     }

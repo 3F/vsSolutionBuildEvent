@@ -32,6 +32,12 @@ namespace net.r_eg.vsSBE.Configuration.User
         /// Tiger tree.
         /// ~328 MiB/Second	with CPU frequency ~2.194e+09 Hz
         /// </summary>
-        TTH
+        TTH,
+
+        /// <summary>
+        /// SHA-1
+        /// ~192 MiB/Second	with CPU frequency ~2.194e+09 Hz
+        /// </summary>
+        SHA1,
     }
 }
