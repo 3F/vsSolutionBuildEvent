@@ -14,7 +14,7 @@
     </HostApplication>
     <Addin>
         <FriendlyName>vsSolutionBuildEvent Devenv Command-Line</FriendlyName>
-        <Description>Add-in to the vsSolutionBuildEvent</Description>
+        <Description>Add-in to vsSolutionBuildEvent</Description>
         <Assembly>Devenv/Devenv.dll</Assembly>
         <FullClassName>net.r_eg.vsSBE.Devenv.Connect</FullClassName>
         <LoadBehavior>4</LoadBehavior>

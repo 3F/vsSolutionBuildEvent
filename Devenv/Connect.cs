@@ -33,15 +33,35 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Bridge;
+using net.r_eg.vsSBE.Provider;
 
 namespace net.r_eg.vsSBE.Devenv
 {
+    /// <summary>
+    /// 
+    /// ! https://connect.microsoft.com/VisualStudio/feedback/details/1075033/
+    ///   https://bitbucket.org/3F/vssolutionbuildevent/issues/25/#comment-14586721
+    ///   http://vssbe.r-eg.net/doc/Scheme/
+    ///   
+    /// Alternative variant with MSBuild: 
+    ///   http://vssbe.r-eg.net/doc/CI/CI.MSBuild/
+    /// </summary>
     public sealed class Connect: IDTExtensibility2, IVsSolutionEvents, IVsUpdateSolutionEvents2
     {
         /// <summary>
-        /// Our the vsSolutionBuildEvent library
+        /// Used logger
+        /// </summary>
+        internal ILog log;
+
+        /// <summary>
+        /// Our vsSolutionBuildEvent library
         /// </summary>
         private Provider.ILibrary library;
+
+        /// <summary>
+        /// Support of the core commands.
+        /// </summary>
+        private CoreCommand coreCommand;
 
         /// <summary>
         /// For IVsSolutionEvents events
@@ -70,17 +90,12 @@ namespace net.r_eg.vsSBE.Devenv
         /// <summary>
         /// DTE2 Context from the root object of the host application.
         /// </summary>
-        private DTE2 _dte2;
+        private DTE2 dte2;
 
         /// <summary>
         /// Representing this Add-in.
         /// </summary>
-        private AddIn _addIn;
-
-        /// <summary>
-        /// Loader of main library
-        /// </summary>
-        private Provider.ILoader loader;
+        private AddIn addIn;
 
 
         #region pingpong
@@ -97,7 +112,12 @@ namespace net.r_eg.vsSBE.Devenv
 
         public int UpdateSolution_Begin(ref int pfCancelUpdate)
         {
-            return library.Event.onPre(ref pfCancelUpdate);
+            try {
+                return library.Event.onPre(ref pfCancelUpdate);
+            }
+            finally {
+                termination();
+            }
         }
 
         public int UpdateSolution_Cancel()
@@ -112,12 +132,22 @@ namespace net.r_eg.vsSBE.Devenv
 
         public int UpdateProjectCfg_Begin(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel)
         {
-            return library.Event.onProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel);
+            try {
+                return library.Event.onProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel);
+            }
+            finally {
+                termination();
+            }
         }
 
         public int UpdateProjectCfg_Done(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
         {
-            return library.Event.onProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
+            try {
+                return library.Event.onProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
+            }
+            finally {
+                termination();
+            }
         }
 
         #endregion
@@ -129,55 +159,26 @@ namespace net.r_eg.vsSBE.Devenv
         /// <seealso class='IDTExtensibility2' />
         public void OnConnection(object application, ext_ConnectMode connectMode, object addInInst, ref Array custom)
         {
-
-//#if !DEBUG
             if(connectMode != ext_ConnectMode.ext_cm_CommandLine) {
-                msg("[Ignored] Allowed only Command line mode /'{0}'", connectMode);
+                log.info("[Ignored] Allowed only Command-line mode /'{0}'", connectMode);
                 return;
             }
-//#endif
 
-            loader                      = new Provider.Loader();
-            loader.Settings.DebugMode   = Environment.GetCommandLineArgs().Contains("verbosity:diagnostic");
-            _dte2                       = (DTE2)application;
-            _addIn                      = (AddIn)addInInst;
+            dte2    = (DTE2)application;
+            addIn   = (AddIn)addInInst;
 
-            try
-            {
-                library = loader.load(application, _addIn.SatelliteDllPath, _dte2.RegistryRoot);
-                msg("Library: loaded from '{0}' :: v{1} [{2}] API: v{3} /'{4}':{5}", 
-                                                    library.Dllpath, 
-                                                    library.Version.Number.ToString(), 
-                                                    library.Version.BranchSha1,
-                                                    library.Version.Bridge.Number.ToString(2),
-                                                    library.Version.BranchName,
-                                                    library.Version.BranchRevCount);
+            ILoader loader = new Loader(
+                                    new Provider.Settings()
+                                    {
+                                        DebugMode = log.IsDiagnostic,
+                                        LibSettings = new LibSettings()
+                                        {
+                                            DebugMode = log.IsDiagnostic,
+                                        },
+                                    }
+                                );
 
-                updateBuildType(Environment.GetCommandLineArgs());
-                adviseEvents();
-            }
-            catch(DllNotFoundException ex)
-            {
-                msg(ex.Message);
-                msg("You can install vsSolutionBuildEvent as plugin for this Visual Studio v{0} or manually place the {1} into the current add-in folder",
-                    _dte2.Version,
-                    "vsSolutionBuildEvent.dll with dependencies");
-
-                msg("https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
-                msg("Minimum requirements: vsSolutionBuildEvent.dll v{0}", loader.MinVersion.ToString());
-                msg(new String('=', 80));
-            }
-            catch(ReflectionTypeLoadException ex)
-            {
-                foreach(FileNotFoundException le in ex.LoaderExceptions) {
-                    msg("{2} {0}{3} {0}{0}{4} {0}{1}",
-                                        Environment.NewLine, new String('~', 80),
-                                        le.FileName, le.Message, le.FusionLog);
-                }
-            }
-            catch(Exception ex) {
-                msg("Error with advising '{0}'", ex.ToString());
-            }
+            init(loader, dte2, addIn);
         }
 
         /// <summary>Receives notification that the Add-in is being unloaded.</summary>
@@ -187,29 +188,92 @@ namespace net.r_eg.vsSBE.Devenv
         public void OnDisconnection(ext_DisconnectMode disconnectMode, ref Array custom)
         {
             unadviseEvents();
+            coreCommand.detachCoreCommandListener();
         }
 
         public Connect()
         {
-            msg(new String('=', 60));
-            msg("[[ vsSolutionBuildEvent Devenv Command-Line ]] Welcomes You!");
-            msg(new String('=', 60));
-            msg("Version: v{0}", System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
-            msg("Feedback: entry.reg@gmail.com");
-            msg(new String('_', 60));
+            log = new Log(Environment.GetCommandLineArgs().Contains("verbosity:diagnostic"));
+            header();
         }
 
+        /// <summary>
+        /// Initialize library
+        /// </summary>
+        /// <param name="loader"></param>
+        /// <param name="dte2"></param>
+        /// <param name="addIn"></param>
+        private void init(ILoader loader, DTE2 dte2, AddIn addIn)
+        {
+            try
+            {
+                library = loader.load(dte2, addIn.SatelliteDllPath, dte2.RegistryRoot);
+                log.info("Library: loaded from '{0}' :: v{1} [{2}] API: v{3} /'{4}':{5}", 
+                                                    library.Dllpath, 
+                                                    library.Version.Number.ToString(), 
+                                                    library.Version.BranchSha1,
+                                                    library.Version.Bridge.Number.ToString(2),
+                                                    library.Version.BranchName,
+                                                    library.Version.BranchRevCount);
+
+
+                coreCommand = new CoreCommand(library);
+                coreCommand.attachCoreCommandListener();
+                
+                updateBuildType(Environment.GetCommandLineArgs());
+                adviseEvents();
+                return;
+            }
+            catch(DllNotFoundException ex)
+            {
+                log.info(ex.Message);
+                log.info(new String('.', 80));
+                log.info("How about:");
+
+                log.info("");
+                log.info("* Install vsSolutionBuildEvent as plugin for your Visual Studio v{0}", dte2.Version);
+                log.info("* Or manually place the 'vsSolutionBuildEvent.dll' with dependencies into AddIn folder: '{0}\\'", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                log.info("");
+
+                log.info("See documentation for more details:");
+                log.info("- http://vssbe.r-eg.net");
+                log.info("- http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
+                log.info("");
+
+                log.info("Minimum requirements: vsSolutionBuildEvent.dll v{0}", loader.MinVersion.ToString());
+                log.info(new String('.', 80));
+            }
+            catch(ReflectionTypeLoadException ex)
+            {
+                log.info(ex.ToString());
+                log.info(new String('.', 80));
+
+                foreach(FileNotFoundException le in ex.LoaderExceptions) {
+                    log.info("{2} {0}{3} {0}{0}{4} {0}{1}",
+                                        Environment.NewLine, 
+                                        new String('~', 80),
+                                        le.FileName, 
+                                        le.Message, 
+                                        le.FusionLog);
+                }
+            }
+            catch(Exception ex) {
+                log.info("Error with advising '{0}'", ex.ToString());
+            }
+
+            termination(true);
+        }
 
         /// <summary>
         /// Defines listeners for main events.
         /// </summary>
         private void adviseEvents()
         {
-            // To listen events fires from IVsSolutionEvents
+            // To listen events that fired as a IVsSolutionEvents
             spSolution = (IVsSolution)ServiceProvider.GlobalProvider.GetService(typeof(SVsSolution));
             spSolution.AdviseSolutionEvents(this, out _pdwCookieSolution);
 
-            // To listen events fires from IVsUpdateSolutionEvents2
+            // To listen events that fired as a IVsUpdateSolutionEvents2
             spSolutionBM = (IVsSolutionBuildManager2)ServiceProvider.GlobalProvider.GetService(typeof(SVsSolutionBuildManager));
             spSolutionBM.AdviseUpdateSolutionEvents(this, out _pdwCookieSolutionBM);
         }
@@ -226,6 +290,23 @@ namespace net.r_eg.vsSBE.Devenv
         }
 
         /// <summary>
+        /// Logic of termination of the devenv job
+        /// </summary>
+        /// <param name="force">Terminate manually if true.</param>
+        private void termination(bool force = false)
+        {
+            if(!force && (coreCommand == null || !coreCommand.IsAborted)) {
+                return;
+            }
+            
+            //TODO: Another way ? fix me
+            //throw new AbortException(); // not effective for devenv case. See also in CIM
+
+            log.info("The build has been canceled{0}.", (force)? "" : " by user script");
+            Environment.Exit(VSConstants.S_FALSE); // we work in command line mode with devenv, stop it immediately
+        }
+
+        /// <summary>
         /// Updates the type by command-line switches if it exists in BuildType list
         /// https://msdn.microsoft.com/en-us/library/vstudio/xee0c8y7.aspx
         /// </summary>
@@ -234,37 +315,25 @@ namespace net.r_eg.vsSBE.Devenv
         {
             foreach(string type in switches.Where(p => p.StartsWith("/")).Select(p => p.Substring(1)))
             {
-                debug("updateBuildType: check '{0}'", type);
+                log.debug("updateBuildType: check '{0}'", type);
                 if(Enum.IsDefined(typeof(BuildType), type))
                 {
                     BuildType buildType = (BuildType)Enum.Parse(typeof(BuildType), type);
                     library.Build.updateBuildType(buildType);
-                    debug("updateBuildType: updated as a '{0}'", buildType);
+                    log.debug("updateBuildType: updated as a '{0}'", buildType);
                     return;
                 }
             }
         }
 
-        /// <summary>
-        /// TODO: logger
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="args"></param>
-        private void msg(string data, params object[] args)
+        private void header()
         {
-            Console.WriteLine(data, args);
-        }
-
-        /// <summary>
-        /// TODO: logger
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="args"></param>
-        private void debug(string data, params object[] args)
-        {
-            if(loader.Settings.DebugMode) {
-                msg(data, args);
-            }
+            log.info(new String('=', 60));
+            log.info("[[ vsSolutionBuildEvent Devenv ]] Welcomes You!");
+            log.info(new String('=', 60));
+            log.info("Version: v{0}", System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
+            log.info("Feedback: entry.reg@gmail.com | vssbe.r-eg.net");
+            log.info(new String('_', 60));
         }
 
 

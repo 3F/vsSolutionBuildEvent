@@ -68,6 +68,11 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbortException.cs" />
+    <Compile Include="CoreCommand.cs" />
+    <Compile Include="ILog.cs" />
+    <Compile Include="LibSettings.cs" />
+    <Compile Include="Log.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

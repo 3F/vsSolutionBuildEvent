@@ -331,7 +331,13 @@ namespace net.r_eg.vsSBE
                 CoreCmdSender.fire(new CoreCommandArgs() { Type = CoreCommandType.BuildCancel });
             }
 
-            ((EnvDTE.DTE)Dte2).ExecuteCommand(name, (args == null)? String.Empty : args);
+            try {
+                ((EnvDTE.DTE)Dte2).ExecuteCommand(name, (args == null)? String.Empty : args);
+            }
+            catch(OutOfMemoryException) {
+                // this can be from Devenv
+                Log.Debug("exec: We can't work with DTE commands at this moment in used environment. Command - '{0}'", name);
+            }
         }
 
         public Environment(DTE2 dte2)
