@@ -1,6 +1,12 @@
 ﻿{
   "Header": {
-    "application": "http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/",
+    "_": [
+      " Current file requires a vsSolutionBuildEvent engine.",
+      " Free plugin for Visual Studio or MSBuild Tools:",
+      "  * http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/",
+      "  * http://vssbe.r-eg.net",
+      " Feedback: entry.reg@gmail.com"
+    ],
     "Compatibility": "0.9"
   },
   "Components": [
@@ -14,6 +20,10 @@
     },
     {
       "ClassName": "OWPComponent",
+      "Enabled": true
+    },
+    {
+      "ClassName": "FunctionComponent",
       "Enabled": true
     },
     {
@@ -45,7 +55,7 @@
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": false,
-      "BuildType": "common",
+      "BuildType": "Common",
       "Confirmation": false,
       "ToConfiguration": [],
       "ExecutionOrder": {
@@ -60,8 +70,39 @@
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
-        "Type": "script",
-        "Command": "#[\"\r\n    Prepares data - versions, revBuild & information from git\r\n\"]\r\n\r\n#[var tStart    = $([System.DateTime]::Parse(\"2015/09/27\").ToBinary())]\r\n#[var tNow      = $([System.DateTime]::UtcNow.Ticks)]\r\n#[var revBuild  = $([System.TimeSpan]::FromTicks($([MSBuild]::Subtract($(tNow), $(tStart)))).TotalMinutes.ToString(\"0\"))]\r\n\r\n#[var tplVersion = #[File get(\"Version.tpl\")]]\r\n\r\n#[var pDir          = vsSolutionBuildEvent/]\r\n#[var pDirBridge    = Bridge/]\r\n#[var pDirCIM       = CI.MSBuild/]\r\n#[var pDirDevenv    = Devenv/]\r\n#[var pDirProvider  = Provider/]\r\n\r\n#[var numSBE        = #[File get(\".version\")]]\r\n#[var numBridge     = #[File get(\"#[var pDirBridge].version\")]]\r\n#[var numCIM        = #[File get(\"#[var pDirCIM].version\")]]\r\n#[var numDevenv     = #[File get(\"#[var pDirDevenv].version\")]]\r\n#[var numProvider   = #[File get(\"#[var pDirProvider].version\")]]\r\n\r\n#[\" the 0 it's the reserved number for patches from external assemblies /see AssemblyInfo \"]\r\n\r\n#[var num0Bridge     = #[var numBridge].0]\r\n#[var num0CIM        = #[var numCIM].0]\r\n#[var num0Devenv     = #[var numDevenv].0]\r\n#[var num0Provider   = #[var numProvider].0]\r\n"
+        "Type": "Script",
+        "Command": "#[\"\n    Prepares data - versions, revBuild & information from git\n\"]\n\n#[var tStart    = $([System.DateTime]::Parse(\"2015/09/27\").ToBinary())]\n#[var tNow      = $([System.DateTime]::UtcNow.Ticks)]\n#[var revBuild  = $([System.TimeSpan]::FromTicks($([MSBuild]::Subtract($(tNow), $(tStart)))).TotalMinutes.ToString(\"0\"))]\n\n#[var tplVersion = #[File get(\"Version.tpl\")]]\n\n#[var pDir          = vsSolutionBuildEvent/]\n#[var pDirBridge    = Bridge/]\n#[var pDirCIM       = CI.MSBuild/]\n#[var pDirDevenv    = Devenv/]\n#[var pDirProvider  = Provider/]\n\n#[var numSBE        = #[File get(\".version\")]]\n#[var numBridge     = #[File get(\"#[var pDirBridge].version\")]]\n#[var numCIM        = #[File get(\"#[var pDirCIM].version\")]]\n#[var numDevenv     = #[File get(\"#[var pDirDevenv].version\")]]\n#[var numProvider   = #[File get(\"#[var pDirProvider].version\")]]\n\n#[\" the 0 it's the reserved number for patches from external assemblies /see AssemblyInfo \"]\n\n#[var num0Bridge     = #[var numBridge].0]\n#[var num0CIM        = #[var numCIM].0]\n#[var num0Devenv     = #[var numDevenv].0]\n#[var num0Provider   = #[var numProvider].0]\n",
+        "Command__": [
+          "#[\"",
+          "    Prepares data - versions, revBuild & information from git",
+          "\"]",
+          "",
+          "#[var tStart    = $([System.DateTime]::Parse(\"2015/09/27\").ToBinary())]",
+          "#[var tNow      = $([System.DateTime]::UtcNow.Ticks)]",
+          "#[var revBuild  = $([System.TimeSpan]::FromTicks($([MSBuild]::Subtract($(tNow), $(tStart)))).TotalMinutes.ToString(\"0\"))]",
+          "",
+          "#[var tplVersion = #[File get(\"Version.tpl\")]]",
+          "",
+          "#[var pDir          = vsSolutionBuildEvent/]",
+          "#[var pDirBridge    = Bridge/]",
+          "#[var pDirCIM       = CI.MSBuild/]",
+          "#[var pDirDevenv    = Devenv/]",
+          "#[var pDirProvider  = Provider/]",
+          "",
+          "#[var numSBE        = #[File get(\".version\")]]",
+          "#[var numBridge     = #[File get(\"#[var pDirBridge].version\")]]",
+          "#[var numCIM        = #[File get(\"#[var pDirCIM].version\")]]",
+          "#[var numDevenv     = #[File get(\"#[var pDirDevenv].version\")]]",
+          "#[var numProvider   = #[File get(\"#[var pDirProvider].version\")]]",
+          "",
+          "#[\" the 0 it's the reserved number for patches from external assemblies /see AssemblyInfo \"]",
+          "",
+          "#[var num0Bridge     = #[var numBridge].0]",
+          "#[var num0CIM        = #[var numCIM].0]",
+          "#[var num0Devenv     = #[var numDevenv].0]",
+          "#[var num0Provider   = #[var numProvider].0]",
+          ""
+        ]
       }
     },
     {
@@ -71,7 +112,7 @@
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": true,
-      "BuildType": "common",
+      "BuildType": "Common",
       "Confirmation": false,
       "ToConfiguration": [],
       "ExecutionOrder": {
@@ -86,8 +127,48 @@
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
-        "Type": "script",
-        "Command": "#[( #[File exists.directory(\".git\")] && #[File exists.file(\"git.exe\", true)] )\r\n{\r\n    #[var branchSha1        = #[File sout(\"git\", \"rev-parse --short HEAD\")]]\r\n    #[var branchName        = #[File sout(\"git\", \"rev-parse --abbrev-ref HEAD\")]]\r\n    #[var branchRevCount    = #[File sout(\"git\", \"rev-list HEAD --count\")]]\r\n    \r\n    #[var csVersion = $(tplVersion.Replace(%branchName%, \"$(branchName)\").Replace(%branchSha1%, \"$(branchSha1)\").Replace(%branchRevCount%, \"$(branchRevCount)\"))]\r\n    \r\n    #[($(branchName) == \"HEAD\") {\r\n        #[var branchName = $(APPVEYOR_REPO_BRANCH)]\r\n    }]\r\n}\r\nelse {\r\n    #[var csVersion = $(tplVersion.Replace(%branchName%, \"-\").Replace(%branchSha1%, \"-\").Replace(%branchRevCount%, \"-\"))]\r\n}]\r\n\r\n\r\n#[\"\r\n    Updating version for 'vsSolutionBuildEvent'.\r\n    \r\n    Note:\r\n    * For getting the main project path, sample:\r\n                    #[var pDir = $($(ProjectDir:$(SolutionName)))]\r\n\"]\r\n\r\n#[var cs        = $(csVersion.Replace(%Version%, \"$(numSBE.Replace(\".\", \", \")), $(revBuild)\").Replace(%namespace%, \"\"))]\r\n#[var cs        = $(cs.Replace(%VersionRevString%, \"$(numSBE).$(revBuild)\").Replace(%VersionString%, \"$(numSBE)\"))]\r\n#[File write(\"#[var pDir]Version.cs\"):#[var cs]]\r\n\r\n\r\n#[\"\r\n    .vsixmanifest\r\n\"]\r\n\r\n#[($(Configuration) ~= \"_with_revision\" || $(Configuration) ~= \"CI_\") {\r\n    #[var numSBE = #[var numSBE].#[var revBuild]]\r\n}]\r\n#[File replace.Regexp(\"#[var pDir]/source.extension.vsixmanifest\", \"<Version>[0-9\\.]+</Version>\", \"<Version>#[var numSBE]</Version>\")]"
+        "Type": "Script",
+        "Command": "#[( #[File exists.directory(\".git\")] && #[File exists.file(\"git.exe\", true)] )\n{\n    #[var branchSha1        = #[File sout(\"git\", \"rev-parse --short HEAD\")]]\n    #[var branchName        = #[File sout(\"git\", \"rev-parse --abbrev-ref HEAD\")]]\n    #[var branchRevCount    = #[File sout(\"git\", \"rev-list HEAD --count\")]]\n    \n    #[var csVersion = $(tplVersion.Replace(%branchName%, \"$(branchName)\").Replace(%branchSha1%, \"$(branchSha1)\").Replace(%branchRevCount%, \"$(branchRevCount)\"))]\n    \n    #[($(branchName) == \"HEAD\") {\n        #[var branchName = $(APPVEYOR_REPO_BRANCH)]\n    }]\n}\nelse {\n    #[var csVersion = $(tplVersion.Replace(%branchName%, \"-\").Replace(%branchSha1%, \"-\").Replace(%branchRevCount%, \"-\"))]\n}]\n\n\n#[\"\n    Updating version for 'vsSolutionBuildEvent'.\n    \n    Note:\n    * For getting the main project path, sample:\n                    #[var pDir = $($(ProjectDir:$(SolutionName)))]\n\"]\n\n#[var cs        = $(csVersion.Replace(%Version%, \"$(numSBE.Replace(\".\", \", \")), $(revBuild)\").Replace(%namespace%, \"\"))]\n#[var cs        = $(cs.Replace(%VersionRevString%, \"$(numSBE).$(revBuild)\").Replace(%VersionString%, \"$(numSBE)\"))]\n#[File write(\"#[var pDir]Version.cs\"):#[var cs]]\n\n\n#[\"\n    .vsixmanifest\n\"]\n\n#[($(Configuration) ~= \"_with_revision\" || $(Configuration) ~= \"CI_\") {\n    #[var numSBE = #[var numSBE].#[var revBuild]]\n}]\n#[File replace.Regexp(\"#[var pDir]/source.extension.vsixmanifest\", \"<Version>[0-9\\.]+</Version>\", \"<Version>#[var numSBE]</Version>\")]",
+        "Command__": [
+          "#[( #[File exists.directory(\".git\")] && #[File exists.file(\"git.exe\", true)] )",
+          "{",
+          "    #[var branchSha1        = #[File sout(\"git\", \"rev-parse --short HEAD\")]]",
+          "    #[var branchName        = #[File sout(\"git\", \"rev-parse --abbrev-ref HEAD\")]]",
+          "    #[var branchRevCount    = #[File sout(\"git\", \"rev-list HEAD --count\")]]",
+          "    ",
+          "    #[var csVersion = $(tplVersion.Replace(%branchName%, \"$(branchName)\").Replace(%branchSha1%, \"$(branchSha1)\").Replace(%branchRevCount%, \"$(branchRevCount)\"))]",
+          "    ",
+          "    #[($(branchName) == \"HEAD\") {",
+          "        #[var branchName = $(APPVEYOR_REPO_BRANCH)]",
+          "    }]",
+          "}",
+          "else {",
+          "    #[var csVersion = $(tplVersion.Replace(%branchName%, \"-\").Replace(%branchSha1%, \"-\").Replace(%branchRevCount%, \"-\"))]",
+          "}]",
+          "",
+          "",
+          "#[\"",
+          "    Updating version for 'vsSolutionBuildEvent'.",
+          "    ",
+          "    Note:",
+          "    * For getting the main project path, sample:",
+          "                    #[var pDir = $($(ProjectDir:$(SolutionName)))]",
+          "\"]",
+          "",
+          "#[var cs        = $(csVersion.Replace(%Version%, \"$(numSBE.Replace(\".\", \", \")), $(revBuild)\").Replace(%namespace%, \"\"))]",
+          "#[var cs        = $(cs.Replace(%VersionRevString%, \"$(numSBE).$(revBuild)\").Replace(%VersionString%, \"$(numSBE)\"))]",
+          "#[File write(\"#[var pDir]Version.cs\"):#[var cs]]",
+          "",
+          "",
+          "#[\"",
+          "    .vsixmanifest",
+          "\"]",
+          "",
+          "#[($(Configuration) ~= \"_with_revision\" || $(Configuration) ~= \"CI_\") {",
+          "    #[var numSBE = #[var numSBE].#[var revBuild]]",
+          "}]",
+          "#[File replace.Regexp(\"#[var pDir]/source.extension.vsixmanifest\", \"<Version>[0-9\\.]+</Version>\", \"<Version>#[var numSBE]</Version>\")]"
+        ]
       }
     },
     {
@@ -97,7 +178,7 @@
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": true,
-      "BuildType": "common",
+      "BuildType": "Common",
       "Confirmation": false,
       "ToConfiguration": [],
       "ExecutionOrder": {
@@ -112,8 +193,55 @@
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
-        "Type": "script",
-        "Command": "#[\" TODO: functions or templates (with delay of the evaluation)\r\n\r\n currently it's can be like this:\r\n\r\n    #[var template =\r\n        ##[var box = \r\n            #[var cs = $$(...)]\r\n        ]\r\n    ]\r\n    #[var eval = #[var template]]\r\n    \r\n    however... inconvenient, not useful and unstable (not for all cases) ...\r\n\"]\r\n\r\n#[\"\r\n    Updating version for 'Bridge'.\r\n\"]\r\n\r\n#[var cs    = $(csVersion.Replace(%Version%, \"$(num0Bridge.Replace(\".\", \", \")), $(revBuild)\").Replace(%namespace%, \".Bridge\"))]\r\n#[var cs    = $(cs.Replace(%VersionRevString%, \"$(num0Bridge).$(revBuild)\").Replace(%VersionString%, \"$(num0Bridge)\"))]\r\n#[File write(\"#[var pDirBridge]Version.cs\"):#[var cs]]\r\n\r\n#[\"\r\n    Updating version for 'CI.MSBuild'.\r\n\"]\r\n\r\n#[var cs    = $(csVersion.Replace(%Version%, \"$(num0CIM.Replace(\".\", \", \")), $(revBuild)\").Replace(%namespace%, \".CI.MSBuild\"))]\r\n#[var cs    = $(cs.Replace(%VersionRevString%, \"$(num0CIM).$(revBuild)\").Replace(%VersionString%, \"$(num0CIM)\"))]\r\n#[File write(\"#[var pDirCIM]Version.cs\"):#[var cs]]\r\n\r\n#[\"\r\n    Updating version for 'Devenv'.\r\n\"]\r\n\r\n#[var cs    = $(csVersion.Replace(%Version%, \"$(num0Devenv.Replace(\".\", \", \")), $(revBuild)\").Replace(%namespace%, \".Devenv\"))]\r\n#[var cs    = $(cs.Replace(%VersionRevString%, \"$(num0Devenv).$(revBuild)\").Replace(%VersionString%, \"$(num0Devenv)\"))]\r\n#[File write(\"#[var pDirDevenv]Version.cs\"):#[var cs]]\r\n\r\n#[\"\r\n    Updating version for 'Provider'.\r\n\"]\r\n\r\n#[var cs    = $(csVersion.Replace(%Version%, \"$(num0Provider.Replace(\".\", \", \")), $(revBuild)\").Replace(%namespace%, \".Provider\"))]\r\n#[var cs    = $(cs.Replace(%VersionRevString%, \"$(num0Provider).$(revBuild)\").Replace(%VersionString%, \"$(num0Provider)\"))]\r\n#[File write(\"#[var pDirProvider]Version.cs\"):#[var cs]]"
+        "Type": "Script",
+        "Command": "#[\" TODO: functions or templates (with delay of the evaluation)\n\n currently it's can be like this:\n\n    #[var template =\n        ##[var box = \n            #[var cs = $$(...)]\n        ]\n    ]\n    #[var eval = #[var template]]\n    \n    however... inconvenient, not useful and unstable (not for all cases) ...\n\"]\n\n#[\"\n    Updating version for 'Bridge'.\n\"]\n\n#[var cs    = $(csVersion.Replace(%Version%, \"$(num0Bridge.Replace(\".\", \", \")), $(revBuild)\").Replace(%namespace%, \".Bridge\"))]\n#[var cs    = $(cs.Replace(%VersionRevString%, \"$(num0Bridge).$(revBuild)\").Replace(%VersionString%, \"$(num0Bridge)\"))]\n#[File write(\"#[var pDirBridge]Version.cs\"):#[var cs]]\n\n#[\"\n    Updating version for 'CI.MSBuild'.\n\"]\n\n#[var cs    = $(csVersion.Replace(%Version%, \"$(num0CIM.Replace(\".\", \", \")), $(revBuild)\").Replace(%namespace%, \".CI.MSBuild\"))]\n#[var cs    = $(cs.Replace(%VersionRevString%, \"$(num0CIM).$(revBuild)\").Replace(%VersionString%, \"$(num0CIM)\"))]\n#[File write(\"#[var pDirCIM]Version.cs\"):#[var cs]]\n\n#[\"\n    Updating version for 'Devenv'.\n\"]\n\n#[var cs    = $(csVersion.Replace(%Version%, \"$(num0Devenv.Replace(\".\", \", \")), $(revBuild)\").Replace(%namespace%, \".Devenv\"))]\n#[var cs    = $(cs.Replace(%VersionRevString%, \"$(num0Devenv).$(revBuild)\").Replace(%VersionString%, \"$(num0Devenv)\"))]\n#[File write(\"#[var pDirDevenv]Version.cs\"):#[var cs]]\n\n#[\"\n    Updating version for 'Provider'.\n\"]\n\n#[var cs    = $(csVersion.Replace(%Version%, \"$(num0Provider.Replace(\".\", \", \")), $(revBuild)\").Replace(%namespace%, \".Provider\"))]\n#[var cs    = $(cs.Replace(%VersionRevString%, \"$(num0Provider).$(revBuild)\").Replace(%VersionString%, \"$(num0Provider)\"))]\n#[File write(\"#[var pDirProvider]Version.cs\"):#[var cs]]",
+        "Command__": [
+          "#[\" TODO: functions or templates (with delay of the evaluation)",
+          "",
+          " currently it's can be like this:",
+          "",
+          "    #[var template =",
+          "        ##[var box = ",
+          "            #[var cs = $$(...)]",
+          "        ]",
+          "    ]",
+          "    #[var eval = #[var template]]",
+          "    ",
+          "    however... inconvenient, not useful and unstable (not for all cases) ...",
+          "\"]",
+          "",
+          "#[\"",
+          "    Updating version for 'Bridge'.",
+          "\"]",
+          "",
+          "#[var cs    = $(csVersion.Replace(%Version%, \"$(num0Bridge.Replace(\".\", \", \")), $(revBuild)\").Replace(%namespace%, \".Bridge\"))]",
+          "#[var cs    = $(cs.Replace(%VersionRevString%, \"$(num0Bridge).$(revBuild)\").Replace(%VersionString%, \"$(num0Bridge)\"))]",
+          "#[File write(\"#[var pDirBridge]Version.cs\"):#[var cs]]",
+          "",
+          "#[\"",
+          "    Updating version for 'CI.MSBuild'.",
+          "\"]",
+          "",
+          "#[var cs    = $(csVersion.Replace(%Version%, \"$(num0CIM.Replace(\".\", \", \")), $(revBuild)\").Replace(%namespace%, \".CI.MSBuild\"))]",
+          "#[var cs    = $(cs.Replace(%VersionRevString%, \"$(num0CIM).$(revBuild)\").Replace(%VersionString%, \"$(num0CIM)\"))]",
+          "#[File write(\"#[var pDirCIM]Version.cs\"):#[var cs]]",
+          "",
+          "#[\"",
+          "    Updating version for 'Devenv'.",
+          "\"]",
+          "",
+          "#[var cs    = $(csVersion.Replace(%Version%, \"$(num0Devenv.Replace(\".\", \", \")), $(revBuild)\").Replace(%namespace%, \".Devenv\"))]",
+          "#[var cs    = $(cs.Replace(%VersionRevString%, \"$(num0Devenv).$(revBuild)\").Replace(%VersionString%, \"$(num0Devenv)\"))]",
+          "#[File write(\"#[var pDirDevenv]Version.cs\"):#[var cs]]",
+          "",
+          "#[\"",
+          "    Updating version for 'Provider'.",
+          "\"]",
+          "",
+          "#[var cs    = $(csVersion.Replace(%Version%, \"$(num0Provider.Replace(\".\", \", \")), $(revBuild)\").Replace(%namespace%, \".Provider\"))]",
+          "#[var cs    = $(cs.Replace(%VersionRevString%, \"$(num0Provider).$(revBuild)\").Replace(%VersionString%, \"$(num0Provider)\"))]",
+          "#[File write(\"#[var pDirProvider]Version.cs\"):#[var cs]]"
+        ]
       }
     }
   ],
@@ -125,7 +253,7 @@
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": true,
-      "BuildType": "common",
+      "BuildType": "Common",
       "Confirmation": false,
       "ToConfiguration": [],
       "ExecutionOrder": {
@@ -133,7 +261,7 @@
         "$values": [
           {
             "Project": "vsSolutionBuildEvent",
-            "Order": "after"
+            "Order": "After"
           }
         ]
       },
@@ -145,8 +273,15 @@
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
-        "Type": "script",
-        "Command": "#[($([System.Convert]::ToInt32(\"$(VisualStudioVersion.Replace('.', ''))\")) < 120) {\r\n    #[($(Configuration) ^= \"Release\" && !$(Configuration) ^= \"CI_\") {\r\n        #[DTE exec: Test.RunAllTestsInSolution]\r\n    }]\r\n}]"
+        "Type": "Script",
+        "Command": "#[($([System.Convert]::ToInt32(\"$(VisualStudioVersion.Replace('.', ''))\")) < 120) {\n    #[($(Configuration) ^= \"Release\" && !$(Configuration) ^= \"CI_\") {\n        #[DTE exec: Test.RunAllTestsInSolution]\n    }]\n}]",
+        "Command__": [
+          "#[($([System.Convert]::ToInt32(\"$(VisualStudioVersion.Replace('.', ''))\")) < 120) {",
+          "    #[($(Configuration) ^= \"Release\" && !$(Configuration) ^= \"CI_\") {",
+          "        #[DTE exec: Test.RunAllTestsInSolution]",
+          "    }]",
+          "}]"
+        ]
       }
     },
     {
@@ -156,7 +291,7 @@
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": true,
-      "BuildType": "common",
+      "BuildType": "Common",
       "Confirmation": false,
       "ToConfiguration": [],
       "ExecutionOrder": {
@@ -171,8 +306,22 @@
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
-        "Type": "script",
-        "Command": "#[var appzip    = $(SolutionDir)bin/7z/7za.exe]\r\n#[var odir      = $(SolutionDir)bin/Releases/]\r\n#[var cfg       = #[($(Configuration) ~= \"Release\"){Release}else{Debug}]]\r\n#[var cfgFull   = $(Configuration)]\r\n#[var vsixLib   = $(SolutionDir)VsixLib\\bin\\]\r\n#[var CIMLib    = $(SolutionDir)CIMLib\\bin\\]\r\n\r\n#[var netStamp      = net$(TargetFrameworkVersion.Replace(\".\", \"\").Replace(\"v\", \"\"))]\r\n#[var netVerString  = $(TargetFrameworkVersion)#[($(TargetFrameworkVersion) != v4.0){ (be careful - need a v4.0 to compatibility with VS2010)}]]\r\n\r\n#[File sout(\"cmd\", \"/C mkdir \\\"#[var odir]\\\" 2>&1\")]\r\n#[File sout(\"cmd\", \"/C del /F/Q \\\"#[var odir]\\\" 2>&1\")]"
+        "Type": "Script",
+        "Command": "#[var appzip    = $(SolutionDir)bin/7z/7za.exe]\n#[var odir      = $(SolutionDir)bin/Releases/]\n#[var cfg       = #[($(Configuration) ~= \"Release\"){Release}else{Debug}]]\n#[var cfgFull   = $(Configuration)]\n#[var vsixLib   = $(SolutionDir)VsixLib\\bin\\]\n#[var CIMLib    = $(SolutionDir)CIMLib\\bin\\]\n\n#[var netStamp      = net$(TargetFrameworkVersion.Replace(\".\", \"\").Replace(\"v\", \"\"))]\n#[var netVerString  = $(TargetFrameworkVersion)#[($(TargetFrameworkVersion) != v4.0){ (be careful - need a v4.0 to compatibility with VS2010)}]]\n\n#[File sout(\"cmd\", \"/C mkdir \\\"#[var odir]\\\" 2>&1\")]\n#[File sout(\"cmd\", \"/C del /F/Q \\\"#[var odir]\\\" 2>&1\")]",
+        "Command__": [
+          "#[var appzip    = $(SolutionDir)bin/7z/7za.exe]",
+          "#[var odir      = $(SolutionDir)bin/Releases/]",
+          "#[var cfg       = #[($(Configuration) ~= \"Release\"){Release}else{Debug}]]",
+          "#[var cfgFull   = $(Configuration)]",
+          "#[var vsixLib   = $(SolutionDir)VsixLib\\bin\\]",
+          "#[var CIMLib    = $(SolutionDir)CIMLib\\bin\\]",
+          "",
+          "#[var netStamp      = net$(TargetFrameworkVersion.Replace(\".\", \"\").Replace(\"v\", \"\"))]",
+          "#[var netVerString  = $(TargetFrameworkVersion)#[($(TargetFrameworkVersion) != v4.0){ (be careful - need a v4.0 to compatibility with VS2010)}]]",
+          "",
+          "#[File sout(\"cmd\", \"/C mkdir \\\"#[var odir]\\\" 2>&1\")]",
+          "#[File sout(\"cmd\", \"/C del /F/Q \\\"#[var odir]\\\" 2>&1\")]"
+        ]
       }
     },
     {
@@ -182,7 +331,7 @@
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": true,
-      "BuildType": "common",
+      "BuildType": "Common",
       "Confirmation": false,
       "ToConfiguration": [],
       "ExecutionOrder": {
@@ -197,8 +346,35 @@
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
-        "Type": "script",
-        "Command": "#[File write(\"#[var odir]/Release_notes.txt\"):This assembled from:\r\n\r\n* Configuration:   '#[var cfgFull]' (Folders: #[var cfg])\r\n* .NET version:     #[var netVerString];\r\n* Build number:     #[var revBuild];\r\n* Branch Sha1:      #[var branchSha1];\r\n* Branch Name:      #[var branchName];\r\n* Branch revCount:  #[var branchRevCount];\r\n------------------------------------------\r\n\r\nVersions:\r\n\r\n* The 'Bridge':                 v#[var numBridge];\r\n* The 'CI.MSBuild':             v#[var numCIM];\r\n* The 'Devenv':                 v#[var numDevenv];\r\n* The 'Provider':               v#[var numProvider];\r\n* The 'vsSolutionBuildEvent':   v#[var numSBE];\r\n\r\nDemo:\r\n\r\n* ClientDemo - [#[var branchSha1]][#[var netStamp]](#[var revBuild])\r\n\r\n------------------------------------------\r\n\\t\\t\\t\\t\\t Generated by vsSolutionBuildEvent\r\n]"
+        "Type": "Script",
+        "Command": "#[File write(\"#[var odir]/Release_notes.txt\"):This assembled from:\n\n* Configuration:   '#[var cfgFull]' (Folders: #[var cfg])\n* .NET version:     #[var netVerString];\n* Build number:     #[var revBuild];\n* Branch Sha1:      #[var branchSha1];\n* Branch Name:      #[var branchName];\n* Branch revCount:  #[var branchRevCount];\n------------------------------------------\n\nVersions:\n\n* The 'Bridge':                 v#[var numBridge];\n* The 'CI.MSBuild':             v#[var numCIM];\n* The 'Devenv':                 v#[var numDevenv];\n* The 'Provider':               v#[var numProvider];\n* The 'vsSolutionBuildEvent':   v#[var numSBE];\n\nDemo:\n\n* ClientDemo - [#[var branchSha1]][#[var netStamp]](#[var revBuild])\n\n------------------------------------------\n\\t\\t\\t\\t\\t Generated by vsSolutionBuildEvent\n]",
+        "Command__": [
+          "#[File write(\"#[var odir]/Release_notes.txt\"):This assembled from:",
+          "",
+          "* Configuration:   '#[var cfgFull]' (Folders: #[var cfg])",
+          "* .NET version:     #[var netVerString];",
+          "* Build number:     #[var revBuild];",
+          "* Branch Sha1:      #[var branchSha1];",
+          "* Branch Name:      #[var branchName];",
+          "* Branch revCount:  #[var branchRevCount];",
+          "------------------------------------------",
+          "",
+          "Versions:",
+          "",
+          "* The 'Bridge':                 v#[var numBridge];",
+          "* The 'CI.MSBuild':             v#[var numCIM];",
+          "* The 'Devenv':                 v#[var numDevenv];",
+          "* The 'Provider':               v#[var numProvider];",
+          "* The 'vsSolutionBuildEvent':   v#[var numSBE];",
+          "",
+          "Demo:",
+          "",
+          "* ClientDemo - [#[var branchSha1]][#[var netStamp]](#[var revBuild])",
+          "",
+          "------------------------------------------",
+          "\\t\\t\\t\\t\\t Generated by vsSolutionBuildEvent",
+          "]"
+        ]
       }
     },
     {
@@ -208,7 +384,7 @@
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": true,
-      "BuildType": "common",
+      "BuildType": "Common",
       "Confirmation": false,
       "ToConfiguration": [],
       "ExecutionOrder": {
@@ -223,8 +399,11 @@
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
-        "Type": "script",
-        "Command": "#[File sout(\"cmd\", \"/C cd \\\"#[var pDirBridge]bin/#[var cfg]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]Bridge_v#[var numBridge]_[#[var branchSha1]][#[var netStamp]].zip\\\" Bridge.dll Bridge.pdb\")]"
+        "Type": "Script",
+        "Command": "#[File sout(\"cmd\", \"/C cd \\\"#[var pDirBridge]bin/#[var cfg]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]Bridge_v#[var numBridge]_[#[var branchSha1]][#[var netStamp]].zip\\\" Bridge.dll Bridge.pdb\")]",
+        "Command__": [
+          "#[File sout(\"cmd\", \"/C cd \\\"#[var pDirBridge]bin/#[var cfg]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]Bridge_v#[var numBridge]_[#[var branchSha1]][#[var netStamp]].zip\\\" Bridge.dll Bridge.pdb\")]"
+        ]
       }
     },
     {
@@ -234,7 +413,7 @@
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": true,
-      "BuildType": "common",
+      "BuildType": "Common",
       "Confirmation": false,
       "ToConfiguration": [],
       "ExecutionOrder": {
@@ -249,8 +428,11 @@
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
-        "Type": "script",
-        "Command": "#[File sout(\"cmd\", \"/C cd \\\"#[var pDirCIM]bin/#[var cfg]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]CI.MSBuild_v#[var numCIM]_[#[var branchSha1]][#[var netStamp]].zip\\\" Bridge.dll Bridge.pdb Provider.dll Provider.pdb CI.MSBuild.dll CI.MSBuild.pdb\")]"
+        "Type": "Script",
+        "Command": "#[File sout(\"cmd\", \"/C cd \\\"#[var pDirCIM]bin/#[var cfg]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]CI.MSBuild_v#[var numCIM]_[#[var branchSha1]][#[var netStamp]].zip\\\" Bridge.dll Bridge.pdb Provider.dll Provider.pdb CI.MSBuild.dll CI.MSBuild.pdb\")]",
+        "Command__": [
+          "#[File sout(\"cmd\", \"/C cd \\\"#[var pDirCIM]bin/#[var cfg]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]CI.MSBuild_v#[var numCIM]_[#[var branchSha1]][#[var netStamp]].zip\\\" Bridge.dll Bridge.pdb Provider.dll Provider.pdb CI.MSBuild.dll CI.MSBuild.pdb\")]"
+        ]
       }
     },
     {
@@ -260,7 +442,7 @@
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": true,
-      "BuildType": "common",
+      "BuildType": "Common",
       "Confirmation": false,
       "ToConfiguration": [],
       "ExecutionOrder": {
@@ -275,8 +457,17 @@
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
-        "Type": "script",
-        "Command": "#[var _DP = $(SolutionDir)$(pDirDevenv)bin\\#[var cfg]\\]\r\n\r\n#[IO cmd(\"del /F/Q \\\"#[var _DP]\\Devenv\\\" 2>&1\")]\r\n#[IO cmd(\"cd \\\"#[var _DP]\\\" & for %f in (Bridge.dll,Bridge.pdb,Devenv.dll,Devenv.pdb,Provider.dll,Provider.pdb) do xcopy %f Devenv\\ /Y/R/I\")]\r\n#[IO cmd(\"cd \\\"#[var _DP]\\\" & xcopy Extensibility.dll Devenv\\ /Y/R/I 2>&1\")]\r\n\r\n#[IO cmd(\"cd \\\"#[var _DP]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]Devenv_v#[var numDevenv]_[#[var branchSha1]][#[var netStamp]].zip\\\" Devenv.AddIn Devenv/*.*\")]"
+        "Type": "Script",
+        "Command": "#[var _DP = $(SolutionDir)$(pDirDevenv)bin\\#[var cfg]\\]\n\n#[IO cmd(\"del /F/Q \\\"#[var _DP]\\Devenv\\\" 2>&1\")]\n#[IO cmd(\"cd \\\"#[var _DP]\\\" & for %f in (Bridge.dll,Bridge.pdb,Devenv.dll,Devenv.pdb,Provider.dll,Provider.pdb) do xcopy %f Devenv\\ /Y/R/I\")]\n#[IO cmd(\"cd \\\"#[var _DP]\\\" & xcopy Extensibility.dll Devenv\\ /Y/R/I 2>&1\")]\n\n#[IO cmd(\"cd \\\"#[var _DP]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]Devenv_v#[var numDevenv]_[#[var branchSha1]][#[var netStamp]].zip\\\" Devenv.AddIn Devenv/*.*\")]",
+        "Command__": [
+          "#[var _DP = $(SolutionDir)$(pDirDevenv)bin\\#[var cfg]\\]",
+          "",
+          "#[IO cmd(\"del /F/Q \\\"#[var _DP]\\Devenv\\\" 2>&1\")]",
+          "#[IO cmd(\"cd \\\"#[var _DP]\\\" & for %f in (Bridge.dll,Bridge.pdb,Devenv.dll,Devenv.pdb,Provider.dll,Provider.pdb) do xcopy %f Devenv\\ /Y/R/I\")]",
+          "#[IO cmd(\"cd \\\"#[var _DP]\\\" & xcopy Extensibility.dll Devenv\\ /Y/R/I 2>&1\")]",
+          "",
+          "#[IO cmd(\"cd \\\"#[var _DP]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]Devenv_v#[var numDevenv]_[#[var branchSha1]][#[var netStamp]].zip\\\" Devenv.AddIn Devenv/*.*\")]"
+        ]
       }
     },
     {
@@ -286,7 +477,7 @@
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": true,
-      "BuildType": "common",
+      "BuildType": "Common",
       "Confirmation": false,
       "ToConfiguration": [],
       "ExecutionOrder": {
@@ -301,8 +492,11 @@
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
-        "Type": "script",
-        "Command": "#[File sout(\"cmd\", \"/C cd \\\"#[var pDirProvider]bin/#[var cfg]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]Provider_v#[var numProvider]_[#[var branchSha1]][#[var netStamp]].zip\\\" Bridge.dll Bridge.pdb Provider.dll Provider.pdb\")]"
+        "Type": "Script",
+        "Command": "#[File sout(\"cmd\", \"/C cd \\\"#[var pDirProvider]bin/#[var cfg]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]Provider_v#[var numProvider]_[#[var branchSha1]][#[var netStamp]].zip\\\" Bridge.dll Bridge.pdb Provider.dll Provider.pdb\")]",
+        "Command__": [
+          "#[File sout(\"cmd\", \"/C cd \\\"#[var pDirProvider]bin/#[var cfg]/\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]Provider_v#[var numProvider]_[#[var branchSha1]][#[var netStamp]].zip\\\" Bridge.dll Bridge.pdb Provider.dll Provider.pdb\")]"
+        ]
       }
     },
     {
@@ -312,7 +506,7 @@
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": true,
-      "BuildType": "common",
+      "BuildType": "Common",
       "Confirmation": false,
       "ToConfiguration": [],
       "ExecutionOrder": {
@@ -327,8 +521,11 @@
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
-        "Type": "script",
-        "Command": "#[File sout(\"cmd\", \"/C copy \\\"#[var pDir]bin\\#[var cfg]\\vsSolutionBuildEvent.vsix\\\" \\\"#[var odir]vsSolutionBuildEvent_v#[var numSBE]_[#[var branchSha1]][#[var netStamp]].vsix\\\" /Y/V/B\")]"
+        "Type": "Script",
+        "Command": "#[File sout(\"cmd\", \"/C copy \\\"#[var pDir]bin\\#[var cfg]\\vsSolutionBuildEvent.vsix\\\" \\\"#[var odir]vsSolutionBuildEvent_v#[var numSBE]_[#[var branchSha1]][#[var netStamp]].vsix\\\" /Y/V/B\")]",
+        "Command__": [
+          "#[File sout(\"cmd\", \"/C copy \\\"#[var pDir]bin\\#[var cfg]\\vsSolutionBuildEvent.vsix\\\" \\\"#[var odir]vsSolutionBuildEvent_v#[var numSBE]_[#[var branchSha1]][#[var netStamp]].vsix\\\" /Y/V/B\")]"
+        ]
       }
     },
     {
@@ -338,7 +535,7 @@
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": true,
-      "BuildType": "common",
+      "BuildType": "Common",
       "Confirmation": true,
       "ToConfiguration": [
         "Release_with_revision|Any CPU",
@@ -360,8 +557,16 @@
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
-        "Type": "script",
-        "Command": "#[($(Configuration) ~= \"Release\" && !$(Configuration) ~= \"CI_\") {\r\n    #[var numCIMPackage = $([MSBuild]::Add(#[File sout(\"cmd\", \"/C .nuget\\nuget.exe list vsSBE.CI.MSBuild | grep 'vsSBE.CI.MSBuild' | sed -r 's/^.*\\s[0-9]+\\.[0-9]+\\.//'\")], 1))]\r\n}\r\nelse{\r\n    #[var numCIMPackage = 0]\r\n}]"
+        "Type": "Script",
+        "Command": "#[($(Configuration) ~= \"Release\" && !$(Configuration) ~= \"CI_\") {\n    #[var numCIMPackage = $([MSBuild]::Add(#[File sout(\"cmd\", \"/C .nuget\\nuget.exe list vsSBE.CI.MSBuild | grep 'vsSBE.CI.MSBuild' | sed -r 's/^.*\\s[0-9]+\\.[0-9]+\\.//'\")], 1))]\n}\nelse{\n    #[var numCIMPackage = 0]\n}]",
+        "Command__": [
+          "#[($(Configuration) ~= \"Release\" && !$(Configuration) ~= \"CI_\") {",
+          "    #[var numCIMPackage = $([MSBuild]::Add(#[File sout(\"cmd\", \"/C .nuget\\nuget.exe list vsSBE.CI.MSBuild | grep 'vsSBE.CI.MSBuild' | sed -r 's/^.*\\s[0-9]+\\.[0-9]+\\.//'\")], 1))]",
+          "}",
+          "else{",
+          "    #[var numCIMPackage = 0]",
+          "}]"
+        ]
       }
     },
     {
@@ -371,7 +576,7 @@
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": true,
-      "BuildType": "common",
+      "BuildType": "Common",
       "Confirmation": false,
       "ToConfiguration": [],
       "ExecutionOrder": {
@@ -386,8 +591,29 @@
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
-        "Type": "script",
-        "Command": "#[var tplNuspecCIM  = #[File get(\"vsSBE.CI.MSBuild.nuspec.tpl\")]]\r\n#[var nupCIMdir     = $(odir)NuGet-CI.MSBuild-package]\r\n\r\n#[File sout(\"cmd\", \"/C mkdir \\\"#[var nupCIMdir]\\\" 2>&1\")]\r\n#[File sout(\"cmd\", \"/C del /F/Q \\\"#[var nupCIMdir]\\\" & del /F/Q \\\"#[var nupCIMdir]\\bin\\\" 2>&1\")]\r\n\r\n#[var nuspecCIM = $(tplNuspecCIM.Replace(%CIMVersion%, \"$(numCIM)\").Replace(%PackageVersion%, \"\").Replace(%vsSBEVersion%, \"$(numSBE)\"))]\r\n#[File write(\"#[var nupCIMdir]\\vsSBE.CI.MSBuild.nuspec\"):#[var nuspecCIM]]\r\n\r\n#[\" files for package \"]\r\n\r\n#[File cmd(\"cd \\\"#[var CIMLib]\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]#[\" CIMLib custom \"]\r\n\r\n#[\" vsix dir \"]\r\n#[File cmd(\"cd \\\"#[var pDir]bin/#[var cfg]/\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]\r\n#[File cmd(\"cd \\\"#[var pDirCIM]bin/#[var cfg]/\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]\r\n#[File scall(\".nuget\\nuget.exe\", \"pack \\\"#[var nupCIMdir]\\vsSBE.CI.MSBuild.nuspec\\\" -OutputDirectory \\\"#[var nupCIMdir]\\..\\\" -NonInteractive -Verbosity quiet\")]\r\n\r\n#[File sout(\"cmd\", \"/C rmdir /S/Q \\\"#[var nupCIMdir]\\\" 2>&1\")]"
+        "Type": "Script",
+        "Command": "#[var tplNuspecCIM  = #[File get(\"vsSBE.CI.MSBuild.nuspec.tpl\")]]\n#[var nupCIMdir     = $(odir)NuGet-CI.MSBuild-package]\n\n#[File sout(\"cmd\", \"/C mkdir \\\"#[var nupCIMdir]\\\" 2>&1\")]\n#[File sout(\"cmd\", \"/C del /F/Q \\\"#[var nupCIMdir]\\\" & del /F/Q \\\"#[var nupCIMdir]\\bin\\\" 2>&1\")]\n\n#[var nuspecCIM = $(tplNuspecCIM.Replace(%CIMVersion%, \"$(numCIM)\").Replace(%PackageVersion%, \"\").Replace(%vsSBEVersion%, \"$(numSBE)\"))]\n#[File write(\"#[var nupCIMdir]\\vsSBE.CI.MSBuild.nuspec\"):#[var nuspecCIM]]\n\n#[\" files for package \"]\n\n#[File cmd(\"cd \\\"#[var CIMLib]\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]#[\" CIMLib custom \"]\n\n#[\" vsix dir \"]\n#[File cmd(\"cd \\\"#[var pDir]bin/#[var cfg]/\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]\n#[File cmd(\"cd \\\"#[var pDirCIM]bin/#[var cfg]/\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]\n#[File scall(\".nuget\\nuget.exe\", \"pack \\\"#[var nupCIMdir]\\vsSBE.CI.MSBuild.nuspec\\\" -OutputDirectory \\\"#[var nupCIMdir]\\..\\\" -NonInteractive -Verbosity quiet\")]\n\n#[File sout(\"cmd\", \"/C rmdir /S/Q \\\"#[var nupCIMdir]\\\" 2>&1\")]",
+        "Command__": [
+          "#[var tplNuspecCIM  = #[File get(\"vsSBE.CI.MSBuild.nuspec.tpl\")]]",
+          "#[var nupCIMdir     = $(odir)NuGet-CI.MSBuild-package]",
+          "",
+          "#[File sout(\"cmd\", \"/C mkdir \\\"#[var nupCIMdir]\\\" 2>&1\")]",
+          "#[File sout(\"cmd\", \"/C del /F/Q \\\"#[var nupCIMdir]\\\" & del /F/Q \\\"#[var nupCIMdir]\\bin\\\" 2>&1\")]",
+          "",
+          "#[var nuspecCIM = $(tplNuspecCIM.Replace(%CIMVersion%, \"$(numCIM)\").Replace(%PackageVersion%, \"\").Replace(%vsSBEVersion%, \"$(numSBE)\"))]",
+          "#[File write(\"#[var nupCIMdir]\\vsSBE.CI.MSBuild.nuspec\"):#[var nuspecCIM]]",
+          "",
+          "#[\" files for package \"]",
+          "",
+          "#[File cmd(\"cd \\\"#[var CIMLib]\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]#[\" CIMLib custom \"]",
+          "",
+          "#[\" vsix dir \"]",
+          "#[File cmd(\"cd \\\"#[var pDir]bin/#[var cfg]/\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]",
+          "#[File cmd(\"cd \\\"#[var pDirCIM]bin/#[var cfg]/\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]",
+          "#[File scall(\".nuget\\nuget.exe\", \"pack \\\"#[var nupCIMdir]\\vsSBE.CI.MSBuild.nuspec\\\" -OutputDirectory \\\"#[var nupCIMdir]\\..\\\" -NonInteractive -Verbosity quiet\")]",
+          "",
+          "#[File sout(\"cmd\", \"/C rmdir /S/Q \\\"#[var nupCIMdir]\\\" 2>&1\")]"
+        ]
       }
     },
     {
@@ -397,7 +623,7 @@
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
       "IgnoreIfBuildFailed": true,
-      "BuildType": "common",
+      "BuildType": "Common",
       "Confirmation": false,
       "ToConfiguration": [],
       "ExecutionOrder": {
@@ -412,205 +638,20 @@
       },
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
-        "Type": "script",
-        "Command": "#[var clientDemoDir  = ClientDemo/bin/#[var cfg]/]\r\n#[File sout(\"cmd\", \"/C cd \\\"#[var clientDemoDir]\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]ClientDemo_[#[var branchSha1]][#[var netStamp]](#[var revBuild]).zip\\\" Bridge.dll Bridge.pdb client.vssbe.dll client.vssbe.pdb\")]"
+        "Type": "Script",
+        "Command": "#[var clientDemoDir  = ClientDemo/bin/#[var cfg]/]\n#[File sout(\"cmd\", \"/C cd \\\"#[var clientDemoDir]\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]ClientDemo_[#[var branchSha1]][#[var netStamp]](#[var revBuild]).zip\\\" Bridge.dll Bridge.pdb client.vssbe.dll client.vssbe.pdb\")]",
+        "Command__": [
+          "#[var clientDemoDir  = ClientDemo/bin/#[var cfg]/]",
+          "#[File sout(\"cmd\", \"/C cd \\\"#[var clientDemoDir]\\\" & \\\"#[var appzip]\\\" a \\\"#[var odir]ClientDemo_[#[var branchSha1]][#[var netStamp]](#[var revBuild]).zip\\\" Bridge.dll Bridge.pdb client.vssbe.dll client.vssbe.pdb\")]"
+        ]
       }
     }
   ],
-  "CancelBuild": [
-    {
-      "Enabled": false,
-      "Name": "Act1",
-      "Caption": "",
-      "SupportMSBuild": true,
-      "SupportSBEScripts": true,
-      "IgnoreIfBuildFailed": false,
-      "BuildType": "common",
-      "Confirmation": false,
-      "ToConfiguration": null,
-      "ExecutionOrder": null,
-      "Process": {
-        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
-        "Waiting": true,
-        "Hidden": true,
-        "TimeLimit": 30
-      },
-      "Mode": {
-        "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
-        "Type": "interpreter",
-        "Command": "",
-        "Handler": "",
-        "Newline": "",
-        "Wrapper": ""
-      }
-    }
-  ],
-  "WarningsBuild": [
-    {
-      "Codes": [],
-      "IsWhitelist": true,
-      "Enabled": false,
-      "Name": "Act1",
-      "Caption": "",
-      "SupportMSBuild": true,
-      "SupportSBEScripts": true,
-      "IgnoreIfBuildFailed": false,
-      "BuildType": "common",
-      "Confirmation": false,
-      "ToConfiguration": null,
-      "ExecutionOrder": null,
-      "Process": {
-        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
-        "Waiting": true,
-        "Hidden": true,
-        "TimeLimit": 30
-      },
-      "Mode": {
-        "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
-        "Type": "interpreter",
-        "Command": "",
-        "Handler": "",
-        "Newline": "",
-        "Wrapper": ""
-      }
-    }
-  ],
-  "ErrorsBuild": [
-    {
-      "Codes": [],
-      "IsWhitelist": true,
-      "Enabled": false,
-      "Name": "Act1",
-      "Caption": "",
-      "SupportMSBuild": true,
-      "SupportSBEScripts": true,
-      "IgnoreIfBuildFailed": false,
-      "BuildType": "common",
-      "Confirmation": false,
-      "ToConfiguration": null,
-      "ExecutionOrder": null,
-      "Process": {
-        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
-        "Waiting": true,
-        "Hidden": true,
-        "TimeLimit": 30
-      },
-      "Mode": {
-        "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
-        "Type": "interpreter",
-        "Command": "",
-        "Handler": "",
-        "Newline": "",
-        "Wrapper": ""
-      }
-    }
-  ],
-  "OWPBuild": [
-    {
-      "Match": null,
-      "Enabled": false,
-      "Name": "Act1",
-      "Caption": "",
-      "SupportMSBuild": true,
-      "SupportSBEScripts": true,
-      "IgnoreIfBuildFailed": false,
-      "BuildType": "common",
-      "Confirmation": false,
-      "ToConfiguration": null,
-      "ExecutionOrder": null,
-      "Process": {
-        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
-        "Waiting": true,
-        "Hidden": true,
-        "TimeLimit": 30
-      },
-      "Mode": {
-        "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
-        "Type": "interpreter",
-        "Command": "",
-        "Handler": "",
-        "Newline": "",
-        "Wrapper": ""
-      }
-    }
-  ],
-  "Transmitter": [
-    {
-      "Enabled": false,
-      "Name": "Act1",
-      "Caption": "",
-      "SupportMSBuild": true,
-      "SupportSBEScripts": true,
-      "IgnoreIfBuildFailed": false,
-      "BuildType": "common",
-      "Confirmation": false,
-      "ToConfiguration": null,
-      "ExecutionOrder": null,
-      "Process": {
-        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
-        "Waiting": true,
-        "Hidden": true,
-        "TimeLimit": 30
-      },
-      "Mode": {
-        "$type": "net.r_eg.vsSBE.Events.ModeInterpreter, vsSolutionBuildEvent",
-        "Type": "interpreter",
-        "Command": "",
-        "Handler": "",
-        "Newline": "",
-        "Wrapper": ""
-      }
-    }
-  ],
-  "CommandEvent": [
-    {
-      "Filters": null,
-      "Enabled": false,
-      "Name": null,
-      "Caption": "",
-      "SupportMSBuild": true,
-      "SupportSBEScripts": true,
-      "IgnoreIfBuildFailed": false,
-      "BuildType": "common",
-      "Confirmation": false,
-      "ToConfiguration": null,
-      "ExecutionOrder": null,
-      "Process": {
-        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
-        "Waiting": true,
-        "Hidden": true,
-        "TimeLimit": 30
-      },
-      "Mode": {
-        "$type": "net.r_eg.vsSBE.Events.ModeFile, vsSolutionBuildEvent",
-        "Type": "file",
-        "Command": ""
-      }
-    }
-  ],
-  "Logging": [
-    {
-      "Enabled": false,
-      "Name": null,
-      "Caption": "",
-      "SupportMSBuild": true,
-      "SupportSBEScripts": true,
-      "IgnoreIfBuildFailed": false,
-      "BuildType": "common",
-      "Confirmation": false,
-      "ToConfiguration": null,
-      "ExecutionOrder": null,
-      "Process": {
-        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
-        "Waiting": false,
-        "Hidden": true,
-        "TimeLimit": 30
-      },
-      "Mode": {
-        "$type": "net.r_eg.vsSBE.Events.ModeFile, vsSolutionBuildEvent",
-        "Type": "file",
-        "Command": ""
-      }
-    }
-  ]
+  "CancelBuild": [],
+  "WarningsBuild": [],
+  "ErrorsBuild": [],
+  "OWPBuild": [],
+  "Transmitter": [],
+  "CommandEvent": [],
+  "Logging": []
 }
