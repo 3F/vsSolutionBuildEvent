@@ -4,7 +4,7 @@
 
 [![Build status - master](https://ci.appveyor.com/api/projects/status/l38xn0j2c5an28e1/branch/master?svg=true)](https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/branch/master)
 
-[![VSPackage](https://img.shields.io/badge/VSPackage-v0.12.4-68217A.svg)](http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/) [![Download vsSolutionBuildEvent](https://img.shields.io/sourceforge/dm/vssbe.svg)](https://sourceforge.net/projects/vssbe/files/latest/download) [![Download](https://img.shields.io/sourceforge/dt/vssbe.svg)](https://sourceforge.net/projects/vssbe/files/latest/download) [![LGPLv3](https://img.shields.io/badge/license-LGPLv3-008033.svg?style=flat-square)](http://vssbe.r-eg.net/License/) 
+[![VSPackage](http://vssbe.r-eg.net/etc/badges/VSPackage.svg)](http://vssbe.r-eg.net/Changelist/#vsix) [![Download vsSolutionBuildEvent](https://img.shields.io/sourceforge/dm/vssbe.svg)](https://sourceforge.net/projects/vssbe/files/latest/download) [![Download](https://img.shields.io/sourceforge/dt/vssbe.svg)](https://sourceforge.net/projects/vssbe/files/latest/download) [![LGPLv3](http://vssbe.r-eg.net/etc/badges/License.svg)](http://vssbe.r-eg.net/License/) 
 
 
 MSBuild & SBE-Scripts engine for advanced usage. 
@@ -21,7 +21,7 @@ MSBuild & SBE-Scripts engine for advanced usage.
 
 *Components*:
 
-* [![nuget vsSBE.CI.MSBuild](https://img.shields.io/nuget/v/vsSBE.CI.MSBuild.svg)](https://www.nuget.org/packages/vsSBE.CI.MSBuild/) [![CI.MSBuild](https://img.shields.io/badge/CI.MSBuild-v1.5-8080C0.svg?style=flat)](http://vssbe.r-eg.net/Changelist/#cim) [![Devenv](https://img.shields.io/badge/Devenv-v1.2-B5B5D7.svg?style=flat)](http://vssbe.r-eg.net/Changelist/#devenv)  [![Provider](https://img.shields.io/badge/Provider-v3.0-BAC5C0.svg?style=flat)](http://vssbe.r-eg.net/Changelist/#provider) [![API](https://img.shields.io/badge/API-v1.3-AFCFBE.svg?style=flat)](http://vssbe.r-eg.net/Changelist/#api)
+* [![nuget vsSBE.CI.MSBuild](https://img.shields.io/nuget/v/vsSBE.CI.MSBuild.svg)](https://www.nuget.org/packages/vsSBE.CI.MSBuild/) [![CI.MSBuild](http://vssbe.r-eg.net/etc/badges/CI.MSBuild.svg)](http://vssbe.r-eg.net/Changelist/#cim) [![Devenv](http://vssbe.r-eg.net/etc/badges/Devenv.svg)](http://vssbe.r-eg.net/Changelist/#devenv)  [![Provider](http://vssbe.r-eg.net/etc/badges/Provider.svg)](http://vssbe.r-eg.net/Changelist/#provider) [![API](http://vssbe.r-eg.net/etc/badges/API.svg)](http://vssbe.r-eg.net/Changelist/#api)
 
 -------
 [![Short Overview](https://bitbucket.org/3F/vssolutionbuildevent/wiki/Resources/examples/overview-youtube.png)](http://youtu.be/FX5GiMX0ulI) 
