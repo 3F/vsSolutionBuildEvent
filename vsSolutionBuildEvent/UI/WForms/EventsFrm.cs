@@ -560,9 +560,22 @@ namespace net.r_eg.vsSBE.UI.WForms
                 ISolutionEvent evt = logic.addEventItem(copyFrom);
                 dgvActions.Rows.Add(evt.Enabled, evt.Name, evt.Caption);
                 selectAction(dgvActions.Rows.Count - 1, true);
+                notice(true);
             }
             catch(Exception ex) {
                 Log.Error("Failed to add event-item: '{0}'", ex.Message);
+            }
+        }
+
+        protected void removeRow(DataGridViewExt dgv, DataGridViewButtonColumn btn, DataGridViewCellEventArgs idx)
+        {
+            if(idx.RowIndex == -1 || idx.ColumnIndex == -1) {
+                return; //headers
+            }
+
+            if(idx.ColumnIndex == dgv.Columns.IndexOf(btn) && idx.RowIndex < dgv.Rows.Count - 1) {
+                dgv.Rows.Remove(dgv.Rows[idx.RowIndex]);
+                notice(true);
             }
         }
 
@@ -584,7 +597,8 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         protected void clearControls()
         {
-            textBoxEW.Text = String.Empty;
+            textBoxEW.Text  = String.Empty;
+            textEditor.Text = String.Empty;
             listBoxEW.Items.Clear();
             dataGridViewOutput.Rows.Clear();
             dgvCEFilters.Rows.Clear();
@@ -592,24 +606,16 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         protected void controlsLock(bool disabled)
         {
-            //foreach(Control c in Util.getControls(splitContainer.Panel2, c => true)) {
-            //    c.Enabled = false;
-            //}
-            groupBoxSettings.Enabled 
-                = groupBoxPMode.Enabled 
-                = groupBoxEW.Enabled
-                = groupBoxOutputControl.Enabled
-                = groupBoxVariants.Enabled
-                = groupBoxInterpreter.Enabled
-                = panelCommand.Enabled
-                = checkedListBoxSpecCfg.Enabled
-                = dataGridViewOrder.Enabled
-                = btnActionExec.Enabled
-                = panelToolButtons.Enabled
-                = textBoxCaption.Enabled
-                = !disabled;
-            
-            btnApply.Enabled = true;
+            tabControl.Enabled  = !disabled;
+            btnApply.Enabled    = true;
+
+            if(disabled) {
+                panelCommand.BackColor = Color.Gray;
+                textEditor.setBackgroundFromString("#DDDDDD");
+            }
+            else {
+                updateColors();
+            }
         }
 
         protected void notice(bool isOn)
@@ -1134,9 +1140,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void dataGridViewOutput_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if(e.ColumnIndex == dataGridViewOutput.Columns.IndexOf(owpRemove) && e.RowIndex < dataGridViewOutput.Rows.Count - 1) {
-                dataGridViewOutput.Rows.Remove(dataGridViewOutput.Rows[e.RowIndex]);
-            }
+            removeRow(dataGridViewOutput, owpRemove, e);
         }
 
         private void btnEWAdd_Click(object sender, EventArgs e)
@@ -1180,7 +1184,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void toolStripMenuChangelog_Click(object sender, EventArgs e)
         {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/raw/master/changelog.txt");
+            Util.openUrl("http://vssbe.r-eg.net/Changelist/#vsix");
         }
 
         private void toolStripMenuWiki_Click(object sender, EventArgs e)
@@ -1445,11 +1449,6 @@ namespace net.r_eg.vsSBE.UI.WForms
             logic.restoreData();
         }
 
-        private void dgvActions_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
-        {
-            e.Cancel = (dgvActions.Rows.Count < 2);
-        }
-
         private void splitContainer_SplitterMoved(object sender, SplitterEventArgs e)
         {
             pictureBoxToggle.Visible = !(e.SplitX < metric.splitter);
@@ -1493,6 +1492,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             dgvActions.Rows.RemoveAt(index);
             logic.removeEventItem(index);
             refreshSettingsWithIndex(currentActionIndex());
+            notice(true);
         }
 
         private void pictureBoxToggle_Click(object sender, EventArgs e)
@@ -1516,6 +1516,10 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void dgvActions_CellParsing(object sender, DataGridViewCellParsingEventArgs e)
         {
+            if(e.ColumnIndex != dgvActions.Columns.IndexOf(dgvActionName)) {
+                return;
+            }
+
             string origin = logic.SBE.evt[e.RowIndex].Name;
             try
             {
@@ -1605,19 +1609,26 @@ namespace net.r_eg.vsSBE.UI.WForms
             refreshSettings();
         }
 
-        private void dgvActions_DragDropSortedRow(object sender, DataArgs<DataGridViewExt.MovingRow> e)
+        private void dgvActions_DragDropSortedRow(object sender, DataGridViewExt.MovingRowArgs e)
         {
             logic.moveEventItem(e.Data.from, e.Data.to);
         }
 
+        private void dgvActions_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            linkAddAction.Visible = false;
+        }
+
+        private void dgvActions_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
+        {
+            if(dgvActions.Rows.Count < 1) {
+                linkAddAction.Visible = true;
+            }
+        }
+
         private void dgvCEFilters_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if(e.RowIndex == -1 || e.ColumnIndex == -1) {
-                return; //headers
-            }
-            if(e.ColumnIndex == dgvCEFilters.Columns.IndexOf(dgvCEFiltersColumnRemove) && e.RowIndex < dgvCEFilters.Rows.Count - 1) {
-                dgvCEFilters.Rows.Remove(dgvCEFilters.Rows[e.RowIndex]);
-            }
+            removeRow(dgvCEFilters, dgvCEFiltersColumnRemove, e);
         }
 
         private void checkBoxCESniffer_CheckedChanged(object sender, EventArgs e)
@@ -1675,6 +1686,29 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void menuActionExec_Click(object sender, EventArgs e)
         {
             logic.execAction();
+        }
+
+        private void toolStripMenuVersion_Click(object sender, EventArgs e)
+        {
+            toolStripMenuAbout_Click(sender, e);
+        }
+
+        private void toolStripMenuVersion_MouseHover(object sender, EventArgs e)
+        {
+            toolStripMenuVersion.BorderSides = ToolStripStatusLabelBorderSides.Bottom;
+            statusStrip.Cursor = Cursors.Hand;
+        }
+
+        private void toolStripMenuVersion_MouseLeave(object sender, EventArgs e)
+        {
+            toolStripMenuVersion.BorderSides = ToolStripStatusLabelBorderSides.None;
+            statusStrip.Cursor = Cursors.Default;
+        }
+
+        private void linkAddAction_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            expandActionsList(true);
+            addAction();
         }
     }
 }

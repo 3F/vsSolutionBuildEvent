@@ -53,6 +53,7 @@
             this.menuActionsReset = new System.Windows.Forms.ToolStripMenuItem();
             this.panelStatusBR = new System.Windows.Forms.Panel();
             this.panelLineBottom2 = new System.Windows.Forms.Panel();
+            this.btnApply = new System.Windows.Forms.Button();
             this.panelLineBottom = new System.Windows.Forms.Panel();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripMenuSpring = new System.Windows.Forms.ToolStripStatusLabel();
@@ -84,6 +85,8 @@
             this.toolStripMenuPlugin = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuCopyPath = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuPluginDir = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuCfgSuppressDualCmd = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuSBEPanel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuHelp = new System.Windows.Forms.ToolStripSplitButton();
             this.tsMenuItemExamples = new System.Windows.Forms.ToolStripMenuItem();
@@ -174,7 +177,6 @@
             this.checkedListBoxSpecCfg = new System.Windows.Forms.CheckedListBox();
             this.labelCaption = new System.Windows.Forms.Label();
             this.textBoxCaption = new System.Windows.Forms.TextBox();
-            this.btnApply = new System.Windows.Forms.Button();
             this.dataGridViewOrder = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
             this.dgvOrderEnabled = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.dgvOrderProject = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -232,8 +234,7 @@
             this.btnActivateCSharp = new System.Windows.Forms.Button();
             this.pGridCompilerCfg = new System.Windows.Forms.PropertyGrid();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
-            this.menuCfgSuppressDualCmd = new System.Windows.Forms.ToolStripMenuItem();
+            this.linkAddAction = new System.Windows.Forms.LinkLabel();
             this.contextMenuActions.SuspendLayout();
             this.panelStatusBR.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -363,30 +364,46 @@
             // 
             this.panelStatusBR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.panelStatusBR.Controls.Add(this.panelLineBottom2);
+            this.panelStatusBR.Controls.Add(this.btnApply);
             this.panelStatusBR.Controls.Add(this.panelLineBottom);
             this.panelStatusBR.Controls.Add(this.statusStrip);
-            this.panelStatusBR.Location = new System.Drawing.Point(686, 496);
+            this.panelStatusBR.Location = new System.Drawing.Point(680, 496);
             this.panelStatusBR.Margin = new System.Windows.Forms.Padding(0);
             this.panelStatusBR.Name = "panelStatusBR";
-            this.panelStatusBR.Size = new System.Drawing.Size(304, 30);
+            this.panelStatusBR.Size = new System.Drawing.Size(310, 30);
             this.panelStatusBR.TabIndex = 3;
             // 
             // panelLineBottom2
             // 
             this.panelLineBottom2.BackColor = System.Drawing.Color.DimGray;
+            this.panelLineBottom2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelLineBottom2.Location = new System.Drawing.Point(0, 0);
             this.panelLineBottom2.Margin = new System.Windows.Forms.Padding(0);
             this.panelLineBottom2.Name = "panelLineBottom2";
-            this.panelLineBottom2.Size = new System.Drawing.Size(295, 1);
+            this.panelLineBottom2.Size = new System.Drawing.Size(310, 1);
             this.panelLineBottom2.TabIndex = 80;
+            // 
+            // btnApply
+            // 
+            this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnApply.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnApply.Location = new System.Drawing.Point(0, 4);
+            this.btnApply.Name = "btnApply";
+            this.btnApply.Size = new System.Drawing.Size(62, 23);
+            this.btnApply.TabIndex = 79;
+            this.btnApply.TabStop = false;
+            this.btnApply.Text = "Apply";
+            this.btnApply.UseVisualStyleBackColor = true;
+            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
             // 
             // panelLineBottom
             // 
+            this.panelLineBottom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panelLineBottom.BackColor = System.Drawing.Color.DimGray;
-            this.panelLineBottom.Location = new System.Drawing.Point(62, 7);
+            this.panelLineBottom.Location = new System.Drawing.Point(68, 7);
             this.panelLineBottom.Margin = new System.Windows.Forms.Padding(0);
             this.panelLineBottom.Name = "panelLineBottom";
-            this.panelLineBottom.Size = new System.Drawing.Size(233, 1);
+            this.panelLineBottom.Size = new System.Drawing.Size(239, 1);
             this.panelLineBottom.TabIndex = 79;
             // 
             // statusStrip
@@ -399,9 +416,9 @@
             this.toolStripMenuHelp,
             this.toolStripMenuBug,
             this.toolStripMenuVersion});
-            this.statusStrip.Location = new System.Drawing.Point(111, 7);
+            this.statusStrip.Location = new System.Drawing.Point(148, 7);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(189, 22);
+            this.statusStrip.Size = new System.Drawing.Size(158, 22);
             this.statusStrip.TabIndex = 81;
             // 
             // toolStripMenuSpring
@@ -636,6 +653,20 @@
             this.toolStripMenuPluginDir.Text = "Open directory with plugin";
             this.toolStripMenuPluginDir.Click += new System.EventHandler(this.toolStripMenuPluginDir_Click);
             // 
+            // toolStripSeparator12
+            // 
+            this.toolStripSeparator12.Name = "toolStripSeparator12";
+            this.toolStripSeparator12.Size = new System.Drawing.Size(242, 6);
+            // 
+            // menuCfgSuppressDualCmd
+            // 
+            this.menuCfgSuppressDualCmd.Name = "menuCfgSuppressDualCmd";
+            this.menuCfgSuppressDualCmd.Size = new System.Drawing.Size(245, 22);
+            this.menuCfgSuppressDualCmd.Text = "Suppress \'Command__\' property";
+            this.menuCfgSuppressDualCmd.ToolTipText = "The \'Command__\' property in configuration file is temporary and used for compatib" +
+    "ility with format v0.9.\r\nHowever, you can disable this if needed.";
+            this.menuCfgSuppressDualCmd.Click += new System.EventHandler(this.menuCfgSuppressDualCmd_Click);
+            // 
             // toolStripMenuSBEPanel
             // 
             this.toolStripMenuSBEPanel.Name = "toolStripMenuSBEPanel";
@@ -799,6 +830,9 @@
             this.toolStripMenuVersion.Name = "toolStripMenuVersion";
             this.toolStripMenuVersion.Size = new System.Drawing.Size(45, 17);
             this.toolStripMenuVersion.Text = "version";
+            this.toolStripMenuVersion.Click += new System.EventHandler(this.toolStripMenuVersion_Click);
+            this.toolStripMenuVersion.MouseLeave += new System.EventHandler(this.toolStripMenuVersion_MouseLeave);
+            this.toolStripMenuVersion.MouseHover += new System.EventHandler(this.toolStripMenuVersion_MouseHover);
             // 
             // panelEventType
             // 
@@ -936,10 +970,12 @@
             this.dgvActions.ShowEditingIcon = false;
             this.dgvActions.Size = new System.Drawing.Size(202, 500);
             this.dgvActions.TabIndex = 46;
-            this.dgvActions.DragDropSortedRow += new System.EventHandler<net.r_eg.vsSBE.DataArgs<net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt.MovingRow>>(this.dgvActions_DragDropSortedRow);
+            this.dgvActions.DragDropSortedRow += new System.EventHandler<net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt.MovingRowArgs>(this.dgvActions_DragDropSortedRow);
             this.dgvActions.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvActions_CellContentClick);
             this.dgvActions.CellParsing += new System.Windows.Forms.DataGridViewCellParsingEventHandler(this.dgvActions_CellParsing);
             this.dgvActions.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvActions_CellValueChanged);
+            this.dgvActions.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dgvActions_RowsAdded);
+            this.dgvActions.RowsRemoved += new System.Windows.Forms.DataGridViewRowsRemovedEventHandler(this.dgvActions_RowsRemoved);
             this.dgvActions.Click += new System.EventHandler(this.dgvActions_Click);
             this.dgvActions.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dgvActions_KeyDown);
             this.dgvActions.KeyUp += new System.Windows.Forms.KeyEventHandler(this.dgvActions_KeyUp);
@@ -1329,7 +1365,7 @@
             this.panelCommand.Controls.Add(this.textEditor);
             this.panelCommand.Location = new System.Drawing.Point(6, 261);
             this.panelCommand.Name = "panelCommand";
-            this.panelCommand.Padding = new System.Windows.Forms.Padding(1);
+            this.panelCommand.Padding = new System.Windows.Forms.Padding(5, 1, 1, 1);
             this.panelCommand.Size = new System.Drawing.Size(767, 118);
             this.panelCommand.TabIndex = 62;
             // 
@@ -1337,9 +1373,9 @@
             // 
             this.textEditor.CodeCompletionEnabled = false;
             this.textEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textEditor.Location = new System.Drawing.Point(1, 1);
+            this.textEditor.Location = new System.Drawing.Point(5, 1);
             this.textEditor.Name = "textEditor";
-            this.textEditor.Size = new System.Drawing.Size(765, 116);
+            this.textEditor.Size = new System.Drawing.Size(761, 116);
             this.textEditor.TabIndex = 0;
             // 
             // labelToCommandBox
@@ -1620,7 +1656,6 @@
             this.panelSettingsBottom.Controls.Add(this.checkedListBoxSpecCfg);
             this.panelSettingsBottom.Controls.Add(this.labelCaption);
             this.panelSettingsBottom.Controls.Add(this.textBoxCaption);
-            this.panelSettingsBottom.Controls.Add(this.btnApply);
             this.panelSettingsBottom.Controls.Add(this.dataGridViewOrder);
             this.panelSettingsBottom.Controls.Add(this.labelOnlyFor);
             this.panelSettingsBottom.Controls.Add(this.labelOrder);
@@ -1679,20 +1714,8 @@
             this.textBoxCaption.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxCaption.Location = new System.Drawing.Point(464, 42);
             this.textBoxCaption.Name = "textBoxCaption";
-            this.textBoxCaption.Size = new System.Drawing.Size(221, 20);
+            this.textBoxCaption.Size = new System.Drawing.Size(303, 20);
             this.textBoxCaption.TabIndex = 80;
-            // 
-            // btnApply
-            // 
-            this.btnApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnApply.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnApply.Location = new System.Drawing.Point(692, 42);
-            this.btnApply.Name = "btnApply";
-            this.btnApply.Size = new System.Drawing.Size(75, 23);
-            this.btnApply.TabIndex = 79;
-            this.btnApply.Text = "Apply";
-            this.btnApply.UseVisualStyleBackColor = true;
-            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
             // 
             // dataGridViewOrder
             // 
@@ -2464,25 +2487,23 @@
             this.toolTip.InitialDelay = 500;
             this.toolTip.ReshowDelay = 100;
             // 
-            // toolStripSeparator12
+            // linkAddAction
             // 
-            this.toolStripSeparator12.Name = "toolStripSeparator12";
-            this.toolStripSeparator12.Size = new System.Drawing.Size(242, 6);
-            // 
-            // menuCfgSuppressDualCmd
-            // 
-            this.menuCfgSuppressDualCmd.Name = "menuCfgSuppressDualCmd";
-            this.menuCfgSuppressDualCmd.Size = new System.Drawing.Size(245, 22);
-            this.menuCfgSuppressDualCmd.Text = "Suppress \'Command__\' property";
-            this.menuCfgSuppressDualCmd.ToolTipText = "The \'Command__\' property in configuration file is temporary and used for compatib" +
-    "ility with format v0.9.\r\nHowever, you can disable this if needed.";
-            this.menuCfgSuppressDualCmd.Click += new System.EventHandler(this.menuCfgSuppressDualCmd_Click);
+            this.linkAddAction.AutoSize = true;
+            this.linkAddAction.Location = new System.Drawing.Point(548, 31);
+            this.linkAddAction.Name = "linkAddAction";
+            this.linkAddAction.Size = new System.Drawing.Size(77, 13);
+            this.linkAddAction.TabIndex = 45;
+            this.linkAddAction.TabStop = true;
+            this.linkAddAction.Text = "Add first action";
+            this.linkAddAction.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkAddAction_LinkClicked);
             // 
             // EventsFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(987, 526);
+            this.Controls.Add(this.linkAddAction);
             this.Controls.Add(this.panelStatusBR);
             this.Controls.Add(this.panelEventType);
             this.Controls.Add(this.splitContainer);
@@ -2556,6 +2577,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvComponentInfo)).EndInit();
             this.tabPageCSharp.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -2754,6 +2776,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
         private System.Windows.Forms.ToolStripMenuItem menuCfgSuppressDualCmd;
-
+        private System.Windows.Forms.LinkLabel linkAddAction;
     }
 }

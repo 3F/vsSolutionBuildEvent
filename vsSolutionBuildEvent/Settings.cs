@@ -134,7 +134,7 @@ namespace net.r_eg.vsSBE
         /// <param name="path">New path.</param>
         public void setWorkPath(string path)
         {
-            workPath = (path == null)? String.Empty : path.PathFormat();
+            workPath = path.PathFormat();
         }
 
         /// <summary>

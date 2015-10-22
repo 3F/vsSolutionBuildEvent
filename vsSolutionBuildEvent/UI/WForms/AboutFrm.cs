@@ -257,7 +257,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void pictureBoxDonation_Click(object sender, EventArgs e)
         {
-            Util.openUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=P2HRG52AJSA9N&lc=US&item_name=vsSolutionBuildEvent%20%28vsSBE%29%20projects&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted");
+            Util.openUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=P2HRG52AJSA9N&lc=US&item_name=vsSolutionBuildEvent%20%28vsSBE%29%20Open%20Source%20Projects&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted");
         }
 
         private void pictureBoxDonation_MouseHover(object sender, EventArgs e)

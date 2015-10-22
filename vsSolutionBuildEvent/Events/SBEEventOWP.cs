@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,25 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using Newtonsoft.Json;
 
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
-    /// Support the OutputWindowPane
+    /// Support of the OutputWindowPane
     /// </summary>
     public class SBEEventOWP: SBEEvent, ISolutionEvent, ISolutionEventOWP
     {
         /// <summary>
         /// List of statements
         /// </summary>
-        [JsonProperty(TypeNameHandling = TypeNameHandling.All)]
+        [JsonProperty(TypeNameHandling = TypeNameHandling.All, ItemTypeNameHandling = TypeNameHandling.All)]
         public IMatchWords[] Match
         {
-            get { return match; }
-            set { match = (MatchWords[])value; }
+            get;
+            set;
         }
-        private MatchWords[] match = null;
     }
 }

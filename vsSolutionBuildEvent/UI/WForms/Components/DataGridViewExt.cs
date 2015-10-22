@@ -26,7 +26,12 @@ namespace net.r_eg.vsSBE.UI.WForms.Components
         /// <summary>
         /// After drag & drop sorting
         /// </summary>
-        public event EventHandler<DataArgs<MovingRow>> DragDropSortedRow = delegate(object sender, DataArgs<MovingRow> e) { };
+        public event EventHandler<MovingRowArgs> DragDropSortedRow = delegate(object sender, MovingRowArgs e) { };
+
+        /// <summary>
+        /// Alias for amazing designer -_-
+        /// </summary>
+        public sealed class MovingRowArgs: DataArgs<MovingRow> { }
 
         /// <summary>
         /// The old / new index in sorted row
@@ -157,7 +162,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Components
             this.ClearSelection();
             this.Rows[ddSort.to].Selected = true;
 
-            DragDropSortedRow(this, new DataArgs<MovingRow>() { Data = ddSort });
+            DragDropSortedRow(this, new MovingRowArgs() { Data = ddSort });
         }
 
         protected void onSortableMouseMove(object sender, MouseEventArgs e)

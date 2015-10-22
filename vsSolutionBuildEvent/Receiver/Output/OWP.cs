@@ -121,9 +121,20 @@ namespace net.r_eg.vsSBE.Receiver.Output
 
         protected virtual void evtPaneUpdated(OutputWindowPane pane)
         {
-            TextDocument textD  = pane.TextDocument;
-            int countLines      = textD.EndPoint.Line;
+            if(pane == null) {
+                return;
+            }
 
+            TextDocument textD;
+            try {
+                textD = pane.TextDocument;
+            }
+            catch(System.Runtime.InteropServices.COMException ex) {
+                Log.Debug("notifyRaw: COMException - '{0}'", ex.Message);
+                return;
+            }
+
+            int countLines = textD.EndPoint.Line;
             if(countLines <= 1 || countLines - _prevCountLines < 1) {
                 return;
             }
