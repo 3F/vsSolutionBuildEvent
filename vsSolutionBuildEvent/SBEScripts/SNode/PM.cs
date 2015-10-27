@@ -163,9 +163,12 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
         {
             Log.Trace("PM-detect: entered with '{0}'", data);
 
+            StringHandler h = new StringHandler();
+            data            = h.protectMixedQuotes(data);
+
             Match m = Regex.Match(data, Condition, RegexOptions.IgnorePatternWhitespace);
             if(!m.Success) {
-                levels.Add(getRightOperand(data));
+                levels.Add(getRightOperand(data, h));
                 return;
             }
 
@@ -187,11 +190,11 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
                 levels.Add(new Level() {
                     Type = LevelType.Method,
                     Data = method,
-                    Args = extractArgs(arguments),
+                    Args = extractArgs(h.recovery(arguments)),
                 });
             }
 
-            detect(operation);
+            detect(h.recovery(operation));
         }
 
         /// <summary>
@@ -313,8 +316,9 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
         /// Gets right operand as a Level object.
         /// </summary>
         /// <param name="data">raw data</param>
+        /// <param name="handler">Handler of string if used.</param>
         /// <returns></returns>
-        protected Level getRightOperand(string data)
+        protected Level getRightOperand(string data, StringHandler handler = null)
         {
             if(String.IsNullOrWhiteSpace(data)) {
                 return new Level() { Type = LevelType.RightOperandEmpty };
@@ -329,8 +333,8 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
             string raw  = m.Groups[2].Value;
 
             return new Level() {
-                Type = (type == ":") ? LevelType.RightOperandColon : LevelType.RightOperandStd,
-                Data = raw
+                Type = (type == ":")? LevelType.RightOperandColon : LevelType.RightOperandStd,
+                Data = (handler == null)? raw : handler.recovery(raw)
             };
         }
 

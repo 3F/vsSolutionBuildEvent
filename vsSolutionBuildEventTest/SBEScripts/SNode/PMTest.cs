@@ -300,6 +300,118 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.SNode
         }
 
         /// <summary>
+        ///A test for detect
+        ///</summary>
+        [TestMethod()]
+        public void detectTest14()
+        {
+            PM pm = new PM("left.solution(\" test , (args)\", 123, true, ' (n1) , n2) ').right");
+
+            Assert.AreEqual(pm.Levels[0].Type, LevelType.Property);
+            Assert.AreEqual(pm.Levels[0].Data, "left");
+
+            Assert.AreEqual(pm.Levels[1].Type, LevelType.Method);
+            Assert.AreEqual(pm.Levels[1].Args.Length, 4);
+            Assert.AreEqual(pm.Levels[1].Args[0].type, ArgumentType.StringDouble);
+            Assert.AreEqual(pm.Levels[1].Args[0].data, " test , (args)");
+            Assert.AreEqual(pm.Levels[1].Args[1].type, ArgumentType.Integer);
+            Assert.AreEqual(pm.Levels[1].Args[1].data, 123);
+            Assert.AreEqual(pm.Levels[1].Args[2].type, ArgumentType.Boolean);
+            Assert.AreEqual(pm.Levels[1].Args[2].data, true);
+            Assert.AreEqual(pm.Levels[1].Args[3].type, ArgumentType.StringSingle);
+            Assert.AreEqual(pm.Levels[1].Args[3].data, " (n1) , n2) ");
+            Assert.AreEqual(pm.Levels[1].Data, "solution");
+
+            Assert.AreEqual(pm.Levels[2].Type, LevelType.Property);
+            Assert.AreEqual(pm.Levels[2].Data, "right");
+
+            Assert.AreEqual(pm.Levels[3].Type, LevelType.RightOperandEmpty);
+        }
+
+        /// <summary>
+        ///A test for detect
+        ///</summary>
+        [TestMethod()]
+        public void detectTest15()
+        {
+            PM pm = new PM("solution.path(\"D:/app/(name)).sln\", \"test\").projectBy(\"426(2)A1DC\") : \"test 123\", 'true'");
+
+            Assert.AreEqual(pm.Levels[0].Type, LevelType.Property);
+            Assert.AreEqual(pm.Levels[0].Data, "solution");
+
+            Assert.AreEqual(pm.Levels[1].Type, LevelType.Method);
+            Assert.AreEqual(pm.Levels[1].Data, "path");
+            Assert.AreEqual(pm.Levels[1].Args.Length, 2);
+            Assert.AreEqual(pm.Levels[1].Args[0].type, ArgumentType.StringDouble);
+            Assert.AreEqual(pm.Levels[1].Args[0].data, "D:/app/(name)).sln");
+            Assert.AreEqual(pm.Levels[1].Args[1].type, ArgumentType.StringDouble);
+            Assert.AreEqual(pm.Levels[1].Args[1].data, "test");
+
+            Assert.AreEqual(pm.Levels[2].Type, LevelType.Method);
+            Assert.AreEqual(pm.Levels[2].Data, "projectBy");
+            Assert.AreEqual(pm.Levels[2].Args.Length, 1);
+            Assert.AreEqual(pm.Levels[2].Args[0].type, ArgumentType.StringDouble);
+            Assert.AreEqual(pm.Levels[2].Args[0].data, "426(2)A1DC");
+
+            Assert.AreEqual(pm.Levels[3].Type, LevelType.RightOperandColon);
+            Assert.AreEqual(pm.Levels[3].Data, " \"test 123\", 'true'");
+        }
+
+        /// <summary>
+        ///A test for detect
+        ///</summary>
+        [TestMethod()]
+        public void detectTest16()
+        {
+            PM pm = new PM("solution = \"te()st 123\"), 'true'");
+
+            Assert.AreEqual(pm.Levels[0].Type, LevelType.Property);
+            Assert.AreEqual(pm.Levels[0].Data, "solution");
+
+            Assert.AreEqual(pm.Levels[1].Type, LevelType.RightOperandStd);
+            Assert.AreEqual(pm.Levels[1].Data, " \"te()st 123\"), 'true'");
+
+            pm = new PM("solution : \"te()st 123\"), 'true'");
+
+            Assert.AreEqual(pm.Levels[0].Type, LevelType.Property);
+            Assert.AreEqual(pm.Levels[0].Data, "solution");
+
+            Assert.AreEqual(pm.Levels[1].Type, LevelType.RightOperandColon);
+            Assert.AreEqual(pm.Levels[1].Data, " \"te()st 123\"), 'true'");
+        }
+
+        /// <summary>
+        ///A test for detect
+        ///</summary>
+        [TestMethod()]
+        public void detectTest17()
+        {
+            PM pm = new PM("solution.path(\"\\\"D:/app/(name)).sln\\\"\", \"\\\"test\\\"\", '\\\"12 34\\\"').projectBy(\"\\\"426(2)A1DC\\\"\") : \"\\\"test 123\\\"\", '\\\"true\\\"'");
+
+            Assert.AreEqual(pm.Levels[0].Type, LevelType.Property);
+            Assert.AreEqual(pm.Levels[0].Data, "solution");
+
+            Assert.AreEqual(pm.Levels[1].Type, LevelType.Method);
+            Assert.AreEqual(pm.Levels[1].Data, "path");
+            Assert.AreEqual(pm.Levels[1].Args.Length, 3);
+            Assert.AreEqual(pm.Levels[1].Args[0].type, ArgumentType.StringDouble);
+            Assert.AreEqual(pm.Levels[1].Args[0].data, "\\\"D:/app/(name)).sln\\\"");
+            Assert.AreEqual(pm.Levels[1].Args[1].type, ArgumentType.StringDouble);
+            Assert.AreEqual(pm.Levels[1].Args[1].data, "\\\"test\\\"");
+            Assert.AreEqual(pm.Levels[1].Args[2].type, ArgumentType.StringSingle);
+            Assert.AreEqual(pm.Levels[1].Args[2].data, "\\\"12 34\\\"");
+
+            Assert.AreEqual(pm.Levels[2].Type, LevelType.Method);
+            Assert.AreEqual(pm.Levels[2].Data, "projectBy");
+            Assert.AreEqual(pm.Levels[2].Args.Length, 1);
+            Assert.AreEqual(pm.Levels[2].Args[0].type, ArgumentType.StringDouble);
+            Assert.AreEqual(pm.Levels[2].Args[0].data, "\\\"426(2)A1DC\\\"");
+
+            Assert.AreEqual(pm.Levels[3].Type, LevelType.RightOperandColon);
+            Assert.AreEqual(pm.Levels[3].Data, " \"\\\"test 123\\\"\", '\\\"true\\\"'");
+        }
+
+        /// <summary>
         ///A test for Is
         ///</summary>
         [TestMethod()]
@@ -311,6 +423,36 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.SNode
             Assert.AreEqual(pm.Is(-1, LevelType.Property, "solution"), false);
             Assert.AreEqual(pm.Is(0, LevelType.Property, "solution"), true);
             Assert.AreEqual(pm.Is(1, LevelType.RightOperandStd, "left.right"), true);
+        }
+
+        /// <summary>
+        ///A test for Is
+        ///</summary>
+        [TestMethod()]
+        public void IsTest2()
+        {
+            PM pm = new PM("solution.m1().m2().right");
+
+            Assert.AreEqual(pm.Is(0, LevelType.Property, "solution"), true);
+            Assert.AreEqual(pm.Is(1, LevelType.Method, "m1"), true);
+            Assert.AreEqual(pm.Is(2, LevelType.Method, "m2"), true);
+            Assert.AreEqual(pm.Is(3, LevelType.Property, "right"), true);
+            Assert.AreEqual(pm.Is(4, LevelType.RightOperandEmpty), true);
+        }
+
+        /// <summary>
+        ///A test for Is
+        ///</summary>
+        [TestMethod()]
+        public void IsTest3()
+        {
+            PM pm = new PM("solution.m1(')', '(', \"(\").m2(123, \" -> )\").right");
+
+            Assert.AreEqual(pm.Is(0, LevelType.Property, "solution"), true);
+            Assert.AreEqual(pm.Is(1, LevelType.Method, "m1"), true);
+            Assert.AreEqual(pm.Is(2, LevelType.Method, "m2"), true);
+            Assert.AreEqual(pm.Is(3, LevelType.Property, "right"), true);
+            Assert.AreEqual(pm.Is(4, LevelType.RightOperandEmpty), true);
         }
 
         /// <summary>
@@ -360,6 +502,30 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.SNode
             Assert.AreEqual(pm.Is(0, LevelType.Property, "right"), false);
             Assert.AreEqual(pm.FinalIs(1, LevelType.Property, "right"), false);
             Assert.AreEqual(pm.Is(2, LevelType.Property, "right"), true);
+        }
+
+        /// <summary>
+        ///A test for FinalIs
+        ///</summary>
+        [TestMethod()]
+        public void FinalIsTest4()
+        {
+            PM pm = new PM("left.solution().right");
+            Assert.AreEqual(pm.Is(0, LevelType.Property, "left"), true);
+            Assert.AreEqual(pm.Is(1, LevelType.Method, "solution"), true);
+            Assert.AreEqual(pm.FinalIs(2, LevelType.Property, "right"), true);
+        }
+
+        /// <summary>
+        ///A test for FinalIs
+        ///</summary>
+        [TestMethod()]
+        public void FinalIsTest5()
+        {
+            PM pm = new PM("left.solution(\" (a, b) \").right");
+            Assert.AreEqual(pm.Is(0, LevelType.Property, "left"), true);
+            Assert.AreEqual(pm.Is(1, LevelType.Method, "solution"), true);
+            Assert.AreEqual(pm.FinalIs(2, LevelType.Property, "right"), true);
         }
 
         /// <summary>
@@ -426,6 +592,28 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.SNode
             Assert.AreEqual(pm.Is(0, LevelType.Property, "right"), false);
             Assert.AreEqual(pm.FinalEmptyIs(1, LevelType.Property, "right"), false);
             Assert.AreEqual(pm.Is(2, LevelType.Property, "right"), true);
+        }
+
+        /// <summary>
+        ///A test for FinalEmptyIs
+        ///</summary>
+        [TestMethod()]
+        public void FinalEmptyIsTest4()
+        {
+            PM pm = new PM("left.solution(\"test m()\")");
+            Assert.AreEqual(pm.Is(0, LevelType.Property, "left"), true);
+            Assert.AreEqual(pm.FinalEmptyIs(1, LevelType.Method, "solution"), true);
+        }
+
+        /// <summary>
+        ///A test for FinalEmptyIs
+        ///</summary>
+        [TestMethod()]
+        public void FinalEmptyIsTest5()
+        {
+            PM pm = new PM("left.solution(\"m(1)\", \"m()\", ')', \")\", \"(\")");
+            Assert.AreEqual(pm.Is(0, LevelType.Property, "left"), true);
+            Assert.AreEqual(pm.FinalEmptyIs(1, LevelType.Method, "solution"), true);
         }
 
         /// <summary>
