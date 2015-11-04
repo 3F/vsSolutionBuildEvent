@@ -15,31 +15,44 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Runtime.InteropServices;
-using net.r_eg.vsSBE.Events.Commands;
-
-namespace net.r_eg.vsSBE.Events
+namespace net.r_eg.vsSBE.Events.OWP
 {
-    /// <summary>
-    /// Processing with streaming tools
-    /// </summary>
-    [Guid("DEF30B20-9A0B-41FC-97DD-E95BA770FDB0")]
-    public interface IModeInterpreter: ICommand
+    public class Condition: IMatching
     {
         /// <summary>
-        /// Stream handler
+        /// Phrase for comparison.
         /// </summary>
-        string Handler { get; set; }
+        public string Phrase
+        {
+            get;
+            set;
+        }
 
         /// <summary>
-        /// Treat newline as
+        /// How to compare.
         /// </summary>
-        string Newline { get; set; }
+        public ComparisonType Type
+        {
+            get;
+            set;
+        }
 
         /// <summary>
-        /// Symbol/s for wrapping of commands
+        /// The Name of pane for Condition.
         /// </summary>
-        string Wrapper { get; set; }
+        public string PaneName
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// The Guid of pane for Condition.
+        /// </summary>
+        public string PaneGuid
+        {
+            get;
+            set;
+        }
     }
 }

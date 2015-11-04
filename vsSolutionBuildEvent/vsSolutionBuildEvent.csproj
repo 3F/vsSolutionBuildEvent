@@ -142,7 +142,14 @@
     <Compile Include="Configuration\User\IData.cs" />
     <Compile Include="Configuration\User\IManager.cs" />
     <Compile Include="Configuration\User\Manager.cs" />
+    <Compile Include="Events\Commands\ICommand.cs" />
+    <Compile Include="Events\Commands\ICommandArray.cs" />
     <Compile Include="Events\Mapping\Json\ModeCommand.cs" />
+    <Compile Include="Events\OWP\ComparisonType.cs" />
+    <Compile Include="Events\OWP\Condition.cs" />
+    <Compile Include="Events\OWP\IMatching.cs" />
+    <Compile Include="Events\Types\Command.cs" />
+    <Compile Include="Events\Types\CommandDte.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="GlobalConfig.cs" />
     <Compile Include="ISolutionEvents.cs" />

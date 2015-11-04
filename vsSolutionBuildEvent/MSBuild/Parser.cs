@@ -102,8 +102,8 @@ namespace net.r_eg.vsSBE.MSBuild
                 }
             }
 
-            Project project = env.getProject(projectName);
-            ProjectProperty prop = project.GetProperty(name);
+            Project project         = getProject(projectName);
+            ProjectProperty prop    = project.GetProperty(name);
 
             if(prop != null) {
                 return prop.EvaluatedValue;
@@ -122,7 +122,7 @@ namespace net.r_eg.vsSBE.MSBuild
         {
             List<PropertyItem> properties = new List<PropertyItem>();
 
-            Project project = env.getProject(projectName);
+            Project project = getProject(projectName);
             foreach(ProjectProperty property in project.Properties)
             {
                 string eValue = property.EvaluatedValue;
@@ -150,9 +150,9 @@ namespace net.r_eg.vsSBE.MSBuild
         public virtual string evaluate(string unevaluated, string projectName = null)
         {
             const string container  = "vsSBE_latestEvaluated";
-            Project project         = env.getProject(projectName);
-            Log.Trace("evaluate: '{0}' -> [{1}]", unevaluated, projectName);
+            Project project         = getProject(projectName);
 
+            Log.Trace("evaluate: '{0}' -> [{1}]", unevaluated, projectName);
             lock(_lock)
             {
                 try {
@@ -505,6 +505,23 @@ namespace net.r_eg.vsSBE.MSBuild
                     TUserVariable prev = (TUserVariable)uvar.prev;
                     project.SetGlobalProperty(uvar.ident, (prev.evaluated == null)? prev.unevaluated : prev.evaluated);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Wrapper of getting project instance by name.
+        /// </summary>
+        /// <param name="name">Project name.</param>
+        /// <returns></returns>
+        protected Project getProject(string name)
+        {
+            try {
+                Log.Trace("MSBuild - getProject: Trying of getting project instance - '{0}'", name);
+                return env.getProject(name);
+            }
+            catch(MSBProjectNotFoundException) {
+                Log.Trace("MSBuild - getProject: use empty project by default.");
+                return new Project();
             }
         }
 

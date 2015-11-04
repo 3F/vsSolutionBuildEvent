@@ -17,29 +17,30 @@
 
 using System;
 using System.Runtime.InteropServices;
-using net.r_eg.vsSBE.Events.Commands;
 
-namespace net.r_eg.vsSBE.Events
+namespace net.r_eg.vsSBE.Events.OWP
 {
-    /// <summary>
-    /// Processing with streaming tools
-    /// </summary>
-    [Guid("DEF30B20-9A0B-41FC-97DD-E95BA770FDB0")]
-    public interface IModeInterpreter: ICommand
+    [Guid("AF518505-C235-47CA-BA65-72EF8110E3B1")]
+    public interface IMatching
     {
         /// <summary>
-        /// Stream handler
+        /// Phrase for comparison.
         /// </summary>
-        string Handler { get; set; }
+        string Phrase { get; set; }
 
         /// <summary>
-        /// Treat newline as
+        /// How to compare.
         /// </summary>
-        string Newline { get; set; }
+        ComparisonType Type { get; set; }
 
         /// <summary>
-        /// Symbol/s for wrapping of commands
+        /// The Name of pane for Condition.
         /// </summary>
-        string Wrapper { get; set; }
+        string PaneName { get; set; }
+
+        /// <summary>
+        /// The Guid of pane for Condition.
+        /// </summary>
+        string PaneGuid { get; set; }
     }
 }

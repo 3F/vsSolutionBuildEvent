@@ -28,27 +28,27 @@ namespace net.r_eg.vsSBE.Events
     public interface ISolutionEvent
     {
         /// <summary>
-        /// Status of activation
+        /// Status of activation.
         /// </summary>
         bool Enabled { get; set; }
 
         /// <summary>
-        /// Optional, unique name for manually identification
+        /// Unique name for identification.
         /// </summary>
         string Name { get; set; }
 
         /// <summary>
-        /// Short header about this
+        /// About event.
         /// </summary>
         string Caption { get; set; }
 
         /// <summary>
-        /// Support of MSBuild environment variables (properties)
+        /// Support of the MSBuild engine.
         /// </summary>
         bool SupportMSBuild { get; set; }
 
         /// <summary>
-        /// Support of SBE-Scripts
+        /// Support of the SBE-Scripts engine.
         /// </summary>
         bool SupportSBEScripts { get; set; }
 
@@ -58,7 +58,7 @@ namespace net.r_eg.vsSBE.Events
         bool IgnoreIfBuildFailed { get; set; }
 
         /// <summary>
-        /// Type of build action
+        /// The type of build action.
         /// </summary>
         BuildType BuildType { get; set; }
 

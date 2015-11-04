@@ -15,31 +15,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Runtime.InteropServices;
-using net.r_eg.vsSBE.Events.Commands;
-
-namespace net.r_eg.vsSBE.Events
+namespace net.r_eg.vsSBE.Events.Types
 {
     /// <summary>
-    /// Processing with streaming tools
+    /// Struct of EnvDTE Command.
     /// </summary>
-    [Guid("DEF30B20-9A0B-41FC-97DD-E95BA770FDB0")]
-    public interface IModeInterpreter: ICommand
+    public struct CommandDte
     {
         /// <summary>
-        /// Stream handler
+        /// Scope by GUID.
         /// </summary>
-        string Handler { get; set; }
+        public string Guid
+        {
+            get;
+            set;
+        }
 
         /// <summary>
-        /// Treat newline as
+        /// For work with command ID.
         /// </summary>
-        string Newline { get; set; }
+        public int Id
+        {
+            get;
+            set;
+        }
 
         /// <summary>
-        /// Symbol/s for wrapping of commands
+        /// Input parameters.
         /// </summary>
-        string Wrapper { get; set; }
+        public object CustomIn
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Output parameters.
+        /// </summary>
+        public object CustomOut
+        {
+            get;
+            set;
+        }
     }
 }

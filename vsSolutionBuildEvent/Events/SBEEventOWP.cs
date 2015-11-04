@@ -25,7 +25,7 @@ namespace net.r_eg.vsSBE.Events
     public class SBEEventOWP: SBEEvent, ISolutionEvent, ISolutionEventOWP
     {
         /// <summary>
-        /// List of statements
+        /// List of statements from OWP.
         /// </summary>
         [JsonProperty(TypeNameHandling = TypeNameHandling.All, ItemTypeNameHandling = TypeNameHandling.All)]
         public IMatchWords[] Match

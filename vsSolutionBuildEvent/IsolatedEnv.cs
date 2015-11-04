@@ -101,6 +101,15 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
+        /// Get status of opened solution.
+        /// </summary>
+        public bool IsOpenedSolution
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Events in the extensibility model
         /// </summary>
         public EnvDTE.Events Events
@@ -226,6 +235,9 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public string SolutionCfgFormat(EnvDTE80.SolutionConfiguration2 cfg)
         {
+            if(cfg == null) {
+                return String.Format("{0}|{0}", Environment.PROP_UNAV_STRING);
+            }
             return formatCfg(cfg.Name, cfg.PlatformName);
         }
 
@@ -277,6 +289,7 @@ namespace net.r_eg.vsSBE
             if(String.IsNullOrEmpty(StartupProjectString) && _sln.projects.Count > 0) {
                 StartupProjectString = _sln.projects[0].Name;
             }
+            IsOpenedSolution = true;
 
             this.properties = propertiesByDefault(properties);
             foreach(KeyValuePair<string, string> property in properties) {

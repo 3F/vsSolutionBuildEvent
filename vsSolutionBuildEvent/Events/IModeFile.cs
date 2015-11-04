@@ -15,11 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Runtime.InteropServices;
+using net.r_eg.vsSBE.Events.Commands;
+
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
     /// Processing with files
     /// </summary>
+    [Guid("AFDDD7BE-C979-467E-8BA9-F7264B0C20E4")]
     public interface IModeFile: ICommand
     {
 

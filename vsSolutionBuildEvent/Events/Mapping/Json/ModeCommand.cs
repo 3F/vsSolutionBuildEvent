@@ -17,6 +17,7 @@
 
 using System;
 using System.ComponentModel;
+using net.r_eg.vsSBE.Events.Commands;
 using Newtonsoft.Json;
 
 namespace net.r_eg.vsSBE.Events.Mapping.Json

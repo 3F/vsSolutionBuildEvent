@@ -15,20 +15,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Runtime.InteropServices;
+using net.r_eg.vsSBE.Events.Commands;
+
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
     /// Processing with environment of Visual Studio
+    /// TODO: string type is obsolete. See variant in vsCE
     /// </summary>
-    public interface IModeOperation: ICommandArray
+    [Guid("3860EC60-0206-422F-A16E-4228DCEF2B30")]
+    public interface IModeOperation: ICommandArray<string>
     {
         /// <summary>
-        /// Caption for atomic commands
+        /// Caption for atomic commands.
+        /// TODO: obsolete and should be removed
         /// </summary>
         string Caption { get; set; }
 
         /// <summary>
-        /// Abort operations on the first error
+        /// Abort operations on first error.
         /// </summary>
         bool AbortOnFirstError { get; set; }
     }

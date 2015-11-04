@@ -15,31 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Runtime.InteropServices;
-using net.r_eg.vsSBE.Events.Commands;
 
-namespace net.r_eg.vsSBE.Events
+namespace net.r_eg.vsSBE.Events.OWP
 {
     /// <summary>
-    /// Processing with streaming tools
+    /// Available methods of comparison.
     /// </summary>
-    [Guid("DEF30B20-9A0B-41FC-97DD-E95BA770FDB0")]
-    public interface IModeInterpreter: ICommand
+    [Guid("2E81983C-2370-46F4-B951-8B1E30B887EB")]
+    public enum ComparisonType
     {
         /// <summary>
-        /// Stream handler
+        /// Equality with case sensitive.
         /// </summary>
-        string Handler { get; set; }
+        Default,
 
         /// <summary>
-        /// Treat newline as
+        /// Using .NET Framework Regular Expressions.
         /// </summary>
-        string Newline { get; set; }
+        Regexp,
 
         /// <summary>
-        /// Symbol/s for wrapping of commands
+        /// Using common wildcards.
         /// </summary>
-        string Wrapper { get; set; }
+        Wildcards
     }
 }

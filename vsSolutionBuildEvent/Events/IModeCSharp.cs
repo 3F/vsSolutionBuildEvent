@@ -18,6 +18,7 @@
 using System;
 using System.Runtime.InteropServices;
 using net.r_eg.vsSBE.Configuration.User;
+using net.r_eg.vsSBE.Events.Commands;
 
 namespace net.r_eg.vsSBE.Events
 {

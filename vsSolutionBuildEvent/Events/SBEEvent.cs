@@ -24,7 +24,7 @@ namespace net.r_eg.vsSBE.Events
     public class SBEEvent: ISolutionEvent
     {
         /// <summary>
-        /// Status of activation
+        /// Status of activation.
         /// </summary>
         public bool Enabled
         {
@@ -34,17 +34,16 @@ namespace net.r_eg.vsSBE.Events
         private bool enabled = false;
 
         /// <summary>
-        /// Optional, unique name for manually identification
+        /// Unique name for identification.
         /// </summary>
         public string Name
         {
-            get { return name; }
-            set { name = value; }
+            get;
+            set;
         }
-        private string name = null;
 
         /// <summary>
-        /// Short header about this
+        /// About event.
         /// </summary>
         public string Caption
         {
@@ -52,9 +51,9 @@ namespace net.r_eg.vsSBE.Events
             set { caption = value; }
         }
         private string caption = String.Empty;
-        
+
         /// <summary>
-        /// Support of MSBuild environment variables (properties)
+        /// Support of the MSBuild engine.
         /// </summary>
         public bool SupportMSBuild
         {
@@ -64,7 +63,7 @@ namespace net.r_eg.vsSBE.Events
         private bool supportMSBuild = true;
 
         /// <summary>
-        /// Support of SBE-Scripts
+        /// Support of the SBE-Scripts engine.
         /// </summary>
         public bool SupportSBEScripts
         {
@@ -84,7 +83,7 @@ namespace net.r_eg.vsSBE.Events
         private bool ignoreIfBuildFailed = false;
 
         /// <summary>
-        /// Type of build action
+        /// The type of build action.
         /// </summary>
         public BuildType BuildType
         {
@@ -140,7 +139,7 @@ namespace net.r_eg.vsSBE.Events
         private EventProcess process = new EventProcess();
 
         /// <summary>
-        /// Available mode
+        /// Used mode.
         /// </summary>
         [JsonProperty(TypeNameHandling = TypeNameHandling.All)]
         public IMode Mode

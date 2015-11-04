@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,15 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
-    /// Processing with Environment of Visual Studio
+    /// Processing with Environment of Visual Studio.
     /// </summary>
     public class ModeOperation: IMode, IModeOperation
     {
         /// <summary>
-        /// Type of implementation
+        /// Type of implementation.
         /// </summary>
         public ModeType Type
         {
@@ -31,27 +33,26 @@ namespace net.r_eg.vsSBE.Events
         }
 
         /// <summary>
-        /// Command (Atomic DTE operation) for handling
+        /// Atomic commands for handling.
         /// </summary>
         public string[] Command
         {
-            get { return command; }
-            set { command = value; }
+            get;
+            set;
         }
-        private string[] command = null;
 
         /// <summary>
-        /// Single caption for atomic commands
+        /// Caption for atomic commands.
         /// </summary>
         public string Caption
         {
             get { return caption; }
             set { caption = value; }
         }
-        private string caption = string.Empty;
+        private string caption = String.Empty;
 
         /// <summary>
-        /// Abort operations on the first error
+        /// Abort operations on first error.
         /// </summary>
         public bool AbortOnFirstError
         {
@@ -60,15 +61,17 @@ namespace net.r_eg.vsSBE.Events
         }
         private bool abortOnFirstError = false;
 
+        /// <param name="command"></param>
+        /// <param name="caption"></param>
+        public ModeOperation(string[] command, string caption)
+        {
+            Command         = command;
+            this.caption    = caption;
+        }
+
         public ModeOperation()
         {
 
-        }
-
-        public ModeOperation(string[] command, string caption)
-        {
-            this.command = command;
-            this.caption = caption;
         }
     }
 }

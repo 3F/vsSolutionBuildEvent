@@ -67,5 +67,10 @@ namespace net.r_eg.vsSBE.Events
         /// C# code
         /// </summary>
         CSharp = 0x105,
+        
+        /// <summary>
+        /// Environment Commands
+        /// </summary>
+        EnvCommand = 0x106,
     }
 }

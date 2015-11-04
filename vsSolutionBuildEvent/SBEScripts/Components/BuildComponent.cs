@@ -313,7 +313,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             // solution.current.
-            if(pm.Is(1, LevelType.Property, "current")) {
+            if(pm.Is(1, LevelType.Property, "current"))
+            {
+                if(!env.IsOpenedSolution) {
+                    throw new NotSupportedOperationException("Property 'current' is not available. Open the Solution or use 'path()' method instead.");
+                }
                 return stSlnPMap(env.SolutionFile, pm.pinTo(2));
             }
 

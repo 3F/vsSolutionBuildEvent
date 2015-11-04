@@ -15,31 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Runtime.InteropServices;
-using net.r_eg.vsSBE.Events.Commands;
-
-namespace net.r_eg.vsSBE.Events
+namespace net.r_eg.vsSBE.Events.Types
 {
     /// <summary>
-    /// Processing with streaming tools
+    /// Simple commands with format like this:
+    /// https://msdn.microsoft.com/en-us/library/envdte._dte.executecommand.aspx
     /// </summary>
-    [Guid("DEF30B20-9A0B-41FC-97DD-E95BA770FDB0")]
-    public interface IModeInterpreter: ICommand
+    public struct Command
     {
         /// <summary>
-        /// Stream handler
+        /// Name of command.
         /// </summary>
-        string Handler { get; set; }
+        public string name;
 
         /// <summary>
-        /// Treat newline as
+        /// Arguments of command.
         /// </summary>
-        string Newline { get; set; }
-
-        /// <summary>
-        /// Symbol/s for wrapping of commands
-        /// </summary>
-        string Wrapper { get; set; }
+        public string args;
     }
 }

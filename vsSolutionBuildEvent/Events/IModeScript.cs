@@ -15,7 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Runtime.InteropServices;
+using net.r_eg.vsSBE.Events.Commands;
 
 namespace net.r_eg.vsSBE.Events
 {

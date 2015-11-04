@@ -17,29 +17,18 @@
 
 using System;
 using System.Runtime.InteropServices;
-using net.r_eg.vsSBE.Events.Commands;
 
-namespace net.r_eg.vsSBE.Events
+namespace net.r_eg.vsSBE.Events.Commands
 {
     /// <summary>
-    /// Processing with streaming tools
+    /// Specifies basic fields for command list.
     /// </summary>
-    [Guid("DEF30B20-9A0B-41FC-97DD-E95BA770FDB0")]
-    public interface IModeInterpreter: ICommand
+    [Guid("2229F68B-0FC7-46E3-953A-AFC53650DA63")]
+    public interface ICommandArray<T>
     {
         /// <summary>
-        /// Stream handler
+        /// Atomic commands for handling.
         /// </summary>
-        string Handler { get; set; }
-
-        /// <summary>
-        /// Treat newline as
-        /// </summary>
-        string Newline { get; set; }
-
-        /// <summary>
-        /// Symbol/s for wrapping of commands
-        /// </summary>
-        string Wrapper { get; set; }
+        T[] Command { get; set; }
     }
 }

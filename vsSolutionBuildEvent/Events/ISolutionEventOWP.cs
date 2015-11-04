@@ -27,7 +27,8 @@ namespace net.r_eg.vsSBE.Events
     public interface ISolutionEventOWP: ISolutionEvent
     {
         /// <summary>
-        /// List of statements
+        /// List of statements from OWP.
+        /// TODO: obsolete. use OWP.IMatching /-> C27A1E8C-7808-4529-BAC4-E8322D4F11CD
         /// </summary>
         IMatchWords[] Match { get; set; }
     }

@@ -35,6 +35,11 @@ namespace net.r_eg.vsSBE
     public class Environment: IEnvironment, IEnvironmentExt
     {
         /// <summary>
+        /// Marking of unavailable property.
+        /// </summary>
+        public const string PROP_UNAV_STRING = "*Undefined*";
+
+        /// <summary>
         /// Simple list of names from EnvDTE projects
         /// </summary>
         public List<string> ProjectsList
@@ -81,7 +86,13 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public SolutionConfiguration2 SolutionActiveCfg
         {
-            get { return (SolutionConfiguration2)Dte2.Solution.SolutionBuild.ActiveConfiguration; }
+            get
+            {
+                if(!IsOpenedSolution) {
+                    return null;
+                }
+                return (SolutionConfiguration2)Dte2.Solution.SolutionBuild.ActiveConfiguration;
+            }
         }
 
         /// <summary>
@@ -109,7 +120,12 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public IEnumerable<SolutionConfiguration2> SolutionConfigurations
         {
-            get {
+            get
+            {
+                if(!IsOpenedSolution) {
+                    yield break;
+                }
+
                 foreach(SolutionConfiguration2 cfg in Dte2.Solution.SolutionBuild.SolutionConfigurations) {
                     yield return cfg;
                 }
@@ -123,6 +139,10 @@ namespace net.r_eg.vsSBE
         {
             get
             {
+                if(!IsOpenedSolution) {
+                    return null;
+                }
+
                 foreach(string project in (Array)Dte2.Solution.SolutionBuild.StartupProjects)
                 {
                     if(String.IsNullOrEmpty(project)) {
@@ -131,6 +151,20 @@ namespace net.r_eg.vsSBE
                     return project;
                 }
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// Get status of opened solution.
+        /// </summary>
+        public bool IsOpenedSolution
+        {
+            get
+            {
+                if(Dte2 == null) {
+                    return false;
+                }
+                return Dte2.Solution.IsOpen;
             }
         }
 
@@ -207,6 +241,10 @@ namespace net.r_eg.vsSBE
         {
             get
             {
+                if(!IsOpenedSolution) {
+                    yield break;
+                }
+
                 foreach(EnvDTE.Project project in Dte2.Solution.Projects)
                 {
                     if(project.Kind != ProjectKinds.vsProjectKindSolutionFolder) {
@@ -277,11 +315,11 @@ namespace net.r_eg.vsSBE
             }
 
             if(name.Equals("Configuration")) {
-                return SolutionActiveCfg.Name;
+                return (SolutionActiveCfg == null)? PROP_UNAV_STRING : SolutionActiveCfg.Name;
             }
 
             if(name.Equals("Platform")) {
-                return SolutionActiveCfg.PlatformName;
+                return (SolutionActiveCfg == null)? PROP_UNAV_STRING : SolutionActiveCfg.PlatformName;
             }
 
             return null;
@@ -293,6 +331,9 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public string SolutionCfgFormat(SolutionConfiguration2 cfg)
         {
+            if(cfg == null) {
+                return String.Format("{0}|{0}", PROP_UNAV_STRING);
+            }
             return String.Format("{0}|{1}", cfg.Name, cfg.PlatformName);
         }
 
@@ -340,6 +381,7 @@ namespace net.r_eg.vsSBE
             }
         }
 
+        /// <param name="dte2"></param>
         public Environment(DTE2 dte2)
         {
             Dte2 = dte2;

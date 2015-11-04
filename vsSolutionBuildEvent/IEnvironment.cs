@@ -61,6 +61,11 @@ namespace net.r_eg.vsSBE
         EnvDTE.Events Events { get; }
 
         /// <summary>
+        /// Get status of opened solution.
+        /// </summary>
+        bool IsOpenedSolution { get; }
+
+        /// <summary>
         /// Sender of the core commands.
         /// </summary>
         IFireCoreCommand CoreCmdSender { get; set; }

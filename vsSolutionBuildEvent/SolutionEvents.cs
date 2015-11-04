@@ -41,11 +41,9 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public Component[] Components
         {
-            get { return components; }
-            set { components = value; }
+            get;
+            set;
         }
-        [NonSerialized]
-        private Component[] components = null;
 
         /// <summary>
         /// Before assembling.

@@ -15,11 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Runtime.InteropServices;
+
 namespace net.r_eg.vsSBE.Events.CommandEvents
 {
     /// <summary>
     /// Specifies filters for ICommandEvent
     /// </summary>
+    [Guid("7119BA06-8F1A-4055-BA13-9ADA5850D1B7")]
     public interface IFilter
     {
         /// <summary>

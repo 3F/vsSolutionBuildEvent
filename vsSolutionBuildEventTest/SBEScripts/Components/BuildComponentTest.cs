@@ -60,6 +60,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                     mockSolutionActiveConfiguration.SetupGet(p => p.SolutionContexts).Returns(mockSolutionContexts.Object);
                     mockEnv.SetupGet(p => p.SolutionActiveCfg).Returns(mockSolutionActiveConfiguration.Object);
                     mockEnv.SetupGet(p => p.SolutionFile).Returns("stub.sln");
+                    mockEnv.SetupGet(p => p.IsOpenedSolution).Returns(true);
                     env = mockEnv.Object;
                 }
                 return env;
