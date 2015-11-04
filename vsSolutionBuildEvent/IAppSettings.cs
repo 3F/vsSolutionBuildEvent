@@ -43,6 +43,16 @@ namespace net.r_eg.vsSBE
         bool IgnoreActions { get; set; }
 
         /// <summary>
+        /// Checks availability data for used configurations.
+        /// </summary>
+        bool IsCfgExists { get; }
+
+        /// <summary>
+        /// Common path of library.
+        /// </summary>
+        string CommonPath { get; }
+
+        /// <summary>
         /// Full path to library.
         /// </summary>
         string LibPath { get; }
@@ -51,6 +61,11 @@ namespace net.r_eg.vsSBE
         /// Working path for library.
         /// </summary>
         string WorkPath { get; }
+
+        /// <summary>
+        /// Manager of configurations.
+        /// </summary>
+        IManager ConfigManager { get; }
 
         /// <summary>
         /// Main configuration data.

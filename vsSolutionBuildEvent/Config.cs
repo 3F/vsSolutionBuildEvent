@@ -22,11 +22,12 @@ using System.Text;
 using net.r_eg.vsSBE.Configuration;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts;
+using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.SBEScripts.Components;
 
 namespace net.r_eg.vsSBE
 {
-    internal sealed class Config: PackerAbstract<ISolutionEvents, SolutionEvents>, IConfig<ISolutionEvents>
+    internal class Config: PackerAbstract<ISolutionEvents, SolutionEvents>, IConfig<ISolutionEvents>
     {
         /// <summary>
         /// When data is updated.
@@ -40,7 +41,7 @@ namespace net.r_eg.vsSBE
         {
             /// <summary>
             /// Config version.
-            /// Version of app is controlled by Package!
+            /// Version of app managed by Package!
             /// </summary>
             public static readonly System.Version Version = new System.Version(0, 9);
 
@@ -56,34 +57,95 @@ namespace net.r_eg.vsSBE
         public ISolutionEvents Data
         {
             get;
-            private set;
+            protected set;
         }
-        
-        /// <summary>
-        /// Thread-safe getting instance from Config.
-        /// </summary>
-        public static Config _
-        {
-            get { return _lazy.Value; }
-        }
-        private static readonly Lazy<Config> _lazy = new Lazy<Config>(() => new Config());
-
-        /// <summary>
-        /// Link to configuration file.
-        /// </summary>
-        private string link;
-
 
         /// <summary>
         /// Loads our data from file.
         /// </summary>
         /// <param name="path">Path to configuration file.</param>
         /// <param name="prefix">Special version of configuration file.</param>
-        public void load(string path, string prefix)
+        /// <returns>true value if loaded from existing file, otherwise loaded as new.</returns>
+        public bool load(string path, string prefix)
         {
             Settings._.setWorkPath(path);
-            link = getLink(path, Entity.NAME, prefix);
+            Link = getLink(path, Entity.NAME, prefix);
+            return loadByLink(Link);
+        }
 
+        /// <summary>
+        /// Settings from other object.
+        /// </summary>
+        /// <param name="data">Object with configuration.</param>
+        public void load(ISolutionEvents data)
+        {
+            Data = data;
+            Updated(this, new DataArgs<ISolutionEvents>() { Data = Data });
+        }
+
+        /// <summary>
+        /// Use link from other configuration for loading new settings.
+        /// </summary>
+        /// <param name="link">Link from other configuration.</param>
+        /// <returns>true value if loaded from existing file, otherwise loaded as new.</returns>
+        public bool load(string link)
+        {
+            Link = link.PathFormat();
+            return load(Link, null);
+        }
+
+        /// <summary>
+        /// Load settings from file with path by default.
+        /// </summary>
+        /// <returns>true value if loaded from existing file, otherwise loaded as new.</returns>
+        public bool load()
+        {
+            return load(Settings._.CommonPath, null);
+        }
+
+        /// <summary>
+        /// Save settings.
+        /// </summary>
+        public void save()
+        {
+            if(Link == null) {
+                Log.Trace("Configuration: Ignore saving. Link is null.");
+                return;
+            }
+
+            try
+            {
+                using(TextWriter stream = new StreamWriter(Link, false, Encoding.UTF8)) {
+                    serialize(stream, Data);
+                }
+                InRAM = false;
+
+                Log.Trace("Configuration: has been saved in '{0}'", Settings.WPath);
+                Updated(this, new DataArgs<ISolutionEvents>() { Data = Data });
+            }
+            catch(Exception ex) {
+                Log.Error("Cannot apply configuration '{0}'", ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Unload User data.
+        /// </summary>
+        public void unload()
+        {
+            Link = null;
+            Data = null;
+            Updated(this, new DataArgs<ISolutionEvents>() { Data = null });
+        }
+
+        /// <summary>
+        /// Load settings by link to configuration file.
+        /// </summary>
+        /// <param name="link">Link to configuration file.</param>
+        /// <returns>true value if loaded from existing file, otherwise loaded as new.</returns>
+        protected virtual bool loadByLink(string link)
+        {
+            InRAM = false;
             Log.Debug("Configuration: trying to load - '{0}'", link);
             try
             {
@@ -99,7 +161,8 @@ namespace net.r_eg.vsSBE
             }
             catch(FileNotFoundException)
             {
-                Data = new SolutionEvents();
+                Data    = new SolutionEvents();
+                InRAM   = true;
                 Log.Info("Initialized with new settings.");
             }
             catch(Newtonsoft.Json.JsonException ex)
@@ -109,62 +172,15 @@ namespace net.r_eg.vsSBE
             catch(Exception ex)
             {
                 Log.Error("Configuration file is corrupt - '{0}'", ex.Message);
-                Data = new SolutionEvents(); //TODO: actions in UI, e.g.: restore, new..
+                Data    = new SolutionEvents(); //TODO: actions in UI, e.g.: restore, new..
+                InRAM   = true;
             }
 
             // Now we work with latest version
             Data.Header.Compatibility = Entity.Version.ToString();
             Updated(this, new DataArgs<ISolutionEvents>() { Data = Data });
-        }
 
-        /// <summary>
-        /// Settings from other object.
-        /// </summary>
-        /// <param name="data">Object with configuration.</param>
-        public void load(ISolutionEvents data)
-        {
-            Data = data;
-            Updated(this, new DataArgs<ISolutionEvents>() { Data = Data });
-        }
-
-        /// <summary>
-        /// Save settings.
-        /// </summary>
-        public void save()
-        {
-            try
-            {
-                using(TextWriter stream = new StreamWriter(link, false, Encoding.UTF8)) {
-                    serialize(stream, Data);
-                }
-
-                Log.Trace("Configuration: has been saved in '{0}'", Settings.WPath);
-                Updated(this, new DataArgs<ISolutionEvents>() { Data = Data });
-            }
-            catch(Exception ex) {
-                Log.Error("Cannot apply configuration '{0}'", ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Activation of data with bootloader.
-        /// TODO:
-        /// </summary>
-        /// <param name="bootloader"></param>
-        public void updateActivation(IBootloader bootloader)
-        {
-            foreach(IComponent c in bootloader.Registered)
-            {
-                if(Data.Components == null || Data.Components.Length < 1) {
-                    //c.Enabled = true;
-                    continue;
-                }
-
-                Configuration.Component found = Data.Components.Where(p => p.ClassName == c.GetType().Name).FirstOrDefault();
-                if(found != null) {
-                    c.Enabled = found.Enabled;
-                }
-            }
+            return !InRAM;
         }
 
         /// <summary>
@@ -209,7 +225,5 @@ namespace net.r_eg.vsSBE
             }
             return new SolutionEvents();
         }
-
-        private Config() { }
     }
 }

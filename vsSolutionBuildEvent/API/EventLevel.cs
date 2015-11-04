@@ -23,6 +23,7 @@ using net.r_eg.vsSBE.API.Commands;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Bridge.CoreCommand;
 using net.r_eg.vsSBE.Clients;
+using net.r_eg.vsSBE.Configuration;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.Scripts;
 using AppSettings = net.r_eg.vsSBE.Settings;
@@ -48,6 +49,26 @@ namespace net.r_eg.vsSBE.API
         /// When the solution has been closed
         /// </summary>
         public event EventHandler ClosedSolution = delegate(object sender, EventArgs e) { };
+
+        /// <summary>
+        /// Container of user-variables
+        /// </summary>
+        protected IUserVariable uvariable = new UserVariable();
+
+        /// <summary>
+        /// Provides command events for automation clients
+        /// </summary>
+        protected EnvDTE.CommandEvents cmdEvents;
+
+        /// <summary>
+        /// Access to client library
+        /// </summary>
+        protected IClientLibrary clientLib = new ClientLibrary();
+
+        /// <summary>
+        /// object synch.
+        /// </summary>
+        private Object _lock = new Object();
 
         /// <summary>
         /// Main loader
@@ -77,25 +98,14 @@ namespace net.r_eg.vsSBE.API
         }
 
         /// <summary>
-        /// Container of user-variables
+        /// Manager of configurations.
         /// </summary>
-        protected IUserVariable uvariable = new UserVariable();
-
-        /// <summary>
-        /// Provides command events for automation clients
-        /// </summary>
-        protected EnvDTE.CommandEvents cmdEvents;
-
-        /// <summary>
-        /// Access to client library
-        /// </summary>
-        protected IClientLibrary clientLib = new ClientLibrary();
-
-        /// <summary>
-        /// object synch.
-        /// </summary>
-        private Object _lock = new Object();
-
+        public IManager ConfigManager
+        {
+            get {
+                return AppSettings.CfgManager;
+            }
+        }
 
         /// <summary>
         /// Load with DTE2 context
@@ -351,6 +361,7 @@ namespace net.r_eg.vsSBE.API
 
         /// <summary>
         /// During assembly.
+        /// TODO: (string data, string guid, string item)
         /// </summary>
         /// <param name="data">Raw data of building process</param>
         public void onBuildRaw(string data)
@@ -373,29 +384,20 @@ namespace net.r_eg.vsSBE.API
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int solutionOpened(object pUnkReserved, int fNewSolution)
         {
-            try {
-                Config._.load(Environment.SolutionPath, Environment.SolutionFileName);
-                Config._.updateActivation(Bootloader);
-                UserConfig._.load(Environment.SolutionPath, Environment.SolutionFileName);
+            var config      = (ConfigManager.Config)?? new Config();
+            var userConfig  = (ConfigManager.UserConfig)?? new UserConfig();
 
-                UI.Plain.State.print(Config._.Data);
-#if DEBUG
-                Log.Warn("Used [Debug version]");
-#else
-                if(vsSBE.Version.branchName.ToLower() != "releases") {
-                    Log.Warn("Used [Unofficial release]");
-                }
-#endif
+            bool isNew = !config.load(Environment.SolutionPath, Environment.SolutionFileName);
+            userConfig.load(config.Link);
 
-                OpenedSolution(this, new EventArgs());
+            //ConfigManager.addAndUse(config, userConfig, ContextType.Solution);
+            refreshComponents();
 
-                clientLib.Event.solutionOpened(pUnkReserved, fNewSolution);
-                return Codes.Success;
-            }
-            catch(Exception ex) {
-                Log.Fatal("Cannot load configuration: " + ex.Message);
-            }
-            return Codes.Failed;
+            UI.Plain.State.print(config.Data);
+
+            OpenedSolution(this, new EventArgs());
+            clientLib.Event.solutionOpened(pUnkReserved, fNewSolution);
+            return Codes.Success;
         }
 
         /// <summary>
@@ -406,8 +408,10 @@ namespace net.r_eg.vsSBE.API
         public int solutionClosed(object pUnkReserved)
         {
             clientLib.Event.solutionClosed(pUnkReserved);
-
             ClosedSolution(this, new EventArgs());
+
+            ConfigManager.Config.unload();
+            ConfigManager.UserConfig.unload();
             return Codes.Success;
         }
 
@@ -436,6 +440,15 @@ namespace net.r_eg.vsSBE.API
         /// </summary>
         protected void init()
         {
+
+#if DEBUG
+            Log.Warn("Used [Debug version]");
+#else
+                if(vsSBE.Version.branchName.ToLower() != "releases") {
+                    Log.Warn("Used [Unofficial release]");
+                }
+#endif
+
             Environment.CoreCmdSender = this;
             attachCommandEvents();
 
@@ -463,6 +476,14 @@ namespace net.r_eg.vsSBE.API
 
             AppSettings._.DebugMode = cfg.DebugMode;
             // ...
+        }
+
+        protected void refreshComponents()
+        {
+            if(this.Bootloader == null || AppSettings.CfgManager.Config == null) {
+                return;
+            }
+            this.Bootloader.updateActivation(AppSettings.CfgManager.Config.Data);
         }
 
         protected void attachCommandEvents()

@@ -46,30 +46,94 @@ namespace net.r_eg.vsSBE
             get;
             private set;
         }
-        
-        /// <summary>
-        /// Thread-safe getting instance from UserConfig.
-        /// </summary>
-        public static UserConfig _
-        {
-            get { return _lazy.Value; }
-        }
-        private static readonly Lazy<UserConfig> _lazy = new Lazy<UserConfig>(() => new UserConfig());
-
-        /// <summary>
-        /// Link to configuration file.
-        /// </summary>
-        protected string link;
-
 
         /// <summary>
         /// Loads data from user config file.
         /// </summary>
         /// <param name="path">Path to configuration file.</param>
         /// <param name="prefix">Special version of configuration file.</param>
-        public virtual void load(string path, string prefix = null)
+        /// <returns>true value if loaded from existing file, otherwise loaded as new.</returns>
+        public virtual bool load(string path, string prefix)
         {
-            link = getLink(path, Config.Entity.NAME + EXT, prefix);
+            Link = getLink(path, Config.Entity.NAME + EXT, prefix);
+            return loadByLink(Link);
+        }
+
+        /// <summary>
+        /// Settings from other object.
+        /// </summary>
+        /// <param name="data">Object with configuration.</param>
+        public void load(IUserData data)
+        {
+            Data = data;
+            Updated(this, new DataArgs<IUserData>() { Data = Data });
+        }
+
+        /// <summary>
+        /// Use link from other configuration for loading new settings.
+        /// </summary>
+        /// <param name="link">Link from other configuration.</param>
+        /// <returns>true value if loaded from existing file, otherwise loaded as new.</returns>
+        public bool load(string link)
+        {
+            Link = link + EXT;
+            return loadByLink(Link);
+        }
+
+        /// <summary>
+        /// Load settings from file with path by default.
+        /// </summary>
+        /// <returns>true value if loaded from existing file, otherwise loaded as new.</returns>
+        public bool load()
+        {
+            return load(Settings.CfgManager.Config.Link);
+        }
+
+        /// <summary>
+        /// Save settings.
+        /// </summary>
+        public void save()
+        {
+            if(Link == null) {
+                Log.Trace("User Configuration: Ignore saving. Link is null.");
+                return;
+            }
+
+            ((IUserDataSvc)Data).updateCommon(false);
+            try
+            {
+                Data.updateCache();
+                using(TextWriter stream = new StreamWriter(Link, false, Encoding.UTF8)) {
+                    serialize(stream, Data);
+                }
+                InRAM = false;
+
+                Log.Trace("User Configuration: has been updated '{0}'", Link);
+                Updated(this, new DataArgs<IUserData>() { Data = Data });
+            }
+            catch(Exception ex) {
+                Log.Debug("Cannot apply user configuration '{0}'", ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Unload User data.
+        /// </summary>
+        public void unload()
+        {
+            Link = null;
+            Data = null;
+            Updated(this, new DataArgs<IUserData>() { Data = null });
+        }
+
+        /// <summary>
+        /// Load settings by link to configuration file.
+        /// </summary>
+        /// <param name="link">Link to configuration file.</param>
+        /// <returns>true value if loaded from existing file, otherwise loaded as new.</returns>
+        protected virtual bool loadByLink(string link)
+        {
+            InRAM = false;
             try
             {
                 using(StreamReader stream = new StreamReader(link, Encoding.UTF8, true))
@@ -83,63 +147,22 @@ namespace net.r_eg.vsSBE
             }
             catch(FileNotFoundException)
             {
-                Data = new UserData();
+                Data    = new UserData();
+                InRAM   = true;
                 Log.Trace("User settings: Initialized new.");
             }
             catch(Exception ex)
             {
                 Log.Debug("User settings is corrupt - '{0}'", ex.Message);
-                Data = new UserData();
+                Data    = new UserData();
+                InRAM   = true;
             }
 
             ((IUserDataSvc)Data).updateCommon(true);
             Configuration.User.Manager.update(Data);
 
             Updated(this, new DataArgs<IUserData>() { Data = Data });
-            configure(Data.Global);
+            return !InRAM;
         }
-
-        /// <summary>
-        /// Settings from other object.
-        /// </summary>
-        /// <param name="data">Object with configuration.</param>
-        public void load(IUserData data)
-        {
-            Data = data;
-            Updated(this, new DataArgs<IUserData>() { Data = Data });
-            configure(Data.Global);
-        }
-
-        /// <summary>
-        /// Save settings.
-        /// </summary>
-        public void save()
-        {
-            ((IUserDataSvc)Data).updateCommon(false);
-            try
-            {
-                Data.updateCache();
-                using(TextWriter stream = new StreamWriter(link, false, Encoding.UTF8)) {
-                    serialize(stream, Data);
-                }
-
-                Log.Trace("User Configuration: has been updated '{0}'", link);
-                Updated(this, new DataArgs<IUserData>() { Data = Data });
-            }
-            catch(Exception ex) {
-                Log.Debug("Cannot apply user configuration '{0}'", ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Apply global configuration.
-        /// </summary>
-        /// <param name="cfg"></param>
-        protected void configure(Configuration.User.IGlobal cfg)
-        {
-            Settings._.DebugMode = cfg.DebugMode;
-        }
-
-        protected UserConfig() { }
     }
 }

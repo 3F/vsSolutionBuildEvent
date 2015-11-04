@@ -25,7 +25,9 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Bridge;
+using net.r_eg.vsSBE.Configuration;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.UI.Xaml;
 
 namespace net.r_eg.vsSBE
@@ -47,28 +49,8 @@ namespace net.r_eg.vsSBE
 
     // Package Guid
     [Guid(GuidList.PACKAGE_STRING)]
-
     public sealed class vsSolutionBuildEventPackage: Package, IDisposable, IVsSolutionEvents, IVsUpdateSolutionEvents2
     {
-        /// <summary>
-        /// DTE2 Context
-        /// </summary>
-        public DTE2 Dte2
-        {
-            get {
-                return (DTE2)Package.GetGlobalService(typeof(SDTE)); 
-            }
-        }
-
-        /// <summary>
-        /// Support the all public events
-        /// </summary>
-        public static API.IEventLevel Event
-        {
-            get;
-            private set;
-        }
-
         /// <summary>
         /// For IVsSolutionEvents events
         /// http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivssolution.aspx
@@ -99,6 +81,35 @@ namespace net.r_eg.vsSBE
         private Receiver.Output.OWP _owpListener;
 
         /// <summary>
+        /// The command for menu - Build / Events Solution
+        /// </summary>
+        private MenuCommand _menuItemMain;
+        
+        /// <summary>
+        /// Main form of settings
+        /// </summary>
+        private UI.WForms.EventsFrm _configFrm;
+
+        /// <summary>
+        /// DTE2 Context
+        /// </summary>
+        public DTE2 Dte2
+        {
+            get {
+                return (DTE2)Package.GetGlobalService(typeof(SDTE)); 
+            }
+        }
+
+        /// <summary>
+        /// Support the all public events
+        /// </summary>
+        public API.IEventLevel Event
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// Gets instance of StatusToolWindow.
         /// Ensures that the Frame of value is also != null
         /// </summary>
@@ -122,16 +133,6 @@ namespace net.r_eg.vsSBE
         private ToolWindowPane statusTool;
 
         /// <summary>
-        /// The command for menu - Build / Events Solution
-        /// </summary>
-        private MenuCommand _menuItemMain;
-        
-        /// <summary>
-        /// Main form of settings
-        /// </summary>
-        private UI.WForms.EventsFrm _configFrm;
-
-        /// <summary>
         /// Priority call with SVsSolution.
         /// Part of IVsSolutionEvents - that the solution has been opened.
         /// http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivssolutionevents.onafteropensolution.aspx
@@ -141,11 +142,12 @@ namespace net.r_eg.vsSBE
         /// <returns></returns>
         public int OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
         {
-            try {
-                eventsOfStatusTool(true);
+            try
+            {
                 //Log.paneAttach(GetOutputPane(GuidList.OWP_SBE, Settings.OWP_ITEM_VSSBE)); // also may be problem with toolWindow as in other COM variant -_-
                 Log._.paneAttach(Settings.OWP_ITEM_VSSBE, Dte2);
                 Log._.show();
+                eventsOfStatusTool(true);
 
                 int ret = Event.solutionOpened(pUnkReserved, fNewSolution);
                 _menuItemMain.Visible = (ret == VSConstants.S_OK);
@@ -167,11 +169,11 @@ namespace net.r_eg.vsSBE
         public int OnAfterCloseSolution(object pUnkReserved)
         {
             _menuItemMain.Visible = false;
-            try {
+            try
+            {
                 Event.solutionClosed(pUnkReserved);
                 UI.Util.closeTool(_configFrm);
 
-                Log._.paneDetach((IVsOutputWindow)GetGlobalService(typeof(SVsOutputWindow)));
                 eventsOfStatusTool(false);
                 return VSConstants.S_OK;
             }
@@ -237,10 +239,12 @@ namespace net.r_eg.vsSBE
 
         private void initAppEvents()
         {
-            GlobalConfig._.load(null, null);
-            
+            var usrCfg = new UserConfig();
+            usrCfg.load(usrCfg.getLink(Settings._.CommonPath, Config.Entity.NAME, null));
+            Settings.CfgManager.addAndUse(new Config(), usrCfg, ContextType.Static);
+
             Event = new API.EventLevel();
-            ((IEntryPointCore)Event).load(Dte2, GlobalConfig._.Data.Global.DebugMode);
+            ((IEntryPointCore)Event).load(Dte2, usrCfg.Data.Global.DebugMode);
 
             _owpListener = new Receiver.Output.OWP(Event.Environment, "Build");
             _owpListener.attachEvents();
@@ -262,10 +266,10 @@ namespace net.r_eg.vsSBE
             IStatusToolEvents ste = (IStatusToolEvents)StatusTool;
 
             if(attach) {
-                ste.attachEvents(Event).attachEvents(Config._).attachEvents();
+                ste.attachEvents(Event).attachEvents(Settings.CfgManager.Config).attachEvents();
                 return;
             }
-            ste.detachEvents().detachEvents(Config._).detachEvents(Event);
+            ste.detachEvents().detachEvents(Settings.CfgManager.Config).detachEvents(Event);
         }
 
         /// <summary>

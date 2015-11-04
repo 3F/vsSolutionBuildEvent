@@ -187,7 +187,7 @@ namespace net.r_eg.vsSBE.Actions
             mode.CacheData.Manager.CacheHeader.Hash         = toHash.MD5Hash();
             mode.CacheData.Manager.CacheHeader.Algorithm    = HashType.MD5;
             mode.CacheData.Manager.CacheHeader.Updated      = DateTime.Now.ToFileTimeUtc();
-            UserConfig._.save();
+            Settings.CfgManager.UserConfig.save();
         }
 
         /// <summary>

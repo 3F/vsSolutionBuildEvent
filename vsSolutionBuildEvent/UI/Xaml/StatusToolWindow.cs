@@ -134,7 +134,9 @@ namespace net.r_eg.vsSBE.UI.Xaml
 
         private void onUpdated(object sender, DataArgs<ISolutionEvents> e)
         {
-            tool.refresh();
+            if(e.Data != null) {
+                tool.refresh();
+            }
         }
 
         private void onReceiving(object sender, Logger.MessageArgs e)

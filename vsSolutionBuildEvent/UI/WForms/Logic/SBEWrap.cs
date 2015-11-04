@@ -15,42 +15,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using net.r_eg.vsSBE.Configuration;
-using net.r_eg.vsSBE.SBEScripts;
+using System.Collections.Generic;
+using net.r_eg.vsSBE.Events;
 
-namespace net.r_eg.vsSBE.API
+namespace net.r_eg.vsSBE.UI.WForms.Logic
 {
-    public interface IEventLevel: Bridge.IEvent, Bridge.IBuild
+    public class SBEWrap
     {
         /// <summary>
-        /// When the solution has been opened or created
+        /// Wrapped event
         /// </summary>
-        event EventHandler OpenedSolution;
+        public List<ISolutionEvent> evt;
 
         /// <summary>
-        /// When the solution has been closed
+        /// Specific type
         /// </summary>
-        event EventHandler ClosedSolution;
+        public SolutionEventType type;
+
+        /// <param name="type"></param>
+        public SBEWrap(SolutionEventType type)
+        {
+            this.type = type;
+            update();
+        }
 
         /// <summary>
-        /// Loader of components
+        /// Updating list from used array data
         /// </summary>
-        IBootloader Bootloader { get; }
+        public void update()
+        {
+            if(Settings.Cfg.getEvent(type) != null) {
+                evt = new List<ISolutionEvent>(Settings.Cfg.getEvent(type));
+                return;
+            }
 
-        /// <summary>
-        /// Used Environment
-        /// </summary>
-        IEnvironment Environment { get; }
-
-        /// <summary>
-        /// Binder of action
-        /// </summary>
-        Actions.Connection Action { get; }
-
-        /// <summary>
-        /// Manager of configurations.
-        /// </summary>
-        IManager ConfigManager { get; }
+            Log.Debug("SBEWrap: evt is null for type '{0}'", type);
+            evt = new List<ISolutionEvent>();
+        }
     }
 }

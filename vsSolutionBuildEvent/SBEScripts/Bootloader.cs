@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.Scripts;
@@ -140,6 +141,38 @@ namespace net.r_eg.vsSBE.SBEScripts
         public void unregister()
         {
             components.Clear();
+        }
+
+        /// <summary>
+        /// Activation of components with ISolutionEvents.
+        /// </summary>
+        /// <param name="ISolutionEvents"></param>
+        public void updateActivation(ISolutionEvents data)
+        {
+            if(data == null) {
+                Log.Debug("Bootloader: Changing of activation has been ignored.");
+                return;
+            }
+
+            foreach(IComponent c in Registered)
+            {
+                if(data.Components == null || data.Components.Length < 1) {
+                    //c.Enabled = true;
+                    continue;
+                }
+
+                Configuration.Component found = data.Components.Where(p => p.ClassName == c.GetType().Name).FirstOrDefault();
+                if(found == null) {
+                    continue;
+                }
+
+#if DEBUG
+                if(c.Enabled != found.Enabled) {
+                    Log.Trace("Bootloader - Component '{0}': Changing of activation status '{1}' -> '{2}'", found.ClassName, c.Enabled, found.Enabled);
+                }
+#endif
+                c.Enabled = found.Enabled;
+            }
         }
 
         /// <param name="env">Used environment</param>

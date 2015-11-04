@@ -22,6 +22,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using net.r_eg.vsSBE.Bridge;
+using net.r_eg.vsSBE.Configuration;
 using net.r_eg.vsSBE.Configuration.User;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
@@ -38,44 +39,63 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
     public class Events
     {
         /// <summary>
-        /// For naming actions
+        /// Prefix for new action by default.
         /// </summary>
         public const string ACTION_PREFIX       = "Act";
+
+        /// <summary>
+        /// Prefix for cloned action by default.
+        /// </summary>
         public const string ACTION_PREFIX_CLONE = "CopyOf";
 
-        public class SBEWrap
-        {
-            /// <summary>
-            /// Wrapped event
-            /// </summary>
-            public List<ISolutionEvent> evt;
+        /// <summary>
+        /// Used loader
+        /// </summary>
+        protected IBootloader bootloader;
 
-            /// <summary>
-            /// Specific type
-            /// </summary>
-            public SolutionEventType type;
+        /// Mapper of the available components
+        /// </summary>
+        protected IInspector inspector;
 
-            /// <param name="type"></param>
-            public SBEWrap(SolutionEventType type)
-            {
-                this.type = type;
-                update();
-            }
+        /// <summary>
+        /// Registered used SBE-events
+        /// </summary>
+        protected List<SBEWrap> events = new List<SBEWrap>();
 
-            /// <summary>
-            /// Updating list from used array data
-            /// </summary>
-            public void update()
-            {
-                if(Settings.Cfg.getEvent(type) != null) {
-                    evt = new List<ISolutionEvent>(Settings.Cfg.getEvent(type));
-                    return;
-                }
+        /// <summary>
+        /// Selected event
+        /// </summary>
+        protected volatile int currentEventIndex = 0;
 
-                Log.Debug("SBEWrap: evt is null for type '{0}'", type);
-                evt = new List<ISolutionEvent>();
-            }
-        }
+        /// <summary>
+        /// Selected item of event
+        /// </summary>
+        protected volatile int currentEventItem = 0;
+
+        /// <summary>
+        /// List of available types of the build
+        /// </summary>
+        protected List<BuildType> buildType = new List<BuildType>();
+
+        /// <summary>
+        /// Backup of settings.
+        /// </summary>
+        protected RestoreData backup = new RestoreData();
+
+        /// <summary>
+        /// Information by existing components
+        /// </summary>
+        protected Dictionary<string, List<INodeInfo>> cInfo = new Dictionary<string, List<INodeInfo>>();
+
+        /// <summary>
+        /// Provides command events for automation clients
+        /// </summary>
+        protected EnvDTE.CommandEvents cmdEvents;
+
+        /// <summary>
+        /// object synch.
+        /// </summary>
+        private Object _lock = new Object();
 
         /// <summary>
         /// Provides operations with environment
@@ -84,6 +104,16 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         {
             get;
             protected set;
+        }
+
+        /// <summary>
+        /// Manager of configurations.
+        /// </summary>
+        public Configuration.IManager CfgManager
+        {
+            get {
+                return Settings.CfgManager;
+            }
         }
 
         /// <summary>
@@ -144,56 +174,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         }
         protected List<ModeOperation> defOperations = DefCommandsDTE.operations();
 
-        /// <summary>
-        /// Registered used SBE-events
-        /// </summary>
-        protected List<SBEWrap> events = new List<SBEWrap>();
-
-        /// <summary>
-        /// Selected event
-        /// </summary>
-        protected volatile int currentEventIndex = 0;
-
-        /// <summary>
-        /// Selected item of event
-        /// </summary>
-        protected volatile int currentEventItem = 0;
-
-        /// <summary>
-        /// List of available types of the build
-        /// </summary>
-        protected List<BuildType> buildType = new List<BuildType>();
-
-        /// <summary>
-        /// Used for restoring settings
-        /// </summary>
-        protected ISolutionEvents toRestoring;
-
-        /// <summary>
-        /// Information by existing components
-        /// </summary>
-        protected Dictionary<string, List<INodeInfo>> cInfo = new Dictionary<string, List<INodeInfo>>();
-
-        /// <summary>
-        /// Used loader
-        /// </summary>
-        protected IBootloader bootloader;
-
-        /// Mapper of the available components
-        /// </summary>
-        protected IInspector inspector;
-
-        /// <summary>
-        /// Provides command events for automation clients
-        /// </summary>
-        protected EnvDTE.CommandEvents cmdEvents;
-
-        /// <summary>
-        /// object synch.
-        /// </summary>
-        private Object _lock = new Object();
-
-
+        /// <param name="evt"></param>
         public void addEvent(SBEWrap evt)
         {
             events.Add(evt);
@@ -312,16 +293,35 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
 
         public void saveData()
         {
-            UserConfig._.save();
-            GlobalConfig._.save();
-            Config._.save(); // all changes has been passed by reference
-            toRestoring = SlnEvents.CloneBySerializationWithType<ISolutionEvents, SolutionEvents>(); // updating of deep copies
+            CfgManager.UserConfig.save();
+            CfgManager.Config.save(); // all changes has been passed by reference
+            backupUpdate();
         }
 
         public void restoreData()
         {
-            Settings.CfgUser.avoidRemovingFromCache();
-            Config._.load(toRestoring.CloneBySerializationWithType<ISolutionEvents, SolutionEvents>());
+            if(Settings.CfgUser != null) {
+                Settings.CfgUser.avoidRemovingFromCache();
+            }
+            backupRestore();
+        }
+
+        /// <summary>
+        /// Clone configuration from specific context into current.
+        /// </summary>
+        /// <param name="from">Clone from this context.</param>
+        public void cloneCfg(ContextType from)
+        {
+            CfgManager.Config.load(CfgManager.getConfigFor(from).Data.CloneBySerializationWithType<ISolutionEvents, SolutionEvents>());
+            CfgManager.UserConfig.load(CfgManager.getUserConfigFor(from).Data.CloneBySerializationWithType<IData, Data>());
+        }
+
+        /// <summary>
+        /// Update of backup copies of user config for actual context.
+        /// </summary>
+        public void updateUserCfg()
+        {
+            backup.update(CfgManager.UserConfig.Data.CloneBySerializationWithType<IData, Data>(), CfgManager.Context);
         }
 
         public void fillEvents(ComboBox combo)
@@ -837,7 +837,49 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             this.bootloader = bootloader;
             this.inspector  = inspector;
             Env             = bootloader.Env;
-            toRestoring     = SlnEvents.CloneBySerializationWithType<ISolutionEvents, SolutionEvents>();
+            backupUpdate();
+        }
+
+        /// <summary>
+        /// Updating of deep copies from configuration data using all available contexts.
+        /// </summary>
+        protected void backupUpdate()
+        {
+            //backupUpdate(ContextType.Common);
+            //if(CfgManager.IsExistCfg(ContextType.Solution)) {
+            //    backupUpdate(ContextType.Solution);
+            //}
+            backupUpdate(ContextType.Static);
+        }
+
+        /// <summary>
+        /// Updating of deep copies from configuration data using specific context.
+        /// </summary>
+        protected void backupUpdate(ContextType context)
+        {
+            backup.update(CfgManager.getConfigFor(context).Data.CloneBySerializationWithType<ISolutionEvents, SolutionEvents>(), context);
+            backup.update(CfgManager.getUserConfigFor(context).Data.CloneBySerializationWithType<IData, Data>(), context);
+        }
+
+        /// <summary>
+        /// Restore configuration data from backup using all available contexts.
+        /// </summary>
+        protected void backupRestore()
+        {
+            backupUpdate(ContextType.Static);
+            //if(CfgManager.IsExistCfg(ContextType.Solution)) {
+            //    backupRestore(ContextType.Solution);
+            //}
+            //backupRestore(ContextType.Common);
+        }
+
+        /// <summary>
+        /// Restore configuration data from backup using specific context.
+        /// </summary>
+        protected void backupRestore(ContextType context)
+        {
+            CfgManager.getConfigFor(context).load(backup.getConfig(context).CloneBySerializationWithType<ISolutionEvents, SolutionEvents>());
+            CfgManager.getUserConfigFor(context).load(backup.getUserConfig(context).CloneBySerializationWithType<IData, Data>());
         }
 
         /// <summary>

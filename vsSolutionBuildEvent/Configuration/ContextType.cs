@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,29 +16,26 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Runtime.InteropServices;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Configuration
 {
-    internal class SynchSubscribers<T>
+    [Guid("A55E2432-81B0-407E-B3B2-29958D76B09A")]
+    public enum ContextType
     {
         /// <summary>
-        /// thread-safe collection of subscribers
+        /// Common configuration.
         /// </summary>
-        protected SynchronizedCollection<T> subscribers = new SynchronizedCollection<T>();
+        Common,
 
-        public void register(T l)
-        {
-            if(!subscribers.Contains(l)) {
-                subscribers.Add(l);
-            }
-        }
+        /// <summary>
+        /// Configuration of specific solution.
+        /// </summary>
+        Solution,
 
-        public void unregister(T l)
-        {
-            subscribers.Remove(l);
-        }
+        /// <summary>
+        /// Unspecified static configuration.
+        /// </summary>
+        Static,
     }
 }

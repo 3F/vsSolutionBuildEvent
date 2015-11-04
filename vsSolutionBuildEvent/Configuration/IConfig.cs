@@ -34,11 +34,23 @@ namespace net.r_eg.vsSBE.Configuration
         T Data { get; }
 
         /// <summary>
+        /// Link to configuration file.
+        /// </summary>
+        string Link { get; }
+
+        /// <summary>
+        /// Get status of configuration data.
+        /// true value if data exists only in RAM, otherwise used existing file.
+        /// </summary>
+        bool InRAM { get; }
+
+        /// <summary>
         /// Load settings from file.
         /// </summary>
         /// <param name="path">Path to configuration file.</param>
         /// <param name="prefix">Special version of configuration file.</param>
-        void load(string path, string prefix);
+        /// <returns>true value if loaded from existing file, otherwise loaded as new.</returns>
+        bool load(string path, string prefix);
 
         /// <summary>
         /// Load settings from other object.
@@ -47,8 +59,26 @@ namespace net.r_eg.vsSBE.Configuration
         void load(T data);
 
         /// <summary>
+        /// Use link from other configuration for loading new settings.
+        /// </summary>
+        /// <param name="link">Link from other configuration.</param>
+        /// <returns>true value if loaded from existing file, otherwise loaded as new.</returns>
+        bool load(string link);
+
+        /// <summary>
+        /// Load settings from file with path by default.
+        /// </summary>
+        /// <returns>true value if loaded from existing file, otherwise loaded as new.</returns>
+        bool load();
+
+        /// <summary>
         /// Save settings.
         /// </summary>
         void save();
+
+        /// <summary>
+        /// Unload User data.
+        /// </summary>
+        void unload();
     }
 }

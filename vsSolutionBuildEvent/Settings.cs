@@ -18,6 +18,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using net.r_eg.vsSBE.Configuration;
 using net.r_eg.vsSBE.Extensions;
 using IUserData = net.r_eg.vsSBE.Configuration.User.IData;
 
@@ -73,6 +74,39 @@ namespace net.r_eg.vsSBE
         private volatile bool ignoreActions = false;
 
         /// <summary>
+        /// Checks availability data for used configurations.
+        /// </summary>
+        public bool IsCfgExists
+        {
+            get {
+                return (Config != null && UserConfig != null);
+            }
+        }
+
+        /// <summary>
+        /// Common path of library.
+        /// </summary>
+        public string CommonPath
+        {
+            get
+            {
+                if(commonPath != null) {
+                    return commonPath;
+                }
+
+                string vsdir    = System.Environment.GetEnvironmentVariable("VisualStudioDir");
+                string path     = Path.Combine((vsdir)?? Path.GetTempPath(), APP_NAME).PathFormat();
+
+                if(!Directory.Exists(path)) {
+                    Directory.CreateDirectory(path);
+                }
+                commonPath = path;
+                return commonPath;
+            }
+        }
+        private string commonPath;
+
+        /// <summary>
         /// Full path to library.
         /// </summary>
         public string LibPath
@@ -105,11 +139,32 @@ namespace net.r_eg.vsSBE
         private string workPath;
 
         /// <summary>
+        /// Manager of configurations.
+        /// </summary>
+        public IManager ConfigManager
+        {
+            get
+            {
+                if(configManager == null) {
+                    configManager = new Manager(this);
+                }
+                return configManager;
+            }
+        }
+        private IManager configManager;
+
+        /// <summary>
         /// Main configuration data.
         /// </summary>
         public ISolutionEvents Config
         {
-            get { return net.r_eg.vsSBE.Config._.Data; }
+            get
+            {
+                if(ConfigManager.Config == null) {
+                    return null;
+                }
+                return ConfigManager.Config.Data;
+            }
         }
 
         /// <summary>
@@ -117,7 +172,13 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public IUserData UserConfig
         {
-            get { return net.r_eg.vsSBE.UserConfig._.Data; }
+            get
+            {
+                if(ConfigManager.UserConfig == null) {
+                    return null;
+                }
+                return ConfigManager.UserConfig.Data;
+            }
         }
 
         /// <summary>
@@ -125,16 +186,22 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public IUserData GlobalConfig
         {
-            get { return net.r_eg.vsSBE.GlobalConfig._.Data; }
+            get
+            {
+                IConfig<IUserData> gcfg = ConfigManager.getUserConfigFor(ContextType.Static);
+                if(gcfg == null) {
+                    return null;
+                }
+                return gcfg.Data;
+            }
         }
 
         /// <summary>
-        /// Updates working path for library.
+        /// Static alias. Manager of configurations.
         /// </summary>
-        /// <param name="path">New path.</param>
-        public void setWorkPath(string path)
+        public static IManager CfgManager
         {
-            workPath = path.PathFormat();
+            get { return _.ConfigManager; }
         }
 
         /// <summary>
@@ -178,9 +245,18 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
+        /// Updates working path for library.
+        /// </summary>
+        /// <param name="path">New path.</param>
+        public void setWorkPath(string path)
+        {
+            workPath = path.PathFormat();
+        }
+
+        /// <summary>
         /// Thread-safe getting instance from Settings.
         /// </summary>
-        public static Settings _
+        public static IAppSettings _
         {
             get { return _lazy.Value; }
         }

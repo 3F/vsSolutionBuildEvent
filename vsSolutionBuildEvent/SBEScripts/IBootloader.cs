@@ -72,5 +72,11 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// To unregister all available components.
         /// </summary>
         void unregister();
+
+        /// <summary>
+        /// Activation of components with ISolutionEvents.
+        /// </summary>
+        /// <param name="ISolutionEvents"></param>
+        void updateActivation(ISolutionEvents data);
     }
 }

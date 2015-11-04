@@ -35,6 +35,25 @@ namespace net.r_eg.vsSBE.Configuration
         where TOut: TIn // the TOut should be equivalent to TIn, for example: extending TIn or have a common interface, or simple equal to TIn.
     {
         /// <summary>
+        /// Link to configuration file.
+        /// </summary>
+        public string Link
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
+        /// Get status of configuration data.
+        /// true value if data exists only in RAM, otherwise used existing file.
+        /// </summary>
+        public bool InRAM
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
         /// Defines full path to configuration file.
         /// </summary>
         /// <param name="path">Base path.</param>

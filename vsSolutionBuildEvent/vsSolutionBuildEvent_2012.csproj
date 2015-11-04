@@ -143,7 +143,10 @@
     <Compile Include="Clients\IClientLibrary.cs" />
     <Compile Include="Clients\Instance.cs" />
     <Compile Include="Clients\ClientLibrary.cs" />
+    <Compile Include="Configuration\ContextType.cs" />
     <Compile Include="Configuration\IConfig.cs" />
+    <Compile Include="Configuration\IManager.cs" />
+    <Compile Include="Configuration\Manager.cs" />
     <Compile Include="Configuration\PackerAbstract.cs" />
     <Compile Include="Configuration\User\IDataSvc.cs" />
     <Compile Include="Configuration\User\LinkType.cs" />
@@ -159,7 +162,6 @@
     <Compile Include="Events\Types\Command.cs" />
     <Compile Include="Events\Types\CommandDte.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
-    <Compile Include="GlobalConfig.cs" />
     <Compile Include="ISolutionEvents.cs" />
     <Compile Include="IAppSettings.cs" />
     <Compile Include="DataArgs.cs" />
@@ -171,6 +173,8 @@
     <Compile Include="SBEScripts\SNode\LevelType.cs" />
     <Compile Include="SBEScripts\SNode\ILevel.cs" />
     <Compile Include="SBEScripts\SNode\PM.cs" />
+    <Compile Include="UI\WForms\Logic\RestoreData.cs" />
+    <Compile Include="UI\WForms\Logic\SBEWrap.cs" />
     <Compile Include="UserConfig.cs" />
     <Compile Include="Configuration\Component.cs" />
     <Compile Include="Configuration\User\HashType.cs" />
@@ -189,9 +193,7 @@
     <Compile Include="Events\CommandEvents\Filter.cs" />
     <Compile Include="Events\CommandEvent.cs" />
     <Compile Include="Events\CommandEvents\IFilter.cs" />
-    <Compile Include="Events\ICommandArray.cs" />
     <Compile Include="Events\ICommandEvent.cs" />
-    <Compile Include="Events\ICommand.cs" />
     <Compile Include="Events\IModeCSharp.cs" />
     <Compile Include="Events\IModeTargets.cs" />
     <Compile Include="Events\ModeCSharp.cs" />
@@ -330,7 +332,6 @@
     <Compile Include="Settings.cs" />
     <Compile Include="SolutionParser.cs" />
     <Compile Include="Scripts\Tokens.cs" />
-    <Compile Include="SynchSubscribers.cs" />
     <Compile Include="MSBuild\PreparedData.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
     <Compile Include="UI\Plain\State.cs" />
