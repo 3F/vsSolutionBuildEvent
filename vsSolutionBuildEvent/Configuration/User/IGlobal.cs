@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace net.r_eg.vsSBE.Configuration.User
@@ -35,5 +36,10 @@ namespace net.r_eg.vsSBE.Configuration.User
         /// However, this can be inconvenient and while we can't upgrade format, we should also provide a some option to turn off one field at least.
         /// </summary>
         bool SuppressDualCommand { get; set; }
+
+        /// <summary>
+        /// List of levels for disabling from logger.
+        /// </summary>
+        Dictionary<string, bool> LogIgnoreLevels { get; set; }
     }
 }

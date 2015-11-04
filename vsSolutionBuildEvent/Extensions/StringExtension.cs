@@ -64,5 +64,35 @@ namespace net.r_eg.vsSBE.Extensions
             }
             return path;
         }
+
+        /// <summary>
+        /// Comparing string Guids.
+        /// </summary>
+        /// <param name="g1">Guid 1</param>
+        /// <param name="g2">Guid 2</param>
+        /// <returns>equality or not</returns>
+        public static bool CompareGuids(this string g1, string g2)
+        {
+            if(g1 == g2) {
+                return true; // checked 'as is' inc. null values
+            }
+
+            if(String.IsNullOrEmpty(g1) || String.IsNullOrEmpty(g2)) {
+                return false;
+            }
+
+            // {AF0B53BF-2F92-482C-B3D5-F3E804813100} & AF0B53BF-2F92-482C-B3D5-F3E804813100
+            const int CURLY = 38;
+
+            if(g1.Length == CURLY) {
+                g1 = g1.Substring(1, g1.Length - 2);
+            }
+
+            if(g2.Length == CURLY) {
+                g2 = g2.Substring(1, g2.Length - 2);
+            }
+
+            return g1.Equals(g2, StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

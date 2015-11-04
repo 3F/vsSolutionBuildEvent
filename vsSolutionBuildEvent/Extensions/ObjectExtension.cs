@@ -15,7 +15,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Cryptography;
@@ -82,6 +84,9 @@ namespace net.r_eg.vsSBE.Extensions
         /// <returns>The new object with specific type.</returns>
         public static T2 CloneBySerializationWithType<T, T2>(this T obj)
         {
+            if(obj == null) {
+                return default(T2);
+            }
             return JsonConvert.DeserializeObject<T2>(
                                 JsonConvert.SerializeObject(
                                         obj, 
@@ -96,6 +101,60 @@ namespace net.r_eg.vsSBE.Extensions
                                 new JsonSerializerSettings() {
                                     Binder = new JsonSerializationBinder(),
                                 });
+        }
+
+        /// <summary>
+        /// Comparing objects and array of objects.
+        /// </summary>
+        /// <param name="left">The first object to compare.</param>
+        /// <param name="right">The second object to compare.</param>
+        /// <returns>true value if the objects are considered equal.</returns>
+        public static bool EqualsMixedObjects(this object left, object right)
+        {
+            if(left == null && right == null) {
+                return true;
+            }
+
+            if(left == null || right == null) {
+                return false;
+            }
+
+            if(Object.ReferenceEquals(left, right)) {
+                return true;
+            }
+
+            if(left.GetType().IsArray && right.GetType().IsArray) {
+                return Enumerable.SequenceEqual((object[])left, (object[])right);
+            }
+
+            if(!left.GetType().IsArray && !right.GetType().IsArray) {
+                return Object.Equals(left, right);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks object on null value and empty string if it's string.
+        /// </summary>
+        /// <param name="obj">Object for checking.</param>
+        /// <returns>true if null or empty string, otherwise false.</returns>
+        public static bool IsNullOrEmptyString(this object obj)
+        {
+            return (obj == null || obj is string && (string)obj == String.Empty);
+        }
+
+        /// <summary>
+        /// Convert complex object to system.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static object ToSystemObject(this object data)
+        {
+            if(data is Newtonsoft.Json.Linq.JArray) {
+                return (object)((Newtonsoft.Json.Linq.JArray)data).ToObject(typeof(object[]));
+            }
+            return data;
         }
 
         /// <summary>

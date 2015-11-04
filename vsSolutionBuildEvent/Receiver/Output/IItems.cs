@@ -15,16 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace net.r_eg.vsSBE.Events
+using System;
+using System.Runtime.InteropServices;
+
+namespace net.r_eg.vsSBE.Receiver.Output
 {
     /// <summary>
-    /// Specifies basic fields for command
+    /// Specifies operations with items.
     /// </summary>
-    public interface ICommand
+    [Guid("962E70D3-FBA4-4019-82AD-2473C45F7D7B")]
+    public interface IItems
     {
         /// <summary>
-        /// Main command for handling
+        /// Get item for type and identifier.
         /// </summary>
-        string Command { get; set; }
+        /// <param name="type">Type of item.</param>
+        /// <param name="ident">Identifier of item.</param>
+        /// <returns>Unspecified common item.</returns>
+        IItem get(ItemType type, Ident ident);
+
+        /// <summary>
+        /// Get EW item for identifier.
+        /// </summary>
+        /// <param name="ident">Identifier of item.</param>
+        /// <returns>EW item.</returns>
+        IItemEW getEW(Ident ident);
     }
 }

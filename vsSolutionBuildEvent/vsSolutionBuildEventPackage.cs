@@ -146,6 +146,7 @@ namespace net.r_eg.vsSBE
             {
                 //Log.paneAttach(GetOutputPane(GuidList.OWP_SBE, Settings.OWP_ITEM_VSSBE)); // also may be problem with toolWindow as in other COM variant -_-
                 Log._.paneAttach(Settings.OWP_ITEM_VSSBE, Dte2);
+                Log._.clear();
                 Log._.show();
                 eventsOfStatusTool(true);
 
@@ -175,6 +176,7 @@ namespace net.r_eg.vsSBE
                 UI.Util.closeTool(_configFrm);
 
                 eventsOfStatusTool(false);
+                //Log._.paneDetach((IVsOutputWindow)GetGlobalService(typeof(SVsOutputWindow)));
                 return VSConstants.S_OK;
             }
             catch(Exception ex) {
@@ -246,10 +248,15 @@ namespace net.r_eg.vsSBE
             Event = new API.EventLevel();
             ((IEntryPointCore)Event).load(Dte2, usrCfg.Data.Global.DebugMode);
 
-            _owpListener = new Receiver.Output.OWP(Event.Environment, "Build");
+            // Receiver
+
+            _owpListener = new Receiver.Output.OWP(Event.Environment);
             _owpListener.attachEvents();
-            _owpListener.Receiving += (object sender, Receiver.Output.PaneArgs e) => {
-                ((Bridge.IBuild)Event).onBuildRaw(e.Raw);
+            _owpListener.Receiving += (object sender, Receiver.Output.PaneArgs e) =>
+            {
+                if(e.Guid.CompareGuids(GuidList.OWP_BUILD_STRING)) {
+                    Event.onBuildRaw(e.Raw);
+                }
             };
         }
 

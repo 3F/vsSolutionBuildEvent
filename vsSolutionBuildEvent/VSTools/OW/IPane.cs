@@ -16,37 +16,32 @@
 */
 
 using System;
+using System.Runtime.InteropServices;
 
-namespace net.r_eg.vsSBE.Receiver.Output
+namespace net.r_eg.vsSBE.VSTools.OW
 {
-    [Serializable]
-    public class PaneArgs: EventArgs
+    [Guid("9C9CEFB5-BECE-4DB8-87EF-5C38AFA5EBD7")]
+    public interface IPane
     {
         /// <summary>
-        /// Raw message
+        /// Gets the GUID for the pane.
         /// </summary>
-        public string Raw
-        {
-            get;
-            set;
-        }
+        Guid Guid { get; }
 
         /// <summary>
-        /// Guid string of pane
+        /// Moves the focus to the current item.
         /// </summary>
-        public string Guid
-        {
-            get;
-            set;
-        }
+        void Activate();
 
         /// <summary>
-        /// Name of item pane
+        /// Clears all text from pane.
         /// </summary>
-        public string Item
-        {
-            get;
-            set;
-        }
+        void Clear();
+
+        /// <summary>
+        /// Sends a text string into pane.
+        /// </summary>
+        /// <param name="text"></param>
+        void OutputString(string text);
     }
 }

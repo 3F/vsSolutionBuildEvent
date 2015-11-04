@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
@@ -116,7 +117,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - stOut
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(NotSupportedOperationException))]
+        [ExpectedException(typeof(OperationNotFoundException))]
         public void stOutParseTest2()
         {
             OWPComponent target = new OWPComponent((IEnvironment)null);
@@ -124,6 +125,107 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         }
 
         /// <summary>
+        ///A test for parse - stOut
+        ///</summary>
+        [TestMethod()]
+        public void stOutParseTest3()
+        {
+            try {
+                OWPComponent target = new OWPComponent((IEnvironment)null);
+                target.parse("[OWP out()]");
+                Assert.Fail("1");
+            }
+            catch(InvalidArgumentException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                OWPComponent target = new OWPComponent((IEnvironment)null);
+                target.parse("[OWP out().All]");
+                Assert.Fail("2");
+            }
+            catch(InvalidArgumentException) {
+                Assert.IsTrue(true);
+            }
+        }
+
+        /// <summary>
+        ///A test for parse - stOut
+        ///</summary>
+        [TestMethod()]
+        public void stOutParseTest4()
+        {
+            try {
+                OWPComponent target = new OWPComponent((IEnvironment)null);
+                target.parse("[OWP out.All.NotRealProperty]");
+                Assert.Fail("1");
+            }
+            catch(NotSupportedOperationException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                OWPComponent target = new OWPComponent((IEnvironment)null);
+                target.parse("[OWP out.Warnings.NotRealProperty]");
+                Assert.Fail("2");
+            }
+            catch(NotSupportedOperationException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                OWPComponent target = new OWPComponent((IEnvironment)null);
+                target.parse("[OWP out.Warnings.Codes.NotRealProperty]");
+                Assert.Fail("3");
+            }
+            catch(NotSupportedOperationException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                OWPComponent target = new OWPComponent((IEnvironment)null);
+                target.parse("[OWP out.NotRealProperty]");
+                Assert.Fail("4");
+            }
+            catch(OperationNotFoundException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                OWPComponent target = new OWPComponent((IEnvironment)null);
+                target.parse("[OWP out.Warnings.Count = 12]");
+                Assert.Fail("5");
+            }
+            catch(NotSupportedOperationException) {
+                Assert.IsTrue(true);
+            }
+        }
+
+        /// <summary>
+        ///A test for parse - stOut
+        ///</summary>
+        [TestMethod()]
+        public void stOutParseTest5()
+        {
+            try {
+                OWPComponent target = new OWPComponent((IEnvironment)null);
+                target.parse("[OWP out(\"NotAvailableName\").Warnings.Raw]");
+                Assert.Fail("1");
+            }
+            catch(NotFoundException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                OWPComponent target = new OWPComponent((IEnvironment)null);
+                target.parse("[OWP out(\"814F1F57-BF57-4944-8100-CA5514BB4194\", true).All]");
+                Assert.Fail("2");
+            }
+            catch(NotFoundException) {
+                Assert.IsTrue(true);
+            }
+        }
+
         ///A test for parse - stLog
         ///</summary>
         [TestMethod()]

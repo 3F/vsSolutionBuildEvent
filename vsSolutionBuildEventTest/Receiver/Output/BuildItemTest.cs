@@ -70,7 +70,7 @@ namespace net.r_eg.vsSBE.Test.Receiver.Output
         public void extractTest2()
         {
             string rawdata = @"9>C:\VC\atlmfc\include\atlhost.h(422): warning C4505: 'ATL::CAxHostWindow::AddRef' : unreferenced local function has been removed";
-            BuildItem target = new BuildItem();
+            ItemEW target = new ItemEW();
             target.updateRaw(rawdata);
             Assert.IsTrue(target.ErrorsCount < 1);
             Assert.IsTrue(target.WarningsCount == 1);
@@ -83,7 +83,7 @@ namespace net.r_eg.vsSBE.Test.Receiver.Output
         public void extractTest3()
         {
             string rawdata = @"11>windows\Search.cpp(2246): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int";
-            BuildItem target = new BuildItem();
+            ItemEW target = new ItemEW();
             target.updateRaw(rawdata);
             Assert.IsTrue(target.ErrorsCount == 1);
             Assert.IsTrue(target.WarningsCount < 1);
@@ -100,11 +100,11 @@ namespace net.r_eg.vsSBE.Test.Receiver.Output
             target.updateRaw(rawdata);
             
             target.warnings = new List<string>() { "C4505" };
-            Assert.AreEqual(true, target.checkRule(BuildItem.Type.Warnings, true, new List<string>()));
+            Assert.AreEqual(true, target.checkRule(EWType.Warnings, true, new List<string>()));
             target.warnings.Clear();
 
             target.errors = new List<string>() { "C4430" };
-            Assert.AreEqual(true, target.checkRule(BuildItem.Type.Errors, true, new List<string>()));
+            Assert.AreEqual(true, target.checkRule(EWType.Errors, true, new List<string>()));
             target.errors.Clear();
         }
 
@@ -119,11 +119,11 @@ namespace net.r_eg.vsSBE.Test.Receiver.Output
             target.updateRaw(rawdata);
 
             target.warnings = new List<string>() { "C4505", "C4507" };
-            Assert.AreEqual(false, target.checkRule(BuildItem.Type.Warnings, true, new List<string>() { "C4506" }));
+            Assert.AreEqual(false, target.checkRule(EWType.Warnings, true, new List<string>() { "C4506" }));
             target.warnings.Clear();
 
             target.errors = new List<string>() { "C4430", "C4432" };
-            Assert.AreEqual(false, target.checkRule(BuildItem.Type.Errors, true, new List<string>() { "C4431" }));
+            Assert.AreEqual(false, target.checkRule(EWType.Errors, true, new List<string>() { "C4431" }));
             target.errors.Clear();
         }
 
@@ -138,11 +138,11 @@ namespace net.r_eg.vsSBE.Test.Receiver.Output
             target.updateRaw(rawdata);
 
             target.warnings = new List<string>() { "C4505", "C4507" };
-            Assert.AreEqual(true, target.checkRule(BuildItem.Type.Warnings, true, new List<string>() { "C4507" }));
+            Assert.AreEqual(true, target.checkRule(EWType.Warnings, true, new List<string>() { "C4507" }));
             target.warnings.Clear();
 
             target.errors = new List<string>() { "C4430", "C4432" };
-            Assert.AreEqual(true, target.checkRule(BuildItem.Type.Errors, true, new List<string>() { "C4432" }));
+            Assert.AreEqual(true, target.checkRule(EWType.Errors, true, new List<string>() { "C4432" }));
             target.errors.Clear();
         }
 
@@ -157,14 +157,14 @@ namespace net.r_eg.vsSBE.Test.Receiver.Output
             target.updateRaw(rawdata);
 
             target.warnings = new List<string>() { "C4505", "C4507" };
-            Assert.AreEqual(false, target.checkRule(BuildItem.Type.Warnings, false, new List<string>()));
+            Assert.AreEqual(false, target.checkRule(EWType.Warnings, false, new List<string>()));
             target.warnings.Clear();
-            Assert.AreEqual(false, target.checkRule(BuildItem.Type.Warnings, false, new List<string>()));
+            Assert.AreEqual(false, target.checkRule(EWType.Warnings, false, new List<string>()));
 
             target.errors = new List<string>() { "C4430", "C4432" };
-            Assert.AreEqual(false, target.checkRule(BuildItem.Type.Errors, false, new List<string>()));
+            Assert.AreEqual(false, target.checkRule(EWType.Errors, false, new List<string>()));
             target.errors.Clear();
-            Assert.AreEqual(false, target.checkRule(BuildItem.Type.Errors, false, new List<string>()));
+            Assert.AreEqual(false, target.checkRule(EWType.Errors, false, new List<string>()));
         }
 
         /// <summary>
@@ -178,11 +178,11 @@ namespace net.r_eg.vsSBE.Test.Receiver.Output
             target.updateRaw(rawdata);
 
             target.warnings = new List<string>() { "C4505", "C4507" };
-            Assert.AreEqual(true, target.checkRule(BuildItem.Type.Warnings, false, new List<string>() { "C4507" }));
+            Assert.AreEqual(true, target.checkRule(EWType.Warnings, false, new List<string>() { "C4507" }));
             target.warnings.Clear();
 
             target.errors = new List<string>() { "C4430", "C4432" };
-            Assert.AreEqual(true, target.checkRule(BuildItem.Type.Errors, false, new List<string>() { "C4432" }));
+            Assert.AreEqual(true, target.checkRule(EWType.Errors, false, new List<string>() { "C4432" }));
             target.errors.Clear();
         }
 
@@ -197,17 +197,17 @@ namespace net.r_eg.vsSBE.Test.Receiver.Output
             target.updateRaw(rawdata);
 
             target.warnings = new List<string>() { "C4505" };
-            Assert.AreEqual(false, target.checkRule(BuildItem.Type.Warnings, false, new List<string>() { "C4505" }));
+            Assert.AreEqual(false, target.checkRule(EWType.Warnings, false, new List<string>() { "C4505" }));
             target.warnings.Clear();
 
             target.errors = new List<string>() { "C4430" };
-            Assert.AreEqual(false, target.checkRule(BuildItem.Type.Errors, false, new List<string>() { "C4430" }));
+            Assert.AreEqual(false, target.checkRule(EWType.Errors, false, new List<string>() { "C4430" }));
             target.errors.Clear();
         }
 
         private class BuildItemAccessor
         {
-            public class Accessor: BuildItem
+            public class Accessor: ItemEW
             {
                 //public Accessor(ref string rawdata): base(ref rawdata) { }
             }

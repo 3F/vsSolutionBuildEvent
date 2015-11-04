@@ -85,5 +85,10 @@ namespace net.r_eg.vsSBE.Logger
         /// Show messages if it's possible.
         /// </summary>
         void show();
+
+        /// <summary>
+        /// To clear all available messages if it's possible.
+        /// </summary>
+        void clear();
     }
 }

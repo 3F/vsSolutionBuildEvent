@@ -83,6 +83,11 @@ namespace net.r_eg.vsSBE
         IUserData GlobalConfig { get; }
 
         /// <summary>
+        /// OWP item name by default.
+        /// </summary>
+        string DefaultOWPItem { get; set; }
+
+        /// <summary>
         /// Updates working path for library.
         /// </summary>
         /// <param name="path">New path.</param>

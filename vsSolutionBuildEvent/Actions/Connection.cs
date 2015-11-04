@@ -24,8 +24,11 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
+using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.Logger;
 using net.r_eg.vsSBE.SBEScripts.Components;
+using OWPIdent = net.r_eg.vsSBE.Receiver.Output.Ident;
+using OWPItems = net.r_eg.vsSBE.Receiver.Output.Items;
 
 namespace net.r_eg.vsSBE.Actions
 {
@@ -217,7 +220,18 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="data">Raw data</param>
         public void bindBuildRaw(string data)
         {
-            Receiver.Output.Item._.Build.updateRaw(data); //TODO:
+            bindBuildRaw(data, GuidList.OWP_BUILD_STRING);
+        }
+
+        /// <summary>
+        /// Full process of building.
+        /// </summary>
+        /// <param name="data">Raw data</param>
+        /// <param name="guid">Guid string of pane</param>
+        /// <param name="item">Name of item pane</param>
+        public void bindBuildRaw(string data, string guid, string item = null)
+        {
+            OWPItems._.getEW(new OWPIdent() { guid = guid, item = (item)?? Settings._.DefaultOWPItem }).updateRaw(data); //TODO:
             if(!IsAllowActions)
             {
                 if(!isDisabledAll(SlnEvents.Transmitter)) {
@@ -237,7 +251,7 @@ namespace net.r_eg.vsSBE.Actions
 
             //TODO: IStatus
 
-            foreach(SBETransmitter evt in SlnEvents.Transmitter)
+            foreach(ITransmitter evt in SlnEvents.Transmitter)
             {
                 if(!isExecute(evt, current)) {
                     Log.Info("[Transmitter] ignored action '{0}' :: by execution order", evt.Caption);
@@ -256,21 +270,21 @@ namespace net.r_eg.vsSBE.Actions
 
             //TODO: ExecStateType
 
-            foreach(SBEEventEW evt in SlnEvents.WarningsBuild) {
+            foreach(ISolutionEventEW evt in SlnEvents.WarningsBuild) {
                 if(evt.Enabled) {
-                    sbeEW(evt, Receiver.Output.BuildItem.Type.Warnings);
+                    sbeEW(evt, Receiver.Output.EWType.Warnings);
                 }
             }
 
-            foreach(SBEEventEW evt in SlnEvents.ErrorsBuild) {
+            foreach(ISolutionEventEW evt in SlnEvents.ErrorsBuild) {
                 if(evt.Enabled) {
-                    sbeEW(evt, Receiver.Output.BuildItem.Type.Errors);
+                    sbeEW(evt, Receiver.Output.EWType.Errors);
                 }
             }
 
-            foreach(SBEEventOWP evt in SlnEvents.OWPBuild) {
+            foreach(ISolutionEventOWP evt in SlnEvents.OWPBuild) {
                 if(evt.Enabled) {
-                    sbeOutput(evt, ref data);
+                    sbeOutput(evt, ref data, guid, item);
                 }
             }
         }
@@ -329,9 +343,9 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// Entry point to Errors/Warnings
         /// </summary>
-        protected int sbeEW(ISolutionEventEW evt, Receiver.Output.BuildItem.Type type)
+        protected int sbeEW(ISolutionEventEW evt, Receiver.Output.EWType type)
         {
-            Receiver.Output.BuildItem info = Receiver.Output.Item._.Build;
+            Receiver.Output.IItemEW info = OWPItems._.getEW(new OWPIdent() { guid = GuidList.OWP_BUILD_STRING });
 
             // TODO: capture code####, message..
             if(!info.checkRule(type, evt.IsWhitelist, evt.Codes)) {
@@ -344,7 +358,7 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             try {
-                if(cmd.exec(evt, (type == Receiver.Output.BuildItem.Type.Warnings)? SolutionEventType.Warnings : SolutionEventType.Errors)) {
+                if(cmd.exec(evt, (type == Receiver.Output.EWType.Warnings)? SolutionEventType.Warnings : SolutionEventType.Errors)) {
                     Log.Info("[{0}] finished SBE: {1}", type, evt.Caption);
                 }
                 return Codes.Success;
@@ -358,9 +372,13 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// Entry point to the OWP
         /// </summary>
-        protected int sbeOutput(ISolutionEventOWP evt, ref string raw)
+        /// <param name="evt"></param>
+        /// <param name="raw"></param>
+        /// <param name="guid">Guid string of pane</param>
+        /// <param name="item">Name of item pane</param>
+        protected int sbeOutput(ISolutionEventOWP evt, ref string raw, string guid, string item)
         {
-            if(!(new Receiver.Output.Matcher()).match(evt.Match, raw)) {
+            if(!(new Receiver.Output.Matcher()).match(evt.Match, raw, guid, item)) {
                 return Codes.Success;
             }
 
@@ -393,7 +411,7 @@ namespace net.r_eg.vsSBE.Actions
             if(SlnEvents == null) { // activation of this event type can be before opening solution
                 return Codes.Failed;
             }
-            CommandEvent[] evt = SlnEvents.CommandEvent;
+            ICommandEvent[] evt = SlnEvents.CommandEvent;
 
             if(isDisabledAll(evt)) {
                 return Codes.Success;
@@ -403,7 +421,7 @@ namespace net.r_eg.vsSBE.Actions
                 return _ignoredAction(SolutionEventType.CommandEvent);
             }
 
-            foreach(CommandEvent item in evt)
+            foreach(ICommandEvent item in evt)
             {
                 if(item.Filters == null) {
                     // well, should be some protection for user if we will listen all events... otherwise we can lose control
@@ -412,20 +430,20 @@ namespace net.r_eg.vsSBE.Actions
 
                 var Is = item.Filters.Where(f => 
                             (
-                              ((pre && f.Pre == true) || (!pre && f.Post == true))
+                              ((pre && f.Pre) || (!pre && f.Post))
                                 && 
                                 (
-                                  (f.Id == id && f.Guid == guid) 
+                                  (f.Id == id && f.Guid != null && f.Guid.CompareGuids(guid))
                                    && 
                                    (
                                      (
-                                       (f.CustomIn != null && f.CustomIn == customIn)
-                                       || (f.CustomIn == null && customIn == null)
+                                       (f.CustomIn != null && f.CustomIn.EqualsMixedObjects(customIn))
+                                       || (f.CustomIn == null && customIn.IsNullOrEmptyString())
                                      )
                                      &&
                                      (
-                                       (f.CustomOut != null && f.CustomOut == customOut)
-                                       || (f.CustomOut == null && customOut == null)
+                                       (f.CustomOut != null && f.CustomOut.EqualsMixedObjects(customOut))
+                                       || (f.CustomOut == null && customOut.IsNullOrEmptyString())
                                      )
                                    )
                                 )
@@ -448,7 +466,7 @@ namespace net.r_eg.vsSBE.Actions
             return Status._.contains(SolutionEventType.CommandEvent, StatusType.Fail)? Codes.Failed : Codes.Success;
         }
 
-        protected void commandEvent(CommandEvent item)
+        protected void commandEvent(ICommandEvent item)
         {
             try
             {

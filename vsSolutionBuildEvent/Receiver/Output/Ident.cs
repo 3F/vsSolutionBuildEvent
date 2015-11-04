@@ -15,30 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace net.r_eg.vsSBE.Receiver.Output
 {
     /// <summary>
-    /// Provides the available items from the output
+    /// Identifier of items.
     /// </summary>
-    public sealed class Item: IItem
+    public struct Ident
     {
-        public BuildItem Build
-        {
-            get { return build; }
-        }
-        private BuildItem build = new BuildItem();
+        /// <summary>
+        /// Guid string of pane.
+        /// </summary>
+        public string guid;
 
         /// <summary>
-        /// Thread-safe getting the instance of Items
+        /// Name of item pane.
         /// </summary>
-        public static Item _
-        {
-            get { return _lazy.Value; }
-        }
-        private static readonly Lazy<Item> _lazy = new Lazy<Item>(() => new Item());
-
-        private Item(){}
+        public string item;
     }
 }

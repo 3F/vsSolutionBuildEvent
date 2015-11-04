@@ -16,11 +16,14 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Logger;
+using net.r_eg.vsSBE.VSTools.OW;
 using NLog;
 
 namespace net.r_eg.vsSBE
@@ -36,6 +39,26 @@ namespace net.r_eg.vsSBE
         public event EventHandler<MessageArgs> Receiving = delegate(object sender, MessageArgs e) { };
 
         /// <summary>
+        /// DTE context
+        /// </summary>
+        protected EnvDTE.DTE dte;
+
+        /// <summary>
+        /// To displaying messages.
+        /// </summary>
+        protected IPane upane;
+
+        /// <summary>
+        /// Undelivered messages.
+        /// </summary>
+        protected Queue<string> undelivered = new Queue<string>();
+
+        /// <summary>
+        /// Size of buffer for undelivered messages.
+        /// </summary>
+        protected int undBuffer = 2048;
+
+        /// <summary>
         /// Get instance of the NLog logger
         /// </summary>
         public NLog.Logger NLog
@@ -49,32 +72,16 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Thread-safe getting the instance of Log class
         /// </summary>
-        public static Log _
+        public static ILog _
         {
             get { return _lazy.Value; }
         }
         private static readonly Lazy<Log> _lazy = new Lazy<Log>(() => new Log());
 
         /// <summary>
-        /// DTE context
-        /// </summary>
-        protected EnvDTE.DTE dte;
-
-        /// <summary>
-        /// To displaying messages on the OutputWindowPane by SVsOutputWindow
-        /// </summary>
-        protected IVsOutputWindowPane _paneCOM = null;
-
-        /// <summary>
-        /// To displaying messages on the OutputWindowPane by EnvDTE
-        /// </summary>
-        protected EnvDTE.OutputWindowPane _paneDTE = null;
-
-
-        /// <summary>
         /// Initialization of the IVsOutputWindowPane
-        /// note: probably slow initialization, 
-        ///       and be careful with using in Initialize() of package or constructor, 
+        /// note: probably slow, 
+        ///       and be careful with using inside `Initialize()` method or constructor of main package, 
         ///       may be inner exception for COM object in VS (tested on VS2013 with docked to output panel)
         ///       Otherwise, use the IVsUIShell.FindToolWindow (again, only with __VSFINDTOOLWIN.FTW_fFindFirst)
         /// </summary>
@@ -84,14 +91,12 @@ namespace net.r_eg.vsSBE
         public void paneAttach(string name, IVsOutputWindow ow, EnvDTE.DTE dteContext)
         {
             dte = dteContext;
-            if(_paneCOM != null || _paneDTE != null) {
-                Log.Debug("paneAttach-COM: skipped");
-                return; // currently we work only with one pane
-            }
 
-            Guid id = GuidList.OWP_SBE;
-            ow.CreatePane(ref id, name, 1, 1);
-            ow.GetPane(ref id, out _paneCOM);
+            if(upane != null) {
+                Log.Debug("paneAttach-COM: pane is already attached.");
+                return;
+            }
+            upane = new PaneCOM(ow, name);
         }
 
         /// <summary>
@@ -100,35 +105,26 @@ namespace net.r_eg.vsSBE
         /// <param name="owp"></param>
         public void paneAttach(IVsOutputWindowPane owp)
         {
-            if(_paneCOM != null || _paneDTE != null) {
-                Log.Debug("paneAttach-direct: to detach prev. first /skipped");
+            if(upane != null) {
+                Log.Debug("paneAttach-direct: pane is already attached.");
                 return;
             }
-            _paneCOM = owp;
+            upane = new PaneCOM(owp);
         }
 
         /// <summary>
-        /// Initialization of the EnvDTE.OutputWindowPane
+        /// Attach pane with EnvDTE.OutputWindowPane
         /// </summary>
         /// <param name="name">Name of the pane</param>
         /// <param name="dte2"></param>
         public void paneAttach(string name, EnvDTE80.DTE2 dte2)
         {
             dte = (EnvDTE.DTE)dte2;
-            if(_paneCOM != null || _paneDTE != null) {
-                Log.Debug("paneAttach-DTE: skipped");
-                return; // currently we work only with one pane
+            if(upane != null) {
+                Log.Debug("paneAttach-DTE: pane is already attached.");
+                return;
             }
-
-            try {
-                _paneDTE = dte2.ToolWindows.OutputWindow.OutputWindowPanes.Item(name);
-            }
-            catch(ArgumentException) {
-                _paneDTE = dte2.ToolWindows.OutputWindow.OutputWindowPanes.Add(name);
-            }
-            catch(Exception ex) {
-                Log.Error("Log :: inner exception: '{0}'", ex.ToString());
-            }
+            upane = new PaneDTE(dte2, name);
         }
 
         /// <summary>
@@ -137,19 +133,12 @@ namespace net.r_eg.vsSBE
         /// <param name="ow"></param>
         public void paneDetach(IVsOutputWindow ow)
         {
-            Guid id;
-            if(_paneDTE != null) {
-                id = new Guid(_paneDTE.Guid);
-                //_paneDTE.Clear();
-            }
-            else{
-                id = GuidList.OWP_SBE;
-            }
+            Guid id = (upane != null)? upane.Guid : GuidList.OWP_SBE;
+            paneDetach();
 
             if(ow != null) {
                 ow.DeletePane(ref id);
             }
-            paneDetach();
         }
 
         /// <summary>
@@ -157,9 +146,8 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public void paneDetach()
         {
-            _paneCOM = null;
-            _paneDTE = null;
-            dte      = null;
+            upane   = null;
+            dte     = null;
         }
 
         /// <summary>
@@ -169,7 +157,7 @@ namespace net.r_eg.vsSBE
         /// <returns>self reference</returns>
         public ILog raw(string message)
         {
-            _.write(message);
+            write(message);
             return this;
         }
 
@@ -194,11 +182,8 @@ namespace net.r_eg.vsSBE
                     dte.ExecuteCommand("View.Output"); //TODO:
                 }
 
-                if(_paneDTE != null) {
-                    _paneDTE.Activate();
-                }
-                else if(_paneCOM != null) {
-                    _paneCOM.Activate();
+                if(upane != null) {
+                    upane.Activate();
                 }
             }
             catch(Exception ex) {
@@ -206,6 +191,17 @@ namespace net.r_eg.vsSBE
             }
         }
 
+        /// <summary>
+        /// To clear all available messages if it's possible.
+        /// </summary>
+        public void clear()
+        {
+            undelivered.Clear();
+
+            if(upane != null) {
+                upane.Clear();
+            }
+        }
 
         /// <summary>
         /// Entry point for NLog messages.
@@ -221,7 +217,8 @@ namespace net.r_eg.vsSBE
             }
 #endif
 
-            _.write(_.format(level, message, stamp), level);
+            var log = _lazy.Value;
+            log.write(log.format(level, message, stamp), level);
         }
 
         /// <summary>
@@ -301,30 +298,100 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
+        /// Checks status of ignoring level.
+        /// </summary>
+        /// <param name="level">Level for cheking.</param>
+        /// <returns></returns>
+        protected bool ignoreLevel(string level)
+        {
+            if(String.IsNullOrEmpty(level)) {
+                return false;
+            }
+
+            var cfg = Settings.CfgManager.UserConfig;
+
+            if(cfg == null || cfg.Data == null || !cfg.Data.Global.LogIgnoreLevels.ContainsKey(level)) {
+                return false;
+            }
+            return cfg.Data.Global.LogIgnoreLevels[level];
+        }
+
+        /// <summary>
         /// Where to write.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="level"></param>
         protected virtual void write(string message, string level = null)
         {
+            if(ignoreLevel(level)) {
+                return;
+            }
+
             if(Thread.CurrentThread.Name != LoggingEvent.IDENT_TH) {
                 Receiving(this, new MessageArgs() { Message =  message,  Level = (level)?? String.Empty });
             }
 
-            if(_paneDTE != null) {
-                _paneDTE.OutputString(message);
-                return;
+            try {
+                if(deliver(message)) {
+                    return;
+                }
             }
-
-            if(_paneCOM != null) {
-                _paneCOM.OutputString(message);
-                return;
+            catch(COMException ex) {
+                message = String.Format("Log - COMException '{0}' :: Message - '{1}'", ex.Message, message);
             }
 
             Console.Write(message);
             System.Diagnostics.Debug.Write(message);
         }
 
-        private Log() { }
+        /// <summary>
+        /// Use OWP for write operation.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns>true value if message has been sent.</returns>
+        protected bool owpSend(string message)
+        {
+            if(upane != null) {
+                upane.OutputString(message);
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Delivering message.
+        /// Including the all undelivered before.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns>true value if message has been delivered.</returns>
+        protected bool deliver(string message)
+        {
+            if(upane == null) {
+                holdMessage(message);
+                return false;
+            }
+            
+            while(undelivered.Count > 0) {
+                owpSend(undelivered.Dequeue());
+            }
+
+            owpSend(message);
+            return true;
+        }
+
+        /// <summary>
+        /// Hold undelivered message.
+        /// </summary>
+        /// <param name="msg"></param>
+        protected void holdMessage(string msg)
+        {
+            if(undelivered.Count > undBuffer) {
+                undelivered.Dequeue();
+            }
+            undelivered.Enqueue(msg);
+        }
+
+        protected Log() { }
     }
 }

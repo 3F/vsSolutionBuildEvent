@@ -139,6 +139,16 @@ namespace net.r_eg.vsSBE
         private string workPath;
 
         /// <summary>
+        /// OWP item name by default.
+        /// </summary>
+        public string DefaultOWPItem
+        {
+            get { return defaultOWPItem; }
+            set { defaultOWPItem = value; }
+        }
+        private string defaultOWPItem = "Build";
+
+        /// <summary>
         /// Manager of configurations.
         /// </summary>
         public IManager ConfigManager

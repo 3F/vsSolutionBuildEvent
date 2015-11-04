@@ -165,6 +165,12 @@
     <Compile Include="ISolutionEvents.cs" />
     <Compile Include="IAppSettings.cs" />
     <Compile Include="DataArgs.cs" />
+    <Compile Include="Receiver\Output\EWType.cs" />
+    <Compile Include="Receiver\Output\Ident.cs" />
+    <Compile Include="Receiver\Output\IItemEW.cs" />
+    <Compile Include="Receiver\Output\IItems.cs" />
+    <Compile Include="Receiver\Output\Items.cs" />
+    <Compile Include="Receiver\Output\ItemType.cs" />
     <Compile Include="SBEScripts\Components\Build\ProjectsMap.cs" />
     <Compile Include="SBEScripts\SNode\ArgumentType.cs" />
     <Compile Include="SBEScripts\SNode\IPM.cs" />
@@ -289,7 +295,6 @@
     <Compile Include="Events\IModeInterpreter.cs" />
     <Compile Include="Events\IModeOperation.cs" />
     <Compile Include="Receiver\Output\IItem.cs" />
-    <Compile Include="Receiver\Output\Item.cs" />
     <Compile Include="SBEScripts\Components\CommentComponent.cs" />
     <Compile Include="SBEScripts\Components\ConditionComponent.cs" />
     <Compile Include="SBEScripts\Components\FileComponent.cs" />
@@ -383,7 +388,7 @@
     </Compile>
     <Compile Include="MSBuild\IMSBuild.cs" />
     <Compile Include="Receiver\Output\OWP.cs" />
-    <Compile Include="Receiver\Output\BuildItem.cs" />
+    <Compile Include="Receiver\Output\ItemEW.cs" />
     <Compile Include="MSBuild\Parser.cs" />
     <Compile Include="MSBuild\Exceptions\MSBPropertyParseException.cs" />
     <Compile Include="Actions\Command.cs" />
@@ -430,6 +435,9 @@
     </Compile>
     <Compile Include="vsSolutionBuildEventPackage.cs" />
     <Compile Include="PkgCmdID.cs" />
+    <Compile Include="VSTools\OW\PaneDTE.cs" />
+    <Compile Include="VSTools\OW\PaneCOM.cs" />
+    <Compile Include="VSTools\OW\IPane.cs" />
     <Compile Include="xshd\XshdResource.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -34,8 +34,11 @@ namespace net.r_eg.vsSBE
         /// Main item for OutputWindow
         /// </summary>
         public const string OWP_SBE_STRING      = "3000844A-77CB-4081-BAA0-915E29EA6EB2";
-        
 
+        /// <summary>
+        /// BuildOutput pane
+        /// </summary>
+        public const string OWP_BUILD_STRING    = "1BD8A850-02D1-11d1-BEE7-00A0C913D1F8";
 
         /// <summary>
         /// Guid of main UI command

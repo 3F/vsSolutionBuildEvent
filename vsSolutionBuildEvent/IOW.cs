@@ -16,9 +16,11 @@
 */
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace net.r_eg.vsSBE
 {
+    [Guid("7C0E9E6B-7BDC-4D0F-97D2-6F3F30FBA368")]
     public interface IOW
     {
         /// <summary>

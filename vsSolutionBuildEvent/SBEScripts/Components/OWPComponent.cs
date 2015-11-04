@@ -18,8 +18,12 @@
 using System;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.Receiver.Output;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
+using net.r_eg.vsSBE.SBEScripts.SNode;
+using OWPIdent = net.r_eg.vsSBE.Receiver.Output.Ident;
+using OWPItems = net.r_eg.vsSBE.Receiver.Output.Items;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
@@ -386,101 +390,106 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
-        /// Gets data from the output pane
-        /// TODO: restructuring
+        /// Gets data from the output pane.
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        [
-            Method
-            (
-                "out", 
-                "For getting mixed data from the OWP. Returns the partial raw from all build log", 
+        [Method(
+                "out",
+                "Streaming of getting the mixed data from selected pane. Returns: partial raw data.", 
                 new string[] { "name" }, 
-                new string[] { "Name of item.\n Note: The 'Build' item used by default." }, 
+                new string[] { "Name of pane" }, 
                 CValueType.String, 
                 CValueType.String
-            )
-        ]
+        )]
+        [Method(
+                "out",
+                "Streaming of getting the mixed data from selected pane. Returns: partial raw data.",
+                new string[] { "ident", "isGuid" },
+                new string[] { "Identifier of pane", "Use Guid as identifier or as name of item" },
+                CValueType.String,
+                CValueType.String, CValueType.Boolean
+        )]
         [Property("out", "Alias for: out(\"Build\").", CValueType.String)]
-        [Property("All", "Alias for: out", "out", "stOut", CValueType.String)]
-        [Property("Warnings", "Partial raw with warning/s:", "out", "stOut", CValueType.String)]
-        [Property("Raw", "Alias for: Warnings", "Warnings", "stOut", CValueType.String)]
-        [Property("Count", "Count of warnings", "Warnings", "stOut", CValueType.Integer)]
-        [Property("Codes", "List of warnings as C4702,4505 ...", "Warnings", "stOut", CValueType.List)]
-        [Property("Errors", "Partial raw with error/s:", "out", "stOut", CValueType.String)]
-        [Property("Raw", "Alias for: Errors", "Errors", "stOut", CValueType.String)]
-        [Property("Count", "Count of Errors", "Errors", "stOut", CValueType.Integer)]
-        [Property("Codes", "List of Errors as C4702,4505 ...", "Errors", "stOut", CValueType.List)]
+        [Property("All", "Get raw data if exists.", "out", "stOut", CValueType.String)]
+        [Property("Warnings", "For work with warnings from received data. Also used as short alias for: Warnings.Raw", "out", "stOut", CValueType.String)]
+        [Property("Raw", "Return the partial raw data with warning/s if an exists.", "Warnings", "stOut", CValueType.String)]
+        [Property("Count", "Count of warnings from data", "Warnings", "stOut", CValueType.Integer)]
+        [Property("Codes", "List of warnings from data as C4702,4505, ...", "Warnings", "stOut", CValueType.List)]
+        [Property("Errors", "For work with errors from received data. Also used as short alias for: Errors.Raw:", "out", "stOut", CValueType.String)]
+        [Property("Raw", "Return the partial raw data with errors if an exists", "Errors", "stOut", CValueType.String)]
+        [Property("Count", "Count of errors from data", "Errors", "stOut", CValueType.Integer)]
+        [Property("Codes", "List of errors from data as C4702,4505, ...", "Errors", "stOut", CValueType.List)]
         protected string stOut(string data)
         {
-            Match m = Regex.Match(data, 
-                                    String.Format(@"out
-                                                   (?:
-                                                     \s*
-                                                     \({0}\)  #1 - arguments (optional)
-                                                   )?
-                                                   \s*(.*)    #2 - property",
-                                                   RPattern.DoubleQuotesContent
-                                                 ), RegexOptions.IgnorePatternWhitespace);
+            IPM pm = new PM(data);
 
-            if(!m.Success) {
-                throw new OperationNotFoundException("Failed stOut - '{0}'", data);
+            if(!pm.Is(0, LevelType.Property, "out") && !pm.Is(0, LevelType.Method, "out")) {
+                throw new SyntaxIncorrectException("Failed stOut - '{0}'", data);
             }
-            
-            if(m.Groups[1].Success)
+
+            string item = Settings._.DefaultOWPItem; // by default for all
+            bool isGuid = false;
+
+            if(pm.Is(0, LevelType.Method, "out"))
             {
-                string item = StringHandler.normalize(m.Groups[1].Value);
-                Log.Debug("stOut: item = '{0}'", item);
+                Argument[] args = pm.Levels[0].Args;
+                if((args.Length < 1 || args.Length > 2)
+                    || args[0].type != ArgumentType.StringDouble
+                    || (args.Length == 2 && args[1].type != ArgumentType.Boolean))
+                {
+                    throw new InvalidArgumentException("stOut: incorrect arguments to `out(string ident [, boolean isGuid])`");
+                }
 
-                if(item == "Build") {
-                    //used by default - #[OWP out("Build")] / #[OWP out]
-                }
-                else {
-                    throw new NotSupportedOperationException("item - '{0}' not yet supported", item);
-                }
+                item    = (string)args[0].data;
+                isGuid  = (args.Length == 2)? (bool)args[1].data : false; // optional isGuid param
             }
-            string property = m.Groups[2].Value.Trim();
-            Log.Debug("stOut: property = '{0}'", property);
 
-            string raw = StringHandler.escapeQuotes(Receiver.Output.Item._.Build.Raw);
+            Log.Trace("stOut: out = item('{0}'), isGuid('{1}')", item, isGuid);
 
-            // #[OWP out.All] / #[OWP out]
-            if(property == ".All" || property == String.Empty) {
+            IItemEW ew = OWPItems._.getEW((isGuid)? new OWPIdent() { guid = item } : new OWPIdent() { item = item });
+            string raw = StringHandler.escapeQuotes(ew.Raw);
+
+            // #[OWP out.All] / #[OWP out] / #[OWP out("Build").All] / #[OWP out("Build")] ...
+            if(pm.FinalEmptyIs(1, LevelType.Property, "All") || pm.FinalEmptyIs(1, LevelType.RightOperandEmpty)) {
                 return raw;
             }
 
-            // #[OWP out.Warnings.Raw] / #[OWP out.Warnings]
-            if(property == ".Warnings" || property == ".Warnings.Raw") {
-                return (Receiver.Output.Item._.Build.IsWarnings)? raw : String.Empty;
+            // #[OWP out.Warnings.Count] ...
+            if(pm.Is(1, LevelType.Property, "Warnings") && pm.FinalEmptyIs(2, LevelType.Property, "Count")) {
+                return Value.from(ew.WarningsCount);
             }
 
-            // #[OWP out.Warnings.Count]
-            if(property == ".Warnings.Count") {
-                return Value.from(Receiver.Output.Item._.Build.WarningsCount);
+            // #[OWP out.Warnings.Codes] ...
+            if(pm.Is(1, LevelType.Property, "Warnings") && pm.FinalEmptyIs(2, LevelType.Property, "Codes")) {
+                return Value.from(ew.Warnings);
             }
 
-            // #[OWP out.Warnings.Codes]
-            if(property == ".Warnings.Codes") {
-                return Value.from(Receiver.Output.Item._.Build.Warnings);
+            // #[OWP out.Warnings.Raw] / #[OWP out.Warnings] ...
+            if((pm.Is(1, LevelType.Property, "Warnings") && pm.FinalEmptyIs(2, LevelType.Property, "Raw"))
+                || pm.FinalEmptyIs(1, LevelType.Property, "Warnings"))
+            {
+                return (ew.IsWarnings)? raw : String.Empty;
             }
 
-            // #[OWP out.Errors.Raw] / #[OWP out.Errors]
-            if(property == ".Errors" || property == ".Errors.Raw") {
-                return (Receiver.Output.Item._.Build.IsErrors)? raw : String.Empty;
+            // #[OWP out.Errors.Count] ...
+            if(pm.Is(1, LevelType.Property, "Errors") && pm.FinalEmptyIs(2, LevelType.Property, "Count")) {
+                return Value.from(ew.ErrorsCount);
             }
 
-            // #[OWP out.Errors.Count]
-            if(property == ".Errors.Count") {
-                return Value.from(Receiver.Output.Item._.Build.ErrorsCount);
+            // #[OWP out.Errors.Codes] ...
+            if(pm.Is(1, LevelType.Property, "Errors") && pm.FinalEmptyIs(2, LevelType.Property, "Codes")) {
+                return Value.from(ew.Errors);
             }
 
-            // #[OWP out.Errors.Codes]
-            if(property == ".Errors.Codes") {
-                return Value.from(Receiver.Output.Item._.Build.Errors);
+            // #[OWP out.Errors.Raw] / #[OWP out.Errors] ...
+            if((pm.Is(1, LevelType.Property, "Errors") && pm.FinalEmptyIs(2, LevelType.Property, "Raw"))
+                || pm.FinalEmptyIs(1, LevelType.Property, "Errors"))
+            {
+                return (ew.IsErrors)? raw : String.Empty;
             }
-
-            throw new NotSupportedOperationException("property - '{0}' not yet supported", property);
+            
+            throw new OperationNotFoundException("stOut: not found - '{0}' /'{1}'", pm.Levels[1].Data, pm.Levels[1].Type);
         }
 
         private bool _booleanValueFromRaw(ref string raw)

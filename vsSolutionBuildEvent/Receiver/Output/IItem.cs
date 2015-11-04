@@ -15,13 +15,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Runtime.InteropServices;
+
 namespace net.r_eg.vsSBE.Receiver.Output
 {
+    /// <summary>
+    /// Specifies basic item.
+    /// </summary>
+    [Guid("38C1F903-2584-4D1D-98A3-922A953280C8")]
     public interface IItem
     {
         /// <summary>
-        /// Item of build process
+        /// Gets current raw data or sets new.
         /// </summary>
-        BuildItem Build { get; }
+        string Raw { get; set; }
+
+        /// <summary>
+        /// Updating raw data.
+        /// </summary>
+        /// <param name="data"></param>
+        void updateRaw(string data);
     }
 }

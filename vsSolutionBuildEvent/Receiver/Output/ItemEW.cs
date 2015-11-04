@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,35 +18,49 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace net.r_eg.vsSBE.Receiver.Output
 {
-    public class BuildItem
+    /// <summary>
+    /// The item based on errors/warnings container.
+    /// </summary>
+    public class ItemEW: IItemEW
     {
+        /// <summary>
+        /// Count of found errors.
+        /// </summary>
         public int ErrorsCount
         {
             get { return errors.Count; }
         }
 
+        /// <summary>
+        /// Count of found warnings.
+        /// </summary>
         public int WarningsCount
         {
             get { return warnings.Count; }
         }
 
+        /// <summary>
+        /// Checks errors.
+        /// </summary>
         public bool IsErrors
         {
             get { return ErrorsCount > 0; }
         }
 
+        /// <summary>
+        /// Checks warnings.
+        /// </summary>
         public bool IsWarnings
         {
             get { return WarningsCount > 0; }
         }
 
         /// <summary>
-        /// all errors in partial data
+        /// Gets all errors in partial data.
         /// </summary>
         public List<string> Errors
         {
@@ -55,7 +69,7 @@ namespace net.r_eg.vsSBE.Receiver.Output
         protected List<string> errors = new List<string>();
 
         /// <summary>
-        /// all warnings in partial data
+        /// Gets all warnings in partial data.
         /// </summary>
         public List<string> Warnings
         {
@@ -63,19 +77,13 @@ namespace net.r_eg.vsSBE.Receiver.Output
         }
         protected List<string> warnings = new List<string>();
 
-        public enum Type
-        {
-            Warnings,
-            Errors
-        }
-
         /// <summary>
-        /// Current raw
+        /// Gets current raw data or sets new.
         /// </summary>
         public string Raw
         {
             get { 
-                return (rawdata == null)? String.Empty : rawdata; 
+                return (rawdata)?? String.Empty;
             }
             set {
                 updateRaw(value);
@@ -84,7 +92,7 @@ namespace net.r_eg.vsSBE.Receiver.Output
         protected string rawdata;
 
         /// <summary>
-        /// Updating data and immediately extracting contents
+        /// Updating raw data.
         /// </summary>
         /// <param name="rawdata"></param>
         public void updateRaw(string rawdata)
@@ -93,11 +101,18 @@ namespace net.r_eg.vsSBE.Receiver.Output
             extract();
         }
 
-        public bool checkRule(Type type, bool isWhitelist, List<string> codes)
+        /// <summary>
+        /// Checking of rule for codes.
+        /// </summary>
+        /// <param name="type">Type of checking.</param>
+        /// <param name="isWhitelist">The rule of whitelist or blacklist.</param>
+        /// <param name="codes">List of codes for checking.</param>
+        /// <returns>true value if it correct for this rule.</returns>
+        public bool checkRule(EWType type, bool isWhitelist, List<string> codes)
         {
             if(isWhitelist) {
-                if((codes.Count < 1 && (type == Type.Warnings ? Warnings : Errors).Count > 0) || 
-                    (codes.Count > 0 && codes.Intersect(type == Type.Warnings ? Warnings : Errors).Count() > 0)) {
+                if((codes.Count < 1 && (type == EWType.Warnings ? Warnings : Errors).Count > 0) || 
+                    (codes.Count > 0 && codes.Intersect(type == EWType.Warnings ? Warnings : Errors).Count() > 0)) {
                     return true;
                 }
                 return false;
@@ -106,7 +121,7 @@ namespace net.r_eg.vsSBE.Receiver.Output
             if(codes.Count < 1) {
                 return false;
             }
-            if((type == Type.Warnings ? Warnings : Errors).Except(codes).Count() > 0) {
+            if((type == EWType.Warnings ? Warnings : Errors).Except(codes).Count() > 0) {
                 return true;
             }
             return false;

@@ -16,37 +16,19 @@
 */
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace net.r_eg.vsSBE.Receiver.Output
 {
-    [Serializable]
-    public class PaneArgs: EventArgs
+    /// <summary>
+    /// Specifies types of available items.
+    /// </summary>
+    [Guid("3DD1EA27-A02E-4982-B71C-F72329CAC723")]
+    public enum ItemType
     {
         /// <summary>
-        /// Raw message
+        /// The item based on errors/warnings container.
         /// </summary>
-        public string Raw
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Guid string of pane
-        /// </summary>
-        public string Guid
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Name of item pane
-        /// </summary>
-        public string Item
-        {
-            get;
-            set;
-        }
+        EW,
     }
 }

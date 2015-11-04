@@ -15,16 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace net.r_eg.vsSBE.Events
+using System;
+using System.Runtime.InteropServices;
+
+namespace net.r_eg.vsSBE.Receiver.Output
 {
-    /// <summary>
-    /// Specifies basic fields for array of commands
-    /// </summary>
-    public interface ICommandArray
+    [Guid("71320C9F-3019-4FF1-B19C-BE2E63713937")]
+    public enum EWType
     {
         /// <summary>
-        /// Main atomic commands for handling
+        /// Type of common warnings.
         /// </summary>
-        string[] Command { get; set; }
+        Warnings,
+
+        /// <summary>
+        /// Type of common errors.
+        /// </summary>
+        Errors
     }
 }

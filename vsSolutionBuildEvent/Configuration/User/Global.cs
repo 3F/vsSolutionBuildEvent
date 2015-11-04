@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
+
 namespace net.r_eg.vsSBE.Configuration.User
 {
     public class Global: IGlobal
@@ -39,5 +41,16 @@ namespace net.r_eg.vsSBE.Configuration.User
             get;
             set;
         }
+
+        /// <summary>
+        /// List of levels for disabling from logger.
+        /// </summary>
+        //[JsonProperty(TypeNameHandling = TypeNameHandling.None, ItemTypeNameHandling = TypeNameHandling.All)]
+        public Dictionary<string, bool> LogIgnoreLevels
+        {
+            get { return logIgnoreLevels; }
+            set { logIgnoreLevels = value; }
+        }
+        private Dictionary<string, bool> logIgnoreLevels = new Dictionary<string, bool>();
     }
 }
