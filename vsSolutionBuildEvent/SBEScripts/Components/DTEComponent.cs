@@ -193,10 +193,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     return Value.from(lastCommandEvent.Id);
                 }
                 case "CustomIn": {
-                    return Value.from(lastCommandEvent.CustomIn);
+                    return Value.pack(lastCommandEvent.CustomIn)?? String.Empty;
                 }
                 case "CustomOut": {
-                    return Value.from(lastCommandEvent.CustomOut);
+                    return Value.pack(lastCommandEvent.CustomOut)?? String.Empty;
                 }
                 case "Pre": {
                     return Value.from(lastCommandEvent.Pre); // see commandEvent below

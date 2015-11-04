@@ -201,16 +201,17 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
         /// Extracts all arguments from line.
         /// </summary>
         /// <param name="data">Raw line with user arguments.</param>
+        /// <param name="splitter">A character that delimits arguments.</param>
         /// <returns>List of parsed arguments or null value if data is empty.</returns>
         /// <exception cref="SyntaxIncorrectException">If incorrect arguments line.</exception>
-        protected Argument[] extractArgs(string data)
+        protected Argument[] extractArgs(string data, char splitter = ',')
         {
             if(String.IsNullOrWhiteSpace(data)) {
                 return new Argument[0];
             }
             
             StringHandler h = new StringHandler();
-            string[] raw    = h.protectMixedQuotes(data).Split(',');
+            string[] raw    = h.protectArguments(data).Split(splitter);
 
             Argument[] ret = new Argument[raw.Length];
             for(int i = 0; i < raw.Length; ++i)
@@ -231,16 +232,39 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
         /// <returns>Prepared struct.</returns>
         protected Argument detectArgument(string raw)
         {
+            // Array - { "p1", true, 12 }
+
+            Match m = Regex.Match(raw, String.Format("^{0}$", RPattern.ObjectContent), RegexOptions.IgnorePatternWhitespace);
+            if(m.Success)
+            {
+                return new Argument() {
+                    type = ArgumentType.Object,
+                    data = extractArgs(m.Groups[1].Value.Trim())
+                };
+            }
+
+            // Char
+
+            m = Regex.Match(raw, String.Format("^{0}$", RPattern.CharContent));
+            if(m.Success)
+            {
+                return new Argument() { 
+                    type = ArgumentType.Char,
+                    data = Value.toChar(m.Groups[1].Value)
+                };
+            }
+
+
             // Strings
 
-            Match m = Regex.Match(raw, 
-                                    String.Format(@"^(?:
-                                                       {0}   #1  - Content from double quotes
-                                                     |
-                                                       {1}   #2  - Content from single quotes
-                                                    )$", RPattern.DoubleQuotesContent, RPattern.SingleQuotesContent
-                                    ),
-                                    RegexOptions.IgnorePatternWhitespace);
+            m = Regex.Match(raw, 
+                             String.Format(@"^(?:
+                                                {0}   #1  - Content from double quotes
+                                              |
+                                                {1}   #2  - Content from single quotes
+                                             )$", RPattern.DoubleQuotesContent, RPattern.SingleQuotesContent
+                             ),
+                             RegexOptions.IgnorePatternWhitespace);
             if(m.Success)
             {
                 return new Argument() { 
@@ -260,17 +284,6 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
                 };
             }
 
-            // Double
-
-            m = Regex.Match(raw, String.Format("^{0}$", RPattern.DoubleContent));
-            if(m.Success)
-            {
-                return new Argument() {
-                    type = ArgumentType.Double,
-                    data = Value.toDouble(m.Groups[1].Value)
-                };
-            }
-
             // Float
 
             m = Regex.Match(raw, String.Format("^{0}$", RPattern.FloatContent));
@@ -279,6 +292,17 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
                 return new Argument() { 
                     type = ArgumentType.Float,
                     data = Value.toFloat(m.Groups[1].Value)
+                };
+            }
+
+            // Double
+
+            m = Regex.Match(raw, String.Format("^{0}$", RPattern.DoubleContent));
+            if(m.Success)
+            {
+                return new Argument() {
+                    type = ArgumentType.Double,
+                    data = Value.toDouble(m.Groups[1].Value)
                 };
             }
 

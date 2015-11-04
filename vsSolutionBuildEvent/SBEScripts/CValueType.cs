@@ -58,8 +58,15 @@ namespace net.r_eg.vsSBE.SBEScripts
         UFloat,
 
         /// <summary>
-        /// Sequential list of mixed values
+        /// Sequential list of mixed values.
+        /// format: 1,2,3,4,5,6,7
         /// </summary>
         List,
+
+        /// <summary>
+        /// Object data. Similar as array with mixed data.
+        /// Format: { "p1", true, { 12, 'n', -4.5f }, 12d }
+        /// </summary>
+        Object,
     }
 }

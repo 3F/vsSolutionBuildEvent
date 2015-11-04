@@ -1,6 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts;
+using net.r_eg.vsSBE.SBEScripts.SNode;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts
 {
@@ -372,6 +374,135 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
         public void cmpTest24()
         {
             Value.cmp("2", "1", "> =");
+        }
+        
+        /// <summary>
+        ///A test for pack
+        ///</summary>
+        [TestMethod()]
+        public void packTest1()
+        {
+            object data = (object)new object[] { "str", 123, -1.4, true, "str2", new object[] { 1.2f, "str2", false }, -24.574 };
+            Assert.AreEqual("{\"str\", 123, -1.4, true, \"str2\", {1.2f, \"str2\", false}, -24.574}", Value.pack(data));
+        }
+
+        /// <summary>
+        ///A test for pack
+        ///</summary>
+        [TestMethod()]
+        public void packTest2()
+        {
+            object data = (object)new object[] { "str", 't', new object[] { 'a', 'b', 'c' }, true };
+            Assert.AreEqual("{\"str\", 't', {'a', 'b', 'c'}, true}", Value.pack(data));
+        }
+
+        /// <summary>
+        ///A test for pack
+        ///</summary>
+        [TestMethod()]
+        public void packTest3()
+        {
+            Assert.AreEqual(" test ", Value.pack(" test "));
+            Assert.AreEqual(String.Empty, Value.pack(String.Empty));
+            Assert.AreEqual(null, Value.pack(null));
+        }
+
+        /// <summary>
+        ///A test for pack and SNode.Arguments - Optional compatibility
+        ///</summary>
+        [TestMethod()]
+        public void packTest4()
+        {
+            object data = (object)new object[] { "str", 123, -1.4, true, 'n', new object[] { 1.2f, "str2", 'y', false }, -24.574 };
+
+            IPM pm = new PM(String.Format("left({0})", Value.pack(data)));
+            
+            Argument[] raw = (Argument[])pm.Levels[0].Args;
+            Assert.AreEqual(raw.Length, 1);
+
+            Assert.AreEqual(raw[0].type, ArgumentType.Object);
+            {
+                Argument[] args = (Argument[])raw[0].data;
+                Assert.AreEqual(args.Length, 7);
+
+                Assert.AreEqual(args[0].type, ArgumentType.StringDouble);
+                Assert.AreEqual(args[0].data, "str");
+
+                Assert.AreEqual(args[1].type, ArgumentType.Integer);
+                Assert.AreEqual(args[1].data, 123);
+
+                Assert.AreEqual(args[2].type, ArgumentType.Double);
+                Assert.AreEqual(args[2].data, -1.4);
+
+                Assert.AreEqual(args[3].type, ArgumentType.Boolean);
+                Assert.AreEqual(args[3].data, true);
+
+                Assert.AreEqual(args[4].type, ArgumentType.Char);
+                Assert.AreEqual(args[4].data, 'n');
+
+                Assert.AreEqual(args[5].type, ArgumentType.Object);
+                {
+                    Argument[] args5 = (Argument[])args[5].data;
+                    Assert.AreEqual(args5.Length, 4);
+
+                    Assert.AreEqual(args5[0].type, ArgumentType.Float);
+                    Assert.AreEqual(args5[0].data, 1.2f);
+
+                    Assert.AreEqual(args5[1].type, ArgumentType.StringDouble);
+                    Assert.AreEqual(args5[1].data, "str2");
+
+                    Assert.AreEqual(args5[2].type, ArgumentType.Char);
+                    Assert.AreEqual(args5[2].data, 'y');
+
+                    Assert.AreEqual(args5[3].type, ArgumentType.Boolean);
+                    Assert.AreEqual(args5[3].data, false);
+                }
+
+                Assert.AreEqual(args[6].type, ArgumentType.Double);
+                Assert.AreEqual(args[6].data, -24.574);
+            }            
+        }
+
+        /// <summary>
+        ///A test for pack and SNode.Arguments /Float and Double - Optional compatibility
+        ///</summary>
+        [TestMethod()]
+        public void packTest5()
+        {
+            object data = (object)new object[] { 1.4, 1.4f, 1.4d, -1.4, -1.4f, -1.4d };
+
+            IPM pm = new PM(String.Format("left({0})", Value.pack(data)));
+
+            Argument[] args = (Argument[])pm.Levels[0].Args[0].data;
+            Assert.AreEqual(args.Length, 6);
+            
+            Assert.AreEqual(args[0].type, ArgumentType.Double);
+            Assert.AreEqual(args[0].data, 1.4d);
+
+            Assert.AreEqual(args[1].type, ArgumentType.Float);
+            Assert.AreEqual(args[1].data, 1.4f);
+
+            Assert.AreEqual(args[2].type, ArgumentType.Double);
+            Assert.AreEqual(args[2].data, 1.4d);
+
+            Assert.AreEqual(args[3].type, ArgumentType.Double);
+            Assert.AreEqual(args[3].data, -1.4d);
+
+            Assert.AreEqual(args[4].type, ArgumentType.Float);
+            Assert.AreEqual(args[4].data, -1.4f);
+
+            Assert.AreEqual(args[5].type, ArgumentType.Double);
+            Assert.AreEqual(args[5].data, -1.4d);
+        }
+
+        /// <summary>
+        ///A test for pack - nested
+        ///</summary>
+        [TestMethod()]
+        public void packTest6()
+        {
+            object data = (object)new object[] { "str", new object[] { 1, 'y', new object[] { -12.457f, new object[] { 12 } } }, true };
+            Assert.AreEqual("{\"str\", {1, 'y', {-12.457f, {12}}}, true}", Value.pack(data));
         }
     }
 }

@@ -174,7 +174,7 @@ namespace net.r_eg.vsSBE.Scripts
                 }
                 var.status          = TUserVariable.StatusType.Evaluated;
                 definitions[ident]  = var;
-                Log.Debug("Completed evaluation of variable with IEvaluator :: '{0}'", ident);
+                Log.Trace("IEvaluator '{0}': Evaluation of variable is completed with  :: '{1}'", evaluator.GetType().ToString(), ident);
             }
         }
 

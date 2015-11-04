@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.Extensions;
 
 namespace net.r_eg.vsSBE.SBEScripts
 {
@@ -97,6 +98,16 @@ namespace net.r_eg.vsSBE.SBEScripts
             return Double.Parse(val.Trim(), CultureInfo.InvariantCulture);
         }
 
+        /// <summary>
+        /// Getting of symbol as char.
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        public static char toChar(string val)
+        {
+            return Char.Parse(val.Trim());
+        }
+
         /// <param name="val"></param>
         /// <returns></returns>
         public static string from(bool val)
@@ -138,6 +149,109 @@ namespace net.r_eg.vsSBE.SBEScripts
         public static string from(string val)
         {
             return (val)?? String.Empty;
+        }
+
+        /// <summary>
+        /// Extract SNode.Argument[] into system object[] data.
+        /// </summary>
+        /// <param name="args">SNode arguments.</param>
+        /// <returns></returns>
+        public static object[] extract(SNode.Argument[] args)
+        {
+            object[] ret = new object[args.Length];
+            for(int i = 0; i < args.Length; ++i)
+            {
+                if(args[i].data is SNode.Argument[]) {
+                    ret[i] = extract((SNode.Argument[])args[i].data);
+                    continue;
+                }
+                ret[i] = args[i].data;
+#if DEBUG
+                Log.Trace("Value.extract: SNode.Argument - '{0}'", ret[i]);
+#endif
+            }
+            return ret;
+        }
+
+        /// <summary>
+        /// To pack complex object data in string format.
+        /// Ex.: {"str", 123, -1.4, true, "str2", {1.2, "str2", false}, -24.574}
+        /// </summary>
+        /// <param name="data">Mixed data inc. complex object.</param>
+        /// <returns>string with mixed data.</returns>
+        public static string pack(object data)
+        {
+            if(data == null) {
+                return null;
+            }
+            data = data.ToSystemObject();
+
+            if(!data.GetType().IsArray) {
+                return data.ToString();
+            }
+            List<object> ret = new List<object>();
+
+            foreach(object val in (object[])data)
+            {
+                object sys = val.ToSystemObject();
+
+                if(sys.GetType().IsArray) {
+                    ret.Add(pack(sys));
+                    continue;
+                }
+
+                if(sys is string) {
+                    ret.Add(String.Format("\"{0}\"", sys));
+                    continue;
+                }
+
+                if(sys is bool) {
+                    ret.Add(sys.ToString().ToLower());
+                    continue;
+                }
+
+                if(sys is char) {
+                    ret.Add(String.Format("'{0}'", sys));
+                    continue;
+                }
+
+                if(sys is Single) {
+                    ret.Add(String.Format("{0}f", sys.ToString().Replace(',', '.')));
+                    continue;
+                }
+
+                if(sys is Double) {
+                    ret.Add(sys.ToString().Replace(',', '.'));
+                    continue;
+                }
+
+                ret.Add(sys);
+            }
+            return String.Format("{{{0}}}", String.Join(", ", ret));
+        }
+
+        /// <summary>
+        /// To pack string argument in object.
+        /// </summary>
+        /// <param name="arg">Argument for packing.</param>
+        /// <returns></returns>
+        public static object packArgument(object arg)
+        {
+            if(arg == null) {
+                return null;
+            }
+
+            if(!(arg is string) || String.IsNullOrWhiteSpace((string)arg)) {
+                return arg;
+            }
+
+            SNode.IPM pm            = new SNode.PM(String.Format("_({0})", arg));
+            SNode.Argument first    = pm.Levels[0].Args[0];
+
+            if(first.type != SNode.ArgumentType.Object) {
+                return arg;
+            }
+            return extract((SNode.Argument[])first.data);
         }
 
         /// <summary>

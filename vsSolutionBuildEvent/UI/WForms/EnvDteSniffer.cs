@@ -17,6 +17,7 @@
 
 using System;
 using System.Windows.Forms;
+using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.UI.WForms.Controls;
 using CEAfterEventHandler = EnvDTE._dispCommandEvents_AfterExecuteEventHandler;
 using CEBeforeEventHandler = EnvDTE._dispCommandEvents_BeforeExecuteEventHandler;
@@ -34,6 +35,11 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// Provides command events for automation clients
         /// </summary>
         protected EnvDTE.CommandEvents cmdEvents;
+
+        /// <summary>
+        /// Size of buffer for existing records.
+        /// </summary>
+        protected int rcBuffer = 2048;
 
         /// <summary>
         /// object synch.
@@ -88,8 +94,13 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(dgvCESniffer == null) {
                 return;
             }
+
+            if(dgvCESniffer.Rows.Count > rcBuffer) {
+                dgvCESniffer.Rows.RemoveAt(0);
+            }
+
             string tFormat = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern + " .fff";
-            dgvCESniffer.Rows.Add(DateTime.Now.ToString(tFormat), pre, guid, id, customIn, customOut, Util.enumViewBy(guid, id));
+            dgvCESniffer.Rows.Add(DateTime.Now.ToString(tFormat), pre, guid, id, Value.pack(customIn), Value.pack(customOut), Util.enumViewBy(guid, id));
         }
 
         protected void flash(Lights.FlashType type, int delay = 250)
@@ -135,6 +146,28 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void buttonFlush_Click(object sender, EventArgs e)
         {
             dgvCESniffer.Rows.Clear();
+        }
+
+        private void menuCopy_Click(object sender, EventArgs e)
+        {
+            if(dgvCESniffer.SelectedRows.Count < 1) {
+                return;
+            }
+            Clipboard.SetDataObject(dgvCESniffer.GetClipboardContent());
+        }
+
+        private void menuRemove_Click(object sender, EventArgs e)
+        {
+            foreach(DataGridViewRow row in dgvCESniffer.SelectedRows) {
+                if(!row.IsNewRow) {
+                    dgvCESniffer.Rows.Remove(row);
+                }
+            }
+        }
+
+        private void menuFlush_Click(object sender, EventArgs e)
+        {
+            buttonFlush_Click(sender, e);
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events;
+using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
@@ -210,6 +211,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             target.parse("[DTE NotExist.test]");
         }
 
+
         private class DTEComponentAccessor: DTEComponent
         {
             protected Mock<IEnvironment> mEnv;
@@ -253,6 +255,11 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 mDTEO.Setup(m => m.exec(It.IsAny<string[]>(), It.IsAny<bool>()));
                 this.dteo = mDTEO.Object;
             }
+
+            //protected override void raise(string guid, int id, ref object customIn, ref object customOut)
+            //{
+            //    // ...
+            //}
         }
     }
 }

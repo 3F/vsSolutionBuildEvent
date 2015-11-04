@@ -257,7 +257,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <returns>prepared & evaluated data</returns>
         protected string selector(string data)
         {
-            Log.Debug("SBEScripts-selector: started with '{0}'", data);
+            Log.Trace("SBEScripts-selector: started with '{0}'", data);
 
             foreach(IComponent c in Bootloader.Components)
             {

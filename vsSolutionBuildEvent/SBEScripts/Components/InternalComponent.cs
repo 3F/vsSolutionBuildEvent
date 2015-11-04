@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,10 +16,7 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events;
@@ -32,7 +29,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// <summary>
     /// All internal operations with vsSBE
     /// </summary>
-    [Component("vsSBE", "All internal operations with vsSBE")]
+    [Component("vsSBE", new string[] { "Core" }, "All internal operations with vsSBE")]
     public class InternalComponent: Component, IComponent
     {
         /// <summary>
@@ -40,7 +37,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         public override string Condition
         {
-            get { return "vsSBE "; }
+            get { return @"(?:vsSBE|Core)\s"; }
         }
 
         /// <summary>

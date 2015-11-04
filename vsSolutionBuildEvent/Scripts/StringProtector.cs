@@ -112,6 +112,29 @@ namespace net.r_eg.vsSBE.Scripts
         }
 
         /// <summary>
+        /// Protects data with custom pattern.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="pattern">Pattern with first ($1) capture group.</param>
+        /// <returns>protected string</returns>
+        public string protectByPattern(string data, string pattern)
+        {
+            lock(_lock)
+            {
+                return Regex.Replace(data, pattern, delegate(Match m)
+                                                    {
+                                                        uint ident      = IdentNext;
+                                                        strings[ident]  = m.Groups[1].Value;
+#if DEBUG
+                                                        Log.Trace("StringProtector: protect by pattern '{0}' :: '{1}'", strings[ident], ident);
+#endif
+                                                        return replacementIn(ident);
+                                                    },
+                                                    RegexOptions.IgnorePatternWhitespace);
+            }
+        }
+
+        /// <summary>
         /// Restores the all protected data for strings.
         /// </summary>
         /// <param name="data"></param>
@@ -122,7 +145,7 @@ namespace net.r_eg.vsSBE.Scripts
 
             if(_recoveryLevel >= RECOVERY_LIMIT) {
                 _recoveryLevel = 0;
-                throw new LimitException("StringHandler->recovery: Nesting level of '{0}' reached. Aborted.", RECOVERY_LIMIT);
+                throw new LimitException("StringProtector->recovery: Nesting level of '{0}' reached. Aborted.", RECOVERY_LIMIT);
             }
 
             lock(_lock)
@@ -132,14 +155,17 @@ namespace net.r_eg.vsSBE.Scripts
                     string removed;
                     uint index = uint.Parse(m.Groups[1].Value);
                     strings.TryRemove(index, out removed); // deallocate protected string
-
-                    Log.Trace("StringHandler: recovery string '{0}' :: '{1}' /level: {2}", removed, index, _recoveryLevel);
+#if DEBUG
+                    Log.Trace("StringProtector: recovery string '{0}' :: '{1}' /level: {2}", removed, index, _recoveryLevel);
+#endif
                     return removed;
                 });
 
                 if(Regex.IsMatch(ret, replacementOut()))
                 {
-                    Log.Trace("StringHandler->recovery: found the new protected data - '{0}'", ret);
+#if DEBUG
+                    Log.Trace("StringProtector->recovery: found the new protected data - '{0}'", ret);
+#endif
                     ++_recoveryLevel;
                     ret = recovery(ret);
                     --_recoveryLevel;
@@ -171,7 +197,9 @@ namespace net.r_eg.vsSBE.Scripts
                 {
                     uint ident      = IdentNext;
                     strings[ident]  = m.Groups[1].Value;
-                    Log.Trace("MSBuild-StringHandler: protect string '{0}' :: '{1}'", strings[ident], ident);
+#if DEBUG
+                    Log.Trace("StringProtector: protect string '{0}' :: '{1}'", strings[ident], ident);
+#endif
                     return replacementIn(ident);
                 },
                 RegexOptions.IgnorePatternWhitespace);

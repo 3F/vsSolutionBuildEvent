@@ -187,6 +187,23 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
+        /// Object data. Similar as array with mixed data.
+        /// Format: { "p1", true, { 12, 'n', -4.5f }, 12d }
+        /// </summary>
+        public static string ObjectContent
+        {
+            get { return CurlyBracketsContent; }
+        }
+
+        /// <summary>
+        /// Char symbol value from allowed syntax
+        /// </summary>
+        public static string CharContent
+        {
+            get { return @"\s*'(\S{1})'\s*"; }
+        }
+
+        /// <summary>
         /// Content for present symbol of quotes
         /// Escaping is a "\" for used symbol
         /// e.g.: \', \"

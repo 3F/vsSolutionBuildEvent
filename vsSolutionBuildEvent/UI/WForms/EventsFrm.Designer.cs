@@ -107,6 +107,13 @@
             this.toolStripMenuBug = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripMenuReport = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuDebugMode = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuLogMsg = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuLogIgnoreTrace = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuLogIgnoreDebug = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuLogIgnoreInfo = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuLogIgnoreWarn = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuLogIgnoreError = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuVersion = new System.Windows.Forms.ToolStripStatusLabel();
             this.panelEventType = new System.Windows.Forms.Panel();
             this.comboBoxEvents = new System.Windows.Forms.ComboBox();
@@ -187,6 +194,10 @@
             this.buttonEnvVariables = new System.Windows.Forms.Button();
             this.btnDteCmd = new System.Windows.Forms.Button();
             this.tabPageFilters = new System.Windows.Forms.TabPage();
+            this.panelVSCE = new System.Windows.Forms.Panel();
+            this.btnInfoVSCE = new System.Windows.Forms.Button();
+            this.btnDownloadVSCE = new System.Windows.Forms.Button();
+            this.labelVSCE = new System.Windows.Forms.Label();
             this.splitContainerCE = new System.Windows.Forms.SplitContainer();
             this.groupBoxCESniffer = new System.Windows.Forms.GroupBox();
             this.dgvCESniffer = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
@@ -267,6 +278,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrder)).BeginInit();
             this.panelToolButtons.SuspendLayout();
             this.tabPageFilters.SuspendLayout();
+            this.panelVSCE.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerCE)).BeginInit();
             this.splitContainerCE.Panel1.SuspendLayout();
             this.splitContainerCE.Panel2.SuspendLayout();
@@ -671,7 +683,7 @@
             // 
             this.toolStripMenuSBEPanel.Name = "toolStripMenuSBEPanel";
             this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(154, 22);
-            this.toolStripMenuSBEPanel.Text = "vsSBE Panel";
+            this.toolStripMenuSBEPanel.Text = "Quick Panel";
             this.toolStripMenuSBEPanel.Click += new System.EventHandler(this.toolStripMenuSBEPanel_Click);
             // 
             // toolStripMenuHelp
@@ -802,12 +814,15 @@
             this.toolStripMenuBug.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripMenuBug.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuReport,
-            this.toolStripMenuDebugMode});
+            this.toolStripMenuDebugMode,
+            this.toolStripSeparator13,
+            this.menuLogMsg});
             this.toolStripMenuBug.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuBug.Image")));
             this.toolStripMenuBug.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripMenuBug.Name = "toolStripMenuBug";
             this.toolStripMenuBug.Size = new System.Drawing.Size(32, 20);
             this.toolStripMenuBug.ButtonClick += new System.EventHandler(this.toolStripMenuBug_ButtonClick);
+            this.toolStripMenuBug.DropDownOpening += new System.EventHandler(this.toolStripMenuBug_DropDownOpening);
             // 
             // toolStripMenuReport
             // 
@@ -824,6 +839,58 @@
             this.toolStripMenuDebugMode.Size = new System.Drawing.Size(208, 22);
             this.toolStripMenuDebugMode.Text = "Debug Mode";
             this.toolStripMenuDebugMode.Click += new System.EventHandler(this.toolStripMenuDebugMode_Click);
+            // 
+            // toolStripSeparator13
+            // 
+            this.toolStripSeparator13.Name = "toolStripSeparator13";
+            this.toolStripSeparator13.Size = new System.Drawing.Size(205, 6);
+            // 
+            // menuLogMsg
+            // 
+            this.menuLogMsg.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuLogIgnoreTrace,
+            this.menuLogIgnoreDebug,
+            this.menuLogIgnoreInfo,
+            this.menuLogIgnoreWarn,
+            this.menuLogIgnoreError});
+            this.menuLogMsg.Name = "menuLogMsg";
+            this.menuLogMsg.Size = new System.Drawing.Size(208, 22);
+            this.menuLogMsg.Text = "Avoid Log messages";
+            // 
+            // menuLogIgnoreTrace
+            // 
+            this.menuLogIgnoreTrace.Name = "menuLogIgnoreTrace";
+            this.menuLogIgnoreTrace.Size = new System.Drawing.Size(109, 22);
+            this.menuLogIgnoreTrace.Text = "Trace";
+            this.menuLogIgnoreTrace.Click += new System.EventHandler(this.menuLogIgnoreTrace_Click);
+            // 
+            // menuLogIgnoreDebug
+            // 
+            this.menuLogIgnoreDebug.Name = "menuLogIgnoreDebug";
+            this.menuLogIgnoreDebug.Size = new System.Drawing.Size(109, 22);
+            this.menuLogIgnoreDebug.Text = "Debug";
+            this.menuLogIgnoreDebug.Click += new System.EventHandler(this.menuLogIgnoreDebug_Click);
+            // 
+            // menuLogIgnoreInfo
+            // 
+            this.menuLogIgnoreInfo.Name = "menuLogIgnoreInfo";
+            this.menuLogIgnoreInfo.Size = new System.Drawing.Size(109, 22);
+            this.menuLogIgnoreInfo.Text = "Info";
+            this.menuLogIgnoreInfo.Click += new System.EventHandler(this.menuLogIgnoreInfo_Click);
+            // 
+            // menuLogIgnoreWarn
+            // 
+            this.menuLogIgnoreWarn.Name = "menuLogIgnoreWarn";
+            this.menuLogIgnoreWarn.Size = new System.Drawing.Size(109, 22);
+            this.menuLogIgnoreWarn.Text = "Warn";
+            this.menuLogIgnoreWarn.Click += new System.EventHandler(this.menuLogIgnoreWarn_Click);
+            // 
+            // menuLogIgnoreError
+            // 
+            this.menuLogIgnoreError.Name = "menuLogIgnoreError";
+            this.menuLogIgnoreError.Size = new System.Drawing.Size(109, 22);
+            this.menuLogIgnoreError.Text = "Error";
+            this.menuLogIgnoreError.Click += new System.EventHandler(this.menuLogIgnoreError_Click);
             // 
             // toolStripMenuVersion
             // 
@@ -1835,6 +1902,7 @@
             // 
             // tabPageFilters
             // 
+            this.tabPageFilters.Controls.Add(this.panelVSCE);
             this.tabPageFilters.Controls.Add(this.splitContainerCE);
             this.tabPageFilters.Location = new System.Drawing.Point(4, 25);
             this.tabPageFilters.Name = "tabPageFilters";
@@ -1843,6 +1911,47 @@
             this.tabPageFilters.TabIndex = 3;
             this.tabPageFilters.Text = "Filters";
             this.tabPageFilters.UseVisualStyleBackColor = true;
+            // 
+            // panelVSCE
+            // 
+            this.panelVSCE.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.panelVSCE.Controls.Add(this.btnInfoVSCE);
+            this.panelVSCE.Controls.Add(this.btnDownloadVSCE);
+            this.panelVSCE.Controls.Add(this.labelVSCE);
+            this.panelVSCE.Location = new System.Drawing.Point(6, 442);
+            this.panelVSCE.Margin = new System.Windows.Forms.Padding(0);
+            this.panelVSCE.Name = "panelVSCE";
+            this.panelVSCE.Size = new System.Drawing.Size(461, 29);
+            this.panelVSCE.TabIndex = 64;
+            // 
+            // btnInfoVSCE
+            // 
+            this.btnInfoVSCE.Location = new System.Drawing.Point(186, 3);
+            this.btnInfoVSCE.Name = "btnInfoVSCE";
+            this.btnInfoVSCE.Size = new System.Drawing.Size(45, 23);
+            this.btnInfoVSCE.TabIndex = 2;
+            this.btnInfoVSCE.Text = "Info";
+            this.btnInfoVSCE.UseVisualStyleBackColor = true;
+            this.btnInfoVSCE.Click += new System.EventHandler(this.btnInfoVSCE_Click);
+            // 
+            // btnDownloadVSCE
+            // 
+            this.btnDownloadVSCE.Location = new System.Drawing.Point(105, 3);
+            this.btnDownloadVSCE.Name = "btnDownloadVSCE";
+            this.btnDownloadVSCE.Size = new System.Drawing.Size(75, 23);
+            this.btnDownloadVSCE.TabIndex = 1;
+            this.btnDownloadVSCE.Text = "Download";
+            this.btnDownloadVSCE.UseVisualStyleBackColor = true;
+            this.btnDownloadVSCE.Click += new System.EventHandler(this.btnDownloadVSCE_Click);
+            // 
+            // labelVSCE
+            // 
+            this.labelVSCE.AutoSize = true;
+            this.labelVSCE.Location = new System.Drawing.Point(3, 9);
+            this.labelVSCE.Name = "labelVSCE";
+            this.labelVSCE.Size = new System.Drawing.Size(96, 13);
+            this.labelVSCE.TabIndex = 0;
+            this.labelVSCE.Text = "vsCommandEvent:";
             // 
             // splitContainerCE
             // 
@@ -2556,6 +2665,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewOrder)).EndInit();
             this.panelToolButtons.ResumeLayout(false);
             this.tabPageFilters.ResumeLayout(false);
+            this.panelVSCE.ResumeLayout(false);
+            this.panelVSCE.PerformLayout();
             this.splitContainerCE.Panel1.ResumeLayout(false);
             this.splitContainerCE.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerCE)).EndInit();
@@ -2777,5 +2888,16 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
         private System.Windows.Forms.ToolStripMenuItem menuCfgSuppressDualCmd;
         private System.Windows.Forms.LinkLabel linkAddAction;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
+        private System.Windows.Forms.ToolStripMenuItem menuLogMsg;
+        private System.Windows.Forms.ToolStripMenuItem menuLogIgnoreTrace;
+        private System.Windows.Forms.ToolStripMenuItem menuLogIgnoreDebug;
+        private System.Windows.Forms.ToolStripMenuItem menuLogIgnoreInfo;
+        private System.Windows.Forms.ToolStripMenuItem menuLogIgnoreWarn;
+        private System.Windows.Forms.ToolStripMenuItem menuLogIgnoreError;
+        private System.Windows.Forms.Panel panelVSCE;
+        private System.Windows.Forms.Button btnInfoVSCE;
+        private System.Windows.Forms.Button btnDownloadVSCE;
+        private System.Windows.Forms.Label labelVSCE;
     }
 }

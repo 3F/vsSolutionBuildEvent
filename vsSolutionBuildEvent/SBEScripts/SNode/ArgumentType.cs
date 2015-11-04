@@ -43,6 +43,11 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
         StringDouble,
 
         /// <summary>
+        /// Single symbol from single quotes. 
+        /// </summary>
+        Char,
+
+        /// <summary>
         /// Boolean data.
         /// </summary>
         Boolean,
@@ -76,5 +81,11 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
         /// Predefined data as Const.
         /// </summary>
         Const,
+
+        /// <summary>
+        /// Object data. Similar as array with mixed data.
+        /// Format: { "p1", true, { 12, 'n', -4.5f }, 12d }
+        /// </summary>
+        Object,
     }
 }

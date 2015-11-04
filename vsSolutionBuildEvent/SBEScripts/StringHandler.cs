@@ -54,11 +54,33 @@ namespace net.r_eg.vsSBE.SBEScripts
                         {
                             uint ident      = IdentNext;
                             strings[ident]  = m.Groups[1].Value;
+#if DEBUG
                             Log.Trace("StringHandler: protect cores '{0}' :: '{1}'", strings[ident], ident);
+#endif
                             return replacementIn(ident);
                         },
                         RegexOptions.IgnorePatternWhitespace);
             }
+        }
+
+        /// <summary>
+        /// Protects ArrayContent data.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>protected string</returns>
+        public string protectArray(string data)
+        {
+            return protectByPattern(data, String.Format("({0})", RPattern.ObjectContent));
+        }
+
+        /// <summary>
+        /// Protects argument list.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>protected string</returns>
+        public string protectArguments(string data)
+        {
+            return protectArray(protectMixedQuotes(data));
         }
 
         /// <summary>

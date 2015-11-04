@@ -56,9 +56,9 @@
         <CommandFlag>DefaultInvisible</CommandFlag>
         <CommandFlag>DynamicVisibility</CommandFlag>
         <Strings>
-            <CommandName>Events Solution</CommandName>
-            <ButtonText>Events Solution</ButtonText>
-            <MenuText>Events Solution</MenuText>
+            <CommandName>vsSolutionBuildEvent</CommandName>
+            <ButtonText>vsSolutionBuildEvent</ButtonText>
+            <MenuText>Events of Solution</MenuText>
             <CanonicalName>vsSBE.Settings</CanonicalName>
         </Strings>
       </Button>
@@ -67,9 +67,9 @@
        <Parent guid="guidSHLMainMenu" id="IDG_VS_WNDO_OTRWNDWS1" />
        <Icon guid="guidImages" id="package16" />
        <Strings>
-           <CommandName>Solution Build-Events Panel</CommandName>
-           <ButtonText>Solution Build-Events Panel</ButtonText>
-           <MenuText>Solution Build-Events Panel</MenuText>
+           <CommandName>vsSolutionBuildEvent Panel</CommandName>
+           <ButtonText>vsSolutionBuildEvent Panel</ButtonText>
+           <MenuText>vsSolutionBuildEvent Panel</MenuText>
            <CanonicalName>vsSBE.Panel</CanonicalName>
        </Strings>
      </Button>

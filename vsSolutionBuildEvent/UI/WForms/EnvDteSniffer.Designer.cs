@@ -27,15 +27,20 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.chkActivate = new System.Windows.Forms.CheckBox();
             this.groupBoxCESniffer = new System.Windows.Forms.GroupBox();
             this.buttonFlush = new System.Windows.Forms.Button();
             this.labelSep1 = new System.Windows.Forms.Label();
-            this.lightsTraffic = new net.r_eg.vsSBE.UI.WForms.Controls.Lights();
             this.panelTop = new System.Windows.Forms.Panel();
             this.panelMain = new System.Windows.Forms.Panel();
+            this.contextMenuMain = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.menuCopy = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuRemove = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuFlush = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.dgvCESniffer = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
             this.dgvCESnifferColumnStamp = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvCESnifferColumnPre = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -44,9 +49,11 @@
             this.dgvCESnifferColumnCustomIn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvCESnifferColumnCustomOut = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvCESnifferColumnEnum = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lightsTraffic = new net.r_eg.vsSBE.UI.WForms.Controls.Lights();
             this.groupBoxCESniffer.SuspendLayout();
             this.panelTop.SuspendLayout();
             this.panelMain.SuspendLayout();
+            this.contextMenuMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCESniffer)).BeginInit();
             this.SuspendLayout();
             // 
@@ -98,13 +105,6 @@
             this.labelSep1.TabIndex = 67;
             this.labelSep1.Text = "::";
             // 
-            // lightsTraffic
-            // 
-            this.lightsTraffic.Location = new System.Drawing.Point(4, 0);
-            this.lightsTraffic.Name = "lightsTraffic";
-            this.lightsTraffic.Size = new System.Drawing.Size(38, 9);
-            this.lightsTraffic.TabIndex = 65;
-            // 
             // panelTop
             // 
             this.panelTop.Controls.Add(this.groupBoxCESniffer);
@@ -124,6 +124,42 @@
             this.panelMain.Size = new System.Drawing.Size(747, 254);
             this.panelMain.TabIndex = 66;
             // 
+            // contextMenuMain
+            // 
+            this.contextMenuMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuCopy,
+            this.menuRemove,
+            this.toolStripSeparator1,
+            this.menuFlush});
+            this.contextMenuMain.Name = "contextMenuMain";
+            this.contextMenuMain.Size = new System.Drawing.Size(118, 76);
+            // 
+            // menuCopy
+            // 
+            this.menuCopy.Name = "menuCopy";
+            this.menuCopy.Size = new System.Drawing.Size(117, 22);
+            this.menuCopy.Text = "Copy";
+            this.menuCopy.Click += new System.EventHandler(this.menuCopy_Click);
+            // 
+            // menuRemove
+            // 
+            this.menuRemove.Name = "menuRemove";
+            this.menuRemove.Size = new System.Drawing.Size(117, 22);
+            this.menuRemove.Text = "Remove";
+            this.menuRemove.Click += new System.EventHandler(this.menuRemove_Click);
+            // 
+            // menuFlush
+            // 
+            this.menuFlush.Name = "menuFlush";
+            this.menuFlush.Size = new System.Drawing.Size(117, 22);
+            this.menuFlush.Text = "Flush";
+            this.menuFlush.Click += new System.EventHandler(this.menuFlush_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(114, 6);
+            // 
             // dgvCESniffer
             // 
             this.dgvCESniffer.AllowUserToAddRows = false;
@@ -140,6 +176,7 @@
             this.dgvCESnifferColumnCustomIn,
             this.dgvCESnifferColumnCustomOut,
             this.dgvCESnifferColumnEnum});
+            this.dgvCESniffer.ContextMenuStrip = this.contextMenuMain;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -237,6 +274,13 @@
             this.dgvCESnifferColumnEnum.ReadOnly = true;
             this.dgvCESnifferColumnEnum.ToolTipText = "Equivalent with Enum";
             // 
+            // lightsTraffic
+            // 
+            this.lightsTraffic.Location = new System.Drawing.Point(4, 0);
+            this.lightsTraffic.Name = "lightsTraffic";
+            this.lightsTraffic.Size = new System.Drawing.Size(38, 9);
+            this.lightsTraffic.TabIndex = 65;
+            // 
             // EnvDteSniffer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -254,6 +298,7 @@
             this.groupBoxCESniffer.PerformLayout();
             this.panelTop.ResumeLayout(false);
             this.panelMain.ResumeLayout(false);
+            this.contextMenuMain.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvCESniffer)).EndInit();
             this.ResumeLayout(false);
 
@@ -276,6 +321,10 @@
         private System.Windows.Forms.Panel panelMain;
         private System.Windows.Forms.Button buttonFlush;
         private System.Windows.Forms.Label labelSep1;
-
+        private System.Windows.Forms.ContextMenuStrip contextMenuMain;
+        private System.Windows.Forms.ToolStripMenuItem menuCopy;
+        private System.Windows.Forms.ToolStripMenuItem menuRemove;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem menuFlush;
     }
 }

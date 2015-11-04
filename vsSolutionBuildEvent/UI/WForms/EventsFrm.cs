@@ -23,6 +23,7 @@ using System.Windows.Forms;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Events.CommandEvents;
+using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.UI.WForms.Components;
@@ -77,15 +78,9 @@ namespace net.r_eg.vsSBE.UI.WForms
         protected EnvDteSniffer frmSniffer;
 
         /// <summary>
-        /// Default sizes for controls
+        /// Size of buffer for existing records in sniffer pane.
         /// </summary>
-        protected struct MetricDefault
-        {
-            public Size form;
-            public Size formCollapsed;
-            public int splitter;
-        }
-        protected MetricDefault metric;
+        protected int snifferRcBuffer = 2048;
 
         /// <summary>
         /// Flag of notification if it's required
@@ -97,6 +92,24 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// </summary>
         private bool isNotified;
 
+        /// <summary>
+        /// Default sizes for controls
+        /// </summary>
+        private struct MetricDefault
+        {
+            public Size form;
+            public Size formCollapsed;
+            public int splitter;
+        }
+        private MetricDefault metric;
+
+        /// <summary>
+        /// Application settings.
+        /// </summary>
+        internal IAppSettings App
+        {
+            get { return Settings._; }
+        }
 
         /// <summary>
         /// Implements transport for MSBuild property
@@ -147,18 +160,14 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(Version.branchName.ToLower() != "releases") {
                 this.Text = String.Format("{0}  [Unofficial release]", Settings.APP_NAME);
             }
-            toolStripMenuDebugMode.Checked  = Settings._.DebugMode;
-            toolStripMenuVersion.Text       = String.Format("v{0} [ {1} ]", Version.numberString, Version.branchSha1);
+            toolStripMenuVersion.Text = String.Format("v{0} [ {1} ]", Version.numberString, Version.branchSha1);
 #endif
             menuCfgSuppressDualCmd.Checked = Settings.CfgUser.Global.SuppressDualCommand;
 
-            // Fixes for dataGridView component with the height property
-            Util.fixDGVRowHeight(dataGridViewOutput);
-            Util.fixDGVRowHeight(dataGridViewOrder);
-            Util.fixDGVRowHeight(dgvActions);
-            Util.fixDGVRowHeight(dgvComponents);
-            Util.fixDGVRowHeight(dgvCEFilters);
-            Util.fixDGVRowHeight(dgvCESniffer);
+            //TODO: it was before with original dataGridView... need to check with DataGridViewExt and move it inside if still needed
+            foreach(Control ctrl in Util.getControls(this, c => c.GetType() == typeof(DataGridViewExt))) {
+                Util.fixDGVRowHeight((DataGridViewExt)ctrl); // solves problem with the height property
+            }
         }
 
         /// <summary>
@@ -284,13 +293,13 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
-        protected void saveData(SBEEventEW evt)
+        protected void saveData(ISolutionEventEW evt)
         {
             evt.Codes       = listBoxEW.Items.Cast<string>().ToList();
             evt.IsWhitelist = radioCodesWhitelist.Checked;
         }
 
-        protected void saveData(SBEEventOWP evt)
+        protected void saveData(ISolutionEventOWP evt)
         {
             List<MatchWords> list = new List<MatchWords>();
             foreach(DataGridViewRow row in dataGridViewOutput.Rows)
@@ -306,7 +315,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             evt.Match = list.ToArray();
         }
 
-        protected void saveData(CommandEvent evt)
+        protected void saveData(ICommandEvent evt)
         {
             List<Filter> list = new List<Filter>();
             foreach(DataGridViewRow row in dgvCEFilters.Rows)
@@ -315,11 +324,15 @@ namespace net.r_eg.vsSBE.UI.WForms
                     continue;
                 }
 
+                object customIn  = Value.packArgument(row.Cells[dgvCEFiltersColumnCustomIn.Name].Value);
+                object customOut = Value.packArgument(row.Cells[dgvCEFiltersColumnCustomOut.Name].Value);
+                object guid      = row.Cells[dgvCEFiltersColumnGuid.Name].Value;
+
                 list.Add(new Filter()
                 {
-                    Guid        = (string)row.Cells[dgvCEFiltersColumnGuid.Name].Value,
-                    CustomIn    = (string)row.Cells[dgvCEFiltersColumnCustomIn.Name].Value,
-                    CustomOut   = (string)row.Cells[dgvCEFiltersColumnCustomOut.Name].Value,
+                    Guid        = (guid == null)? String.Empty : ((string)guid).Trim(),
+                    CustomIn    = customIn.IsNullOrEmptyString() ? null : customIn,
+                    CustomOut   = customOut.IsNullOrEmptyString() ? null : customOut,
                     Description = (string)row.Cells[dgvCEFiltersColumnDescription.Name].Value,
                     Id          = Convert.ToInt32(row.Cells[dgvCEFiltersColumnId.Name].Value),
                     Cancel      = Convert.ToBoolean(row.Cells[dgvCEFiltersColumnCancel.Name].Value),
@@ -463,7 +476,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
-        protected void renderData(SBEEventEW evt)
+        protected void renderData(ISolutionEventEW evt)
         {
             listBoxEW.Items.Clear();
             listBoxEW.Items.AddRange(evt.Codes.ToArray());
@@ -476,7 +489,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
-        protected void renderData(SBEEventOWP evt)
+        protected void renderData(ISolutionEventOWP evt)
         {
             dataGridViewOutput.Rows.Clear();
             if(evt.Match == null) {
@@ -487,21 +500,21 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
-        protected void renderData(CommandEvent evt)
+        protected void renderData(ICommandEvent evt)
         {
             dgvCEFilters.Rows.Clear();
             if(evt.Filters == null) {
                 return;
             }
             foreach(IFilter f in evt.Filters) {
-                dgvCEFilters.Rows.Add(f.Guid, f.Id, f.CustomIn, f.CustomOut, f.Description, f.Cancel, f.Pre, f.Post);
+                dgvCEFilters.Rows.Add(f.Guid, f.Id, Value.pack(f.CustomIn), Value.pack(f.CustomOut), f.Description, f.Cancel, f.Pre, f.Post);
             }
         }
 
         protected void fillActionsList()
         {
             dgvActions.Rows.Clear();
-            foreach(SBEEvent item in logic.SBE.evt) {
+            foreach(ISolutionEvent item in logic.SBE.evt) {
                 dgvActions.Rows.Add(item.Enabled, item.Name, item.Caption);
             }
         }
@@ -513,7 +526,8 @@ namespace net.r_eg.vsSBE.UI.WForms
             renderData();
             onlyFor();
             executionOrder();
-            
+            updateColors();
+
             if(!requiresNotification) {
                 notice(false);
             }
@@ -606,8 +620,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         protected void controlsLock(bool disabled)
         {
-            tabControl.Enabled  = !disabled;
-            btnApply.Enabled    = true;
+            tabControl.Enabled = !disabled;
 
             if(disabled) {
                 panelCommand.BackColor = Color.Gray;
@@ -871,8 +884,13 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(dgvCESniffer == null) {
                 return;
             }
+
+            if(dgvCESniffer.Rows.Count > snifferRcBuffer) {
+                dgvCESniffer.Rows.RemoveAt(0);
+            }
+
             string tFormat = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern + " .fff";
-            dgvCESniffer.Rows.Add(DateTime.Now.ToString(tFormat), pre, guid, id, customIn, customOut, Util.enumViewBy(guid, id));
+            dgvCESniffer.Rows.Add(DateTime.Now.ToString(tFormat), pre, guid, id, Value.pack(customIn), Value.pack(customOut), Util.enumViewBy(guid, id));
         }
 
         protected void addFilterFromSniffer(DataGridView sniffer, DataGridView filter)
@@ -977,6 +995,15 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void EventsFrm_Load(object sender, EventArgs e)
         {
+            if(!App.IsCfgExists)
+            {
+                Log.Fatal("Configuration data is corrupt. User: {0} / Main: {1}", (App.UserConfig == null), (App.Config == null));
+                MessageBox.Show("We can't continue. See details in log.", "Configuration data is corrupt");
+                FormClosing -= EventsFrm_FormClosing;
+                Close();
+                return;
+            }
+
             EventHandler call = (csender, ce) => { notice(true); };
 
             Util.noticeAboutChanges(typeof(CheckBox), this, call, new string[] { checkBoxCESniffer.Name });
@@ -1244,7 +1271,8 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void toolStripMenuDebugMode_Click(object sender, EventArgs e)
         {
 #if !DEBUG
-            Settings.CfgUser.Global.DebugMode = Settings._.DebugMode = toolStripMenuDebugMode.Checked = !toolStripMenuDebugMode.Checked;
+            App.UserConfig.Global.DebugMode = App.DebugMode = toolStripMenuDebugMode.Checked = !toolStripMenuDebugMode.Checked;
+            logic.updateUserCfg();
 #endif
         }
 
@@ -1267,7 +1295,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void toolStripMenuPluginDir_Click(object sender, EventArgs e)
         {
-            Util.openUrl(String.Format("\"{0}\"", Settings.LPath));
+            Util.openUrl(String.Format("\"{0}\"", App.LibPath));
         }
 
         private void toolStripMenuCIMSBuild_Click(object sender, EventArgs e)
@@ -1283,6 +1311,16 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void toolStripMenuAPI_Click(object sender, EventArgs e)
         {
             Util.openUrl("http://vssbe.r-eg.net/doc/API/");
+        }
+
+        private void btnDownloadVSCE_Click(object sender, EventArgs e)
+        {
+            Util.openUrl("https://visualstudiogallery.msdn.microsoft.com/ad9f19b2-04c0-46fe-9637-9a52ce4ca661/file/184640/");
+        }
+
+        private void btnInfoVSCE_Click(object sender, EventArgs e)
+        {
+            Util.openUrl("http://vsce.r-eg.net/About/");
         }
 
         private void componentInfo(string name)
@@ -1709,6 +1747,58 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             expandActionsList(true);
             addAction();
+        }
+
+        private void menuLogIgnoreTrace_Click(object sender, EventArgs e)
+        {
+            App.UserConfig.Global.LogIgnoreLevels["TRACE"] = menuLogIgnoreTrace.Checked = !menuLogIgnoreTrace.Checked;
+            logic.updateUserCfg();
+        }
+
+        private void menuLogIgnoreDebug_Click(object sender, EventArgs e)
+        {
+            App.UserConfig.Global.LogIgnoreLevels["DEBUG"] = menuLogIgnoreDebug.Checked = !menuLogIgnoreDebug.Checked;
+            logic.updateUserCfg();
+        }
+
+        private void menuLogIgnoreInfo_Click(object sender, EventArgs e)
+        {
+            App.UserConfig.Global.LogIgnoreLevels["INFO"] = menuLogIgnoreInfo.Checked = !menuLogIgnoreInfo.Checked;
+            logic.updateUserCfg();
+        }
+
+        private void menuLogIgnoreWarn_Click(object sender, EventArgs e)
+        {
+            App.UserConfig.Global.LogIgnoreLevels["WARN"] = menuLogIgnoreWarn.Checked = !menuLogIgnoreWarn.Checked;
+            logic.updateUserCfg();
+        }
+
+        private void menuLogIgnoreError_Click(object sender, EventArgs e)
+        {
+            App.UserConfig.Global.LogIgnoreLevels["ERROR"] = menuLogIgnoreError.Checked = !menuLogIgnoreError.Checked;
+            logic.updateUserCfg();
+        }
+
+        private void toolStripMenuBug_DropDownOpening(object sender, EventArgs e)
+        {
+
+#if !DEBUG
+            toolStripMenuDebugMode.Checked = App.DebugMode;
+#endif
+            
+            Func<string, bool> IsIgnoreLevel = (string level) =>
+            {
+                if(!App.UserConfig.Global.LogIgnoreLevels.ContainsKey(level)) {
+                    return false;
+                }
+                return App.UserConfig.Global.LogIgnoreLevels[level];
+            };
+            
+            menuLogIgnoreTrace.Checked  = IsIgnoreLevel("TRACE");
+            menuLogIgnoreDebug.Checked  = IsIgnoreLevel("DEBUG");
+            menuLogIgnoreInfo.Checked   = IsIgnoreLevel("INFO");
+            menuLogIgnoreWarn.Checked   = IsIgnoreLevel("WARN");
+            menuLogIgnoreError.Checked  = IsIgnoreLevel("ERROR");
         }
     }
 }
