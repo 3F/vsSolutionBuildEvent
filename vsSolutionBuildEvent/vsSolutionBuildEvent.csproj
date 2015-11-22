@@ -157,6 +157,7 @@
     <Compile Include="ISolutionEvents.cs" />
     <Compile Include="IAppSettings.cs" />
     <Compile Include="DataArgs.cs" />
+    <Compile Include="MSBuild\Exceptions\PossibleLoopException.cs" />
     <Compile Include="Receiver\Output\EWType.cs" />
     <Compile Include="Receiver\Output\Ident.cs" />
     <Compile Include="Receiver\Output\IItemEW.cs" />

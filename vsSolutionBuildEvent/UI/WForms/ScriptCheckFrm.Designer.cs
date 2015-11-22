@@ -51,6 +51,7 @@
             this.richTextBoxUVariables = new System.Windows.Forms.RichTextBox();
             this.groupBoxComponents = new System.Windows.Forms.GroupBox();
             this.chkListComponents = new System.Windows.Forms.CheckedListBox();
+            this.chkStackTrace = new System.Windows.Forms.CheckBox();
             this.contextMenuUVariables.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMVertical)).BeginInit();
             this.splitContainerMVertical.Panel1.SuspendLayout();
@@ -185,6 +186,7 @@
             // 
             // panelBottomMain
             // 
+            this.panelBottomMain.Controls.Add(this.chkStackTrace);
             this.panelBottomMain.Controls.Add(this.btnDoc);
             this.panelBottomMain.Controls.Add(this.checkBoxMSBuildSupport);
             this.panelBottomMain.Controls.Add(this.button1);
@@ -346,6 +348,16 @@
             this.chkListComponents.TabIndex = 0;
             this.chkListComponents.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.chkListComponents_ItemCheck);
             // 
+            // chkStackTrace
+            // 
+            this.chkStackTrace.AutoSize = true;
+            this.chkStackTrace.Location = new System.Drawing.Point(189, 6);
+            this.chkStackTrace.Name = "chkStackTrace";
+            this.chkStackTrace.Size = new System.Drawing.Size(82, 17);
+            this.chkStackTrace.TabIndex = 11;
+            this.chkStackTrace.Text = "StackTrace";
+            this.chkStackTrace.UseVisualStyleBackColor = true;
+            // 
             // ScriptCheckFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -407,5 +419,6 @@
         private System.Windows.Forms.CheckedListBox chkListComponents;
         private System.Windows.Forms.ToolStripMenuItem mItemUVarEdit;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.CheckBox chkStackTrace;
     }
 }

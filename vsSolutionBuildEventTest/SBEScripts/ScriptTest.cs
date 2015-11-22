@@ -123,5 +123,107 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
             Assert.AreEqual(String.Empty, target.parse("#[\" #[var name = value] \"]"));
             Assert.AreEqual(0, uvariable.Variables.Count());
         }
+
+        /// <summary>
+        ///A test for parse - unlooping with MSBuild
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(Exceptions.LimitException))]
+        public void parseMSBuildUnloopingTest1()
+        {
+            var env     = new StubEnv();
+            var uvar    = new UserVariable();
+            var msbuild = new vsSBE.MSBuild.Parser(env, uvar);
+            var sbe     = new Script(env, uvar);
+
+            // p4 -> p2 -> p3 -> p1 -> p4
+            msbuild.parse(sbe.parse("#[var p1 = $$(p2)]#[var p2 = $$(p1)]#[var p3 = $(p2)]", true));
+        }
+
+        /// <summary>
+        ///A test for parse - unlooping with MSBuild
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(Exceptions.LimitException))]
+        public void parseMSBuildUnloopingTest2()
+        {
+            var env     = new StubEnv();
+            var uvar    = new UserVariable();
+            var msbuild = new vsSBE.MSBuild.Parser(env, uvar);
+            var sbe     = new Script(env, uvar);
+
+            msbuild.parse(sbe.parse("#[var p1 = $$(p4)]#[var p2 = $$(p3)]#[var p3 = $$(p1)]#[var p4 = $(p2)]", true));
+        }
+
+        /// <summary>
+        ///A test for parse - unlooping with MSBuild
+        ///</summary>
+        [TestMethod()]
+        public void parseMSBuildUnloopingTest3()
+        {
+            var env     = new StubEnv();
+            var uvar    = new UserVariable();
+            var msbuild = new vsSBE.MSBuild.Parser(env, uvar);
+            var sbe     = new Script(env, uvar);
+
+            msbuild.parse(sbe.parse("#[var p2 = $$(p1)]#[var p6 = $$(p2)]#[var p7 = $$(p5)]#[var p5 = $(p6)]", true));
+            Assert.IsTrue(true);
+        }
+
+        /// <summary>
+        ///A test for parse - unlooping with MSBuild
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(Exceptions.LimitException))]
+        public void parseMSBuildUnloopingTest4()
+        {
+            var env     = new StubEnv();
+            var uvar    = new UserVariable();
+            var msbuild = new vsSBE.MSBuild.Parser(env, uvar);
+            var sbe     = new Script(env, uvar);
+
+            msbuild.parse(sbe.parse("#[var p2 = $$(p1) to $$(p8), and new ($$(p7.Replace('1', '2'))) s$$(p9)]#[var p6 = $$(p2)]#[var p7 = $$(p5)]#[var p5 = $(p6)]", true));
+            Assert.IsTrue(true);
+        }
+
+        /// <summary>
+        ///A test for parse - unlooping with MSBuild
+        ///</summary>
+        [TestMethod()]
+        public void parseMSBuildUnloopingTest5()
+        {
+            var env     = new StubEnv();
+            var uvar    = new UserVariable();
+            var msbuild = new vsSBE.MSBuild.Parser(env, uvar);
+            var sbe     = new Script(env, uvar);
+
+            msbuild.parse(sbe.parse("#[var test = $$(test)]#[var test = 1 $(test) 2]", true));
+
+            uvar.unsetAll();
+            msbuild.parse(sbe.parse("#[var test = $$(test)]#[var test = 1 $(test.Replace('1', '2')) 2]", true));
+
+            uvar.unsetAll();
+            msbuild.parse(sbe.parse("#[var test = $(test)]#[var test = 1 $(test) 2]", true));
+        }
+
+        /// <summary>
+        ///A test for parse - unlooping with MSBuild
+        ///</summary>
+        [TestMethod()]
+        public void parseMSBuildUnloopingTest6()
+        {
+            var env     = new StubEnv();
+            var uvar    = new UserVariable();
+            var msbuild = new vsSBE.MSBuild.Parser(env, uvar);
+            var sbe     = new Script(env, uvar);
+
+            string data = "#[var test = #[($(test) == \""+ vsSBE.MSBuild.Parser.PROP_VALUE_DEFAULT + "\"){0}else{$(test)}]]#[var test]";
+            Assert.AreEqual("0", msbuild.parse(sbe.parse(data, true)));
+            Assert.AreEqual("0", msbuild.parse(sbe.parse(data, true)));
+
+            uvar.set("test", null, "7");
+            uvar.evaluate("test", null, new EvaluatorBlank(), true);
+            Assert.AreEqual("7", msbuild.parse(sbe.parse(data, true)));
+        }
     }
 }

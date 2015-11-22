@@ -83,6 +83,11 @@ namespace net.r_eg.vsSBE.MSBuild
             public string unevaluated;
 
             /// <summary>
+            /// The left definition of property.
+            /// </summary>
+            public string name;
+
+            /// <summary>
             /// Specific project for property
             /// </summary>
             public string project;

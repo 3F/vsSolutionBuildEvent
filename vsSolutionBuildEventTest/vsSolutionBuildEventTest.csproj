@@ -40,6 +40,7 @@
     </Reference>
     <Reference Include="EnvDTE80, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     </Reference>
+    <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Moq, Version=4.2.1507.118, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>..\packages\Moq.4.2.1507.0118\lib\net40\Moq.dll</HintPath>
@@ -49,6 +50,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
@@ -57,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\DTEOperationTest.cs" />
+    <Compile Include="StubEnv.cs" />
     <Compile Include="SBEScripts\Components\BuildComponentTest.cs" />
     <Compile Include="SBEScripts\Components\FunctionComponentTest.cs" />
     <Compile Include="SBEScripts\Components\CommentComponentTest.cs" />
@@ -64,7 +67,7 @@
     <Compile Include="SBEScripts\Components\DTEComponentTest.cs" />
     <Compile Include="SBEScripts\Components\FileComponentTest.cs" />
     <Compile Include="SBEScripts\Components\InternalComponentTest.cs" />
-    <Compile Include="MSBuild\MSBuildParserTest.cs" />
+    <Compile Include="MSBuild\ParserTest.cs" />
     <Compile Include="SBEScripts\Components\OWPComponentTest.cs" />
     <Compile Include="Receiver\Output\BuildItemTest.cs" />
     <Compile Include="Receiver\Output\MatcherTest.cs" />
