@@ -13,7 +13,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
     ///to contain all MSBuildParserTest Unit Tests
     ///</summary>
     [TestClass()]
-    public class MSBuildParserTest
+    public class ParserTest
     {
         private TestContext testContextInstance;
 
@@ -51,61 +51,9 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             mockSolution.SetupGet(p => p.SolutionBuild).Returns(mockSolutionBuild.Object);
             mockDte2.SetupGet(p => p.Solution).Returns(mockSolution.Object);
 
-            vsSBE.MSBuild.Parser target = new Parser(new net.r_eg.vsSBE.Environment(mockDte2.Object));
+            Parser target = new Parser(new net.r_eg.vsSBE.Environment(mockDte2.Object));
             Assert.IsNotNull(target.getProperty("Configuration"));
             Assert.IsNotNull(target.getProperty("Platform"));
-        }
-
-        /// <summary>
-        ///A test for parseVariablesSBE
-        ///</summary>
-        [TestMethod()]
-        public void parseVariablesSBETest()
-        {
-            vsSBE.MSBuild.Parser target = new Parser(new net.r_eg.vsSBE.Environment((DTE2)null));
-
-            string expected = "$(name)";
-            string actual   = target.parseVariablesSBE("$(name)", "subname", "value");
-            Assert.AreEqual(expected, actual);
-        }
-
-        /// <summary>
-        ///A test for parseVariablesSBE
-        ///</summary>
-        [TestMethod()]
-        public void parseVariablesSBETest2()
-        {
-            vsSBE.MSBuild.Parser target = new Parser(new net.r_eg.vsSBE.Environment((DTE2)null));
-
-            string expected = "value";
-            string actual   = target.parseVariablesSBE("$(name)", "name", "value");
-            Assert.AreEqual(expected, actual);
-        }
-
-        /// <summary>
-        ///A test for parseVariablesSBE
-        ///</summary>
-        [TestMethod()]
-        public void parseVariablesSBETest3()
-        {
-            vsSBE.MSBuild.Parser target = new Parser(new net.r_eg.vsSBE.Environment((DTE2)null));
-
-            string expected = "$$(name)";
-            string actual   = target.parseVariablesSBE("$$(name)", "name", "value");
-            Assert.AreEqual(expected, actual);
-        }
-
-        /// <summary>
-        ///A test for parseVariablesSBE
-        ///</summary>
-        [TestMethod()]
-        public void parseVariablesSBETest4()
-        {
-            vsSBE.MSBuild.Parser target = new Parser(new net.r_eg.vsSBE.Environment((DTE2)null));
-
-            string expected = String.Empty;
-            string actual   = target.parseVariablesSBE("$(name)", "name", null);
-            Assert.AreEqual(expected, actual);
         }
 
         /// <summary>
@@ -114,7 +62,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
         [TestMethod()]
         public void parseTest1()
         {
-            vsSBE.MSBuild.Parser target = new Parser(new net.r_eg.vsSBE.Environment((DTE2)null));
+            Parser target = new Parser(new StubEnv());
 
             string actual   = target.parse("FooBar");
             string expected = "FooBar";
@@ -240,7 +188,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
         [TestMethod()]
         public void parseTest12()
         {
-            vsSBE.MSBuild.Parser target = new Parser(new net.r_eg.vsSBE.Environment((DTE2)null));
+            Parser target = new Parser(new StubEnv());
 
             string actual = target.parse("$$(Path.Replace('\', '/'):project)");
             string expected = "$(Path.Replace('\', '/'):project)";
@@ -852,7 +800,100 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             Assert.AreEqual("[E~[System.TimeSpan]::FromTicks([E~[MSBuild]::Subtract([E~[System.DateTime]::UtcNow.Ticks~], [E~[System.DateTime]::Parse('27.03.2015').ToBinary()~])~]).TotalMinutes.ToString(\"0\")~]", target.parse(data));
         }
 
+        /// <summary>
+        ///A test for parse - unlooping
+        ///</summary>
+        [TestMethod()]
+        public void parseUnloopingTest1()
+        {
+            var target = new Parser(new StubEnv());
 
+            string data = "$(myVar = $$(myVar))$(myVar)";
+            Assert.AreEqual("$(myVar)", target.parse(data));
+        }
+
+        /// <summary>
+        ///A test for parse - unlooping
+        ///</summary>
+        [TestMethod()]
+        public void parseUnloopingTest2()
+        {
+            var target = new Parser(new StubEnv());
+
+            string data = "$(myVar = $(myVar))$(myVar)";
+            Assert.AreEqual(Parser.PROP_VALUE_DEFAULT, target.parse(data));
+        }
+
+        /// <summary>
+        ///A test for parse - unlooping
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(Exceptions.LimitException))]
+        public void parseUnloopingTest3()
+        {
+            var target = new Parser(new StubEnv());
+            // p1 -> p2 -> p1 ] p3 -> p2
+            target.parse("$(p1 = $$(p2))$(p2 = $$(p1))$(p3 = $(p2))");
+        }
+
+        /// <summary>
+        ///A test for parse - unlooping
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(Exceptions.LimitException))]
+        public void parseUnloopingTest4()
+        {
+            var target = new Parser(new StubEnv());
+            // p4 -> p2 -> p3 -> p1 -> p4
+            target.parse("$(p4 = $$(p2))$(p3 = $$(p1))$(p2 = $$(p3))$(p1 = $$(p4))$(p4)");
+        }
+
+        /// <summary>
+        ///A test for parse - unlooping
+        ///</summary>
+        [TestMethod()]
+        public void parseUnloopingTest5()
+        {
+            var target = new Parser(new StubEnv());
+            Assert.AreEqual(Parser.PROP_VALUE_DEFAULT, target.parse("$(p2 = $$(p1))$(p6 = $$(p2))$(p7 = $$(p5))$(p5 = $(p6))$(p5)"));
+        }
+
+        /// <summary>
+        ///A test for parse - unlooping
+        ///</summary>
+        [TestMethod()]
+        public void parseUnloopingTest6()
+        {
+            var target = new Parser(new StubEnv());
+            target.parse("$(p2 = \"$$(p1) to $$(p8),  and new ($$( p7.Replace('1', '2'))) s$$(p9)\")$(p6 = $$(p2))$(p7 = $$(p5))$(p5 = $(p6))$(p5)");
+            target.parse("$(p2 = \"$$(p1) to $$(p8),  and new ($$(p7.Replace('1', '2'))) s$$(p9)\")$(p6 = $$(p2))$(p7 = $$(p5))$(p5 = $(p6))$(p5)");
+            Assert.IsTrue(true);
+        }
+
+        /// <summary>
+        ///A test for parse - unlooping
+        ///</summary>
+        [TestMethod()]
+        public void parseUnloopingTest7()
+        {
+            var target = new Parser(new StubEnv());
+            Assert.AreEqual(String.Format("2 {0} 2", Parser.PROP_VALUE_DEFAULT), 
+                            target.parse("$(test = \"1 $(test) 2\")$(test = $(test.Replace('1', '2')))$(test)"));
+        }
+
+        /// <summary>
+        ///A test for parse - unlooping
+        ///</summary>
+        [TestMethod()]
+        public void parseUnloopingTest8()
+        {
+            var target = new Parser(new StubEnv());
+            Assert.AreEqual("7", target.parse("$(test = 7)$(test = $(test))$(test)"));
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         private class MSBuildParserAccessor
         {
             public class Accessor: vsSBE.MSBuild.Parser

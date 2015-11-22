@@ -148,6 +148,7 @@
     <Compile Include="ISolutionEvents.cs" />
     <Compile Include="IAppSettings.cs" />
     <Compile Include="DataArgs.cs" />
+    <Compile Include="MSBuild\Exceptions\PossibleLoopException.cs" />
     <Compile Include="SBEScripts\Components\Build\ProjectsMap.cs" />
     <Compile Include="SBEScripts\SNode\ArgumentType.cs" />
     <Compile Include="SBEScripts\SNode\IPM.cs" />

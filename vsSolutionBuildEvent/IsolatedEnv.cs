@@ -285,6 +285,15 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
+        /// Blank instance.
+        /// </summary>
+        /// <param name="properties">Solution properties.</param>
+        public IsolatedEnv(Dictionary<string, string> properties)
+        {
+
+        }
+
+        /// <summary>
         /// Gets project name from Microsoft.Build.Evaluation.Project
         /// </summary>
         /// <param name="eProject"></param>

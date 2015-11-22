@@ -184,11 +184,16 @@ namespace net.r_eg.vsSBE.UI.WForms
                 else {
                     ret = context.script.parse(data);
                 }
-                updateVariableList();
                 return ret;
             }
             catch(Exception ex) {
+                if(chkStackTrace.Checked) {
+                    return String.Format("Fail: `{0}`\n\n{1}\n{2}", ex.Message, new String('-', 15), ex.StackTrace);
+                }
                 return String.Format("Fail: {0}", ex.Message);
+            }
+            finally {
+                updateVariableList();
             }
         }
 

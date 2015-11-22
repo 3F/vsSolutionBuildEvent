@@ -35,7 +35,7 @@ namespace net.r_eg.vsSBE.MSBuild
         /// <summary>
         /// Max of supported containers for processing.
         /// </summary>
-        protected const uint CONTAINERS_LIMIT = 1 << 22;
+        protected const uint CONTAINERS_LIMIT = 1 << 16;
 
         /// <summary>
         /// Provides operation with environment
@@ -48,10 +48,14 @@ namespace net.r_eg.vsSBE.MSBuild
         protected IUserVariable uvariable;
 
         /// <summary>
+        /// References of evaluated properties.
+        /// </summary>
+        private Dictionary<string, HashSet<string>> references = new Dictionary<string, HashSet<string>>();
+
+        /// <summary>
         /// object synch.
         /// </summary>
         private Object _lock = new Object();
-
 
         /// <summary>
         /// Used environment.
@@ -157,7 +161,7 @@ namespace net.r_eg.vsSBE.MSBuild
             {
                 try {
                     defVariables(project);
-                    project.SetProperty(container, Scripts.Tokens.characters(_wrapProperty(ref unevaluated)));
+                    project.SetProperty(container, Tokens.characters(_wrapProperty(ref unevaluated)));
                     return project.GetProperty(container).EvaluatedValue;
                 }
                 finally {
@@ -196,36 +200,7 @@ namespace net.r_eg.vsSBE.MSBuild
         }
 
         /// <summary>
-        /// Internal processing.
-        /// 
-        /// All variables which are not included in MSBuild environment.
-        /// Customization for our data.
-        /// </summary>
-        /// <param name="raw">Where to look</param>
-        /// <param name="ident">Expected variable. What we're looking for..</param>
-        /// <param name="vTrue">Value if found</param>
-        /// <returns>String with evaluated data as vTrue value or unevaluated as is</returns>
-        [Obsolete("Use the SBE-Scripts", false)]
-        public string parseVariablesSBE(string raw, string ident, string vTrue)
-        {
-            return Regex.Replace(raw, @"(
-                                          \${1,2}     #1 -> $ or $$
-                                        )
-                                        \(
-                                           (
-                                             [^)]+?   #2 -> unevaluated data
-                                           )
-                                        \)", delegate(Match m)
-            {
-                if(m.Groups[2].Value != ident || m.Groups[1].Value.Length > 1) {
-                    return m.Value;
-                }
-                return (vTrue == null)? "" : vTrue;
-            }, RegexOptions.IgnorePatternWhitespace);
-        }
-
-        /// <summary>
-        /// Evaluate data with current object
+        /// Evaluate data with MSBuild.
         /// </summary>
         /// <param name="data">mixed data</param>
         /// <returns>Evaluated value</returns>
@@ -267,14 +242,16 @@ namespace net.r_eg.vsSBE.MSBuild
         /// <returns></returns>
         protected string containerIn(string data, StringHandler sh, uint limit)
         {
-            Regex con   = new Regex(RPattern.ContainerIn, RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
+            Regex con   = RPattern.ContainerInCompiled;
             int maxRep  = 1; // rule of depth, e.g.: $(p1 = $(Platform))$(p2 = $(p1))$(p2)
                              //TODO: it's slowest but fully compatible with classic rules with minimal programming.. so, improve performance
 
+            references.Clear();
             uint step = 0;
             do
             {
                 if(step++ > limit) {
+                    sh.flush();
                     throw new LimitException("Restriction of supported containers '{0}' reached. Aborted.", limit);
                 }
 
@@ -366,6 +343,14 @@ namespace net.r_eg.vsSBE.MSBuild
             else {
                 ret.property.unevaluated    = ((rDataWithProject.Success)? rDataWithProject : rData).Value.Trim();
                 ret.variable.type           = (rVariable.Success)? PreparedData.ValueType.Unknown : PreparedData.ValueType.Property;
+
+                int lp = ret.property.unevaluated.IndexOf('.');
+                ret.property.name = ((lp == -1)? ret.property.unevaluated : ret.property.unevaluated.Substring(0, lp)).Trim();
+
+                //TODO:
+                if(ret.property.name.IndexOf('[') != -1) {
+                    ret.property.name = null; // avoid static methods
+                }
             }
 
             ret.property.complex = !isPropertySimple(ref ret.property.unevaluated);
@@ -436,11 +421,20 @@ namespace net.r_eg.vsSBE.MSBuild
             {
                 Log.Trace("Evaluate: use getProperty");
                 evaluated = getProperty(prepared.property.unevaluated, prepared.property.project);
+                try {
+                    evaluated = unlooping(evaluated, prepared, false);
+                }
+                catch(PossibleLoopException) {
+                    // last chance with direct evaluation
+                    evaluated = evaluate(prepared.property.unevaluated, prepared.property.project);
+                    evaluated = unlooping(evaluated, prepared, true);
+                }
             }
             else
             {
                 Log.Trace("Evaluate: use evaluation with msbuild engine");
                 evaluated = evaluate(prepared.property.unevaluated, prepared.property.project);
+                evaluated = unlooping(evaluated, prepared, true);
             }
             Log.Debug("Evaluated: '{0}'", evaluated);
 
@@ -506,6 +500,78 @@ namespace net.r_eg.vsSBE.MSBuild
                     project.SetGlobalProperty(uvar.ident, (prev.evaluated == null)? prev.unevaluated : prev.evaluated);
                 }
             }
+        }
+
+        /// <summary>
+        /// Operations for recursive properties and to avoiding some looping.
+        /// 
+        /// The recursive property means that value contains same definition, even after evaluation of this, for example: 
+        /// `$(var)` -> `value from $(var)` -> `value from value from $(var)` ... 
+        /// 
+        /// TODO: I need a COW... fix mooo ~@@``
+        /// </summary>
+        /// <param name="data">Data with possible recursive property or some looping.</param>
+        /// <param name="prepared">Describes property.</param>
+        /// <param name="eqEscape">To escape equality if true, otherwise throw PossibleLoopException.</param>
+        /// <returns>Evaluated data.</returns>
+        protected string unlooping(string data, PreparedData prepared, bool eqEscape)
+        {
+            string pname = prepared.property.name;
+
+            if(pname == null || data.IndexOf("$(") == -1) {
+                return data; // all clear
+            }
+
+            HashSet<string> pchecked    = new HashSet<string>();
+            Action<string> unlink       = null;
+
+            unlink = delegate(string _name)
+            {
+                if(!pchecked.Add(_name)) {
+#if DEBUG
+                    Log.Debug("unlooping-unlink: has been protected with `{0}`", _name);
+#endif
+                    return;
+                    //throw new MismatchException("");
+                }
+
+                if(!references.ContainsKey(_name)) {
+                    return;
+                }
+
+                if(references[_name].Contains(pname)) {
+                    throw new LimitException("Found looping for used properties: `{0}` <-> `{1}`", _name, pname);
+                }
+
+                foreach(string refvar in references[_name]) {
+                    unlink(refvar);
+                }
+            };
+
+            data = RPattern.ContainerInNamedCompiled.Replace(data, delegate(Match m)
+            {
+                string found = m.Groups["name"].Value;
+
+                if(pname == found)
+                {
+                    if(eqEscape) {
+                        return "$" + m.Groups[0].Value;
+                    }
+                    throw new PossibleLoopException();
+                }
+
+                if(!references.ContainsKey(pname)) {
+                    references[pname] = new HashSet<string>();
+                }
+                references[pname].Add(found);
+
+                // checking
+                unlink(found);
+
+                return m.Groups[0].Value;
+            });
+
+            return data;
         }
 
         protected virtual bool isPropertySimple(ref string data)

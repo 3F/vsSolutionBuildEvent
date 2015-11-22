@@ -16,11 +16,27 @@
 */
 
 using System;
+using System.Text.RegularExpressions;
 
 namespace net.r_eg.vsSBE.MSBuild
 {
     public static class RPattern
     {
+        /// <summary>
+        /// Compiled ContainerIn.
+        /// </summary>
+        public static readonly Regex ContainerInCompiled = new Regex(ContainerIn, 
+                                                                        RegexOptions.IgnorePatternWhitespace |
+                                                                        RegexOptions.Compiled);
+
+        /// <summary>
+        /// Compiled ContainerIn with naming the left definitions.
+        /// </summary>
+        public static readonly Regex ContainerInNamedCompiled = new Regex(
+                                                                        getContainerIn(@"\s*(?'name'[^$\s).:]+)"), // $( name ... 
+                                                                        RegexOptions.IgnorePatternWhitespace |
+                                                                        RegexOptions.Compiled);
+
         /// <summary>
         /// State of the container
         /// </summary>
@@ -139,6 +155,15 @@ namespace net.r_eg.vsSBE.MSBuild
         private static string singleQuotesContent;
 
         /// <summary>
+        /// Deepest container, e.g.: $(.. -} $(..) {- ...)
+        /// </summary>
+        /// <param name="left">Condition of left bracket - `$(left`</param>
+        public static string getContainerIn(string left)
+        {
+            return container(ContainerType.Normal, true, left);
+        }
+
+        /// <summary>
         /// Content for present symbol of quotes
         /// Escaping is a \ for used symbol
         /// e.g.: \', \"
@@ -173,8 +198,9 @@ namespace net.r_eg.vsSBE.MSBuild
         /// </summary>
         /// <param name="type"></param>
         /// <param name="upward">all or only internal(deepest)</param>
+        /// <param name="left">Condition of left bracket - `$(left`</param>
         /// <returns></returns>
-        private static string container(ContainerType type, bool upward)
+        private static string container(ContainerType type, bool upward, string left = "")
         {
             /* PCRE:
                  (
@@ -196,9 +222,9 @@ namespace net.r_eg.vsSBE.MSBuild
                                      \${{{2}}}
                                    )
                                    (
-                                     \(
+                                     \({3}
                                        (?>
-                                         {3}[^()]
+                                         {4}[^()]
                                          |
                                          \((?<R>)
                                          |
@@ -210,7 +236,8 @@ namespace net.r_eg.vsSBE.MSBuild
                                    (type == ContainerType.Unclear)? String.Empty : "?:",
                                    (type == ContainerType.Normal)? @"(?<!\$)" : String.Empty,
                                    (type == ContainerType.Unclear)? "1,2" : (type == ContainerType.Normal)? "1" : "2",
-                                   (upward)? @"(?!\$\()" : String.Empty);
+                                   left,
+                                   (upward) ? @"(?!\$\()" : String.Empty);
         }
     }
 }
