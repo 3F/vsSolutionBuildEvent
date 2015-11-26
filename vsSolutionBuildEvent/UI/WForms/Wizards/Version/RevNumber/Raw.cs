@@ -15,13 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace net.r_eg.vsSBE.UI
+namespace net.r_eg.vsSBE.UI.WForms.Wizards.Version.RevNumber
 {
-    public interface ITransferProperty
+    internal struct Raw: IRevNumber
     {
         /// <summary>
-        /// Basic view of property
+        /// The type of this revision number.
         /// </summary>
-        void property(string name, string project);
+        public Type Type
+        {
+            get { return Type.Raw; }
+        }
     }
 }

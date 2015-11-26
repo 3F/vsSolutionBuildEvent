@@ -48,11 +48,6 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         /// </summary>
         public const string ACTION_PREFIX_CLONE = "CopyOf";
 
-        /// <summary>
-        /// Used loader
-        /// </summary>
-        protected IBootloader bootloader;
-
         /// Mapper of the available components
         /// </summary>
         protected IInspector inspector;
@@ -101,6 +96,15 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         /// Provides operations with environment
         /// </summary>
         public IEnvironment Env
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
+        /// Used loader
+        /// </summary>
+        public IBootloader Bootloader
         {
             get;
             protected set;
@@ -450,7 +454,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         public void fillComponents(DataGridView grid)
         {
             grid.Rows.Clear();
-            foreach(IComponent c in bootloader.Registered)
+            foreach(IComponent c in Bootloader.Registered)
             {
                 Type type = c.GetType();
                 if(!Inspector.isComponent(type)) {
@@ -507,7 +511,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         public void updateComponents(Configuration.Component[] components)
         {
             SlnEvents.Components = components;
-            foreach(IComponent c in bootloader.Registered) {
+            foreach(IComponent c in Bootloader.Registered) {
                 Configuration.Component found = components.Where(p => p.ClassName == c.GetType().Name).FirstOrDefault();
                 if(found != null) {
                     c.Enabled = found.Enabled;
@@ -815,9 +819,9 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                 Log.Info("No actions to execution. Add new, then try again.");
                 return;
             }
-            Actions.ICommand cmd = new Actions.Command(bootloader.Env,
-                                                        new Script(bootloader),
-                                                        new MSBuild.Parser(bootloader.Env, bootloader.UVariable));
+            Actions.ICommand cmd = new Actions.Command(Bootloader.Env,
+                                                        new Script(Bootloader),
+                                                        new MSBuild.Parser(Bootloader.Env, Bootloader.UVariable));
 
             ISolutionEvent evt      = SBEItem;
             SolutionEventType type  = SBE.type;
@@ -834,7 +838,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
 
         public Events(IBootloader bootloader, IInspector inspector = null)
         {
-            this.bootloader = bootloader;
+            this.Bootloader = bootloader;
             this.inspector  = inspector;
             Env             = bootloader.Env;
             backupUpdate();
@@ -940,7 +944,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             }
 
             List<INodeInfo> ret = new List<INodeInfo>();
-            foreach(IComponent c in bootloader.Registered)
+            foreach(IComponent c in Bootloader.Registered)
             {
                 if(c.GetType().Name != className) {
                     continue;

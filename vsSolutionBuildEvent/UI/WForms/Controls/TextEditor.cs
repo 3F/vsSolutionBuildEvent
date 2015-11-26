@@ -52,9 +52,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
             OperationMode,
             InterpreterMode,
             ScriptMode,            
-            SBEScript,
+            SBEScripts,
             MSBuildTargets,
             CSharpLang,
+            CppLang,
         }
 
         /// <summary>
@@ -166,7 +167,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
             switch(schema)
             {
                 case ColorSchema.ScriptMode:
-                case ColorSchema.SBEScript: {
+                case ColorSchema.SBEScripts: {
                     def = HighlightingManager.Instance.GetDefinition("SBEScripts");
                     break;
                 }
@@ -189,6 +190,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
                 }
                 case ColorSchema.CSharpLang: {
                     def = HighlightingManager.Instance.GetDefinition("CSharpLang");
+                    break;
+                }
+                case ColorSchema.CppLang: {
+                    def = HighlightingManager.Instance.GetDefinition("CppLang");
                     break;
                 }
                 default: {
@@ -279,7 +284,8 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
                 }
                 case ColorSchema.InterpreterMode:
                 case ColorSchema.ScriptMode:
-                case ColorSchema.SBEScript:
+                case ColorSchema.SBEScripts:
+                case ColorSchema.CppLang:
                 case ColorSchema.CSharpLang:
                 {
                     if(braceFoldingStrategy == null) {
@@ -354,7 +360,8 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
             loadXshdSchema(xshd.XshdResource.InterpreterMode, "InterpreterMode");
             loadXshdSchema(xshd.XshdResource.MSBuildTargets, "MSBuildTargets");
             loadXshdSchema(xshd.XshdResource.CSharpLang, "CSharpLang");
-            
+            loadXshdSchema(xshd.XshdResource.CppLang, "CppLang");
+
             colorize(ColorSchema.Default);
 
             _.Options.ConvertTabsToSpaces                       = true;

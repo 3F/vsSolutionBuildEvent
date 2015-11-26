@@ -70,6 +70,7 @@
             this.toolStripMenuDTECmd = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuDTECmdExec = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemSniffer = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuWizards = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuTpl = new System.Windows.Forms.ToolStripMenuItem();
             this.menuTplTargets = new System.Windows.Forms.ToolStripMenuItem();
             this.menuTplTargetsDefault = new System.Windows.Forms.ToolStripMenuItem();
@@ -246,6 +247,7 @@
             this.pGridCompilerCfg = new System.Windows.Forms.PropertyGrid();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.linkAddAction = new System.Windows.Forms.LinkLabel();
+            this.menuWizardVersion = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuActions.SuspendLayout();
             this.panelStatusBR.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -428,9 +430,9 @@
             this.toolStripMenuHelp,
             this.toolStripMenuBug,
             this.toolStripMenuVersion});
-            this.statusStrip.Location = new System.Drawing.Point(148, 7);
+            this.statusStrip.Location = new System.Drawing.Point(117, 7);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(158, 22);
+            this.statusStrip.Size = new System.Drawing.Size(189, 22);
             this.statusStrip.TabIndex = 81;
             // 
             // toolStripMenuSpring
@@ -448,6 +450,7 @@
             this.toolStripMenuReset,
             this.toolStripSeparator6,
             this.toolStripMenuTools,
+            this.menuWizards,
             this.toolStripMenuTpl,
             this.toolStripSeparator10,
             this.toolStripMenuCI,
@@ -553,6 +556,14 @@
             this.menuItemSniffer.Size = new System.Drawing.Size(216, 22);
             this.menuItemSniffer.Text = "EnvDTE Sniffer";
             this.menuItemSniffer.Click += new System.EventHandler(this.menuItemSniffer_Click);
+            // 
+            // menuWizards
+            // 
+            this.menuWizards.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuWizardVersion});
+            this.menuWizards.Name = "menuWizards";
+            this.menuWizards.Size = new System.Drawing.Size(154, 22);
+            this.menuWizards.Text = "Wizards";
             // 
             // toolStripMenuTpl
             // 
@@ -2607,6 +2618,13 @@
             this.linkAddAction.Text = "Add first action";
             this.linkAddAction.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkAddAction_LinkClicked);
             // 
+            // menuWizardVersion
+            // 
+            this.menuWizardVersion.Name = "menuWizardVersion";
+            this.menuWizardVersion.Size = new System.Drawing.Size(236, 22);
+            this.menuWizardVersion.Text = "Automatic Version Numbering";
+            this.menuWizardVersion.Click += new System.EventHandler(this.menuWizardVersion_Click);
+            // 
             // EventsFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2899,5 +2917,7 @@
         private System.Windows.Forms.Button btnInfoVSCE;
         private System.Windows.Forms.Button btnDownloadVSCE;
         private System.Windows.Forms.Label labelVSCE;
+        private System.Windows.Forms.ToolStripMenuItem menuWizards;
+        private System.Windows.Forms.ToolStripMenuItem menuWizardVersion;
     }
 }

@@ -36,7 +36,7 @@ namespace net.r_eg.vsSBE.UI.WForms
     /// Please don't forget - it's older version /outbuilding from ~v0.5
     /// This only contains the all manipulation with UI elements, 'as is'.
     /// </summary>
-    public partial class EventsFrm: Form, ITransferProperty, ITransferCommand
+    public partial class EventsFrm: Form, ITransfer
     {
         public const int WM_SYSCOMMAND  = 0x0112;
         public const int SC_RESTORE     = 0xF120;
@@ -71,6 +71,11 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// Testing tool - SBE-Scripts
         /// </summary>
         protected ScriptCheckFrm frmSBEScript;
+
+        /// <summary>
+        /// Wizard - Automatic Version Numbering
+        /// </summary>
+        protected Wizards.VersionFrm frmWizVersion;
 
         /// <summary>
         /// UI-helper - EnvDTE Sniffer
@@ -135,6 +140,30 @@ namespace net.r_eg.vsSBE.UI.WForms
                 textEditor.insertToSelection(name);
             }
             Focus();
+        }
+
+        /// <summary>
+        /// Implements transport for new action by event type.
+        /// </summary>
+        /// <param name="type">The type of event.</param>
+        /// <param name="cfg">The event configuration for action.</param>
+        public void action(SolutionEventType type, ISolutionEvent cfg)
+        {
+            switchEvent(type);
+            ISolutionEvent evt = addAction(-1);
+
+            if(evt == null || cfg == null) {
+                Log.Debug("UI.action for `{0}` - cfg or evt is null /skip", type);
+                return;
+            }
+
+            cfg.CloneByReflectionInto(evt, true);
+
+            refreshActions(true);
+            refreshSettings();
+            notice(true);
+
+            MessageBox.Show(String.Format("The new action `{0}`:\n`{1}` has been added.", evt.Name, evt.Caption), "New action");
         }
 
         /// <param name="bootloader"></param>
@@ -568,17 +597,21 @@ namespace net.r_eg.vsSBE.UI.WForms
             refreshSettings();
         }
 
-        protected void addAction(int copyFrom = -1)
+        protected ISolutionEvent addAction(int copyFrom = -1)
         {
             try {
                 ISolutionEvent evt = logic.addEventItem(copyFrom);
                 dgvActions.Rows.Add(evt.Enabled, evt.Name, evt.Caption);
                 selectAction(dgvActions.Rows.Count - 1, true);
-                notice(true);
+                return evt;
             }
             catch(Exception ex) {
                 Log.Error("Failed to add event-item: '{0}'", ex.Message);
             }
+            finally {
+                notice(true);
+            }
+            return null;
         }
 
         protected void removeRow(DataGridViewExt dgv, DataGridViewButtonColumn btn, DataGridViewCellEventArgs idx)
@@ -964,6 +997,16 @@ namespace net.r_eg.vsSBE.UI.WForms
             metric.formCollapsed = new Size(Width - (metric.splitter), Height);
         }
 
+        protected void switchEvent(SolutionEventType type)
+        {
+            int pos = logic.getDefIndexByEventType(type);
+            if(pos == -1) {
+                Log.Trace("UI.Activation the event `{0}`: -1", type);
+                return;
+            }
+            comboBoxEvents.SelectedIndex = pos;
+        }
+
         protected void fillEvents(ComboBox combo)
         {
             //TODO: exclude saveData(true) for event:
@@ -1125,7 +1168,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                 return;
             }
             uiViewMode(ModeType.Script);
-            textEditor.colorize(TextEditor.ColorSchema.SBEScript);
+            textEditor.colorize(TextEditor.ColorSchema.SBEScripts);
             textEditor._.ShowLineNumbers        = true;
             textEditor.CodeCompletionEnabled    = true;
         }
@@ -1475,6 +1518,15 @@ namespace net.r_eg.vsSBE.UI.WForms
             frmSniffer.Show();
         }
 
+        private void menuWizardVersion_Click(object sender, EventArgs e)
+        {
+            if(Util.focusForm(frmWizVersion)) {
+                return;
+            }
+            frmWizVersion = new Wizards.VersionFrm(logic.Bootloader, this);
+            frmWizVersion.Show();
+        }
+
         private void EventsFrm_FormClosing(object sender, FormClosingEventArgs e)
         {
             snifferEnabled(false);
@@ -1484,6 +1536,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             Util.closeTool(frmDTECheck);
             Util.closeTool(frmSBEScript);
             Util.closeTool(frmSniffer);
+            Util.closeTool(frmWizVersion);
             logic.restoreData();
         }
 
@@ -1686,12 +1739,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void menuSnifferActivateCE_Click(object sender, EventArgs e)
         {
-            int pos = logic.getDefIndexByEventType(SolutionEventType.CommandEvent);
-            if(pos == -1) {
-                Log.Trace("UI.Activation the CommandEvent: -1");
-                return;
-            }
-            comboBoxEvents.SelectedIndex = pos;
+            switchEvent(SolutionEventType.CommandEvent);
         }
 
         private void contextMenuSniffer_Opening(object sender, System.ComponentModel.CancelEventArgs e)

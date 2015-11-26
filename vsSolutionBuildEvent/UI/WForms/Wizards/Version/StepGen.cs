@@ -15,23 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace net.r_eg.vsSBE.UI
+namespace net.r_eg.vsSBE.UI.WForms.Wizards.Version
 {
-    public interface ITransferCommand
+    internal sealed class StepGen: IStep
     {
         /// <summary>
-        /// Various commands such as a DTE, etc.
+        /// The type of generation.
         /// </summary>
-        void command(string data);
+        public GenType gtype = GenType.CSharpStruct;
 
         /// <summary>
-        /// EnvDTE command.
+        /// The type of step.
         /// </summary>
-        /// <param name="guid"></param>
-        /// <param name="id"></param>
-        /// <param name="customIn"></param>
-        /// <param name="customOut"></param>
-        /// <param name="description"></param>
-        //void command(string guid, int id, object customIn, object customOut, string description);
+        public StepsType Type
+        {
+            get { return StepsType.Gen; }
+        }
     }
 }

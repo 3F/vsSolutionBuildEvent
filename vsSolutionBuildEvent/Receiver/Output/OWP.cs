@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using EnvDTE;
 
@@ -28,6 +29,10 @@ namespace net.r_eg.vsSBE.Receiver.Output
     /// </summary>
     public class OWP
     {
+        /// Max length of envelope.
+        /// </summary>
+        public const int ENVELOPE_LIMIT = 32768;
+
         /// <summary>
         /// When is receiving data from pane
         /// </summary>
@@ -108,19 +113,23 @@ namespace net.r_eg.vsSBE.Receiver.Output
                 return;
             }
 
-            //TODO: timer for splitting a long messages
             lock(_eLock)
             {
-                string envelope = String.Empty;
+                StringBuilder envelope = new StringBuilder();
                 while(dataList[guid].Count > 0)
                 {
                     string msg;
-                    if(dataList[guid].TryDequeue(out msg)) {
-                        envelope += msg;
+                    if(!dataList[guid].TryDequeue(out msg)) {
+                        continue;
+                    }
+
+                    envelope.Append(msg);
+                    if(envelope.Length > ENVELOPE_LIMIT) {
+                        break;
                     }
                 }
 
-                Receiving(this, new PaneArgs() { Raw = envelope, Guid = guid, Item = item });
+                Receiving(this, new PaneArgs() { Raw = envelope.ToString(), Guid = guid, Item = item });
             }
 
             if(dataList[guid].Count > 0) {

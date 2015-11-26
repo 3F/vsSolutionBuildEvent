@@ -112,7 +112,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             string exDate   = DateTime.Now.AddDays((new Random()).Next(-30, -2)).ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern);
             _editor.Text    = Resource.StringScriptExampleSBE.Replace("%mdate%", exDate);
-            textEditor.colorize(TextEditor.ColorSchema.SBEScript);
+            textEditor.colorize(TextEditor.ColorSchema.SBEScripts);
             textEditor.codeCompletionInit(context.inspector);
         }
 

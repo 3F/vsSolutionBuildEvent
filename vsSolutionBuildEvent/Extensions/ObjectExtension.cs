@@ -29,17 +29,30 @@ namespace net.r_eg.vsSBE.Extensions
     public static class ObjectExtension
     {
         /// <summary>
-        /// Deep copy of public properties through Reflection (slowest)
+        /// Copying of all public properties with Reflection (slowest).
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="obj"></param>
+        /// <param name="source"></param>
         /// <param name="destination"></param>
-        public static void CloneByReflectionInto<T>(this T obj, T destination)
+        /// <param name="skipNullVal">To skip properties with null value if true.</param>
+        public static void CloneByReflectionInto<T>(this T source, T destination, bool skipNullVal = false)
         {
-            PropertyInfo[] properties = obj.GetType().GetProperties();
+            if(source == null) {
+                return;
+            }
+            PropertyInfo[] properties = source.GetType().GetProperties();
 
-            foreach(PropertyInfo property in properties) {
-                property.SetValue(destination, property.GetValue(obj, null), null);
+            foreach(PropertyInfo property in properties)
+            {
+                if(property.GetSetMethod() == null) {
+                    continue;
+                }
+
+                object val = property.GetValue(source, null);
+                if(skipNullVal && val == null) {
+                    continue;
+                }
+                property.SetValue(destination, val, null);
             }
         }
 

@@ -253,4 +253,95 @@ namespace vsSolutionBuildEvent
 * [Performance] - For repeated events such as EW, OWP, Logging etc. probably need a more time for services of your all defined actions. Remember this!
 * [Compatibility] - However, some your actions can require a lock of the main thread for waiting to the next steps, otherwise some actions can lose a some technical data for processes of your script on next step.</value>
   </data>
+  <data name="WizardVerCppDefine" xml:space="preserve">
+    <value>#pragma once
+
+#ifndef VSSBE_VERSION_H_
+#define VSSBE_VERSION_H_
+
+#define VER_NUMBER_STRING           L"0.12.4";
+#define VER_NUMBER_WITH_REV_STRING  L"0.12.4.17639";
+#define VER_BRANCH_NAME             L"develop";
+#define VER_BRANCH_SHA1             L"e3de826";
+#define VER_BRANCH_REV_COUNT        L"296";
+#define VER_INFORMATIONAL           L"0.12.4.17639 [ e3de826 ]";
+#define VER_INFORMATIONAL_FULL      L"0.12.4.17639 [ e3de826 ] /'develop':296";
+
+#endif</value>
+    <comment>Example for wizard - Automatic Version Numbering :: C++ preprocessor directives - #define (macro definitions)</comment>
+  </data>
+  <data name="WizardVerCppStruct" xml:space="preserve">
+    <value>#pragma once
+
+#ifndef VSSBE_VERSION_H_
+#define VSSBE_VERSION_H_
+
+#include &lt;string&gt;
+
+namespace example
+{
+    struct Version
+    {
+        struct TNum
+        {
+            const int major;
+            const int minor;
+            const int build;
+            const int revision;
+
+            TNum(int major, int minor, int build = 0, int revision = 0) 
+                : major(major), minor(minor), build(build), revision(revision) { }
+
+            TNum() : TNum(0, 12, 4, 17639) { }
+
+        } number;
+
+        const std::wstring branchName       = L"develop";
+        const std::wstring branchSha1       = L"e3de826";
+        const std::wstring branchRevCount   = L"296";
+        const std::wstring informational    = L"0.12.4.17639 [ e3de826 ]";
+    } Version;
+};
+
+#endif</value>
+    <comment>Example for wizard - Automatic Version Numbering :: C++ Struct</comment>
+  </data>
+  <data name="WizardVerCSharpStruct" xml:space="preserve">
+    <value>namespace example
+{
+    internal struct Version
+    {
+        public static readonly System.Version number    = new System.Version(0, 12, 4, 17639);
+        public const string numberString                = "0.12.4";
+        public const string numberWithRevString         = "0.12.4.17639";
+        public const string branchName                  = "develop";
+        public const string branchSha1                  = "e3de826";
+        public const string branchRevCount              = "296";
+        public const string informational               = "0.12.4.17639 [ e3de826 ]";
+        public const string informationalFull           = "0.12.4.17639 [ e3de826 ] /'develop':296";
+    }
+}</value>
+    <comment>Example for wizard - Automatic Version Numbering :: C# struct</comment>
+  </data>
+  <data name="WizardVerDirectRepl" xml:space="preserve">
+    <value>&lt;!-- the mixed format --&gt;
+&lt;Identifier Id="C972EFAB-8642-444F-8033-FF5C3720E97F"&gt;
+    &lt;Name&gt;AwesomeApp&lt;/Name&gt;
+    &lt;Author&gt;Mr.Smith&lt;/Author&gt;
+&gt;&gt;&gt; &lt;Version&gt;0.12.4.17639&lt;/Version&gt; &lt;&lt;&lt;
+    &lt;Description xml:space="preserve"&gt;&lt;/Description&gt;
+    &lt;Locale&gt;1033&lt;/Locale&gt;
+    &lt;InstalledByMsi&gt;false&lt;/InstalledByMsi&gt;
+    &lt;SupportedProducts&gt;
+        &lt;VisualStudio Version="14.0"&gt;
+            &lt;Edition&gt;Enterprise&lt;/Edition&gt;
+            &lt;Edition&gt;Ultimate&lt;/Edition&gt;
+            &lt;Edition&gt;Premium&lt;/Edition&gt;
+            &lt;Edition&gt;Pro&lt;/Edition&gt;
+        &lt;/VisualStudio&gt;
+    &lt;/SupportedProducts&gt;
+    &lt;SupportedFrameworkRuntimeEdition MinVersion="4.0" /&gt;
+&lt;/Identifier&gt;</value>
+    <comment>Example for wizard - Automatic Version Numbering :: Direct replacement</comment>
+  </data>
 </root>

@@ -28,7 +28,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// <summary>
         /// Transport support
         /// </summary>
-        private ITransferProperty _pin;
+        private ITransfer _pin;
 
         /// <summary>
         /// Work with properties
@@ -45,7 +45,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// </summary>
         private ConcurrentDictionary<string, List<MSBuild.PropertyItem>> _cacheProperties;
 
-        public PropertiesFrm(IEnvironment env, ITransferProperty pin)
+        public PropertiesFrm(IEnvironment env, ITransfer pin)
         {
             InitializeComponent();
             Icon = Resource.Package_32;
