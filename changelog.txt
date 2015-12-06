@@ -1,6 +1,28 @@
 vsSolutionBuildEvent
 ____________________
 
+[v0.12.5] 2015.12.06
+    * FIXED: Infinite loop with user-variables(+recursive properties) in MSBuild engine.
+    * FIXED: "Fail: PM - getRightOperand: incorrect data ')")'" -> Func / SHA1 & MD5 (FunctionComponent)
+    * FIXED: Supported products ( +Enterprise & Community )
+    * FIXED: UI: Incorrect updating of availability of the form controls when selected action has been changed.
+    * FIXED: Possible crash for COMException in OWP components.
+    * FIXED: UI: incorrect updating of variable list in Testing tool when the user script is failed.
+    * FIXED: Evaluation with MSBuild engine when the all projects are not available at all - "Fail: not found project: ..."
+    * NEW: Added the code generation Wizard 'Automatic Version Numbering'
+           http://vssbe.r-eg.net/doc/Examples/Version/
+           
+    * NEW: Support of complex objects for filters in CommandEvent, Sniffer tool, +DTEComponent
+    * NEW: UI: added control of log messages by type - Trace, Debug, etc.
+    * NEW: Added `Core` alias for InternalComponent.
+    * NEW: Support of all available items (OWPComponent)
+           Signature: `#[OWP out(string ident [, boolean isGuid])]`
+           
+    * CHANGED: Limit for supported containers per action: 2^16 (MSBuild engine)
+    * CHANGED: Limit on 2048 records in sniffer tools.
+    * CHANGED: Updated NLog v4.2.2
+    * CHANGED: Other trivial changes and bug fixes with UI: stack trace in testing tool, fixed notifications for removed rows, etc.
+
 [v0.12.4] 2015.09.29
     * FIXED: C# Mode. Error CS1567 when used GenerateInMemory property.
     * FIXED: "Action ... is ignored for current configuration" for AnyCPU platform if used MSBuild tool.

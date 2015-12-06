@@ -3,7 +3,7 @@
     <Identifier Id="94ecd13f-15f3-4f51-9afd-17f0275c6266">
         <Name>vsSolutionBuildEvent</Name>
         <Author>entry.reg@gmail.com</Author>
-        <Version>0.12.4</Version>
+        <Version>0.12.5</Version>
         <Description xml:space="preserve">Flexible actions for all events.. +Supports the CI /Build Servers, Command-Line mode and many other features for build, tests, debugging, versioning, CI, logging(+logger for msbuild), work with files etc.,</Description>
         <Locale>1033</Locale>
         <MoreInfoUrl>http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/</MoreInfoUrl>
