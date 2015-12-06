@@ -22,7 +22,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vsSolutionBuildEvent_2015",
 		{A7BF1F9C-F18D-423E-9354-859DC3CFAFD4} = {A7BF1F9C-F18D-423E-9354-859DC3CFAFD4}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vsSolutionBuildEventTest_2015", "vsSolutionBuildEventTest\vsSolutionBuildEventTest_2015.csproj", "{C00D04E8-8101-42F5-89DA-CBAD205CC1D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vsSolutionBuildEventTest", "vsSolutionBuildEventTest\vsSolutionBuildEventTest.csproj", "{C00D04E8-8101-42F5-89DA-CBAD205CC1D3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4262A1DC-768F-43CC-85F5-A4ED9CD034CC} = {4262A1DC-768F-43CC-85F5-A4ED9CD034CC}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bridge", "Bridge\Bridge.csproj", "{73919171-44B6-4536-B892-F1FCA653887C}"
 EndProject

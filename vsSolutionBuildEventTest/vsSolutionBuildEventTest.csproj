@@ -13,8 +13,19 @@
     <RootNamespace>net.r_eg.vsSBE.Test</RootNamespace>
     <AssemblyName>vsSolutionBuildEventTest</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <csprojPostfix>
+    </csprojPostfix>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">0</VisualStudioVersion>
+    <VsSDKVersion Condition="'$(VsSDKVersion)' == ''">0</VsSDKVersion>
+    <TargetFrameworkVersion Condition="'$(VisualStudioVersion)' &gt; '10' or '$(VsSDKVersion)' &gt; '10'">v4.5</TargetFrameworkVersion>
+    <csprojPostfix Condition="'$(VisualStudioVersion)' == '14.0' or '$(VsSDKVersion)' == '14.0'">_2015</csprojPostfix>
+    <csprojPostfix Condition="'$(VisualStudioVersion)' == '12.0' or '$(VsSDKVersion)' == '12.0'">_2013</csprojPostfix>
+    <csprojPostfix Condition="'$(VisualStudioVersion)' == '11.0' or '$(VsSDKVersion)' == '11.0'">_2012</csprojPostfix>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -24,6 +35,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
     <NoWarn>618</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -33,6 +45,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
     <NoWarn>618</NoWarn>
   </PropertyGroup>
   <ItemGroup>
@@ -42,8 +55,8 @@
     </Reference>
     <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Moq, Version=4.2.1507.118, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <HintPath>..\packages\Moq.4.2.1507.0118\lib\net40\Moq.dll</HintPath>
+    <Reference Include="Moq, Version=4.2.1510.2205, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.2.1510.2205\lib\net40\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -87,7 +100,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup Condition="$(SpecLibForEnvCI) != true">
-    <ProjectReference Include="..\vsSolutionBuildEvent\vsSolutionBuildEvent.csproj">
+    <ProjectReference Include="..\vsSolutionBuildEvent\vsSolutionBuildEvent$(csprojPostfix).csproj">
       <Project>{32E44995-F621-4E77-B46A-8F65D64E7FEA}</Project>
       <Name>vsSolutionBuildEvent</Name>
     </ProjectReference>
@@ -96,10 +109,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
+  <Import Project="$(SolutionDir)\VsixLib\List.targets" />
   <Target Name="BeforeBuild">
+    <Copy SourceFiles="@(VsixLib)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" UseHardlinksIfPossible="true" />
   </Target>
+  <!--
   <Target Name="AfterBuild">
   </Target>
   -->

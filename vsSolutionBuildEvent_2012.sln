@@ -8,7 +8,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vsSolutionBuildEvent", "vsS
 		{A7BF1F9C-F18D-423E-9354-859DC3CFAFD4} = {A7BF1F9C-F18D-423E-9354-859DC3CFAFD4}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vsSolutionBuildEventTest", "vsSolutionBuildEventTest\vsSolutionBuildEventTest_2012.csproj", "{C00D04E8-8101-42F5-89DA-CBAD205CC1D3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vsSolutionBuildEventTest", "vsSolutionBuildEventTest\vsSolutionBuildEventTest.csproj", "{C00D04E8-8101-42F5-89DA-CBAD205CC1D3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4262A1DC-768F-43CC-85F5-A4ED9CD034CC} = {4262A1DC-768F-43CC-85F5-A4ED9CD034CC}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7ADBBB81-2FA7-45CA-B97D-486C3A6624D3}"
 	ProjectSection(SolutionItems) = preProject
