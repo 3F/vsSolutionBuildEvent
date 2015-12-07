@@ -24,6 +24,7 @@ using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Bridge.CoreCommand;
 using net.r_eg.vsSBE.Clients;
 using net.r_eg.vsSBE.Configuration;
+using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.Scripts;
 using AppSettings = net.r_eg.vsSBE.Settings;
@@ -384,8 +385,12 @@ namespace net.r_eg.vsSBE.API
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int solutionOpened(object pUnkReserved, int fNewSolution)
         {
-            var config      = (ConfigManager.Config)?? new Config();
-            var userConfig  = (ConfigManager.UserConfig)?? new UserConfig();
+            var config      = ConfigManager.Config;
+            var userConfig  = ConfigManager.UserConfig;
+
+            if(config == null || userConfig == null) {
+                throw new NotFoundException("Config is not ready for loading. User: {0} / Main: {1}", (userConfig != null), (config != null));
+            }
 
             bool isNew = !config.load(Environment.SolutionPath, Environment.SolutionFileName);
             userConfig.load(config.Link);
@@ -468,6 +473,7 @@ namespace net.r_eg.vsSBE.API
         /// <param name="cfg"></param>
         protected void configure(ISettings cfg)
         {
+            ConfigManager.addAndUse(new Config(), new UserConfig(), ContextType.Static); //TODO: Solution & Common context
             (new Logger.Initializer()).configure();
 
             // TODO: event with common settings for IEntryPointCore

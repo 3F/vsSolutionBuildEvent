@@ -1040,7 +1040,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             if(!App.IsCfgExists)
             {
-                Log.Fatal("Configuration data is corrupt. User: {0} / Main: {1}", (App.UserConfig == null), (App.Config == null));
+                Log.Fatal("Configuration data is corrupt. User: {0} / Main: {1}", (App.UserConfig != null), (App.Config != null));
                 MessageBox.Show("We can't continue. See details in log.", "Configuration data is corrupt");
                 FormClosing -= EventsFrm_FormClosing;
                 Close();

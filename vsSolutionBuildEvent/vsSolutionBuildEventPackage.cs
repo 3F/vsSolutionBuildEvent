@@ -243,7 +243,6 @@ namespace net.r_eg.vsSBE
         {
             var usrCfg = new UserConfig();
             usrCfg.load(usrCfg.getLink(Settings._.CommonPath, Config.Entity.NAME, null));
-            Settings.CfgManager.addAndUse(new Config(), usrCfg, ContextType.Static);
 
             Event = new API.EventLevel();
             ((IEntryPointCore)Event).load(Dte2, usrCfg.Data.Global.DebugMode);
