@@ -1,4 +1,4 @@
-call %~dp0_config
+call "%~dp0_config"
 
 REM # Configuration
 set cfgname=Release
@@ -9,4 +9,4 @@ set sln=vsSolutionBuildEvent_2015.sln
 REM # Version of MSBuild tool
 set _msbuild=14.0
 
-call %~dp0_build
+call "%~dp0_build"

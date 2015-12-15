@@ -50,6 +50,46 @@
   "PreBuild": [
     {
       "Enabled": true,
+      "Name": "RestorePkg",
+      "Caption": "To restore packages - nuget etc.",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": false,
+      "BuildType": "Common",
+      "Confirmation": false,
+      "ToConfiguration": [],
+      "ExecutionOrder": {
+        "$type": "net.r_eg.vsSBE.Events.ExecutionOrder[], vsSolutionBuildEvent",
+        "$values": []
+      },
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true,
+        "TimeLimit": 30
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
+        "Type": "Script",
+        "Command": "#[\" \n    To restore packages with GetNuTool\n    It's important for packages of solution-level in VS2015\n    https://github.com/NuGet/Home/issues/522\n    \n    TODO: later it can be as part of engine...\n\"]\n#[($([System.Convert]::ToInt32(\"$(VisualStudioVersion.Replace('.', ''))\")) >= 140)\n{\n    #[var msbuild = \"$(MSBuildToolsPath)\\msbuild.exe\"]\n    #[IO scall(#[var msbuild], \"gnt.core /p:ngconfig=\\\".nuget/packages.config\\\"\", 60)]\n}]",
+        "Command__": [
+          "#[\" ",
+          "    To restore packages with GetNuTool",
+          "    It's important for packages of solution-level in VS2015",
+          "    https://github.com/NuGet/Home/issues/522",
+          "    ",
+          "    TODO: later it can be as part of engine...",
+          "\"]",
+          "#[($([System.Convert]::ToInt32(\"$(VisualStudioVersion.Replace('.', ''))\")) >= 140)",
+          "{",
+          "    #[var msbuild = \"$(MSBuildToolsPath)\\msbuild.exe\"]",
+          "    #[IO scall(#[var msbuild], \"gnt.core /p:ngconfig=\\\".nuget/packages.config\\\"\", 60)]",
+          "}]"
+        ]
+      }
+    },
+    {
+      "Enabled": true,
       "Name": "Definitions",
       "Caption": "Prepares data",
       "SupportMSBuild": true,
@@ -594,10 +634,11 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[var tplNuspecCIM  = #[File get(\"vsSBE.CI.MSBuild.nuspec.tpl\")]]\n#[var nupCIMdir     = $(odir)NuGet-CI.MSBuild-package]\n\n#[File sout(\"cmd\", \"/C mkdir \\\"#[var nupCIMdir]\\\" 2>&1\")]\n#[File sout(\"cmd\", \"/C del /F/Q \\\"#[var nupCIMdir]\\\" & del /F/Q \\\"#[var nupCIMdir]\\bin\\\" 2>&1\")]\n\n#[var nuspecCIM = $(tplNuspecCIM.Replace(%CIMVersion%, \"$(numCIM)\").Replace(%PackageVersion%, \"\").Replace(%vsSBEVersion%, \"$(numSBE)\"))]\n#[File write(\"#[var nupCIMdir]\\vsSBE.CI.MSBuild.nuspec\"):#[var nuspecCIM]]\n\n#[\" files for package \"]\n\n#[File cmd(\"cd \\\"#[var CIMLib]\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]#[\" CIMLib custom \"]\n\n#[\" vsix dir \"]\n#[File cmd(\"cd \\\"#[var pDir]bin/#[var cfg]/\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]\n#[File cmd(\"cd \\\"#[var pDirCIM]bin/#[var cfg]/\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]\n#[File scall(\".nuget\\nuget.exe\", \"pack \\\"#[var nupCIMdir]\\vsSBE.CI.MSBuild.nuspec\\\" -OutputDirectory \\\"#[var nupCIMdir]\\..\\\" -NonInteractive -Verbosity quiet\")]\n\n#[File sout(\"cmd\", \"/C rmdir /S/Q \\\"#[var nupCIMdir]\\\" 2>&1\")]",
+        "Command": "#[var tplNuspecCIM  = #[File get(\"vsSBE.CI.MSBuild.nuspec.tpl\")]]\n#[var nupCIMdir     = $(odir)NuGet-CI.MSBuild-package]\n#[var msbuild       = $(MSBuildToolsPath)\\msbuild.exe]\n\n#[File sout(\"cmd\", \"/C mkdir \\\"#[var nupCIMdir]\\\" 2>&1\")]\n#[File sout(\"cmd\", \"/C del /F/Q \\\"#[var nupCIMdir]\\\" & del /F/Q \\\"#[var nupCIMdir]\\bin\\\" 2>&1\")]\n\n#[var nuspecCIM = $(tplNuspecCIM.Replace(%CIMVersion%, \"$(numCIM)\").Replace(%PackageVersion%, \"\").Replace(%vsSBEVersion%, \"$(numSBE)\"))]\n#[File write(\"#[var nupCIMdir]\\vsSBE.CI.MSBuild.nuspec\"):#[var nuspecCIM]]\n\n#[\" files for package \"]\n\n#[File cmd(\"cd \\\"#[var CIMLib]\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]#[\" CIMLib custom \"]\n\n#[\" vsix dir \"]\n#[File cmd(\"cd \\\"#[var pDir]bin/#[var cfg]/\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]\n#[File cmd(\"cd \\\"#[var pDirCIM]bin/#[var cfg]/\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]\n#[File scall(\"#[var msbuild]\", \"gnt.core /t:pack /p:ngin=\\\"#[var nupCIMdir]\\\" /p:ngout=\\\"#[var odir]\\\"\")]\n\n#[File sout(\"cmd\", \"/C rmdir /S/Q \\\"#[var nupCIMdir]\\\" 2>&1\")]",
         "Command__": [
           "#[var tplNuspecCIM  = #[File get(\"vsSBE.CI.MSBuild.nuspec.tpl\")]]",
           "#[var nupCIMdir     = $(odir)NuGet-CI.MSBuild-package]",
+          "#[var msbuild       = $(MSBuildToolsPath)\\msbuild.exe]",
           "",
           "#[File sout(\"cmd\", \"/C mkdir \\\"#[var nupCIMdir]\\\" 2>&1\")]",
           "#[File sout(\"cmd\", \"/C del /F/Q \\\"#[var nupCIMdir]\\\" & del /F/Q \\\"#[var nupCIMdir]\\bin\\\" 2>&1\")]",
@@ -612,7 +653,7 @@
           "#[\" vsix dir \"]",
           "#[File cmd(\"cd \\\"#[var pDir]bin/#[var cfg]/\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]",
           "#[File cmd(\"cd \\\"#[var pDirCIM]bin/#[var cfg]/\\\" & xcopy *.dll \\\"#[var nupCIMdir]\\bin\\\" /Y/R/I\")]",
-          "#[File scall(\".nuget\\nuget.exe\", \"pack \\\"#[var nupCIMdir]\\vsSBE.CI.MSBuild.nuspec\\\" -OutputDirectory \\\"#[var nupCIMdir]\\..\\\" -NonInteractive -Verbosity quiet\")]",
+          "#[File scall(\"#[var msbuild]\", \"gnt.core /t:pack /p:ngin=\\\"#[var nupCIMdir]\\\" /p:ngout=\\\"#[var odir]\\\"\")]",
           "",
           "#[File sout(\"cmd\", \"/C rmdir /S/Q \\\"#[var nupCIMdir]\\\" 2>&1\")]"
         ]

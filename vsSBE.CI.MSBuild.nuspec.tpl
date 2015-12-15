@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package >
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>vsSBE.CI.MSBuild</id>
     <title>vsSolutionBuildEvent CI.MSBuild</title>
