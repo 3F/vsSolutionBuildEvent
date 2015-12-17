@@ -41,20 +41,30 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
+        /// Use regex engine
+        /// </summary>
+        public override bool CRegex
+        {
+            get { return true; }
+        }
+
+        /// <summary>
         /// Handler for current data
         /// </summary>
         /// <param name="data">mixed data</param>
         /// <returns>prepared and evaluated data</returns>
         public override string parse(string data)
         {
-            Match m = Regex.Match(data, @"^\[vsSBE
-                                              \s+
-                                              (                  #1 - full ident
-                                                ([A-Za-z_0-9]+)  #2 - subtype
-                                                .*
-                                              )
-                                           \]$", 
-                                           RegexOptions.IgnorePatternWhitespace);
+            Match m = Regex.Match(data, 
+                                    String.Format(@"^\[{0}
+                                                        \s*
+                                                        (                  #1 - full ident
+                                                          ([A-Za-z_0-9]+)  #2 - subtype
+                                                          .*
+                                                        )
+                                                     \]$", Condition
+                                    ),
+                                    RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
                 throw new SyntaxIncorrectException("Failed InternalComponent - '{0}'", data);

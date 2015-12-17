@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.vsSBE.SBEScripts;
+using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 using net.r_eg.vsSBE.Scripts;
 
@@ -224,6 +225,28 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
             uvar.set("test", null, "7");
             uvar.evaluate("test", null, new EvaluatorBlank(), true);
             Assert.AreEqual("7", msbuild.parse(sbe.parse(data, true)));
+        }
+
+        /// <summary>
+        ///A test for selector
+        ///</summary>
+        [TestMethod()]
+        public void selectorTest1()
+        {
+            var target  = new Script(new StubEnv(), new UserVariable());
+            var dom     = new Inspector(target.Bootloader);
+            
+            // Compliance Test - entry point to component + CRegex flag
+            foreach(var c in dom.Root)
+            {
+                try {
+                    target.parse(String.Format("#[{0} ]", c.Name));
+                }
+                catch(SelectorMismatchException ex) {
+                    Assert.Fail("`{0}` <- `{1}`", c.Name, ex.Message);
+                }
+                catch { }
+            }
         }
     }
 }
