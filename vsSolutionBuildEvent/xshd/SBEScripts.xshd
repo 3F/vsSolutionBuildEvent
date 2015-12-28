@@ -20,13 +20,32 @@
             <Word>vsSBE</Word>
             <Word>OWP</Word>
             <Word>var</Word>
+            <Word>7z</Word>
+            <Word>Core</Word>
+            <Word>NuGet</Word>
         </Keywords>
 
         <Keywords color="SysConst">
             <Word>STDOUT</Word>
             <Word>STDIN</Word>
             <Word>STDERR</Word>
-        </Keywords>        
+        </Keywords>
+
+        <!-- unspecified EnumOrConst -->
+        <Keywords color="SysConst">
+            <Word>SevenZip</Word>
+            <Word>Zip</Word>
+            <Word>GZip</Word>
+            <Word>BZip2</Word>
+            <Word>Tar</Word>
+            <Word>XZ</Word>
+            <Word>Deflate</Word>
+            <Word>Deflate64</Word>
+            <Word>Lzma</Word>
+            <Word>Lzma2</Word>
+            <Word>Ppmd</Word>
+            <Word>Copy</Word>
+        </Keywords>
         
         <Rule color="Punctuation">
             [?,.;()\[\]{}+\-/%*&lt;&gt;^+~!|&amp;]+

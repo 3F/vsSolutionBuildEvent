@@ -1,8 +1,7 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.Exceptions;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 {
@@ -46,8 +45,9 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void hashTest1()
         {
+            var target = new FunctionComponent();
+
             try {
-                FunctionComponent target = new FunctionComponent();
                 target.parse("[Func hash]");
                 Assert.Fail("1");
             }
@@ -56,7 +56,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                FunctionComponent target = new FunctionComponent();
                 target.parse("[Func hash = 1]");
                 Assert.Fail("2");
             }
@@ -71,8 +70,9 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void hashTest2()
         {
+            var target = new FunctionComponent();
+
             try {
-                FunctionComponent target = new FunctionComponent();
                 target.parse("[Func hash.MD5]");
                 Assert.Fail("1");
             }
@@ -81,7 +81,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                FunctionComponent target = new FunctionComponent();
                 target.parse("[Func hash.SHA1]");
                 Assert.Fail("2");
             }
@@ -107,8 +106,9 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void hashTest4()
         {
+            var target = new FunctionComponent();
+
             try {
-                FunctionComponent target = new FunctionComponent();
                 target.parse("[Func hash.MD5(\"Hello World!\").right]");
                 Assert.Fail("1");
             }
@@ -117,7 +117,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                FunctionComponent target = new FunctionComponent();
                 target.parse("[Func hash.SHA1(\"Hello World!\").right]");
                 Assert.Fail("2");
             }
@@ -132,8 +131,9 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void hashTest5()
         {
+            var target = new FunctionComponent();
+
             try {
-                FunctionComponent target = new FunctionComponent();
                 target.parse("[Func hash.MD5(\"Hello World!\") = true]");
                 Assert.Fail("1");
             }
@@ -142,7 +142,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                FunctionComponent target = new FunctionComponent();
                 target.parse("[Func hash.SHA1(\"Hello World!\") = true]");
                 Assert.Fail("2");
             }
@@ -157,8 +156,9 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void hashTest6()
         {
+            var target = new FunctionComponent();
+
             try {
-                FunctionComponent target = new FunctionComponent();
                 target.parse("[Func hash.MD5()]");
                 Assert.Fail("1");
             }
@@ -167,7 +167,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                FunctionComponent target = new FunctionComponent();
                 target.parse("[Func hash.SHA1()]");
                 Assert.Fail("2");
             }
@@ -176,7 +175,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                FunctionComponent target = new FunctionComponent();
                 target.parse("[Func hash.MD5(test)]");
                 Assert.Fail("3");
             }
@@ -185,7 +183,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                FunctionComponent target = new FunctionComponent();
                 target.parse("[Func hash.SHA1(test)]");
                 Assert.Fail("4");
             }
@@ -194,7 +191,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                FunctionComponent target = new FunctionComponent();
                 target.parse("[Func hash.MD5(\"test\", true)]");
                 Assert.Fail("5");
             }
@@ -203,7 +199,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                FunctionComponent target = new FunctionComponent();
                 target.parse("[Func hash.SHA1(\"test\", true)]");
                 Assert.Fail("6");
             }

@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace net.r_eg.vsSBE.Extensions
@@ -105,6 +107,29 @@ namespace net.r_eg.vsSBE.Extensions
                 ret.Append(b.ToString("X2"));
             }
             return ret.ToString();
+        }
+
+        /// <summary>
+        /// Extracts absolute paths to files with mask (*.*, *.dll, ..)
+        /// </summary>
+        /// <param name="files">List of files.</param>
+        /// <param name="path">Base path.</param>
+        /// <returns></returns>
+        public static string[] ExtractFiles(this string[] files, string path = null)
+        {
+            List<string> ret = new List<string>();
+            foreach(string file in files)
+            {
+                string mask     = Path.GetFileName(file);
+                string fullname = Path.Combine(path ?? Settings.WPath, file);
+
+                if(mask.IndexOf('*') != -1) {
+                    ret.AddRange(Directory.GetFiles(Path.GetDirectoryName(fullname), mask));
+                    continue;
+                }
+                ret.Add(fullname);
+            }
+            return ret.ToArray();
         }
     }
 }

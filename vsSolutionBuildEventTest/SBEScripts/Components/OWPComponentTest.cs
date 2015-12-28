@@ -130,8 +130,9 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void stOutParseTest3()
         {
+            var target = new OWPComponent((IEnvironment)null);
+
             try {
-                OWPComponent target = new OWPComponent((IEnvironment)null);
                 target.parse("[OWP out()]");
                 Assert.Fail("1");
             }
@@ -140,7 +141,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                OWPComponent target = new OWPComponent((IEnvironment)null);
                 target.parse("[OWP out().All]");
                 Assert.Fail("2");
             }
@@ -155,8 +155,9 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void stOutParseTest4()
         {
+            var target = new OWPComponent((IEnvironment)null);
+
             try {
-                OWPComponent target = new OWPComponent((IEnvironment)null);
                 target.parse("[OWP out.All.NotRealProperty]");
                 Assert.Fail("1");
             }
@@ -165,7 +166,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                OWPComponent target = new OWPComponent((IEnvironment)null);
                 target.parse("[OWP out.Warnings.NotRealProperty]");
                 Assert.Fail("2");
             }
@@ -174,7 +174,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                OWPComponent target = new OWPComponent((IEnvironment)null);
                 target.parse("[OWP out.Warnings.Codes.NotRealProperty]");
                 Assert.Fail("3");
             }
@@ -183,7 +182,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                OWPComponent target = new OWPComponent((IEnvironment)null);
                 target.parse("[OWP out.NotRealProperty]");
                 Assert.Fail("4");
             }
@@ -192,7 +190,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                OWPComponent target = new OWPComponent((IEnvironment)null);
                 target.parse("[OWP out.Warnings.Count = 12]");
                 Assert.Fail("5");
             }
@@ -207,8 +204,9 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void stOutParseTest5()
         {
+            var target = new OWPComponent((IEnvironment)null);
+
             try {
-                OWPComponent target = new OWPComponent((IEnvironment)null);
                 target.parse("[OWP out(\"NotAvailableName\").Warnings.Raw]");
                 Assert.Fail("1");
             }
@@ -217,7 +215,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                OWPComponent target = new OWPComponent((IEnvironment)null);
                 target.parse("[OWP out(\"814F1F57-BF57-4944-8100-CA5514BB4194\", true).All]");
                 Assert.Fail("2");
             }
@@ -324,6 +321,20 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             Assert.AreEqual(String.Empty, target.parse("[OWP item(\"name\").write(true): data]"));
             Assert.AreEqual(String.Empty, target.parse("[OWP item(\"name\").writeLine(false): data]"));
             Assert.AreEqual(String.Empty, target.parse("[OWP item(\"name\").writeLine(true): data]"));
+        }
+
+        /// <summary>
+        /// A test for parse - stItemWrite
+        /// multi-line data
+        ///</summary>
+        [TestMethod()]
+        public void stItemWriteParseTest3()
+        {
+            OWPComponent target = new OWPComponent(Env);
+            Assert.AreEqual(String.Empty, target.parse("[OWP item(\"name\").write(false): multi\nline\" \n 'data'.]"));
+            Assert.AreEqual(String.Empty, target.parse("[OWP item(\"name\").write(true): multi\nline\" \n 'data'.]"));
+            Assert.AreEqual(String.Empty, target.parse("[OWP item(\"name\").writeLine(false): multi\nline\" \n 'data'.]"));
+            Assert.AreEqual(String.Empty, target.parse("[OWP item(\"name\").writeLine(true): multi\nline\" \n 'data'.]"));
         }
 
         /// <summary>

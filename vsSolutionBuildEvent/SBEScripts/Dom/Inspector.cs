@@ -101,7 +101,9 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         {
             this.bootloader = bootloader;
             foreach(IComponent c in bootloader.Registered) {
+#if DEBUG
                 Log.Trace("Inspector: extracting from '{0}'", c.GetType().Name);
+#endif
                 extract(c, data);
             }
 

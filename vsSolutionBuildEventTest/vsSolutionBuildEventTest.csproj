@@ -59,6 +59,10 @@
       <HintPath>..\packages\Moq.4.2.1510.2205\lib\net40\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="SevenZipSharp, Version=0.64.3890.29348, Culture=neutral, PublicKeyToken=20de82c62b055c88, processorArchitecture=MSIL">
+      <HintPath>..\packages\SevenZipSharp.0.64\lib\SevenZipSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -72,6 +76,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\DTEOperationTest.cs" />
+    <Compile Include="SBEScripts\Components\SevenZipComponentTest.cs" />
+    <Compile Include="SBEScripts\SNode\LevelTest.cs" />
     <Compile Include="StubEnv.cs" />
     <Compile Include="SBEScripts\Components\BuildComponentTest.cs" />
     <Compile Include="SBEScripts\Components\FunctionComponentTest.cs" />

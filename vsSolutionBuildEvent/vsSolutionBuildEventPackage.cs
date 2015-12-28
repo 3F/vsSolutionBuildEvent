@@ -146,7 +146,7 @@ namespace net.r_eg.vsSBE
             {
                 //Log.paneAttach(GetOutputPane(GuidList.OWP_SBE, Settings.OWP_ITEM_VSSBE)); // also may be problem with toolWindow as in other COM variant -_-
                 Log._.paneAttach(Settings.OWP_ITEM_VSSBE, Dte2);
-                Log._.clear();
+                Log._.clear(false);
                 Log._.show();
                 eventsOfStatusTool(true);
 

@@ -162,9 +162,7 @@
             this.textBoxIncludes.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxIncludes.Size = new System.Drawing.Size(334, 52);
             this.textBoxIncludes.TabIndex = 0;
-            this.textBoxIncludes.Text = "* AvalonEdit (avalonedit.net)\r\n* Json.NET (json.codeplex.com)\r\n* NLog (nlog-proje" +
-    "ct.org)\r\n* Ude (code.google.com/p/ude/)\r\n\r\nAll about graphical resources see /Re" +
-    "sources/License";
+            this.textBoxIncludes.Text = resources.GetString("textBoxIncludes.Text");
             this.textBoxIncludes.WordWrap = false;
             // 
             // groupBoxMixed

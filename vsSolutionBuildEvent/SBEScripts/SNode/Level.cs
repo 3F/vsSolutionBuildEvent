@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using net.r_eg.vsSBE.Exceptions;
+
 namespace net.r_eg.vsSBE.SBEScripts.SNode
 {
     public struct Level: ILevel
@@ -53,6 +55,44 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// Checks the argument types.
+        /// </summary>
+        /// <param name="types">The types that should be for this level.</param>
+        /// <returns>True value if the Args contains arguments with specified types.</returns>
+        public bool Is(params ArgumentType[] types)
+        {
+            if(Args == null || types == null || Args.Length != types.Length) {
+                return false;
+            }
+
+            for(int i = 0; i < Args.Length; ++i)
+            {
+                if(Args[i].type != types[i]) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks the argument types.
+        /// </summary>
+        /// <param name="exception">Use string for exception instead of boolean result.</param>
+        /// <param name="types">The types that should be for this level.</param>
+        /// <returns>True value if the Args contains arguments with specified types.</returns>
+        public bool Is(string exception, params ArgumentType[] types)
+        {
+            bool val = Is(types);
+
+            if(exception != null && !val) {
+                throw new InvalidArgumentException("Incorrect arguments to `{0}`", exception);
+            }
+
+            return val;
         }
     }
 }

@@ -76,37 +76,24 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns>prepared and evaluated data</returns>
         public override string parse(string data)
         {
-            Match m = Regex.Match(data, @"^\[OWP
-                                              \s+
-                                              (                  #1 - full ident
-                                                ([A-Za-z_0-9]+)  #2 - subtype
-                                                .*
-                                              )
-                                           \]$",
-                                           RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+            var point       = entryPoint(data, RegexOptions.Singleline);
+            string subtype  = point.Key;
+            string request  = point.Value;
 
-            if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed OWPComponent - '{0}'", data);
-            }
-
-            string ident    = m.Groups[1].Value;
-            string subtype  = m.Groups[2].Value;
+            Log.Trace("OWPComponent: subtype - `{0}`, request - `{1}`", subtype, request);
 
             switch(subtype) {
                 case "out": {
-                    Log.Debug("OWPComponent: use stOut");
-                    return stOut(ident);
+                    return stOut(request);
                 }
                 case "log": {
-                    Log.Debug("OWPComponent: use stLog");
-                    return stLog(ident);
+                    return stLog(request);
                 }
                 case "item": {
-                    Log.Debug("OWPComponent: use stItem");
-                    return stItem(ident);
+                    return stItem(request);
                 }
             }
-            throw new SubtypeNotFoundException("OWPComponent: not found subtype - '{0}'", m.Groups[2].Value);
+            throw new SubtypeNotFoundException("OWPComponent: not found subtype - '{0}'", subtype);
         }
 
         /// <summary>
@@ -433,13 +420,13 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             if(pm.Is(0, LevelType.Method, "out"))
             {
-                Argument[] args = pm.Levels[0].Args;
-                if((args.Length < 1 || args.Length > 2)
-                    || args[0].type != ArgumentType.StringDouble
-                    || (args.Length == 2 && args[1].type != ArgumentType.Boolean))
+                ILevel lvlOut = pm.Levels[0];
+                if(!lvlOut.Is(ArgumentType.StringDouble)
+                    && !lvlOut.Is(ArgumentType.StringDouble, ArgumentType.Boolean))
                 {
-                    throw new InvalidArgumentException("stOut: incorrect arguments to `out(string ident [, boolean isGuid])`");
+                    throw new InvalidArgumentException("Incorrect arguments to `out(string ident [, boolean isGuid])`");
                 }
+                Argument[] args = lvlOut.Args;
 
                 item    = (string)args[0].data;
                 isGuid  = (args.Length == 2)? (bool)args[1].data : false; // optional isGuid param

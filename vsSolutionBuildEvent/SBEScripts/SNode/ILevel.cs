@@ -42,5 +42,20 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
         /// Type of data.
         /// </summary>
         CValueType DataType { get; set; }
+
+        /// <summary>
+        /// Checks the argument types.
+        /// </summary>
+        /// <param name="types">The types that should be for this level.</param>
+        /// <returns>True value if the Args contains arguments with specified types.</returns>
+        bool Is(params ArgumentType[] types);
+
+        /// <summary>
+        /// Checks the argument types.
+        /// </summary>
+        /// <param name="exception">Use string for exception instead of boolean result.</param>
+        /// <param name="types">The types that should be for this level.</param>
+        /// <returns>True value if the Args contains arguments with specified types.</returns>
+        bool Is(string exception, params ArgumentType[] types);
     }
 }

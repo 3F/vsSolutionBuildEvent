@@ -15,13 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.MSBuild;
+using net.r_eg.vsSBE.SBEScripts.Exceptions;
 using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
     public abstract class Component: IComponent
     {
+        /// <summary>
+        /// For evaluation with SBE-Scripts
+        /// </summary>
+        protected ISBEScript script;
+
+        /// <summary>
+        /// For evaluation with MSBuild
+        /// </summary>
+        protected IMSBuild msbuild;
+
+        /// <summary>
+        /// Provides operation with environment
+        /// </summary>
+        protected IEnvironment env;
+
+        /// <summary>
+        /// Current container of user-variables
+        /// </summary>
+        protected IUserVariable uvariable;
+
         /// <summary>
         /// Ability to work with data for current component
         /// </summary>
@@ -82,26 +106,6 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
         protected bool cregex = false;
 
-        /// <summary>
-        /// For evaluating with SBE-Script
-        /// </summary>
-        protected ISBEScript script;
-
-        /// <summary>
-        /// For evaluating with MSBuild
-        /// </summary>
-        protected IMSBuild msbuild;
-
-        /// <summary>
-        /// Provides operation with environment
-        /// </summary>
-        protected IEnvironment env;
-
-        /// <summary>
-        /// Current container of user-variables
-        /// </summary>
-        protected IUserVariable uvariable;
-
         /// <param name="env">Used environment</param>
         /// <param name="uvariable">Instance of user-variables</param>
         public Component(IEnvironment env, IUserVariable uvariable)
@@ -147,6 +151,34 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             this.env        = env;
             this.uvariable  = uvariable;
             msbuild         = new MSBuild.Parser(env, uvariable);
+        }
+
+        /// <summary>
+        /// Default entry point to start analysis.
+        /// </summary>
+        /// <param name="data">Raw data.</param>
+        /// <param name="opt">Additional options to engine.</param>
+        /// <returns></returns>
+        protected virtual KeyValuePair<string, string> entryPoint(string data, RegexOptions opt = RegexOptions.None)
+        {
+            Match m = Regex.Match(data, 
+                                    String.Format(@"^\[{0}
+                                                        \s*
+                                                        (?'request'
+                                                           (?'type'
+                                                              [A-Za-z_0-9]+
+                                                           )
+                                                           .*
+                                                        )
+                                                     \]$", Condition
+                                    ),
+                                    RegexOptions.IgnorePatternWhitespace | opt);
+
+            if(!m.Success) {
+                throw new SyntaxIncorrectException("Failed {0} - `{1}`", GetType().FullName, data);
+            }
+
+            return new KeyValuePair<string, string>(m.Groups["type"].Value, m.Groups["request"].Value);
         }
     }
 }

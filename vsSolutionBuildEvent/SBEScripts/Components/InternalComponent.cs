@@ -55,28 +55,18 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns>prepared and evaluated data</returns>
         public override string parse(string data)
         {
-            Match m = Regex.Match(data, 
-                                    String.Format(@"^\[{0}
-                                                        \s*
-                                                        (                  #1 - full ident
-                                                          ([A-Za-z_0-9]+)  #2 - subtype
-                                                          .*
-                                                        )
-                                                     \]$", Condition
-                                    ),
-                                    RegexOptions.IgnorePatternWhitespace);
+            var point       = entryPoint(data);
+            string subtype  = point.Key;
+            string request  = point.Value;
 
-            if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed InternalComponent - '{0}'", data);
-            }
+            Log.Trace("InternalComponent: subtype - `{0}`, request - `{1}`", subtype, request);
 
-            switch(m.Groups[2].Value) {
+            switch(subtype) {
                 case "events": {
-                    Log.Debug("InternalComponent: use stEvents");
-                    return stEvents(m.Groups[1].Value);
+                    return stEvents(request);
                 }
             }
-            throw new SubtypeNotFoundException("InternalComponent: not found subtype - '{0}'", m.Groups[2].Value);
+            throw new SubtypeNotFoundException("InternalComponent: not found subtype - '{0}'", subtype);
         }
 
         /// <summary>

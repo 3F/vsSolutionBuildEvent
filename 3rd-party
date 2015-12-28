@@ -1,0 +1,18 @@
+# Third-party software components
+
+## The vsSolutionBuildEvent includes:
+
+    * AvalonEdit (avalonedit.net)
+    * Json.NET (json.codeplex.com)
+    * NLog (nlog-project.org)
+    * Ude (code.google.com/p/ude/)
+    * SevenZipSharp (sevenzipsharp.codeplex.com)
+    * 7-Zip (www.7-zip.org)
+    
+## Maintenance of this project includes next additional software:
+
+    * Moq (www.moqthis.com)
+    * GetNuTool (github.com/3F/GetNuTool)
+    * vsSolutionBuildEvent CI.MSBuild (vssbe.r-eg.net)
+
+All about graphical resources see /Resources/License

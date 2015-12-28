@@ -121,6 +121,7 @@ namespace net.r_eg.vsSBE.SBEScripts
             register(new BuildComponent(Env));
             register(new FunctionComponent());
             register(new FileComponent());
+            register(new SevenZipComponent());
         }
 
         /// <summary>

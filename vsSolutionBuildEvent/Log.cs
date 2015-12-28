@@ -194,9 +194,12 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// To clear all available messages if it's possible.
         /// </summary>
-        public void clear()
+        /// <param name="force">Including undelivered etc.</param>
+        public void clear(bool force)
         {
-            undelivered.Clear();
+            if(force) {
+                undelivered.Clear();
+            }
 
             if(upane != null) {
                 upane.Clear();

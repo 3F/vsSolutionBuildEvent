@@ -82,30 +82,19 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns>prepared and evaluated data</returns>
         public override string parse(string data)
         {
-            Match m = Regex.Match(data, @"^\[DTE
-                                              \s+
-                                              (                  #1 - full ident
-                                                ([A-Za-z_0-9]+)  #2 - subtype
-                                                .*
-                                              )
-                                           \]$", 
-                                           RegexOptions.IgnorePatternWhitespace);
+            var point       = entryPoint(data);
+            string subtype  = point.Key;
+            string request  = point.Value;
 
-            if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed DTEComponent - '{0}'", data);
-            }
-            string ident    = m.Groups[1].Value;
-            string subtype  = m.Groups[2].Value;
+            Log.Trace("DTEComponent: subtype - `{0}`, request - `{1}`", subtype, request);
 
             switch(subtype)
             {
                 case "exec": {
-                    Log.Trace("DTEComponent: use stExec");
-                    return stExec(ident);
+                    return stExec(request);
                 }
                 case "events": {
-                    Log.Trace("DTEComponent: use stEvents");
-                    return stEvents(ident);
+                    return stEvents(request);
                 }
             }
             throw new SubtypeNotFoundException("DTEComponent: not found subtype - '{0}'", subtype);

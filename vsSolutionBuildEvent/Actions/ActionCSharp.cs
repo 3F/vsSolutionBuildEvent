@@ -17,7 +17,6 @@
 
 using System;
 using System.CodeDom.Compiler;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -358,11 +357,11 @@ namespace net.r_eg.vsSBE.Actions
 
             Log.Trace("[Compiler] use as list of files with source code.");
             if(String.IsNullOrEmpty(hash)) {
-                return provider.CompileAssemblyFromFile(parameters, extractFiles(filesFromCommand(source)));
+                return provider.CompileAssemblyFromFile(parameters, filesFromCommand(source).ExtractFiles());
             }
 
             using(TempAssemblyInfo f = new TempAssemblyInfo(hash)) {
-                return provider.CompileAssemblyFromFile(parameters, extractFiles(filesFromCommand(String.Format("{0}\n{1}", source, f.FullPath))));
+                return provider.CompileAssemblyFromFile(parameters, filesFromCommand(String.Format("{0}\n{1}", source, f.FullPath)).ExtractFiles());
             }
         }
 
@@ -445,28 +444,6 @@ namespace net.r_eg.vsSBE.Actions
                 return new string[]{ };
             }
             return data.Replace("\r\n", "\n").Split('\n');
-        }
-
-        /// <summary>
-        /// Gets absolute paths to files and works with mask (*.*, *.cs, ..)
-        /// </summary>
-        /// <param name="files">List of files.</param>
-        /// <returns></returns>
-        private string[] extractFiles(string[] files)
-        {
-            List<string> ret = new List<string>();
-            foreach(string file in files)
-            {
-                string mask     = Path.GetFileName(file);
-                string fullname = Path.Combine(Settings.WPath, file);
-
-                if(mask.IndexOf('*') != -1) {
-                    ret.AddRange(Directory.GetFiles(Path.GetDirectoryName(fullname), mask));
-                    continue;
-                }
-                ret.Add(fullname);
-            }
-            return ret.ToArray();
         }
 
         private string outputCacheFile(ISolutionEvent evt)

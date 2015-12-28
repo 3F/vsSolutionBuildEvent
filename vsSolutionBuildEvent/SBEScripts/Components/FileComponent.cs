@@ -86,68 +86,55 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns>prepared and evaluated data</returns>
         public override string parse(string data)
         {
-            Match m = Regex.Match(data, 
-                                    String.Format(@"^\[{0}
-                                                       \s*
-                                                       (                  #1 - full ident
-                                                         ([A-Za-z_0-9]+)  #2 - subtype
-                                                         \s*
-                                                         [.(=]
-                                                         .*
-                                                       )
-                                                    \]$", Condition
-                                    ), RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+            var point       = entryPoint(data, RegexOptions.Singleline);
+            string subtype  = point.Key;
+            string request  = point.Value;
 
-            if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed FileComponent - '{0}'", data);
-            }
-            string ident = m.Groups[1].Value;
-
-            switch(m.Groups[2].Value) {
+            switch(subtype) {
                 case "get": {
-                    return stGet(ident);
+                    return stGet(request);
                 }
                 case "call": {
-                    return stCall(ident, false, false);
+                    return stCall(request, false, false);
                 }
                 case "out": { // is obsolete
                     //return stCall(ident, true, false);
-                    return stCall(ident, true, true); // redirect to sout
+                    return stCall(request, true, true); // redirect to sout
                 }
                 case "scall": {
-                    return stCall(ident, false, true);
+                    return stCall(request, false, true);
                 }
                 case "sout": {
-                    return stCall(ident, true, true);
+                    return stCall(request, true, true);
                 }
                 case "write": {
-                    stWrite(ident, false, false);
+                    stWrite(request, false, false);
                     return String.Empty;
                 }
                 case "append": {
-                    stWrite(ident, true, false);
+                    stWrite(request, true, false);
                     return String.Empty;
                 }
                 case "writeLine": {
-                    stWrite(ident, false, true);
+                    stWrite(request, false, true);
                     return String.Empty;
                 }
                 case "appendLine": {
-                    stWrite(ident, true, true);
+                    stWrite(request, true, true);
                     return String.Empty;
                 }
                 case "replace": {
-                    stReplace(ident);
+                    stReplace(request);
                     return String.Empty;
                 }
                 case "exists": {
-                    return stExists(ident);
+                    return stExists(request);
                 }
                 case "cmd": {
-                    return stCmd(ident);
+                    return stCmd(request);
                 }
             }
-            throw new SubtypeNotFoundException("FileComponent: not found subtype - '{0}'", m.Groups[2].Value);
+            throw new SubtypeNotFoundException("FileComponent: not found subtype - '{0}'", subtype);
         }
 
         /// <summary>

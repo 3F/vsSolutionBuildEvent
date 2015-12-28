@@ -89,6 +89,7 @@ namespace net.r_eg.vsSBE.Logger
         /// <summary>
         /// To clear all available messages if it's possible.
         /// </summary>
-        void clear();
+        /// <param name="force">Including undelivered etc.</param>
+        void clear(bool force);
     }
 }

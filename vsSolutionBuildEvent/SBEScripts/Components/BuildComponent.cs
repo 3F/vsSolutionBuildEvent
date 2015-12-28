@@ -72,38 +72,25 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns>prepared and evaluated data</returns>
         public override string parse(string data)
         {
-            Match m = Regex.Match(data.Trim(), @"^\[Build
-                                                    \s+
-                                                    (                  #1 - full ident
-                                                      ([A-Za-z_0-9]+)  #2 - subtype
-                                                      .*
-                                                    )
-                                                 \]$", 
-                                                 RegexOptions.IgnorePatternWhitespace);
+            var point       = entryPoint(data.Trim());
+            string subtype  = point.Key;
+            string request  = point.Value;
 
-            if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed BuildComponent - '{0}'", data);
-            }
-            string ident    = m.Groups[1].Value;
-            string subtype  = m.Groups[2].Value;
+            Log.Trace("BuildComponent: subtype - `{0}`, request - `{1}`", subtype, request);
 
             switch(subtype) {
                 case "cancel": {
-                    Log.Trace("BuildComponent: use stCancel");
-                    return stCancel(ident);
+                    return stCancel(request);
                 }
                 case "projects": {
                     // is meant the SolutionContexts !
-                    Log.Trace("BuildComponent: use stProjects");
-                    return stProjects(ident);
+                    return stProjects(request);
                 }
                 case "type": {
-                    Log.Trace("BuildComponent: use stType");
-                    return stType(ident);
+                    return stType(request);
                 }
                 case "solution": {
-                    Log.Trace("BuildComponent: use stSolution");
-                    return stSolution(ident);
+                    return stSolution(request);
                 }
             }
             throw new SubtypeNotFoundException("BuildComponent: not found subtype - '{0}'", subtype);
@@ -324,11 +311,9 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             // solution.path("file").
             if(pm.Is(1, LevelType.Method, "path"))
             {
-                Argument[] args = pm.Levels[1].Args;
-                if(args.Length != 1 || args[0].type != ArgumentType.StringDouble) {
-                    throw new InvalidArgumentException("stSolution: incorrect arguments to `solution.path(string sln)`");
-                }
-                return stSlnPMap((string)args[0].data, pm.pinTo(2));
+                ILevel lvlPath = pm.Levels[1];
+                lvlPath.Is("solution.path(string sln)", ArgumentType.StringDouble);
+                return stSlnPMap((string)lvlPath.Args[0].data, pm.pinTo(2));
             }
             
             throw new OperationNotFoundException("stSolution: not found - '{0}' /'{1}'", pm.Levels[1].Data, pm.Levels[1].Type);
@@ -382,11 +367,9 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             if(pm.Is(0, LevelType.Method, "projectBy"))
             {
-                Argument[] args = pm.Levels[0].Args;
-                if(args.Length != 1 || args[0].type != ArgumentType.StringDouble) {
-                    throw new InvalidArgumentException("stSlnPMap: incorrect arguments to `projectBy(string guid)`");
-                }
-                return projectsMap(map.getProjectBy((string)args[0].data), pm.pinTo(1));
+                ILevel lvlPrjBy = pm.Levels[0];
+                lvlPrjBy.Is("projectBy(string guid)", ArgumentType.StringDouble);
+                return projectsMap(map.getProjectBy((string)lvlPrjBy.Args[0].data), pm.pinTo(1));
             }
 
             throw new OperationNotFoundException("stSlnPMap: not found - '{0}' /'{1}'", pm.Levels[0].Data, pm.Levels[0].Type);
