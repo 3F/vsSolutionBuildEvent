@@ -17,6 +17,7 @@
 
 using System;
 using System.Text.RegularExpressions;
+using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.Scripts
 {
@@ -45,7 +46,8 @@ namespace net.r_eg.vsSBE.Scripts
             string ret;
 
             if(!limited) {
-                ret = Regex.Unescape(data);
+                // https://msdn.microsoft.com/en-us/library/system.text.regularexpressions.regex.unescape.aspx
+                ret = Regex.Unescape(data); //inc.: \, *, +, ?, |, {, }, [, ], (,), ^, $,., #, and white space characters
                 Log.Trace("Tokens: processed characters '{0}'", ret);
                 return ret;
             }
@@ -68,6 +70,25 @@ namespace net.r_eg.vsSBE.Scripts
 
             Log.Trace("Tokens: limited processed characters '{0}'", ret);
             return ret;
+        }
+
+        /// <summary>
+        /// Unescape quote symbols from string.
+        /// </summary>
+        /// <param name="type">Quote symbol.</param>
+        /// <param name="data"></param>
+        /// <returns>String with unescaped quote symbols.</returns>
+        public static string unescapeQuote(char type, string data)
+        {
+            switch(type)
+            {
+                case '\'':
+                case '"': {
+                    return data.Replace("\\" + type, type.ToString());
+                }
+            }
+
+            throw new NotSupportedOperationException("The quote symbol ({0}) is not supported.", type);
         }
     }
 }

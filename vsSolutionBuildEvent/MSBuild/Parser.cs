@@ -333,11 +333,11 @@ namespace net.r_eg.vsSBE.MSBuild
             /* Data */
 
             if(rStringDataD.Success) {
-                ret.property.unevaluated    = rStringDataD.Value.Replace("\\\"", "\""); //TODO:
+                ret.property.unevaluated    = Tokens.unescapeQuote('"', rStringDataD.Value);
                 ret.variable.type           = PreparedData.ValueType.StringFromDouble;
             }
             else if(rStringDataS.Success) {
-                ret.property.unevaluated    = rStringDataS.Value.Replace("\\'", "'"); //TODO:
+                ret.property.unevaluated    = Tokens.unescapeQuote('\'', rStringDataS.Value);
                 ret.variable.type           = PreparedData.ValueType.StringFromSingle;
             }
             else {

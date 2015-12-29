@@ -395,9 +395,9 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.SNode
             Assert.AreEqual(pm.Levels[1].Data, "path");
             Assert.AreEqual(pm.Levels[1].Args.Length, 3);
             Assert.AreEqual(pm.Levels[1].Args[0].type, ArgumentType.StringDouble);
-            Assert.AreEqual(pm.Levels[1].Args[0].data, "\\\"D:/app/(name)).sln\\\"");
+            Assert.AreEqual(pm.Levels[1].Args[0].data, "\"D:/app/(name)).sln\"");
             Assert.AreEqual(pm.Levels[1].Args[1].type, ArgumentType.StringDouble);
-            Assert.AreEqual(pm.Levels[1].Args[1].data, "\\\"test\\\"");
+            Assert.AreEqual(pm.Levels[1].Args[1].data, "\"test\"");
             Assert.AreEqual(pm.Levels[1].Args[2].type, ArgumentType.StringSingle);
             Assert.AreEqual(pm.Levels[1].Args[2].data, "\\\"12 34\\\"");
 
@@ -405,7 +405,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.SNode
             Assert.AreEqual(pm.Levels[2].Data, "projectBy");
             Assert.AreEqual(pm.Levels[2].Args.Length, 1);
             Assert.AreEqual(pm.Levels[2].Args[0].type, ArgumentType.StringDouble);
-            Assert.AreEqual(pm.Levels[2].Args[0].data, "\\\"426(2)A1DC\\\"");
+            Assert.AreEqual(pm.Levels[2].Args[0].data, "\"426(2)A1DC\"");
 
             Assert.AreEqual(pm.Levels[3].Type, LevelType.RightOperandColon);
             Assert.AreEqual(pm.Levels[3].Data, " \"\\\"test 123\\\"\", '\\\"true\\\"'");
@@ -818,5 +818,29 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.SNode
             }
         }
 
+        /// <summary>
+        ///A test for detectArgument /quotes
+        ///</summary>
+        [TestMethod()]
+        public void detectArgumentTest4()
+        {
+            IPM pm = new PM("solution(\"str \\\" data1 \\\" \", \"str \\' data2 \\' \", 'str \\' data3 \\' ', 'str \\\" data4 \\\" ')");
+            
+            Assert.AreEqual(pm.Is(0, LevelType.Method, "solution"), true);
+            Assert.AreEqual(pm.Levels[0].Args.Length, 4);
+
+            Argument[] args = pm.Levels[0].Args;
+            Assert.AreEqual(args[0].type, ArgumentType.StringDouble);
+            Assert.AreEqual(args[0].data, "str \" data1 \" ");
+
+            Assert.AreEqual(args[1].type, ArgumentType.StringDouble);
+            Assert.AreEqual(args[1].data, "str \\' data2 \\' ");
+
+            Assert.AreEqual(args[2].type, ArgumentType.StringSingle);
+            Assert.AreEqual(args[2].data, "str ' data3 ' ");
+
+            Assert.AreEqual(args[3].type, ArgumentType.StringSingle);
+            Assert.AreEqual(args[3].data, "str \\\" data4 \\\" ");
+        }
     }
 }

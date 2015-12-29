@@ -21,6 +21,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
+using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.SBEScripts.SNode
 {
@@ -267,10 +268,13 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
                              RegexOptions.IgnorePatternWhitespace);
             if(m.Success)
             {
-                return new Argument() { 
-                    type = (m.Groups[1].Success)? ArgumentType.StringDouble : ArgumentType.StringSingle,
-                    data = (m.Groups[1].Success)? m.Groups[1].Value : m.Groups[2].Value
-                };
+                if(m.Groups[1].Success) {
+                    return new Argument() { type = ArgumentType.StringDouble,
+                                            data = Tokens.unescapeQuote('"', m.Groups[1].Value) };
+                }
+
+                return new Argument() { type = ArgumentType.StringSingle,
+                                        data = Tokens.unescapeQuote('\'', m.Groups[2].Value) };
             }
 
             // Integer
