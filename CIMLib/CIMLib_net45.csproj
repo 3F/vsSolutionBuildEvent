@@ -128,6 +128,9 @@
     <Reference Include="System.Xml">
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Xml.Linq">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="WindowsBase">
       <Private>True</Private>
     </Reference>

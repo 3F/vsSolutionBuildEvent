@@ -29,7 +29,7 @@ using SevenZip;
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
     /// <summary>
-    /// Mixed supported functions
+    /// Support of archives via 7-Zip engine
     /// </summary>
     [Component("7z", "7-Zip.\nFile archiver with a high compression ratio.\nwww.7-zip.org")]
     public class SevenZipComponent: Component, IComponent

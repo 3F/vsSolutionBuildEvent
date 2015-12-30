@@ -85,6 +85,7 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="Ude, Version=0.1.1.0, Culture=neutral, PublicKeyToken=dd537652db4726a9, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Ude.Signed.0.1.1\lib\net40\Ude.dll</HintPath>
@@ -169,6 +170,9 @@
     <Compile Include="Receiver\Output\Items.cs" />
     <Compile Include="Receiver\Output\ItemType.cs" />
     <Compile Include="SBEScripts\Components\Build\ProjectsMap.cs" />
+    <Compile Include="SBEScripts\Components\NuGetComponent.cs" />
+    <Compile Include="SBEScripts\Components\NuGet\GetNuTool\Core.cs" />
+    <Compile Include="SBEScripts\Components\NuGet\GetNuTool\GNT.cs" />
     <Compile Include="SBEScripts\Components\SevenZipComponent.cs" />
     <Compile Include="SBEScripts\SNode\ArgumentType.cs" />
     <Compile Include="SBEScripts\SNode\IPM.cs" />

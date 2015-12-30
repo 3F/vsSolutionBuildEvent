@@ -76,8 +76,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\DTEOperationTest.cs" />
+    <Compile Include="SBEScripts\Components\NuGetComponentTest.cs" />
     <Compile Include="SBEScripts\Components\SevenZipComponentTest.cs" />
     <Compile Include="SBEScripts\SNode\LevelTest.cs" />
+    <Compile Include="TempFile.cs" />
     <Compile Include="StubEnv.cs" />
     <Compile Include="SBEScripts\Components\BuildComponentTest.cs" />
     <Compile Include="SBEScripts\Components\FunctionComponentTest.cs" />
