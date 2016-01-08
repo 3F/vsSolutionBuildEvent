@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -90,6 +90,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string subtype  = point.Key;
             string request  = point.Value;
 
+            Log.Trace("`{0}`: subtype - `{1}`, request - `{2}`", ToString(), subtype, request);
+
             switch(subtype) {
                 case "get": {
                     return stGet(request);
@@ -109,23 +111,23 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 }
                 case "write": {
                     stWrite(request, false, false);
-                    return String.Empty;
+                    return Value.Empty;
                 }
                 case "append": {
                     stWrite(request, true, false);
-                    return String.Empty;
+                    return Value.Empty;
                 }
                 case "writeLine": {
                     stWrite(request, false, true);
-                    return String.Empty;
+                    return Value.Empty;
                 }
                 case "appendLine": {
                     stWrite(request, true, true);
-                    return String.Empty;
+                    return Value.Empty;
                 }
                 case "replace": {
                     stReplace(request);
-                    return String.Empty;
+                    return Value.Empty;
                 }
                 case "exists": {
                     return stExists(request);
@@ -134,7 +136,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     return stCmd(request);
                 }
             }
-            throw new SubtypeNotFoundException("FileComponent: not found subtype - '{0}'", subtype);
+
+            throw new SubtypeNotFoundException("Subtype `{0}` is not found", subtype);
         }
 
         /// <summary>

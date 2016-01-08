@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -47,14 +47,15 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string subtype  = point.Key;
             string request  = point.Value;
 
-            Log.Trace("FunctionComponent: subtype - `{0}`, request - `{1}`", subtype, request);
+            Log.Trace("`{0}`: subtype - `{1}`, request - `{2}`", ToString(), subtype, request);
 
             switch(subtype) {
                 case "hash": {
                     return stHash(new PM(request));
                 }
             }
-            throw new SubtypeNotFoundException("FunctionComponent: not found subtype - '{0}'", subtype);
+
+            throw new SubtypeNotFoundException("Subtype `{0}` is not found", subtype);
         }
 
         /// <summary>
@@ -85,8 +86,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 CValueType.String)]
         protected string stHash(IPM pm)
         {
-            if(!pm.Is(0, LevelType.Property, "hash")) {
-                throw new SyntaxIncorrectException("Failed stHash - '{0}' /'{1}'", pm.Levels[0].Data, pm.Levels[0].Type);
+            if(!pm.Is(LevelType.Property, "hash")) {
+                throw new IncorrectNodeException(pm);
             }
 
             ILevel lvlHash = pm.Levels[1]; // level of the hash property
@@ -103,7 +104,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return ((string)lvlHash.Args[0].data).SHA1Hash();
             }
 
-            throw new OperationNotFoundException("stHash: not found - '{0}' /'{1}'", lvlHash.Data, lvlHash.Type);
+            throw new IncorrectNodeException(pm, 1);
         }
     }
 }

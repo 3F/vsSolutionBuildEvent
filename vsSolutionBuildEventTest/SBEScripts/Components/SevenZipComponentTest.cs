@@ -2,6 +2,7 @@
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 using SevenZip;
@@ -166,8 +167,8 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             //TODO
             string zip = Guid.NewGuid().ToString() + ".zip";
             using(var tf = new TempFile(false)) {
-                Assert.AreEqual(String.Empty, target.parse("[7z pack.files({\"" + tf.file + "\"}, \"" + zip + "\")]"));
-                Assert.AreEqual(String.Empty, target.parse("[7z pack.files({\"" + tf.file + "\"}, \"" + zip + "\", SevenZip, Lzma2, 4)]"));
+                Assert.AreEqual(Value.Empty, target.parse("[7z pack.files({\"" + tf.file + "\"}, \"" + zip + "\")]"));
+                Assert.AreEqual(Value.Empty, target.parse("[7z pack.files({\"" + tf.file + "\"}, \"" + zip + "\", SevenZip, Lzma2, 4)]"));
             }
         }
 
@@ -185,11 +186,11 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             using(var tf2 = new TempFile())
             using(var tf3 = new TempFile())
             {
-                Assert.AreEqual(String.Empty, target.parse("[7z pack.files({\"" + tf1.file + "\", \"" + tf2.file + "\"}, \"" + zip + "\", {\"" + tf1.file + "\"})]"));
+                Assert.AreEqual(Value.Empty, target.parse("[7z pack.files({\"" + tf1.file + "\", \"" + tf2.file + "\"}, \"" + zip + "\", {\"" + tf1.file + "\"})]"));
                 Assert.AreEqual(1, target.FilesInput.Length);
                 Assert.AreEqual(tf2.file, target.FilesInput[0]);
 
-                Assert.AreEqual(String.Empty, target.parse("[7z pack.files({\"" + tf1.file + "\", \"" + tf2.file + "\", \"" + tf3.file + "\"}, \"" + zip + "\", {\"" + tf2.file + "\"}, SevenZip, Lzma2, 4)]"));
+                Assert.AreEqual(Value.Empty, target.parse("[7z pack.files({\"" + tf1.file + "\", \"" + tf2.file + "\", \"" + tf3.file + "\"}, \"" + zip + "\", {\"" + tf2.file + "\"}, SevenZip, Lzma2, 4)]"));
                 Assert.AreEqual(2, target.FilesInput.Length);
                 Assert.AreEqual(tf1.file, target.FilesInput[0]);
                 Assert.AreEqual(tf3.file, target.FilesInput[1]);
@@ -264,8 +265,8 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             //TODO
             string zip = Guid.NewGuid().ToString() + ".zip";
             using(var tf = new TempFile(true)) {
-                Assert.AreEqual(String.Empty, target.parse("[7z pack.directory(\"" + tf.dir + "\", \"" + zip + "\")]"));
-                Assert.AreEqual(String.Empty, target.parse("[7z pack.directory(\"" + tf.dir + "\", \"" + zip + "\", SevenZip, Lzma2, 4)]"));
+                Assert.AreEqual(Value.Empty, target.parse("[7z pack.directory(\"" + tf.dir + "\", \"" + zip + "\")]"));
+                Assert.AreEqual(Value.Empty, target.parse("[7z pack.directory(\"" + tf.dir + "\", \"" + zip + "\", SevenZip, Lzma2, 4)]"));
             }
         }
 
@@ -319,7 +320,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             using(var tf = new TempFile(false, ".zip")) {
-                Assert.AreEqual(String.Empty, target.parse("[7z  unpack(\""+ tf.file + "\")]"));
+                Assert.AreEqual(Value.Empty, target.parse("[7z  unpack(\""+ tf.file + "\")]"));
                 Assert.AreEqual(target.file, target.location(tf.file));
                 Assert.AreEqual(target.output, target.getDirectoryFromFile(tf.file));
                 Assert.AreEqual(false, target.delete);
@@ -327,7 +328,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             using(var tf = new TempFile(false, ".zip")) {
-                Assert.AreEqual(String.Empty, target.parse("[7z  unpack(\""+ tf.file + "\", true)]"));
+                Assert.AreEqual(Value.Empty, target.parse("[7z  unpack(\""+ tf.file + "\", true)]"));
                 Assert.AreEqual(target.file, target.location(tf.file));
                 Assert.AreEqual(target.output, target.getDirectoryFromFile(tf.file));
                 Assert.AreEqual(true, target.delete);
@@ -335,7 +336,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             using(var tf = new TempFile(false, ".zip")) {
-                Assert.AreEqual(String.Empty, target.parse("[7z  unpack(\"" + tf.file + "\", true, \"pass-123\")]"));
+                Assert.AreEqual(Value.Empty, target.parse("[7z  unpack(\"" + tf.file + "\", true, \"pass-123\")]"));
                 Assert.AreEqual(target.file, target.location(tf.file));
                 Assert.AreEqual(target.output, target.getDirectoryFromFile(tf.file));
                 Assert.AreEqual(true, target.delete);
@@ -353,7 +354,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 
             try {
                 using(var tf = new TempFile(false, ".zip")) {
-                    Assert.AreEqual(String.Empty, target.parse("[7z  unpack(\"" + tf.file + "\", \" \")]"));
+                    Assert.AreEqual(Value.Empty, target.parse("[7z  unpack(\"" + tf.file + "\", \" \")]"));
                 }
                 Assert.Fail("1");
             }
@@ -362,7 +363,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             using(var tf = new TempFile(false, ".zip")) {
-                Assert.AreEqual(String.Empty, target.parse("[7z  unpack(\"" + tf.file + "\", \"output-path\")]"));
+                Assert.AreEqual(Value.Empty, target.parse("[7z  unpack(\"" + tf.file + "\", \"output-path\")]"));
                 Assert.AreEqual(target.file, target.location(tf.file));
                 Assert.AreEqual(target.output, target.location("output-path"));
                 Assert.AreEqual(false, target.delete);
@@ -370,7 +371,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             using(var tf = new TempFile(false, ".zip")) {
-                Assert.AreEqual(String.Empty, target.parse("[7z  unpack(\"" + tf.file + "\", \"output-path\", \"pass-123\")]"));
+                Assert.AreEqual(Value.Empty, target.parse("[7z  unpack(\"" + tf.file + "\", \"output-path\", \"pass-123\")]"));
                 Assert.AreEqual(target.file, target.location(tf.file));
                 Assert.AreEqual(target.output, target.location("output-path"));
                 Assert.AreEqual(false, target.delete);
@@ -378,7 +379,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             using(var tf = new TempFile(false, ".zip")) {
-                Assert.AreEqual(String.Empty, target.parse("[7z  unpack(\"" + tf.file + "\", \"output-path\", true)]"));
+                Assert.AreEqual(Value.Empty, target.parse("[7z  unpack(\"" + tf.file + "\", \"output-path\", true)]"));
                 Assert.AreEqual(target.file, target.location(tf.file));
                 Assert.AreEqual(target.output, target.location("output-path"));
                 Assert.AreEqual(true, target.delete);
@@ -386,7 +387,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             using(var tf = new TempFile(false, ".zip")) {
-                Assert.AreEqual(String.Empty, target.parse("[7z  unpack(\"" + tf.file + "\", \"output-path\", true, \"pass-123\")]"));
+                Assert.AreEqual(Value.Empty, target.parse("[7z  unpack(\"" + tf.file + "\", \"output-path\", true, \"pass-123\")]"));
                 Assert.AreEqual(target.file, target.location(tf.file));
                 Assert.AreEqual(target.output, target.location("output-path"));
                 Assert.AreEqual(true, target.delete);
@@ -511,7 +512,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             {
                 this.file   = file;
                 this.pwd    = pwd;
-                return String.Empty;
+                return Value.Empty;
                 //return base.checkArchive(file, pwd);
             }
         }

@@ -75,7 +75,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseExecTest4()
         {
             DTEComponentAccessor target = new DTEComponentAccessor();
-            Assert.AreEqual(String.Empty, target.parse("[DTE exec: command]"));
+            Assert.AreEqual(Value.Empty, target.parse("[DTE exec: command]"));
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseExecTest5()
         {
             DTEComponentAccessor target = new DTEComponentAccessor();
-            Assert.AreEqual(String.Empty, target.parse("[DTE exec: command(args)]"));
+            Assert.AreEqual(Value.Empty, target.parse("[DTE exec: command(args)]"));
         }
 
         /// <summary>

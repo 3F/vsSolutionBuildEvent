@@ -56,7 +56,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 throw new SyntaxIncorrectException("Failed CommentComponent - '{0}'", data);
             }
 
-            return String.Empty; // silent
+            return Value.Empty; // silent
         }
     }
 }

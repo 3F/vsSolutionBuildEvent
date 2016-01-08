@@ -39,7 +39,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[NuGet gnt()]");
                 Assert.Fail("2");
             }
-            catch(SyntaxIncorrectException) {
+            catch(IncorrectNodeException) {
                 Assert.IsTrue(true);
             }
 

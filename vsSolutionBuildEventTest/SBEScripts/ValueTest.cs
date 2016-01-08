@@ -38,27 +38,58 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
         public void toBooleanTest()
         {
             Assert.AreEqual(true, Value.toBoolean("1"));
-            Assert.AreEqual(true, Value.toBoolean(" 1 "));
             Assert.AreEqual(true, Value.toBoolean("true"));
-            Assert.AreEqual(true, Value.toBoolean(" true "));
-            Assert.AreEqual(true, Value.toBoolean("TruE"));
             Assert.AreEqual(true, Value.toBoolean("TRUE"));
+            Assert.AreEqual(true, Value.toBoolean("True"));
+
             Assert.AreEqual(false, Value.toBoolean("0"));
-            Assert.AreEqual(false, Value.toBoolean(" 0 "));
             Assert.AreEqual(false, Value.toBoolean("false"));
-            Assert.AreEqual(false, Value.toBoolean(" false "));
-            Assert.AreEqual(false, Value.toBoolean("FalsE"));
             Assert.AreEqual(false, Value.toBoolean("FALSE"));
+            Assert.AreEqual(false, Value.toBoolean("False"));
+
+            Assert.AreEqual(true, Value.toBoolean(" 1 "));
+            Assert.AreEqual(true, Value.toBoolean(" true "));
+            Assert.AreEqual(false, Value.toBoolean(" 0 "));
+            Assert.AreEqual(false, Value.toBoolean(" false "));
         }
 
         /// <summary>
         ///A test for toBoolean
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(IncorrectSyntaxException))]
         public void toBooleanTest2()
         {
-            Value.toBoolean("-true");
+            try {
+                Value.toBoolean("TruE");
+                Assert.Fail("1");
+            }
+            catch(IncorrectSyntaxException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                Value.toBoolean("FalsE");
+                Assert.Fail("2");
+            }
+            catch(IncorrectSyntaxException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                Value.toBoolean("-true");
+                Assert.Fail("3");
+            }
+            catch(IncorrectSyntaxException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                Value.toBoolean("true.");
+                Assert.Fail("4");
+            }
+            catch(IncorrectSyntaxException) {
+                Assert.IsTrue(true);
+            }
         }
 
         /// <summary>

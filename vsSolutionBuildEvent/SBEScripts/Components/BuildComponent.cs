@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -76,7 +76,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string subtype  = point.Key;
             string request  = point.Value;
 
-            Log.Trace("BuildComponent: subtype - `{0}`, request - `{1}`", subtype, request);
+            Log.Trace("`{0}`: subtype - `{1}`, request - `{2}`", ToString(), subtype, request);
 
             switch(subtype) {
                 case "cancel": {
@@ -93,7 +93,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     return stSolution(request);
                 }
             }
-            throw new SubtypeNotFoundException("BuildComponent: not found subtype - '{0}'", subtype);
+
+            throw new SubtypeNotFoundException("Subtype `{0}` is not found", subtype);
         }
 
         /// <summary>
@@ -117,7 +118,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 Log.Trace("stCancel: pushed true");
                 DTEO.exec("Build.Cancel");
             }
-            return String.Empty;
+            return Value.Empty;
         }
 
         /// <summary>
@@ -243,7 +244,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 {
                     if(value != null) {
                         context.ShouldBuild = Value.toBoolean(value);
-                        return String.Empty;
+                        return Value.Empty;
                     }
                     return Value.from(context.ShouldBuild);
                 }
@@ -251,7 +252,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 {
                     if(value != null) {
                         context.ShouldDeploy = Value.toBoolean(value);
-                        return String.Empty;
+                        return Value.Empty;
                     }
                     return Value.from(context.ShouldDeploy);
                 }
@@ -295,8 +296,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             Log.Trace("stSolution: started with '{0}'", data);
             IPM pm = new PM(data);
             
-            if(!pm.Is(0, LevelType.Property, "solution")) {
-                throw new SyntaxIncorrectException("Failed stSolution - '{0}'", data);
+            if(!pm.Is(LevelType.Property, "solution")) {
+                throw new IncorrectNodeException(pm);
             }
 
             // solution.current.
@@ -315,8 +316,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 lvlPath.Is("solution.path(string sln)", ArgumentType.StringDouble);
                 return stSlnPMap((string)lvlPath.Args[0].data, pm.pinTo(2));
             }
-            
-            throw new OperationNotFoundException("stSolution: not found - '{0}' /'{1}'", pm.Levels[1].Data, pm.Levels[1].Type);
+
+            throw new IncorrectNodeException(pm, 1);
         }
 
         /// <summary>
@@ -345,34 +346,34 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
             ProjectsMap map = getProjectsMap(sln);
 
-            if(pm.Is(0, LevelType.Property, "First")) {
+            if(pm.Is(LevelType.Property, "First")) {
                 return projectsMap(map.FirstBy(env.BuildType), pm.pinTo(1));
             }
 
-            if(pm.Is(0, LevelType.Property, "Last")) {
+            if(pm.Is(LevelType.Property, "Last")) {
                 return projectsMap(map.LastBy(env.BuildType), pm.pinTo(1));
             }
 
-            if(pm.Is(0, LevelType.Property, "FirstRaw")) {
+            if(pm.Is(LevelType.Property, "FirstRaw")) {
                 return projectsMap(map.First, pm.pinTo(1));
             }
 
-            if(pm.Is(0, LevelType.Property, "LastRaw")) {
+            if(pm.Is(LevelType.Property, "LastRaw")) {
                 return projectsMap(map.Last, pm.pinTo(1));
             }
 
-            if(pm.FinalEmptyIs(0, LevelType.Property, "GuidList")) {
+            if(pm.FinalEmptyIs(LevelType.Property, "GuidList")) {
                 return Value.from(map.GuidList);
             }
 
-            if(pm.Is(0, LevelType.Method, "projectBy"))
+            if(pm.Is(LevelType.Method, "projectBy"))
             {
                 ILevel lvlPrjBy = pm.Levels[0];
                 lvlPrjBy.Is("projectBy(string guid)", ArgumentType.StringDouble);
                 return projectsMap(map.getProjectBy((string)lvlPrjBy.Args[0].data), pm.pinTo(1));
             }
 
-            throw new OperationNotFoundException("stSlnPMap: not found - '{0}' /'{1}'", pm.Levels[0].Data, pm.Levels[0].Type);
+            throw new IncorrectNodeException(pm);
         }
         
         /// <summary>
@@ -387,23 +388,23 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         [Property("guid", "Guid of project.", "", "stSlnPMap", CValueType.String)]
         protected string projectsMap(ProjectsMap.Project project, IPM pm)
         {
-            if(pm.FinalEmptyIs(0, LevelType.Property, "name")) {
+            if(pm.FinalEmptyIs(LevelType.Property, "name")) {
                 return project.name;
             }
 
-            if(pm.FinalEmptyIs(0, LevelType.Property, "path")) {
+            if(pm.FinalEmptyIs(LevelType.Property, "path")) {
                 return project.path;
             }
 
-            if(pm.FinalEmptyIs(0, LevelType.Property, "type")) {
+            if(pm.FinalEmptyIs(LevelType.Property, "type")) {
                 return project.type;
             }
 
-            if(pm.FinalEmptyIs(0, LevelType.Property, "guid")) {
+            if(pm.FinalEmptyIs(LevelType.Property, "guid")) {
                 return project.guid;
             }
 
-            throw new OperationNotFoundException("Failed projectsMap - '{0}' /'{1}'", pm.Levels[0].Data, pm.Levels[0].Type);
+            throw new IncorrectNodeException(pm);
         }
 
         /// <summary>

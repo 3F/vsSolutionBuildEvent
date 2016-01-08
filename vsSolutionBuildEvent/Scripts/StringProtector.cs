@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,38 +23,17 @@ using net.r_eg.vsSBE.Exceptions;
 
 namespace net.r_eg.vsSBE.Scripts
 {
+    /// <summary>
+    /// This variant is based on storing of tokens inside string.
+    /// It's simply, but we have a some problems (like with guid) and other inconvenience from final strings.
+    /// As alternative for this, we should implement the nodes storing (like SNode) to abstract build of all final strings by tokens etc. Well, currently we're simple :)
+    /// </summary>
     public abstract class StringProtector
     {
         /// <summary>
         /// Maximum of nesting level to recovery operation
         /// </summary>
         public const int RECOVERY_LIMIT = 50;
-
-        /// <summary>
-        /// Specific format of double quotes with content
-        /// </summary>
-        public abstract string DoubleQuotesContentFull { get; }
-
-        /// <summary>
-        /// Specific format of single quotes with content
-        /// </summary>
-        public abstract string SingleQuotesContentFull { get; }
-
-        /// <summary>
-        /// Generates and returns the next ident number
-        /// </summary>
-        protected uint IdentNext
-        {
-            get { return ++_ident; }
-        }
-
-        /// <summary>
-        /// Get current ident number
-        /// </summary>
-        protected uint Ident
-        {
-            get { return _ident; }
-        }
 
         /// <summary>
         /// Storage of protected strings
@@ -71,13 +50,53 @@ namespace net.r_eg.vsSBE.Scripts
         /// Current level of nesting recovery operation.
         /// Aborting if reached limit
         /// </summary>
-        private volatile uint _recoveryLevel = 0;
+        private volatile uint _recoveryLevel;
 
         /// <summary>
-        /// unsigned identificator
+        /// Unsigned identifier of tokens.
         /// </summary>
         private volatile uint _ident = 0;
 
+        /// <summary>
+        /// Unique identifier between all protectors.
+        /// TODO
+        /// </summary>
+        private static uint guid = 0;
+
+        /// <summary>
+        /// Specific format of double quotes with content
+        /// </summary>
+        public abstract string DoubleQuotesContentFull { get; }
+
+        /// <summary>
+        /// Specific format of single quotes with content
+        /// </summary>
+        public abstract string SingleQuotesContentFull { get; }
+
+        /// <summary>
+        /// Unique identifier for current protector.
+        /// </summary>
+        public uint UID
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
+        /// Generates and returns the next ident number
+        /// </summary>
+        protected uint IdentNext
+        {
+            get { return ++_ident; }
+        }
+
+        /// <summary>
+        /// Get current ident number
+        /// </summary>
+        protected uint Ident
+        {
+            get { return _ident; }
+        }
 
         /// <summary>
         /// Protects data inside mixed quotes.
@@ -119,18 +138,8 @@ namespace net.r_eg.vsSBE.Scripts
         /// <returns>protected string</returns>
         public string protectByPattern(string data, string pattern)
         {
-            lock(_lock)
-            {
-                return Regex.Replace(data, pattern, delegate(Match m)
-                                                    {
-                                                        uint ident      = IdentNext;
-                                                        strings[ident]  = m.Groups[1].Value;
-#if DEBUG
-                                                        Log.Trace("StringProtector: protect by pattern '{0}' :: '{1}'", strings[ident], ident);
-#endif
-                                                        return replacementIn(ident);
-                                                    },
-                                                    RegexOptions.IgnorePatternWhitespace);
+            lock(_lock) {
+                return Regex.Replace(data, pattern, replacerIn, RegexOptions.IgnorePatternWhitespace);
             }
         }
 
@@ -148,12 +157,13 @@ namespace net.r_eg.vsSBE.Scripts
                 throw new LimitException("StringProtector->recovery: Nesting level of '{0}' reached. Aborted.", RECOVERY_LIMIT);
             }
 
+            string format = replacementOut();
             lock(_lock)
             {
-                string ret = Regex.Replace(data, replacementOut(), delegate(Match m)
+                string ret = Regex.Replace(data, format, delegate(Match m)
                 {
                     string removed;
-                    uint index = uint.Parse(m.Groups[1].Value);
+                    uint index = unpackId(m.Groups[1].Value);
                     strings.TryRemove(index, out removed); // deallocate protected string
 #if DEBUG
                     Log.Trace("StringProtector: recovery string '{0}' :: '{1}' /level: {2}", removed, index, _recoveryLevel);
@@ -161,7 +171,7 @@ namespace net.r_eg.vsSBE.Scripts
                     return removed;
                 });
 
-                if(Regex.IsMatch(ret, replacementOut()))
+                if(Regex.IsMatch(ret, format))
                 {
 #if DEBUG
                     Log.Trace("StringProtector->recovery: found the new protected data - '{0}'", ret);
@@ -183,6 +193,23 @@ namespace net.r_eg.vsSBE.Scripts
             _ident = 0;
         }
 
+        protected StringProtector()
+        {
+            lock (_lock) {
+                gcollect();
+                UID = guid++;
+            }
+        }
+
+        protected void gcollect()
+        {
+            //TODO:
+            if(guid == uint.MaxValue) {
+                Log.Debug("gcollect: reset id");
+                guid = 0;
+            }
+        }
+
         /// <summary>
         /// Protects data inside quotes by format.
         /// </summary>
@@ -191,49 +218,69 @@ namespace net.r_eg.vsSBE.Scripts
         /// <returns>protected string</returns>
         protected string protectQuotes(ref string data, string format)
         {
-            lock(_lock)
-            {
-                return Regex.Replace(data, format, delegate(Match m)
-                {
-                    uint ident      = IdentNext;
-                    strings[ident]  = m.Groups[1].Value;
-#if DEBUG
-                    Log.Trace("StringProtector: protect string '{0}' :: '{1}'", strings[ident], ident);
-#endif
-                    return replacementIn(ident);
-                },
-                RegexOptions.IgnorePatternWhitespace);
+            lock(_lock) {
+                return Regex.Replace(data, format, replacerIn, RegexOptions.IgnorePatternWhitespace);
             }
         }
 
         /// <summary>
-        /// How to protect data in strings
+        /// Replacer by default for protection inside strings.
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns>string with changed data</returns>
+        protected string replacerIn(Match m)
+        {
+            uint ident      = IdentNext;
+            strings[ident]  = m.Groups[1].Value;
+#if DEBUG
+            Log.Trace("StringProtector: protect `{0}` :: '{1}'", strings[ident], ident);
+#endif
+            return replacementIn(ident);
+        }
+
+        /// <summary>
+        /// How to protect data.
         /// </summary>
         /// <param name="ident">Unique identificator</param>
         /// <returns></returns>
         protected string replacementIn(uint ident)
         {
-            return replacementFormat(ident.ToString());
+            return replacementFormat(packId(ident));
         }
 
         /// <summary>
-        /// How to recover data from strings
+        /// How to recover data from strings.
         /// </summary>
         /// <returns></returns>
         protected string replacementOut()
         {
-            return replacementFormat(@"(\d+)");
+            return replacementFormat(formatId());
         }
 
         /// <summary>
-        /// Format of protection
+        /// Format of protection.
         /// </summary>
         /// <param name="format"></param>
         /// <returns></returns>
         protected virtual string replacementFormat(string format)
         {
             // no conflict, because all variants with '!' as argument is not possible without quotes.
-            return String.Format("!s{0}!", format);
+            return String.Format("!{0}@{1}!", packId(UID), format);
+        }
+
+        protected virtual string packId(uint id)
+        {
+            return id.ToString("x");
+        }
+
+        protected virtual uint unpackId(string id)
+        {
+            return Convert.ToUInt32(id, 16);
+        }
+
+        protected virtual string formatId()
+        {
+            return "([0-9a-f]+)";
         }
     }
 }

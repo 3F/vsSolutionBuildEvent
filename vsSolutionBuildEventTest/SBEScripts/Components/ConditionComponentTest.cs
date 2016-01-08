@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 using net.r_eg.vsSBE.Scripts;
@@ -67,7 +68,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             var mockEnv = new Mock<IEnvironment>();
             var mockUVar = new Mock<IUserVariable>();
             ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
-            Assert.AreEqual(String.Empty, target.parse("[ (true * 1) { body1 } ]"));
+            Assert.AreEqual(Value.Empty, target.parse("[ (true * 1) { body1 } ]"));
             Assert.AreEqual(" body1 ", target.parse("[ (!true * 1) { body1 } ]"));
         }
 
@@ -100,9 +101,9 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             Assert.AreEqual("\n body1 \n", target.parse("[(true){\n body1 \n}]"));
             Assert.AreEqual(" body1 ", target.parse("[ (\"true\" == 1) { body1 } ]"));
             Assert.AreEqual(" body1 ", target.parse("[ (\"true\") { body1 } ]"));
-            Assert.AreEqual(String.Empty, target.parse("[ (false) { body1 } ]"));
-            Assert.AreEqual(String.Empty, target.parse("[ (true == 0) { body1 } ]"));
-            Assert.AreEqual(String.Empty, target.parse("[ (true == false) { body1 } ]"));
+            Assert.AreEqual(Value.Empty, target.parse("[ (false) { body1 } ]"));
+            Assert.AreEqual(Value.Empty, target.parse("[ (true == 0) { body1 } ]"));
+            Assert.AreEqual(Value.Empty, target.parse("[ (true == false) { body1 } ]"));
         }
 
         /// <summary>
@@ -133,7 +134,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             var mockUVar = new Mock<IUserVariable>();
             ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
             Assert.AreEqual(" body1 ", target.parse("[(!false){ body1 }else{ body2 }]"));
-            Assert.AreEqual(String.Empty, target.parse("[(!true){ body1 }]"));
+            Assert.AreEqual(Value.Empty, target.parse("[(!true){ body1 }]"));
         }
 
         /// <summary>

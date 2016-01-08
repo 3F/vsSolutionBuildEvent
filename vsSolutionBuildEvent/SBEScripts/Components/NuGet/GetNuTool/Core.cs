@@ -1,11 +1,11 @@
 ﻿/*
- * Copyright (c) 2015  Denis Kuzmin (reg) [ entry.reg@gmail.com ]
+ * Copyright (c) 2015-2016  Denis Kuzmin (reg) [ entry.reg@gmail.com ]
  *
  * Distributed under the MIT license
  * (see accompanying file LICENSE or a copy at http://opensource.org/licenses/MIT)
  * 
  * Source code from - https://github.com/3F/GetNuTool
- *                    v1.2
+ *                    v1.3
  * Modifications:
  * - Base path
  * - Logger
@@ -96,10 +96,17 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.NuGet.GetNuTool
         /// <param name="plist"></param>
         /// <param name="url"></param>
         /// <param name="defpath"></param>
-        public void downloader(string plist, string url, string defpath)
+        /// <param name="debug"></param>
+        public void downloader(string plist, string url, string defpath, bool debug)
         {
             // to ignore from package
             var ignore = new string[] { "/_rels/", "/package/", "/[Content_Types].xml" };
+
+            Action<string, object> dbg = delegate(string s, object p) {
+                if(debug) {
+                    Log.Debug(s, p);
+                }
+            };
 
             Action<string, string, string> get = delegate(string link, string name, string path)
             {
@@ -126,7 +133,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.NuGet.GetNuTool
                         }
 
                         var dest = Path.Combine(output, uri.TrimStart('/'));
-                        Log.Trace("-> `{0}`", uri);
+                        dbg("-> `{0}`", uri);
 
                         var dir = Path.GetDirectoryName(dest);
                         if(!Directory.Exists(dir)) {
@@ -139,7 +146,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.NuGet.GetNuTool
                         } 
                     } 
                 }
-                Log.Debug("Done.{0}", System.Environment.NewLine);
+                dbg("Done.{0}", System.Environment.NewLine);
             };
 
             //Format: id/version[:path];id2/version[:path];...
@@ -160,7 +167,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.NuGet.GetNuTool
 
         /// <param name="dir"></param>
         /// <param name="dout"></param>
-        public void packing(string dir, string dout)
+        /// <param name="debug"></param>
+        public void packing(string dir, string dout, bool debug)
         {
             const string EXT_NUSPEC         = ".nuspec";
             const string EXT_NUPKG          = ".nupkg";
@@ -171,6 +179,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.NuGet.GetNuTool
             // Tags
             const string ID     = "id";
             const string VER    = "version";
+                
+            Action<string, object> dbg = delegate(string s, object p) {
+                if(debug) {
+                    Log.Debug(s, p);
+                }
+            };
 
             // Get metadata
 
@@ -216,60 +230,56 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.NuGet.GetNuTool
             }
 
             Log.Debug("Started packing `{0}` ...", pout);
-            using(var sout = File.Create(pout))
+            using(Package package = Package.Open(pout, FileMode.Create))
             {
-                using(Package package = Package.Open(sout, FileMode.Create))
+                // manifest relationship
+
+                Uri manifestUri = new Uri(String.Format("/{0}{1}", metadata[ID], EXT_NUSPEC), UriKind.Relative);
+                package.CreateRelationship(manifestUri, TargetMode.Internal, MANIFEST_URL);
+
+                // content
+
+                foreach(var file in Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories))
                 {
-                    // manifest relationship
-
-                    Uri manifestUri = new Uri(String.Format("/{0}{1}", metadata[ID], EXT_NUSPEC), UriKind.Relative);
-                    package.CreateRelationship(manifestUri, TargetMode.Internal, MANIFEST_URL);
-
-                    // content
-
-                    foreach(var file in Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories))
-                    {
-                        if(ignore.Any(x => file.StartsWith(x, StringComparison.Ordinal))) {
-                            continue;
-                        }
-
-                        string pUri;
-                        if(file.StartsWith(dir, StringComparison.OrdinalIgnoreCase)) {
-                            pUri = file.Substring(dir.Length).TrimStart(Path.DirectorySeparatorChar);
-                        }
-                        else {
-                            pUri = file;
-                        }
-                        Log.Trace("-> `{0}`", pUri);
-
-                        // to protect path without separators
-                        var escaped = String.Join("/", pUri.Split('\\', '/').Select(p => Uri.EscapeDataString(p)));
-                        Uri uri     = PackUriHelper.CreatePartUri(new Uri(escaped, UriKind.Relative));
-
-                        PackagePart part = package.CreatePart(uri, DEF_CONTENT_TYPE, CompressionOption.Maximum);
-
-                        using (Stream tstream = part.GetStream())
-                        using(FileStream fileStream = new FileStream(file, FileMode.Open, FileAccess.Read)) {
-                            fileStream.CopyTo(tstream);
-                        }
+                    if(ignore.Any(x => file.StartsWith(x, StringComparison.Ordinal))) {
+                        continue;
                     }
 
-                    // metadata for package
+                    string pUri;
+                    if(file.StartsWith(dir, StringComparison.OrdinalIgnoreCase)) {
+                        pUri = file.Substring(dir.Length).TrimStart(Path.DirectorySeparatorChar);
+                    }
+                    else {
+                        pUri = file;
+                    }
+                    dbg("-> `{0}`", pUri);
 
-                    Func<string, string> getmeta = delegate(string key) {
-                        return (metadata.ContainsKey(key))? metadata[key] : "";
-                    };
+                    // to protect path without separators
+                    var escaped = String.Join("/", pUri.Split('\\', '/').Select(p => Uri.EscapeDataString(p)));
+                    Uri uri     = PackUriHelper.CreatePartUri(new Uri(escaped, UriKind.Relative));
 
-                    package.PackageProperties.Creator           = getmeta("authors");
-                    package.PackageProperties.Description       = getmeta("description");
-                    package.PackageProperties.Identifier        = metadata[ID];
-                    package.PackageProperties.Version           = metadata[VER];
-                    package.PackageProperties.Keywords          = getmeta("tags");
-                    package.PackageProperties.Title             = getmeta("title");
-                    package.PackageProperties.LastModifiedBy    = String.Format("{0} v{1}", Settings.APP_NAME, Version.numberWithRevString);
+                    PackagePart part = package.CreatePart(uri, DEF_CONTENT_TYPE, CompressionOption.Maximum);
+
+                    using (Stream tstream = part.GetStream())
+                    using(FileStream fileStream = new FileStream(file, FileMode.Open, FileAccess.Read)) {
+                        fileStream.CopyTo(tstream);
+                    }
                 }
+
+                // metadata for package
+
+                Func<string, string> getmeta = delegate(string key) {
+                    return (metadata.ContainsKey(key))? metadata[key] : "";
+                };
+
+                package.PackageProperties.Creator           = getmeta("authors");
+                package.PackageProperties.Description       = getmeta("description");
+                package.PackageProperties.Identifier        = metadata[ID];
+                package.PackageProperties.Version           = metadata[VER];
+                package.PackageProperties.Keywords          = getmeta("tags");
+                package.PackageProperties.Title             = getmeta("title");
+                package.PackageProperties.LastModifiedBy    = String.Format("{0} v{1} - GetNuTool Core", Settings.APP_NAME, Version.numberWithRevString);
             }
-            Log.Debug("Done.");
         }
     }
 }

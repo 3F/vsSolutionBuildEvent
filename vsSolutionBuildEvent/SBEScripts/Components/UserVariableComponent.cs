@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
@@ -89,21 +88,22 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string name     = m.Groups[2].Value;
             string project  = (m.Groups[3].Success)? m.Groups[3].Value.Trim() : null;
 
-            Log.Trace("UVariable: found '{0}' as operation", op);
+            Log.Trace("`{0}`: found `{0}` as operation", ToString(), op);
             switch(op)
             {
                 case "+": {
                     Log.Debug("UVariable: set default value for variable - '{0}':'{1}'", name, project);
                     set(name, project, UVARIABLE_VALUE_DEFAULT);
-                    return String.Empty;
+                    return Value.Empty;
                 }
                 case "-": {
                     Log.Debug("UVariable: unset variable - '{0}':'{1}'", name, project);
                     unset(name, project);
-                    return String.Empty;
+                    return Value.Empty;
                 }
             }
-            throw new SubtypeNotFoundException("UVariable: not found type of operation - '{0}' :: '{1}'", op, data);
+
+            throw new SubtypeNotFoundException("UVariable: the type '{0}' of operation was  not found :: `{1}`", op, data);
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             Log.Trace("UVariable: found '{0}':'{1}' = '{2}'", name, project, value);
             if(value != null) {
                 set(name, project, value);
-                return String.Empty;
+                return Value.Empty;
             }
             return get(name, project);
         }

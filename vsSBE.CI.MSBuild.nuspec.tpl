@@ -28,7 +28,7 @@
     
     </description>
     <releaseNotes>Updated the vsSolutionBuildEvent library: v%vsSBE%</releaseNotes>
-    <copyright>Copyright (c) 2013-2015  Denis Kuzmin (reg) [entry.reg@gmail.com]</copyright>
+    <copyright>Copyright (c) 2013-2016  Denis Kuzmin (reg) [entry.reg@gmail.com]</copyright>
     <tags>CI Tools vsSolutionBuildEvent MSBuild logging automation vsSBE Scripts Build Events Solution Projects Versioning AppVeyor TeamCity Build-Server Continuous-Integration Build-automation</tags>
   </metadata>
 </package>

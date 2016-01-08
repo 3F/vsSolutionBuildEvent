@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -89,7 +89,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string subtype  = point.Key;
             string request  = point.Value;
 
-            Log.Trace("SevenZipComponent: subtype - `{0}`, request - `{1}`", subtype, request);
+            Log.Trace("`{0}`: subtype - `{1}`, request - `{2}`", ToString(), subtype, request);
 
             switch(subtype) {
                 case "pack": {
@@ -103,7 +103,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 }
             }
 
-            throw new SubtypeNotFoundException("SevenZipComponent: not found subtype - `{0}`", subtype);
+            throw new SubtypeNotFoundException("Subtype `{0}` is not found", subtype);
         }
 
         /// <summary>
@@ -115,8 +115,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         [Property("pack", "Packing with 7-zip engine.")]
         protected string stPack(IPM pm)
         {
-            if(!pm.Is(0, LevelType.Property, "pack")) {
-                throw new SyntaxIncorrectException("Failed stPack - '{0}' /'{1}'", pm.Levels[0].Data, pm.Levels[0].Type);
+            if(!pm.Is(LevelType.Property, "pack")) {
+                throw new IncorrectNodeException(pm);
             }
             ILevel level = pm.Levels[1]; // level of the pack property
 
@@ -128,7 +128,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return packDirectory(level, pm);
             }
 
-            throw new OperationNotFoundException("stPack: not found - '{0}' /'{1}'", level.Data, level.Type);
+            throw new IncorrectNodeException(pm, 1);
         }
 
         /// <summary>
@@ -327,7 +327,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             compressFiles(zip, location(name), input);
-            return String.Empty;
+            return Value.Empty;
         }
 
         /// <param name="zip">Compressor.</param>
@@ -442,7 +442,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             };
 
             compressDirectory(zip, fullpath, location(name));
-            return String.Empty;
+            return Value.Empty;
         }
 
         /// <param name="zip">Compressor.</param>
@@ -503,13 +503,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 CValueType.String, CValueType.Boolean, CValueType.String)]
         protected string stUnpack(IPM pm)
         {
-            if(pm.FinalEmptyIs(0, LevelType.Method, "unpack")) {
+            if(pm.FinalEmptyIs(LevelType.Method, "unpack")) {
                 return unpack(pm.Levels[0], pm);
             }
 
             //TODO: ~ unpack.files(...)
-
-            throw new OperationNotFoundException("stUnpack: not found - '{0}' /'{1}'", pm.Levels[0].Data, pm.Levels[0].Type);
+            throw new IncorrectNodeException(pm);
         }
 
         /// <summary>
@@ -586,7 +585,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             extractArchive(file, output, delete, pwd);
-            return String.Empty;
+            return Value.Empty;
         }
 
         /// <param name="file">Archive for unpacking.</param>
@@ -630,11 +629,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 CValueType.String, CValueType.String)]
         protected string stCheck(IPM pm)
         {
-            if(pm.FinalEmptyIs(0, LevelType.Method, "check")) {
+            if(pm.FinalEmptyIs(LevelType.Method, "check")) {
                 return check(pm.Levels[0], pm);
             }
 
-            throw new OperationNotFoundException("stCheck: not found - '{0}' /'{1}'", pm.Levels[0].Data, pm.Levels[0].Type);
+            throw new IncorrectNodeException(pm);
         }
 
         /// <summary>

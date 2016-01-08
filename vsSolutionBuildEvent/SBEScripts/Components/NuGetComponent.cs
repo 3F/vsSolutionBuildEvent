@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Components.NuGet.GetNuTool;
 using net.r_eg.vsSBE.SBEScripts.Dom;
@@ -59,7 +58,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 }
             }
 
-            throw new SubtypeNotFoundException("`{0}`: subtype `{1}` is not found", ToString(), subtype);
+            throw new SubtypeNotFoundException("Subtype `{0}` is not found", subtype);
         }
 
         /// <summary>
@@ -71,8 +70,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         [Property("gnt", "GetNuTool logic - github.com/3F/GetNuTool")]
         protected string stGNT(IPM pm)
         {
-            if(!pm.Is(0, LevelType.Property, "gnt")) {
-                throw new SyntaxIncorrectException("Failed stGNT - '{0}' /'{1}'", pm.Levels[0].Data, pm.Levels[0].Type);
+            if(!pm.Is(LevelType.Property, "gnt")) {
+                throw new IncorrectNodeException(pm);
             }
             ILevel level = pm.Levels[1]; // level of the gnt property
 
@@ -83,7 +82,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             // TODO: +gnt.get(object list [, string path [, string server]]) + config files
             //       +gnt.pack(string nuspec [, string path])
 
-            throw new OperationNotFoundException("stGNT: Operation is not found - '{0}' /'{1}'", level.Data, level.Type);
+            throw new IncorrectNodeException(pm, 1);
         }
 
         /// <summary>
@@ -105,7 +104,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         {
             if(level.Is(ArgumentType.StringDouble)) {
                 gnt.raw((string)level.Args[0].data);
-                return String.Empty;
+                return Value.Empty;
             }
 
             throw new InvalidArgumentException("Incorrect arguments to `gnt.raw(string command)`");

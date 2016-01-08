@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -47,19 +47,13 @@ namespace net.r_eg.vsSBE.SBEScripts
         {
             lock(_lock)
             {
-                return Regex.Replace(data, String.Format(@"({0}|{1})",                          // #1 - mixed
+                return Regex.Replace(data, 
+                                        String.Format(@"({0}|{1})",                             // #1 - mixed
                                                 @"\#{1,2}" + RPattern.SquareBracketsContent,    // #2 -  #[..]
-                                                @"\${1,2}" + RPattern.RoundBracketsContent),    // #3 -  $(..)
-                        delegate(Match m)
-                        {
-                            uint ident      = IdentNext;
-                            strings[ident]  = m.Groups[1].Value;
-#if DEBUG
-                            Log.Trace("StringHandler: protect cores '{0}' :: '{1}'", strings[ident], ident);
-#endif
-                            return replacementIn(ident);
-                        },
-                        RegexOptions.IgnorePatternWhitespace);
+                                                @"\${1,2}" + RPattern.RoundBracketsContent      // #3 -  $(..)
+                                        ), 
+                                        replacerIn,
+                                        RegexOptions.IgnorePatternWhitespace);
             }
         }
 
@@ -84,6 +78,29 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
+        /// Protects data inside &lt;#data&gt; ... &lt;/#data&gt;
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public string protectDataSection(string data)
+        {
+            // <#data> ... </#data>
+            lock (_lock) {
+                return Regex.Replace(data, @"<#data>(.*)<\/#data>", replacerIn, RegexOptions.Singleline);
+            }
+        }
+
+        /// <summary>
+        /// Protection methods by default.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public string protect(string data)
+        {
+            return protectMixedQuotes(protectDataSection(data));
+        }
+
+        /// <summary>
         /// Escaping quotes in data
         /// </summary>
         /// <param name="data">mixed string</param>
@@ -98,8 +115,21 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
+        /// Unescape quote symbols from string.
+        /// TODO
+        /// </summary>
+        /// <param name="type">Quote symbol.</param>
+        /// <param name="data"></param>
+        /// <returns>String with unescaped quote symbols.</returns>
+        public static string unescapeQuotes(char type, string data)
+        {
+            return Scripts.Tokens.unescapeQuotes(type, data);
+        }
+
+        /// <summary>
         /// Normalize data for strings.
         /// e.g.: unescape double quotes etc.
+        /// TODO: obsolete
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -108,18 +138,7 @@ namespace net.r_eg.vsSBE.SBEScripts
             if(String.IsNullOrEmpty(data)) {
                 return String.Empty;
             }
-            return data.Replace("\\\"", "\"");
-        }
-
-        /// <summary>
-        /// Format of protection
-        /// </summary>
-        /// <param name="format"></param>
-        /// <returns></returns>
-        protected override string replacementFormat(string format)
-        {
-            // no conflict, because all variants with '!' as argument is not possible without quotes.
-            return String.Format("!s{0}!", format);
+            return unescapeQuotes('"', data);
         }
     }
 }

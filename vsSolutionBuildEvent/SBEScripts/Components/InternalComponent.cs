@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,13 +16,12 @@
 */
 
 using System;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
+using net.r_eg.vsSBE.SBEScripts.SNode;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
@@ -59,24 +58,21 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string subtype  = point.Key;
             string request  = point.Value;
 
-            Log.Trace("InternalComponent: subtype - `{0}`, request - `{1}`", subtype, request);
+            Log.Trace("`{0}`: subtype - `{1}`, request - `{2}`", ToString(), subtype, request);
 
             switch(subtype) {
                 case "events": {
-                    return stEvents(request);
+                    return stEvents(new PM(request));
                 }
             }
-            throw new SubtypeNotFoundException("InternalComponent: not found subtype - '{0}'", subtype);
+
+            throw new SubtypeNotFoundException("Subtype `{0}` is not found", subtype);
         }
 
         /// <summary>
-        /// Work with events subtype
-        /// #[vsSBE events.Type.item("name")]
-        /// #[vsSBE events.Type.item(index)]
-        /// e.g.: 
-        /// #[vsSBE events.Pre.item("Act1")]
+        /// Work with the events node - `events.Type`
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="pm"></param>
         /// <returns></returns>
         [Property("events", "Work with events")]
         [Property("Pre", "Pre-Build\nBefore assembling", "events", "stEvents"), Property("", "Pre", "stEvents")]
@@ -88,60 +84,40 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         [Property("OWP", "Output-Build customization\nFull control", "events", "stEvents"), Property("", "OWP", "stEvents")]
         [Property("Transmitter", "Transmitter\nTransmission of the build-data to outer handler", "events", "stEvents"), Property("", "Transmitter", "stEvents")]
         [Property("Logging", "Logging\nAll processes with internal logging", "events", "stEvents"), Property("", "Logging", "stEvents")]
-        protected string stEvents(string data)
+        protected string stEvents(IPM pm)
         {
-            Match m = Regex.Match(data,
-                                    String.Format(@"events
-                                                      \s*\.\s*
-                                                      ([A-Za-z]+)       #1 - Event Type
-                                                      \s*\.\s*
-                                                      item
-                                                      \s*
-                                                      \(
-                                                        (?:
-                                                          (\s*\d+\s*)   #2 - item by index
-                                                         |
-                                                          {0}           #3 - item by name
-                                                        )
-                                                      \)
-                                                      \s*(.+)           #4 - operation with item
-                                                    ", RPattern.DoubleQuotesContent
-                                                 ), RegexOptions.IgnorePatternWhitespace);
-
-            if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed stEvents - '{0}'", data);
+            if(!pm.Is(LevelType.Property, "events")) {
+                throw new IncorrectNodeException(pm);
             }
 
-            string typeString   = m.Groups[1].Value;
-            string index        = (m.Groups[2].Success)? m.Groups[2].Value : null;
-            string name         = (m.Groups[3].Success)? StringHandler.normalize(m.Groups[3].Value) : null;
-            string operation    = m.Groups[4].Value;
-
-            SolutionEventType type;
-            try {
-                type = (SolutionEventType)Enum.Parse(typeof(SolutionEventType), typeString);
-            }
-            catch(Exception ex) {
-                throw new OperandNotFoundException("Event type not found - '{0}' :: ", typeString, ex.Message);
+            ILevel etype = pm.Levels[1];
+            if(etype.Type != LevelType.Property) {
+                throw new IncorrectNodeException(pm, 1);
             }
 
-            Log.Debug("stEvents: type - '{0}', index - '{1}', name - '{2}'", type, index, name);
-            return stEventItem(type, index, name, operation);
+            if(pm.Is(2, LevelType.Method, "item"))
+            {
+                SolutionEventType type;
+                try {
+                    type = (SolutionEventType)Enum.Parse(typeof(SolutionEventType), etype.Data);
+                }
+                catch(ArgumentException) {
+                    throw new OperandNotFoundException("The event type `{0}` was not found.", etype.Data);
+                }
+                return stEventItem(type, pm.pinTo(2));
+            }
+
+            throw new IncorrectNodeException(pm, 2);
         }
 
         /// <summary>
-        /// Work with event-item
-        /// #[vsSBE events.Pre.item("Act1").Enabled]
-        /// #[vsSBE events.Pre.item("Act1").Status]
+        /// Work with event-item node.
+        ///     `events.Type.item(string name | integer index)`
         /// </summary>
         /// <param name="type">Type of available events</param>
-        /// <param name="index">access by index if used or null value</param>
-        /// <param name="name">access by name if used or null value</param>
-        /// <param name="data">Operation with event-item</param>
+        /// <param name="pm"></param>
         /// <returns>evaluated data</returns>
-        [
-            Method
-            (
+        [Method(
                 "item", 
                 "Event item by name", 
                 "", "stEvents", 
@@ -149,156 +125,136 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 new string[] { "Name of the event" }, 
                 CValueType.Void, 
                 CValueType.String
-            )
-        ]
-        [
-            Method
-            (
+        )]
+        [Method(
                 "item", 
                 "Event item by index", 
                 "", 
                 "stEvents", 
                 new string[] { "index" }, 
-                new string[] { "Index of the event" },
+                new string[] { "Index of the event >= 1" },
                 CValueType.Void, 
                 CValueType.Integer
-            )
-        ]
-        protected string stEventItem(SolutionEventType type, string index, string name, string data)
+        )]
+        protected string stEventItem(SolutionEventType type, IPM pm)
         {
-            Debug.Assert((index == null && name != null) || (index != null && name == null));
+            ILevel level = pm.Levels[0];
 
-            Match m = Regex.Match(data,
-                                    String.Format(@"\.\s*
-                                                    ([A-Za-z_0-9]+)  #1 - property
-                                                    (?:
-                                                      \s*\(  
-                                                      {0}            #2 - arg (optional)
-                                                      \)\s*
-                                                    )?
-                                                    \s*(.*)          #3 - operation
-                                                   ", RPattern.DoubleQuotesContent
-                                                 ), RegexOptions.IgnorePatternWhitespace);
+            int index = -1;
+            ISolutionEvent evt;
 
-            if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed stEventItem - '{0}'", data);
+            if(level.Is(ArgumentType.StringDouble)) {
+                evt = getEventByName(type, (string)level.Args[0].data, out index);
             }
-
-            string property     = m.Groups[1].Value;
-            string operation    = m.Groups[3].Value.Trim();
-
-            Log.Debug("stEventItem: property - '{0}', operation - '{1}'", property, operation);
-            int sIndex = -1;
-            ISolutionEvent evt = (name != null)? getEventByName(type, name, out sIndex) : getEventByIndex(type, index, out sIndex);
-
-            switch(property)
+            else if(level.Is(ArgumentType.Integer))
             {
-                case "Enabled": {
-                    return pEnabled(evt, operation);
-                }
-                case "Status": {
-                    return pStatus(type, sIndex, operation);
-                }
+                index   = (int)level.Args[0].data;
+                evt     = getEventByIndex(type, index);
             }
-            throw new SubtypeNotFoundException("stEventItem: not found subtype - '{0}'", property);
+            else {
+                throw new InvalidArgumentException("Incorrect arguments to `item( string name | integer index )`");
+            }
+
+            // .item(...).
+
+            if(pm.Is(1, LevelType.Property, "Enabled")) {
+                return pEnabled(evt, pm.pinTo(2));
+            }
+
+            if(pm.Is(1, LevelType.Property, "Status")) {
+                return itemStatus(type, index, pm.pinTo(1));
+            }
+
+            throw new IncorrectNodeException(pm, 1);
         }
 
         /// <summary>
-        /// Work with 'Status' property for selected ISolutionEvent
-        /// #[vsSBE events.Pre.item("Act1").Status.HasErrors]
+        /// `item(...).Status`
+        /// `item(...).Status.HasErrors`
         /// </summary>
-        /// <param name="type">Selected event type</param>
-        /// <param name="index">access by index</param>
-        /// <param name="data">String data with operations</param>
+        /// <param name="type">Selected event type.</param>
+        /// <param name="index">Access by index.</param>
+        /// <param name="pm"></param>
         /// <returns></returns>
         [Property("Status", "Available statuses for selected event-item.", "item", "stEventItem")]
-        [Property("HasErrors", "Checking existence of errors after executed action for selected event-item.", "Status", "pStatus", CValueType.Boolean)]
-        protected string pStatus(SolutionEventType type, int index, string data)
+        [Property("HasErrors", "Checking existence of errors after executed action for selected event-item.", "Status", "itemStatus", CValueType.Boolean)]
+        protected string itemStatus(SolutionEventType type, int index, IPM pm)
         {
-            Match m = Regex.Match(data, @"\.\s*
-                                         ([A-Za-z_0-9]+)  #1 - property
-                                         \s*$", 
-                                         RegexOptions.IgnorePatternWhitespace);
-
-            if(!m.Success) {
-                throw new OperandNotFoundException("Failed pStatus - '{0}'", data);
+            if(!pm.Is(LevelType.Property, "Status")) {
+                throw new IncorrectNodeException(pm);
             }
 
-            string property = m.Groups[1].Value;
-            if(property == "HasErrors")
+            if(pm.FinalEmptyIs(1, LevelType.Property, "HasErrors"))
             {
-                string status = (Status._.get(type, index) == StatusType.Fail).ToString().ToLower();
-                Log.Debug("pStatus: status - '{0}'", status);
+                string status = Value.from(Status._.get(type, index) == StatusType.Fail);
+#if DEBUG
+                Log.Trace("pStatus: status - '{0}'", status);
+#endif
                 return status;
             }
 
-            throw new SubtypeNotFoundException("pStatus: not found subtype - '{0}'", property);
+            throw new IncorrectNodeException(pm, 1);
         }
 
         /// <summary>
-        /// Work with 'Enabled' property for selected ISolutionEvent
-        /// get: #[vsSBE events.Pre.item("Act1").Enabled]
-        /// set: #[vsSBE events.Pre.item("Act1").Enabled = false]
+        /// item(...).Enabled
+        /// item(...).Enabled = true|false
         /// </summary>
         /// <param name="evt">Selected event</param>
-        /// <param name="data">String data with operations</param>
+        /// <param name="pm"></param>
         /// <returns></returns>
         [Property("Enabled", "Gets or Sets Enabled status for selected event-item", "item", "stEventItem", CValueType.Boolean, CValueType.Boolean)]
-        protected string pEnabled(ISolutionEvent evt, string data)
+        protected string pEnabled(ISolutionEvent evt, IPM pm)
         {
-            if(data.Trim().Length < 1) {
-                return evt.Enabled.ToString().ToLower();
+            if(pm.FinalEmptyIs(LevelType.RightOperandEmpty)) {
+                return Value.from(evt.Enabled);
             }
 
-            Match m = Regex.Match(data, @"=\s*(false|true|1|0)\s*$", RegexOptions.IgnoreCase);
-            if(!m.Success) {
-                throw new OperandNotFoundException("Failed pEnabled - '{0}'", data);
-            }
-            evt.Enabled = Value.toBoolean(m.Groups[1].Value);
+            evt.Enabled = Value.toBoolean(pm.Levels[0].Data);
 
-            Log.Debug("pEnabled: setted as '{0}' for '{1}'", evt.Enabled, evt.Name);
-            return String.Empty;
-        }
-
-        /// <param name="sIndex">Binding index with the Execution status</param>
-        protected ISolutionEvent getEventByName(SolutionEventType type, string name, out int sIndex)
-        {
-            sIndex = -1;
-            if(String.IsNullOrEmpty(name)) {
-                throw new NotFoundException("getEventByName: name is null or empty");
-            }
-            ISolutionEvent[] evt = getEvent(type);
-
-            foreach(ISolutionEvent item in evt) {
-                ++sIndex;
-                if(item.Name == name) {
-                    return item;
-                }
-            }
-            throw new NotFoundException("getEvent: not found name - '{0}' with type - '{1}'", name, type);
-        }
-
-        /// <param name="sIndex">Binding index with the Execution status</param>
-        protected ISolutionEvent getEventByIndex(SolutionEventType type, string index, out int sIndex)
-        {
-            sIndex = -1;
-            ISolutionEvent[] evt = getEvent(type);
-            try {
-                sIndex = Int32.Parse(index) - 1; // >= 1
-                return evt[sIndex];
-            }
-            catch(Exception) {
-                throw new NotFoundException("getEvent: incorrect index - '{0}'({1}) with type - '{2}'", index, evt.Length, type);
-            }
+            Log.Trace("pEnabled: updated status '{0}' for '{1}'", evt.Enabled, evt.Name);
+            return Value.Empty;
         }
 
         protected virtual ISolutionEvent[] getEvent(SolutionEventType type)
         {
             try {
-                return Settings.Cfg.getEvent(type);
+                return Settings.Cfg.getEvent(type); //TODO:
             }
-            catch(Exception) {
-                throw new NotSupportedOperationException("getEvent: Not yet supported event type - '{0}'", type);
+            catch(NotFoundException) {
+                throw new NotSupportedOperationException("The event type '{0}' is not supported yet.", type);
+            }
+        }
+
+        /// <param name="type"></param>
+        /// <param name="name"></param>
+        /// <param name="index">Index of selected type of event by name</param>
+        /// <returns></returns>
+        private ISolutionEvent getEventByName(SolutionEventType type, string name, out int index)
+        {
+            if(String.IsNullOrWhiteSpace(name)) {
+                throw new NotFoundException("The name of event type is null or empty.");
+            }
+
+            index = -1;
+            foreach(ISolutionEvent item in getEvent(type)) {
+                ++index;
+                if(item.Name == name) {
+                    return item;
+                }
+            }
+
+            throw new NotFoundException("The event type '{0}' with name '{1}' is not exists.", type, name);
+        }
+
+        private ISolutionEvent getEventByIndex(SolutionEventType type, int index)
+        {
+            ISolutionEvent[] evt = getEvent(type);
+            try {
+                return evt[index - 1]; // starts with 1
+            }
+            catch(IndexOutOfRangeException) {
+                throw new NotFoundException("Incorrect index '{0}' for event type - `{1}`  /{2}", index, type, evt.Length);
             }
         }
     }

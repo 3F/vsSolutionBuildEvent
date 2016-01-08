@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -37,6 +37,14 @@ namespace net.r_eg.vsSBE.SBEScripts
         public const string ARRAY_SEPARATOR = ",";
 
         /// <summary>
+        /// Empty value by default.
+        /// </summary>
+        public static string Empty
+        {
+            get { return String.Empty; }
+        }
+
+        /// <summary>
         /// Getting boolean value
         /// Boolean.Parse() - converts only true/false value from string
         /// </summary>
@@ -44,13 +52,17 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <returns></returns>
         public static bool toBoolean(string val)
         {
-            val = val.Trim().ToLower();
+            val = val.Trim();//.ToLower();
             switch(val) {
                 case "1":
+                case "True":
+                case "TRUE":
                 case VTRUE: {
                     return true;
                 }
                 case "0":
+                case "False":
+                case "FALSE":
                 case VFALSE: {
                     return false;
                 }

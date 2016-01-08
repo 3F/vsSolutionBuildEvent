@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -86,7 +86,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string subtype  = point.Key;
             string request  = point.Value;
 
-            Log.Trace("DTEComponent: subtype - `{0}`, request - `{1}`", subtype, request);
+            Log.Trace("`{0}`: subtype - `{1}`, request - `{2}`", ToString(), subtype, request);
 
             switch(subtype)
             {
@@ -97,7 +97,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     return stEvents(request);
                 }
             }
-            throw new SubtypeNotFoundException("DTEComponent: not found subtype - '{0}'", subtype);
+
+            throw new SubtypeNotFoundException("Subtype `{0}` is not found", subtype);
         }
 
         /// <summary>
@@ -117,7 +118,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             Log.Debug("Found '{0}' to execution", cmd);
 
             dteo.exec(new string[] { cmd }, false);
-            return String.Empty;
+            return Value.Empty;
         }
 
         /// <summary>
@@ -176,16 +177,16 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             switch(operation)
             {
                 case "Guid": {
-                    return (lastCommandEvent.Guid)?? String.Empty;
+                    return (lastCommandEvent.Guid)?? Value.Empty;
                 }
                 case "Id": {
                     return Value.from(lastCommandEvent.Id);
                 }
                 case "CustomIn": {
-                    return Value.pack(lastCommandEvent.CustomIn)?? String.Empty;
+                    return Value.pack(lastCommandEvent.CustomIn)?? Value.Empty;
                 }
                 case "CustomOut": {
-                    return Value.pack(lastCommandEvent.CustomOut)?? String.Empty;
+                    return Value.pack(lastCommandEvent.CustomOut)?? Value.Empty;
                 }
                 case "Pre": {
                     return Value.from(lastCommandEvent.Pre); // see commandEvent below

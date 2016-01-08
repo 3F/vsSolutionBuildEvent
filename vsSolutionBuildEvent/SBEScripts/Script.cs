@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -105,11 +105,6 @@ namespace net.r_eg.vsSBE.SBEScripts
         protected IEnvironment env;
 
         /// <summary>
-        /// Basic operations with strings
-        /// </summary>
-        protected StringHandler hString;
-
-        /// <summary>
         /// Flag of required post-processing with MSBuild core.
         /// In general, some components can require immediate processing with evaluation, before passing control to next level
         /// (e.g. FileComponent etc.) For such components need additional flag about allowed processing, if this used of course...
@@ -143,7 +138,7 @@ namespace net.r_eg.vsSBE.SBEScripts
                 _depthLevel = 0;
                 postProcessingMSBuild = allowMSBuild;
                 StringHandler hString = new StringHandler();
-                return hString.recovery(parse(hString.protectMixedQuotes(data), _depthLevel, hString));
+                return hString.recovery(parse(hString.protect(data), _depthLevel, hString));
             }
         }
 

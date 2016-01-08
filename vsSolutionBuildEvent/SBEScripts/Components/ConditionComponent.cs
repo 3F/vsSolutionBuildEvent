@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -123,7 +123,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             string condition    = m.Groups[1].Value;
             string bodyIfTrue   = _hString.recovery(m.Groups[2].Value);
-            string bodyIfFalse  = (m.Groups[3].Success)? _hString.recovery(m.Groups[3].Value) : String.Empty;
+            string bodyIfFalse  = (m.Groups[3].Success)? _hString.recovery(m.Groups[3].Value) : Value.Empty;
 
             return parse(_hString.protectCores(condition), bodyIfTrue, bodyIfFalse);
         }

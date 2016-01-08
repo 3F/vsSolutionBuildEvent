@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -78,8 +78,12 @@ namespace net.r_eg.vsSBE.Scripts
         /// <param name="type">Quote symbol.</param>
         /// <param name="data"></param>
         /// <returns>String with unescaped quote symbols.</returns>
-        public static string unescapeQuote(char type, string data)
+        public static string unescapeQuotes(char type, string data)
         {
+            if(String.IsNullOrWhiteSpace(data)) {
+                return String.Empty;
+            }
+
             switch(type)
             {
                 case '\'':

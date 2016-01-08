@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
@@ -37,7 +37,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest()
         {
             CommentComponent target = new CommentComponent();
-            Assert.AreEqual(String.Empty, target.parse("[\"test\"]"));
+            Assert.AreEqual(Value.Empty, target.parse("[\"test\"]"));
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest2()
         {
             CommentComponent target = new CommentComponent();
-            Assert.AreEqual(String.Empty, target.parse("[\"line1 \n line2\"]"));
+            Assert.AreEqual(Value.Empty, target.parse("[\"line1 \n line2\"]"));
         }
 
         /// <summary>

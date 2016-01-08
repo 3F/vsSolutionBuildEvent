@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -80,180 +80,148 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string subtype  = point.Key;
             string request  = point.Value;
 
-            Log.Trace("OWPComponent: subtype - `{0}`, request - `{1}`", subtype, request);
+            Log.Trace("`{0}`: subtype - `{1}`, request - `{2}`", ToString(), subtype, request);
 
             switch(subtype) {
                 case "out": {
-                    return stOut(request);
+                    return stOut(new PM(request));
                 }
                 case "log": {
-                    return stLog(request);
+                    return stLog(new PM(request));
                 }
                 case "item": {
-                    return stItem(request);
+                    return stItem(new PM(request));
                 }
             }
-            throw new SubtypeNotFoundException("OWPComponent: not found subtype - '{0}'", subtype);
+            throw new SubtypeNotFoundException("Subtype `{0}` is not found", subtype);
         }
 
         /// <summary>
         /// For work with events of logging.
-        /// 
-        /// * #[OWP log.Message]
-        /// * #[OWP log.Level]
+        ///     `log.Message`
+        ///     `log.Level`
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="pm"></param>
         /// <returns></returns>
         [Property("log", "Provides data from events of logging.")]
         [Property("Message", "Current message from log.", "log", "stLog", CValueType.String)]
-        [Property("Level", "Level for current property the Message.", "log", "stLog", CValueType.String)]
-        protected string stLog(string data)
+        [Property("Level", "The Level of current Message.", "log", "stLog", CValueType.String)]
+        protected string stLog(IPM pm)
         {
-            Match m = Regex.Match(data, @"log
-                                          \s*\.\s*
-                                          ([A-Za-z_0-9]+)", // #1 - Property name
-                                          RegexOptions.IgnorePatternWhitespace);
-
-            if(!m.Success) {
-                throw new OperationNotFoundException("Failed stLog - '{0}'", data);
-            }
-
-            string property = m.Groups[1].Value;
-
-            switch(property) {
-                case "Message": {
+            if(pm.It(LevelType.Property, "log"))
+            {
+                if(pm.It(LevelType.Property, "Message")) {
                     return Value.from(logcopy.Message);
                 }
-                case "Level": {
+
+                if(pm.It(LevelType.Property, "Level")) {
                     return Value.from(logcopy.Level);
                 }
+
+                throw new IncorrectNodeException(pm);
             }
-            throw new OperationNotFoundException("OWPComponent-stLog: not found property - '{0}'", property);
+
+            throw new IncorrectNodeException(pm);
         }
 
         /// <summary>
-        /// Access to items of the OWP.
-        /// 
-        /// * #[OWP item("name")]
+        /// Access to OW items.
+        ///     `item("name")`
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="pm"></param>
         /// <returns></returns>
-        [
-            Method
-            (
+        [Method(
                 "item",
                 "Access to item of the Output window by name.",
                 new string[] { "name" },
                 new string[] { "Name of item" },
                 CValueType.Void,
                 CValueType.String
-            )
-        ]
-        protected string stItem(string data)
+        )]
+        protected string stItem(IPM pm)
         {
-            Match m = Regex.Match(data, 
-                                    String.Format(@"
-                                                    item
-                                                    \s*
-                                                    \(
-                                                       {0}            #1 - name
-                                                    \)
-                                                    \s*\.\s*
-                                                    ([A-Za-z_0-9]+)   #2 - operation
-                                                    \s*(.*)           #3 - raw data for operation (optional)", 
-                                                    RPattern.DoubleQuotesContent
-                                                 ), RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
-
-            if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed stItem - '{0}'", data);
+            if(!pm.Is(LevelType.Method, "item")) {
+                throw new IncorrectNodeException(pm);
             }
+            ILevel level = pm.Levels[0]; // level of the item() method
 
-            string name         = m.Groups[1].Value;            
-            string operation    = m.Groups[2].Value;
-            string raw          = (m.Groups[3].Success)? m.Groups[3].Value : null;
+            if(!level.Is(ArgumentType.StringDouble)) {
+                throw new ArgumentPMException(level, "item(string name)");
+            }
+            string name = (string)level.Args[0].data;
 
-            Log.Debug("stItem: '{0}', '{1}', '{2}'", name, operation, raw);
-
-            if(String.IsNullOrEmpty(name) 
-                || name.Trim().Equals(Settings.OWP_ITEM_VSSBE, StringComparison.OrdinalIgnoreCase))
+            if(String.IsNullOrWhiteSpace(name) 
+                /*|| name.Trim().Equals(Settings.OWP_ITEM_VSSBE, StringComparison.OrdinalIgnoreCase)*/)
             {
-                throw new NotSupportedOperationException("OWPComponent: The name '{0}' is not available to using for current operation.", name);
+                throw new NotSupportedOperationException("The OW pane '{0}' is not available for current operation.", name);
             }
 
-            switch(operation)
+            pm.pinTo(1);
+            switch(pm.Levels[0].Data)
             {
                 case "write": {
-                    return stItemWrite(name, false, raw);
+                    return stItemWrite(name, false, pm);
                 }
                 case "writeLine": {
-                    return stItemWrite(name, true, raw);
+                    return stItemWrite(name, true, pm);
                 }
                 case "delete": {
-                    return stItemDelete(name, raw);
+                    return stItemDelete(name, pm);
                 }
                 case "clear": {
-                    return stItemClear(name, raw);
+                    return stItemClear(name, pm);
                 }
                 case "activate": {
-                    return stItemActivate(name, raw);
+                    return stItemActivate(name, pm);
                 }
             }
-            throw new OperandNotFoundException("OWPComponent-stItem: not supported operation - '{0}'", operation);
+
+            throw new IncorrectNodeException(pm);
         }
 
         /// <summary>
-        /// Sends data to the OutputWindowPane window.
-        /// 
-        /// * #[OWP item("name").write(true): content]
-        /// * #[OWP item("name").writeLine(true): content]
+        /// To send data into OutputWindowPane window.
+        ///     `item("name").write(true): content`
+        ///     `item("name").writeLine(true): content`
         /// </summary>
         /// <param name="raw"></param>
         /// <param name="newline">Flag of new line symbol</param>
-        /// <param name="pane">Selected pane</param>
+        /// <param name="pm"></param>
         /// <returns></returns>
-        [
-            Method
-            (
+        [Method(
                 "write",
                 "Writes data into selected pane.",
                 "item",
                 "stItem",
-                new string[] { "createIfNotExist", "In" },
-                new string[] { "Flag of creating. If this value as true: Creates if this item does not exist.", "Content" },
+                new string[] { "force", "In" },
+                new string[] { "Creates selected item if it does not exist for true value.", "Content" },
                 CValueType.Void,
                 CValueType.Boolean, CValueType.Input
-            )
-        ]
-        [
-            Method
-            (
+        )]
+        [Method(
                 "writeLine",
                 "Writes data with the newline char into selected pane.",
                 "item",
                 "stItem",
-                new string[] { "createIfNotExist", "In" },
-                new string[] { "Flag of creating. If this value as true: Creates if this item does not exist.", "Content" },
+                new string[] { "force", "In" },
+                new string[] { "Creates selected item if it does not exist for true value.", "Content" },
                 CValueType.Void,
                 CValueType.Boolean, CValueType.Input
-            )
-        ]
-        protected string stItemWrite(string name, bool newline, string raw)
+        )]
+        protected string stItemWrite(string name, bool newline, IPM pm)
         {
-            Match m = Regex.Match(raw, 
-                                    String.Format(@"
-                                                    \(
-                                                       {0}   #1 - flag ( createIfNotExist ) - if true value: creates if the item does not exist.
-                                                    \)
-                                                    \s*:(.*) #2 - content",
-                                                    RPattern.BooleanContent
-                                                 ), RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+            if(!pm.IsMethodWithArgs("write", ArgumentType.Boolean) 
+                && !pm.IsMethodWithArgs("writeLine", ArgumentType.Boolean))
+            {
+                throw new IncorrectNodeException(pm);
+            }
+            bool createIfNotExist = (bool)pm.Levels[0].Args[0].data;
 
-            if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed stItemWrite - '{0}'", raw);
+            if(pm.Levels[1].Type != LevelType.RightOperandColon) {
+                throw new IncorrectNodeException(pm);
             }
 
-            bool createIfNotExist   = Value.toBoolean(m.Groups[1].Value);
-            string content          = m.Groups[2].Value;
+            string content = pm.Levels[1].Data;
 
             EnvDTE.OutputWindowPane pane;
             if(!createIfNotExist)
@@ -262,7 +230,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     pane = env.OutputWindowPane.getByName(name, false);
                 }
                 catch(ArgumentException) {
-                    throw new NotFoundException("OWPComponent: Item '{0}' does not exist. Note: use the 'createIfNotExist' flag for automatically creation.", name);
+                    throw new NotFoundException("The item '{0}' does not exist. Use 'force' flag for automatic creation if needed.", name);
                 }
             }
             else {
@@ -274,112 +242,133 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
             pane.OutputString(content);
 
-            return String.Empty;
+            return Value.Empty;
         }
 
         /// <summary>
         /// Removes selected pane.
-        /// 
-        /// * #[OWP item("name").delete = true]
+        ///     `item("name").delete = true`
         /// </summary>
-        /// <param name="raw"></param>
         /// <param name="name">Name of item</param>
+        /// <param name="pm"></param>
         /// <returns></returns>
         [Property(
             "delete",
-            "Removes pane. Returns false if this item not exist, and true value if is successfully deleted.",
+            "Removes pane. Returns false value if item does not exist, otherwise true as a successfully deleted.",
             "item",
             "stItem",
             CValueType.Boolean,
             CValueType.Boolean
         )]
-        protected string stItemDelete(string name, string raw)
+        protected string stItemDelete(string name, IPM pm)
         {
-            Log.Trace("stItemDelete: started");
-            if(!_booleanValueFromRaw(ref raw)) {
+            if(!pm.It(LevelType.Property, "delete") || !pm.IsRight(LevelType.RightOperandStd)) {
+                throw new IncorrectNodeException(pm);
+            }
+
+            if(!Value.toBoolean(pm.Levels[0].Data)) {
+#if DEBUG
+                Log.Trace("skip removing '{0}'", name);
+#endif
                 return Value.from(false);
             }
-            
-            Log.Debug("stItemDelete: removing the item '{0}'", name);
+
+            Log.Debug("removing the item '{0}'", name);
             try {
                 env.OutputWindowPane.deleteByName(name);
                 return Value.from(true);
             }
             catch(ArgumentException) {
-                return Value.from(false);
+                Log.Debug("Incorrect name of pane item `{0}`", name);
             }
+
+            return Value.from(false);
         }
 
         /// <summary>
-        /// Clear contents of item by name.
-        /// 
-        /// * #[OWP item("name").clear = true]
+        /// To clear contents from pane.
+        ///     `item("name").clear = true`
         /// </summary>
         /// <param name="name"></param>
-        /// <param name="raw"></param>
+        /// <param name="pm"></param>
         /// <returns></returns>
         [Property(
             "clear",
-            "Clear contents of item. Returns false if this item not exist, and true value if is clean.",
+            "To clear contents from OW pane. Returns false value if item does not exist, otherwise true as a successfully cleared.",
             "item",
             "stItem",
             CValueType.Boolean,
             CValueType.Boolean
         )]
-        protected string stItemClear(string name, string raw)
+        protected string stItemClear(string name, IPM pm)
         {
-            Log.Trace("stItemClear: started");
-            if(!_booleanValueFromRaw(ref raw)) {
+            if(!pm.It(LevelType.Property, "clear") || !pm.IsRight(LevelType.RightOperandStd)) {
+                throw new IncorrectNodeException(pm);
+            }
+
+            if(!Value.toBoolean(pm.Levels[0].Data)) {
+#if DEBUG
+                Log.Trace("skip clearing '{0}'", name);
+#endif
                 return Value.from(false);
             }
 
-            Log.Debug("stItemClear: clearing the item '{0}'", name);
+            Log.Debug("Clearing the item '{0}'", name);
             try {
                 env.OutputWindowPane.getByName(name, false).Clear();
                 return Value.from(true);
             }
             catch(ArgumentException) {
-                return Value.from(false);
+                Log.Debug("Incorrect name of pane item `{0}`", name);
             }
+
+            return Value.from(false);
         }
 
         /// <summary>
         /// Activate item by name.
-        /// 
-        /// * #[OWP item("name").activate = true]
+        ///     `item("name").activate = true`
         /// </summary>
         /// <param name="name"></param>
-        /// <param name="raw"></param>
+        /// <param name="pm"></param>
         /// <returns></returns>
         [Property(
             "activate",
-            "Activate(Display) item.",
+            "To activate (display) OW pane by item name.",
             "item",
             "stItem",
             CValueType.Boolean,
             CValueType.Boolean
         )]
-        protected string stItemActivate(string name, string raw)
+        protected string stItemActivate(string name, IPM pm)
         {
-            Log.Trace("stItemActivate: started");
-            if(!_booleanValueFromRaw(ref raw)) {
+            if(!pm.It(LevelType.Property, "activate") || !pm.IsRight(LevelType.RightOperandStd)) {
+                throw new IncorrectNodeException(pm);
+            }
+
+            if(!Value.toBoolean(pm.Levels[0].Data)) {
+#if DEBUG
+                Log.Trace("skip activation of pane '{0}'", name);
+#endif
                 return Value.from(false);
             }
 
-            Log.Debug("stItemActivate: activation the item '{0}'", name);
+            Log.Debug("Activation the item '{0}'", name);
             try {
                 env.OutputWindowPane.getByName(name, false).Activate();
                 return Value.from(true);
             }
             catch(ArgumentException) {
-                return Value.from(false);
+                Log.Debug("Incorrect name of pane item `{0}`", name);
             }
+
+            return Value.from(false);
         }
 
         /// <summary>
         /// Gets data from the output pane.
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="pm"></param>
         /// <returns></returns>
         [Method(
                 "out",
@@ -407,18 +396,16 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         [Property("Raw", "Return the partial raw data with errors if an exists", "Errors", "stOut", CValueType.String)]
         [Property("Count", "Count of errors from data", "Errors", "stOut", CValueType.Integer)]
         [Property("Codes", "List of errors from data as C4702,4505, ...", "Errors", "stOut", CValueType.List)]
-        protected string stOut(string data)
+        protected string stOut(IPM pm)
         {
-            IPM pm = new PM(data);
-
-            if(!pm.Is(0, LevelType.Property, "out") && !pm.Is(0, LevelType.Method, "out")) {
-                throw new SyntaxIncorrectException("Failed stOut - '{0}'", data);
+            if(!pm.Is(LevelType.Property, "out") && !pm.Is(LevelType.Method, "out")) {
+                throw new IncorrectNodeException(pm);
             }
 
             string item = Settings._.DefaultOWPItem; // by default for all
             bool isGuid = false;
 
-            if(pm.Is(0, LevelType.Method, "out"))
+            if(pm.Is(LevelType.Method, "out"))
             {
                 ILevel lvlOut = pm.Levels[0];
                 if(!lvlOut.Is(ArgumentType.StringDouble)
@@ -456,7 +443,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if((pm.Is(1, LevelType.Property, "Warnings") && pm.FinalEmptyIs(2, LevelType.Property, "Raw"))
                 || pm.FinalEmptyIs(1, LevelType.Property, "Warnings"))
             {
-                return (ew.IsWarnings)? raw : String.Empty;
+                return (ew.IsWarnings)? raw : Value.Empty;
             }
 
             // #[OWP out.Errors.Count] ...
@@ -473,22 +460,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if((pm.Is(1, LevelType.Property, "Errors") && pm.FinalEmptyIs(2, LevelType.Property, "Raw"))
                 || pm.FinalEmptyIs(1, LevelType.Property, "Errors"))
             {
-                return (ew.IsErrors)? raw : String.Empty;
+                return (ew.IsErrors)? raw : Value.Empty;
             }
-            
-            throw new OperationNotFoundException("stOut: not found - '{0}' /'{1}'", pm.Levels[1].Data, pm.Levels[1].Type);
-        }
 
-        private bool _booleanValueFromRaw(ref string raw)
-        {
-            Match m = Regex.Match(raw, @"=\s*(false|true|1|0)\s*$", RegexOptions.IgnoreCase);
-            if(!m.Success) {
-                throw new OperationNotFoundException("Failed getting boolean value - '{0}'", raw);
-            }
-            string val = m.Groups[1].Value;
-
-            Log.Debug("Extracted boolean value: is '{0}'", val);
-            return Value.toBoolean(val);
+            throw new IncorrectNodeException(pm, 1);
         }
     }
 }

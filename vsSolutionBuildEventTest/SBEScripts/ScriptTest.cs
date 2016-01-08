@@ -126,6 +126,116 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
         }
 
         /// <summary>
+        ///A test for container
+        ///</summary>
+        [TestMethod()]
+        public void containerTest1()
+        {
+            var uvar        = new UserVariable();
+            Script target   = new Script(env, uvar);
+
+            Assert.AreEqual("ne]", target.parse("#[var name = value\nli]ne]"));
+            Assert.AreEqual(1, uvar.Variables.Count());
+            Assert.AreEqual("value\nli", uvar.get("name"));
+        }
+
+        /// <summary>
+        ///A test for container
+        ///</summary>
+        [TestMethod()]
+        public void containerTest2()
+        {
+            var uvar = new UserVariable();
+            Script target = new Script(env, uvar);
+
+            Assert.AreEqual(String.Empty, target.parse("#[var name = <#data>value\nli]ne</#data>]"));
+            Assert.AreEqual(1, uvar.Variables.Count());
+            Assert.AreEqual("value\nli]ne", uvar.get("name"));
+        }
+
+        /// <summary>
+        ///A test for container
+        ///</summary>
+        [TestMethod()]
+        public void containerTest3()
+        {
+            var uvar = new UserVariable();
+            Script target = new Script(env, uvar);
+
+            uvar.set("mx", null, "<#data>value\nli]ne</#data>");
+            uvar.evaluate("mx", null, new EvaluatorBlank(), true);
+
+            Assert.AreEqual(String.Empty, target.parse("#[var name = #[var mx]]"));
+            Assert.AreEqual(2, uvar.Variables.Count());
+            Assert.AreEqual("value\nli]ne", uvar.get("name"));
+        }
+
+        /// <summary>
+        ///A test for container
+        ///</summary>
+        [TestMethod()]
+        public void containerTest4()
+        {
+            var uvar        = new UserVariable();
+            Script target   = new Script(env, uvar);
+
+            uvar.set("mx", null, "<#data>value\nli]ne</#data>");
+            uvar.evaluate("mx", null, new EvaluatorBlank(), true);
+
+            Assert.AreEqual(String.Empty, target.parse("#[var name = <#data>#[var mx]|value\nli]ne</#data>]"));
+            Assert.AreEqual(2, uvar.Variables.Count());
+            Assert.AreEqual("value\nli]ne|value\nli]ne", uvar.get("name"));
+        }
+
+        /// <summary>
+        ///A test for container
+        ///</summary>
+        [TestMethod()]
+        public void containerTest5()
+        {
+            var uvar        = new UserVariable();
+            Script target   = new Script(env, uvar);
+
+            uvar.set("mx", null, "<#data>value\nli]ne</#data>");
+            uvar.evaluate("mx", null, new EvaluatorBlank(), true);
+
+            Assert.AreEqual(String.Empty, target.parse("#[var name = #[var mx]]"));
+            Assert.AreEqual(2, uvar.Variables.Count());
+            Assert.AreEqual("value\nli]ne", uvar.get("name"));
+        }
+
+        /// <summary>
+        ///A test for container
+        ///</summary>
+        [TestMethod()]
+        public void containerTest6()
+        {
+            var uvar = new UserVariable();
+            Script target = new Script(env, uvar);
+
+            Assert.AreEqual(String.Empty, target.parse("#[var name = left [box1] right]"));
+            Assert.AreEqual(1, uvar.Variables.Count());
+            Assert.AreEqual("left [box1] right", uvar.get("name"));
+        }
+
+        /// <summary>
+        ///A test for container
+        ///</summary>
+        [TestMethod()]
+        public void containerTest7()
+        {
+            var uvar = new UserVariable();
+            Script target = new Script(env, uvar);
+
+            Assert.AreEqual("#[var name = left [box1 right]", target.parse("#[var name = left [box1 right]"));
+            Assert.AreEqual(0, uvar.Variables.Count());
+
+            Assert.AreEqual(String.Empty, target.parse("#[var name = \"left [box1 right\"]"));
+            Assert.AreEqual(1, uvar.Variables.Count());
+            Assert.AreEqual("\"left [box1 right\"", uvar.get("name"));
+        }
+
+        /// <summary>
         ///A test for parse - unlooping with MSBuild
         ///</summary>
         [TestMethod()]

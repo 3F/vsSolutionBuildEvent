@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -333,11 +333,11 @@ namespace net.r_eg.vsSBE.MSBuild
             /* Data */
 
             if(rStringDataD.Success) {
-                ret.property.unevaluated    = Tokens.unescapeQuote('"', rStringDataD.Value);
+                ret.property.unevaluated    = Tokens.unescapeQuotes('"', rStringDataD.Value);
                 ret.variable.type           = PreparedData.ValueType.StringFromDouble;
             }
             else if(rStringDataS.Success) {
-                ret.property.unevaluated    = Tokens.unescapeQuote('\'', rStringDataS.Value);
+                ret.property.unevaluated    = Tokens.unescapeQuotes('\'', rStringDataS.Value);
                 ret.variable.type           = PreparedData.ValueType.StringFromSingle;
             }
             else {

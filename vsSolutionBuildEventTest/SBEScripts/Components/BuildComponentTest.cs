@@ -9,6 +9,7 @@ using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Components.Build;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
@@ -139,11 +140,11 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void stCancelTest3()
         {
             BuildComponentAccessor target = new BuildComponentAccessor();
-            Assert.AreEqual(String.Empty, target.parse("[Build cancel = true]"));
-            Assert.AreEqual(String.Empty, target.parse("[Build cancel = 1]"));
-            Assert.AreEqual(String.Empty, target.parse("[Build cancel = false]"));
-            Assert.AreEqual(String.Empty, target.parse("[Build cancel = 0]"));
-            Assert.AreEqual(String.Empty, target.parse("[Build cancel = true ] "));
+            Assert.AreEqual(Value.Empty, target.parse("[Build cancel = true]"));
+            Assert.AreEqual(Value.Empty, target.parse("[Build cancel = 1]"));
+            Assert.AreEqual(Value.Empty, target.parse("[Build cancel = false]"));
+            Assert.AreEqual(Value.Empty, target.parse("[Build cancel = 0]"));
+            Assert.AreEqual(Value.Empty, target.parse("[Build cancel = true ] "));
         }
 
         /// <summary>
@@ -228,7 +229,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void isBuildableTest1()
         {
             BuildComponent target = new BuildComponent(Env);
-            Assert.AreEqual(String.Empty, target.parse("[Build projects.find(\"project1\").IsBuildable = true]"));
+            Assert.AreEqual(Value.Empty, target.parse("[Build projects.find(\"project1\").IsBuildable = true]"));
         }
 
         /// <summary>
@@ -249,7 +250,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void isDeployableTest1()
         {
             BuildComponent target = new BuildComponent(Env);
-            Assert.AreEqual(String.Empty, target.parse("[Build projects.find(\"project1\").IsDeployable = true]"));
+            Assert.AreEqual(Value.Empty, target.parse("[Build projects.find(\"project1\").IsDeployable = true]"));
         }
 
         /// <summary>
@@ -272,7 +273,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             var target = new BuildComponentAccessor(Env);
 
             try {
-                Assert.AreEqual(String.Empty, target.parse("[Build solution.current]"));
+                target.parse("[Build solution.current]");
                 Assert.Fail("1");
             }
             catch(OperationNotFoundException) {
@@ -280,7 +281,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                Assert.AreEqual(String.Empty, target.parse("[Build solution.path(\"path.sln\")]"));
+                target.parse("[Build solution.path(\"path.sln\")]");
                 Assert.Fail("2");
             }
             catch(OperationNotFoundException) {
@@ -296,18 +297,18 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void stSolutionTest2()
         {
             BuildComponent target = new BuildComponentAccessor(Env);
-            Assert.AreEqual(String.Empty, target.parse("[Build solution.path()]"));
+            Assert.AreEqual(Value.Empty, target.parse("[Build solution.path()]"));
         }
 
         /// <summary>
         ///A test for parse - stSolution
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(OperationNotFoundException))]
+        [ExpectedException(typeof(IncorrectNodeException))]
         public void stSolutionTest3()
         {
             BuildComponent target = new BuildComponent(Env);
-            Assert.AreEqual(String.Empty, target.parse("[Build solution.NotExistProperty]"));
+            Assert.AreEqual(Value.Empty, target.parse("[Build solution.NotRealProperty]"));
         }
 
         /// <summary>
@@ -319,7 +320,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             var target = new BuildComponentAccessor(Env);
 
             try {
-                Assert.AreEqual(String.Empty, target.parse("[Build solution.current.NotExistProperty]"));
+                target.parse("[Build solution.current.NotExistProperty]");
                 Assert.Fail("1");
             }
             catch(OperationNotFoundException) {
@@ -327,7 +328,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                Assert.AreEqual(String.Empty, target.parse("[Build solution.current.First]"));
+                target.parse("[Build solution.current.First]");
                 Assert.Fail("2");
             }
             catch(OperationNotFoundException) {
@@ -335,7 +336,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                Assert.AreEqual(String.Empty, target.parse("[Build solution.current.Last]"));
+                target.parse("[Build solution.current.Last]");
                 Assert.Fail("3");
             }
             catch(OperationNotFoundException) {
@@ -343,7 +344,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                Assert.AreEqual(String.Empty, target.parse("[Build solution.current.LastRaw]"));
+                target.parse("[Build solution.current.LastRaw]");
                 Assert.Fail("4");
             }
             catch(OperationNotFoundException) {
@@ -351,7 +352,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                Assert.AreEqual(String.Empty, target.parse("[Build solution.current.projectBy(\"" + EXIST_GUID + "\")]"));
+                target.parse("[Build solution.current.projectBy(\"" + EXIST_GUID + "\")]");
                 Assert.Fail("5");
             }
             catch(OperationNotFoundException) {
@@ -368,7 +369,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             var target = new BuildComponentAccessor(Env);
 
             try {
-                Assert.AreEqual(String.Empty, target.parse("[Build solution.path(\"stub.sln\").First]"));
+                target.parse("[Build solution.path(\"stub.sln\").First]");
                 Assert.Fail("1");
             }
             catch(OperationNotFoundException) {
@@ -376,7 +377,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                Assert.AreEqual(String.Empty, target.parse("[Build solution.path(\"stub.sln\").Last]"));
+                target.parse("[Build solution.path(\"stub.sln\").Last]");
                 Assert.Fail("2");
             }
             catch(OperationNotFoundException) {
@@ -384,7 +385,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                Assert.AreEqual(String.Empty, target.parse("[Build solution.path(\"stub.sln\").LastRaw]"));
+                target.parse("[Build solution.path(\"stub.sln\").LastRaw]");
                 Assert.Fail("3");
             }
             catch(OperationNotFoundException) {
@@ -392,7 +393,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                Assert.AreEqual(String.Empty, target.parse("[Build solution.path(\"stub.sln\").projectBy(\"" + EXIST_GUID + "\")]"));
+                target.parse("[Build solution.path(\"stub.sln\").projectBy(\"" + EXIST_GUID + "\")]");
                 Assert.Fail("4");
             }
             catch(OperationNotFoundException) {
@@ -408,7 +409,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void stSlnPMapTest3()
         {
             BuildComponent target = new BuildComponentAccessor(Env);
-            Assert.AreEqual(String.Empty, target.parse("[Build solution.current.projectBy(\"" + NOTEXIST_GUID + "\")]"));
+            Assert.AreEqual(Value.Empty, target.parse("[Build solution.current.projectBy(\"" + NOTEXIST_GUID + "\")]"));
         }
 
         /// <summary>
@@ -430,7 +431,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void stSlnPMapTest5()
         {
             BuildComponent target = new BuildComponentAccessor(Env);
-            Assert.AreEqual(String.Empty, target.parse("[Build solution.current.projectBy()]"));
+            Assert.AreEqual(Value.Empty, target.parse("[Build solution.current.projectBy()]"));
         }
 
         /// <summary>
@@ -472,7 +473,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             var target = new BuildComponentAccessor(Env);
 
             try {
-                Assert.AreEqual(String.Empty, target.parse("[Build solution.path(\"stub.sln\").First.NotRealProperty]"));
+                target.parse("[Build solution.path(\"stub.sln\").First.NotRealProperty]");
                 Assert.Fail("1");
             }
             catch(OperationNotFoundException) {
@@ -480,7 +481,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             }
 
             try {
-                Assert.AreEqual(String.Empty, target.parse("[Build solution.current.First.NotRealProperty]"));
+                target.parse("[Build solution.current.First.NotRealProperty]");
                 Assert.Fail("2");
             }
             catch(OperationNotFoundException) {
