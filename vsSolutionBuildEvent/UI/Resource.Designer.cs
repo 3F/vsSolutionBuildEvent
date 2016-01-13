@@ -93,7 +93,7 @@ namespace net.r_eg.vsSBE.UI {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-        ///&lt;Project ToolsVersion=&quot;12.0&quot; xmlns=&quot;http://schemas.microsoft.com/developer/msbuild/2003&quot;&gt;
+        ///&lt;Project ToolsVersion=&quot;4.0&quot; xmlns=&quot;http://schemas.microsoft.com/developer/msbuild/2003&quot;&gt;
         ///
         ///    &lt;Target Name=&quot;Init&quot;&gt;
         ///        &lt;!-- ... --&gt;
@@ -121,7 +121,7 @@ namespace net.r_eg.vsSBE.UI {
         ///   Looks up a localized string similar to #[&quot;
         ///    Sample
         ///&quot;]
-        ///#[var v = v1.2.3]
+        ///#[var v = 1.2.3]
         ///#[var log = $(TMP)/v.txt]
         ///
         ///#[($(Configuration) ~= Deb || true)
@@ -132,7 +132,7 @@ namespace net.r_eg.vsSBE.UI {
         ///    #[var v         = #[var v].$([MSBuild]::Modulo(#[var revBuild], $([System.Math]::Pow(2, 14))))]
         ///}]
         ///
-        ///#[File write(&quot;#[var log]&quot;):&gt; [rest of string was truncated]&quot;;.
+        ///#[var v = $([System.String]:: [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string StringScriptExampleSBE {
             get {

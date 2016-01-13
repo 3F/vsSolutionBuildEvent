@@ -26,7 +26,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// <summary>
     /// Works with User-Variables
     /// </summary>
-    [Definition("var", "Definitions of User-Variables")]
+    [Definition("var", "Dynamic User-Variables")]
     [Definition("name", "Get data from variable 'name'", "var")]
     [Definition("name = ", "Set mixed data for variable 'name'", "var")]
     [Definition("-name", "Unset variable 'name'", "var")]

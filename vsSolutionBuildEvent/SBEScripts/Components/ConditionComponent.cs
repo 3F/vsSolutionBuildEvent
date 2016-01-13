@@ -31,6 +31,27 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     public class ConditionComponent: Component, IComponent
     {
         /// <summary>
+        /// Maximum of nesting level for brackets
+        /// </summary>
+        protected const int DEPTH_BRACKETS_LIMIT = 40;
+
+        /// <summary>
+        /// Current level of nesting brackets.
+        /// Aborting if reached limit
+        /// </summary>
+        private volatile uint _depthBracketsLevel = 0;
+
+        /// <summary>
+        /// Protecting from incorrect symbols.
+        /// </summary>
+        private StringHandler hString = new StringHandler();
+
+        /// <summary>
+        /// object synch.
+        /// </summary>
+        private Object _lock = new Object();
+
+        /// <summary>
         /// Ability to work with data for current component
         /// </summary>
         public override string Condition
@@ -39,7 +60,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
-        /// Forced post analysis
+        /// Forced post-analysis.
         /// </summary>
         public override bool PostParse
         {
@@ -53,28 +74,6 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         {
             get { return true; }
         }
-
-        /// <summary>
-        /// Maximum of nesting level for brackets
-        /// </summary>
-        protected const int DEPTH_BRACKETS_LIMIT = 40;
-
-        /// <summary>
-        /// Current level of nesting brackets.
-        /// Aborting if reached limit
-        /// </summary>
-        private volatile uint _depthBracketsLevel = 0;
-
-        /// <summary>
-        /// For protecting from quotes & containers
-        /// </summary>
-        private StringHandler _hString = new StringHandler();
-
-        /// <summary>
-        /// object synch.
-        /// </summary>
-        private Object _lock = new Object();
-
 
         /// <param name="env">Used environment</param>
         /// <param name="uvariable">Instance of user-variables</param>
@@ -99,11 +98,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         public override string parse(string data)
         {
             lock(_lock) {
-                _hString = new StringHandler();
+                hString = new StringHandler();
                 _depthBracketsLevel = 0;
             }
 
-            Match m = Regex.Match(_hString.protectMixedQuotes(data.Trim()),
+            Match m = Regex.Match(hString.protectMixedQuotes(data.Trim()),
                                     String.Format(@"^\[\s*
                                                     {0}            #1 - Condition
                                                     \s*
@@ -122,10 +121,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             string condition    = m.Groups[1].Value;
-            string bodyIfTrue   = _hString.recovery(m.Groups[2].Value);
-            string bodyIfFalse  = (m.Groups[3].Success)? _hString.recovery(m.Groups[3].Value) : Value.Empty;
+            string bodyIfTrue   = hString.recovery(m.Groups[2].Value);
+            string bodyIfFalse  = (m.Groups[3].Success)? hString.recovery(m.Groups[3].Value) : Value.Empty;
 
-            return parse(_hString.protectCores(condition), bodyIfTrue, bodyIfFalse);
+            return parse(hString.protectCores(condition), bodyIfTrue, bodyIfFalse);
         }
 
         protected string parse(string condition, string ifTrue, string ifFalse)
@@ -137,7 +136,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected bool calculate(string data)
         {
             Log.Debug("Condition->calculate: started with - '{0}'", data);
-            data = _hString.recovery(data);
+            data = hString.recovery(data);
             Log.Debug("Condition->calculate: after recovery - '{0}'", data);
 
             Match m = Regex.Match(data.Trim(), 

@@ -151,11 +151,36 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse -> stCancel
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(OperationNotFoundException))]
+        [ExpectedException(typeof(IncorrectSyntaxException))]
         public void stCancelTest4()
         {
             BuildComponentAccessor target = new BuildComponentAccessor();
             target.parse("[Build cancel = 1true]");
+        }
+
+        /// <summary>
+        ///A test for parse -> stCancel
+        ///</summary>
+        [TestMethod()]
+        public void stCancelTest5()
+        {
+            var target = new BuildComponentAccessor();
+
+            try {
+                target.parse("[Build cancel]");
+                Assert.Fail("1");
+            }
+            catch(IncorrectNodeException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                target.parse("[Build cancel : true]");
+                Assert.Fail("2");
+            }
+            catch(IncorrectNodeException) {
+                Assert.IsTrue(true);
+            }
         }
 
         /// <summary>
@@ -177,11 +202,22 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         }
 
         /// <summary>
+        ///A test for parse -> stType
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(IncorrectNodeException))]
+        public void stTypeTest2()
+        {
+            BuildComponent target = new BuildComponent(Env);
+            target.parse("[Build type = true]");
+        }
+
+        /// <summary>
         ///A test for parse -> stProjects
         ///#[Build projects.find("name")]
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
+        [ExpectedException(typeof(ArgumentPMException))]
         public void stProjectsTest1()
         {
             BuildComponentAccessor target = new BuildComponentAccessor();
@@ -193,7 +229,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///#[Build projects.find("name")]
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(NotFoundException))]
+        [ExpectedException(typeof(SyntaxIncorrectException))]
         public void stProjectsTest2()
         {
             BuildComponent target = new BuildComponent(Env);
@@ -204,7 +240,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse -> stProjectConf
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
+        [ExpectedException(typeof(IncorrectSyntaxException))]
         public void stProjectConfTest1()
         {
             BuildComponent target = new BuildComponent(Env);
@@ -215,7 +251,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse -> stProjectConf
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(OperationNotFoundException))]
+        [ExpectedException(typeof(IncorrectNodeException))]
         public void stProjectConfTest2()
         {
             BuildComponent target = new BuildComponent(Env);

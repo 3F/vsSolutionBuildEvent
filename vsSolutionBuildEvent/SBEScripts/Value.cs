@@ -141,6 +141,13 @@ namespace net.r_eg.vsSBE.SBEScripts
             return val.ToString();
         }
 
+        /// <param name="val"></param>
+        /// <returns></returns>
+        public static string from(Enum val)
+        {
+            return val.ToString();
+        }
+
         /// <param name="val">Including array of data</param>
         /// <returns></returns>
         public static string from(object val)

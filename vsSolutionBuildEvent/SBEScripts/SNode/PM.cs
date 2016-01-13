@@ -252,6 +252,7 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
         /// <summary>
         /// Checks equality of method for specific level.
         /// </summary>
+        /// <param name="level">Selected level.</param>
         /// <param name="name">Method name.</param>
         /// <param name="types">The arguments that should be.</param>
         /// <returns></returns>
@@ -279,6 +280,30 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
         public bool IsRight(LevelType type)
         {
             return Levels.Count > 0 && Levels[0].Type == type;
+        }
+
+        /// <summary>
+        /// Checks equality of data for zero level.
+        /// </summary>
+        /// <param name="data">Level should be with data.</param>
+        /// <param name="variants">Alternative variants that can be.</param>
+        /// <returns>true value if selected level is equal to selected data, otherwise false.</returns>
+        public bool IsData(string data, params string[] variants)
+        {
+            if(Levels.Count < 1) {
+                return false;
+            }
+            string ldata = Levels[0].Data;
+
+            if(ldata == data) {
+                return true;
+            }
+
+            if(variants.Any(v => ldata == v)) {
+                return true;
+            }
+
+            return false;
         }
 
         /// <param name="raw">Initial raw data.</param>

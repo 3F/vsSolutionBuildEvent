@@ -921,6 +921,39 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.SNode
         }
 
         /// <summary>
+        ///A test for IsData
+        ///</summary>
+        [TestMethod()]
+        public void IsDataTest1()
+        {
+            IPM pm = new PM("pname . m1(true, 123).right = true");
+
+            Assert.AreEqual(true, pm.IsData("pname"));
+            Assert.AreEqual(false, pm.IsData("pname "));
+            pm.pinTo(1);
+
+            Assert.AreEqual(true, pm.IsData("m1"));
+            pm.pinTo(1);
+
+            Assert.AreEqual(true, pm.IsData("right"));
+            pm.pinTo(1);
+
+            Assert.AreEqual(true, pm.IsData(" true"));
+        }
+
+        /// <summary>
+        ///A test for IsData
+        ///</summary>
+        [TestMethod()]
+        public void IsDataTest2()
+        {
+            IPM pm = new PM("pname = true");
+
+            Assert.AreEqual(false, pm.IsData("property1", "property2", "property2", "property3"));
+            Assert.AreEqual(true, pm.IsData("property1", "property2", "pname", "property3"));
+        }
+
+        /// <summary>
         ///A test for getRightOperand
         ///</summary>
         [TestMethod()]

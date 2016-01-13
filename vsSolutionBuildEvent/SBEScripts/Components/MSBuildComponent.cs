@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -15,30 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
-    /// <summary>
-    /// The comments for scripts.
-    /// </summary>
-    [Definition("\" \"", "The multiline comment.")]
-    public class CommentComponent: Component, IComponent
+    [Definition("$()", "Forcing evaluation with MSBuild engine.")]
+    public class MSBuildComponent: Component, IComponent
     {
         /// <summary>
         /// Ability to work with data for current component
         /// </summary>
         public override string Condition
         {
-            get { return "\""; }
+            get { return "$("; }
         }
-
-        public CommentComponent()
-            : base()
+        
+        /// <param name="loader">Initialization with loader</param>
+        public MSBuildComponent(IBootloader loader)
+            : base(loader)
         {
-            beforeDeepen = true; // Should be located before deepening
+
         }
 
         /// <summary>
@@ -48,15 +47,15 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns>prepared and evaluated data</returns>
         public override string parse(string data)
         {
-            Match m = Regex.Match(data, @"^\[""
-                                              .*
-                                              ""\]$", RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+            Match m = Regex.Match(data, @"^\[(\$+)\(     # 1
+                                              (?'exp'.+) # MSBuild expression
+                                               \)\]$", RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed CommentComponent - '{0}'", data);
+                throw new SyntaxIncorrectException("'{0}' Failed `{1}`", ToString(), data);
             }
 
-            return Value.Empty; // silent
+            return msbuild.parse(String.Format("{0}({1})", m.Groups[1].Value, m.Groups["exp"].Value));
         }
     }
 }

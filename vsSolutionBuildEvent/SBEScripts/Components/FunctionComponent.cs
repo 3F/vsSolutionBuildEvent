@@ -59,7 +59,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
-        /// Work with hash.
+        /// The hash node.
         /// 
         /// Samples:
         ///     #[Func hash.MD5("test")]
@@ -86,25 +86,25 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 CValueType.String)]
         protected string stHash(IPM pm)
         {
-            if(!pm.Is(LevelType.Property, "hash")) {
+            if(!pm.It(LevelType.Property, "hash")) {
                 throw new IncorrectNodeException(pm);
             }
 
-            ILevel lvlHash = pm.Levels[1]; // level of the hash property
+            ILevel lvlHash = pm.Levels[0]; // level of the hash property
 
             // hash.MD5("data")
-            if(pm.FinalEmptyIs(1, LevelType.Method, "MD5")) {
+            if(pm.FinalEmptyIs(LevelType.Method, "MD5")) {
                 lvlHash.Is("hash.MD5(string data)", ArgumentType.StringDouble);
                 return ((string)lvlHash.Args[0].data).MD5Hash();
             }
 
             // hash.SHA1("data")
-            if(pm.FinalEmptyIs(1, LevelType.Method, "SHA1")) {
+            if(pm.FinalEmptyIs(LevelType.Method, "SHA1")) {
                 lvlHash.Is("hash.SHA1(string data)", ArgumentType.StringDouble);
                 return ((string)lvlHash.Args[0].data).SHA1Hash();
             }
 
-            throw new IncorrectNodeException(pm, 1);
+            throw new IncorrectNodeException(pm);
         }
     }
 }

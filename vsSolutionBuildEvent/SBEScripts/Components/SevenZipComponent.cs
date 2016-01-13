@@ -31,7 +31,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// <summary>
     /// Support of archives via 7-Zip engine
     /// </summary>
-    [Component("7z", "7-Zip.\nFile archiver with a high compression ratio.\nwww.7-zip.org")]
+    [Component("7z", "7-Zip.\nFile archiver with high compression ratio.\nwww.7-zip.org")]
     public class SevenZipComponent: Component, IComponent
     {
         /// <summary>
@@ -115,20 +115,20 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         [Property("pack", "Packing with 7-zip engine.")]
         protected string stPack(IPM pm)
         {
-            if(!pm.Is(LevelType.Property, "pack")) {
+            if(!pm.It(LevelType.Property, "pack")) {
                 throw new IncorrectNodeException(pm);
             }
-            ILevel level = pm.Levels[1]; // level of the pack property
+            ILevel level = pm.Levels[0]; // level of the pack property
 
-            if(pm.FinalEmptyIs(1, LevelType.Method, "files")) {
+            if(pm.FinalEmptyIs(LevelType.Method, "files")) {
                 return packFiles(level, pm);
             }
 
-            if(pm.FinalEmptyIs(1, LevelType.Method, "directory")) {
+            if(pm.FinalEmptyIs(LevelType.Method, "directory")) {
                 return packDirectory(level, pm);
             }
 
-            throw new IncorrectNodeException(pm, 1);
+            throw new IncorrectNodeException(pm);
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected string packFiles(ILevel level, IPM pm)
         {
             if(level.Is(ArgumentType.Object, ArgumentType.StringDouble)) {
-                return stPackFiles((Argument[])level.Args[0].data, (string)level.Args[1].data, pm.pinTo(2));
+                return stPackFiles((Argument[])level.Args[0].data, (string)level.Args[1].data, pm.pinTo(1));
             }
 
             if(level.Is(ArgumentType.Object, ArgumentType.StringDouble, ArgumentType.EnumOrConst, ArgumentType.EnumOrConst, ArgumentType.Integer))
@@ -153,11 +153,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                             (OutArchiveFormat)Enum.Parse(typeof(OutArchiveFormat), (string)level.Args[2].data),
                             (CompressionMethod)Enum.Parse(typeof(CompressionMethod), (string)level.Args[3].data),
                             (CompressionLevel)(int)level.Args[4].data,
-                            pm.pinTo(2));
+                            pm.pinTo(1));
             }
 
             if(level.Is(ArgumentType.Object, ArgumentType.StringDouble, ArgumentType.Object)) {
-                return stPackFiles((Argument[])level.Args[0].data, (string)level.Args[1].data, (Argument[])level.Args[2].data, pm.pinTo(2));
+                return stPackFiles((Argument[])level.Args[0].data, (string)level.Args[1].data, (Argument[])level.Args[2].data, pm.pinTo(1));
             }
 
             if(level.Is(ArgumentType.Object, ArgumentType.StringDouble, ArgumentType.Object, ArgumentType.EnumOrConst, ArgumentType.EnumOrConst, ArgumentType.Integer))
@@ -169,10 +169,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                             (OutArchiveFormat)Enum.Parse(typeof(OutArchiveFormat), (string)level.Args[3].data),
                             (CompressionMethod)Enum.Parse(typeof(CompressionMethod), (string)level.Args[4].data),
                             (CompressionLevel)(int)level.Args[5].data,
-                            pm.pinTo(2));
+                            pm.pinTo(1));
             }
 
-            throw new InvalidArgumentException("Incorrect arguments to `pack.files(object files, string output [, object except][, enum format, enum method, integer level])`");
+            throw new ArgumentPMException(level, "pack.files(object files, string output [, object except][, enum format, enum method, integer level])");
         }
 
         /// <summary>
@@ -348,7 +348,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected string packDirectory(ILevel level, IPM pm)
         {
             if(level.Is(ArgumentType.StringDouble, ArgumentType.StringDouble)) {
-                return stPackDirectory((string)level.Args[0].data, (string)level.Args[1].data, pm.pinTo(2));
+                return stPackDirectory((string)level.Args[0].data, (string)level.Args[1].data, pm.pinTo(1));
             }
 
             if(level.Is(ArgumentType.StringDouble, ArgumentType.StringDouble, ArgumentType.EnumOrConst, ArgumentType.EnumOrConst, ArgumentType.Integer))
@@ -359,10 +359,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                             (OutArchiveFormat)Enum.Parse(typeof(OutArchiveFormat), (string)level.Args[2].data),
                             (CompressionMethod)Enum.Parse(typeof(CompressionMethod), (string)level.Args[3].data),
                             (CompressionLevel)(int)level.Args[4].data,
-                            pm.pinTo(2));
+                            pm.pinTo(1));
             }
 
-            throw new InvalidArgumentException("Incorrect arguments to `pack.directory(string dir, string output [, enum format, enum method, integer level])`");
+            throw new ArgumentPMException(level, "pack.directory(string dir, string output [, enum format, enum method, integer level])");
         }
 
         /// <summary>

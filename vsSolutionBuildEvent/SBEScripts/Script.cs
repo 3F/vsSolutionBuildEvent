@@ -17,6 +17,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Components;
@@ -175,8 +176,8 @@ namespace net.r_eg.vsSBE.SBEScripts
 
         /// <param name="data">Mixed data</param>
         /// <param name="level">Nesting level</param>
-        /// <param name="hString">Handler of strings if exist</param>
-        /// <returns>Prepared & evaluated data</returns>
+        /// <param name="hString">Handler of strings if exists</param>
+        /// <returns>Prepared and evaluated data</returns>
         protected string parse(string data, int level, StringHandler hString = null)
         {
             if(level >= DEPTH_LIMIT) {
@@ -184,21 +185,21 @@ namespace net.r_eg.vsSBE.SBEScripts
                 throw new LimitException("Nesting level of '{0}' reached. Aborted.", DEPTH_LIMIT);
             }
 
-            return Regex.Replace(data, ContainerPattern, delegate(Match m)
-            {
-                if(m.Groups[1].Value.Length > 1) { //escape
-                    Log.Debug("SBEScripts: escape - '{0}'", m.Groups[2].Value);
-                    return "#" + escapeMSBuildData(m.Groups[2].Value, true);
-                }
-                string raw = m.Groups[2].Value;
+            return Regex.Replace(data, 
+                                    ContainerPattern, 
+                                    delegate(Match m)
+                                    {
+                                        string escape   = m.Groups[1].Value;
+                                        string raw      = m.Groups[2].Value;
 
-                Log.Trace("SBEScripts-data: to parse '{0}'", raw);
-                if(hString != null) {
-                    return selector(hString.recovery(raw));
-                }
-                return selector(raw);
-            }, 
-            RegexOptions.IgnorePatternWhitespace);
+                                        if(escape.Length > 1) {
+                                            Log.Trace("SBEScripts-Container: escape `{0}`", (raw.Length > 40)? raw.Substring(0, 40) + "..." : raw);
+                                            return "#" + escapeMSBuildData(raw, true);
+                                        }
+
+                                        return selector((hString != null)? hString.recovery(raw) : raw);
+                                    }, 
+                                    RegexOptions.IgnorePatternWhitespace);
         }
 
         /// <summary>
@@ -245,14 +246,11 @@ namespace net.r_eg.vsSBE.SBEScripts
             return Regex.IsMatch(data, String.Format("^\\[{0}", c.Condition), RegexOptions.IgnorePatternWhitespace);
         }
 
-        /// <summary>
-        /// Work with SBE-Script by components
-        /// </summary>
         /// <param name="data">mixed data</param>
-        /// <returns>prepared & evaluated data</returns>
+        /// <returns>prepared and evaluated data</returns>
         protected string selector(string data)
         {
-            Log.Trace("SBEScripts-selector: started with '{0}'", data);
+            Log.Trace("Selector: started with `{0}`", data);
 
             foreach(IComponent c in Bootloader.Components)
             {
@@ -284,7 +282,10 @@ namespace net.r_eg.vsSBE.SBEScripts
                 }
             }
 
-            throw new SelectorMismatchException("SBEScripts-selector: not found component for handling - '{0}'", data);
+            throw new SelectorMismatchException("Selector: cannot find component. {0}/{1} :: `{2}`", 
+                                                                    Bootloader.Components.Count(), 
+                                                                    Bootloader.Registered.Count(),
+                                                                    data);
         }
 
         protected bool deepen(ref string data)

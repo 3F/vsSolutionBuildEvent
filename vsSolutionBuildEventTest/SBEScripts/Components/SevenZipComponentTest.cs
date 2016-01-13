@@ -95,6 +95,14 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             catch(NotSupportedOperationException) {
                 Assert.IsTrue(true);
             }
+
+            try {
+                target.parse("[7z pack.files()]");
+                Assert.Fail("5");
+            }
+            catch(ArgumentPMException) {
+                Assert.IsTrue(true);
+            }
         }
 
         /// <summary>
@@ -242,6 +250,14 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 Assert.Fail("5");
             }
             catch(NotSupportedOperationException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                target.parse("[7z pack.directory()]");
+                Assert.Fail("6");
+            }
+            catch(ArgumentPMException) {
                 Assert.IsTrue(true);
             }
         }

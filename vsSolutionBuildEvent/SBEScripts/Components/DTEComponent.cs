@@ -16,20 +16,38 @@
 */
 
 using System;
-using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events.CommandEvents;
+using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
+using net.r_eg.vsSBE.SBEScripts.SNode;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
-    /// <summary>
-    /// For work with DTE
-    /// </summary>
-    [Component("DTE", "For work with EnvDTE.\nIs an assembly-wrapped COM library containing the objects and members for Visual Studio core automation.\n- http://msdn.microsoft.com/en-us/library/EnvDTE.aspx")]
+    [Component("DTE", "For work with EnvDTE.\nAssembly-wrapped COM library containing the objects and members for Visual Studio core automation.\n- http://msdn.microsoft.com/en-us/library/EnvDTE.aspx")]
     public class DTEComponent: Component, IComponent
     {
+        /// <summary>
+        /// Provides command-events for automation clients.
+        /// </summary>
+        protected EnvDTE.CommandEvents cmdEvents;
+
+        /// <summary>
+        /// The last received command from EnvDTE.
+        /// </summary>
+        protected volatile IFilter lastCommandEvent = new Filter();
+
+        /// <summary>
+        /// Work with commands.
+        /// </summary>
+        protected DTEOperation dteo;
+
+        /// <summary>
+        /// object synch.
+        /// </summary>
+        private Object _lock = new Object();
+
         /// <summary>
         /// Ability to work with data for current component
         /// </summary>
@@ -39,33 +57,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
-        /// Work with DTE-Commands
-        /// </summary>
-        protected DTEOperation dteo;
-
-        /// <summary>
-        /// Last received command from EnvDTE
-        /// </summary>
-        protected volatile IFilter lastCommandEvent = new Filter();
-
-        /// <summary>
-        /// Checks ability to work with CommandEvent
+        /// Ability of work with CommandEvent.
         /// </summary>
         protected bool IsAvaialbleCommandEvent
         {
             get { return env != null && env.Events != null; }
         }
-
-        /// <summary>
-        /// Provides command events for automation clients
-        /// </summary>
-        protected EnvDTE.CommandEvents cmdEvents;
-
-        /// <summary>
-        /// object synch.
-        /// </summary>
-        private Object _lock = new Object();
-
 
         /// <param name="env">Used environment</param>
         public DTEComponent(IEnvironment env)
@@ -91,10 +88,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             switch(subtype)
             {
                 case "exec": {
-                    return stExec(request);
+                    return stExec(new PM(request));
                 }
                 case "events": {
-                    return stEvents(request);
+                    return stEvents(new PM(request));
                 }
             }
 
@@ -105,94 +102,83 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// DTE-command to execution
         /// e.g: #[DTE exec: command(arg)]
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="pm"></param>
         /// <returns>found command</returns>
         [Property("exec", "DTE-command to execution, e.g.: exec: command(arg)", CValueType.Void, CValueType.Input)]
-        protected string stExec(string data)
+        protected string stExec(IPM pm)
         {
-            Match m = Regex.Match(data, @"exec\s*:(.+)");
-            if(!m.Success) {
-                throw new OperandNotFoundException("Failed stExec - '{0}'", data);
+            if(!pm.It(LevelType.Property, "exec") || !pm.IsRight(LevelType.RightOperandColon)) {
+                throw new IncorrectNodeException(pm);
             }
-            string cmd = m.Groups[1].Value.Trim();
-            Log.Debug("Found '{0}' to execution", cmd);
+
+            string cmd = pm.Levels[0].Data.Trim();
+            if(String.IsNullOrWhiteSpace(cmd)) {
+                throw new InvalidArgumentException("The command cannot be empty.");
+            }
+            Log.Debug("Execute command `{0}`", cmd);
 
             dteo.exec(new string[] { cmd }, false);
             return Value.Empty;
         }
 
         /// <summary>
-        /// Work with available events
+        /// For work with available events.
         /// #[DTE events]
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="pm"></param>
         /// <returns></returns>
         [Property("events", "Operations with events.", CValueType.Void, CValueType.Void)]
-        protected string stEvents(string data)
+        protected string stEvents(IPM pm)
         {
-            Match m = Regex.Match(data, @"events\s*\.\s*
-                                                 (                  #1 - full ident
-                                                   ([A-Za-z_0-9]+)  #2 - subtype
-                                                   .*
-                                                 )", RegexOptions.IgnorePatternWhitespace);
-            if(!m.Success) {
-                throw new OperandNotFoundException("Failed stEvents - '{0}'", data);
+            if(!pm.It(LevelType.Property, "events")) {
+                throw new IncorrectNodeException(pm);
             }
-            string ident    = m.Groups[1].Value;
-            string subtype  = m.Groups[2].Value;
 
-            switch(subtype)
-            {
-                case "LastCommand": {
-                    Log.Trace("stEvents: use stLastCommand");
-                    return stLastCommand(ident);
-                }
+            if(pm.It(LevelType.Property, "LastCommand")) {
+                return stLastCommand(pm);
             }
-            throw new SubtypeNotFoundException("stEvents: not found subtype - '{0}'", subtype);
+
+            throw new IncorrectNodeException(pm);
         }
 
         /// <summary>
         /// Last received command from EnvDTE
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="pm"></param>
         /// <returns></returns>
-        [Property("LastCommand", "Last received command.", "events", "stEvents", CValueType.Void, CValueType.Void)]
-        [Property("Guid", "Scope for Command ID", "LastCommand", "stLastCommand", CValueType.String, CValueType.Void)]
-        [Property("Id", "Command ID", "LastCommand", "stLastCommand", CValueType.Integer, CValueType.Void)]
-        [Property("CustomIn", "Custom input parameters.", "LastCommand", "stLastCommand", CValueType.String, CValueType.Void)]
-        [Property("CustomOut", "Custom output parameters.", "LastCommand", "stLastCommand", CValueType.String, CValueType.Void)]
-        [Property("Pre", "Flag of the execution command - Before / After", "LastCommand", "stLastCommand", CValueType.Boolean, CValueType.Void)]
-        protected string stLastCommand(string data)
+        [Property("LastCommand", "The last received command.", "events", "stEvents")]
+        [Property("Guid", "Scope of Command ID", "LastCommand", "stLastCommand", CValueType.String)]
+        [Property("Id", "Command ID", "LastCommand", "stLastCommand", CValueType.Integer)]
+        [Property("CustomIn", "Custom input parameters.", "LastCommand", "stLastCommand", CValueType.Object)]
+        [Property("CustomOut", "Custom output parameters.", "LastCommand", "stLastCommand", CValueType.Object)]
+        [Property("Pre", "Flag of execution of the command - Before / After", "LastCommand", "stLastCommand", CValueType.Boolean)]
+        protected string stLastCommand(IPM pm)
         {
             if(!IsAvaialbleCommandEvent) {
                 throw new NotSupportedOperationException("CommandEvents: aren't available for current context. Use full environment.");
             }
 
-            Match m = Regex.Match(data, @"LastCommand\s*\.\s*(.+)\s*");
-            if(!m.Success) {
-                throw new OperandNotFoundException("Failed stLastCommand - '{0}'", data);
+            if(pm.FinalEmptyIs(LevelType.Property, "Guid")) {
+                return (lastCommandEvent.Guid) ?? Value.Empty;
             }
-            string operation = m.Groups[1].Value;
 
-            switch(operation)
-            {
-                case "Guid": {
-                    return (lastCommandEvent.Guid)?? Value.Empty;
-                }
-                case "Id": {
-                    return Value.from(lastCommandEvent.Id);
-                }
-                case "CustomIn": {
-                    return Value.pack(lastCommandEvent.CustomIn)?? Value.Empty;
-                }
-                case "CustomOut": {
-                    return Value.pack(lastCommandEvent.CustomOut)?? Value.Empty;
-                }
-                case "Pre": {
-                    return Value.from(lastCommandEvent.Pre); // see commandEvent below
-                }
+            if(pm.FinalEmptyIs(LevelType.Property, "Id")) {
+                return Value.from(lastCommandEvent.Id);
             }
-            throw new OperationNotFoundException("stLastCommand: not found operation - '{0}'", operation);
+
+            if(pm.FinalEmptyIs(LevelType.Property, "CustomIn")) {
+                return Value.pack(lastCommandEvent.CustomIn) ?? Value.Empty;
+            }
+
+            if(pm.FinalEmptyIs(LevelType.Property, "CustomOut")) {
+                return Value.pack(lastCommandEvent.CustomOut) ?? Value.Empty;
+            }
+
+            if(pm.FinalEmptyIs(LevelType.Property, "Pre")) {
+                return Value.from(lastCommandEvent.Pre); // see commandEvent below
+            }
+
+            throw new IncorrectNodeException(pm);
         }
 
         protected void attachCommandEvents()

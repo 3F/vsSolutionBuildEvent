@@ -61,7 +61,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - stGet
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
+        [ExpectedException(typeof(ArgumentPMException))]
         public void stGetParseTest1()
         {
             FileComponent target = new FileComponent();
@@ -93,22 +93,25 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - stCall
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
         public void stCallParseTest1()
         {
-            FileComponentAccessor target = new FileComponentAccessor();
-            target.parse("[File call(file)]");
-        }
+            var target = new FileComponent();
 
-        /// <summary>
-        ///A test for parse - stCall
-        ///</summary>
-        [TestMethod()]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void stCallParseTest2()
-        {
-            FileComponentAccessor target = new FileComponentAccessor();
-            target.parse("[File out(file)]");
+            try {
+                target.parse("[File call(file)]");
+                Assert.Fail("1");
+            }
+            catch(ArgumentPMException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                target.parse("[File out(file)]");
+                Assert.Fail("2");
+            }
+            catch(ArgumentPMException) {
+                Assert.IsTrue(true);
+            }
         }
 
         /// <summary>
@@ -130,18 +133,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - stCall
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(ScriptException))]
-        public void stCallParseTest4()
-        {
-            FileComponentAccessor target = new FileComponentAccessor(true);
-            target.parse("[File call(\"file\")]");
-        }
-
-        /// <summary>
-        ///A test for parse - stCall
-        ///</summary>
-        [TestMethod()]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
+        [ExpectedException(typeof(ArgumentPMException))]
         public void stCallParseTest5()
         {
             FileComponentAccessor target = new FileComponentAccessor();
@@ -152,7 +144,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - stCall
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
+        [ExpectedException(typeof(ArgumentPMException))]
         public void stCallParseTest6()
         {
             FileComponentAccessor target = new FileComponentAccessor();
@@ -186,7 +178,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - stWrite
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
+        [ExpectedException(typeof(IncorrectNodeException))]
         public void stWriteParseTest1()
         {
             FileComponentAccessor target = new FileComponentAccessor();
@@ -229,84 +221,64 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - stWrite
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(ScriptException))]
-        public void stWriteParseTest4()
-        {
-            FileComponentAccessor target = new FileComponentAccessor(true);
-            target.parse("[File write(\"file\"):data]");
-        }
-
-        /// <summary>
-        ///A test for parse - stWrite
-        ///</summary>
-        [TestMethod()]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
         public void stWriteParseTest5()
         {
-            FileComponentAccessor target = new FileComponentAccessor();
-            target.parse("[File write(\"file\", true):data]");
-        }
+            var target = new FileComponent();
 
-        /// <summary>
-        ///A test for parse - stWrite
-        ///</summary>
-        [TestMethod()]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void stWriteParseTest6()
-        {
-            FileComponentAccessor target = new FileComponentAccessor();
-            target.parse("[File write(\"file\", true, true):data]");
-        }
+            try {
+                target.parse("[File write(\"file\", true):data]");
+                Assert.Fail("1");
+            }
+            catch(ArgumentPMException) {
+                Assert.IsTrue(true);
+            }
 
-        /// <summary>
-        ///A test for parse - stWrite
-        ///</summary>
-        [TestMethod()]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void stWriteParseTest7()
-        {
-            FileComponentAccessor target = new FileComponentAccessor();
-            target.parse("[File write(\"file\", \"true\", \"true\", \"utf-8\"):data]");
-        }
+            try {
+                target.parse("[File write(\"file\", true, true):data]");
+                Assert.Fail("2");
+            }
+            catch(ArgumentPMException) {
+                Assert.IsTrue(true);
+            }
 
-        /// <summary>
-        ///A test for parse - stWrite
-        ///</summary>
-        [TestMethod()]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void stWriteParseTest8()
-        {
-            FileComponentAccessor target = new FileComponentAccessor();
-            target.parse("[File append(\"file\", true, true, \"utf-8\"):data]");
-        }
+            try {
+                target.parse("[File write(\"file\", \"true\", \"true\", \"utf-8\"):data]");
+                Assert.Fail("3");
+            }
+            catch(ArgumentPMException) {
+                Assert.IsTrue(true);
+            }
 
-        /// <summary>
-        ///A test for parse - stWrite
-        ///</summary>
-        [TestMethod()]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void stWriteParseTest9()
-        {
-            FileComponentAccessor target = new FileComponentAccessor();
-            target.parse("[File appendLine(\"file\", true, true, \"utf-8\"):data]");
-        }
+            try {
+                target.parse("[File append(\"file\", true, true, \"utf-8\"):data]");
+                Assert.Fail("4");
+            }
+            catch(ArgumentPMException) {
+                Assert.IsTrue(true);
+            }
 
-        /// <summary>
-        ///A test for parse - stWrite
-        ///</summary>
-        [TestMethod()]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
-        public void stWriteParseTest10()
-        {
-            FileComponentAccessor target = new FileComponentAccessor();
-            target.parse("[File writeLine(\"file\", true, true, \"utf-8\"):data]");
+            try {
+                target.parse("[File appendLine(\"file\", true, true, \"utf-8\"):data]");
+                Assert.Fail("5");
+            }
+            catch(ArgumentPMException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                target.parse("[File writeLine(\"file\", true, true, \"utf-8\"):data]");
+                Assert.Fail("6");
+            }
+            catch(ArgumentPMException) {
+                Assert.IsTrue(true);
+            }
         }
 
         /// <summary>
         ///A test for parse - stReplace
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
+        [ExpectedException(typeof(ArgumentPMException))]
         public void stReplaceParseTest1()
         {
             FileComponentAccessor target = new FileComponentAccessor();
@@ -361,7 +333,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - stExists
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
+        [ExpectedException(typeof(IncorrectNodeException))]
         public void stExistsParseTest1()
         {
             FileComponentAccessor target = new FileComponentAccessor();

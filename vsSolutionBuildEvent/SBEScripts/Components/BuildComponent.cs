@@ -18,7 +18,6 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 using EnvDTE;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Exceptions;
@@ -30,9 +29,9 @@ using net.r_eg.vsSBE.SBEScripts.SNode;
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
     /// <summary>
-    /// Component of operations with the build
+    /// Managing of build process at runtime. And similar operations for projects and solution.
     /// </summary>
-    [Component("Build", "Operations with build processes.")]
+    [Component("Build", "Managing of build process at runtime.")]
     public class BuildComponent: Component, IComponent
     {
         /// <summary>
@@ -80,17 +79,16 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             switch(subtype) {
                 case "cancel": {
-                    return stCancel(request);
+                    return stCancel(new PM(request));
                 }
                 case "projects": {
-                    // is meant the SolutionContexts !
-                    return stProjects(request);
+                    return stProjects(new PM(request));
                 }
                 case "type": {
-                    return stType(request);
+                    return stType(new PM(request));
                 }
                 case "solution": {
-                    return stSolution(request);
+                    return stSolution(new PM(request));
                 }
             }
 
@@ -98,188 +96,152 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
-        /// The Cancel operation
-        /// Sample: #[Build cancel = true]
+        /// To cancel the build task
+        ///     `cancel = true`
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="pm"></param>
         /// <returns>found command</returns>
-        [Property("cancel", "Cancel build immediately if true.", CValueType.Void, CValueType.Boolean)]
-        protected string stCancel(string data)
+        [Property("cancel", "To immediately cancel the build task if it's possible.", CValueType.Void, CValueType.Boolean)]
+        protected string stCancel(IPM pm)
         {
-            Match m = Regex.Match(data, @"cancel\s*=\s*(false|true|1|0)\s*$");
-            if(!m.Success) {
-                throw new OperationNotFoundException("Failed stCancel - '{0}'", data);
+            if(!pm.It(LevelType.Property, "cancel") || !pm.IsRight(LevelType.RightOperandStd)) {
+                throw new IncorrectNodeException(pm);
             }
-            string val = m.Groups[1].Value;
-            Log.Debug("stCancel: value is {0}", val);
 
-            if(Value.toBoolean(val))
-            {
-                Log.Trace("stCancel: pushed true");
+            if(Value.toBoolean(pm.Levels[0].Data)) {
+                Log.Debug("attempt to cancel the build");
                 DTEO.exec("Build.Cancel");
             }
+
             return Value.Empty;
         }
 
         /// <summary>
-        /// Work with configuration manager of projects through the SolutionContexts
+        /// Work with configuration manager of projects through SolutionContexts.
         /// 
         /// http://msdn.microsoft.com/en-us/library/EnvDTE.Configuration_properties.aspx
         /// http://msdn.microsoft.com/en-us/library/envdte.solutioncontext.aspx
         /// 
-        /// Therefore operand 'find' used for permanent getting as - contains or not ?
-        /// Values for example:
-        /// * "bzip2.vcxproj"
-        /// * "Zenlib\ZenLib.vcxproj"
-        /// 
         /// Sample: 
-        ///  #[Build projects.find("name")]
+        ///  #[Build projects]
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="pm"></param>
         /// <returns></returns>
         [Property("projects", "Work with configuration manager of projects through SolutionContexts.")]
-        protected string stProjects(string data)
+        protected string stProjects(IPM pm)
         {
-            Match m = Regex.Match(data,
-                                    String.Format(@"projects
-                                                    \s*\.\s*
-                                                    find
-                                                    \s*
-                                                    \({0}\)    #1 - project name
-                                                    \s*(.+)    #2 - operation
-                                                    ",
-                                                    RPattern.DoubleQuotesContent
-                                                 ), RegexOptions.IgnorePatternWhitespace);
-
-            if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed stProjects - '{0}'", data);
+            if(!pm.It(LevelType.Property, "projects")) {
+                throw new IncorrectNodeException(pm);
             }
 
-            string project      = m.Groups[1].Value;
-            string operation    = m.Groups[2].Value;
-
-            if(env.SolutionActiveCfg == null) {
-                //TODO:
-                throw new ComponentException("Disabled for this environment");
+            if(pm.Is(LevelType.Method, "find")) {
+                return stProjectsFind(pm);
             }
 
-            SolutionContext context = null;
-            IEnumerator slnc        = env.SolutionActiveCfg.SolutionContexts.GetEnumerator();
-
-            while(slnc.MoveNext()) {
-                SolutionContext item = (SolutionContext)slnc.Current;
-                if(((SolutionContext)slnc.Current).ProjectName.Contains(project)) {
-                    context = item;
-                    break;
-                }
-            }
-            if(context == null) {
-                throw new NotFoundException("Not found project - '{0}'", project);
-            }
-            return stProjectConf(context, operation);
+            throw new IncorrectNodeException(pm);
         }
 
         /// <summary>
-        /// Work with item of SolutionContexts
-        /// 
-        /// Samples:
-        ///  #[Build projects.find("name").IsBuildable = true]
-        ///  #[Build projects.find("name").IsBuildable]
-        ///  #[Build projects.find("name").IsDeployable = true]
-        ///  #[Build projects.find("name").IsDeployable]
+        /// .find(...) level
         /// </summary>
-        /// <param name="context">Working SolutionContext</param>
-        /// <param name="data">String data with operations</param>
+        /// <param name="pm"></param>
         /// <returns></returns>
-        [
-            Method
-            (
-                "find", 
-                "The find() compares as part of name, and you can use simply like a find(\"ZenLib\") or for unique identification full \"Zenlib\\ZenLib.vcxproj\" etc.",
+        [Method(
+                "find",
+                "To find project by name. It compares part of name, therefore you can use simply like a \"ZenLib\" or full name \"Zenlib\\ZenLib.vcxproj\" etc.",
                 "projects",
                 "stProjects",
-                new string[] { "name" }, 
+                new string[] { "name" },
                 new string[] { "Project name" },
                 CValueType.Void,
                 CValueType.String
-            ),
-        ]
+        )]
+        protected string stProjectsFind(IPM pm)
+        {
+            ILevel level = pm.Levels[0]; // level of the `find` property
+
+            if(level.Is(ArgumentType.StringDouble)) {
+                string name = (string)level.Args[0].data;
+                return projectCfg(getContextByProject(name), pm.pinTo(1));
+            }
+
+            throw new ArgumentPMException(level, "find(string name)");
+        }
+
+        /// <summary>
+        /// Configuration level of project.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="pm"></param>
+        /// <returns></returns>
         [Property(
             "IsBuildable",
             "Gets or Sets. Whether the project or item configuration of project can be built.\nAssociated with current SolutionContext.", 
-            "find", 
-            "stProjectConf", 
+            "find",
+            "stProjectsFind", 
             CValueType.Boolean, 
             CValueType.Boolean
         )]
         [Property(
             "IsDeployable",
             "Gets or Sets. Whether the current project or item configuration of project can be deployed.\nAssociated with current SolutionContext.", 
-            "find", 
-            "stProjectConf", 
+            "find",
+            "stProjectsFind", 
             CValueType.Boolean, 
             CValueType.Boolean
         )]
-        protected string stProjectConf(SolutionContext context, string data)
+        protected string projectCfg(SolutionContext context, IPM pm)
         {
             Debug.Assert(context != null);
 
-            Match m = Regex.Match(data, @"\.\s*
-                                          ([A-Za-z_0-9]+)            #1 - property
-                                          (?:
-                                            \s*=\s*(false|true|1|0)  #2 - value (optional)
-                                           |
-                                            \s*$
-                                          )", RegexOptions.IgnorePatternWhitespace);
+            if(pm.It(LevelType.Property, "IsBuildable"))
+            {
+                if(pm.IsRight(LevelType.RightOperandStd)) {
+                    context.ShouldBuild = Value.toBoolean(pm.Levels[0].Data);
+                    return Value.Empty;
+                }
 
-            if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed stProjectConf - '{0}'", data);
-            }
-            string property = m.Groups[1].Value;
-            string value    = (m.Groups[2].Success)? m.Groups[2].Value : null;
-
-            Log.Debug("stProjectConf: property - '{0}', value - '{1}'", property, value);
-            switch(property) {
-                case "IsBuildable":
-                {
-                    if(value != null) {
-                        context.ShouldBuild = Value.toBoolean(value);
-                        return Value.Empty;
-                    }
+                if(pm.IsRight(LevelType.RightOperandEmpty)) {
                     return Value.from(context.ShouldBuild);
                 }
-                case "IsDeployable":
-                {
-                    if(value != null) {
-                        context.ShouldDeploy = Value.toBoolean(value);
-                        return Value.Empty;
-                    }
+            }
+
+            if(pm.It(LevelType.Property, "IsDeployable"))
+            {
+                if(pm.IsRight(LevelType.RightOperandStd)) {
+                    context.ShouldDeploy = Value.toBoolean(pm.Levels[0].Data);
+                    return Value.Empty;
+                }
+
+                if(pm.IsRight(LevelType.RightOperandEmpty)) {
                     return Value.from(context.ShouldDeploy);
                 }
             }
-            throw new OperationNotFoundException("stProjectConf: not found property - '{0}'", property);
+
+            throw new IncorrectNodeException(pm);
         }
 
         /// <summary>
         /// Work with type of build action
         /// Sample: #[Build type]
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="pm"></param>
         /// <returns>current type</returns>
         [Property("type", "Get type of current build action, or last used type if it already finished.", CValueType.Enum, CValueType.Void)]
-        protected string stType(string data)
+        protected string stType(IPM pm)
         {
-            if(!Regex.Match(data, @"type\s*$").Success) {
-                throw new OperationNotFoundException("Failed stType - '{0}'", data);
+            if(!pm.It(LevelType.Property, "type") || !pm.IsRight(LevelType.RightOperandEmpty)) {
+                throw new IncorrectNodeException(pm);
             }
-            return env.BuildType.ToString();
+
+            return Value.from(env.BuildType);
         }
 
         /// <summary>
         /// Work with solution node.
         /// Sample: #[Build solution]
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="pm"></param>
         /// <returns></returns>
         [Property("solution", "Work with solution data.")]
         [Property("current", "Link to current used solution.", "solution", "stSolution"), Property("", "current", "stSolution")]
@@ -291,11 +253,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 new string[] { "Full path to solution file." },
                 CValueType.Void,
                 CValueType.String), Property("", "path", "stSolution")]
-        protected string stSolution(string data)
+        protected string stSolution(IPM pm)
         {
-            Log.Trace("stSolution: started with '{0}'", data);
-            IPM pm = new PM(data);
-            
             if(!pm.Is(LevelType.Property, "solution")) {
                 throw new IncorrectNodeException(pm);
             }
@@ -415,6 +374,28 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected virtual ProjectsMap getProjectsMap(string sln)
         {
             return new ProjectsMap(sln);
+        }
+
+        /// <param name="name">Project name</param>
+        /// <returns></returns>
+        protected SolutionContext getContextByProject(string name)
+        {
+            if(env.SolutionActiveCfg == null) {
+                //TODO:
+                throw new ComponentException("The SolutionActiveCfg has been disabled for current environment.");
+            }
+
+            IEnumerator slnc = env.SolutionActiveCfg.SolutionContexts.GetEnumerator();
+
+            while(slnc.MoveNext())
+            {
+                var con = (SolutionContext)slnc.Current;
+                if(con.ProjectName.Contains(name)) {
+                    return con;
+                }
+            }
+
+            throw new NotFoundException("The project '{0}' was not found.", name);
         }
     }
 }

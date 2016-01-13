@@ -61,7 +61,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - exec
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(OperandNotFoundException))]
+        [ExpectedException(typeof(InvalidArgumentException))]
         public void parseExecTest3()
         {
             DTEComponentAccessor target = new DTEComponentAccessor();
@@ -92,7 +92,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - events.LastCommand
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(OperandNotFoundException))]
+        [ExpectedException(typeof(IncorrectNodeException))]
         public void parseLastCommandTest1()
         {
             DTEComponentAccessor target = new DTEComponentAccessor();
@@ -159,7 +159,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - events.LastCommand
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(OperationNotFoundException))]
+        [ExpectedException(typeof(IncorrectNodeException))]
         public void parseLastCommandTest5()
         {
             DTEComponentAccessor target = new DTEComponentAccessor();

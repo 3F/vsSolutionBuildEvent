@@ -134,6 +134,7 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
         /// <summary>
         /// Checks equality of method for specific level.
         /// </summary>
+        /// <param name="level">Selected level.</param>
         /// <param name="name">Method name.</param>
         /// <param name="types">The arguments that should be.</param>
         /// <returns></returns>
@@ -153,5 +154,13 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
         /// <param name="type">The right operand should be with level type.</param>
         /// <returns>true value if the right operand is equal to selected level type, otherwise false.</returns>
         bool IsRight(LevelType type);
+
+        /// <summary>
+        /// Checks equality of data for zero level.
+        /// </summary>
+        /// <param name="data">Level should be with data.</param>
+        /// <param name="variants">Alternative variants that can be.</param>
+        /// <returns>true value if selected level is equal to selected data, otherwise false.</returns>
+        bool IsData(string data, params string[] variants);
     }
 }

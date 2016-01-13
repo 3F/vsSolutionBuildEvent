@@ -178,6 +178,7 @@
     <Compile Include="Receiver\Output\Items.cs" />
     <Compile Include="Receiver\Output\ItemType.cs" />
     <Compile Include="SBEScripts\Components\Build\ProjectsMap.cs" />
+    <Compile Include="SBEScripts\Components\MSBuildComponent.cs" />
     <Compile Include="SBEScripts\Components\NuGetComponent.cs" />
     <Compile Include="SBEScripts\Components\NuGet\GetNuTool\Core.cs" />
     <Compile Include="SBEScripts\Components\NuGet\GetNuTool\GNT.cs" />
