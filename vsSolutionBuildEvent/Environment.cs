@@ -139,16 +139,15 @@ namespace net.r_eg.vsSBE
         {
             get
             {
-                if(!IsOpenedSolution) {
+                if(!IsOpenedSolution || Dte2.Solution.SolutionBuild.StartupProjects == null) {
                     return null;
                 }
 
                 foreach(string project in (Array)Dte2.Solution.SolutionBuild.StartupProjects)
                 {
-                    if(String.IsNullOrEmpty(project)) {
-                        continue;
+                    if(!String.IsNullOrEmpty(project)) {
+                        return project;
                     }
-                    return project;
                 }
                 return null;
             }

@@ -892,6 +892,88 @@ namespace net.r_eg.vsSBE.Test.MSBuild
         }
 
         /// <summary>
+        ///A test for parse - quotes
+        ///</summary>
+        [TestMethod()]
+        public void quotesTest1()
+        {
+            var target = new Parser(new StubEnv());
+
+            Assert.AreEqual(String.Empty, target.parse("$(name = \" $([System.Math]::Pow(2, 16)) \")"));
+            Assert.AreEqual(" 65536 ", target.UVariable.get("name", null));
+
+            Assert.AreEqual(String.Empty, target.parse("$(name = ' $([System.Math]::Pow(2, 16)) ')"));
+            Assert.AreEqual(" $([System.Math]::Pow(2, 16)) ", target.UVariable.get("name", null));
+        }
+
+        /// <summary>
+        ///A test for parse - quotes
+        ///</summary>
+        [TestMethod()]
+        public void quotesTest2()
+        {
+            var target = new Parser(new StubEnv());
+            Assert.AreEqual(" left '123' right ", target.parse("$([System.String]::Format(\" left '{0}' right \", \"123\"))"));
+            Assert.AreEqual(" left '123' ) right ", target.parse("$([System.String]::Format(\" left '{0}' ) right \", \"123\"))"));
+
+            Assert.AreEqual(" left \"123\" right ", target.parse("$([System.String]::Format(' left \"{0}\" right ', '123'))"));
+            Assert.AreEqual(" left \"123\" ) right ", target.parse("$([System.String]::Format(' left \"{0}\" ) right ', '123'))"));
+        }
+
+        /// <summary>
+        ///A test for parse - quotes
+        ///</summary>
+        [TestMethod()]
+        public void quotesTest3()
+        {
+            var target = new Parser(new StubEnv());
+
+            Assert.AreEqual(String.Empty, target.parse("$(tpl = \"My version - '%Ver%'\")"));
+            Assert.AreEqual("My version - '%Ver%'", target.UVariable.get("tpl", null));
+
+            Assert.AreEqual(String.Empty, target.parse("$(ver = '1.2.3')"));
+            Assert.AreEqual("1.2.3", target.UVariable.get("ver", null));
+
+            Assert.AreEqual(String.Empty, target.parse("$(rev = '2417')"));
+            Assert.AreEqual("2417", target.UVariable.get("rev", null));
+
+            Assert.AreEqual("My version - '1, 2, 3, 2417'", target.parse("$(tpl.Replace(\"%Ver%\", \"$(ver.Replace('.', ', ')), $(rev)\"))"));
+            Assert.AreEqual("1.2.3 version - '1.2.3.2417'", target.parse("$(tpl.Replace(\"%Ver%\", \"$(ver).$(rev)\").Replace(\"My\", \"$(ver)\"))"));
+        }
+
+        /// <summary>
+        ///A test for parse - quotes
+        ///</summary>
+        [TestMethod()]
+        public void quotesTest4()
+        {
+            var target = new Parser(new StubEnv());
+
+            target.UVariable.set("name", "project", "test123");
+            target.UVariable.evaluate("name", "project", new EvaluatorBlank(), true);
+
+            string data = "$([System.String]::Concat(\"$(name:project)\"))";
+            Assert.AreEqual("test123", target.parse(data));
+            
+            //target.parse("$([System.DateTime]::Parse(\"$([System.DateTime]::UtcNow.Ticks)\").ToBinary())");
+        }
+
+        /// <summary>
+        ///A test for parse - quotes
+        ///</summary>
+        [TestMethod()]
+        public void quotesTest5()
+        {
+            var target = new Parser(new StubEnv());
+
+            target.UVariable.set("name", null, "test123");
+            target.UVariable.evaluate("name", null, new EvaluatorBlank(), true);
+
+            string data = "$([System.String]::Concat(\"$(name)\"))";
+            Assert.AreEqual("test123", target.parse(data));
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         private class MSBuildParserAccessor
