@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -188,14 +188,17 @@ namespace net.r_eg.vsSBE.MSBuild
             StringHandler sh = new StringHandler();
             lock(_lock)
             {
-                return sh.recovery(
-                            containerIn(
-                                sh.protectEscContainer(
-                                    sh.protectMixedQuotes(data)
-                                ),
-                                sh, CONTAINERS_LIMIT
+                return hquotes(
+                            sh.recovery(
+                                containerIn(
+                                    sh.protectEscContainer(
+                                        sh.protectMixedQuotes(data)
+                                    ),
+                                    sh, 
+                                    CONTAINERS_LIMIT
+                                )
                             )
-                        );
+                       );
             }
         }
 
@@ -255,12 +258,14 @@ namespace net.r_eg.vsSBE.MSBuild
                     throw new LimitException("Restriction of supported containers '{0}' reached. Aborted.", limit);
                 }
 
-                data = con.Replace(data, delegate(Match m)
-                        {
-                            string raw = m.Groups[1].Value;
-                            Log.Trace("containerIn: raw - '{0}'", raw);
-                            return evaluate(prepare(hquotes(sh.recovery(raw))));
-                        }, maxRep);
+                data = con.Replace(data, 
+                                    delegate(Match m)
+                                    {
+                                        string raw = m.Groups[1].Value;
+                                        Log.Trace("containerIn: raw - `{0}`", raw);
+                                        return evaluate(prepare(sh.recovery(raw)));
+                                    }, 
+                                    maxRep);
 
                 // protect before new checking
                 data = sh.protectEscContainer(sh.protectMixedQuotes(data));
@@ -333,7 +338,7 @@ namespace net.r_eg.vsSBE.MSBuild
             /* Data */
 
             if(rStringDataD.Success) {
-                ret.property.unevaluated    = rStringDataD.Value.Replace("\\\"", "\""); //TODO:
+                ret.property.unevaluated    = parse(rStringDataD.Value.Replace("\\\"", "\"")); //TODO:
                 ret.variable.type           = PreparedData.ValueType.StringFromDouble;
             }
             else if(rStringDataS.Success) {
@@ -341,7 +346,7 @@ namespace net.r_eg.vsSBE.MSBuild
                 ret.variable.type           = PreparedData.ValueType.StringFromSingle;
             }
             else {
-                ret.property.unevaluated    = ((rDataWithProject.Success)? rDataWithProject : rData).Value.Trim();
+                ret.property.unevaluated    = hquotes((rDataWithProject.Success ? rDataWithProject : rData).Value.Trim());
                 ret.variable.type           = (rVariable.Success)? PreparedData.ValueType.Unknown : PreparedData.ValueType.Property;
 
                 int lp = ret.property.unevaluated.IndexOf('.');
@@ -385,22 +390,25 @@ namespace net.r_eg.vsSBE.MSBuild
         /// <returns></returns>
         protected string hquotes(string data)
         {
-            // Double quotes - "..."
-
             /*
                 Firstly, the all original expressions can be evaluated by original engine inside double quotes.
-                For all other (inc. incorrect data) we should evaluate it manually if used protection for double quotes
+                For all other (inc. incorrect data) we should evaluate it manually if used protection of course
                 ~ $([System.DateTime]::Parse("$(p:project)").ToBinary()); $([System.DateTime]::Parse("$([System.DateTime]::UtcNow.Ticks)").ToBinary()) etc.
 
                 Generally it's important only for ~ $(p:project) expressions with protection... so TODO
             */
 
-            return Regex.Replace(data,
-                                    RPattern.DoubleQuotesContent,
-                                    delegate(Match m) {
-                                        return String.Format("\"{0}\"", parse(m.Groups[1].Value));
-                                    }, 
-                                    RegexOptions.IgnorePatternWhitespace);
+            Func<string, bool, string> h = delegate (string _data, bool qDouble)
+            {
+                return Regex.Replace(_data,
+                                        (qDouble)? RPattern.DoubleQuotesContent : RPattern.SingleQuotesContent,
+                                        delegate(Match m) {
+                                            return String.Format("{0}{1}{0}", (qDouble)? "\"" : "'", parse(m.Groups[1].Value));
+                                        },
+                                        RegexOptions.IgnorePatternWhitespace);
+            };
+
+            return h(h(data, false), true);
         }
 
         /// <summary>
