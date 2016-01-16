@@ -571,10 +571,11 @@ namespace net.r_eg.vsSBE.Test.MSBuild
         {
             MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
 
-            string data = "$(var = \" $$(Path:project) \")";
-
-            Assert.AreEqual("", target.parse(data));
+            Assert.AreEqual(String.Empty, target.parse("$(var = \" $$(Path:project) \")"));
             Assert.AreEqual(" $(Path:project) ", target.uvariable.get("var"));
+
+            Assert.AreEqual(String.Empty, target.parse("$(var = ' $$(Path:project) ')"));
+            Assert.AreEqual(" $$(Path:project) ", target.uvariable.get("var"));
         }
 
         /// <summary>
@@ -785,7 +786,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
 
             string data = "$([System.DateTime]::Parse(' left $([System.DateTime]::UtcNow.Ticks) right').ToBinary())";
-            Assert.AreEqual("[E~[System.DateTime]::Parse(' left $([System.DateTime]::UtcNow.Ticks) right').ToBinary()~]", target.parse(data));
+            Assert.AreEqual("[E~[System.DateTime]::Parse(' left [E~[System.DateTime]::UtcNow.Ticks~] right').ToBinary()~]", target.parse(data));
         }
 
         /// <summary>
@@ -952,9 +953,9 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             target.UVariable.set("name", "project", "test123");
             target.UVariable.evaluate("name", "project", new EvaluatorBlank(), true);
 
-            string data = "$([System.String]::Concat(\"$(name:project)\"))";
-            Assert.AreEqual("test123", target.parse(data));
-            
+            Assert.AreEqual("test123", target.parse("$([System.String]::Concat('$(name:project)'))"));
+            Assert.AreEqual("test123", target.parse("$([System.String]::Concat(\"$(name:project)\"))"));
+
             //target.parse("$([System.DateTime]::Parse(\"$([System.DateTime]::UtcNow.Ticks)\").ToBinary())");
         }
 
@@ -971,6 +972,97 @@ namespace net.r_eg.vsSBE.Test.MSBuild
 
             string data = "$([System.String]::Concat(\"$(name)\"))";
             Assert.AreEqual("test123", target.parse(data));
+        }
+
+        /// <summary>
+        /// Evaluation from quotes
+        ///</summary>
+        [TestMethod()]
+        public void quotesTest6()
+        {
+            var target = new Parser(new StubEnv());
+
+            Assert.AreEqual(String.Empty, target.parse("$(version = \"1.2.3\")"));
+            Assert.AreEqual(String.Empty, target.parse("$(tpl = \"My version - $(version), \\\"$(version)\\\", '$(version)' end.\")"));
+            Assert.AreEqual("My version - 1.2.3, \"1.2.3\", '1.2.3' end.", target.parse("$(tpl)"));
+        }
+
+        /// <summary>
+        /// Evaluation from quotes
+        ///</summary>
+        [TestMethod()]
+        public void quotesTest7()
+        {
+            var uvar    = new UserVariable();
+            var target  = new Parser(new StubEnv(), uvar);
+
+            uvar.set("lp", null, "s1\\dir");
+            uvar.evaluate("lp", null, new EvaluatorBlank(), true);
+            Assert.AreEqual("s1\\dir", uvar.get("lp", null));
+
+            Assert.AreEqual("\"s1\\dir\\p1.exe\"", target.parse("\"$(lp)\\p1.exe\""));
+            Assert.AreEqual("'s1\\dir\\p2.exe'", target.parse("'$(lp)\\p2.exe'"));
+            Assert.AreEqual("s1\\dir\\p3.exe", target.parse("$(lp)\\p3.exe"));
+        }
+
+        /// <summary>
+        /// Evaluation from quotes
+        ///</summary>
+        [TestMethod()]
+        public void quotesTest8()
+        {
+            var uvar    = new UserVariable();
+            var target  = new Parser(new StubEnv(), uvar);
+
+            uvar.set("lp", null, "'s2\\dir'");
+            uvar.evaluate("lp", null, new EvaluatorBlank(), true);
+            Assert.AreEqual("'s2\\dir'", uvar.get("lp", null));
+
+            Assert.AreEqual("\"'s2\\dir'\\p1.exe\"", target.parse("\"$(lp)\\p1.exe\""));
+            //Assert.AreEqual("''s2\\dir'\\p2.exe'", target.parse("'$(lp)\\p2.exe'")); // ? TODO: unspecified for current time
+            Assert.AreEqual("'s2\\dir'\\p3.exe", target.parse("$(lp)\\p3.exe"));
+        }
+
+        /// <summary>
+        /// Evaluation from quotes
+        ///</summary>
+        [TestMethod()]
+        public void quotesTest9()
+        {
+            var uvar    = new UserVariable();
+            var target  = new Parser(new StubEnv(), uvar);
+
+            uvar.set("lp", null, "\"s3\\dir\"");
+            uvar.evaluate("lp", null, new EvaluatorBlank(), true);
+            Assert.AreEqual("\"s3\\dir\"", uvar.get("lp", null));
+
+            //Assert.AreEqual("\"\"s3\\dir\"\\p1.exe\"", target.parse("\"$(lp)\\p1.exe\"")); // ? TODO: unspecified for current time
+            Assert.AreEqual("'\"s3\\dir\"\\p2.exe'", target.parse("'$(lp)\\p2.exe'"));
+            Assert.AreEqual("\"s3\\dir\"\\p3.exe", target.parse("$(lp)\\p3.exe"));
+        }
+
+        /// <summary>
+        /// Evaluation from quotes
+        ///</summary>
+        [TestMethod()]
+        public void quotesTest10()
+        {
+            var target = new Parser(new StubEnv());
+
+            target.UVariable.set("name", null, "test123");
+            target.UVariable.evaluate("name", null, new EvaluatorBlank(), true);
+
+            Assert.AreEqual("test123)", target.parse("$([System.String]::Concat(\"$(name))\"))"));
+            Assert.AreEqual("(test123", target.parse("$([System.String]::Concat(\"($(name)\"))"));
+
+            Assert.AreEqual("(test123", target.parse("$([System.String]::Concat('($(name)'))"));
+            Assert.AreEqual("test123)", target.parse("$([System.String]::Concat('$(name))'))"));
+
+            Assert.AreEqual(" left ) test123 ", target.parse("$([System.String]::Concat(\" left ) $(name) \"))"));
+            Assert.AreEqual(" left ) test123 ", target.parse("$([System.String]::Concat(' left ) $(name) '))"));
+
+            Assert.AreEqual(" left () test123 ", target.parse("$([System.String]::Concat(\" left () $(name) \"))"));
+            Assert.AreEqual(" left () test123 ", target.parse("$([System.String]::Concat(' left () $(name) '))"));
         }
 
         /// <summary>

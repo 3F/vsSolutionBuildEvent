@@ -154,11 +154,11 @@ namespace net.r_eg.vsSBE.Scripts
             lock(_lock)
             {
                 if(!definitions.ContainsKey(ident)) {
-                    throw new NotFoundException("Variable '{0}' not found", ident);
+                    throw new NotFoundException("Variable '{0}' is not found.", ident);
                 }
 
                 if(evaluator == null) {
-                    throw new InvalidArgumentException("evaluation of variable: evaluator is null");
+                    throw new InvalidArgumentException("Evaluation of variable: evaluator is null");
                 }
 
                 TUserVariable var = new TUserVariable(definitions[ident]) {
@@ -174,7 +174,7 @@ namespace net.r_eg.vsSBE.Scripts
                 }
                 var.status          = TUserVariable.StatusType.Evaluated;
                 definitions[ident]  = var;
-                Log.Trace("IEvaluator '{0}': Evaluation of variable is completed with  :: '{1}'", evaluator.GetType().ToString(), ident);
+                Log.Trace("IEvaluator '{0}': Evaluation of variable '{1}' is completed.", evaluator.GetType().ToString(), ident);
             }
         }
 
