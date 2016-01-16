@@ -36,6 +36,15 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             get { return "Func "; }
         }
 
+        /// <param name="loader">Initialize with loader</param>
+        public FunctionComponent(IBootloader loader)
+            : base(loader)
+        {
+
+        }
+
+        public FunctionComponent() { }
+
         /// <summary>
         /// Handler for current data
         /// </summary>
@@ -49,9 +58,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             Log.Trace("`{0}`: subtype - `{1}`, request - `{2}`", ToString(), subtype, request);
 
+            IPM pm = new PM(request, msbuild);
             switch(subtype) {
                 case "hash": {
-                    return stHash(new PM(request));
+                    return stHash(pm);
                 }
             }
 

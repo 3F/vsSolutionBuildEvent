@@ -120,10 +120,10 @@ namespace net.r_eg.vsSBE.SBEScripts
             register(new InternalComponent());
             register(new MSBuildComponent(this));
             register(new BuildComponent(Env));
-            register(new FunctionComponent());
-            register(new FileComponent());
-            register(new NuGetComponent());
-            register(new SevenZipComponent());
+            register(new FunctionComponent(this));
+            register(new FileComponent(this));
+            register(new NuGetComponent(this));
+            register(new SevenZipComponent(this));
         }
 
         /// <summary>

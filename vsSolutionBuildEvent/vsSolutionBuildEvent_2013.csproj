@@ -185,6 +185,7 @@
     <Compile Include="SBEScripts\Components\SevenZipComponent.cs" />
     <Compile Include="SBEScripts\Exceptions\IncorrectNodeException.cs" />
     <Compile Include="SBEScripts\Exceptions\ArgumentPMException.cs" />
+    <Compile Include="SBEScripts\SNode\EvalType.cs" />
     <Compile Include="SBEScripts\SNode\ArgumentType.cs" />
     <Compile Include="SBEScripts\SNode\IPM.cs" />
     <Compile Include="SBEScripts\SNode\Argument.cs" />

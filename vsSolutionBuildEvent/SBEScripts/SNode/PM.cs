@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 using net.r_eg.vsSBE.Scripts;
 
@@ -31,6 +32,9 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
     /// </summary>
     public class PM: IPM
     {
+        protected IMSBuild msbuild;
+        protected EvalType teval = EvalType.None;
+
         /// <summary>
         /// Condition for analyzer.
         /// </summary>
@@ -61,6 +65,23 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
         }
         protected List<ILevel> levels = new List<ILevel>();
 
+        /// <summary>
+        /// Compiled rules of nodes.
+        /// </summary>
+        protected Regex Rcon
+        {
+            get
+            {
+                if(rcon == null) {
+                    rcon = new Regex(Condition,
+                                        RegexOptions.IgnorePatternWhitespace |
+                                        RegexOptions.Singleline |
+                                        RegexOptions.Compiled);
+                }
+                return rcon;
+            }
+        }
+        private Regex rcon;
 
         /// <summary>
         /// Checks equality for level.
@@ -306,9 +327,23 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
             return false;
         }
 
+        ///// <param name="raw">Initial raw data.</param>
+        //public PM(string raw)
+        //{
+        //    detect(raw);
+        //}
+
         /// <param name="raw">Initial raw data.</param>
-        public PM(string raw)
+        /// <param name="msbuild">To evaluate data with MSBuild engine where it's allowed.</param>
+        /// <param name="type">Allowed types of evaluation with MSBuild.</param>
+        public PM(string raw, IMSBuild msbuild = null, EvalType type = EvalType.ArgStringD /*| EvalType.RightOperandStd*/)
         {
+            //if(msbuild == null) {
+            //    throw new InvalidArgumentException("PM: The `msbuild` argument cannot be null");
+            //}
+            this.msbuild    = msbuild;
+            teval           = type;
+
             detect(raw);
         }
 
@@ -329,7 +364,7 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
             StringHandler h = new StringHandler();
             data            = h.protectMixedQuotes(data);
 
-            Match m = Regex.Match(data, Condition, RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+            Match m = Rcon.Match(data);
             if(!m.Success) {
                 levels.Add(getRightOperand(data, h));
                 return;
@@ -432,11 +467,11 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
             {
                 if(m.Groups[1].Success) {
                     return new Argument() { type = ArgumentType.StringDouble,
-                                            data = Tokens.unescapeQuotes('"', m.Groups[1].Value) };
+                                            data = eval(EvalType.ArgStringD, Tokens.unescapeQuotes('"', m.Groups[1].Value)) };
                 }
 
                 return new Argument() { type = ArgumentType.StringSingle,
-                                        data = Tokens.unescapeQuotes('\'', m.Groups[2].Value) };
+                                        data = eval(EvalType.ArgStringS, Tokens.unescapeQuotes('\'', m.Groups[2].Value)) };
             }
 
             // Integer
@@ -508,7 +543,7 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
         /// <param name="data">raw data</param>
         /// <param name="handler">Handler of string if used.</param>
         /// <returns></returns>
-        protected Level getRightOperand(string data, StringHandler handler = null)
+        protected ILevel getRightOperand(string data, StringHandler handler = null)
         {
             if(String.IsNullOrWhiteSpace(data)) {
                 return new Level() { Type = LevelType.RightOperandEmpty };
@@ -522,10 +557,21 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
             string type = m.Groups[1].Value;
             string raw  = m.Groups[2].Value;
 
-            return new Level() {
-                Type = (type == ":")? LevelType.RightOperandColon : LevelType.RightOperandStd,
-                Data = (handler == null)? raw : handler.recovery(raw)
-            };
+            string ldata = (handler == null)? raw : handler.recovery(raw);
+
+            if(type == ":") {
+                return new Level() { Type = LevelType.RightOperandColon, Data = eval(EvalType.RightOperandColon, ldata) };
+            }
+            return new Level() { Type = LevelType.RightOperandStd, Data = eval(EvalType.RightOperandStd, ldata) };
+        }
+
+        protected string eval(EvalType type, string raw)
+        {
+            if(type == EvalType.None || msbuild == null) {
+                return raw;
+            }
+
+            return ((teval & type) == type)? msbuild.parse(raw) : raw;
         }
 
         /// <summary>

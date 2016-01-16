@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -55,6 +55,44 @@ namespace net.r_eg.vsSBE.MSBuild
             /// </summary>
             Unclear
         }
+
+        /// <summary>
+        /// Property item of MSBuild expression.
+        /// </summary>
+        public static Regex PItem
+        {
+            get
+            {
+                if(pitem == null) {
+                    pitem = new Regex(
+                                    String.Format(@"^\(  
+                                                       (?:
+                                                         \s*
+                                                         ([A-Za-z_0-9]+) # 1 -> variable name (optional)
+                                                         \s*=\s*
+                                                         (?: {0}         # 2 -> string data inside double quotes
+                                                             |
+                                                             {1}         # 3 -> string data inside single quotes
+                                                         )? 
+                                                       )?
+                                                       (?:
+                                                          (.+)           # 4 -> unevaluated data
+                                                          (?<!:):
+                                                          ([^:)]+)       # 5 -> specific project for variable if 1 is present or for unevaluated data
+                                                        |                # or:
+                                                          (.+)           # 6 -> unevaluated data
+                                                       )?
+                                                   \)$",
+                                                   DoubleQuotesContent,
+                                                   SingleQuotesContent
+                                                 ),
+                                    RegexOptions.IgnorePatternWhitespace |
+                                    RegexOptions.Compiled);
+                }
+                return pitem;
+            }
+        }
+        private static Regex pitem;
 
         /// <summary>
         /// Escaped outer container, e.g.: -} $$(.. $(..) ...) {-

@@ -64,6 +64,13 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         }
 
+        /// <param name="loader">Initialize with loader</param>
+        public BuildComponent(IBootloader loader)
+            : base(loader)
+        {
+
+        }
+
         /// <summary>
         /// Handler for current data
         /// </summary>
@@ -77,18 +84,19 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             Log.Trace("`{0}`: subtype - `{1}`, request - `{2}`", ToString(), subtype, request);
 
+            IPM pm = new PM(request, msbuild);
             switch(subtype) {
                 case "cancel": {
-                    return stCancel(new PM(request));
+                    return stCancel(pm);
                 }
                 case "projects": {
-                    return stProjects(new PM(request));
+                    return stProjects(pm);
                 }
                 case "type": {
-                    return stType(new PM(request));
+                    return stType(pm);
                 }
                 case "solution": {
-                    return stSolution(new PM(request));
+                    return stSolution(pm);
                 }
             }
 

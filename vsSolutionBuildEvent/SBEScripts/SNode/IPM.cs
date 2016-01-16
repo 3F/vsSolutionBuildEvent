@@ -31,7 +31,7 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
         List<ILevel> Levels { get; }
 
         /// <summary>
-        /// Used condition.
+        /// Condition for analyzer.
         /// </summary>
         string Condition { get; }
 

@@ -62,16 +62,16 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             get { return "7z "; }
         }
 
+        /// <param name="loader">Initialize with loader</param>
+        public SevenZipComponent(IBootloader loader)
+            : base(loader)
+        {
+            initLib();
+        }
+
         public SevenZipComponent()
         {
-            string cPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location).PathFormat();
-            try {
-                SevenZipBase.SetLibraryPath(Path.Combine(cPath, LIB_FULL));
-                isReady = true;
-            }
-            catch(Exception ex) {
-                Log.Error("Found problem with library {0} ({1}): `{2}`", LIB_FULL, cPath, ex.Message);
-            }
+            initLib();
         }
 
         /// <summary>
@@ -91,19 +91,32 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             Log.Trace("`{0}`: subtype - `{1}`, request - `{2}`", ToString(), subtype, request);
 
+            IPM pm = new PM(request, msbuild);
             switch(subtype) {
                 case "pack": {
-                    return stPack(new PM(request));
+                    return stPack(pm);
                 }
                 case "unpack": {
-                    return stUnpack(new PM(request));
+                    return stUnpack(pm);
                 }
                 case "check": {
-                    return stCheck(new PM(request));
+                    return stCheck(pm);
                 }
             }
 
             throw new SubtypeNotFoundException("Subtype `{0}` is not found", subtype);
+        }
+
+        protected void initLib()
+        {
+            string cPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location).PathFormat();
+            try {
+                SevenZipBase.SetLibraryPath(Path.Combine(cPath, LIB_FULL));
+                isReady = true;
+            }
+            catch(Exception ex) {
+                Log.Error("Found problem with library {0} ({1}): `{2}`", LIB_FULL, cPath, ex.Message);
+            }
         }
 
         /// <summary>
@@ -316,6 +329,9 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             };
 
             input = input.ExtractFiles();
+            if(input.Length < 1) {
+                throw new InvalidArgumentException("The input files was not found. Check your mask if used.");
+            }
 
             if(except != null) {
                 input = input.Except(except
@@ -711,17 +727,17 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         private string pathToFile(string file, int idx = -1)
         {
             if(String.IsNullOrWhiteSpace(file)) {
-                throw new InvalidArgumentException("File name is empty.{0}", 
-                                                    (idx != -1)? String.Format("Found in '{0}' position.", idx) : "");
+                throw new InvalidArgumentException("File name is empty. {0}", 
+                                                    (idx != -1)? String.Format("Fail in '{0}' position.", idx) : "");
             }
 
             string fullpath = location(file);
 
             if(fullpath.IndexOf('*') == -1 && !File.Exists(fullpath)) { // check existence of file if it's non-mask
-                throw new NotFoundException("File `{0}` is not found. Looked as `{1}`.{2}", 
+                throw new NotFoundException("File `{0}` is not found. Looked as `{1}`. {2}", 
                                                 file, 
                                                 fullpath, 
-                                                (idx != -1)? String.Format("Found in '{0}' position.", idx) : "");
+                                                (idx != -1)? String.Format("Fail in '{0}' position.", idx) : "");
             }
 
             return fullpath;

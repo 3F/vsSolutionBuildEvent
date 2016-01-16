@@ -18,7 +18,7 @@
         * https://github.com/3F/vsSolutionBuildEvent
         * https://bitbucket.org/3F/vssolutionbuildevent
         
-    Package version: a.b.x[.y] -&gt; a &amp; b - CI.MSBuild (v%CIM%) -&gt; x - main library (%Lib%" is a v%vsSBE%) -&gt; y - variant of package if exists
+    Package version: a.b.x[.y] -&gt; a &amp; b - CI.MSBuild (v%CIM%) -&gt; x - main library (%Lib% is a v%vsSBE%) -&gt; y - variant of package if exists
 
     ---
     Alternative for getting this package if you have problem with nuget:

@@ -92,6 +92,15 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
         protected string[] envPath = null;
 
+        /// <param name="loader">Initialize with loader</param>
+        public FileComponent(IBootloader loader)
+            : base(loader)
+        {
+
+        }
+
+        public FileComponent() { }
+
         /// <summary>
         /// Handler for current data
         /// </summary>
@@ -105,7 +114,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             Log.Trace("`{0}`: subtype - `{1}`, request - `{2}`", ToString(), subtype, request);
 
-            IPM pm = new PM(request);
+            IPM pm = new PM(request, msbuild);
 
             if(pm.IsData("get")) {
                 return stGet(pm);

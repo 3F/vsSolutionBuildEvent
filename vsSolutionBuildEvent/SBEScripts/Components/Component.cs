@@ -126,11 +126,17 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="script">Instance of SBE-Scripts core</param>
         /// <param name="msbuild">Instance of MSBuild core</param>
         public Component(ISBEScript script, IMSBuild msbuild)
+            : this(msbuild)
+        {
+            this.script = script;
+        }
+
+        /// <param name="msbuild">Instance of MSBuild core</param>
+        public Component(IMSBuild msbuild)
             : this()
         {
-            env             = script.Bootloader.Env;
-            uvariable       = script.Bootloader.UVariable;
-            this.script     = script;
+            env             = msbuild.Env;
+            uvariable       = msbuild.UVariable;
             this.msbuild    = msbuild;
         }
 

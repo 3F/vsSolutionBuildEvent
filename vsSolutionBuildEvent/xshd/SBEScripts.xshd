@@ -67,6 +67,14 @@
             </RuleSet>
         </Span>
 
+        <Span color="String" multiline="false">
+            <Begin>'</Begin>
+            <End>'</End>
+            <RuleSet>
+                <Span begin="\\" end="." />
+            </RuleSet>
+        </Span>
+
         <Span color="Comment" ruleSet="CommentRule" multiline="true">
             <Begin>\#\[\"</Begin>
             <End>\"\]</End>

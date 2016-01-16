@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,11 +16,59 @@
 */
 
 using System;
+using System.Text.RegularExpressions;
 
 namespace net.r_eg.vsSBE.SBEScripts
 {
     public static class RPattern
     {
+        /// <summary>
+        /// General container of SBE-Scripts
+        /// </summary>
+        public static Regex Container
+        {
+            get
+            {
+                /*
+                     (
+                       \#{1,2}
+                     )
+                     (?=
+                       (
+                         \[
+                           (?>
+                             [^\[\]]
+                             |
+                             (?2)
+                           )*
+                         \]
+                       )
+                     )            -> for .NET: v
+                */
+                if(container == null) {
+                    container = new Regex(@"(?:\r?\n\x20*)?\r?\n?(
+                                                \#{1,2}   #1 - # or ##
+                                              )
+                                              (           #2 - mixed data of SBE-Script
+                                                \[
+                                                  (?>
+                                                    [^\[\]]
+                                                    |
+                                                    \[(?<R>)
+                                                    |
+                                                    \](?<-R>)
+                                                  )*
+                                                  (?(R)(?!))
+                                                \]
+                                              )\r?\n?",
+                                              RegexOptions.IgnorePatternWhitespace | 
+                                              RegexOptions.Compiled);
+                }
+                return container;
+            }
+        }
+        private static Regex container;
+
         /// <summary>
         /// Content from double quotes
         /// </summary>

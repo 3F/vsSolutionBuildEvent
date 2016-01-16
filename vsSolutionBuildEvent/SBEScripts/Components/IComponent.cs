@@ -35,9 +35,9 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         bool Enabled { get; set; }
 
         /// <summary>
-        /// Flag of required post-processing with MSBuild core.
-        /// In general, some components can require immediate processing with evaluation, before passing control to next level
-        /// (e.g. FileComponent etc.) For such components need additional flag about allowed processing, if this used of course...
+        /// Flag of post-processing with MSBuild core.
+        /// In general, some components can require immediate processing with evaluation before passing control to next level.
+        /// This flag allows processing if needed.
         /// </summary>
         bool PostProcessingMSBuild { get; set; }
 

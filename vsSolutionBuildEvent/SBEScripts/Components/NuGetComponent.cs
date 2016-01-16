@@ -39,6 +39,15 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             get { return "NuGet "; }
         }
 
+        /// <param name="loader">Initialize with loader</param>
+        public NuGetComponent(IBootloader loader)
+            : base(loader)
+        {
+
+        }
+
+        public NuGetComponent() { }
+
         /// <summary>
         /// Handler for current data
         /// </summary>
@@ -52,9 +61,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             Log.Trace("`{0}`: subtype - `{1}`, request - `{2}`", ToString(), subtype, request);
 
+            IPM pm = new PM(request, msbuild);
             switch(subtype) {
                 case "gnt": {
-                    return stGNT(new PM(request));
+                    return stGNT(pm);
                 }
             }
 

@@ -282,29 +282,7 @@ namespace net.r_eg.vsSBE.MSBuild
         /// <exception cref="IncorrectSyntaxException"></exception>
         protected PreparedData prepare(string raw)
         {
-            Match m = Regex.Match(raw.Trim(), String.Format(@"^\(  
-                                                                  (?:
-                                                                    \s*
-                                                                    ([A-Za-z_0-9]+) # 1 -> variable name (optional)
-                                                                    \s*=\s*
-                                                                    (?: {0}         # 2 -> string data inside double quotes
-                                                                        |
-                                                                        {1}         # 3 -> string data inside single quotes
-                                                                    )? 
-                                                                  )?
-                                                                  (?:
-                                                                     (.+)           # 4 -> unevaluated data
-                                                                     (?<!:):
-                                                                     ([^:)]+)       # 5 -> specific project for variable if 1 is present or for unevaluated data
-                                                                   |                # or:
-                                                                     (.+)           # 6 -> unevaluated data
-                                                                  )?
-                                                              \)$",
-                                                                  RPattern.DoubleQuotesContent,
-                                                                  RPattern.SingleQuotesContent
-                                                            ), 
-                                                            RegexOptions.IgnorePatternWhitespace);
-
+            Match m = RPattern.PItem.Match(raw.Trim());
             if(!m.Success) {
                 throw new IncorrectSyntaxException("prepare: failed - '{0}'", raw);
             }
