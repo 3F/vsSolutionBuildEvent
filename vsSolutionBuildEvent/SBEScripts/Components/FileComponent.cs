@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
@@ -134,6 +135,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             if(pm.IsData("exists")) {
                 return stExists(pm);
+            }
+
+            if(pm.IsData("remote")) {
+                return stRemote(pm);
             }
 
             throw new IncorrectNodeException(pm);
@@ -670,6 +675,60 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             return Value.from(false);
+        }
+
+        /// <param name="pm"></param>
+        [Property("remote", "Remote servers.")]
+        [Method("download",
+                "To download file from remote server.",
+                "remote",
+                "stRemote",
+                new string[] { "addr", "output" },
+                new string[] { "Full address to remote file. e.g.: ftp://... http://...", "Output file name." },
+                CValueType.Void,
+                CValueType.String, CValueType.String
+        )]
+        [Method("download",
+                "To download file from remote server.",
+                "remote",
+                "stRemote",
+                new string[] { "addr", "output", "user", "pwd" },
+                new string[] { "Full address to remote file. e.g.: ftp://... http://...", "Output file name.", "Username", "Password" },
+                CValueType.Void,
+                CValueType.String, CValueType.String, CValueType.String, CValueType.String
+        )]
+        protected string stRemote(IPM pm)
+        {
+            if(!pm.It(LevelType.Property, "remote")) {
+                throw new IncorrectNodeException(pm);
+            }
+            ILevel level = pm.Levels[0];
+
+            if(pm.FinalEmptyIs(LevelType.Method, "download"))
+            {
+                if(level.Is(ArgumentType.StringDouble, ArgumentType.StringDouble)) {
+                    return download((string)level.Args[0].data, (string)level.Args[1].data);
+                }
+
+                if(level.Is(ArgumentType.StringDouble, ArgumentType.StringDouble, ArgumentType.StringDouble, ArgumentType.StringDouble)) {
+                    return download((string)level.Args[0].data, (string)level.Args[1].data, (string)level.Args[2].data, (string)level.Args[3].data);
+                }
+
+                throw new ArgumentPMException(level, "(string addr, string output [, string user, string pwd])");
+            }
+
+            throw new IncorrectNodeException(pm);
+        }
+
+        protected virtual string download(string addr, string output, string user = null, string pwd = null)
+        {
+            var wc = new WebClient();
+            if(user != null) {
+                wc.Credentials = new NetworkCredential(user, pwd ?? "");
+            }
+
+            wc.DownloadFile(addr, location(output));
+            return Value.Empty;
         }
 
         /// <param name="file">The file to be read</param>

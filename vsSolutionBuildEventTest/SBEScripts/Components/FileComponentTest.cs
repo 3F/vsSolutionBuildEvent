@@ -393,6 +393,79 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             Assert.AreEqual(Value.VTRUE, target.parse("[File exists.file(\"cmd.exe\", true)]"));
         }
 
+        /// <summary>
+        ///A test for parse - stRemote
+        ///</summary>
+        [TestMethod()]
+        public void stRemoteTest1()
+        {
+            var target = new FileComponent();
+
+            try {
+                target.parse("[File remote]");
+                Assert.Fail("1");
+            }
+            catch(IncorrectNodeException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                target.parse("[File remote.download]");
+                Assert.Fail("2");
+            }
+            catch(IncorrectNodeException) {
+                Assert.IsTrue(true);
+            }
+        }
+
+        /// <summary>
+        ///A test for parse - stRemote
+        ///</summary>
+        [TestMethod()]
+        public void stRemoteTest2()
+        {
+            var target = new FileComponent();
+
+            try {
+                target.parse("[File remote.download()]");
+                Assert.Fail("1");
+            }
+            catch(ArgumentPMException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                target.parse("[File remote.download(\"addr\")]");
+                Assert.Fail("2");
+            }
+            catch(ArgumentPMException) {
+                Assert.IsTrue(true);
+            }
+
+            try {
+                target.parse("[File remote.download(\"addr\", \"file\", \"user\")]");
+                Assert.Fail("3");
+            }
+            catch(ArgumentPMException) {
+                Assert.IsTrue(true);
+            }
+        }
+
+        /// <summary>
+        ///A test for parse - stRemote
+        ///</summary>
+        [TestMethod()]
+        public void stRemoteTest3()
+        {
+            var target = new FileComponentDownloadAccessor();
+
+            Assert.AreEqual(Value.Empty, target.parse("[File remote.download(\"ftp://192.168.17.04:2021/dir1/non-api.png\", \"non-api.png\", \"user1\", \"mypass123\")]"));
+            Assert.AreEqual(target.addr, "ftp://192.168.17.04:2021/dir1/non-api.png");
+            Assert.AreEqual(target.output, "non-api.png");
+            Assert.AreEqual(target.user, "user1");
+            Assert.AreEqual(target.pwd, "mypass123");
+        }
+
         private class FileComponentAccessor: FileComponent
         {
             public bool throwError = false;
@@ -435,6 +508,21 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                     throw new ComponentException(String.Format("Some error for '{0} {1}'", file, args));
                 }
                 return String.Format("{0}stdout", silent? "silent ": String.Empty);
+            }
+        }
+
+        private class FileComponentDownloadAccessor: FileComponent
+        {
+            public string addr, output, user, pwd;
+
+            protected override string download(string addr, string output, string user = null, string pwd = null)
+            {
+                this.addr   = addr;
+                this.output = output;
+                this.user   = user;
+                this.pwd    = pwd;
+                //return base.download(addr, output, user, pwd);
+                return Value.Empty;
             }
         }
     }
