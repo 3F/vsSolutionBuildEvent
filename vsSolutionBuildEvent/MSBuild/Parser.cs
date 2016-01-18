@@ -190,15 +190,15 @@ namespace net.r_eg.vsSBE.MSBuild
             {
                 return hquotes(
                             sh.recovery(
-                            containerIn(
-                                sh.protectEscContainer(
-                                    sh.protectMixedQuotes(data)
-                                ),
+                                containerIn(
+                                    sh.protectEscContainer(
+                                        sh.protectMixedQuotes(data)
+                                    ),
                                     sh, 
                                     CONTAINERS_LIMIT
+                                )
                             )
-                            )
-                        );
+                       );
             }
         }
 
@@ -376,17 +376,37 @@ namespace net.r_eg.vsSBE.MSBuild
                 Generally it's important only for ~ $(p:project) expressions with protection... so TODO
             */
 
-            Func<string, bool, string> h = delegate (string _data, bool qDouble)
+            Func<string, char, string> h = delegate (string _data, char qtype)
             {
                 return Regex.Replace(_data,
-                                        (qDouble)? RPattern.DoubleQuotesContent : RPattern.SingleQuotesContent,
-                                    delegate(Match m) {
-                                            return String.Format("{0}{1}{0}", (qDouble)? "\"" : "'", parse(m.Groups[1].Value));
+                                        (qtype == '"')? RPattern.DoubleQuotesContent : RPattern.SingleQuotesContent,
+                                        delegate(Match m)
+                                        {
+                                            string content = m.Groups[1].Value;
+                                            return String.Format("{0}{1}{0}", qtype, parse(Tokens.unescapeQuotes(qtype, content)));
                                         },
-                                    RegexOptions.IgnorePatternWhitespace);
+                                        RegexOptions.IgnorePatternWhitespace);
             };
 
-            return h(h(data, false), true);
+            /*
+            TODO:
+                From single quotes is still protected for compatibility with original logic.
+                Because it can be different for ~
+
+                    $([MSBuild]::Multiply('$([System.Math]::Log(2))', 16)) -> 1,10903548889591E+16
+                    \                     \_(1) 0,693147180559945_/
+                    \_______________(2)__________________________________/
+
+                    
+                    $([MSBuild]::Multiply('$([System.Math]::Log(2))', 16)) -> 11,0903548889591
+                    \______________________(1)___________________________/
+
+                $([System.Math]::Exp(1.10903548889591E+16)) = ∞ 
+                $([System.Math]::Exp(11.0903548889591)) = 65535,9999999983
+            */
+
+            //return h(h(data, '\''), '"');
+            return h(data, '"');
         }
 
         /// <summary>

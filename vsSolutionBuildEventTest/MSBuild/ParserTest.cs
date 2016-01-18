@@ -786,7 +786,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
 
             string data = "$([System.DateTime]::Parse(' left $([System.DateTime]::UtcNow.Ticks) right').ToBinary())";
-            Assert.AreEqual("[E~[System.DateTime]::Parse(' left [E~[System.DateTime]::UtcNow.Ticks~] right').ToBinary()~]", target.parse(data));
+            Assert.AreEqual("[E~[System.DateTime]::Parse(' left $([System.DateTime]::UtcNow.Ticks) right').ToBinary()~]", target.parse(data));
         }
 
         /// <summary>
@@ -953,10 +953,8 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             target.UVariable.set("name", "project", "test123");
             target.UVariable.evaluate("name", "project", new EvaluatorBlank(), true);
 
-            Assert.AreEqual("test123", target.parse("$([System.String]::Concat('$(name:project)'))"));
-            Assert.AreEqual("test123", target.parse("$([System.String]::Concat(\"$(name:project)\"))"));
-
-            //target.parse("$([System.DateTime]::Parse(\"$([System.DateTime]::UtcNow.Ticks)\").ToBinary())");
+            //Assert.AreEqual("test123", target.parse("$([System.String]::Concat('$(name:project)'))")); //TODO: read note from hquotes
+            Assert.AreEqual("test123", target.parse("$([System.String]::Concat(\"$(name:project)\"))")); // $([System.DateTime]::Parse(\"$([System.DateTime]::UtcNow.Ticks)\").ToBinary())
         }
 
         /// <summary>
@@ -970,8 +968,8 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             target.UVariable.set("name", null, "test123");
             target.UVariable.evaluate("name", null, new EvaluatorBlank(), true);
 
-            string data = "$([System.String]::Concat(\"$(name)\"))";
-            Assert.AreEqual("test123", target.parse(data));
+            Assert.AreEqual("test123", target.parse("$([System.String]::Concat(\"$(name)\"))"));
+            Assert.AreEqual("test123", target.parse("$([System.String]::Concat('$(name)'))"));
         }
 
         /// <summary>
@@ -984,7 +982,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
 
             Assert.AreEqual(String.Empty, target.parse("$(version = \"1.2.3\")"));
             Assert.AreEqual(String.Empty, target.parse("$(tpl = \"My version - $(version), \\\"$(version)\\\", '$(version)' end.\")"));
-            Assert.AreEqual("My version - 1.2.3, \"1.2.3\", '1.2.3' end.", target.parse("$(tpl)"));
+            Assert.AreEqual("My version - 1.2.3, \"1.2.3\", '$(version)' end.", target.parse("$(tpl)"));
         }
 
         /// <summary>
@@ -1001,7 +999,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             Assert.AreEqual("s1\\dir", uvar.get("lp", null));
 
             Assert.AreEqual("\"s1\\dir\\p1.exe\"", target.parse("\"$(lp)\\p1.exe\""));
-            Assert.AreEqual("'s1\\dir\\p2.exe'", target.parse("'$(lp)\\p2.exe'"));
+            Assert.AreEqual("'$(lp)\\p2.exe'", target.parse("'$(lp)\\p2.exe'"));
             Assert.AreEqual("s1\\dir\\p3.exe", target.parse("$(lp)\\p3.exe"));
         }
 
@@ -1037,7 +1035,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             Assert.AreEqual("\"s3\\dir\"", uvar.get("lp", null));
 
             //Assert.AreEqual("\"\"s3\\dir\"\\p1.exe\"", target.parse("\"$(lp)\\p1.exe\"")); // ? TODO: unspecified for current time
-            Assert.AreEqual("'\"s3\\dir\"\\p2.exe'", target.parse("'$(lp)\\p2.exe'"));
+            Assert.AreEqual("'$(lp)\\p2.exe'", target.parse("'$(lp)\\p2.exe'"));
             Assert.AreEqual("\"s3\\dir\"\\p3.exe", target.parse("$(lp)\\p3.exe"));
         }
 
