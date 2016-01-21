@@ -23,6 +23,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.SNode;
@@ -120,31 +121,31 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(pm.IsData("get")) {
                 return stGet(pm);
             }
-
             if(pm.IsData("call", "out", "scall", "sout", "cmd")) {
                 return stCallFamily(pm);
             }
-
             if(pm.IsData("write", "append", "writeLine", "appendLine")) {
                 return stWriteFamily(pm);
             }
-
             if(pm.IsData("replace")) {
                 return stReplace(pm);
             }
-
             if(pm.IsData("exists")) {
                 return stExists(pm);
             }
-
             if(pm.IsData("remote")) {
                 return stRemote(pm);
+            }
+            if(pm.IsData("copy")) {
+                return stCopy(pm);
+            }
+            if(pm.IsData("delete")) {
+                return stDelete(pm);
             }
 
             throw new IncorrectNodeException(pm);
         }
 
-        /// <param name="pm"></param>
         [Method("get",
                 "Get all data from text file.", 
                 new string[] { "name" }, 
@@ -359,15 +360,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(pm.FinalIs(LevelType.Method, "write")) {
                 return stWrite(pm, false, false);
             }
-
             if(pm.FinalIs(LevelType.Method, "append")) {
                 return stWrite(pm, true, false);
             }
-
             if(pm.FinalIs(LevelType.Method, "writeLine")) {
                 return stWrite(pm, false, true);
             }
-
             if(pm.FinalIs(LevelType.Method, "appendLine")) {
                 return stWrite(pm, true, true);
             }
@@ -495,7 +493,6 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             return stWrite(pm, append, newline, defaultEncoding);
         }
 
-        /// <param name="pm"></param>
         [Method("replace",
                 "To replace data in files.", 
                 new string[] { "file", "pattern", "replacement" },
@@ -506,8 +503,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         [Property("replace", "Provides additional replacement methods.")]
         [Method("Regex",
                 "Alias for Regexp.", 
-                "replace",
-                "stReplace", 
+                "replace", "stReplace", 
                 new string[] { "file", "pattern", "replacement" },
                 new string[] { "Input file", "Regular expression pattern", "Replacement pattern" },
                 CValueType.Void, 
@@ -515,8 +511,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         )]
         [Method("Regexp",
                 "To replace data in files with Regular Expression Language.",
-                "replace",
-                "stReplace",
+                "replace", "stReplace",
                 new string[] { "file", "pattern", "replacement" },
                 new string[] { "Input file", "Regular expression pattern", "Replacement pattern." },
                 CValueType.Void, 
@@ -524,8 +519,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         )]
         [Method("Wildcards",
                 "To replace data in files with Wildcards.",
-                "replace",
-                "stReplace",
+                "replace", "stReplace",
                 new string[] { "file", "pattern", "replacement" },
                 new string[] { "Input file", "Pattern with wildcards", "New data" },
                 CValueType.Void, 
@@ -598,12 +592,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
         }
 
-        /// <param name="pm"></param>
         [Property("exists", "Determines whether the something exists.")]
         [Method("directory",
                 "Determines whether the given path refers to an existing directory on disk.",
-                "exists",
-                "stExists",
+                "exists", "stExists",
                 new string[] { "path" },
                 new string[] { "Path to directory" },
                 CValueType.Boolean,
@@ -611,8 +603,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         )]
         [Method("directory",
                 "Determines whether the given path refers to an existing directory on disk. Searching with Environment path.",
-                "exists",
-                "stExists",
+                "exists", "stExists",
                 new string[] { "path", "environment" },
                 new string[] { "Path to directory", "Use Environment PATH (Associated for current process)." },
                 CValueType.Boolean,
@@ -620,8 +611,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         )]
         [Method("file",
                 "Determines whether the specified file exists.",
-                "exists",
-                "stExists",
+                "exists", "stExists",
                 new string[] { "path" },
                 new string[] { "Path to file" },
                 CValueType.Boolean,
@@ -629,8 +619,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         )]
         [Method("file",
                 "Determines whether the specified file exists. Searching with Environment path.",
-                "exists",
-                "stExists",
+                "exists", "stExists",
                 new string[] { "path", "environment" },
                 new string[] { "Path to file", "Use Environment PATH (Associated for current process)." },
                 CValueType.Boolean,
@@ -652,7 +641,6 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(level.Is(ArgumentType.StringDouble)) {
                 return stExists(pm.IsData("file"), (string)level.Args[0].data, false);
             }
-
             if(level.Is(ArgumentType.StringDouble, ArgumentType.Boolean)) {
                 return stExists(pm.IsData("file"), (string)level.Args[0].data, (bool)level.Args[1].data);
             }
@@ -677,12 +665,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             return Value.from(false);
         }
 
-        /// <param name="pm"></param>
         [Property("remote", "Remote servers.")]
         [Method("download",
                 "To download file from remote server.",
-                "remote",
-                "stRemote",
+                "remote", "stRemote",
                 new string[] { "addr", "output" },
                 new string[] { "Full address to remote file. e.g.: ftp://... http://...", "Output file name." },
                 CValueType.Void,
@@ -690,8 +676,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         )]
         [Method("download",
                 "To download file from remote server.",
-                "remote",
-                "stRemote",
+                "remote", "stRemote",
                 new string[] { "addr", "output", "user", "pwd" },
                 new string[] { "Full address to remote file. e.g.: ftp://... http://...", "Output file name.", "Username", "Password" },
                 CValueType.Void,
@@ -709,7 +694,6 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 if(level.Is(ArgumentType.StringDouble, ArgumentType.StringDouble)) {
                     return download((string)level.Args[0].data, (string)level.Args[1].data);
                 }
-
                 if(level.Is(ArgumentType.StringDouble, ArgumentType.StringDouble, ArgumentType.StringDouble, ArgumentType.StringDouble)) {
                     return download((string)level.Args[0].data, (string)level.Args[1].data, (string)level.Args[2].data, (string)level.Args[3].data);
                 }
@@ -731,10 +715,321 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             return Value.Empty;
         }
 
+        [Property("copy", "The copy operations.")]
+        protected string stCopy(IPM pm)
+        {
+            if(!pm.It(LevelType.Property, "copy")) {
+                throw new IncorrectNodeException(pm);
+            }
+            ILevel level = pm.Levels[0];
+
+            if(pm.FinalEmptyIs(LevelType.Method, "file")) {
+                return copyFile(level, pm);
+            }
+            if(pm.FinalEmptyIs(LevelType.Method, "directory")) {
+                return copyDirectory(level, pm);
+            }
+
+            throw new IncorrectNodeException(pm);
+        }
+
+        /// <summary>
+        ///  `copy.file(string src, string dest, bool overwrite [, object except])`
+        /// </summary>
+        [Method("file",
+                "To copy the selected file to the destination. Creates the destination path if not exists.",
+                "copy", "stCopy",
+                new string[] { "src", "dest", "overwrite" },
+                new string[] { "Source file. May contain mask as *.dll, *.*, ...",
+                                "The destination path. May contain path to file or directory (end with \\ or /).",
+                                "Overwrite file/s if already exists." },
+                CValueType.Void,
+                CValueType.String, CValueType.String, CValueType.Boolean
+        )]
+        [Method("file",
+                "To copy the selected file to the destination. Creates the destination path if not exists.",
+                "copy", "stCopy",
+                new string[] { "src", "dest", "overwrite", "except" },
+                new string[] { "Source file. May contain mask as *.dll, *.*, ...",
+                                "The destination path. May contain path to file or directory (end with \\ or /).",
+                                "Overwrite file/s if already exists.",
+                                "List of files to exclude from input source as {\"f1\", \"path\\*.dll\", ...}" },
+                CValueType.Void,
+                CValueType.String, CValueType.String, CValueType.Boolean, CValueType.Object
+        )]
+        protected string copyFile(ILevel level, IPM pm)
+        {
+            if(level.Is(ArgumentType.StringDouble, ArgumentType.StringDouble, ArgumentType.Boolean)) {
+                return copyFile(pm.pinTo(1), (string)level.Args[0].data, (string)level.Args[1].data, (bool)level.Args[2].data);
+            }
+            if(level.Is(ArgumentType.StringDouble, ArgumentType.StringDouble, ArgumentType.Boolean, ArgumentType.Object)) {
+                return copyFile(pm.pinTo(1), (string)level.Args[0].data, (string)level.Args[1].data, (bool)level.Args[2].data, (Argument[])level.Args[3].data);
+            }
+
+            throw new ArgumentPMException(level, "copy.file(string src, string dest, bool overwrite [, object except])");
+        }
+
+        protected string copyFile(IPM pm, string src, string dest, bool overwrite, Argument[] except = null)
+        {
+            if(String.IsNullOrWhiteSpace(src) || String.IsNullOrWhiteSpace(dest)) {
+                throw new InvalidArgumentException("The source file or the destination path is empty.");
+            }
+
+            if(except != null && except.Any(p => p.type != ArgumentType.StringDouble)) {
+                throw new InvalidArgumentException("Incorrect data from the 'except' argument. Define as {\"f1\", \"f2\", ...}");
+            }
+
+            dest = location(dest.TrimEnd());
+            string destDir  = Path.GetDirectoryName(dest);
+            string destFile = Path.GetFileName(dest);
+
+            src = location(src);
+            string[] input = new[] { src }.ExtractFiles();
+#if DEBUG
+            Log.Trace("Found files to copy `{0}`", String.Join(", ", input));
+#endif
+            if(except != null) {
+                string path = Path.GetDirectoryName(src);
+                input = input.Except(except
+                                        .Where(f => !String.IsNullOrWhiteSpace((string)f.data))
+                                        .Select(f => location((string)f.data, path))
+                                        .ToArray()
+                                        .ExtractFiles()
+                                    ).ToArray();
+            }
+
+            if(input.Length < 1) {
+                throw new InvalidArgumentException("The input files was not found. Check your mask and the exception list if used.");
+            }
+
+            copyFile(destDir, destFile, overwrite, input);
+            return Value.Empty;
+        }
+
+        protected virtual void copyFile(string destDir, string destFile, bool overwrite, params string[] files)
+        {
+            if(!Directory.Exists(destDir)) {
+                Log.Trace("Trying to create directory `{0}`", destDir);
+                Directory.CreateDirectory(destDir);
+            }
+
+            bool isDestFile = !String.IsNullOrWhiteSpace(destFile);
+            if(isDestFile && files.Length > 1) {
+                throw new InvalidArgumentException("The destination path `{0}` cannot contain file name `{1}` if the source has 2 or more files for used mask. End with `{1}\\` or `{1}/` if it directory.", destDir, destFile);
+            }
+
+            foreach(string file in files) {
+                string dest = Path.Combine(destDir, isDestFile ? destFile : Path.GetFileName(file));
+                Log.Trace("Copy file `{0}` to `{1}` overwrite({2})", file, dest, overwrite);
+                File.Copy(file, dest, overwrite);
+            }
+        }
+
+        /// <summary>
+        ///  `copy.directory(string src, string dest, bool force [, bool overwrite])`
+        /// </summary>
+        [Method("directory",
+                "To copy the selected directory and subdirectories to the destination.",
+                "copy", "stCopy",
+                new string[] { "src", "dest", "force" },
+                new string[] { "The source directory.", "The destination directory.", "Create the destination path if not exists." },
+                CValueType.Void,
+                CValueType.String, CValueType.String, CValueType.Boolean
+        )]
+        [Method("directory",
+                "To copy the selected directory and subdirectories to the destination.",
+                "copy", "stCopy",
+                new string[] { "src", "dest", "force", "overwrite" },
+                new string[] { "The source directory.", "The destination directory.", "Create the destination path if not exists.", "Overwrite files if already exists." },
+                CValueType.Void,
+                CValueType.String, CValueType.String, CValueType.Boolean, CValueType.Boolean
+        )]
+        protected string copyDirectory(ILevel level, IPM pm)
+        {
+            if(level.Is(ArgumentType.StringDouble, ArgumentType.StringDouble, ArgumentType.Boolean)) {
+                return copyDirectory(pm.pinTo(1), (string)level.Args[0].data, (string)level.Args[1].data, (bool)level.Args[2].data);
+            }
+            if(level.Is(ArgumentType.StringDouble, ArgumentType.StringDouble, ArgumentType.Boolean, ArgumentType.Boolean)) {
+                return copyDirectory(pm.pinTo(1), (string)level.Args[0].data, (string)level.Args[1].data, (bool)level.Args[2].data, (bool)level.Args[3].data);
+            }
+
+            throw new ArgumentPMException(level, "copy.directory(string src, string dest, bool force [, bool overwrite])");
+        }
+
+        protected string copyDirectory(IPM pm, string src, string dest, bool force, bool overwrite = false)
+        {
+            if(String.IsNullOrWhiteSpace(src) || String.IsNullOrWhiteSpace(dest)) {
+                throw new InvalidArgumentException("The source or the destination directory is empty.");
+            }
+
+            src  = location(src.PathFormat());
+            dest = Path.GetDirectoryName(location(dest.PathFormat()));
+
+            var files = Directory.EnumerateFiles(src, "*.*", SearchOption.AllDirectories)
+                                    .Select(f => new[] { f, Path.Combine(dest, f.Substring(src.Length)) });
+
+            copyDirectory(files, dest, force, overwrite);
+            return Value.Empty;
+        }
+
+        protected virtual void copyDirectory(IEnumerable<string[]> files, string dest, bool force, bool overwrite)
+        {
+            if(!Directory.Exists(dest)) {
+                if(!force) {
+                    throw new NotFoundException("Part of path `{0}` of the destination directory is not exists. Check path or use `force` flag", dest);
+                }
+                Log.Trace("Trying to create directory `{0}`", dest);
+                Directory.CreateDirectory(dest);
+            }
+
+            foreach(var file in files)
+            {
+                string from = file[0];
+                string to   = file[1];
+
+                string subdir = Path.GetDirectoryName(to);
+                if(!Directory.Exists(subdir)) {
+                    Directory.CreateDirectory(subdir);
+                }
+
+                Log.Trace("Copy directory: file `{0}` to `{1}` overwrite({2})", from, to, overwrite);
+                File.Copy(from, to, overwrite);
+            }
+        }
+
+        [Property("delete", "The delete operations.")]
+        protected string stDelete(IPM pm)
+        {
+            if(!pm.It(LevelType.Property, "delete")) {
+                throw new IncorrectNodeException(pm);
+            }
+            ILevel level = pm.Levels[0];
+
+            if(pm.FinalEmptyIs(LevelType.Method, "files")) {
+                return deleteFiles(level, pm);
+            }
+            if(pm.FinalEmptyIs(LevelType.Method, "directory")) {
+                return deleteDirectory(level, pm);
+            }
+
+            throw new IncorrectNodeException(pm);
+        }
+
+        /// <summary>
+        ///  `delete.files(object files [, object except])`
+        /// </summary>
+        [Method("files",
+                "To delete the selected files.",
+                "delete", "stDelete",
+                new string[] { "files" },
+                new string[] { "List of files to deletion as {\"f1\", \"path\\*.dll\", ..}" },
+                CValueType.Void,
+                CValueType.Object
+        )]
+        [Method("files",
+                "To delete the selected files.",
+                "delete", "stDelete",
+                new string[] { "files", "except" },
+                new string[] { "List of files to deletion as {\"f1\", \"path\\*.dll\", ..}", "List of files to exclude from input list." },
+                CValueType.Void,
+                CValueType.Object, CValueType.Object
+        )]
+        protected string deleteFiles(ILevel level, IPM pm)
+        {
+            if(level.Is(ArgumentType.Object)) {
+                return deleteFiles(pm.pinTo(1), (Argument[])level.Args[0].data);
+            }
+            if(level.Is(ArgumentType.Object, ArgumentType.Object)) {
+                return deleteFiles(pm.pinTo(1), (Argument[])level.Args[0].data, (Argument[])level.Args[1].data);
+            }
+
+            throw new ArgumentPMException(level, "delete.files(object files [, object except])");
+        }
+
+        protected string deleteFiles(IPM pm, Argument[] files, Argument[] except = null)
+        {
+            if(files.Any(p => p.type != ArgumentType.StringDouble)) {
+                throw new InvalidArgumentException("Incorrect data from input files. Define as {\"f1\", \"f2\", ...}");
+            }
+
+            if(except != null && except.Any(p => p.type != ArgumentType.StringDouble)) {
+                throw new InvalidArgumentException("Incorrect data from the 'except' argument. Define as {\"f1\", \"f2\", ...}");
+            }
+
+            Func<string, int, string> exs = delegate(string file, int idx) {
+                if(!String.IsNullOrWhiteSpace(file)) {
+                    return location(file);
+                }
+                throw new InvalidArgumentException("File name is empty. Fail in '{0}' position.", idx);
+            };
+
+            string[] input = files.Select((f, i) => exs((string)f.data, i)).ToArray().ExtractFiles();
+#if DEBUG
+            Log.Trace("deleteFiles: Found files `{0}`", String.Join(", ", input));
+#endif
+            if(except != null) {
+                input = input.Except(except
+                                        .Where(f => !String.IsNullOrWhiteSpace((string)f.data))
+                                        .Select(f => location((string)f.data))
+                                        .ToArray()
+                                        .ExtractFiles()
+                                    ).ToArray();
+            }
+
+            if(input.Length < 1) {
+                throw new InvalidArgumentException("The input files was not found. Check your mask and the exception list if used.");
+            }
+
+            deleteFiles(input);
+            return Value.Empty;
+        }
+
+        protected virtual void deleteFiles(string[] files)
+        {
+            foreach(string file in files) {
+                Log.Trace("Delete file `{0}`", file);
+                File.Delete(file);
+            }
+        }
+
+        /// <summary>
+        ///  `delete.directory(string dir, bool force)`
+        /// </summary>
+        [Method("directory",
+                "To delete the selected directory.",
+                "delete", "stDelete",
+                new string[] { "dir", "force" },
+                new string[] { "Path to directory for deletion.", "To remove non-empty directories." },
+                CValueType.Void,
+                CValueType.String, CValueType.Boolean
+        )]
+        protected string deleteDirectory(ILevel level, IPM pm)
+        {
+            if(level.Is(ArgumentType.StringDouble, ArgumentType.Boolean)) {
+                return deleteDirectory(pm.pinTo(1), (string)level.Args[0].data, (bool)level.Args[1].data);
+            }
+
+            throw new ArgumentPMException(level, "delete.directory(string dir, bool force)");
+        }
+
+        protected string deleteDirectory(IPM pm, string src, bool force)
+        {
+            if(String.IsNullOrWhiteSpace(src)) {
+                throw new InvalidArgumentException("The source directory is empty.");
+            }
+            deleteDirectory(location(src), force);
+            return Value.Empty;
+        }
+
+        protected virtual void deleteDirectory(string src, bool force)
+        {
+            Log.Trace("Delete directory `{0}` /force: {1}", src, force);
+            Directory.Delete(src, force);
+        }
+
         /// <param name="file">The file to be read</param>
         /// <param name="enc">The character encoding</param>
         /// <param name="detectEncoding">Indicates whether to look for byte order marks at the beginning of the file</param>
-        /// <returns></returns>
         protected virtual string readToEnd(string file, Encoding enc, bool detectEncoding = false)
         {
             using(StreamReader stream = new StreamReader(file, enc, detectEncoding)) {

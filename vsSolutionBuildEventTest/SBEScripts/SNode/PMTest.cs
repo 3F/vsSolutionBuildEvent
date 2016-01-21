@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.SNode;
@@ -221,17 +222,13 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.SNode
                 IPM pm = new PM("solution(123, ).right");
                 Assert.Fail("1");
             }
-            catch(SyntaxIncorrectException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(SyntaxIncorrectException), ex.GetType().ToString()); }
 
             try {
                 IPM pm = new PM("solution(, 123).right");
                 Assert.Fail("2");
             }
-            catch(SyntaxIncorrectException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(SyntaxIncorrectException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -512,18 +509,14 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.SNode
                 Assert.AreEqual(pm.FinalIs(1, LevelType.Property, "solution"), true);
                 Assert.Fail("1");
             }
-            catch(NotSupportedOperationException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
 
             try {
                 IPM pm = new PM("left.solution.right");
                 Assert.AreEqual(pm.FinalIs(LevelType.Property, "left"), true);
                 Assert.Fail("2");
             }
-            catch(NotSupportedOperationException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -584,36 +577,28 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.SNode
                 Assert.AreEqual(pm.FinalEmptyIs(1, LevelType.Property, "right"), true);
                 Assert.Fail("1");
             }
-            catch(NotSupportedOperationException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
 
             try {
                 IPM pm = new PM("solution.right : ");
                 Assert.AreEqual(pm.FinalEmptyIs(1, LevelType.Property, "right"), true);
                 Assert.Fail("2");
             }
-            catch(NotSupportedOperationException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
 
             try {
                 IPM pm = new PM("solution.right . prop");
                 Assert.AreEqual(pm.FinalEmptyIs(1, LevelType.Property, "right"), true);
                 Assert.Fail("3");
             }
-            catch(NotSupportedOperationException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
 
             try {
                 IPM pm = new PM("solution.right mixed data");
                 Assert.AreEqual(pm.FinalEmptyIs(1, LevelType.Property, "right"), true);
                 Assert.Fail("4");
             }
-            catch(NotSupportedOperationException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -682,27 +667,21 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.SNode
                 pm.pinTo(100);
                 Assert.Fail("1");
             }
-            catch(InvalidArgumentException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
 
             try {
                 IPM pm = new PM("left.solution.right");
                 pm.pinTo(-1);
                 Assert.Fail("2");
             }
-            catch(InvalidArgumentException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
 
             try {
                 IPM pm = new PM("left.solution.right"); //4
                 pm.pinTo(4);
                 Assert.Fail("4");
             }
-            catch(InvalidArgumentException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
 
             try {
                 IPM pm = new PM("left.solution.right"); //4
@@ -711,9 +690,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.SNode
                 pm.pinTo(1);
                 Assert.Fail("5");
             }
-            catch(InvalidArgumentException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -963,17 +940,13 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.SNode
                 new PM("pname.... = true");
                 Assert.Fail("1");
             }
-            catch(SyntaxIncorrectException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(SyntaxIncorrectException), ex.GetType().ToString()); }
 
             try {
                 new PM("pname @ = false");
                 Assert.Fail("2");
             }
-            catch(SyntaxIncorrectException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(SyntaxIncorrectException), ex.GetType().ToString()); }
         }
 
         /// <summary>

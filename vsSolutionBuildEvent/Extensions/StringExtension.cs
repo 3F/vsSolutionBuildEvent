@@ -56,9 +56,10 @@ namespace net.r_eg.vsSBE.Extensions
         public static string PathFormat(this string path)
         {
             if(String.IsNullOrWhiteSpace(path)) {
-                return String.Empty;
+                return Path.DirectorySeparatorChar.ToString();
             }
-            
+            path = path.Trim();
+
             if(path[path.Length - 1] != Path.DirectorySeparatorChar) {
                 path += Path.DirectorySeparatorChar;
             }

@@ -868,7 +868,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             var target = new Parser(new StubEnv());
             target.parse("$(p2 = \"$$(p1) to $$(p8),  and new ($$( p7.Replace('1', '2'))) s$$(p9)\")$(p6 = $$(p2))$(p7 = $$(p5))$(p5 = $(p6))$(p5)");
             target.parse("$(p2 = \"$$(p1) to $$(p8),  and new ($$(p7.Replace('1', '2'))) s$$(p9)\")$(p6 = $$(p2))$(p7 = $$(p5))$(p5 = $(p6))$(p5)");
-            Assert.IsTrue(true);
+            Assert.IsTrue(true); // no problems for stack & heap
         }
 
         /// <summary>

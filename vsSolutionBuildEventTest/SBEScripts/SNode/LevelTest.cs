@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.SNode;
 
@@ -90,33 +91,25 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.SNode
                 Assert.AreEqual(false, level.Is("hash", ArgumentType.StringDouble));
                 Assert.Fail("1");
             }
-            catch(InvalidArgumentException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
 
             try {
                 Assert.AreEqual(false, level.Is("hash", ArgumentType.StringDouble, ArgumentType.Boolean, ArgumentType.Boolean));
                 Assert.Fail("2");
             }
-            catch(InvalidArgumentException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
 
             try {
                 Assert.AreEqual(false, level.Is("hash", null));
                 Assert.Fail("3");
             }
-            catch(InvalidArgumentException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
 
             try {
                 Assert.AreEqual(false, level.Is("hash", ArgumentType.Boolean, ArgumentType.StringDouble));
                 Assert.Fail("4");
             }
-            catch(InvalidArgumentException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
         }
 
         /// <summary>

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -101,17 +103,13 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[File call(file)]");
                 Assert.Fail("1");
             }
-            catch(ArgumentPMException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File out(file)]");
                 Assert.Fail("2");
             }
-            catch(ArgumentPMException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -229,49 +227,37 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[File write(\"file\", true):data]");
                 Assert.Fail("1");
             }
-            catch(ArgumentPMException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File write(\"file\", true, true):data]");
                 Assert.Fail("2");
             }
-            catch(ArgumentPMException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File write(\"file\", \"true\", \"true\", \"utf-8\"):data]");
                 Assert.Fail("3");
             }
-            catch(ArgumentPMException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File append(\"file\", true, true, \"utf-8\"):data]");
                 Assert.Fail("4");
             }
-            catch(ArgumentPMException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File appendLine(\"file\", true, true, \"utf-8\"):data]");
                 Assert.Fail("5");
             }
-            catch(ArgumentPMException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File writeLine(\"file\", true, true, \"utf-8\"):data]");
                 Assert.Fail("6");
             }
-            catch(ArgumentPMException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -405,17 +391,25 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[File remote]");
                 Assert.Fail("1");
             }
-            catch(IncorrectNodeException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File remote.download]");
                 Assert.Fail("2");
             }
-            catch(IncorrectNodeException) {
-                Assert.IsTrue(true);
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
+
+            try {
+                target.parse("[File remote.notRealNode]");
+                Assert.Fail("3");
             }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
+
+            try {
+                target.parse("[File remote.download(\"addr\", \"file\").notRealNode]");
+                Assert.Fail("4");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -430,25 +424,19 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[File remote.download()]");
                 Assert.Fail("1");
             }
-            catch(ArgumentPMException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File remote.download(\"addr\")]");
                 Assert.Fail("2");
             }
-            catch(ArgumentPMException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File remote.download(\"addr\", \"file\", \"user\")]");
                 Assert.Fail("3");
             }
-            catch(ArgumentPMException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -464,6 +452,305 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             Assert.AreEqual(target.output, "non-api.png");
             Assert.AreEqual(target.user, "user1");
             Assert.AreEqual(target.pwd, "mypass123");
+        }
+
+        /// <summary>
+        ///A test for parse - stCopy
+        ///</summary>
+        [TestMethod()]
+        public void stCopyTest1()
+        {
+            var target = new FileComponent();
+
+            try {
+                target.parse("[File copy]");
+                Assert.Fail("1");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
+
+            try {
+                target.parse("[File copy.file]");
+                Assert.Fail("2");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
+
+            try {
+                target.parse("[File copy.directory]");
+                Assert.Fail("3");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
+
+            try {
+                target.parse("[File copy.notRalNode]");
+                Assert.Fail("4");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
+        }
+
+        /// <summary>
+        ///A test for parse - stCopy - file
+        ///</summary>
+        [TestMethod()]
+        public void stCopyFileTest1()
+        {
+            var target = new FileComponent();
+            
+            try {
+                target.parse("[File copy.file()]");
+                Assert.Fail("1");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
+
+            try {
+                target.parse("[File copy.file(false)]");
+                Assert.Fail("2");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
+
+            try {
+                target.parse("[File copy.file(\" \", \"dest\", false)]");
+                Assert.Fail("3");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+
+            try {
+                target.parse("[File copy.file(\"src\", \" \", false)]");
+                Assert.Fail("4");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+        }
+
+        /// <summary>
+        ///A test for parse - stCopy - file
+        ///</summary>
+        [TestMethod()]
+        public void stCopyFileTest2()
+        {
+            var target = new FileComponentCopyFileAccessor();
+
+            try {
+                target.parse("[File copy.file(\"src\", \"dest\", false, {\"src\"})]");
+                Assert.Fail("1");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+
+
+            target.parse("[File copy.file(\"src\", \"dest\", false, {\"notexists\"})]");
+            try {
+                target.parse("[File copy.file(\"src\", \"dest\", false, {\"notexists\", false})]");
+                Assert.Fail("2");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+
+
+            Assert.AreEqual(Value.Empty, target.parse("[File copy.file(\"path\\subdir1\\file1.txt\", \"path2\\file2.txt\", true)]"));
+            try {
+                Assert.AreEqual(Value.Empty, target.parse("[File copy.file(\"path\\subdir1\\file1.txt\", \"path2\\file2.txt\", true, {\"file1.txt\"})]"));
+                Assert.Fail("3");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+        }
+
+        /// <summary>
+        ///A test for parse - stCopy - copy.file(string src, string dest, bool overwrite, object except)
+        ///</summary>
+        [TestMethod()]
+        public void stCopyFileTest3()
+        {
+            var target = new FileComponentCopyFileAccessor();
+
+            Assert.AreEqual(Value.Empty, target.parse("[File copy.file(\"path\\subdir1\\file1.txt\", \"path2\\file2.txt\", true, {\"file2.txt\"})]"));
+            Assert.AreEqual(true, target.cmpPaths("path2", target.destDir));
+            Assert.AreEqual(true, target.cmpPaths("file2.txt", target.destFile));
+            Assert.AreEqual(true, target.overwrite);
+            Assert.AreEqual(1, target.files.Length);
+            Assert.AreEqual(true, target.cmpPaths("path\\subdir1\\file1.txt", target.files[0]));
+        }
+
+        /// <summary>
+        ///A test for parse - stCopy - copy.file(string src, string dest, bool overwrite)
+        ///</summary>
+        [TestMethod()]
+        public void stCopyFileTest4()
+        {
+            var target = new FileComponentCopyFileAccessor();
+
+            Assert.AreEqual(Value.Empty, target.parse("[File copy.file(\"path\\subdir1\\file1.txt\", \"path2\\file2.txt\", true)]"));
+            Assert.AreEqual(true, target.cmpPaths("path2", target.destDir));
+            Assert.AreEqual(true, target.cmpPaths("file2.txt", target.destFile));
+            Assert.AreEqual(true, target.overwrite);
+            Assert.AreEqual(1, target.files.Length);
+            Assert.AreEqual(true, target.cmpPaths("path\\subdir1\\file1.txt", target.files[0]));
+        }
+
+        /// <summary>
+        ///A test for parse - stCopy - directory
+        ///</summary>
+        [TestMethod()]
+        public void stCopyDirectoryTest1()
+        {
+            var target = new FileComponent();
+            
+            try {
+                target.parse("[File copy.directory()]");
+                Assert.Fail("1");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
+
+            try {
+                target.parse("[File copy.directory(false)]");
+                Assert.Fail("2");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
+
+            try {
+                target.parse("[File copy.directory(\" \", \"dest\", false)]");
+                Assert.Fail("3");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+
+            try {
+                target.parse("[File copy.directory(\"src\", \" \", false)]");
+                Assert.Fail("4");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+        }
+
+        /// <summary>
+        ///A test for parse - stCopy - copy.directory(string src, string dest, bool force [, bool overwrite])
+        ///</summary>
+        [TestMethod()]
+        public void stCopyDirectoryTest2()
+        {
+            var target = new FileComponentCopyDirectoryAccessor();
+
+            using(var tf = new TempFile(true)) {
+                Assert.AreEqual(Value.Empty, target.parse("[File copy.directory(\"" + tf.dir + "\", \"path2\\sub1\", true, true)]"));
+                Assert.AreEqual(true, target.cmpPaths("path2\\sub1", target.dest));
+                Assert.AreEqual(true, target.force);
+                Assert.AreEqual(true, target.overwrite);
+                Assert.AreEqual(1, target.files.Count());
+                Assert.AreEqual(true, target.cmpPaths(tf.file, target.files.ElementAt(0)[0]));
+
+                Assert.AreEqual(Value.Empty, target.parse("[File copy.directory(\"" + tf.dir + "\", \"path2\\sub1\", true)]"));
+                Assert.AreEqual(true, target.force);
+                Assert.AreEqual(false, target.overwrite);
+            }
+        }
+
+        /// <summary>
+        ///A test for parse - stDelete
+        ///</summary>
+        [TestMethod()]
+        public void stDeleteTest1()
+        {
+            var target = new FileComponent();
+
+            try {
+                target.parse("[File delete]");
+                Assert.Fail("1");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
+
+            try {
+                target.parse("[File delete.files]");
+                Assert.Fail("2");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
+
+            try {
+                target.parse("[File delete.directory]");
+                Assert.Fail("3");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
+
+            try {
+                target.parse("[File delete.notRalNode]");
+                Assert.Fail("4");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
+        }
+
+        /// <summary>
+        ///A test for parse - stDelete - Files
+        ///</summary>
+        [TestMethod()]
+        public void stDeleteFilesTest1()
+        {
+            var target = new FileComponent();
+
+            try {
+                target.parse("[File delete.files(\"file\")]");
+                Assert.Fail("1");
+            }
+            catch(Exception ex) {
+                Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException));
+            }
+
+            try {
+                target.parse("[File delete.files({\"file\", false})]");
+                Assert.Fail("2");
+            }
+            catch(Exception ex) {
+                Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException));
+            }
+
+            try {
+                target.parse("[File delete.files({\"file\"}, {true})]");
+                Assert.Fail("3");
+            }
+            catch(Exception ex) {
+                Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException));
+            }
+        }
+
+        /// <summary>
+        ///A test for parse - stDelete - Files
+        ///</summary>
+        [TestMethod()]
+        public void stDeleteFilesTest2()
+        {
+            var target = new FileComponentDeleteFilesAccessor();
+
+            Assert.AreEqual(Value.Empty, target.parse("[IO delete.files({\"file1\", \"file2\", \"file3\"})]"));
+            Assert.AreEqual(3, target.files.Length);
+            Assert.AreEqual(true, target.cmpPaths("file1", target.files[0]));
+            Assert.AreEqual(true, target.cmpPaths("file2", target.files[1]));
+            Assert.AreEqual(true, target.cmpPaths("file3", target.files[2]));
+        }
+
+        /// <summary>
+        ///A test for parse - stDelete - Files
+        ///</summary>
+        [TestMethod()]
+        public void stDeleteFilesTest3()
+        {
+            var target = new FileComponentDeleteFilesAccessor();
+
+            Assert.AreEqual(Value.Empty, target.parse("[IO delete.files({\"file1\", \"file2\", \"file3\"}, {\"file2\", \"file1\"})]"));
+            Assert.AreEqual(1, target.files.Length);
+            Assert.AreEqual(true, target.cmpPaths("file3", target.files[0]));
+        }
+
+        /// <summary>
+        ///A test for parse - stDelete - directory
+        ///</summary>
+        [TestMethod()]
+        public void stDeleteDirectoryTest1()
+        {
+            var target = new FileComponentDeleteDirectoryAccessor();
+
+            try {
+                target.parse("[File delete.directory(\"dir\")]");
+                Assert.Fail("1");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
+
+            try {
+                target.parse("[File delete.directory(\"  \", false)]");
+                Assert.Fail("2");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
         }
 
         private class FileComponentAccessor: FileComponent
@@ -523,6 +810,65 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 this.pwd    = pwd;
                 //return base.download(addr, output, user, pwd);
                 return Value.Empty;
+            }
+        }
+
+        private class FileComponentPath: FileComponent
+        {
+            public bool cmpPaths(string p1, string p2)
+            {
+                return p1.TrimStart(Path.DirectorySeparatorChar) == p2.TrimStart(Path.DirectorySeparatorChar);
+            }
+        }
+
+        private class FileComponentCopyFileAccessor: FileComponentPath
+        {
+            public string destDir, destFile;
+            public bool overwrite;
+            public string[] files;
+
+            protected override void copyFile(string destDir, string destFile, bool overwrite, params string[] files)
+            {
+                this.destDir    = destDir.TrimStart(Path.PathSeparator);
+                this.destFile   = destFile.TrimStart(Path.PathSeparator);
+                this.overwrite  = overwrite;
+                this.files      = files;
+                //base.copyFile(destDir, destFile, overwrite, files);
+            }
+        }
+
+        private class FileComponentCopyDirectoryAccessor: FileComponentPath
+        {
+            public IEnumerable<string[]> files;
+            public string dest;
+            public bool force, overwrite;
+
+            protected override void copyDirectory(IEnumerable<string[]> files, string dest, bool force, bool overwrite)
+            {
+                this.files      = files;
+                this.dest       = dest;
+                this.force      = force;
+                this.overwrite  = overwrite;
+                //base.copyDirectory(files, dest, force, overwrite);
+            }
+        }
+
+        private class FileComponentDeleteFilesAccessor: FileComponentPath
+        {
+            public string[] files;
+
+            protected override void deleteFiles(string[] files)
+            {
+                this.files = files;
+                //base.deleteFiles(files);
+            }
+        }
+
+        private class FileComponentDeleteDirectoryAccessor: FileComponentPath
+        {
+            protected override void deleteDirectory(string src, bool force)
+            {
+                //base.deleteDirectory(src, force);
             }
         }
     }

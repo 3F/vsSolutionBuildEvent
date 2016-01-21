@@ -63,33 +63,25 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
                 Value.toBoolean("TruE");
                 Assert.Fail("1");
             }
-            catch(IncorrectSyntaxException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectSyntaxException), ex.GetType().ToString()); }
 
             try {
                 Value.toBoolean("FalsE");
                 Assert.Fail("2");
             }
-            catch(IncorrectSyntaxException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectSyntaxException), ex.GetType().ToString()); }
 
             try {
                 Value.toBoolean("-true");
                 Assert.Fail("3");
             }
-            catch(IncorrectSyntaxException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectSyntaxException), ex.GetType().ToString()); }
 
             try {
                 Value.toBoolean("true.");
                 Assert.Fail("4");
             }
-            catch(IncorrectSyntaxException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectSyntaxException), ex.GetType().ToString()); }
         }
 
         /// <summary>

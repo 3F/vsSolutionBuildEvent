@@ -551,15 +551,26 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\3rd-party">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="key.pfx" />
     <None Include="key.snk" />
+    <Content Include="..\changelog.txt">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\LICENSE">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="packages.config" />
     <None Include="Properties\vsix-compress.props" />
+    <Content Include="Resources\License.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="source.extension.vsixmanifest">
       <SubType>Designer</SubType>
     </None>
     <None Include="$(SolutionDir).version" />
-    <None Include="$(SolutionDir)changelog.txt" />
     <None Include="xshd\CppLang.xshd" />
     <None Include="xshd\CSharpLang.xshd" />
     <None Include="xshd\FilesMode.xshd" />

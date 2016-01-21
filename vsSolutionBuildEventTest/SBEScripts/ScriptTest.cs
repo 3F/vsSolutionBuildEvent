@@ -278,7 +278,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
             var sbe     = new Script(env, uvar);
 
             msbuild.parse(sbe.parse("#[var p2 = $$(p1)]#[var p6 = $$(p2)]#[var p7 = $$(p5)]#[var p5 = $(p6)]", true));
-            Assert.IsTrue(true);
+            Assert.IsTrue(true); // no problems for stack & heap
         }
 
         /// <summary>
@@ -294,7 +294,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
             var sbe     = new Script(env, uvar);
 
             msbuild.parse(sbe.parse("#[var p2 = $$(p1) to $$(p8), and new ($$(p7.Replace('1', '2'))) s$$(p9)]#[var p6 = $$(p2)]#[var p7 = $$(p5)]#[var p5 = $(p6)]", true));
-            Assert.IsTrue(true);
+            Assert.IsTrue(true); // no problems for stack & heap
         }
 
         /// <summary>

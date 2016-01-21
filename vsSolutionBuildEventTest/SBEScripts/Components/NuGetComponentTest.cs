@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
@@ -31,25 +32,19 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[NuGet gnt]");
                 Assert.Fail("1");
             }
-            catch(OperationNotFoundException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[NuGet gnt()]");
                 Assert.Fail("2");
             }
-            catch(IncorrectNodeException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[NuGet gnt.NotRealNode]");
                 Assert.Fail("3");
             }
-            catch(OperationNotFoundException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -64,9 +59,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[NuGet gnt.raw()]");
                 Assert.Fail("1");
             }
-            catch(InvalidArgumentException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[NuGet gnt.raw(\"the is not a correct command\")]");

@@ -129,8 +129,8 @@ namespace net.r_eg.vsSBE
             get
             {
                 if(String.IsNullOrWhiteSpace(workPath)) {
-                    workPath = "/";
-                    Log.Trace("WorkPath is empty or null, use '{0}' by default.", workPath);
+                    workPath = "".PathFormat();
+                    Log.Trace("WorkPath is empty or null, use `{0}` by default.", workPath);
                     //throw new SBEException("WorkPath is empty or null");
                 }
                 return workPath;

@@ -136,17 +136,13 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[OWP out()]");
                 Assert.Fail("1");
             }
-            catch(InvalidArgumentException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[OWP out().All]");
                 Assert.Fail("2");
             }
-            catch(InvalidArgumentException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -161,41 +157,31 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[OWP out.All.NotRealProperty]");
                 Assert.Fail("1");
             }
-            catch(NotSupportedOperationException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[OWP out.Warnings.NotRealProperty]");
                 Assert.Fail("2");
             }
-            catch(NotSupportedOperationException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[OWP out.Warnings.Codes.NotRealProperty]");
                 Assert.Fail("3");
             }
-            catch(NotSupportedOperationException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[OWP out.NotRealProperty]");
                 Assert.Fail("4");
             }
-            catch(OperationNotFoundException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[OWP out.Warnings.Count = 12]");
                 Assert.Fail("5");
             }
-            catch(NotSupportedOperationException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -210,17 +196,13 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[OWP out(\"NotAvailableName\").Warnings.Raw]");
                 Assert.Fail("1");
             }
-            catch(NotFoundException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotFoundException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[OWP out(\"814F1F57-BF57-4944-8100-CA5514BB4194\", true).All]");
                 Assert.Fail("2");
             }
-            catch(NotFoundException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotFoundException), ex.GetType().ToString()); }
         }
 
         ///A test for parse - stLog

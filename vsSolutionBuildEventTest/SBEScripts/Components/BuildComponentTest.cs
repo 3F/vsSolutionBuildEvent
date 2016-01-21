@@ -170,17 +170,13 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[Build cancel]");
                 Assert.Fail("1");
             }
-            catch(IncorrectNodeException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[Build cancel : true]");
                 Assert.Fail("2");
             }
-            catch(IncorrectNodeException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -312,17 +308,13 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[Build solution.current]");
                 Assert.Fail("1");
             }
-            catch(OperationNotFoundException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[Build solution.path(\"path.sln\")]");
                 Assert.Fail("2");
             }
-            catch(OperationNotFoundException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -359,41 +351,31 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[Build solution.current.NotExistProperty]");
                 Assert.Fail("1");
             }
-            catch(OperationNotFoundException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[Build solution.current.First]");
                 Assert.Fail("2");
             }
-            catch(OperationNotFoundException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[Build solution.current.Last]");
                 Assert.Fail("3");
             }
-            catch(OperationNotFoundException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[Build solution.current.LastRaw]");
                 Assert.Fail("4");
             }
-            catch(OperationNotFoundException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[Build solution.current.projectBy(\"" + EXIST_GUID + "\")]");
                 Assert.Fail("5");
             }
-            catch(OperationNotFoundException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -408,33 +390,25 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[Build solution.path(\"stub.sln\").First]");
                 Assert.Fail("1");
             }
-            catch(OperationNotFoundException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[Build solution.path(\"stub.sln\").Last]");
                 Assert.Fail("2");
             }
-            catch(OperationNotFoundException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[Build solution.path(\"stub.sln\").LastRaw]");
                 Assert.Fail("3");
             }
-            catch(OperationNotFoundException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[Build solution.path(\"stub.sln\").projectBy(\"" + EXIST_GUID + "\")]");
                 Assert.Fail("4");
             }
-            catch(OperationNotFoundException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -512,17 +486,13 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[Build solution.path(\"stub.sln\").First.NotRealProperty]");
                 Assert.Fail("1");
             }
-            catch(OperationNotFoundException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[Build solution.current.First.NotRealProperty]");
                 Assert.Fail("2");
             }
-            catch(OperationNotFoundException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -541,17 +511,17 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 return true;
             };
 
-            try { h("current", "First"); Assert.Fail("1"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
-            try { h("current", "Last"); Assert.Fail("2"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
-            try { h("current", "FirstRaw"); Assert.Fail("3"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
-            try { h("current", "LastRaw"); Assert.Fail("4"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
-            try { h("current", "projectBy(\"" + EXIST_GUID + "\")"); Assert.Fail("5"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
+            try { h("current", "First"); Assert.Fail("1"); } catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
+            try { h("current", "Last"); Assert.Fail("2"); } catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
+            try { h("current", "FirstRaw"); Assert.Fail("3"); } catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
+            try { h("current", "LastRaw"); Assert.Fail("4"); } catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
+            try { h("current", "projectBy(\"" + EXIST_GUID + "\")"); Assert.Fail("5"); } catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
 
-            try { h("path(\"path\\to.sln\")", "First"); Assert.Fail("6"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
-            try { h("path(\"path\\to.sln\")", "Last"); Assert.Fail("7"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
-            try { h("path(\"path\\to.sln\")", "FirstRaw"); Assert.Fail("8"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
-            try { h("path(\"path\\to.sln\")", "LastRaw"); Assert.Fail("9"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
-            try { h("path(\"path\\to.sln\")", "projectBy(\"" + EXIST_GUID + "\")"); Assert.Fail("10"); } catch(NotSupportedOperationException) { Assert.IsTrue(true); }
+            try { h("path(\"path\\to.sln\")", "First"); Assert.Fail("6"); } catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
+            try { h("path(\"path\\to.sln\")", "Last"); Assert.Fail("7"); } catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
+            try { h("path(\"path\\to.sln\")", "FirstRaw"); Assert.Fail("8"); } catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
+            try { h("path(\"path\\to.sln\")", "LastRaw"); Assert.Fail("9"); } catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
+            try { h("path(\"path\\to.sln\")", "projectBy(\"" + EXIST_GUID + "\")"); Assert.Fail("10"); } catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
         }
 
         private class BuildComponentAccessor: BuildComponent

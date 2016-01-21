@@ -314,10 +314,22 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             // additional checking of input files. 
             // The SevenZipSharp creates directories if input file is not exist o_O
-            string[] input = files.Select((f, i) => pathToFile((string)f.data, i)).ToArray();
+            string[] input = files.Select((f, i) => pathToFile((string)f.data, i)).ToArray().ExtractFiles();
 #if DEBUG
             Log.Trace("stPackFiles: Found files `{0}`", String.Join(", ", input));
 #endif
+            if(except != null) {
+                input = input.Except(except
+                                        .Where(f => !String.IsNullOrWhiteSpace((string)f.data))
+                                        .Select(f => location((string)f.data))
+                                        .ToArray()
+                                        .ExtractFiles()
+                                    ).ToArray();
+            }
+
+            if(input.Length < 1) {
+                throw new InvalidArgumentException("The input files was not found. Check your mask and the exception list if used.");
+            }
 
             SevenZipCompressor zip = new SevenZipCompressor()
             {
@@ -328,20 +340,6 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 FastCompression     = true, // to disable some events inside SevenZip
             };
 
-            input = input.ExtractFiles();
-            if(input.Length < 1) {
-                throw new InvalidArgumentException("The input files was not found. Check your mask if used.");
-            }
-
-            if(except != null) {
-                input = input.Except(except
-                                        .Where(f => !String.IsNullOrWhiteSpace((string)f.data))
-                                        .Select(f => location((string)f.data))
-                                        .ToArray()
-                                        .ExtractFiles()
-                                    ).ToArray();
-            }
-
             compressFiles(zip, location(name), input);
             return Value.Empty;
         }
@@ -351,7 +349,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="input">Input files.</param>
         protected virtual void compressFiles(SevenZipCompressor zip, string name, params string[] input)
         {
-            zip.CompressFiles(location(name), input); // -_-
+            zip.CompressFiles(name, input); // -_-
         }
 
         /// <summary>

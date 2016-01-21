@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
@@ -47,25 +48,19 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[$()]");
                 Assert.Fail("1");
             }
-            catch(SyntaxIncorrectException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(SyntaxIncorrectException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[$(]");
                 Assert.Fail("2");
             }
-            catch(SyntaxIncorrectException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(SyntaxIncorrectException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[$(notRealVariablename]");
                 Assert.Fail("3");
             }
-            catch(SyntaxIncorrectException) {
-                Assert.IsTrue(true);
-            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(SyntaxIncorrectException), ex.GetType().ToString()); }
         }
 
         /// <summary>
