@@ -175,7 +175,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
             IInspector inspector    = new Inspector(bootloader);
             logic                   = new Logic.Events(bootloader, inspector);
-            textEditor.codeCompletionInit(inspector);
+            textEditor.codeCompletionInit(inspector, new MSBuild.Parser(bootloader.Env, bootloader.UVariable));
             
             Icon = Resource.Package_32;
             toolTip.SetToolTip(pictureBoxWarnWait, Resource.StringWarnForWaiting);

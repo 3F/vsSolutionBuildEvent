@@ -56,7 +56,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards
             editorStepGen.setBackgroundFromString("#F4F4F4");
 
             editorFinalScript.colorize(TextEditor.ColorSchema.SBEScripts);
-            editorFinalScript.codeCompletionInit(new Inspector(bootloader));
+            editorFinalScript.codeCompletionInit(new Inspector(bootloader), new MSBuild.Parser(bootloader.Env, bootloader.UVariable));
             editorFinalScript.CodeCompletionEnabled = true;
             editorFinalScript._.WordWrap            = false;
 

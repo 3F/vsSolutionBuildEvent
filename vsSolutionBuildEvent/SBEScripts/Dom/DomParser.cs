@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,19 +16,26 @@
 */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using ICSharpCode.AvalonEdit.CodeCompletion;
+using net.r_eg.vsSBE.MSBuild;
 
 namespace net.r_eg.vsSBE.SBEScripts.Dom
 {
     public class DomParser
     {
+        /// <summary>
+        /// Caching of retrieved properties
+        /// </summary>
+        private ConcurrentDictionary<string, List<PropertyItem>> pcache = new ConcurrentDictionary<string, List<PropertyItem>>();
+
         public enum KeysCommand
         {
             Default,
             /// <summary>
-            /// Started of container '#['..
+            /// Start of container '#['..
             /// </summary>
             Container,
             /// <summary>
@@ -43,12 +50,22 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
             /// Space key
             /// </summary>
             Space,
+            /// <summary>
+            /// Start of container '$('..
+            /// </summary>
+            MSBuildContainer,
         }
 
         /// <summary>
         /// Mapper of the available components
         /// </summary>
         public IInspector Inspector
+        {
+            get;
+            protected set;
+        }
+
+        public IMSBuild MSBuild
         {
             get;
             protected set;
@@ -74,28 +91,35 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
                 return ListEmpty;
             }
 
-            if(cmd == KeysCommand.Container) { // '#[' - root for any place
+            if(cmd == KeysCommand.MSBuildContainer) { // '#[' - root of the MSBuild container
+                return listMSBuildProperties(null);
+            }
+
+            if(cmd == KeysCommand.Container) { // '#[' - root of the SBE container
                 return listComponents(null);
             }
 
             data = region(data, offset);
 
-            Match mRoot = Regex.Match(data, @"^\#\[
-                                              (?:
-                                                 \s*
-                                                 |
-                                                 (\S+)  #1 - component name
-                                              )$", RegexOptions.IgnorePatternWhitespace);
-
-
-            if(mRoot.Success) // '#[ '<--
-            {
-                if(cmd == KeysCommand.CtrlSpace) {
-                    return listComponents(mRoot.Groups[1].Value);
-                }
-                return ListNull;
+            // '$( '<--
+            if(Regex.IsMatch(data, @"\$\(\s*\w*$")) {
+                return (cmd == KeysCommand.CtrlSpace)? listMSBuildProperties() : ListNull;
             }
 
+            // '#[ '<--
+            Match root = Regex.Match(data, @"\#\[
+                                             (?:
+                                                (?'data'\S+)
+                                              |
+                                                \s*
+                                             )$", RegexOptions.IgnorePatternWhitespace);
+
+
+            if(root.Success) {
+                return (cmd == KeysCommand.CtrlSpace)? listComponents(root.Groups["data"].Value) : ListNull;
+            }
+
+            // '#[...' -->
             Match m = Regex.Match(data, @"^\#\[
                                           \s*
                                           (\S+)     #1 - Component
@@ -119,9 +143,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
             return find(cmd, component, (m.Groups[2].Success)? m.Groups[2].Value : null);
         }
 
-        public DomParser(IInspector inspector)
+        public DomParser(IInspector inspector, IMSBuild msbuild = null)
         {
-            Inspector = inspector;
+            Inspector   = inspector;
+            MSBuild     = msbuild;
         }
 
         /// <param name="cmd">Pushed command</param>
@@ -247,6 +272,15 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
             }
         }
 
+        protected IEnumerable<ICompletionData> listMSBuildProperties(string project = null)
+        {
+            foreach(MSBuild.PropertyItem prop in getMSBProperties(project)) {
+                if(!String.IsNullOrWhiteSpace(prop.name)) {
+                    yield return new CompletionData(prop.name, prop.value, InfoType.Definition);
+                }
+            }
+        }
+
         protected IEnumerable<ICompletionData> list(NodeIdent ident, string name = null)
         {
             INodeInfo hidden = isHiddenLevel(ident);
@@ -300,6 +334,24 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
                 }
             }
             return null;
+        }
+
+        private List<PropertyItem> getMSBProperties(string project)
+        {
+            string key = project;
+            if(String.IsNullOrEmpty(key)) {
+                key = "default";
+            }
+
+            if(!pcache.ContainsKey(key))
+            {
+                if(MSBuild == null) {
+                    return new List<PropertyItem>();
+                }
+                pcache[key] = MSBuild.listProperties(project);
+                Log.Debug("Properties has been saved in cache ['{0}']", key);
+            }
+            return pcache[key];
         }
 
         private bool _isLatest(char symbol, string data)

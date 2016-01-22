@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -33,6 +33,7 @@ using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Search;
 using net.r_eg.vsSBE.Configuration.User;
+using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.UI.WForms.Controls.TextEditorElements;
 using AvalonEditorWPF = ICSharpCode.AvalonEdit.TextEditor;
@@ -154,9 +155,9 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
         /// Updating model of the data for code completion
         /// </summary>
         /// <param name="inspector"></param>
-        public void codeCompletionInit(IInspector inspector)
+        public void codeCompletionInit(IInspector inspector, IMSBuild msbuild = null)
         {
-            dom = new DomParser(inspector);
+            dom = new DomParser(inspector, msbuild);
             Log.Trace("Code completion has been initialized for '{0}'", Name);
         }
 
@@ -428,6 +429,9 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
             }
             else if(e.Text == " ") {
                 cmd = DomParser.KeysCommand.Space;
+            }
+            else if(e.Text == "(" && _.TextArea.Document.Text[Math.Max(0, _.TextArea.Caret.Offset - 2)] == '$') {
+                cmd = DomParser.KeysCommand.MSBuildContainer;
             }
 
             if(cmd != DomParser.KeysCommand.Default) {
