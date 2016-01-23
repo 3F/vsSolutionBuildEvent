@@ -179,7 +179,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                      \]$", 
                                                      (CRegex)? Condition : Condition.Replace(" ", @"\s")
                                     ),
-                                    RegexOptions.IgnorePatternWhitespace | opt);
+                                    RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | opt);
 
             if(!m.Success) {
                 throw new SyntaxIncorrectException("Failed {0} - `{1}`", GetType().FullName, data);

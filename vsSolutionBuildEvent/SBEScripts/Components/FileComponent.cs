@@ -737,7 +737,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         ///  `copy.file(string src, string dest, bool overwrite [, object except])`
         /// </summary>
         [Method("file",
-                "To copy the selected file to the destination. Creates the destination path if not exists.",
+                "To copy selected file to the destination. Creates the destination path if not exists.",
                 "copy", "stCopy",
                 new string[] { "src", "dest", "overwrite" },
                 new string[] { "Source file. May contain mask as *.dll, *.*, ...",
@@ -747,7 +747,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 CValueType.String, CValueType.String, CValueType.Boolean
         )]
         [Method("file",
-                "To copy the selected file to the destination. Creates the destination path if not exists.",
+                "To copy selected file to the destination. Creates the destination path if not exists.",
                 "copy", "stCopy",
                 new string[] { "src", "dest", "overwrite", "except" },
                 new string[] { "Source file. May contain mask as *.dll, *.*, ...",
@@ -772,7 +772,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected string copyFile(IPM pm, string src, string dest, bool overwrite, Argument[] except = null)
         {
             if(String.IsNullOrWhiteSpace(src) || String.IsNullOrWhiteSpace(dest)) {
-                throw new InvalidArgumentException("The source file or the destination path is empty.");
+                throw new InvalidArgumentException("The source file or the destination path argument is empty.");
             }
 
             if(except != null && except.Any(p => p.type != ArgumentType.StringDouble)) {
@@ -829,18 +829,21 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         ///  `copy.directory(string src, string dest, bool force [, bool overwrite])`
         /// </summary>
         [Method("directory",
-                "To copy the selected directory and subdirectories to the destination.",
+                "To copy selected directory and subdirectories to the destination.",
                 "copy", "stCopy",
                 new string[] { "src", "dest", "force" },
-                new string[] { "The source directory.", "The destination directory.", "Create the destination path if not exists." },
+                new string[] { "The source directory. Can be empty as new directory.", "The destination directory.", "Create the destination path if not exists." },
                 CValueType.Void,
                 CValueType.String, CValueType.String, CValueType.Boolean
         )]
         [Method("directory",
-                "To copy the selected directory and subdirectories to the destination.",
+                "To copy selected directory and subdirectories to the destination.",
                 "copy", "stCopy",
                 new string[] { "src", "dest", "force", "overwrite" },
-                new string[] { "The source directory.", "The destination directory.", "Create the destination path if not exists.", "Overwrite files if already exists." },
+                new string[] { "The source directory. Can be empty as new directory.",
+                                "The destination directory.",
+                                "Create the destination path if not exists.",
+                                "Overwrite files if already exists." },
                 CValueType.Void,
                 CValueType.String, CValueType.String, CValueType.Boolean, CValueType.Boolean
         )]
@@ -858,12 +861,21 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         protected string copyDirectory(IPM pm, string src, string dest, bool force, bool overwrite = false)
         {
-            if(String.IsNullOrWhiteSpace(src) || String.IsNullOrWhiteSpace(dest)) {
-                throw new InvalidArgumentException("The source or the destination directory is empty.");
+            if(String.IsNullOrWhiteSpace(dest)) {
+                throw new InvalidArgumentException("The destination directory argument is empty.");
             }
 
-            src  = location(src.PathFormat());
             dest = Path.GetDirectoryName(location(dest.PathFormat()));
+
+            if(String.IsNullOrWhiteSpace(src)) {
+                if(force) {
+                    mkdir(dest);
+                    return Value.Empty;
+                }
+                throw new InvalidArgumentException("Use `force` flag if you want to create directory `{0}`", dest);
+            }
+
+            src = location(src.PathFormat());
 
             var files = Directory.EnumerateFiles(src, "*.*", SearchOption.AllDirectories)
                                     .Select(f => new[] { f, Path.Combine(dest, f.Substring(src.Length)) });
@@ -919,7 +931,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         ///  `delete.files(object files [, object except])`
         /// </summary>
         [Method("files",
-                "To delete the selected files.",
+                "To delete selected files.",
                 "delete", "stDelete",
                 new string[] { "files" },
                 new string[] { "List of files to deletion as {\"f1\", \"path\\*.dll\", ..}" },
@@ -927,7 +939,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 CValueType.Object
         )]
         [Method("files",
-                "To delete the selected files.",
+                "To delete selected files.",
                 "delete", "stDelete",
                 new string[] { "files", "except" },
                 new string[] { "List of files to deletion as {\"f1\", \"path\\*.dll\", ..}", "List of files to exclude from input list." },
@@ -996,7 +1008,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         ///  `delete.directory(string dir, bool force)`
         /// </summary>
         [Method("directory",
-                "To delete the selected directory.",
+                "To delete selected directory.",
                 "delete", "stDelete",
                 new string[] { "dir", "force" },
                 new string[] { "Path to directory for deletion.", "To remove non-empty directories." },
@@ -1024,7 +1036,17 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected virtual void deleteDirectory(string src, bool force)
         {
             Log.Trace("Delete directory `{0}` /force: {1}", src, force);
-            Directory.Delete(src, force);
+            if(Directory.Exists(src)) { // to avoid errors.. like `File.Delete`
+                Directory.Delete(src, force);
+            }
+        }
+
+        protected virtual void mkdir(string path)
+        {
+            if(!Directory.Exists(path)) {
+                Log.Trace("Create empty directory `{0}`", path);
+                Directory.CreateDirectory(path);
+            }
         }
 
         /// <param name="file">The file to be read</param>

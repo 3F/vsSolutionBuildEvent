@@ -95,7 +95,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.NuGet.GetNuTool
         public void getCommand(string packages, string config = null, string path = null, string server = null)
         {
             string list = prepareList(config ?? String.Empty, packages ?? String.Empty);
-            downloader(list, server ?? ngserver, path ?? ngpath, debug);
+            downloader(list, server ?? ngserver, location(path ?? ngpath), debug);
         }
 
         /// <param name="dir"></param>

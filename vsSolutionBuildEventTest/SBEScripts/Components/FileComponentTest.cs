@@ -639,6 +639,24 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         }
 
         /// <summary>
+        ///A test for parse - stCopy - copy.directory - mkdir
+        ///</summary>
+        [TestMethod()]
+        public void stCopyDirectoryTest3()
+        {
+            var target = new FileComponentCopyDirectoryAccessor();
+
+            try {
+                target.parse("[File copy.directory(\"\", \"path2\\sub1\", false, true)]");
+                Assert.Fail("1");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+
+            Assert.AreEqual(Value.Empty, target.parse("[File copy.directory(\"\", \"path2\\sub1\", true)]"));
+            Assert.AreEqual(true, target.cmpPaths("path2\\sub1", target.dest));
+        }
+
+        /// <summary>
         ///A test for parse - stDelete
         ///</summary>
         [TestMethod()]
@@ -850,6 +868,12 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 this.force      = force;
                 this.overwrite  = overwrite;
                 //base.copyDirectory(files, dest, force, overwrite);
+            }
+
+            protected override void mkdir(string path)
+            {
+                this.dest = path;
+                //base.mkdir(path);
             }
         }
 

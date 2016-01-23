@@ -338,6 +338,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 CompressionLevel    = rate,
                 CompressionMode     = CompressionMode.Create,
                 FastCompression     = true, // to disable some events inside SevenZip
+                DirectoryStructure  = true,
             };
 
             compressFiles(zip, location(name), input);

@@ -81,9 +81,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.NuGet.GetNuTool
             };
 
             var ret = new Queue<string>();
-            foreach(var cfg in config.Split('|')) {
-                if(File.Exists(cfg)) {
-                    h(cfg, ret);
+            foreach(string cfg in config.Split('|')) {
+                string lcfg = location(cfg);
+                if(File.Exists(lcfg)) {
+                    h(lcfg, ret);
                 }
             }
 
