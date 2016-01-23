@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -43,6 +43,19 @@ namespace net.r_eg.vsSBE.MSBuild
             StringFromSingle,
         }
 
+        public enum VariableType
+        {
+            Default,
+            /// <summary>
+            /// Set the msbuild property.
+            /// </summary>
+            DefProperty,
+            /// <summary>
+            /// Unset the msbuild property.
+            /// </summary>
+            UndefProperty,
+        }
+
         public struct Variable
         {
             /// <summary>
@@ -65,6 +78,11 @@ namespace net.r_eg.vsSBE.MSBuild
             /// Available types of value
             /// </summary>
             public ValueType type;
+
+            /// <summary>
+            /// Additional operation for current variable.
+            /// </summary>
+            public VariableType operation;
         }
 
         public struct Property

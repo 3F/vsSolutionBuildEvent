@@ -68,6 +68,7 @@ namespace net.r_eg.vsSBE.MSBuild
                                     String.Format(@"^\(  
                                                        (?:
                                                          \s*
+                                                         (?'tsign'-|\+)?
                                                          ([A-Za-z_0-9]+) # 1 -> variable name (optional)
                                                          \s*=\s*
                                                          (?: {0}         # 2 -> string data inside double quotes
@@ -85,7 +86,7 @@ namespace net.r_eg.vsSBE.MSBuild
                                                    \)$",
                                                    DoubleQuotesContent,
                                                    SingleQuotesContent
-                                                 ),
+                                    ),
                                     RegexOptions.IgnorePatternWhitespace |
                                     RegexOptions.Compiled);
                 }

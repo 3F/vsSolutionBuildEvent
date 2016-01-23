@@ -160,7 +160,7 @@ namespace net.r_eg.vsSBE.MSBuild
             lock(_lock)
             {
                 try {
-                    defVariables(project);
+                    defProperties(project);
                     project.SetProperty(container, Tokens.characters(_wrapProperty(ref unevaluated)));
                     return project.GetProperty(container).EvaluatedValue;
                 }
@@ -218,6 +218,7 @@ namespace net.r_eg.vsSBE.MSBuild
         {
             this.env        = env;
             this.uvariable  = uvariable;
+            setPropertiesByDefault();
         }
 
         /// <summary>
@@ -225,11 +226,10 @@ namespace net.r_eg.vsSBE.MSBuild
         /// </summary>
         /// <param name="env">Used environment</param>
         public Parser(IEnvironment env)
+            : this(env, new UserVariable())
         {
-            this.env        = env;
-            this.uvariable  = new UserVariable();
-        }
 
+        }
 
         /// <summary>
         /// Handler of general containers.
@@ -287,6 +287,7 @@ namespace net.r_eg.vsSBE.MSBuild
                 throw new IncorrectSyntaxException("prepare: failed - '{0}'", raw);
             }
 
+            Group rTSign            = m.Groups["tsign"];
             Group rVariable         = m.Groups[1];
             Group rStringDataD      = m.Groups[2];
             Group rStringDataS      = m.Groups[3];
@@ -305,8 +306,23 @@ namespace net.r_eg.vsSBE.MSBuild
 
             /* Variable */
 
-            if(rVariable.Success) {
+            if(rVariable.Success)
+            {
                 ret.variable.name = rVariable.Value;
+                switch(rTSign.Value) {
+                    case "+": {
+                        ret.variable.operation = PreparedData.VariableType.DefProperty;
+                        break;
+                    }
+                    case "-": {
+                        ret.variable.operation = PreparedData.VariableType.UndefProperty;
+                        break;
+                    }
+                    default: {
+                        ret.variable.operation = PreparedData.VariableType.Default;
+                        break;
+                    }
+                }
                 // all $() in right operand cannot be evaluated because it's escaped and already unwrapped property.
                 // i.e. this already should be evaluated with prev. steps - because we are moving upward from deepest container !
                 Log.Trace("prepare: variable name = '{0}'", ret.variable.name);
@@ -444,7 +460,7 @@ namespace net.r_eg.vsSBE.MSBuild
                     || !String.IsNullOrEmpty(prepared.variable.name))
             {
                 //Note: * content from double quotes should be already evaluated in prev. steps.
-                //      * content from single quotes shouldn't be evaluated because uses protector for current type above.
+                //      * content from single quotes shouldn't be evaluated by rules with protector above.
                 Log.Trace("Evaluate: use content from string or use escaped property");
                 evaluated = prepared.property.unevaluated;
             }
@@ -479,6 +495,13 @@ namespace net.r_eg.vsSBE.MSBuild
 
                 uvariable.set(prepared.variable.name, prepared.variable.project, evaluated);
                 uvariable.evaluate(prepared.variable.name, prepared.variable.project, new EvaluatorBlank(), true);
+
+                if(prepared.variable.operation == PreparedData.VariableType.DefProperty) {
+                    defProperty(prepared.variable);
+                }
+                else if(prepared.variable.operation == PreparedData.VariableType.UndefProperty) {
+                    undefProperty(prepared.variable);
+                }
                 evaluated = String.Empty;
             }
 
@@ -513,23 +536,55 @@ namespace net.r_eg.vsSBE.MSBuild
         }
 
         /// <summary>
-        /// Define variables for project context from all user-variables
+        /// Define properties of project context from user-variables.
         /// </summary>
         /// <param name="project"></param>
-        protected void defVariables(Project project)
+        protected void defProperties(Project project)
         {
-            foreach(TUserVariable uvar in uvariable.Variables)
-            {
-                if(uvar.status != TUserVariable.StatusType.Started) {
-                    project.SetGlobalProperty(uvar.ident, getUVariableValue(uvar.ident));
-                    continue;
-                }
+            foreach(TUserVariable uvar in uvariable.Variables) {
+                defProperty(uvar, project);
+            }
+        }
 
-                if(uvar.prev != null && ((TUserVariable)uvar.prev).unevaluated != null)
-                {
-                    TUserVariable prev = (TUserVariable)uvar.prev;
-                    project.SetGlobalProperty(uvar.ident, (prev.evaluated == null)? prev.unevaluated : prev.evaluated);
-                }
+        protected void defProperty(TUserVariable uvar, Project project)
+        {
+            if(uvar.status != TUserVariable.StatusType.Started) {
+                project.SetGlobalProperty(uvar.ident, getUVariableValue(uvar.ident));
+                return;
+            }
+
+            if(uvar.prev != null && ((TUserVariable)uvar.prev).unevaluated != null)
+            {
+                TUserVariable prev = (TUserVariable)uvar.prev;
+                project.SetGlobalProperty(uvar.ident, (prev.evaluated == null)? prev.unevaluated : prev.evaluated);
+            }
+        }
+
+        protected void defProperty(PreparedData.Variable variable)
+        {
+            Log.Debug("Set MSBuild property: `{0}`:`{1}`", variable.name, variable.project);
+            defProperty(uvariable.getVariable(variable.name, variable.project), getProject(variable.project));
+        }
+
+        protected bool undefProperty(PreparedData.Variable variable)
+        {
+            Log.Debug("Unset MSBuild property: `{0}`:`{1}`", variable.name, variable.project);
+            Project project = getProject(variable.project);
+
+            var uvar = uvariable.getVariable(variable.name, variable.project);
+            return project.RemoveGlobalProperty(uvar.ident);
+        }
+
+        protected void setPropertiesByDefault()
+        {
+            Project project = getProject(null);
+            if(project == null) {
+                Log.Debug("The default global properties cannot be defined.");
+                return;
+            }
+
+            if(!project.GlobalProperties.ContainsKey(Settings.APP_NAME)) {
+                project.SetGlobalProperty(Settings.APP_NAME, Version.numberWithRevString);
             }
         }
 

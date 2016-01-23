@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -26,6 +26,22 @@ namespace net.r_eg.vsSBE.Scripts
     public class UserVariable: IUserVariable, IUserVariableDebug
     {
         /// <summary>
+        /// Contains all defined user-variables.
+        /// 
+        /// Note: ConcurrentDictionary used Nodes! order is unpredictable - see m_tables & internal adding
+        /// http://referencesource.microsoft.com/#mscorlib/system/Collections/Concurrent/ConcurrentDictionary.cs
+        /// https://bitbucket.org/3F/vssolutionbuildevent/commits/34cdc43df67#comment-1330734
+        /// 
+        /// Also variant use the both SynchronizedCollection/BlockingCollection + ConcurrentDictionary for O(1) operations
+        /// </summary>
+        protected Dictionary<string, TUserVariable> definitions = new Dictionary<string, TUserVariable>();
+
+        /// <summary>
+        /// object synch.
+        /// </summary>
+        private Object _lock = new Object();
+
+        /// <summary>
         /// Exposes the enumerable for defined names of user-variables
         /// </summary>
         public IEnumerable<string> Definitions
@@ -48,22 +64,6 @@ namespace net.r_eg.vsSBE.Scripts
                 }
             }
         }
-
-        /// <summary>
-        /// Contains the all defined user-variables.
-        /// 
-        /// Note: ConcurrentDictionary used Nodes! order is unpredictable - see m_tables & internal adding
-        /// http://referencesource.microsoft.com/#mscorlib/system/Collections/Concurrent/ConcurrentDictionary.cs
-        /// https://bitbucket.org/3F/vssolutionbuildevent/commits/34cdc43df67#comment-1330734
-        /// 
-        /// Also variant use the both SynchronizedCollection/BlockingCollection + ConcurrentDictionary for O(1) operations
-        /// </summary>
-        protected Dictionary<string, TUserVariable> definitions = new Dictionary<string, TUserVariable>();
-
-        /// <summary>
-        /// object synch.
-        /// </summary>
-        private Object _lock = new Object();
 
         /// <summary>
         /// Getting value of user-variable by using scope of project
@@ -95,6 +95,33 @@ namespace net.r_eg.vsSBE.Scripts
                     evaluated = String.Empty;
                 }
                 return evaluated;
+            }
+        }
+
+        /// <summary>
+        /// Get user-variable struct by using scope of project
+        /// </summary>
+        /// <param name="name">variable name</param>
+        /// <param name="project">project name</param>
+        /// <returns>Struct of user-variable</returns>
+        public TUserVariable getVariable(string name, string project)
+        {
+            return getVariable(defIndex(name, project));
+        }
+
+        /// <summary>
+        /// Get user-variable struct by using unique identification
+        /// </summary>
+        /// <param name="ident">Unique identificator</param>
+        /// <returns>Struct of user-variable</returns>
+        public TUserVariable getVariable(string ident)
+        {
+            lock(_lock)
+            {
+                if(definitions.ContainsKey(ident)) {
+                    return definitions[ident];
+                }
+                return default(TUserVariable);
             }
         }
 
