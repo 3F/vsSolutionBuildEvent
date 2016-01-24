@@ -1,7 +1,7 @@
 @echo off
 
 REM # Version of used CI.MSBuild
-set CIM=1.5.1
+set CIM=1.5.1206
 
 REM # Version of MSBuild tool by default
 set _msbuild=12.0
