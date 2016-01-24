@@ -1,6 +1,79 @@
 vsSolutionBuildEvent
 ____________________
 
+[v0.12.6] 2016.01.24
+    * FIXED: Bug with configuration for Isolated and other external Environments (CI.MSBuild, Devenv, etc.)
+                - `Failed Solution.Pre-binding: 'Object reference not set to an instance of an object.'`
+                - `Failed build-raw: 'Object reference not set to an instance of an object.'` ...
+
+    * FIXED: MSBuild: Fixed incorrect evaluation from double quotes if used `(`, `)` symbols.
+             Evaluation from single quotes is still protected for compatibility with original logic.
+             Because it can be different for ~      
+             ```
+                 $([MSBuild]::Multiply('$([System.Math]::Log(2))', 16)) -> 1,10903548889591E+16
+                 \                     \_(1) 0,693147180559945_/
+                 \_______________(2)__________________________________/
+          
+                 $([MSBuild]::Multiply('$([System.Math]::Log(2))', 16)) -> 11,0903548889591
+                 \______________________(1)___________________________/
+          
+             $([System.Math]::Exp(1.10903548889591E+16)) = ∞
+             $([System.Math]::Exp(11.0903548889591)) = 65535,9999999983
+             ```
+             See the documentation for details.
+
+    * FIXED: Possible null-reference exception when getting name from "Set as StartUp Project".
+    * FIXED: `SBEScripts-selector: not found component for handling` with vsSBE & Core alias (InternalComponent)
+    * FIXED: [FileComponent] Fixed BOM for all UTF-8 encodings when is used the `replace` methods.
+    * NEW: Added SevenZipComponent for work with archives via 7-Zip engine (www.7-zip.org).
+            Method signatures:
+                - `void pack.files(object files, string output [, object except][, enum format, enum method, integer level])`
+                - `void pack.directory(string dir, string output [, enum format, enum method, integer level])`
+                - `boolean check(string file [, string pwd])`
+                - `void unpack(string file [, string output][, boolean delete][, string pwd])` ...
+            
+    * NEW: Added NuGetComponent for work with NuGet packages (nupkg) via GetNuTool logic. (SBE-Scripts)
+            GetNuTool v1.3
+            Method signatures:
+                - `void gnt.raw(string command)` ...
+                
+    * NEW: Forcing evaluation with MSBuild engine from new MSBuildComponent. (SBE-Scripts)
+    * NEW: [FileComponent] remote.download() to download files from remote server.
+            Method signatures:
+                - `void remote.download(string addr, string output [, string user, string pwd])` ...
+                
+    * NEW: [FileComponent] copy() methods to copy selected files / directories to the destination. +mkdir
+            Fast operations instead of xcopy etc.
+            Method signatures:
+                - `void copy.file(string src, string dest, bool overwrite [, object except])`
+                - `void copy.directory(string src, string dest, bool force [, bool overwrite])` ...
+                
+    * NEW: [FileComponent] delete() methods to delete selected files / directories.
+            Method signatures:
+                - `void delete.files(object files [, object except])`
+                - `void delete.directory(string dir, bool force)` ...
+                
+    * NEW: [FileComponent] BOM (Byte-Order Mark) special names: `utf-8-bom` (0xEF 0xBB 0xBF) & `utf-8`
+    * NEW: [MSBuild core] Global MSBuild properties $(+name = ...) & $(-name = ...)
+    * NEW: Added special marker `<#data> ... </#data>` to avoid broken container for unpaired symbols `[`, `]` (SBE-Scripts)
+    * NEW: UI. Added list of the MSBuild Properties in code completion. start with '$('<--
+    * CHANGED: The ToolsVersion="4.0" now is used by default instead of 12.0 (Targets Mode - Template)
+    * CHANGED: [FileComponent] Default encoding for all I/O operations - `UTF-8 Without BOM`
+    * CHANGED: [FileComponent] Removed processing of tokens when is used the `write` operations.
+    * CHANGED: Allowed using of the vsSBE panel from VS.Output Window. R/W operations. (OWPComponent)
+    * CHANGED: Unescaping the quote characters from arguments by default. (SBE-Scripts)
+    * CHANGED: Allowed evaluation of string arguments with MSBuild engine for:
+                Components:
+                    - BuildComponent
+                    - FileComponent
+                    - FunctionComponent
+                    - NuGetComponent
+                    - SevenZipComponent
+                    
+    * CHANGED: Allowed multiline definitions of all nodes. (SBE-Scripts)
+    * CHANGED: Updated forms of Boolean type. See the documentation. (SBE-Scripts)
+    * CHANGED: Updated NLog v4.2.3 & Newtonsoft.Json v8.0.2
+
 [v0.12.5] 2015.12.06
     * FIXED: Infinite loop with user-variables(+recursive properties) in MSBuild engine.
     * FIXED: "Fail: PM - getRightOperand: incorrect data ')")'" -> Func / SHA1 & MD5 (FunctionComponent)
