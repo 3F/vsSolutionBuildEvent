@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -60,6 +60,11 @@ namespace net.r_eg.vsSBE.API
         /// Provides command events for automation clients
         /// </summary>
         protected EnvDTE.CommandEvents cmdEvents;
+
+        /// <summary>
+        /// The low priority level of the solution events.
+        /// </summary>
+        protected EnvDTE.SolutionEvents slnEvents;
 
         /// <summary>
         /// Access to client library
@@ -401,7 +406,12 @@ namespace net.r_eg.vsSBE.API
             UI.Plain.State.print(config.Data);
 
             OpenedSolution(this, new EventArgs());
-            clientLib.Event.solutionOpened(pUnkReserved, fNewSolution);
+
+            // delay calling
+            lock(_lock) {
+                slnEvents.Opened -= slnOpenedLowPriority;
+                slnEvents.Opened += slnOpenedLowPriority;
+            }
             return Codes.Success;
         }
 
@@ -412,12 +422,21 @@ namespace net.r_eg.vsSBE.API
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int solutionClosed(object pUnkReserved)
         {
-            clientLib.Event.solutionClosed(pUnkReserved);
+            int ret;
+            try {
+                ret = Action.bindSlnClosed();
+                clientLib.Event.solutionClosed(pUnkReserved);
+            }
+            catch(Exception ex) {
+                Log.Error("Failed Solution.SlnClosed-binding: `{0}`", ex.Message);
+                ret = Codes.Failed;
+            }
+
             ClosedSolution(this, new EventArgs());
 
             ConfigManager.Config.unload();
             ConfigManager.UserConfig.unload();
-            return Codes.Success;
+            return ret;
         }
 
         /// <summary>
@@ -454,7 +473,8 @@ namespace net.r_eg.vsSBE.API
                 }
 #endif
 
-            Environment.CoreCmdSender = this;
+            slnEvents                   = Environment.Events.SolutionEvents;
+            Environment.CoreCmdSender   = this;
             attachCommandEvents();
 
             this.Bootloader = new Bootloader(Environment, uvariable);
@@ -513,9 +533,29 @@ namespace net.r_eg.vsSBE.API
             if(cmdEvents == null) {
                 return;
             }
+
             lock(_lock) {
                 cmdEvents.BeforeExecute -= _cmdBeforeExecute;
                 cmdEvents.AfterExecute  -= _cmdAfterExecute;
+            }
+        }
+
+        /// <summary>
+        /// The low priority handler for work only when all projects are opened.
+        /// Mainly we work with priority ( http://stackoverflow.com/q/27018762 ) so this should be handled after the all 'OnAfterOpenProject' etc. as non-priority 'IVsSolutionEvents.OnAfterOpenSolution'
+        /// </summary>
+        private void slnOpenedLowPriority()
+        {
+            lock(_lock)
+            {
+                slnEvents.Opened -= slnOpenedLowPriority;
+                try {
+                    Action.bindSlnOpened();
+                    clientLib.Event.solutionOpened(new object(), 0); //TODO: use from solutionOpened(object pUnkReserved, int fNewSolution)
+                }
+                catch(Exception ex) {
+                    Log.Error("Failed Solution.SlnOpened-binding: `{0}`", ex.Message);
+                }
             }
         }
 

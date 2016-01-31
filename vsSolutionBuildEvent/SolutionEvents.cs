@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -144,9 +144,31 @@ namespace net.r_eg.vsSBE
         [NonSerialized]
         private LoggingEvent[] logging = new LoggingEvent[] { };
 
+        /// <summary>
+        /// Solution has been opened.
+        /// </summary>
+        public SBEEvent[] SlnOpened
+        {
+            get { return slnOpened; }
+            set { slnOpened = value; }
+        }
+        [NonSerialized]
+        private SBEEvent[] slnOpened = new SBEEvent[] { };
 
         /// <summary>
-        /// Getting event by type.
+        /// Solution has been closed.
+        /// </summary>
+        public SBEEvent[] SlnClosed
+        {
+            get { return slnClosed; }
+            set { slnClosed = value; }
+        }
+        [NonSerialized]
+        private SBEEvent[] slnClosed = new SBEEvent[] { };
+
+
+        /// <summary>
+        /// The event by type.
         /// </summary>
         /// <param name="type">Available event.</param>
         /// <exception cref="NotFoundException"></exception>
@@ -181,8 +203,15 @@ namespace net.r_eg.vsSBE
                 case SolutionEventType.Logging: {
                     return Logging;
                 }
+                case SolutionEventType.SlnOpened: {
+                    return SlnOpened;
+                }
+                case SolutionEventType.SlnClosed: {
+                    return SlnClosed;
+                }
             }
-            throw new NotFoundException("getEvent: Not found event type - '{0}'", type);
+
+            throw new NotFoundException("getEvent: the event type '{0}' is not found.", type);
         }
     }
 }

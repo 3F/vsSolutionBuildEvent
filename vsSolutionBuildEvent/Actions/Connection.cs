@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -212,6 +212,24 @@ namespace net.r_eg.vsSBE.Actions
                 }
             }
             return Status._.contains(SolutionEventType.Cancel, StatusType.Fail)? Codes.Failed : Codes.Success;
+        }
+
+        /// <summary>
+        /// Binding 'Sln-Opened'
+        /// </summary>
+        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
+        public int bindSlnOpened()
+        {
+            return bindSln(SlnEvents.SlnOpened, SolutionEventType.SlnOpened);
+        }
+
+        /// <summary>
+        /// Binding 'Sln-Closed'
+        /// </summary>
+        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
+        public int bindSlnClosed()
+        {
+            return bindSln(SlnEvents.SlnClosed, SolutionEventType.SlnClosed);
         }
 
         /// <summary>
@@ -479,6 +497,34 @@ namespace net.r_eg.vsSBE.Actions
                 Log.Error("CommandEvent error: '{0}'", ex.Message);
             }
             Status._.add(SolutionEventType.CommandEvent, StatusType.Fail);
+        }
+
+        protected int bindSln(SBEEvent[] evt, SolutionEventType type)
+        {
+            if(isDisabledAll(evt)) {
+                return Codes.Success;
+            }
+
+            if(!IsAllowActions) {
+                return _ignoredAction(type);
+            }
+
+            string typeString = SolutionEventType.SlnOpened.ToString();
+            foreach(SBEEvent item in evt)
+            {
+                try {
+                    if(cmd.exec(item, type)) {
+                        Log.Info("[{0}] finished SBE: `{1}`", typeString, item.Caption);
+                    }
+                    Status._.add(type, StatusType.Success);
+                }
+                catch(Exception ex) {
+                    Log.Error("[{0}] error: `{1}`", typeString, ex.Message);
+                    Status._.add(type, StatusType.Fail);
+                }
+            }
+
+            return Status._.contains(type, StatusType.Fail)? Codes.Failed : Codes.Success;
         }
 
         /// <summary>

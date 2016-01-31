@@ -341,7 +341,7 @@
       "Caption": "Definitions for POST",
       "SupportMSBuild": true,
       "SupportSBEScripts": true,
-      "IgnoreIfBuildFailed": true,
+      "IgnoreIfBuildFailed": false,
       "BuildType": "Common",
       "Confirmation": false,
       "ToConfiguration": [],

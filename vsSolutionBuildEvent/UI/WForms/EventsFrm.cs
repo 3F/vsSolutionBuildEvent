@@ -412,10 +412,15 @@ namespace net.r_eg.vsSBE.UI.WForms
                 }
                 case SolutionEventType.Pre:
                 case SolutionEventType.Cancel:
+                case SolutionEventType.SlnClosed:
                 case SolutionEventType.Post:
                 {
                     checkBoxIgnoreIfFailed.Enabled  = true;
                     pictureBoxWarnWait.Visible      = false;
+                    break;
+                }
+                case SolutionEventType.SlnOpened: {
+                    pictureBoxWarnWait.Visible = false;
                     break;
                 }
                 case SolutionEventType.Logging:

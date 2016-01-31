@@ -52,6 +52,8 @@ namespace net.r_eg.vsSBE.UI.Plain
             sb.Append(about(data.WarningsBuild, "Warnings-Build"));
             sb.Append(about(data.ErrorsBuild,   "Errors-Build  "));
             sb.Append(about(data.OWPBuild,      "Output-Build  "));
+            sb.Append(about(data.SlnOpened,     "Sln-Opened    "));
+            sb.Append(about(data.SlnClosed,     "Sln-Closed    "));
             sb.Append(about(data.Transmitter,   "Transmitter   "));
             sb.Append(about(data.Logging,       "Logging       "));
             sb.Append("\n---\n");

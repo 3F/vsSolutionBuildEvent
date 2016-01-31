@@ -4,10 +4,10 @@ REM # Version of used CI.MSBuild
 set CIM=1.5.1206
 
 REM # Version of MSBuild tool by default
-set _msbuild=12.0
+set _msbuild=14.0
 
 REM # Solution file by defualt
-set sln=vsSolutionBuildEvent_net40.sln
+set sln=vsSolutionBuildEvent_2015.sln
 
 REM # Target by default
 set target=Rebuild

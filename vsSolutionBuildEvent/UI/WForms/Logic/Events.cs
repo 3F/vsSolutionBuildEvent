@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -334,16 +334,16 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             combo.Items.Clear();
 
             addEvent(new SBEWrap(SolutionEventType.Pre));
-            combo.Items.Add(":: Pre-Build :: Before assembling");
+            combo.Items.Add(":: Pre-Build :: Before build");
 
             addEvent(new SBEWrap(SolutionEventType.Post));
-            combo.Items.Add(":: Post-Build :: After assembling");
+            combo.Items.Add(":: Post-Build :: After build");
 
             addEvent(new SBEWrap(SolutionEventType.Cancel));
             combo.Items.Add(":: Cancel-Build :: by user or when occurs error");
 
             addEvent(new SBEWrap(SolutionEventType.CommandEvent));
-            combo.Items.Add(":: CommandEvent (DTE) :: All Command Events from EnvDTE");
+            combo.Items.Add(":: CommandEvent (DTE) :: The Command Events from EnvDTE");
 
             addEvent(new SBEWrap(SolutionEventType.Warnings));
             combo.Items.Add(":: Warnings-Build :: Warnings during assembly processing");
@@ -352,7 +352,13 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             combo.Items.Add(":: Errors-Build :: Errors during assembly processing");
 
             addEvent(new SBEWrap(SolutionEventType.OWP));
-            combo.Items.Add(":: Output-Build customization :: Full control");
+            combo.Items.Add(":: Output-Build :: Customization and full control by using listener");
+
+            addEvent(new SBEWrap(SolutionEventType.SlnOpened));
+            combo.Items.Add(":: Sln-Opened :: When solution has been opened");
+
+            addEvent(new SBEWrap(SolutionEventType.SlnClosed));
+            combo.Items.Add(":: Sln-Closed :: When solution has been closed");
 
             addEvent(new SBEWrap(SolutionEventType.Transmitter));
             combo.Items.Add(":: Transmitter :: Transmission of the build-data to outer handler");
@@ -583,6 +589,18 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                     added = evt;
                     break;
                 }
+                case SolutionEventType.SlnOpened: {
+                    var evt = (isNew)? new SBEEvent() : SBE.evt[copy].CloneBySerializationWithType<ISolutionEvent, SBEEvent>();
+                    SlnEvents.SlnOpened = SlnEvents.SlnOpened.GetWithAdded(evt);
+                    added = evt;
+                    break;
+                }
+                case SolutionEventType.SlnClosed: {
+                    var evt = (isNew)? new SBEEvent() : SBE.evt[copy].CloneBySerializationWithType<ISolutionEvent, SBEEvent>();
+                    SlnEvents.SlnClosed = SlnEvents.SlnClosed.GetWithAdded(evt);
+                    added = evt;
+                    break;
+                }
                 case SolutionEventType.Logging:
                 {
                     var evt = (isNew)? new LoggingEvent() {
@@ -656,6 +674,14 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                     SlnEvents.CommandEvent = SlnEvents.CommandEvent.GetWithMoved(from, to);
                     break;
                 }
+                case SolutionEventType.SlnOpened: {
+                    SlnEvents.SlnOpened = SlnEvents.SlnOpened.GetWithMoved(from, to);
+                    break;
+                }
+                case SolutionEventType.SlnClosed: {
+                    SlnEvents.SlnClosed = SlnEvents.SlnClosed.GetWithMoved(from, to);
+                    break;
+                }
                 case SolutionEventType.Logging: {
                     SlnEvents.Logging = SlnEvents.Logging.GetWithMoved(from, to);
                     break;
@@ -701,6 +727,14 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                 }
                 case SolutionEventType.CommandEvent: {
                     SlnEvents.CommandEvent = SlnEvents.CommandEvent.GetWithRemoved(index);
+                    break;
+                }
+                case SolutionEventType.SlnOpened: {
+                    SlnEvents.SlnOpened = SlnEvents.SlnOpened.GetWithRemoved(index);
+                    break;
+                }
+                case SolutionEventType.SlnClosed: {
+                    SlnEvents.SlnClosed = SlnEvents.SlnClosed.GetWithRemoved(index);
                     break;
                 }
                 case SolutionEventType.Logging: {
