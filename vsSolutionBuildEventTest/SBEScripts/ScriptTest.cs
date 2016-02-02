@@ -236,6 +236,36 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
         }
 
         /// <summary>
+        ///A test for container
+        ///</summary>
+        [TestMethod()]
+        public void containerTest8()
+        {
+            var uvar = new UserVariable();
+            Script target = new Script(env, uvar);
+
+            Assert.AreEqual("test - cc", target.parse("#[var sres = <#data>Data1</#data>]test - cc#[var sres2 = <#data>Data2</#data>]"));
+            Assert.AreEqual(2, uvar.Variables.Count());
+            Assert.AreEqual("Data1", uvar.get("sres"));
+            Assert.AreEqual("Data2", uvar.get("sres2"));
+        }
+
+        /// <summary>
+        ///A test for container
+        ///</summary>
+        [TestMethod()]
+        public void containerTest9()
+        {
+            var uvar = new UserVariable();
+            Script target = new Script(env, uvar);
+
+            Assert.AreEqual("test - cc", target.parse("#[var sres = <#data>Data1\n\nEnd</#data>]test - cc#[var sres2 = <#data>Data2\n\nEnd</#data>]"));
+            Assert.AreEqual(2, uvar.Variables.Count());
+            Assert.AreEqual("Data1\n\nEnd", uvar.get("sres"));
+            Assert.AreEqual("Data2\n\nEnd", uvar.get("sres2"));
+        }
+
+        /// <summary>
         ///A test for parse - unlooping with MSBuild
         ///</summary>
         [TestMethod()]

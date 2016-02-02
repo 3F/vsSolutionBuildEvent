@@ -258,13 +258,13 @@ namespace net.r_eg.vsSBE.MSBuild
                     throw new LimitException("Restriction of supported containers '{0}' reached. Aborted.", limit);
                 }
 
-                data = con.Replace(data, 
+                data = con.Replace(data,
                                     delegate(Match m)
-                        {
-                            string raw = m.Groups[1].Value;
+                                    {
+                                        string raw = m.Groups[1].Value;
                                         Log.Trace("containerIn: raw - `{0}`", raw);
                                         return evaluate(prepare(sh.recovery(raw)));
-                                    }, 
+                                    },
                                     maxRep);
 
                 // protect before new checking
@@ -399,7 +399,7 @@ namespace net.r_eg.vsSBE.MSBuild
                                         delegate(Match m)
                                         {
                                             string content = m.Groups[1].Value;
-                                            return String.Format("{0}{1}{0}", qtype, parse(Tokens.unescapeQuotes(qtype, content)));
+                                            return String.Format("{0}{1}{0}", qtype, parse(content));
                                         },
                                         RegexOptions.IgnorePatternWhitespace);
             };
