@@ -1064,6 +1064,21 @@ namespace net.r_eg.vsSBE.Test.MSBuild
         }
 
         /// <summary>
+        ///A test for quotes
+        ///</summary>
+        [TestMethod()]
+        public void quotesTest11()
+        {
+            var target = new Parser(new StubEnv());
+            Assert.AreEqual("simply \"text\" data", target.parse("simply \"text\" data"));
+            Assert.AreEqual("simply \\\"text\\\" data", target.parse("simply \\\"text\\\" data"));
+            Assert.AreEqual("simply \\\\\"text\\\\\" data", target.parse("simply \\\\\"text\\\\\" data"));
+            Assert.AreEqual("simply 'text' data", target.parse("simply 'text' data"));
+            Assert.AreEqual("simply \'text\' data", target.parse("simply \'text\' data"));
+            Assert.AreEqual("simply \\'text\\' data", target.parse("simply \\'text\\' data"));
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         private class MSBuildParserAccessor
