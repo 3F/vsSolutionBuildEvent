@@ -86,7 +86,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         {
             // <#data> ... </#data>
             lock (_lock) {
-                return Regex.Replace(data, @"<#data>(.*)<\/#data>", replacerIn, RegexOptions.Singleline);
+                return Regex.Replace(data, @"<#data>(.*?)<\/#data>", replacerIn, RegexOptions.Singleline);
             }
         }
 
