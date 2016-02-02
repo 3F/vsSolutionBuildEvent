@@ -733,7 +733,7 @@ namespace net.r_eg.vsSBE.Actions
                 return; // can be early initialization
             }
 
-            if(Thread.CurrentThread.Name == Events.LoggingEvent.IDENT_TH) {
+            if(Thread.CurrentThread.Name == LoggingEvent.IDENT_TH) {
                 return; // self protection
             }
 
@@ -746,9 +746,12 @@ namespace net.r_eg.vsSBE.Actions
                 return;
             }
 
-            (new Task(() => {
-                
-                Thread.CurrentThread.Name = Events.LoggingEvent.IDENT_TH;
+            (new Task(() =>
+            {
+                if(Thread.CurrentThread.Name == null) {
+                    Thread.CurrentThread.Name = LoggingEvent.IDENT_TH;
+                }
+
                 lock(_lock)
                 {
                     IComponent component = cmd.SBEScript.Bootloader.getComponentByType(typeof(OWPComponent));

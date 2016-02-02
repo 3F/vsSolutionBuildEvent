@@ -160,9 +160,14 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(pm.Is(1, LevelType.Property, "Enabled")) {
                 return pEnabled(evt, pm.pinTo(2));
             }
-
             if(pm.Is(1, LevelType.Property, "Status")) {
                 return itemStatus(type, index, pm.pinTo(1));
+            }
+            if(pm.Is(1, LevelType.Property, "stdout")) {
+                return pStdout(evt, pm.pinTo(2));
+            }
+            if(pm.Is(1, LevelType.Property, "stderr")) {
+                return pStderr(evt, pm.pinTo(2));
             }
 
             throw new IncorrectNodeException(pm, 1);
@@ -194,6 +199,26 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             throw new IncorrectNodeException(pm, 1);
+        }
+
+        [Property("stdout", "Get data from stdout for action which is executed asynchronously.", "item", "stEventItem", CValueType.String)]
+        protected string pStdout(ISolutionEvent evt, IPM pm)
+        {
+            if(pm.FinalEmptyIs(LevelType.RightOperandEmpty)) {
+                return Value.from(HProcess.stdout(evt.Id));
+            }
+
+            throw new IncorrectNodeException(pm);
+        }
+
+        [Property("stderr", "Get data from stderr for action which is executed asynchronously.", "item", "stEventItem", CValueType.String)]
+        protected string pStderr(ISolutionEvent evt, IPM pm)
+        {
+            if(pm.FinalEmptyIs(LevelType.RightOperandEmpty)) {
+                return Value.from(HProcess.stderr(evt.Id));
+            }
+
+            throw new IncorrectNodeException(pm);
         }
 
         /// <summary>

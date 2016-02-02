@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -27,6 +27,8 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         protected ICommand cmd;
 
+        protected HProcess hprocess;
+
         /// <summary>
         /// Process for specified event.
         /// </summary>
@@ -42,9 +44,7 @@ namespace net.r_eg.vsSBE.Actions
         public virtual void shell(ISolutionEvent evt, string cmd)
         {
             Log.Info("Prepared command: '{0}'", cmd);
-
-            HProcess p = new HProcess(Settings.WPath);
-            p.useShell(cmd, evt.Process.Waiting, evt.Process.Hidden, evt.Process.TimeLimit);
+            hprocess.useShell(cmd, evt.Id, evt.Process.Waiting, evt.Process.Hidden, evt.Process.TimeLimit);
         }
 
         /// <summary>
@@ -70,6 +70,7 @@ namespace net.r_eg.vsSBE.Actions
         public Action(ICommand cmd)
         {
             this.cmd = cmd;
+            hprocess = new HProcess(Settings.WPath);
         }
 
         protected string treatNewlineAs(string str, string data)

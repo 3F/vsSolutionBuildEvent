@@ -159,6 +159,48 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             target.parse("[vsSBE events.Pre.item(1).Status.NotExistProp]");
         }
 
+        /// <summary>
+        ///A test for parse - stEventItem - pStdout
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(IncorrectNodeException))]
+        public void pStdoutTest1()
+        {
+            var target = new InternalComponentAccessor();
+            target.parse("[Core events.Pre.item(1).stdout = true]");
+        }
+
+        /// <summary>
+        ///A test for parse - stEventItem - pStdout
+        ///</summary>
+        [TestMethod()]
+        public void pStdoutTest2()
+        {
+            var target = new InternalComponentAccessor();
+            Assert.AreNotEqual(null, target.parse("[Core events.Pre.item(1).stdout]"));
+        }
+
+        /// <summary>
+        ///A test for parse - stEventItem - pStderr
+        ///</summary>
+        [TestMethod()]
+        [ExpectedException(typeof(IncorrectNodeException))]
+        public void pStderrTest1()
+        {
+            var target = new InternalComponentAccessor();
+            target.parse("[Core events.Pre.item(1).stderr = true]");
+        }
+
+        /// <summary>
+        ///A test for parse - stEventItem - pStderr
+        ///</summary>
+        [TestMethod()]
+        public void pStderrTest2()
+        {
+            var target = new InternalComponentAccessor();
+            Assert.AreNotEqual(null, target.parse("[Core events.Pre.item(1).stderr]"));
+        }
+
         private class InternalComponentAccessor: InternalComponent
         {
             private SBEEvent[] evt = null;

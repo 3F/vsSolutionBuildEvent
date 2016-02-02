@@ -779,7 +779,7 @@
             // 
             this.toolStripMenuSources.Name = "toolStripMenuSources";
             this.toolStripMenuSources.Size = new System.Drawing.Size(187, 22);
-            this.toolStripMenuSources.Text = "Sources";
+            this.toolStripMenuSources.Text = "Source code";
             this.toolStripMenuSources.Click += new System.EventHandler(this.toolStripMenuSources_Click);
             // 
             // toolStripSeparator4

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Management;
@@ -27,6 +28,22 @@ namespace net.r_eg.vsSBE.Actions
 {
     public class HProcess
     {
+        /// <summary>
+        /// Unspecified identifier for streams.
+        /// </summary>
+        public readonly Guid STDS = new Guid("{97FC36E2-2751-4CCC-A2EC-80FFB5FAF3C4}");
+
+        /// <summary>
+        /// Initial directory
+        /// </summary>
+        protected string initDir;
+
+        /// <summary>
+        /// Container for standard stream data.
+        /// TODO:
+        /// </summary>
+        private static Dictionary<Guid, TStream> stdstream = new Dictionary<Guid, TStream>();
+        
         // CA1060
         internal static class NativeMethods
         {
@@ -34,8 +51,15 @@ namespace net.r_eg.vsSBE.Actions
             internal static extern int GetSystemDefaultLCID();
         }
 
+        internal class TStream
+        {
+            public string stdout;
+            public string stderr;
+            //public string stdin;
+        }
+
         /// <summary>
-        /// The current OEM code page from the system locale
+        /// The current OEM code page from system locale
         /// </summary>
         public static int OEMCodePage
         {
@@ -58,18 +82,10 @@ namespace net.r_eg.vsSBE.Actions
                 return encodingOEM;
             }
         }
-        protected static Encoding encodingOEM;
+        private static Encoding encodingOEM;
 
         /// <summary>
-        /// Initial directory
-        /// </summary>
-        protected string initDir;
-
-
-        /// <summary>
-        /// Execute file with arguments.
-        /// 
-        /// Uses synchronous the read operations.
+        /// Execute file with arguments. Uses synchronous read operations.
         /// TODO: Serial data for stdin.
         /// </summary>
         /// <param name="file"></param>
@@ -109,28 +125,46 @@ namespace net.r_eg.vsSBE.Actions
         }
 
         /// <summary>
-        /// Executing command with standard command-line interpreter
+        /// Execute command with standard command-line interpreter.
         /// </summary>
         /// <param name="cmd">Command to execute</param>
+        /// <param name="uid">Unique id for streams.</param>
         /// <param name="waiting">Waiting for completion</param>
         /// <param name="hidden">Hiding result</param>
         /// <param name="timeout">How long to wait the execution, in seconds. 0 value - infinitely</param>
-        public void useShell(string cmd, bool waiting, bool hidden, int timeout = 0)
+        public void useShell(string cmd, Guid uid, bool waiting, bool hidden, int timeout = 0)
         {
             Process p = prepareProcessFor("cmd", String.Format("/C {0}", cmd), true);
 
-            p.ErrorDataReceived += new DataReceivedEventHandler((object sender, DataReceivedEventArgs e) => {
+            p.ErrorDataReceived += (object sender, DataReceivedEventArgs e) =>
+            {
                 if(String.IsNullOrEmpty(e.Data)) {
                     return;
                 }
-                Log.Warn("Command executed with error: '{0}'", reEncodeString(e.Data));
-            });
 
-            p.OutputDataReceived += new DataReceivedEventHandler((object sender, DataReceivedEventArgs e) => {
+                string sdata                = reEncodeString(e.Data);
+                streamContainer(uid).stderr = sdata;
+                Log.Warn("stderr: received '{0}'", sdata.Length);
+
                 if(!hidden) {
-                    Log.Info("Result of command: '{0}'", reEncodeString(e.Data));
+                    Log.Warn("The command has been executed with error: `{0}`", sdata);
                 }
-            });
+            };
+
+            p.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>
+            {
+                if(String.IsNullOrEmpty(e.Data)) {
+                    return;
+                }
+
+                string sdata                = reEncodeString(e.Data);
+                streamContainer(uid).stdout = sdata;
+                Log.Info("stdout: received '{0}'", sdata.Length);
+
+                if(!hidden) {
+                    Log.Info("Result of the command: `{0}`", sdata);
+                }
+            };
 
             p.Start();
             p.BeginOutputReadLine();
@@ -155,6 +189,31 @@ namespace net.r_eg.vsSBE.Actions
             string errors = p.StandardError.ReadToEnd();
             if(errors.Length > 0) {
                 throw new SBEException(reEncodeString(errors));
+            }
+        }
+
+        public void useShell(string cmd, bool waiting, bool hidden, int timeout = 0)
+        {
+            useShell(cmd, STDS, waiting, hidden, timeout);
+        }
+
+        internal static string stdout(Guid id)
+        {
+            try {
+                return streamContainer(id).stdout;
+            }
+            finally {
+                streamContainer(id).stdout = null; //TODO: for clients by uid etc.
+            }
+        }
+
+        internal static string stderr(Guid id)
+        {
+            try {
+                return streamContainer(id).stderr;
+            }
+            finally {
+                streamContainer(id).stderr = null;
             }
         }
 
@@ -258,6 +317,14 @@ namespace net.r_eg.vsSBE.Actions
         protected string reEncodeString(string str)
         {
             return reEncodeString(str, EncodingOEM);
+        }
+
+        private static TStream streamContainer(Guid id)
+        {
+            if(!stdstream.ContainsKey(id)) {
+                stdstream[id] = new TStream();
+            }
+            return stdstream[id];
         }
     }
 }
