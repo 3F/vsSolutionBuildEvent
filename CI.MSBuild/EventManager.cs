@@ -1,7 +1,7 @@
 ﻿/*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Bridge.CoreCommand;
+using net.r_eg.vsSBE.Provider;
 
 namespace net.r_eg.vsSBE.CI.MSBuild
 {
@@ -100,6 +101,14 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             log         = new Log(Verbosity);
             initializer = new Initializer(Parameters, log);
 
+            // load with properties by default
+            library = initializer.load();
+            setPropertiesByDefault();
+
+            attachCoreCommandListener(library);
+            library.Event.solutionOpened(pUnkReserved, 0);
+
+            // bring song
             evt.TargetStarted   += onTargetStarted;
             evt.ProjectStarted  += onProjectStarted;
             evt.AnyEventRaised  += onAnyEventRaised;
@@ -113,7 +122,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         {
             if(library != null) {
                 library.Event.solutionClosed(pUnkReserved);
-                detachCoreCommandListener();
+                detachCoreCommandListener(library);
             }
         }
 
@@ -202,12 +211,6 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         protected void onBuildStarted(object sender, BuildStartedEventArgs e)
         {
             try {
-                // load with properties by default
-                library = initializer.load();
-
-                attachCoreCommandListener();
-                library.Event.solutionOpened(pUnkReserved, 0);
-
                 // yes, we're ready
                 onPre(initializer.Properties.Targets);
             }
@@ -259,6 +262,10 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                 case CoreCommandType.Nop: {
                     break;
                 }
+                case CoreCommandType.RawCommand: {
+                    rawCommand(c);
+                    break;
+                }
             }
             receivedCommands.Push(c);
         }
@@ -279,20 +286,39 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             }
         }
 
-        protected bool attachCoreCommandListener()
+        protected void rawCommand(ICoreCommand c)
+        {
+            if(c.Args.Length < 1) {
+                msg("RawCommand is incorrect or broken.");
+                return;
+            }
+
+            switch(c.Args[0].ToString()) {
+                case "property.set": {
+                    setProperty(c.Args[1].ToString(), c.Args[2].ToString());
+                    return;
+                }
+                case "property.del": {
+                    setProperty(c.Args[1].ToString(), null);
+                    return;
+                }
+            }
+        }
+
+        protected bool attachCoreCommandListener(ILibrary library)
         {
             if(library == null) {
                 return false;
             }
 
             lock(_lock) {
-                detachCoreCommandListener();
+                detachCoreCommandListener(library);
                 library.EntryPoint.CoreCommand += command;
             }
             return true;
         }
 
-        protected bool detachCoreCommandListener()
+        protected bool detachCoreCommandListener(ILibrary library)
         {
             if(library == null) {
                 return false;
@@ -338,6 +364,18 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                                 "The build has been canceled{0}.", 
                                 (receivedCommands.Count < 1)? "" : " by user script"
                             ));
+        }
+
+        protected virtual void setProperty(string name, string value)
+        {
+            debug("setProperty '{0}' = `{1}`", name, value);
+            Environment.SetEnvironmentVariable(name, value, EnvironmentVariableTarget.Process);
+        }
+
+        protected void setPropertiesByDefault()
+        {
+            setProperty("vsSolutionBuildEvent", library.Version.Number.ToString());
+            setProperty("vssbeCIM", Version.numberWithRevString);
         }
 
         /// <summary>

@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Evaluation;
+using net.r_eg.vsSBE.Bridge.CoreCommand;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild.Exceptions;
 using net.r_eg.vsSBE.Scripts;
@@ -549,14 +550,14 @@ namespace net.r_eg.vsSBE.MSBuild
         protected void defProperty(TUserVariable uvar, Project project)
         {
             if(uvar.status != TUserVariable.StatusType.Started) {
-                project.SetGlobalProperty(uvar.ident, getUVariableValue(uvar.ident));
+                setGlobalProperty(project, uvar.ident, getUVariableValue(uvar.ident));
                 return;
             }
 
             if(uvar.prev != null && ((TUserVariable)uvar.prev).unevaluated != null)
             {
                 TUserVariable prev = (TUserVariable)uvar.prev;
-                project.SetGlobalProperty(uvar.ident, (prev.evaluated == null)? prev.unevaluated : prev.evaluated);
+                setGlobalProperty(project, uvar.ident, (prev.evaluated == null)? prev.unevaluated : prev.evaluated);
             }
         }
 
@@ -572,7 +573,35 @@ namespace net.r_eg.vsSBE.MSBuild
             Project project = getProject(variable.project);
 
             var uvar = uvariable.getVariable(variable.name, variable.project);
-            return project.RemoveGlobalProperty(uvar.ident);
+            return removeGlobalProperty(project, uvar.ident);
+        }
+
+        /// <returns>Returns true if the value changes, otherwise returns false.</returns>
+        protected virtual bool setGlobalProperty(Project project, string name, string val)
+        {
+            try {
+                return project.SetGlobalProperty(name, val);
+            }
+            finally {
+                env.CoreCmdSender.fire(new CoreCommandArgs() {
+                    Type = CoreCommandType.RawCommand,
+                    Args = new[] { "property.set", name, val } //TODO: to CoreCommandType
+                });
+            }
+        }
+
+        /// <returns>Returns true if the value of the global property was set.</returns>
+        protected virtual bool removeGlobalProperty(Project project, string name)
+        {
+            try {
+                return project.RemoveGlobalProperty(name);
+            }
+            finally {
+                env.CoreCmdSender.fire(new CoreCommandArgs() {
+                    Type = CoreCommandType.RawCommand,
+                    Args = new[] { "property.del", name } //TODO: to CoreCommandType
+                });
+            }
         }
 
         protected void setPropertiesByDefault()
@@ -584,7 +613,7 @@ namespace net.r_eg.vsSBE.MSBuild
             }
 
             if(!project.GlobalProperties.ContainsKey(Settings.APP_NAME)) {
-                project.SetGlobalProperty(Settings.APP_NAME, Version.numberWithRevString);
+                setGlobalProperty(project, Settings.APP_NAME, Version.numberWithRevString);
             }
         }
 
