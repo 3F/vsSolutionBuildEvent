@@ -407,6 +407,10 @@ namespace net.r_eg.vsSBE.API
 
             OpenedSolution(this, new EventArgs());
 
+            if(slnEvents == null) {
+                return slnOpened(pUnkReserved, fNewSolution); // we can work in normal mode
+            }
+
             // delay calling
             lock(_lock) {
                 slnEvents.Opened -= slnOpenedLowPriority;
@@ -473,8 +477,11 @@ namespace net.r_eg.vsSBE.API
                 }
 #endif
 
-            slnEvents                   = Environment.Events.SolutionEvents;
-            Environment.CoreCmdSender   = this;
+            if(Environment.Events != null) {
+                slnEvents = Environment.Events.SolutionEvents;
+            }
+
+            Environment.CoreCmdSender = this;
             attachCommandEvents();
 
             this.Bootloader = new Bootloader(Environment, uvariable);
@@ -548,15 +555,24 @@ namespace net.r_eg.vsSBE.API
         {
             lock(_lock)
             {
-                slnEvents.Opened -= slnOpenedLowPriority;
-                try {
-                    Action.bindSlnOpened();
-                    clientLib.Event.solutionOpened(new object(), 0); //TODO: use from solutionOpened(object pUnkReserved, int fNewSolution)
+                if(slnEvents != null) {
+                    slnEvents.Opened -= slnOpenedLowPriority;
                 }
-                catch(Exception ex) {
-                    Log.Error("Failed Solution.SlnOpened-binding: `{0}`", ex.Message);
-                }
+                slnOpened(new object(), 0); //TODO: use from solutionOpened(object pUnkReserved, int fNewSolution)
             }
+        }
+
+        private int slnOpened(object pUnkReserved, int fNewSolution)
+        {
+            try {
+                int ret = Action.bindSlnOpened();
+                clientLib.Event.solutionOpened(pUnkReserved, fNewSolution);
+                return ret;
+            }
+            catch(Exception ex) {
+                Log.Error("Failed Solution.SlnOpened-binding: `{0}`", ex.Message);
+            }
+            return Codes.Failed;
         }
 
         /// <summary>

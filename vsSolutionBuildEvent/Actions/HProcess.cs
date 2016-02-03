@@ -51,7 +51,7 @@ namespace net.r_eg.vsSBE.Actions
             internal static extern int GetSystemDefaultLCID();
         }
 
-        internal class TStream
+        internal sealed class TStream
         {
             public string stdout;
             public string stderr;
@@ -321,7 +321,7 @@ namespace net.r_eg.vsSBE.Actions
 
         private static TStream streamContainer(Guid id)
         {
-            if(!stdstream.ContainsKey(id)) {
+            if(!stdstream.ContainsKey(id) || stdstream[id] == null) {
                 stdstream[id] = new TStream();
             }
             return stdstream[id];
