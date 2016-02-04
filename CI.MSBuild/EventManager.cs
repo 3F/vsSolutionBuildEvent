@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Build.Framework;
@@ -74,6 +75,11 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         /// All received CoreCommand from library.
         /// </summary>
         protected Stack<ICoreCommand> receivedCommands = new Stack<ICoreCommand>();
+
+        /// <summary>
+        /// List of started targets and their Pre/Post states.
+        /// </summary>
+        private ConcurrentDictionary<int, bool> ptargets = new ConcurrentDictionary<int, bool>();
 
         /// <summary>
         /// Reserved for future use with IVsSolutionEvents
@@ -159,18 +165,32 @@ namespace net.r_eg.vsSBE.CI.MSBuild
 
         protected void onTargetStarted(object sender, TargetStartedEventArgs e)
         {
-            if(!projects.ContainsKey(e.BuildEventContext.ProjectInstanceId)) {
+            int pid = e.BuildEventContext.ProjectInstanceId;
+            if(!projects.ContainsKey(pid)) {
                 return;
             }
 
-            switch(e.TargetName) {
-                case "PreBuildEvent": {
-                    library.Event.onProjectPre(projects[e.BuildEventContext.ProjectInstanceId].Name);
+            // the PreBuildEvent & PostBuildEvent should be only for condition '$(PreBuildEvent)'!='' ...
+            switch(e.TargetName)
+            {
+                case "BeforeBuild":
+                case "BeforeRebuild":
+                case "BeforeClean":
+                {
+                    if(!ptargets.ContainsKey(pid)) {
+                        ptargets[pid] = false; //pre
+                        library.Event.onProjectPre(projects[pid].Name);
+                    }
                     break;
                 }
-                case "PostBuildEvent": {
-                    Project p = projects[e.BuildEventContext.ProjectInstanceId];
-                    library.Event.onProjectPost(p.Name, p.HasErrors ? 0 : 1);
+                case "AfterBuild":
+                case "AfterRebuild":
+                case "AfterClean":
+                {
+                    if(!ptargets.ContainsKey(pid) || !ptargets[pid]) {
+                        ptargets[pid] = true; //post
+                        library.Event.onProjectPost(projects[pid].Name, projects[pid].HasErrors ? 0 : 1);
+                    }                    
                     break;
                 }
             }
@@ -211,6 +231,8 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         protected void onBuildStarted(object sender, BuildStartedEventArgs e)
         {
             try {
+                ptargets.Clear();
+
                 // yes, we're ready
                 onPre(initializer.Properties.Targets);
             }
