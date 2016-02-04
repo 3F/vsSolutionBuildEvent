@@ -1,6 +1,19 @@
 vsSolutionBuildEvent
 ____________________
 
+[v0.12.7] 2016.02.04
+    * FIXED: MSBuild engine. Bug with the unescape of double quotes from simply text data. The most common problem for C# Mode etc.
+    * FIXED: Properties by default for specific projects. [MSBuild core]
+    * FIXED: Possible error - 'InvalidOperationException' This property has already been set and cannot be modified. (Logging event type)
+    * FIXED: Fixes of incorrect behavior of special marker `<#data>` if it used 2 or more times. Symptoms: Breaking of SBE-container where it used.
+    * NEW: Event types: 'Sln-Opened' & 'Sln-Closed'. When solution has been opened/closed. 
+    * NEW: [InternalComponent] new stdout & stderr properties.
+           To get data from stdout/stderr for action which is executed asynchronously.
+           
+    * NEW: raw CoreCommand - 'property.set' & 'property.del'. 
+           Raises when is used the `$(+name)` & `$(-name)` See the documentation.
+           
+
 [v0.12.6] 2016.01.24
     * FIXED: Bug with configuration for Isolated and other external Environments (CI.MSBuild, Devenv, etc.)
                 - `Failed Solution.Pre-binding: 'Object reference not set to an instance of an object.'`

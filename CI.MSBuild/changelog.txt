@@ -1,6 +1,12 @@
 vsSolutionBuildEvent CI.MSBuild
 _______________________________
 
+[v1.6] 2016.02.04
+
+    * FIXED: bug for Pre/Post-project event type ~ `"PreBuildEvent" skipped, due to false condition; ('$(PreBuildEvent)'!='')`.
+    * NEW: Implemented the 'property.set' & 'property.del' for Sln-Opened & Sln-Closed event types.
+    * CHANGED: Added 2 properties by default - `vsSolutionBuildEvent` & `vssbeCIM` as the versions of this.
+
 [v1.5] 2015.08.29
 
     * NEW: Added support of the `Build.Cancel` command for user scripts.
