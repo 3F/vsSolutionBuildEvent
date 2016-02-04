@@ -228,7 +228,7 @@ namespace net.r_eg.vsSBE
                 foreach(EnvDTE.Project project in DTEProjectsRaw)
                 {
                     if(project.Kind == "{67294A52-A4F0-11D2-AA88-00C04F688DDE}" || project.ConfigurationManager == null) {
-                        Log.Debug("Unloaded project '{0}' has ignored", project.Name);
+                        Log.Trace("Unloaded project '{0}' has ignored", project.Name);
                         continue; // skip for all unloaded projects
                     }
                     yield return project;

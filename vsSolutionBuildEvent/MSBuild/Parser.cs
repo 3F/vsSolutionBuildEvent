@@ -107,7 +107,7 @@ namespace net.r_eg.vsSBE.MSBuild
                 }
             }
 
-            Project project         = getProject(projectName);
+            Project project         = getProject(projectName, true);
             ProjectProperty prop    = project.GetProperty(name);
 
             if(prop != null) {
@@ -127,7 +127,7 @@ namespace net.r_eg.vsSBE.MSBuild
         {
             List<PropertyItem> properties = new List<PropertyItem>();
 
-            Project project = getProject(projectName);
+            Project project = getProject(projectName, true);
             foreach(ProjectProperty property in project.Properties)
             {
                 string eValue = property.EvaluatedValue;
@@ -155,7 +155,7 @@ namespace net.r_eg.vsSBE.MSBuild
         public virtual string evaluate(string unevaluated, string projectName = null)
         {
             const string container  = "vsSBE_latestEvaluated";
-            Project project         = getProject(projectName);
+            Project project         = getProject(projectName, true);
 
             Log.Trace("evaluate: '{0}' -> [{1}]", unevaluated, projectName);
             lock(_lock)
@@ -219,7 +219,6 @@ namespace net.r_eg.vsSBE.MSBuild
         {
             this.env        = env;
             this.uvariable  = uvariable;
-            setPropertiesByDefault();
         }
 
         /// <summary>
@@ -583,10 +582,7 @@ namespace net.r_eg.vsSBE.MSBuild
                 return project.SetGlobalProperty(name, val);
             }
             finally {
-                env.CoreCmdSender.fire(new CoreCommandArgs() {
-                    Type = CoreCommandType.RawCommand,
-                    Args = new[] { "property.set", name, val } //TODO: to CoreCommandType
-                });
+                sendRawCoreCommand(new[] { "property.set", name, val }); //TODO: to CoreCommandType
             }
         }
 
@@ -597,16 +593,24 @@ namespace net.r_eg.vsSBE.MSBuild
                 return project.RemoveGlobalProperty(name);
             }
             finally {
-                env.CoreCmdSender.fire(new CoreCommandArgs() {
-                    Type = CoreCommandType.RawCommand,
-                    Args = new[] { "property.del", name } //TODO: to CoreCommandType
-                });
+                sendRawCoreCommand(new[] { "property.del", name }); //TODO: to CoreCommandType
             }
         }
 
-        protected void setPropertiesByDefault()
+        protected void sendRawCoreCommand(object[] cmd)
         {
-            Project project = getProject(null);
+            if(env == null || env.CoreCmdSender == null) {
+                return;
+            }
+
+            env.CoreCmdSender.fire(new CoreCommandArgs() {
+                Type = CoreCommandType.RawCommand,
+                Args = cmd
+            });
+        }
+
+        protected void setPropertiesByDefault(Project project)
+        {
             if(project == null) {
                 Log.Debug("The default global properties cannot be defined.");
                 return;
@@ -704,6 +708,15 @@ namespace net.r_eg.vsSBE.MSBuild
                 Log.Trace("MSBuild - getProject: use empty project by default.");
                 return new Project();
             }
+        }
+
+        protected Project getProject(string name, bool defProperties)
+        {
+            Project p = getProject(name);
+            if(defProperties) {
+                setPropertiesByDefault(p);
+            }
+            return p;
         }
 
         protected virtual bool isPropertySimple(ref string data)
