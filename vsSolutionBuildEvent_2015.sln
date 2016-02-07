@@ -10,9 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		vsSolutionBuildEvent.vsmdi = vsSolutionBuildEvent.vsmdi
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D7F03368-D84C-41CC-B038-B6EEB11131E2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".gnt", ".gnt", "{65FF5D56-E814-4956-89BD-7C53EC557BFE}"
 	ProjectSection(SolutionItems) = preProject
-		.nuget\packages.config = .nuget\packages.config
+		.gnt\gnt.core = .gnt\gnt.core
+		.gnt\packages.config = .gnt\packages.config
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vsSolutionBuildEvent_2015", "vsSolutionBuildEvent\vsSolutionBuildEvent_2015.csproj", "{32E44995-F621-4E77-B46A-8F65D64E7FEA}"

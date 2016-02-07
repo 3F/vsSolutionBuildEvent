@@ -1,1 +1,1 @@
-%1 gnt.core /p:ngconfig=".nuget/packages.config|vsSolutionBuildEvent/packages.config|vsSolutionBuildEventTest/packages.config"
+%1 "%cd%/.gnt/gnt.core" /p:ngpath="%cd%/packages" /p:ngconfig="%cd%/.gnt/packages.config|%cd%/vsSolutionBuildEvent/packages.config|%cd%/vsSolutionBuildEventTest/packages.config"

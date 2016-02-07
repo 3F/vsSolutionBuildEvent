@@ -83,17 +83,14 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[\" \n    To restore packages with GetNuTool\n    It's important for packages of solution-level in VS2015\n    https://github.com/NuGet/Home/issues/522\n\"]\n#[($([System.Convert]::ToInt32(\"$(VisualStudioVersion.Replace('.', ''))\")) >= 140)\n{\n    #[NuGet gnt.raw(\"/p:ngconfig=\\\".nuget/packages.config\\\"\")]\n}]",
+        "Command": "#[\" \n    To restore packages via GetNuTool\n    https://github.com/NuGet/Home/issues/522\n    https://github.com/NuGet/Home/issues/1521\n\"]\n#[NuGet gnt.raw(\"/p:ngconfig=\\\".gnt/packages.config\\\"\")]",
         "Command__": [
           "#[\" ",
-          "    To restore packages with GetNuTool",
-          "    It's important for packages of solution-level in VS2015",
+          "    To restore packages via GetNuTool",
           "    https://github.com/NuGet/Home/issues/522",
+          "    https://github.com/NuGet/Home/issues/1521",
           "\"]",
-          "#[($([System.Convert]::ToInt32(\"$(VisualStudioVersion.Replace('.', ''))\")) >= 140)",
-          "{",
-          "    #[NuGet gnt.raw(\"/p:ngconfig=\\\".nuget/packages.config\\\"\")]",
-          "}]"
+          "#[NuGet gnt.raw(\"/p:ngconfig=\\\".gnt/packages.config\\\"\")]"
         ]
       }
     },
