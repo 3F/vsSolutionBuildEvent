@@ -749,5 +749,7 @@
   "OWPBuild": [],
   "Transmitter": [],
   "CommandEvent": [],
-  "Logging": []
+  "Logging": [],
+  "SlnOpened": [],
+  "SlnClosed": []
 }
