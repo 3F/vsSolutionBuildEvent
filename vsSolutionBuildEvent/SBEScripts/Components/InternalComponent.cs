@@ -75,13 +75,15 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="pm"></param>
         /// <returns></returns>
         [Property("events", "Work with events")]
-        [Property("Pre", "Pre-Build\nBefore assembling", "events", "stEvents"), Property("", "Pre", "stEvents")]
-        [Property("Post", "Post-Build\nAfter assembling", "events", "stEvents"), Property("", "Post", "stEvents")]
+        [Property("Pre", "Pre-Build\nBefore build", "events", "stEvents"), Property("", "Pre", "stEvents")]
+        [Property("Post", "Post-Build\nAfter build", "events", "stEvents"), Property("", "Post", "stEvents")]
         [Property("Cancel", "Cancel-Build\nby user or when occurs error", "events", "stEvents"), Property("", "Cancel", "stEvents")]
-        [Property("CommandEvent", "CommandEvent (DTE)\nAll Command Events from EnvDTE", "events", "stEvents"), Property("", "CommandEvent", "stEvents")]
+        [Property("CommandEvent", "CommandEvent (DTE)\nThe Command Events from EnvDTE", "events", "stEvents"), Property("", "CommandEvent", "stEvents")]
         [Property("Warnings", "Warnings-Build\nWarnings during assembly processing", "events", "stEvents"), Property("", "Warnings", "stEvents")]
         [Property("Errors", "Errors-Build\nErrors during assembly processing", "events", "stEvents"), Property("", "Errors", "stEvents")]
-        [Property("OWP", "Output-Build customization\nFull control", "events", "stEvents"), Property("", "OWP", "stEvents")]
+        [Property("OWP", "Output-Build\nCustomization and full control by using listener", "events", "stEvents"), Property("", "OWP", "stEvents")]
+        [Property("SlnOpened", "Sln-Opened\nWhen solution has been opened", "events", "stEvents"), Property("", "SlnOpened", "stEvents")]
+        [Property("SlnClosed", "Sln-Closed\nWhen solution has been closed", "events", "stEvents"), Property("", "SlnClosed", "stEvents")]
         [Property("Transmitter", "Transmitter\nTransmission of the build-data to outer handler", "events", "stEvents"), Property("", "Transmitter", "stEvents")]
         [Property("Logging", "Logging\nAll processes with internal logging", "events", "stEvents"), Property("", "Logging", "stEvents")]
         protected string stEvents(IPM pm)

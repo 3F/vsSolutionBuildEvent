@@ -66,9 +66,11 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards
             tcReplType.SizeMode     = TabSizeMode.Fixed;
             btnPrevStep.Visible     = false;
 
+            string spath = bootloader.Env.SolutionPath ?? Settings.WPath;
+
             ftbInputNum.Dialog.InitialDirectory = ftbOutputFile.Dialog.InitialDirectory
                                                 = ftbReplFile.Dialog.InitialDirectory
-                                                = bootloader.Env.SolutionPath.PathFormat();
+                                                = spath.PathFormat();
         }
 
         private void render(StepsType type)

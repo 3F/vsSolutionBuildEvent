@@ -98,6 +98,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards.Version
             catch(Exception ex) {
                 Log.Debug("Wizard-Version: RootNamespace failed - `{0}`", ex.Message);
             }
+
+            if(namspace == MSBuild.Parser.PROP_VALUE_DEFAULT) {
+                namspace = "MyNamespace";
+            }
         }
     }
 }

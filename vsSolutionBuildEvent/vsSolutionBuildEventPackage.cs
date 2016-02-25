@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -25,7 +25,6 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Bridge;
-using net.r_eg.vsSBE.Configuration;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.UI.Xaml;
@@ -88,7 +87,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Main form of settings
         /// </summary>
-        private UI.WForms.EventsFrm _configFrm;
+        private UI.WForms.EventsFrm configFrm;
 
         /// <summary>
         /// DTE2 Context
@@ -173,7 +172,7 @@ namespace net.r_eg.vsSBE
             try
             {
                 Event.solutionClosed(pUnkReserved);
-                UI.Util.closeTool(_configFrm);
+                UI.Util.closeTool(configFrm);
 
                 eventsOfStatusTool(false);
                 //Log._.paneDetach((IVsOutputWindow)GetGlobalService(typeof(SVsOutputWindow)));
@@ -283,11 +282,17 @@ namespace net.r_eg.vsSBE
         /// </summary>
         private void _menuMainCallback(object sender, EventArgs e)
         {
-            if(UI.Util.focusForm(_configFrm)) {
-                return;
+            try
+            {
+                if(UI.Util.focusForm(configFrm)) {
+                    return;
+                }
+                configFrm = new UI.WForms.EventsFrm(Event.Bootloader);
+                configFrm.Show();
             }
-            _configFrm = new UI.WForms.EventsFrm(Event.Bootloader);
-            _configFrm.Show();
+            catch(Exception ex) {
+                Log.Error("Failed UI: `{0}`", ex.Message);
+            }
         }
 
         /// <summary>
@@ -392,7 +397,7 @@ namespace net.r_eg.vsSBE
                                 "Try to restart IDE or reinstall current plugin in Extension Manager.", 
                                 ex.ToString());
 
-                Log.Fatal(msg);
+                Debug.WriteLine(msg);
                 
                 int res;
                 Guid id = Guid.Empty;
@@ -414,10 +419,10 @@ namespace net.r_eg.vsSBE
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_configFrm")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "configFrm")]
         protected override void Dispose(bool disposing)
         {
-            UI.Util.closeTool(_configFrm); //CA2213: we use Util for all System.Windows.Forms
+            UI.Util.closeTool(configFrm); //<- CA2213: the Util will manage this
 
             if(spSolutionBM != null && _pdwCookieSolutionBM != 0) {
                 spSolutionBM.UnadviseUpdateSolutionEvents(_pdwCookieSolutionBM);

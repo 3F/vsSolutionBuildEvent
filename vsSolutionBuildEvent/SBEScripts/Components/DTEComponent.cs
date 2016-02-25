@@ -183,16 +183,15 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         protected void attachCommandEvents()
         {
-            if(!IsAvaialbleCommandEvent) {
+            if(!IsAvaialbleCommandEvent || env.Events.CommandEvents == null) {
                 Log.Info("CommandEvents: aren't available for current context.");
                 return; //this can be for emulated DTE2 context
             }
 
             cmdEvents = env.Events.CommandEvents;
             lock(_lock) {
-                cmdEvents.BeforeExecute -= commandEventBefore;
+                detachCommandEvents();
                 cmdEvents.BeforeExecute += commandEventBefore;
-                cmdEvents.AfterExecute  -= commandEventAfter;
                 cmdEvents.AfterExecute  += commandEventAfter;
             }
         }
@@ -202,6 +201,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(cmdEvents == null) {
                 return;
             }
+
             lock(_lock) {
                 cmdEvents.BeforeExecute -= commandEventBefore;
                 cmdEvents.AfterExecute  -= commandEventAfter;

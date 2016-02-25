@@ -152,7 +152,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Components
             Point point = this.PointToClient(new Point(e.X, e.Y));
             ddSort.to = this.HitTest(point.X, point.Y).RowIndex;
 
-            if(e.Effect != DragDropEffects.Move || ddSort.to == -1 || this.Rows[ddSort.to].IsNewRow) {
+            if(e.Effect != DragDropEffects.Move || ddSort.to == -1 || Rows.Count < 1 || Rows[ddSort.to].IsNewRow) {
                 return;
             }
             e.Effect = DragDropEffects.None;
@@ -168,10 +168,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Components
         protected void onSortableMouseMove(object sender, MouseEventArgs e)
         {
             if((e.Button & MouseButtons.Left) == MouseButtons.Left) {
-                if(ddSort.from == -1 || this.Rows[ddSort.from].IsNewRow) {
+                if(ddSort.from == -1 || Rows.Count < 1 || Rows[ddSort.from].IsNewRow) {
                     return;
                 }
-                this.DoDragDrop(this.Rows[ddSort.from], DragDropEffects.Move);
+                DoDragDrop(Rows[ddSort.from], DragDropEffects.Move);
             }
         }
 

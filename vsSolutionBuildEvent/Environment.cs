@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -372,7 +372,7 @@ namespace net.r_eg.vsSBE
             }
 
             try {
-                ((EnvDTE.DTE)Dte2).ExecuteCommand(name, (args == null)? String.Empty : args);
+                ((EnvDTE.DTE)Dte2).ExecuteCommand(name, args ?? String.Empty);
             }
             catch(OutOfMemoryException) {
                 // this can be from Devenv
@@ -557,11 +557,17 @@ namespace net.r_eg.vsSBE
         /// <returns></returns>
         protected string getFullPathToSln(DTE2 dte2)
         {
-            string path = dte2.Solution.FullName; // can be is empty if it's a new solution
-            if(String.IsNullOrWhiteSpace(path)) {
-                return dte2.Solution.Properties.Item("Path").Value.ToString();
+            try {
+                string path = dte2.Solution.FullName; // can be empty if it is the new solution
+                if(String.IsNullOrWhiteSpace(path)) {
+                    return dte2.Solution.Properties.Item("Path").Value.ToString();
+                }
+                return path;
             }
-            return path;
+            catch(Exception ex) {
+                Log.Debug("getFullPathToSln returns null: `{0}`", ex.Message);
+                return null;
+            }
         }
     }
 }

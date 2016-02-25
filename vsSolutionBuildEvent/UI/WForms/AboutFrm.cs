@@ -192,7 +192,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
             space = new DeepSpace(pictureBoxSpace.CreateGraphics(), pictureBoxSpace.Width, pictureBoxSpace.Height);
 
-            labelCopyright.Text = "Copyright (c)  Denis Kuzmin (reg) < entry.reg@gmail.com >";
+            labelCopyright.Text = String.Format("Copyright (c) 2013-{0}  Denis Kuzmin (reg) < entry.reg@gmail.com >", Math.Max(2016, DateTime.Now.Year));
             string vAPIString   = (new API.Version()).Bridge.Number.ToString(2);
 
 #if !DEBUG
