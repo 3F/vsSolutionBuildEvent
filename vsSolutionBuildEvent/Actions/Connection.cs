@@ -38,6 +38,27 @@ namespace net.r_eg.vsSBE.Actions
     public class Connection
     {
         /// <summary>
+        /// The main handler of commands.
+        /// </summary>
+        protected ICommand cmd;
+
+        /// <summary>
+        /// To support the 'execution order' features.
+        /// Contains the current states of all projects.
+        /// </summary>
+        protected Dictionary<string, ExecutionOrderType> projects;
+
+        /// <summary>
+        /// Contains current incoming project.
+        /// </summary>
+        protected IExecutionOrder current = new ExecutionOrder();
+
+        /// <summary>
+        /// object synch.
+        /// </summary>
+        private Object _lock = new Object();
+
+        /// <summary>
         /// Flag of permission for any actions.
         /// </summary>
         protected bool IsAllowActions
@@ -52,28 +73,6 @@ namespace net.r_eg.vsSBE.Actions
         {
             get { return Settings.Cfg; }
         }
-
-        /// <summary>
-        /// To support the 'execution order' features.
-        /// Contains the current states of all projects.
-        /// </summary>
-        protected Dictionary<string, ExecutionOrderType> projects;
-
-        /// <summary>
-        /// Contains current incoming project.
-        /// </summary>
-        protected IExecutionOrder current = new ExecutionOrder();
-
-        /// <summary>
-        /// Used handler.
-        /// </summary>
-        protected ICommand cmd;
-
-        /// <summary>
-        /// object synch.
-        /// </summary>
-        private Object _lock = new Object();
-
 
         /// <summary>
         /// Binding 'PRE' of Solution

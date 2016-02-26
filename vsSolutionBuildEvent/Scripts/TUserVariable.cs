@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -32,9 +32,19 @@ namespace net.r_eg.vsSBE.Scripts
         public string unevaluated;
 
         /// <summary>
-        /// Identificator for current variable
+        /// Identifier of current variable
         /// </summary>
         public string ident;
+
+        /// <summary>
+        /// Front-end variable name if used
+        /// </summary>
+        public string name;
+
+        /// <summary>
+        /// Context of variable if used
+        /// </summary>
+        public string project;
 
         /// <summary>
         /// Current status of evaluation
@@ -74,11 +84,14 @@ namespace net.r_eg.vsSBE.Scripts
             Evaluated
         }
 
-        public TUserVariable(TUserVariable origin): this()
+        public TUserVariable(TUserVariable origin)
+            : this()
         {
             evaluated       = origin.evaluated;
             unevaluated     = origin.unevaluated;
             ident           = origin.ident;
+            name            = origin.name;
+            project         = origin.project;
             status          = origin.status;
             persistence     = origin.persistence;
             prev            = origin.prev;

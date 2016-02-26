@@ -449,9 +449,13 @@ namespace net.r_eg.vsSBE.API
         /// <param name="type"></param>
         public void updateBuildType(Bridge.BuildType type)
         {
-            Environment.BuildType = type;
+            if(Environment != null) {
+                Environment.BuildType = type;
+            }
             
-            clientLib.Build.updateBuildType(type);
+            if(clientLib != null && clientLib.Build != null) {
+                clientLib.Build.updateBuildType(type);
+            }
         }
 
         /// <summary>
@@ -528,9 +532,8 @@ namespace net.r_eg.vsSBE.API
 
             cmdEvents = Environment.Events.CommandEvents; // protection from garbage collector
             lock(_lock) {
-                cmdEvents.BeforeExecute -= _cmdBeforeExecute;
+                detachCommandEvents();
                 cmdEvents.BeforeExecute += _cmdBeforeExecute;
-                cmdEvents.AfterExecute  -= _cmdAfterExecute;
                 cmdEvents.AfterExecute  += _cmdAfterExecute;
             }
         }
