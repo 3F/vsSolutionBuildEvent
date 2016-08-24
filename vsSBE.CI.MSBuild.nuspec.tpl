@@ -20,11 +20,12 @@
         
     Package version: a.b.x[.y] -&gt; a &amp; b - CI.MSBuild (v%CIM%) -&gt; x - main library (%Lib% is a v%vsSBE%) -&gt; y - variant of package if exists
 
-    ---
-    Alternative for getting this package if you have problem with nuget:
+    ~~~~~~~~
+    Alternative to get it:
+    ==========================================
+    msbuild gnt.core /p:ngpackages="vsSBE.CI.MSBuild/%CIM%.%Lib%"
+    ==========================================
     * https://github.com/3F/GetNuTool
-
-    [ msbuild.exe gnt.core /p:ngpackages="vsSBE.CI.MSBuild/%CIM%.%Lib%" ]
     
     </description>
     <releaseNotes>Updated the vsSolutionBuildEvent library: v%vsSBE%</releaseNotes>

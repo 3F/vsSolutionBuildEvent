@@ -1,13 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7ADBBB81-2FA7-45CA-B97D-486C3A6624D3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{7ADBBB81-2FA7-45CA-B97D-486C3A6624D3}"
 	ProjectSection(SolutionItems) = preProject
-		Local.testsettings = Local.testsettings
-		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
-		vsSolutionBuildEvent.vsmdi = vsSolutionBuildEvent.vsmdi
+		.gitignore = .gitignore
+		.vssbe = .vssbe
+		3rd-party = 3rd-party
+		appveyor.yml = appveyor.yml
+		AUTHORS = AUTHORS
+		build_[CI_Debug].bat = build_[CI_Debug].bat
+		build_[CI_Release].bat = build_[CI_Release].bat
+		changelog.txt = changelog.txt
+		LICENSE = LICENSE
+		README.md = README.md
+		Version.tpl = Version.tpl
+		vsSBE.CI.MSBuild.nuspec.tpl = vsSBE.CI.MSBuild.nuspec.tpl
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".gnt", ".gnt", "{65FF5D56-E814-4956-89BD-7C53EC557BFE}"

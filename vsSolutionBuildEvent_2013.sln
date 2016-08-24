@@ -3,6 +3,28 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{7ADBBB81-2FA7-45CA-B97D-486C3A6624D3}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		.vssbe = .vssbe
+		3rd-party = 3rd-party
+		appveyor.yml = appveyor.yml
+		AUTHORS = AUTHORS
+		build_[CI_Debug].bat = build_[CI_Debug].bat
+		build_[CI_Release].bat = build_[CI_Release].bat
+		changelog.txt = changelog.txt
+		LICENSE = LICENSE
+		README.md = README.md
+		Version.tpl = Version.tpl
+		vsSBE.CI.MSBuild.nuspec.tpl = vsSBE.CI.MSBuild.nuspec.tpl
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".gnt", ".gnt", "{65FF5D56-E814-4956-89BD-7C53EC557BFE}"
+	ProjectSection(SolutionItems) = preProject
+		.gnt\gnt.core = .gnt\gnt.core
+		.gnt\packages.config = .gnt\packages.config
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vsSolutionBuildEvent_2013", "vsSolutionBuildEvent\vsSolutionBuildEvent_2013.csproj", "{32E44995-F621-4E77-B46A-8F65D64E7FEA}"
 	ProjectSection(ProjectDependencies) = postProject
 		{73919171-44B6-4536-B892-F1FCA653887C} = {73919171-44B6-4536-B892-F1FCA653887C}
@@ -15,13 +37,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vsSolutionBuildEventTest", 
 		{4262A1DC-768F-43CC-85F5-A4ED9CD034CC} = {4262A1DC-768F-43CC-85F5-A4ED9CD034CC}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7ADBBB81-2FA7-45CA-B97D-486C3A6624D3}"
-	ProjectSection(SolutionItems) = preProject
-		Local.testsettings = Local.testsettings
-		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
-		vsSolutionBuildEvent.vsmdi = vsSolutionBuildEvent.vsmdi
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bridge", "Bridge\Bridge.csproj", "{73919171-44B6-4536-B892-F1FCA653887C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Devenv_2013", "Devenv\Devenv_2013.csproj", "{56437CBB-4AE5-4405-B928-600009D60E2D}"
@@ -32,12 +47,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CI.MSBuild", "CI.MSBuild\CI.MSBuild.csproj", "{97F0E2FF-42DB-4506-856D-8694DD99F827}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Provider", "Provider\Provider.csproj", "{4F8BB8CD-1116-4F07-9B8F-06D69FB8589B}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".gnt", ".gnt", "{65FF5D56-E814-4956-89BD-7C53EC557BFE}"
-	ProjectSection(SolutionItems) = preProject
-		.gnt\gnt.core = .gnt\gnt.core
-		.gnt\packages.config = .gnt\packages.config
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VsixLib_net45", "VsixLib\VsixLib_net45.csproj", "{4262A1DC-768F-43CC-85F5-A4ED9CD034CC}"
 EndProject
@@ -394,8 +403,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = vsSolutionBuildEvent.vsmdi
 	EndGlobalSection
 EndGlobal
