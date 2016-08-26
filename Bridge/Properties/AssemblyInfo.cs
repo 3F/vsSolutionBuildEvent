@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Bridge to the vsSolutionBuildEvent")]
+[assembly: AssemblyTitle("Bridge to [ github.com/3F/vsSolutionBuildEvent ]")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("vsSolutionBuildEvent API")]
-[assembly: AssemblyCopyright("Denis Kuzmin (reg) <entry.reg@gmail.com>")]
+[assembly: AssemblyCopyright("Denis Kuzmin - entry.reg@gmail.com")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

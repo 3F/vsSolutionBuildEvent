@@ -8,22 +8,27 @@
     <ProjectName>Devenv</ProjectName>
     <ProjectGuid>{56437CBB-4AE5-4405-B928-600009D60E2D}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <StartupObject>
-    </StartupObject>
+    <RootNamespace>net.r_eg.vsSBE.Devenv</RootNamespace>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
     <NoStandardLibraries>false</NoStandardLibraries>
     <AssemblyName>Devenv</AssemblyName>
     <DeploymentDirectory>.\bin\</DeploymentDirectory>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <NetTargetVName>net40</NetTargetVName>
+    <DefineConstants>NET_40</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <OutputPath>.\bin\Debug\</OutputPath>
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
     <WarningLevel>4</WarningLevel>
     <IncrementalBuild>false</IncrementalBuild>
     <DocumentationFile>
     </DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
     <DebugType>pdbonly</DebugType>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
@@ -32,49 +37,64 @@
     <Optimize>true</Optimize>
     <OutputPath>.\bin\Release\</OutputPath>
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>$(DefineConstants)</DefineConstants>
     <WarningLevel>4</WarningLevel>
     <IncrementalBuild>false</IncrementalBuild>
     <DocumentationFile>
     </DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
     <DebugType>pdbonly</DebugType>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-  <PropertyGroup>
-    <RootNamespace>net.r_eg.vsSBE.Devenv</RootNamespace>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release_net45|AnyCPU'">
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <NetTargetVName>net45</NetTargetVName>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>.\bin\Release\</OutputPath>
+    <DefineConstants>NET_45</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug_net45|AnyCPU'">
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <NetTargetVName>net45</NetTargetVName>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>.\bin\Debug\</OutputPath>
+    <DefineConstants>NET_45;DEBUG;TRACE</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\EnvDTE.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\EnvDTE.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EnvDTE80, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\EnvDTE80.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\EnvDTE80.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="extensibility, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\extensibility.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\extensibility.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.OLE.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\Microsoft.VisualStudio.OLE.Interop.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\Microsoft.VisualStudio.OLE.Interop.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\Microsoft.VisualStudio.Shell.10.0.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\Microsoft.VisualStudio.Shell.10.0.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\Microsoft.VisualStudio.Shell.Interop.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\Microsoft.VisualStudio.Shell.Interop.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -113,7 +133,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".version" />
-    <None Include="key.pfx" />
     <None Include="key.snk" />
     <None Include="packages.config" />
   </ItemGroup>

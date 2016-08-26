@@ -6,12 +6,12 @@ using net.r_eg.vsSBE;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("vsSolutionBuildEvent")]
+[assembly: AssemblyTitle("vsSolutionBuildEvent [ github.com/3F/vsSolutionBuildEvent ]")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("vsSolutionBuildEvent")]
-[assembly: AssemblyCopyright("Denis Kuzmin (reg) <entry.reg@gmail.com>")]
+[assembly: AssemblyCopyright("Denis Kuzmin - entry.reg@gmail.com")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: NeutralResourcesLanguage("en-US")]

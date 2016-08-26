@@ -2,9 +2,9 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>vsSBE.CI.MSBuild</id>
-    <title>vsSolutionBuildEvent CI.MSBuild</title>
+    <title>CI.MSBuild vsSolutionBuildEvent</title>
     <version>%CIM%.%Lib%</version>
-    <authors>entry.reg@gmail.com</authors>
+    <authors>github.com/3F/vsSolutionBuildEvent</authors>
     <owners>reg</owners>
     <licenseUrl>https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/</licenseUrl>
     <projectUrl>https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/</projectUrl>
@@ -30,6 +30,6 @@
     </description>
     <releaseNotes>Updated the vsSolutionBuildEvent library: v%vsSBE%</releaseNotes>
     <copyright>Copyright (c) 2013-2016  Denis Kuzmin (reg) [entry.reg@gmail.com]</copyright>
-    <tags>CI Tools vsSolutionBuildEvent MSBuild logging automation vsSBE Scripts Build Events Solution Projects Versioning AppVeyor TeamCity Build-Server Continuous-Integration Build-automation</tags>
+    <tags>Build Tools vsSolutionBuildEvent MSBuild logger automation Version vsSBE Scripts Events CI Solution Projects Versioning AppVeyor TeamCity Build-Server Continuous-Integration Build-automation</tags>
   </metadata>
 </package>

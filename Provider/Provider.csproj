@@ -7,10 +7,14 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{4F8BB8CD-1116-4F07-9B8F-06D69FB8589B}</ProjectGuid>
     <OutputType>Library</OutputType>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>net.r_eg.vsSBE.Provider</RootNamespace>
     <AssemblyName>Provider</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <NetTargetVName>net40</NetTargetVName>
+    <DefineConstants>NET_40</DefineConstants>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -18,7 +22,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -26,15 +30,31 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>$(DefineConstants)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release_net45|AnyCPU'">
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <NetTargetVName>net45</NetTargetVName>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>NET_45</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug_net45|AnyCPU'">
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <NetTargetVName>net45</NetTargetVName>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>NET_45;DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -59,7 +79,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".version" />
-    <None Include="key.pfx" />
     <None Include="key.snk" />
   </ItemGroup>
   <ItemGroup>

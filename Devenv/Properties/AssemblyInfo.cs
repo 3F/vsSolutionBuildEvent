@@ -7,12 +7,12 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-[assembly: AssemblyTitle("Add-in of the vsSolutionBuildEvent")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Devenv vsSolutionBuildEvent [ github.com/3F/vsSolutionBuildEvent ]")]
+[assembly: AssemblyDescription("Add-in")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("vsSolutionBuildEvent Devenv Command-Line")]
-[assembly: AssemblyCopyright("Denis Kuzmin (reg) <entry.reg@gmail.com>")]
+[assembly: AssemblyCopyright("Denis Kuzmin - entry.reg@gmail.com")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -10,7 +10,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>net.r_eg.vsSBE.CI.MSBuild</RootNamespace>
     <AssemblyName>CI.MSBuild</AssemblyName>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <NetTargetVName>net40</NetTargetVName>
+    <DefineConstants>NET_40</DefineConstants>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -18,7 +22,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -26,15 +30,31 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>$(DefineConstants)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release_net45|AnyCPU'">
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <NetTargetVName>net45</NetTargetVName>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>NET_45</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug_net45|AnyCPU'">
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <NetTargetVName>net45</NetTargetVName>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>NET_45;DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Build.Framework" />
@@ -67,7 +87,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".version" />
-    <None Include="key.pfx" />
     <None Include="key.snk" />
   </ItemGroup>
   <ItemGroup>

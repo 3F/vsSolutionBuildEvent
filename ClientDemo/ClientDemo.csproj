@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,16 +8,19 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ClientDemo</RootNamespace>
     <AssemblyName>client.vssbe</AssemblyName>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <NetTargetVName>net40</NetTargetVName>
+    <DefineConstants>NET_40</DefineConstants>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -26,15 +28,31 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>$(DefineConstants)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release_net45|AnyCPU'">
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <NetTargetVName>net45</NetTargetVName>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>NET_45</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug_net45|AnyCPU'">
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <NetTargetVName>net45</NetTargetVName>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>NET_45;DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -72,6 +90,7 @@
     <None Include="key.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="$(MicrosoftCommonPropsHasBeenImported) != true and Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

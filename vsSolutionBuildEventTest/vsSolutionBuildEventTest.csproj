@@ -3,8 +3,6 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>
-    </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectName>vsSolutionBuildEventTest</ProjectName>
     <ProjectGuid>{C00D04E8-8101-42F5-89DA-CBAD205CC1D3}</ProjectGuid>
@@ -13,13 +11,14 @@
     <RootNamespace>net.r_eg.vsSBE.Test</RootNamespace>
     <AssemblyName>vsSolutionBuildEventTest</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <csprojPostfix>
-    </csprojPostfix>
+    <NetTargetVName>net40</NetTargetVName>
+    <DefineConstants>NET_40</DefineConstants>
+    <csprojPostfix></csprojPostfix>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkProfile />
   </PropertyGroup>
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(NetTargetVName)' == ''">
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">0</VisualStudioVersion>
     <VsSDKVersion Condition="'$(VsSDKVersion)' == ''">0</VsSDKVersion>
     <TargetFrameworkVersion Condition="'$(VisualStudioVersion)' &gt; '10' or '$(VsSDKVersion)' &gt; '10'">v4.5</TargetFrameworkVersion>
@@ -32,8 +31,9 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <NoWarn>618</NoWarn>
@@ -42,21 +42,46 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>$(DefineConstants)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <NoWarn>618</NoWarn>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release_net45|AnyCPU'">
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <NetTargetVName>net45</NetTargetVName>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>$(DefineConstants)</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>618</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug_net45|AnyCPU'">
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <NetTargetVName>net45</NetTargetVName>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
+    <NoWarn>618</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net45\EnvDTE.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\EnvDTE.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EnvDTE80, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net45\EnvDTE80.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\EnvDTE80.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Build" />
@@ -70,9 +95,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.Core" />
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>

@@ -5,163 +5,137 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectName>CIMLib</ProjectName>
-    <ProjectGuid>{A7BF1F9C-F18D-423E-9354-859DC3CFAFD4}</ProjectGuid>
+    <ProjectName>VsixLib</ProjectName>
+    <ProjectGuid>{4262A1DC-768F-43CC-85F5-A4ED9CD034CC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>net.r_eg.vsSBE</RootNamespace>
-    <AssemblyName>CIMLib</AssemblyName>
+    <AssemblyName>VsixLib</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <NetTargetVName>net40</NetTargetVName>
+    <DefineConstants>NET_40</DefineConstants>
     <FileAlignment>512</FileAlignment>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
+    <DefineConstants>$(DefineConstants)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>3</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release_net45|AnyCPU'">
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <NetTargetVName>net45</NetTargetVName>
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>NET_45</DefineConstants>
+    <Optimize>true</Optimize>
+    <WarningLevel>3</WarningLevel>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\EnvDTE.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\EnvDTE.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EnvDTE80, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\EnvDTE80.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\EnvDTE80.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="extensibility, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\extensibility.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="microsoft.msxml, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\microsoft.msxml.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\microsoft.msxml.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualC">
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\Microsoft.VisualC.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\Microsoft.VisualC.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.OLE.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\Microsoft.VisualStudio.OLE.Interop.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\Microsoft.VisualStudio.OLE.Interop.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.ProjectAggregator, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\Microsoft.VisualStudio.ProjectAggregator.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\Microsoft.VisualStudio.ProjectAggregator.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\Microsoft.VisualStudio.Shell.10.0.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\Microsoft.VisualStudio.Shell.10.0.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\Microsoft.VisualStudio.Shell.Immutable.10.0.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\Microsoft.VisualStudio.Shell.Immutable.10.0.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\Microsoft.VisualStudio.Shell.Interop.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\Microsoft.VisualStudio.Shell.Interop.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\Microsoft.VisualStudio.Shell.Interop.10.0.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\Microsoft.VisualStudio.Shell.Interop.10.0.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.8.0, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\Microsoft.VisualStudio.Shell.Interop.8.0.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\Microsoft.VisualStudio.Shell.Interop.8.0.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.9.0, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\Microsoft.VisualStudio.Shell.Interop.9.0.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\Microsoft.VisualStudio.Shell.Interop.9.0.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.TextManager.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\Microsoft.VisualStudio.TextManager.Interop.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\Microsoft.VisualStudio.TextManager.Interop.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.TextManager.Interop.8.0, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\Microsoft.VisualStudio.TextManager.Interop.8.0.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\Microsoft.VisualStudio.TextManager.Interop.8.0.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.VSHelp, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\Microsoft.VisualStudio.VSHelp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="PresentationCore">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="PresentationFramework">
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\Microsoft.VisualStudio.VSHelp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="stdole, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\net40\stdole.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\stdole.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Design">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Drawing">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Drawing.Design">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Windows.Forms">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Xaml">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Xml">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Xml.Linq">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="WindowsBase">
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Readme.txt" />
-  </ItemGroup>
-  <ItemGroup>
+    <None Include="List.targets">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Readme.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="BeforeBuild">
-    <RemoveDir Directories="bin" />
-  </Target>
+  <!-- <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="$(MicrosoftCommonPropsHasBeenImported) != true and Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" /> -->
+  <!-- <Target Name="BeforeBuild">
+    <RemoveDir Directories="bin;obj" />
+  </Target> -->
   <Target Name="AfterBuild">
     <Delete Files="$(OutputPath)$(AssemblyName).dll" />
   </Target>

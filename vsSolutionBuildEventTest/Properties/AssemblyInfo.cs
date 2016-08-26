@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Tests of the vsSolutionBuildEvent library")]
+[assembly: AssemblyTitle("Unit-Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]

@@ -176,7 +176,7 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[( #[File exists.directory(\".git\")] && #[File exists.file(\"git.exe\", true)] )\n{\n    #[var branchSha1        = #[File sout(\"git\", \"rev-parse --short HEAD\")]]\n    #[var branchName        = #[File sout(\"git\", \"rev-parse --abbrev-ref HEAD\")]]\n    #[var branchRevCount    = #[File sout(\"git\", \"rev-list HEAD --count\")]]\n    \n    #[var csVersion = $(tplVersion.Replace(%branchName%, \"$(branchName)\").Replace(%branchSha1%, \"$(branchSha1)\").Replace(%branchRevCount%, \"$(branchRevCount)\"))]\n    \n    #[($(branchName) == \"HEAD\") {\n        #[var branchName = $(APPVEYOR_REPO_BRANCH)]\n    }]\n}\nelse {\n    #[var branchSha1 =-] #[var branchName =-] #[var branchRevCount =-]\n    #[var csVersion = $(tplVersion.Replace(%branchName%, \"-\").Replace(%branchSha1%, \"-\").Replace(%branchRevCount%, \"-\"))]\n}]\n\n\n#[\"\n    Updating version for 'vsSolutionBuildEvent'.\n    \n    Note:\n    * For getting the main project path, sample:\n                    #[var pDir = $($(ProjectDir:$(SolutionName)))]\n\"]\n\n#[var cs = $(csVersion.Replace(%Version%, \"$(numSBE.Replace('.', ', ')), $(revBuild)\").Replace(%namespace%, \"\"))]\n#[var cs = $(cs.Replace(%VersionRevString%, \"$(numSBE).$(revBuild)\").Replace(%VersionString%, \"$(numSBE)\"))]\n#[File write(\"#[var pDir]Version.cs\"):#[var cs]]\n\n\n#[\"\n    .vsixmanifest\n\"]\n\n#[($(Configuration) ~= \"_with_revision\" || $(Configuration) ~= \"CI_\") {\n    #[var numSBE = #[var numSBE].#[var revBuild]]\n}]\n#[File replace.Regexp(\"#[var pDir]/source.extension.vsixmanifest\", \"<Version>[0-9.]+</Version>\", \"<Version>#[var numSBE]</Version>\")]",
+        "Command": "#[( #[File exists.directory(\".git\")] && #[File exists.file(\"git.exe\", true)] )\n{\n    #[var branchSha1        = #[File sout(\"git\", \"rev-parse --short HEAD\")]]\n    #[var branchName        = #[File sout(\"git\", \"rev-parse --abbrev-ref HEAD\")]]\n    #[var branchRevCount    = #[File sout(\"git\", \"rev-list HEAD --count\")]]\n    \n    #[var csVersion = $(tplVersion.Replace(%branchName%, \"$(branchName)\").Replace(%branchSha1%, \"$(branchSha1)\").Replace(%branchRevCount%, \"$(branchRevCount)\"))]\n    \n    #[($(branchName) == \"HEAD\") {\n        #[var branchName = $(APPVEYOR_REPO_BRANCH)]\n    }]\n}\nelse {\n    #[var branchSha1 =-] #[var branchName =-] #[var branchRevCount =-]\n    #[var csVersion = $(tplVersion.Replace(%branchName%, \"-\").Replace(%branchSha1%, \"-\").Replace(%branchRevCount%, \"-\"))]\n}]\n\n\n#[\"\n    Updating version for 'vsSolutionBuildEvent'.\n    \n    Note:\n    * For getting the main project path, sample:\n                    #[var pDir = $($(ProjectDir:$(SolutionName)))]\n\"]\n\n#[var cs = $(csVersion.Replace(%Version%, \"$(numSBE.Replace('.', ', ')), $(revBuild)\").Replace(%namespace%, \"\"))]\n#[var cs = $(cs.Replace(%VersionRevString%, \"$(numSBE).$(revBuild)\").Replace(%VersionString%, \"$(numSBE)\"))]\n#[File write(\"#[var pDir]Version.cs\"):#[var cs]]\n\n\n#[\"\n    .vsixmanifest\n\"]\n\n#[( $(Configuration) ^= \"CI_\" || $(Configuration) ~= \"_with_revision\" ) {\n    #[var numSBE = #[var numSBE].#[var revBuild]]\n}]\n#[File replace.Regexp(\"#[var pDir]/source.extension.vsixmanifest\", \"<Version>[0-9.]+</Version>\", \"<Version>#[var numSBE]</Version>\")]",
         "Command__": [
           "#[( #[File exists.directory(\".git\")] && #[File exists.file(\"git.exe\", true)] )",
           "{",
@@ -213,7 +213,7 @@
           "    .vsixmanifest",
           "\"]",
           "",
-          "#[($(Configuration) ~= \"_with_revision\" || $(Configuration) ~= \"CI_\") {",
+          "#[( $(Configuration) ^= \"CI_\" || $(Configuration) ~= \"_with_revision\" ) {",
           "    #[var numSBE = #[var numSBE].#[var revBuild]]",
           "}]",
           "#[File replace.Regexp(\"#[var pDir]/source.extension.vsixmanifest\", \"<Version>[0-9.]+</Version>\", \"<Version>#[var numSBE]</Version>\")]"
@@ -356,7 +356,7 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[var odir      = $(SolutionDir)bin/Releases/]\n#[var cfg       = #[($(Configuration) ~= \"Release\"){Release}else{Debug}]]\n#[var cfgFull   = $(Configuration)]\n#[var vsixLib   = $(SolutionDir)VsixLib\\bin\\]\n#[var CIMLib    = $(SolutionDir)CIMLib\\bin\\]\n\n#[var netStamp      = net$(TargetFrameworkVersion.Replace(\".\", \"\").Replace(\"v\", \"\"))]\n#[var netVerString  = $(TargetFrameworkVersion)#[($(TargetFrameworkVersion) != v4.0){ (be careful - for complete compatibility with VS2010 it should be v4.0)}]]\n#[var msbuildver    = v$(MSBuildToolsVersion)]\n\n#[IO delete.directory(\"$(odir)\", true)]\n#[IO copy.directory(\"\", \"$(odir)\", true)]",
+        "Command": "#[var odir      = $(SolutionDir)bin/Releases/]\n#[var cfg       = #[($(Configuration) ~= \"Release\"){Release}else{Debug}]]\n#[var cfgFull   = $(Configuration)]\n#[var vsixLib   = $(SolutionDir)VsixLib\\bin\\]\n#[var CIMLib    = $(SolutionDir)CIMLib\\bin\\]\n\n#[\" #[var netStamp      = net$(TargetFrameworkVersion.Replace(\".\", \"\").Replace(\"v\", \"\"))] \"]\n#[var netStamp      = $(NetTargetVName:vsSolutionBuildEvent)]\n#[var netVerString  = $(TargetFrameworkVersion:vsSolutionBuildEvent)]\n#[var msbuildver    = v$(MSBuildToolsVersion)]\n\n#[IO delete.directory(\"$(odir)\", true)]\n#[IO copy.directory(\"\", \"$(odir)\", true)]",
         "Command__": [
           "#[var odir      = $(SolutionDir)bin/Releases/]",
           "#[var cfg       = #[($(Configuration) ~= \"Release\"){Release}else{Debug}]]",
@@ -364,8 +364,9 @@
           "#[var vsixLib   = $(SolutionDir)VsixLib\\bin\\]",
           "#[var CIMLib    = $(SolutionDir)CIMLib\\bin\\]",
           "",
-          "#[var netStamp      = net$(TargetFrameworkVersion.Replace(\".\", \"\").Replace(\"v\", \"\"))]",
-          "#[var netVerString  = $(TargetFrameworkVersion)#[($(TargetFrameworkVersion) != v4.0){ (be careful - for complete compatibility with VS2010 it should be v4.0)}]]",
+          "#[\" #[var netStamp      = net$(TargetFrameworkVersion.Replace(\".\", \"\").Replace(\"v\", \"\"))] \"]",
+          "#[var netStamp      = $(NetTargetVName:vsSolutionBuildEvent)]",
+          "#[var netVerString  = $(TargetFrameworkVersion:vsSolutionBuildEvent)]",
           "#[var msbuildver    = v$(MSBuildToolsVersion)]",
           "",
           "#[IO delete.directory(\"$(odir)\", true)]",
@@ -624,12 +625,8 @@
       "BuildType": "Common",
       "Confirmation": true,
       "ToConfiguration": [
-        "Release_with_revision|Any CPU",
-        "Release_with_revision|Mixed Platforms",
-        "Release_with_revision|x86",
-        "Release|Any CPU",
-        "Release|Mixed Platforms",
-        "Release|x86"
+        "Release_net45|Any CPU",
+        "Release|Any CPU"
       ],
       "ExecutionOrder": {
         "$type": "net.r_eg.vsSBE.Events.ExecutionOrder[], vsSolutionBuildEvent",

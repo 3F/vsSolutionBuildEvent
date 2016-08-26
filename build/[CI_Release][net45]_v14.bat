@@ -1,10 +1,7 @@
 call "%~dp0_config"
 
 REM # Configuration
-set cfgname=Release_with_revision
-
-REM # Solution file
-set sln=vsSolutionBuildEvent_net40.sln
+set cfgname=CI_Release_net45
 
 REM # Version of MSBuild tool
 set _msbuild=14.0
