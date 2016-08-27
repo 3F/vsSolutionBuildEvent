@@ -16,7 +16,7 @@
     <csprojPostfix></csprojPostfix>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile />
+    <vsSBE_SDK>1.0.0</vsSBE_SDK>
   </PropertyGroup>
   <PropertyGroup Condition="'$(NetTargetVName)' == ''">
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">0</VisualStudioVersion>
@@ -76,12 +76,12 @@
   <ItemGroup>
     <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\EnvDTE.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(NetTargetVName)\EnvDTE.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="EnvDTE80, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\EnvDTE80.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(NetTargetVName)\EnvDTE80.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Build" />
@@ -147,7 +147,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\VsixLib\List.targets" />
+  <Import Project="$(SolutionDir)\VsixLib.targets" />
   <Target Name="BeforeBuild">
     <Copy SourceFiles="@(VsixLib)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" UseHardlinksIfPossible="true" />
   </Target>

@@ -1,4 +1,7 @@
 
+It's a container of additional libraries for NuGet Package - CI.MSBuild project.
 
-Similarly as VsixLib (see VsixLib\Readme.txt).
-For NuGet Package - CI.MSBuild
+The final nupkg should contain:
+
+* Libraries of vsix package (see: \VsixLib\VsixLib.targets)
+* Libraries from CIMLib\References
