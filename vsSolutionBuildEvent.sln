@@ -54,6 +54,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".gnt", ".gnt", "{65FF5D56-E
 		.gnt\packages.config = .gnt\packages.config
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{849DD790-F856-493C-A19E-2560A21F6AF1}"
+	ProjectSection(SolutionItems) = preProject
+		tools\gnt.bat = tools\gnt.bat
+		tools\msbuild.bat = tools\msbuild.bat
+		tools\powershell.bat = tools\powershell.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		CI_Debug_net45|Any CPU = CI_Debug_net45|Any CPU

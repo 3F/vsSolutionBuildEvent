@@ -4,7 +4,10 @@ REM # Version of used CI.MSBuild
 REM # set CIM=1.6.1207
 
 REM # Version of MSBuild tool by default
-set _msbuild=14.0
+REM # set _msbuild=14.0
+
+REM # MSBuild tools
+set _msbuild_exe=%~dp0..\\tools\\msbuild.bat
 
 REM # Solution file by defualt
 set sln=vsSolutionBuildEvent.sln
