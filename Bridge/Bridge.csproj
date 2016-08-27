@@ -12,8 +12,9 @@
     <AssemblyName>Bridge</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <NetTargetVName>net40</NetTargetVName>
-    <DefineConstants>NET_40</DefineConstants>    
+    <DefineConstants>NET_40</DefineConstants>
     <FileAlignment>512</FileAlignment>
+    <vsSBE_SDK>1.1.0</vsSBE_SDK>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -62,7 +63,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.Shell.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\vsSBE.SDK.1.0.0\lib\$(NetTargetVName)\Microsoft.VisualStudio.Shell.Interop.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(NetTargetVName)\Microsoft.VisualStudio.Shell.Interop.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Core" />

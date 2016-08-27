@@ -18,7 +18,7 @@
     <DefineConstants>NET_40</DefineConstants>
     <MinimumVisualStudioVersion>$(VisualStudioVersion)</MinimumVisualStudioVersion>
     <OldToolsVersion>4.0</OldToolsVersion>
-    <vsSBE_SDK>1.0.0</vsSBE_SDK>
+    <vsSBE_SDK>1.1.0</vsSBE_SDK>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
