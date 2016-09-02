@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -18,11 +18,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace net.r_eg.vsSBE
+namespace net.r_eg.vsSBE.Sln
 {
     /// <summary>
     /// For work with .sln files.
@@ -37,47 +36,12 @@ namespace net.r_eg.vsSBE
     ///      -> void ParseFirstProjectLine(string firstLine, ProjectInSolution proj)
     ///      -> crackProjectLine -> PROJECTNAME + RELATIVEPATH
     /// </summary>
-    public class SolutionParser
+    public class Parser
     {
         /// <summary>
-        /// Properties of project in solution file
+        /// Full path to root solution directory
         /// </summary>
-        public struct Project
-        {
-            /// <summary>
-            /// Project type GUID
-            /// </summary>
-            public string Type { get; set; }
-
-            /// <summary>
-            /// Project name
-            /// </summary>
-            public string Name { get; set; }
-
-            /// <summary>
-            /// Relative path to project
-            /// </summary>
-            public string Path { get; set; }
-
-            /// <summary>
-            /// Full path to project 
-            /// </summary>
-            public string FullPath { get; set; }
-
-            /// <summary>
-            /// Project GUID
-            /// </summary>
-            public string Guid { get; set; }
-        }
-
-        /// <summary>
-        /// Configuration / Platform
-        /// </summary>
-        public struct SolutionCfg
-        {
-            public string Configuration { get; set; }
-            public string Platform { get; set; }
-        }
+        private string solutionDir;
 
         /// <summary>
         /// Provides the result of work
@@ -85,22 +49,21 @@ namespace net.r_eg.vsSBE
         public sealed class Result
         {
             /// <summary>
-            /// Configurations with platforms in solution file
+            /// Solution configurations with platforms.
             /// </summary>
-            public List<SolutionCfg> configs;
+            public List<ConfigSln> configs;
 
             /// <summary>
-            /// All found projects for solution
+            /// Project configurations with platforms.
+            /// </summary>
+            public List<ConfigPrj> projectConfigs;
+
+            /// <summary>
+            /// All found projects for solution.
             /// </summary>
             public List<Project> projects;
         }
 
-        /// <summary>
-        /// Full path to root solution directory
-        /// </summary>
-        private string _solutionDir;
-
-        
         /// <summary>
         /// Parse of selected .sln file
         /// </summary>
@@ -108,11 +71,13 @@ namespace net.r_eg.vsSBE
         /// <returns></returns>
         public Result parse(string sln)
         {
-            _solutionDir = getPathFrom(sln);
+            solutionDir = getPathFrom(sln);
 
-            Result Data = new Result() {
-                configs  = new List<SolutionCfg>(),
-                projects = new List<Project>()
+            Result Data = new Result()
+            {
+                configs         = new List<ConfigSln>(),
+                projectConfigs  = new List<ConfigPrj>(),
+                projects        = new List<Project>(),
             };
 
             using(StreamReader reader = new StreamReader(sln, Encoding.Default))
@@ -127,7 +92,11 @@ namespace net.r_eg.vsSBE
                     }
 
                     if(line.StartsWith("GlobalSection(SolutionConfigurationPlatforms)", StringComparison.Ordinal)) {
-                        hConfiguration(reader, ref Data.configs);
+                        hSlnConfigs(reader, ref Data.configs);
+                    }
+
+                    if(line.StartsWith("GlobalSection(ProjectConfigurationPlatforms)", StringComparison.Ordinal)) {
+                        hPrjConfigs(reader, ref Data.projectConfigs);
                     }
                 }
             }
@@ -139,14 +108,14 @@ namespace net.r_eg.vsSBE
         /// </summary>
         /// <param name="reader"></param>
         /// <param name="configuration"></param>
-        protected void hConfiguration(StreamReader reader, ref List<SolutionCfg> configuration)
+        protected void hSlnConfigs(StreamReader reader, ref List<ConfigSln> configuration)
         {
             string line;
             while((line = reader.ReadLine()) != null && line.Trim() != "EndGlobalSection")
             {
                 string left = line.Split('=')[0].Trim(); // Debug|Win32 = Debug|Win32
                 if(string.Compare(left, "DESCRIPTION", StringComparison.OrdinalIgnoreCase) == 0) {
-                    Log.Trace("SolutionParser: Configuration has been ignored for line '{0}'", line);
+                    Log.Trace("SolutionParser: Solution Configuration has been ignored for line '{0}'", line);
                     continue;
                 }
 
@@ -155,10 +124,53 @@ namespace net.r_eg.vsSBE
                     continue;
                 }
 
-                Log.Trace("SolutionParser: Configuration ->['{0}' ; '{1}']", cfg[0], cfg[1]);
-                configuration.Add(new SolutionCfg() {
-                    Configuration   = cfg[0],
-                    Platform        = cfg[1]
+                Log.Trace("SolutionParser: Solution Configuration ->['{0}' ; '{1}']", cfg[0], cfg[1]);
+                configuration.Add(new ConfigSln() {
+                    configuration   = cfg[0],
+                    platform        = cfg[1]
+                });
+            }
+        }
+
+        /// <summary>
+        /// ProjectConfigurationPlatforms section
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="configuration"></param>
+        protected void hPrjConfigs(StreamReader reader, ref List<ConfigPrj> configuration)
+        {
+            /*
+               [Projects Guid]                        [Solution pair]                [Project pair]
+               {A7BF1F9C-F18D-423E-9354-859DC3CFAFD4}.CI_Release|Any CPU.ActiveCfg = Release|Any CPU   - configuration name
+               {A7BF1F9C-F18D-423E-9354-859DC3CFAFD4}.CI_Release|Any CPU.Build.0 = Release|Any CPU     - flag of build  (this line exists only when this flag is true)
+            */
+            string line;
+            while((line = reader.ReadLine()) != null && line.Trim() != "EndGlobalSection")
+            {
+                int x, y;
+
+                x           = line.IndexOf('.');
+                var pGuid   = line.Substring(0, x).Trim();
+
+                y           = line.IndexOf('.', ++x);
+                string csln = line.Substring(x, y - x).Trim();
+
+                x           = line.IndexOf('=', ++y);
+                string type = line.Substring(y, x - y).Trim();
+
+                string cprj = line.Substring(x + 1).Trim();
+
+                if(!type.Equals("ActiveCfg", StringComparison.OrdinalIgnoreCase)) {
+                    Log.Trace("SolutionParser: Project Configuration has been ignored for line '{0}'", line);
+                    continue;
+                }
+
+                Log.Trace($"SolutionParser: Project Configuration `{pGuid}`, `{csln}` = `{cprj}`");
+
+                configuration.Add(new ConfigPrj(cprj) {
+                    pGuid = pGuid,
+                    sln = new ConfigSln(csln),
+                    includeInBuild = true // TODO: check existence of .Build.0
                 });
             }
         }
@@ -194,17 +206,17 @@ namespace net.r_eg.vsSBE
                 fullPath = pPath;
             }
             else {
-                fullPath = (!String.IsNullOrEmpty(pPath))? Path.Combine(_solutionDir, pPath) : pPath;
+                fullPath = (!String.IsNullOrEmpty(pPath))? Path.Combine(solutionDir, pPath) : pPath;
             }
 
             Log.Trace("SolutionParser: project ->[Type: '{0}'; Name: '{1}'; Path: '{2}'; GUID: '{3}'; FullPath: '{4}']",
                                                             pType, pName, pPath, pGuid, fullPath);
             projects.Add(new Project() {
-                Type        = pType,
-                Name        = pName,
-                Path        = pPath,
-                FullPath    = fullPath,
-                Guid        = pGuid
+                type        = pType,
+                name        = pName,
+                path        = pPath,
+                fullPath    = fullPath,
+                pGuid       = pGuid
             });
         }
 

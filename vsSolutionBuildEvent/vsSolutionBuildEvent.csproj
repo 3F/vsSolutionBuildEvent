@@ -273,6 +273,9 @@
     <Compile Include="SBEScripts\SNode\LevelType.cs" />
     <Compile Include="SBEScripts\SNode\ILevel.cs" />
     <Compile Include="SBEScripts\SNode\PM.cs" />
+    <Compile Include="Sln\ConfigPrj.cs" />
+    <Compile Include="Sln\ConfigSln.cs" />
+    <Compile Include="Sln\Project.cs" />
     <Compile Include="UI\WForms\Controls\FileTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -461,7 +464,7 @@
     <Compile Include="SBEScripts\Value.cs" />
     <Compile Include="Scripts\StringProtector.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="SolutionParser.cs" />
+    <Compile Include="Sln\Parser.cs" />
     <Compile Include="Scripts\Tokens.cs" />
     <Compile Include="MSBuild\PreparedData.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
@@ -733,6 +736,7 @@
     </Content>
   </ItemGroup>
   <Target Name="BeforeBuild">
+    <Delete Files="$(OutputPath)\*.dll" />
     <Copy SourceFiles="@(VsixLib)" DestinationFolder="$(OutputPath)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
   </Target>
   <!--

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -28,11 +28,23 @@ using net.r_eg.vsSBE.UnifiedTypes;
 
 namespace net.r_eg.vsSBE
 {
+    using TProp = Dictionary<string, string>;
+
     /// <summary>
     /// Isolated environment for work without DTE
     /// </summary>
     public class IsolatedEnv: IEnvironment
     {
+        /// <summary>
+        /// Solution properties.
+        /// </summary>
+        protected TProp slnProperties = new TProp();
+
+        /// <summary>
+        /// Solution data
+        /// </summary>
+        private Sln.Parser.Result _sln;
+
         /// <summary>
         /// Simple list of names from EnvDTE projects
         /// </summary>
@@ -40,9 +52,9 @@ namespace net.r_eg.vsSBE
         {
             get {
                 return ProjectCollection.GlobalProjectCollection.LoadedProjects
-                        .Where(p => p.GetPropertyValue("Configuration") == properties["Configuration"] 
-                                    && p.GetPropertyValue("Platform") == properties["Platform"]
-                        )
+                        //.Where(p => p.GetPropertyValue("Configuration") == properties["Configuration"] 
+                        //            && p.GetPropertyValue("Platform") == properties["Platform"]
+                        //)
                         .Select(p => getProjectNameFrom(p))
                         .Where(name => !String.IsNullOrEmpty(name))
                         .ToList<string>();
@@ -67,7 +79,7 @@ namespace net.r_eg.vsSBE
         public string SolutionActiveCfgString
         {
             get {
-                return formatCfg(properties["Configuration"], properties["Platform"]);
+                return formatCfg(slnProperties["Configuration"], slnProperties["Platform"]);
             }
         }
 
@@ -179,17 +191,6 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Solution properties (global properties for all project collection)
-        /// </summary>
-        protected Dictionary<string, string> properties = new Dictionary<string, string>();
-
-        /// <summary>
-        /// Solution data
-        /// </summary>
-        private SolutionParser.Result _sln;
-
-
-        /// <summary>
         /// Gets instance of the Build.Evaluation.Project for accessing to properties etc.
         /// </summary>
         /// <param name="name">Specified project name. null value for project by default (~startup-project etc.)</param>
@@ -202,32 +203,42 @@ namespace net.r_eg.vsSBE
                 name = StartupProjectString;
                 Log.Trace("getProject: use the StartupProject '{0}'", name);
             }
-            SolutionParser.Project project = _sln.projects.Find(p => p.Name == name);
+            Sln.Project project;
 
             foreach(Project eProject in ProjectCollection.GlobalProjectCollection.LoadedProjects)
             {
-                string pName = getProjectNameFrom(eProject);
-                string pCfg  = formatCfg(eProject.GetPropertyValue("Configuration"), eProject.GetPropertyValue("Platform"));
+                string eConfiguration   = eProject.GetPropertyValue("Configuration");
+                string ePlatform        = eProject.GetPropertyValue("Platform");
+                string eCfg             = formatCfg(eConfiguration, ePlatform);
 
-                Log.Trace("find in projects collection: project '{0}' == '{1}', '{2}' == '{3}' [{4} = {5}]",
-                                eProject.FullPath, project.FullPath, pName, name, SolutionActiveCfgString, pCfg);
+                Log.Trace($"find in projects collection: `{eProject.FullPath}`");
+                project = _sln.projects.Find(p => p.fullPath == eProject.FullPath);
 
-                if(SolutionActiveCfgString != pCfg) {
+                if(project.pGuid == null || project.fullPath == null) {
                     continue;
                 }
 
-                if(project.FullPath == eProject.FullPath || pName == name) {
+                TProp prop = projectProperties(project, slnProperties);
+                Log.Trace($" ? {prop["Configuration"]}|{prop["Platform"]} == {eCfg}");
+
+                if(eCfg == formatCfg(prop["Configuration"], prop["Platform"])) {
                     return eProject;
                 }
             }
 
-            Log.Trace("trying to load project :: '{0}' ('{1}')", project.Name, project.FullPath);
-            if(String.IsNullOrEmpty(project.FullPath)) {
-                throw new NotFoundException("Missed path to project '{0}' ['{1}', '{2}']", name, project.Name, project.Guid);
+            project = _sln.projects.Find(p => p.name == name);
+
+            Log.Trace("trying to load project :: '{0}' ('{1}')", project.name, project.fullPath);
+            if(String.IsNullOrEmpty(project.fullPath)) {
+                throw new NotFoundException("Missed path to project '{0}' ['{1}', '{2}']", name, project.name, project.pGuid);
             }
 
-            Log.Debug("-> ['{0}' ; '{1}']", properties["Configuration"], properties["Platform"]);
-            return new Project(project.FullPath, properties, null, ProjectCollection.GlobalProjectCollection);
+            return new Project(
+                            project.fullPath, 
+                            projectProperties(project, slnProperties), 
+                            null, 
+                            ProjectCollection.GlobalProjectCollection
+            );
         }
 
         /// <summary>
@@ -251,12 +262,12 @@ namespace net.r_eg.vsSBE
                 return null;
             }
 
-            if(name.Equals("Configuration") && properties.ContainsKey("Configuration")) {
-                return properties["Configuration"];
+            if(name.Equals("Configuration") && slnProperties.ContainsKey("Configuration")) {
+                return slnProperties["Configuration"];
             }
 
-            if(name.Equals("Platform") && properties.ContainsKey("Platform")) {
-                return properties["Platform"];
+            if(name.Equals("Platform") && slnProperties.ContainsKey("Platform")) {
+                return slnProperties["Platform"];
             }
 
             return null;
@@ -279,19 +290,19 @@ namespace net.r_eg.vsSBE
 
         /// <param name="solutionFile">Full path to solution file (.sln)</param>
         /// <param name="properties">Solution properties / global properties for all project collection</param>
-        public IsolatedEnv(string solutionFile, Dictionary<string, string> properties)
+        public IsolatedEnv(string solutionFile, TProp properties)
         {
             SolutionFile        = solutionFile;
             SolutionPath        = Path.GetDirectoryName(SolutionFile);
             SolutionFileName    = Path.GetFileNameWithoutExtension(SolutionFile);
 
-            _sln = (new SolutionParser()).parse(SolutionFile);
+            _sln = (new Sln.Parser()).parse(SolutionFile);
             if(String.IsNullOrEmpty(StartupProjectString) && _sln.projects.Count > 0) {
-                StartupProjectString = _sln.projects[0].Name;
+                StartupProjectString = _sln.projects[0].name;
             }
             IsOpenedSolution = true;
 
-            this.properties = propertiesByDefault(properties);
+            slnProperties = propertiesByDefault(properties);
             foreach(KeyValuePair<string, string> property in properties) {
                 ProjectCollection.GlobalProjectCollection.SetGlobalProperty(property.Key, property.Value);
             }
@@ -301,7 +312,7 @@ namespace net.r_eg.vsSBE
         /// Blank instance.
         /// </summary>
         /// <param name="properties">Solution properties.</param>
-        public IsolatedEnv(Dictionary<string, string> properties)
+        public IsolatedEnv(TProp properties)
         {
 
         }
@@ -316,13 +327,13 @@ namespace net.r_eg.vsSBE
             return eProject.GetPropertyValue("ProjectName");
         }
 
-        protected Dictionary<string, string> propertiesByDefault(Dictionary<string, string> properties)
+        protected TProp propertiesByDefault(TProp properties)
         {
             if(!properties.ContainsKey("Configuration"))
             {
                 // ~
                 if(_sln.configs.Count > 0) {
-                    properties["Configuration"] = _sln.configs[0].Configuration;
+                    properties["Configuration"] = _sln.configs[0].configuration;
                 }
                 else {
                     properties["Configuration"] = "Release";
@@ -333,20 +344,51 @@ namespace net.r_eg.vsSBE
             {
                 // ~
                 if(_sln.configs.Count > 0) {
-                    properties["Platform"] = _sln.configs[0].Platform;
+                    properties["Platform"] = _sln.configs[0].platform;
                 }
                 else {
                     properties["Platform"] = "x86";
                 }
             }
             else {
-                // Bug with $(OutDir) - see MS Connect Issue #503935 & https://bitbucket.org/3F/vssolutionbuildevent/issue/14/empty-property-outdir
-                if(properties["Platform"] == "Any CPU") {
-                    properties["Platform"] = "AnyCPU";
-                }
+                properties["Platform"] = platformName(properties["Platform"]);
             }
 
             return properties;
+        }
+
+        protected TProp projectProperties(Sln.Project project, TProp properties)
+        {
+            Log.Debug($"-> sln['{properties["Configuration"]}'; '{properties["Platform"]}']");
+
+            if(!properties.ContainsKey("Configuration") || !properties.ContainsKey("Platform")) {
+                Log.Warn("Solution Configuration & Platform are not defined.");
+                return properties;
+            }
+            TProp ret = new TProp(properties);
+
+            var cfg = _sln
+                        .projectConfigs
+                        .Where(c => 
+                            c.pGuid == project.pGuid 
+                            && c.sln.configuration == properties["Configuration"]
+                            && platformName(c.sln.platform) == platformName(properties["Platform"])
+                        )
+                        .FirstOrDefault();
+
+            if(cfg.configuration == null || cfg.platform == null) {
+                Log.Error($"Something went wrong with project configuration. `{cfg.configuration}|{cfg.platform}`");
+                return properties;
+                //throw new MismatchException();
+            }
+
+            string platform = platformName(cfg.platform);
+            Log.Debug($"-> prj['{cfg.configuration}'; '{platform}']");
+
+            ret["Configuration"]    = cfg.configuration;
+            ret["Platform"]         = platform;
+
+            return ret;
         }
 
         /// <summary>
@@ -356,6 +398,20 @@ namespace net.r_eg.vsSBE
         protected string formatCfg(string name, string platform)
         {
             return String.Format("{0}|{1}", name, platform);
+        }
+
+        /// <summary>
+        /// Rules of platform names, for example: 'Any CPU' to 'AnyCPU'
+        /// see MS Connect Issue #503935 + https://bitbucket.org/3F/vssolutionbuildevent/issue/14/empty-property-outdir
+        /// </summary>
+        /// <param name="platform"></param>
+        /// <returns></returns>
+        private string platformName(string platform)
+        {
+            if(String.Compare(platform, "Any CPU", StringComparison.OrdinalIgnoreCase) == 0) {
+                return "AnyCPU";
+            }
+            return platform;
         }
     }
 }

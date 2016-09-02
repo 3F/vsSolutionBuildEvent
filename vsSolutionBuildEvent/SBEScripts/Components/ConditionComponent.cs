@@ -204,10 +204,27 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 result = Value.cmp(left, evaluate(right), coperator);
             }
             else {
-                result = Value.cmp((left == "1")? Value.VTRUE : (left == "0")? Value.VFALSE : left);
+                result = Value.cmp(alias4SingleOperand(left));
             }
             Log.Debug("Condition->calculate: result is: '{0}'", result);
             return ((invert)? !result : result);
+        }
+
+        protected virtual string alias4SingleOperand(string op)
+        {
+            if(op == "0") {
+                return Value.VFALSE;
+            }
+
+            if(op == "1") {
+                return Value.VTRUE;
+            }
+
+            if(String.IsNullOrWhiteSpace(op) || op == MSBuild.Parser.PROP_VALUE_DEFAULT) {
+                return Value.VFALSE;
+            }
+
+            return op;
         }
 
         /// <summary>

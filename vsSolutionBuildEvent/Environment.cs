@@ -27,7 +27,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.API.Commands;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Bridge.CoreCommand;
-using net.r_eg.vsSBE.MSBuild.Exceptions;
+using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.UnifiedTypes;
 
 namespace net.r_eg.vsSBE
@@ -300,7 +300,7 @@ namespace net.r_eg.vsSBE
                 Log.Debug("getProject->selected '{0}'", selected.FullName);
                 return tryLoadPCollection(selected);
             }
-            throw new MSBProjectNotFoundException("not found project: '{0}' [sturtup: '{1}']", name, startup);
+            throw new NotFoundException("The project '{0}' was not found. [startup: '{1}']", name, startup);
         }
 
         /// <summary>
