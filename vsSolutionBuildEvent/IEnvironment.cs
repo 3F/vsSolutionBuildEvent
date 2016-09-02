@@ -26,6 +26,16 @@ namespace net.r_eg.vsSBE
     public interface IEnvironment
     {
         /// <summary>
+        /// List of EnvDTE projects.
+        /// </summary>
+        IEnumerable<EnvDTE.Project> ProjectsDTE { get; }
+
+        /// <summary>
+        /// List of Microsoft.Build.Evaluation projects.
+        /// </summary>
+        IEnumerable<Microsoft.Build.Evaluation.Project> ProjectsMBE { get; }
+
+        /// <summary>
         /// Simple list of names from EnvDTE projects
         /// </summary>
         List<string> ProjectsList { get; }
@@ -54,6 +64,11 @@ namespace net.r_eg.vsSBE
         /// Name from "Set as StartUp Project"
         /// </summary>
         string StartupProjectString { get; }
+
+        /// <summary>
+        /// DTE2 context.
+        /// </summary>
+        EnvDTE80.DTE2 Dte2 { get; }
 
         /// <summary>
         /// Events in the extensibility model

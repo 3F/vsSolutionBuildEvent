@@ -40,6 +40,31 @@ namespace net.r_eg.vsSBE
         public const string PROP_UNAV_STRING = "*Undefined*";
 
         /// <summary>
+        /// List of EnvDTE projects.
+        /// </summary>
+        public IEnumerable<EnvDTE.Project> ProjectsDTE
+        {
+            get {
+                return _DTEProjects;
+            }
+        }
+
+        /// <summary>
+        /// List of Microsoft.Build.Evaluation projects.
+        /// </summary>
+        public IEnumerable<Project> ProjectsMBE
+        {
+            get
+            {
+                foreach(var pname in ProjectsDTE.Select(p => getProjectNameFrom(p))) {
+                    if(String.IsNullOrEmpty(pname)) {
+                        yield return getProject(pname);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Simple list of names from EnvDTE projects
         /// </summary>
         public List<string> ProjectsList
@@ -47,13 +72,22 @@ namespace net.r_eg.vsSBE
             get
             {
                 try {
-                    return DTEProjects.Select(p => getProjectNameFrom(p)).ToList<string>();
+                    return _DTEProjects.Select(p => getProjectNameFrom(p)).ToList<string>();
                 }
                 catch(Exception ex) {
                     Log.Error("Failed getting project from EnvDTE: {0}", ex.Message);
                 }
                 return new List<string>();
             }
+        }
+
+        /// <summary>
+        /// DTE2 context.
+        /// </summary>
+        public DTE2 Dte2
+        {
+            get;
+            protected set;
         }
 
         /// <summary>
@@ -214,14 +248,9 @@ namespace net.r_eg.vsSBE
         protected IOW outputWindowPane;
 
         /// <summary>
-        /// DTE2 context
-        /// </summary>
-        protected DTE2 Dte2 { get; set; }
-
-        /// <summary>
         /// Getting projects from DTE
         /// </summary>
-        protected virtual IEnumerable<EnvDTE.Project> DTEProjects
+        protected virtual IEnumerable<EnvDTE.Project> _DTEProjects
         {
             get
             {
@@ -276,7 +305,7 @@ namespace net.r_eg.vsSBE
                 Log.Debug("default project is a '{0}'", startup);
             }
 
-            foreach(EnvDTE.Project dteProject in DTEProjects)
+            foreach(EnvDTE.Project dteProject in _DTEProjects)
             {
                 if(name == null && !String.IsNullOrEmpty(startup) && !dteProject.UniqueName.Equals(startup)) {
                     continue;

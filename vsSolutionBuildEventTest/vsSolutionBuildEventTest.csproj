@@ -13,19 +13,9 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <NetTargetVName>net40</NetTargetVName>
     <DefineConstants>NET_40</DefineConstants>
-    <csprojPostfix>
-    </csprojPostfix>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <vsSBE_SDK>1.1.0</vsSBE_SDK>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(NetTargetVName)' == ''">
-    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">0</VisualStudioVersion>
-    <VsSDKVersion Condition="'$(VsSDKVersion)' == ''">0</VsSDKVersion>
-    <TargetFrameworkVersion Condition="'$(VisualStudioVersion)' &gt; '10' or '$(VsSDKVersion)' &gt; '10'">v4.5</TargetFrameworkVersion>
-    <csprojPostfix Condition="'$(VisualStudioVersion)' == '14.0' or '$(VsSDKVersion)' == '14.0'">_2015</csprojPostfix>
-    <csprojPostfix Condition="'$(VisualStudioVersion)' == '12.0' or '$(VsSDKVersion)' == '12.0'">_2013</csprojPostfix>
-    <csprojPostfix Condition="'$(VisualStudioVersion)' == '11.0' or '$(VsSDKVersion)' == '11.0'">_2012</csprojPostfix>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -100,6 +90,16 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Bridge\Bridge.csproj">
+      <Project>{73919171-44b6-4536-b892-f1fca653887c}</Project>
+      <Name>Bridge</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\vsSolutionBuildEvent\vsSolutionBuildEvent.csproj">
+      <Project>{32E44995-F621-4E77-B46A-8F65D64E7FEA}</Project>
+      <Name>vsSolutionBuildEvent</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
       <Visible>False</Visible>
     </CodeAnalysisDependentAssemblyPaths>
@@ -131,18 +131,6 @@
     <Compile Include="SBEScripts\Components\UserVariableComponentTest.cs" />
     <Compile Include="Scripts\UserVariableTest.cs" />
     <Compile Include="SBEScripts\ValueTest.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Bridge\Bridge.csproj">
-      <Project>{73919171-44b6-4536-b892-f1fca653887c}</Project>
-      <Name>Bridge</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup Condition="$(SpecLibForEnvCI) != true">
-    <ProjectReference Include="..\vsSolutionBuildEvent\vsSolutionBuildEvent$(csprojPostfix).csproj">
-      <Project>{32E44995-F621-4E77-B46A-8F65D64E7FEA}</Project>
-      <Name>vsSolutionBuildEvent</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

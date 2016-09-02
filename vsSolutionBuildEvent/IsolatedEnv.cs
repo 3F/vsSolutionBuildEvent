@@ -46,6 +46,33 @@ namespace net.r_eg.vsSBE
         private Sln.Parser.Result _sln;
 
         /// <summary>
+        /// List of EnvDTE projects.
+        /// </summary>
+        public IEnumerable<EnvDTE.Project> ProjectsDTE
+        {
+            get {
+                Log.Debug("Accessing to property 'Projects' has been disabled in Isolated environment.");
+                yield break;
+            }
+        }
+
+        /// <summary>
+        /// List of Microsoft.Build.Evaluation projects.
+        /// </summary>
+        public IEnumerable<Project> ProjectsMBE
+        {
+            get
+            {
+                foreach(var pname in ProjectsList)
+                {
+                    if(String.IsNullOrEmpty(pname)) {
+                        yield return getProject(pname);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Simple list of names from EnvDTE projects
         /// </summary>
         public List<string> ProjectsList
@@ -119,6 +146,17 @@ namespace net.r_eg.vsSBE
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// DTE2 context.
+        /// </summary>
+        public EnvDTE80.DTE2 Dte2
+        {
+            get {
+                Log.Debug("Accessing to property 'Dte2' has been disabled in Isolated environment.");
+                return null;
+            }
         }
 
         /// <summary>
