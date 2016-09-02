@@ -93,7 +93,7 @@ namespace net.r_eg.vsSBE.UI.Xaml.Logic
         /// </summary>
         /// <param name="type"></param>
         /// <param name="selected"></param>
-        /// <exception cref="*"></exception>
+        /// <exception cref="Exception"></exception>
         public string caption(SolutionEventType type, bool selected)
         {
             ISolutionEvent[] evt = getEvent(type);
@@ -143,7 +143,7 @@ namespace net.r_eg.vsSBE.UI.Xaml.Logic
             return getEvent(type).All(x => !x.Enabled);
         }
 
-        /// <exception cref="*"></exception>
+        /// <exception cref="Exception"></exception>
         public void executeCommand(string cmd)
         {
             ((DTE)Package.GetGlobalService(typeof(SDTE))).ExecuteCommand(cmd);

@@ -227,11 +227,11 @@ namespace net.r_eg.vsSBE.Actions
         /// Compatible format: 'configname'|'platformname'
         /// http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivscfg.get_displayname.aspx
         /// 
-        /// note: both variants 'Any CPU' & 'AnyCPU' as an awesome features from MS - see also Connect Issue #503935.
+        /// note: both variants 'Any CPU' + 'AnyCPU' as an awesome features from MS - see also Connect Issue #503935.
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
-        /// <param name="anycpuCheck">Special case for checking 'Any CPU' & 'AnyCPU' platform</param>
+        /// <param name="anycpuCheck">Special case for checking 'Any CPU' + 'AnyCPU' platform</param>
         /// <returns>same or not</returns>
         private bool cmpConfig(string left, string right, bool anycpuCheck = true)
         {

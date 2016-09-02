@@ -3,7 +3,7 @@
 namespace net.r_eg.vsSBE.Upgrade.v08.Events
 {
     /// <summary>
-    /// Errors & Warnings
+    /// Errors + Warnings
     /// </summary>
     public interface ISolutionEventOWP: ISolutionEvent
     {

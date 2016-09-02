@@ -261,7 +261,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         }
 
         /// <summary>
-        /// Find & get path to main library
+        /// Find + get path to main library
         /// </summary>
         protected string findLibraryPath(Dictionary<string, string> args)
         {

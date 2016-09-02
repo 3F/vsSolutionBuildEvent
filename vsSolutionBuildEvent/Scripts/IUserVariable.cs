@@ -76,7 +76,7 @@ namespace net.r_eg.vsSBE.Scripts
         /// </summary>
         /// <param name="name">Variable name for evaluating</param>
         /// <param name="project">Project name</param>
-        /// <param name="msbuild">IEvaluator objects for evaluating</param>
+        /// <param name="evaluator">IEvaluator objects for evaluating</param>
         /// <param name="resetting">Evaluation can be in the chain of others IEvaluator's, this flag should reset this to initial state</param>
         void evaluate(string name, string project, IEvaluator evaluator, bool resetting);
 
@@ -85,7 +85,7 @@ namespace net.r_eg.vsSBE.Scripts
         /// Evaluated value should be updated for variable.
         /// </summary>
         /// <param name="ident">Unique identificator</param>
-        /// <param name="msbuild">IEvaluator objects for evaluating</param>
+        /// <param name="evaluator">IEvaluator objects for evaluating</param>
         /// <param name="resetting">Evaluation can be in the chain of others IEvaluator's, this flag should reset this to initial state</param>
         void evaluate(string ident, IEvaluator evaluator, bool resetting);
 

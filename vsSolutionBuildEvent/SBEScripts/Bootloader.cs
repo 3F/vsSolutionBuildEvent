@@ -149,7 +149,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <summary>
         /// Activation of components with ISolutionEvents.
         /// </summary>
-        /// <param name="ISolutionEvents"></param>
+        /// <param name="data"></param>
         public void updateActivation(ISolutionEvents data)
         {
             if(data == null) {

@@ -204,7 +204,7 @@ namespace net.r_eg.vsSBE.UI
         }
 
         /// <summary>
-        /// Find the enum definition by Guid string & Id
+        /// Find the enum definition by Guid string / Id
         /// </summary>
         /// <param name="guid"></param>
         /// <param name="id"></param>
@@ -215,7 +215,7 @@ namespace net.r_eg.vsSBE.UI
         }
 
         /// <summary>
-        /// Find the enum definition by Guid & Id
+        /// Find the enum definition by Guid / Id
         /// </summary>
         /// <param name="guid"></param>
         /// <param name="id"></param>

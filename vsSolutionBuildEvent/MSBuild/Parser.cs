@@ -609,6 +609,8 @@ namespace net.r_eg.vsSBE.MSBuild
         }
 
         /// <param name="project">Uses GlobalProjectCollection if null.</param>
+        /// <param name="name"></param>
+        /// <param name="val"></param>
         /// <returns>Returns true if the value changes, otherwise returns false.</returns>
         protected virtual bool setGlobalProperty(Project project, string name, string val)
         {
@@ -627,6 +629,7 @@ namespace net.r_eg.vsSBE.MSBuild
         }
 
         /// <param name="project">Uses GlobalProjectCollection if null.</param>
+        /// <param name="name"></param>
         /// <returns>Returns true if the value of the global property was set.</returns>
         protected virtual bool removeGlobalProperty(Project project, string name)
         {

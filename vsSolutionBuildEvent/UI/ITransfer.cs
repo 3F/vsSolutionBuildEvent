@@ -40,14 +40,14 @@ namespace net.r_eg.vsSBE.UI
         /// <param name="cfg">The event configuration for action.</param>
         void action(SolutionEventType type, ISolutionEvent cfg);
 
-        /// <summary>
-        /// EnvDTE command.
-        /// </summary>
-        /// <param name="guid"></param>
-        /// <param name="id"></param>
-        /// <param name="customIn"></param>
-        /// <param name="customOut"></param>
-        /// <param name="description"></param>
+        //// <summary>
+        //// EnvDTE command.
+        //// </summary>
+        //// <param name="guid"></param>
+        //// <param name="id"></param>
+        //// <param name="customIn"></param>
+        //// <param name="customOut"></param>
+        //// <param name="description"></param>
         //void command(string guid, int id, object customIn, object customOut, string description);
     }
 }

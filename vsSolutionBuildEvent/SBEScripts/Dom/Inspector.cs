@@ -76,7 +76,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <summary>
         /// List of constructed data by IComponent
         /// </summary>
-        /// <param name="c"></param>
+        /// <param name="component"></param>
         /// <returns></returns>
         public IEnumerable<INodeInfo> getBy(IComponent component)
         {
@@ -298,6 +298,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// Get the first custom attribute.
         /// note: the GetCustomAttribute - allowed only with v4.5 from CustomAttributeExtensions
         /// </summary>
+        /// <param name="type"></param>
         /// <param name="attributeType"></param>
         /// <param name="inherit"></param>
         /// <returns></returns>

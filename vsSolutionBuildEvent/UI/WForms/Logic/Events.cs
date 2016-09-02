@@ -48,7 +48,8 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         /// </summary>
         public const string ACTION_PREFIX_CLONE = "CopyOf";
 
-        /// Mapper of the available components
+        /// <summary>
+        /// Mapper of the available components.
         /// </summary>
         protected IInspector inspector;
 

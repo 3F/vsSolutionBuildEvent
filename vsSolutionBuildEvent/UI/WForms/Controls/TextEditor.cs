@@ -155,6 +155,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
         /// Updating model of the data for code completion
         /// </summary>
         /// <param name="inspector"></param>
+        /// <param name="msbuild"></param>
         public void codeCompletionInit(IInspector inspector, IMSBuild msbuild = null)
         {
             dom = new DomParser(inspector, msbuild);

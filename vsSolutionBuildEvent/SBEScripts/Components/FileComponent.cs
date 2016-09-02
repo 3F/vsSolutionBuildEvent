@@ -201,6 +201,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             throw new IncorrectNodeException(pm);
         }
 
+        /// <param name="pm"></param>
         /// <param name="stdOut">Use StandardOutput or not</param>
         /// <param name="silent">Silent mode</param>
         /// <returns>Received data from StandardOutput</returns>
@@ -373,8 +374,9 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             throw new IncorrectNodeException(pm);
         }
 
+        /// <param name="pm"></param>
         /// <param name="append">Flag to append the content to the end of the file.</param>
-        /// <param name="writeLine">To write with newline.</param>
+        /// <param name="newline">To write with newline.</param>
         /// <param name="enc">Encoding.</param>
         [Method("write",
                 "To write data in a text file.\n * Creates if the file does not exist.\n * Overwrites content if it already exists.",
@@ -576,6 +578,9 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <param name="type">search type</param>
+        /// <param name="content"></param>
+        /// <param name="pattern"></param>
+        /// <param name="replacement"></param>
         protected string stReplaceEngine(SearchType type, ref string content, string pattern, string replacement)
         {
             switch(type) {
@@ -1064,6 +1069,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             return readToEnd(file, defaultEncoding, true);
         }
 
+        /// <param name="file"></param>
+        /// <param name="data"></param>
         /// <param name="append">Flag to append the content to the end of the file</param>
         /// <param name="newline">To write with newline if true</param>
         /// <param name="enc">The character encoding</param>
@@ -1095,6 +1102,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <summary>
         /// Write into standard output stream.
         /// </summary>
+        /// <param name="data"></param>
         /// <param name="newline">To write with newline if true</param>
         protected void writeToStdOut(string data, bool newline)
         {
@@ -1109,6 +1117,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <summary>
         /// Write into standard error stream.
         /// </summary>
+        /// <param name="data"></param>
         /// <param name="newline">To write with newline if true</param>
         protected void writeToStdErr(string data, bool newline)
         {
@@ -1154,6 +1163,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <summary>
         /// Execute file with arguments
         /// </summary>
+        /// <param name="file"></param>
+        /// <param name="args"></param>
         /// <param name="silent">Hide process if true</param>
         /// <param name="stdOut">Reads from StandardOutput if true</param>
         /// <param name="timeout">How long to wait the execution, in seconds. 0 value - infinitely</param>

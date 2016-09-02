@@ -53,11 +53,11 @@ namespace net.r_eg.vsSBE.Actions
         /// <returns>Executed status</returns>
         StatusType get(SolutionEventType tevent, int index);
 
-        /// <summary>
-        /// Getting the Execution statuses by Event type
-        /// </summary>
-        /// <param name="tevent">Event type</param>
-        /// <returns>List of Execution statuses</returns>
+        //// <summary>
+        //// Getting the Execution statuses by Event type
+        //// </summary>
+        //// <param name="tevent">Event type</param>
+        //// <returns>List of Execution statuses</returns>
         //SynchronizedCollection<StatusType> get(SolutionEventType tevent);
 
         /// <summary>

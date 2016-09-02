@@ -136,7 +136,6 @@ namespace net.r_eg.vsSBE.Clients
         /// <summary>
         /// Initialize library
         /// </summary>
-        /// <param name="lib"></param>
         /// <returns></returns>
         protected bool init()
         {

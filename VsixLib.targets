@@ -35,6 +35,10 @@
         <VsixLib Include="$(_SDK_Lib)\Microsoft.VisualStudio.TextManager.Interop.dll" />
         <VsixLib Include="$(_SDK_Lib)\Microsoft.VisualStudio.VSHelp.dll" />
         <VsixLib Include="$(_SDK_Lib)\stdole.dll" />
+
+      <!-- XML Doc -->
+        <VsixLib Include="$(SolutionDir)\Bridge\$(OutputPath)\Bridge.xml" Condition="Exists('$(SolutionDir)\Bridge\$(OutputPath)\Bridge.xml')" />
+
     </ItemGroup>
     
     <ItemGroup>

@@ -44,7 +44,7 @@ namespace net.r_eg.vsSBE
         /// <param name="name">Name of item</param>
         /// <param name="createIfNotExist">If this value as true: Creates new pane if this item does not exist, otherwise exception.</param>
         /// <returns></returns>
-        /// <exception cref="*"></exception>
+        /// <exception cref="Exception"></exception>
         public OutputWindowPane getByName(string name, bool createIfNotExist)
         {
             OutputWindowPanes panes = dte2.ToolWindows.OutputWindow.OutputWindowPanes;

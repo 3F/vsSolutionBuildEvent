@@ -98,7 +98,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <param name="name">Method name</param>
         /// <param name="description">Description for current method</param>
         /// <param name="ret">Return value</param>
-        /// <param name="arguments">Arguments of method</param>
+        /// <param name="args">Arguments of method</param>
         public MethodAttribute(string name, string description, CValueType ret = CValueType.Void, params CValueType[] args)
         {
             Name        = name;
@@ -109,7 +109,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
 
         /// <param name="name">Method name</param>
         /// <param name="ret">Return value</param>
-        /// <param name="arguments">Arguments of method</param>
+        /// <param name="args">Arguments of method</param>
         public MethodAttribute(string name, CValueType ret = CValueType.Void, params CValueType[] args)
             : this(name, String.Empty, ret, args)
         {
@@ -145,7 +145,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <param name="argsName">Arguments of method by name</param>
         /// <param name="argsDesc">Description for arguments</param>
         /// <param name="ret">Return value</param>
-        /// <param name="arguments">Arguments of method</param>
+        /// <param name="args">Arguments of method</param>
         public MethodAttribute(string name, string description, string[] argsName, string[] argsDesc, CValueType ret, params CValueType[] args)
             : this(name, description, ret, args)
         {
@@ -164,7 +164,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <param name="argsName">Arguments of method by name</param>
         /// <param name="argsDesc">Description for arguments</param>
         /// <param name="ret">Return value</param>
-        /// <param name="arguments">Arguments of method</param>
+        /// <param name="args">Arguments of method</param>
         public MethodAttribute(string name, string[] argsName, string[] argsDesc, CValueType ret, params CValueType[] args)
             : this(name, String.Empty, argsName, argsDesc, ret, args)
         {

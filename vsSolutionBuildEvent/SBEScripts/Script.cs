@@ -165,7 +165,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// </summary>
         /// <param name="data">Mixed data</param>
         /// <param name="c">Component</param>
-        /// <returns>Prepared & evaluated data by component</returns>
+        /// <returns>Prepared + evaluated data by component</returns>
         protected string parse(string data, IComponent c)
         {
             string ret = c.parse(data);

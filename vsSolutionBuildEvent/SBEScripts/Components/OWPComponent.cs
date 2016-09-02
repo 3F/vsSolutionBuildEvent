@@ -184,7 +184,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         ///     `item("name").write(true): content`
         ///     `item("name").writeLine(true): content`
         /// </summary>
-        /// <param name="raw"></param>
+        /// <param name="name"></param>
         /// <param name="newline">Flag of new line symbol</param>
         /// <param name="pm"></param>
         /// <returns></returns>

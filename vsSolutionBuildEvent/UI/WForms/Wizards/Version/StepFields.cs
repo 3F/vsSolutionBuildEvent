@@ -121,7 +121,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards.Version
         /// Checking of alowing field type for selected GenType.
         /// </summary>
         /// <param name="type">The type of field.</param>
-        /// <param name="rev">The type of revision.</param>
+        /// <param name="gtype">The type of generator.</param>
         /// <returns></returns>
         public bool isAllow(Fields.Type type, GenType gtype)
         {

@@ -222,6 +222,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
 
         /// <param name="name">Element name</param>
         /// <param name="ident">Identificator of node</param>
+        /// <param name="strict"></param>
         /// <returns>null value if not found</returns>
         protected INodeInfo infoBy(string name, NodeIdent ident, bool strict)
         {

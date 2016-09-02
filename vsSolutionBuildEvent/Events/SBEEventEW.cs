@@ -20,7 +20,7 @@ using System.Collections.Generic;
 namespace net.r_eg.vsSBE.Events
 {
     /// <summary>
-    /// Support of the Errors & Warnings Event type
+    /// Support of the Errors + Warnings Event type
     /// </summary>
     public class SBEEventEW: SBEEvent, ISolutionEvent, ISolutionEventEW
     {        

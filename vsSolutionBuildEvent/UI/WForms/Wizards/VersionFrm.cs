@@ -42,6 +42,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards
         private ITransfer _pin;
 
         /// <param name="bootloader"></param>
+        /// <param name="pin"></param>
         public VersionFrm(IBootloader bootloader, ITransfer pin)
         {
             manager = new Manager(bootloader.Env);

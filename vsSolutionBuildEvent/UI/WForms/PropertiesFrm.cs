@@ -148,7 +148,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
-        /// <exception cref="MSBuildParserProjectNotFoundException">if not found the specific project</exception>
+        /// <exception cref="MSBuild.Exceptions.MSBProjectNotFoundException">if not found the specific project</exception>
         private List<MSBuild.PropertyItem> _getProperties(string project)
         {
             string key = project;

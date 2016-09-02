@@ -235,7 +235,7 @@ namespace net.r_eg.vsSBE.Clients
             return Codes.Failed;
         }
 
-        /// <param name="link">IEvent instance</param>
+        /// <param name="o">IEvent instance</param>
         public SEvent2(IEvent2 o)
         {
             link = o;

@@ -28,7 +28,7 @@ namespace net.r_eg.vsSBE.Scripts
         /// <summary>
         /// Contains all defined user-variables.
         /// 
-        /// Note: ConcurrentDictionary used Nodes! order is unpredictable - see m_tables & internal adding
+        /// Note: ConcurrentDictionary used Nodes! order is unpredictable - see m_tables and internal adding
         /// http://referencesource.microsoft.com/#mscorlib/system/Collections/Concurrent/ConcurrentDictionary.cs
         /// https://bitbucket.org/3F/vssolutionbuildevent/commits/34cdc43df67#comment-1330734
         /// 
@@ -164,7 +164,7 @@ namespace net.r_eg.vsSBE.Scripts
         /// </summary>
         /// <param name="name">Variable name for evaluating</param>
         /// <param name="project">Project name</param>
-        /// <param name="msbuild">IEvaluator objects for evaluating</param>
+        /// <param name="evaluator">IEvaluator objects for evaluating</param>
         /// <param name="resetting">Evaluating from the unevaluated data if true, otherwise evaluation in the chain of others IEvaluator's</param>
         public void evaluate(string name, string project, IEvaluator evaluator, bool resetting)
         {
@@ -176,7 +176,7 @@ namespace net.r_eg.vsSBE.Scripts
         /// Evaluated value should be updated for variable.
         /// </summary>
         /// <param name="ident">Unique identificator</param>
-        /// <param name="msbuild">IEvaluator objects for evaluating</param>
+        /// <param name="evaluator">IEvaluator objects for evaluating</param>
         /// <param name="resetting">Evaluating from the unevaluated data if true, otherwise evaluation in the chain of others IEvaluator's</param>
         public void evaluate(string ident, IEvaluator evaluator, bool resetting)
         {

@@ -24,7 +24,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Components
     public class DataGridViewExt: DataGridView
     {
         /// <summary>
-        /// After drag & drop sorting
+        /// After drag 'n' drop sorting
         /// </summary>
         public event EventHandler<MovingRowArgs> DragDropSortedRow = delegate(object sender, MovingRowArgs e) { };
 
@@ -68,7 +68,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Components
         protected bool numberingForRowsHeader = false;
 
         /// <summary>
-        /// Allows sorting with Drag & Drop
+        /// Allows sorting with Drag 'n' Drop
         /// </summary>
         public bool DragDropSortable
         {
@@ -96,7 +96,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Components
         protected int lastSelectedRowIndex = 0;
 
         /// <summary>
-        /// Support drag & drop for sortable rows
+        /// Support drag 'n' drop for sortable rows
         /// </summary>
         protected MovingRow ddSort = new MovingRow();
 

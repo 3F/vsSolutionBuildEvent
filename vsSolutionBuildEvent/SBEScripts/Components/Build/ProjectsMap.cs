@@ -25,7 +25,7 @@ using net.r_eg.vsSBE.Bridge;
 namespace net.r_eg.vsSBE.SBEScripts.Components.Build
 {
     /// <summary>
-    /// Detects the first & last project of build-order in solution of Visual Studio.
+    /// Detects the first / last project of build-order in solution of Visual Studio.
     /// Based on https://gist.github.com/3F/a77129e3978841241927
     /// And represents final box-solution from Sample 1 - http://vssbe.r-eg.net/doc/Examples/Demo/#sample-1
     /// </summary>
