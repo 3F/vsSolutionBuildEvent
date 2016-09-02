@@ -38,11 +38,6 @@ namespace net.r_eg.vsSBE.Actions
     public class Connection
     {
         /// <summary>
-        /// The main handler of commands.
-        /// </summary>
-        protected ICommand cmd;
-
-        /// <summary>
         /// To support the 'execution order' features.
         /// Contains the current states of all projects.
         /// </summary>
@@ -57,6 +52,15 @@ namespace net.r_eg.vsSBE.Actions
         /// object synch.
         /// </summary>
         private Object _lock = new Object();
+
+        /// <summary>
+        /// The main handler of commands.
+        /// </summary>
+        public ICommand Cmd
+        {
+            get;
+            protected set;
+        }
 
         /// <summary>
         /// Flag of permission for any actions.
@@ -128,7 +132,7 @@ namespace net.r_eg.vsSBE.Actions
                 }
 
                 try {
-                    if(cmd.exec(item, SolutionEventType.Post)) {
+                    if(Cmd.exec(item, SolutionEventType.Post)) {
                         Log.Info("[Post] finished SBE: {0}", item.Caption);
                     }
                     Status._.add(SolutionEventType.Post, StatusType.Success);
@@ -200,7 +204,7 @@ namespace net.r_eg.vsSBE.Actions
                 }
 
                 try {
-                    if(cmd.exec(item, SolutionEventType.Cancel)) {
+                    if(Cmd.exec(item, SolutionEventType.Cancel)) {
                         Log.Info("[Cancel] finished SBE: {0}", item.Caption);
                     }
                     Status._.add(SolutionEventType.Cancel, StatusType.Success);
@@ -275,7 +279,7 @@ namespace net.r_eg.vsSBE.Actions
                 }
                 else {
                     try {
-                        if(cmd.exec(evt, SolutionEventType.Transmitter)) {
+                        if(Cmd.exec(evt, SolutionEventType.Transmitter)) {
                             //Log.Trace("[Transmitter]: " + SlnEvents.transmitter.caption);
                         }
                     }
@@ -351,7 +355,7 @@ namespace net.r_eg.vsSBE.Actions
 
         public Connection(ICommand cmd)
         {
-            this.cmd = cmd;
+            this.Cmd = cmd;
             projects = new Dictionary<string, ExecutionOrderType>();
             attachLoggingEvent();
         }
@@ -375,7 +379,7 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             try {
-                if(cmd.exec(evt, (type == Receiver.Output.EWType.Warnings)? SolutionEventType.Warnings : SolutionEventType.Errors)) {
+                if(Cmd.exec(evt, (type == Receiver.Output.EWType.Warnings)? SolutionEventType.Warnings : SolutionEventType.Errors)) {
                     Log.Info("[{0}] finished SBE: {1}", type, evt.Caption);
                 }
                 return Codes.Success;
@@ -405,7 +409,7 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             try {
-                if(cmd.exec(evt, SolutionEventType.OWP)) {
+                if(Cmd.exec(evt, SolutionEventType.OWP)) {
                     Log.Info("[Output] finished SBE: {0}", evt.Caption);
                 }
                 return Codes.Success;
@@ -487,7 +491,7 @@ namespace net.r_eg.vsSBE.Actions
         {
             try
             {
-                if(cmd.exec(item, SolutionEventType.CommandEvent)) {
+                if(Cmd.exec(item, SolutionEventType.CommandEvent)) {
                     Log.Info("[CommandEvent] finished: '{0}'", item.Caption);
                 }
                 Status._.add(SolutionEventType.CommandEvent, StatusType.Success);
@@ -512,7 +516,7 @@ namespace net.r_eg.vsSBE.Actions
             foreach(SBEEvent item in evt)
             {
                 try {
-                    if(cmd.exec(item, type)) {
+                    if(Cmd.exec(item, type)) {
                         Log.Info("[{0}] finished SBE: `{1}`", typeString, item.Caption);
                     }
                     Status._.add(type, StatusType.Success);
@@ -532,7 +536,7 @@ namespace net.r_eg.vsSBE.Actions
         protected int execPre(SBEEvent evt)
         {
             try {
-                if(cmd.exec(evt, SolutionEventType.Pre)) {
+                if(Cmd.exec(evt, SolutionEventType.Pre)) {
                     Log.Info("[Pre] finished SBE: {0}", evt.Caption);
                 }
                 return Codes.Success;
@@ -557,7 +561,7 @@ namespace net.r_eg.vsSBE.Actions
 
         protected string getProjectName(IVsHierarchy pHierProj)
         {
-            string projectName = ((IEnvironmentExt)cmd.Env).getProjectNameFrom(pHierProj, true);
+            string projectName = ((IEnvironmentExt)Cmd.Env).getProjectNameFrom(pHierProj, true);
             if(!String.IsNullOrEmpty(projectName)) {
                 return projectName;
             }
@@ -753,7 +757,7 @@ namespace net.r_eg.vsSBE.Actions
 
                 lock(_lock)
                 {
-                    IComponent component = cmd.SBEScript.Bootloader.getComponentByType(typeof(OWPComponent));
+                    IComponent component = Cmd.SBEScript.Bootloader.getComponentByType(typeof(OWPComponent));
                     if(component != null) {
                         ((ILogData)component).updateLogData(e.Message, e.Level);
                     }
@@ -766,7 +770,7 @@ namespace net.r_eg.vsSBE.Actions
                         }
 
                         try {
-                            if(cmd.exec(evt, SolutionEventType.Logging)) {
+                            if(Cmd.exec(evt, SolutionEventType.Logging)) {
                                 Log.Trace("[Logging]: " + evt.Caption);
                             }
                         }

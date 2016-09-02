@@ -17,6 +17,7 @@
 
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Microsoft.Build.Evaluation;
 using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.MSBuild
@@ -72,5 +73,18 @@ namespace net.r_eg.vsSBE.MSBuild
         /// <param name="data">mixed data</param>
         /// <returns>All evaluated values for data</returns>
         string parse(string data);
+
+        /// <summary>
+        /// Getting project instance by name.
+        /// </summary>
+        /// <param name="name">Project name.</param>
+        /// <returns>Returns new instance if fail.</returns>
+        Project getProject(string name);
+
+        /// <summary>
+        /// To initialize properties by default for project.
+        /// </summary>
+        /// <param name="project">Uses GlobalProjectCollection if null.</param>
+        void initPropByDefault(Project project = null);
     }
 }

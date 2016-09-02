@@ -107,7 +107,7 @@ namespace net.r_eg.vsSBE.MSBuild
                 }
             }
 
-            Project project         = getProject(projectName, true);
+            Project project         = getProject(projectName);
             ProjectProperty prop    = project.GetProperty(name);
 
             if(prop != null) {
@@ -127,7 +127,7 @@ namespace net.r_eg.vsSBE.MSBuild
         {
             List<PropertyItem> properties = new List<PropertyItem>();
 
-            Project project = getProject(projectName, true);
+            Project project = getProject(projectName);
             foreach(ProjectProperty property in project.Properties)
             {
                 string eValue = property.EvaluatedValue;
@@ -155,7 +155,7 @@ namespace net.r_eg.vsSBE.MSBuild
         public virtual string evaluate(string unevaluated, string projectName = null)
         {
             const string container  = "vsSBE_latestEvaluated";
-            Project project         = getProject(projectName, true);
+            Project project         = getProject(projectName);
 
             Log.Trace("evaluate: '{0}' -> [{1}]", unevaluated, projectName);
             lock(_lock)
@@ -211,6 +211,38 @@ namespace net.r_eg.vsSBE.MSBuild
         public string evaluate(string data)
         {
             return parse(data);
+        }
+
+        /// <summary>
+        /// Getting project instance by name.
+        /// </summary>
+        /// <param name="name">Project name.</param>
+        /// <returns>Returns new instance if fail.</returns>
+        public Project getProject(string name)
+        {
+            try {
+                Log.Trace("MSBuild - getProject: Trying of getting project instance - '{0}'", name);
+                return env.getProject(name);
+            }
+            catch(MSBProjectNotFoundException) {
+                Log.Trace("MSBuild - getProject: use empty project by default.");
+                return new Project();
+            }
+        }
+
+        /// <summary>
+        /// To initialize properties by default for project.
+        /// </summary>
+        /// <param name="project">Uses GlobalProjectCollection if null.</param>
+        public virtual void initPropByDefault(Project project = null)
+        {
+            IAppSettings app    = Settings._;
+            const string _PFX   = Settings.APP_NAME_SHORT;
+
+            setGlobalProperty(project, Settings.APP_NAME, Version.numberWithRevString);
+            setGlobalProperty(project, $"{_PFX}_CommonPath", app.CommonPath);
+            setGlobalProperty(project, $"{_PFX}_LibPath", app.LibPath);
+            setGlobalProperty(project, $"{_PFX}_WorkPath", app.WorkPath);
         }
 
         /// <param name="env">Used environment</param>
@@ -576,14 +608,17 @@ namespace net.r_eg.vsSBE.MSBuild
             return removeGlobalProperty(project, variable.name);
         }
 
+        /// <param name="project">Uses GlobalProjectCollection if null.</param>
         /// <returns>Returns true if the value changes, otherwise returns false.</returns>
         protected virtual bool setGlobalProperty(Project project, string name, string val)
         {
-            if(project == null) {
-                return false;
-            }
+            try
+            {
+                if(project == null) {
+                    ProjectCollection.GlobalProjectCollection.SetGlobalProperty(name, val);
+                    return true;
+                }
 
-            try {
                 return project.SetGlobalProperty(name, val);
             }
             finally {
@@ -591,14 +626,16 @@ namespace net.r_eg.vsSBE.MSBuild
             }
         }
 
+        /// <param name="project">Uses GlobalProjectCollection if null.</param>
         /// <returns>Returns true if the value of the global property was set.</returns>
         protected virtual bool removeGlobalProperty(Project project, string name)
         {
-            if(project == null) {
-                return false;
-            }
+            try
+            {
+                if(project == null) {
+                    return ProjectCollection.GlobalProjectCollection.RemoveGlobalProperty(name);
+                }
 
-            try {
                 return project.RemoveGlobalProperty(name);
             }
             finally {
@@ -616,18 +653,6 @@ namespace net.r_eg.vsSBE.MSBuild
                 Type = CoreCommandType.RawCommand,
                 Args = cmd
             });
-        }
-
-        protected void setPropertiesByDefault(Project project)
-        {
-            if(project == null) {
-                Log.Debug("The default global properties cannot be defined.");
-                return;
-            }
-
-            if(!project.GlobalProperties.ContainsKey(Settings.APP_NAME)) {
-                setGlobalProperty(project, Settings.APP_NAME, Version.numberWithRevString);
-            }
         }
 
         /// <summary>
@@ -700,32 +725,6 @@ namespace net.r_eg.vsSBE.MSBuild
             });
 
             return data;
-        }
-
-        /// <summary>
-        /// Wrapper of getting project instance by name.
-        /// </summary>
-        /// <param name="name">Project name.</param>
-        /// <returns></returns>
-        protected Project getProject(string name)
-        {
-            try {
-                Log.Trace("MSBuild - getProject: Trying of getting project instance - '{0}'", name);
-                return env.getProject(name);
-            }
-            catch(MSBProjectNotFoundException) {
-                Log.Trace("MSBuild - getProject: use empty project by default.");
-                return new Project();
-            }
-        }
-
-        protected Project getProject(string name, bool defProperties)
-        {
-            Project p = getProject(name);
-            if(defProperties) {
-                setPropertiesByDefault(p);
-            }
-            return p;
         }
 
         protected virtual bool isPropertySimple(ref string data)

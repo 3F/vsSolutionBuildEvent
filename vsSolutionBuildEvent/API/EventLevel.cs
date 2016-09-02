@@ -405,6 +405,7 @@ namespace net.r_eg.vsSBE.API
 
             UI.Plain.State.print(config.Data);
 
+            Action.Cmd.MSBuild.initPropByDefault(); //LC: #815, #814
             OpenedSolution(this, new EventArgs());
 
             if(slnEvents == null) {
@@ -487,6 +488,9 @@ namespace net.r_eg.vsSBE.API
 
             Environment.CoreCmdSender = this;
             attachCommandEvents();
+
+            //TODO: extract all below into new methods. It's valuable for CoreCommand etc.
+            //+ do not forget about ClientLibrary, Provider, etc.
 
             this.Bootloader = new Bootloader(Environment, uvariable);
             this.Bootloader.register();

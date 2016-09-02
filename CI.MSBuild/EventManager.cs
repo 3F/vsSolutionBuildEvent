@@ -394,9 +394,17 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             Environment.SetEnvironmentVariable(name, value, EnvironmentVariableTarget.Process);
         }
 
+        /// <summary>
+        /// Note: 
+        /// The main core is already provides properties by default,
+        /// but all this are not available for msbuild targets from CIM.
+        /// Thus, we need also provide this via current environment etc.
+        /// 
+        /// FIXME:
+        /// </summary>
         protected void setPropertiesByDefault()
         {
-            setProperty("vsSolutionBuildEvent", library.Version.Number.ToString());
+            setProperty("vsSolutionBuildEvent", library.Version.Number.ToString()); //optional
             setProperty("vssbeCIM", Version.numberWithRevString);
         }
 
