@@ -88,6 +88,10 @@
 * * http://p.yusukekamiyamane.com
 * url: https://www.iconfinder.com/icons/26386/exclamation_gear_icon#size=16
 
+# ./donate.gif
+
+* official link: https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif
+
 # ./paypal.png
 
 * License: Free for commercial use

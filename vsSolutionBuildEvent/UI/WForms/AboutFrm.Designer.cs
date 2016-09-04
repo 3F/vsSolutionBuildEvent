@@ -274,7 +274,7 @@
             this.pictureBoxDonation.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxDonation.Image")));
             this.pictureBoxDonation.Location = new System.Drawing.Point(280, 298);
             this.pictureBoxDonation.Name = "pictureBoxDonation";
-            this.pictureBoxDonation.Size = new System.Drawing.Size(38, 21);
+            this.pictureBoxDonation.Size = new System.Drawing.Size(74, 21);
             this.pictureBoxDonation.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBoxDonation.TabIndex = 9;
             this.pictureBoxDonation.TabStop = false;

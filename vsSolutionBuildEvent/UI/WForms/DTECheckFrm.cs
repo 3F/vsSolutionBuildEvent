@@ -56,8 +56,8 @@ namespace net.r_eg.vsSBE.UI.WForms
 
             lock(_lock)
             {
-                Log._.Receiving -= hlog;
-                Log._.Receiving += hlog;
+                Log._.Received -= hlog;
+                Log._.Received += hlog;
 
                 try {
                     _dteo.exec(richTextBoxCommand.Text.Split('\n'), false);
@@ -65,7 +65,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                 catch(Exception ex) {
                     richTextBoxExecuted.Text += ex.Message;
                 }
-                Log._.Receiving -= hlog;
+                Log._.Received -= hlog;
             }
         }
 

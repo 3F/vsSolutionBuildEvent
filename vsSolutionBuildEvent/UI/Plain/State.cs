@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,8 +16,8 @@
 */
 
 using System;
+using System.Globalization;
 using System.Linq;
-using Microsoft.VisualStudio.Shell;
 using net.r_eg.vsSBE.Events;
 
 namespace net.r_eg.vsSBE.UI.Plain
@@ -27,7 +27,14 @@ namespace net.r_eg.vsSBE.UI.Plain
     /// </summary>
     public class State
     {
-        public static void print(ISolutionEvents data)
+        private static string Timestamp
+        {
+            get {
+                return DateTime.Now.ToString(CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern + ".ffff");
+            }
+        }
+
+        public static void Print(ISolutionEvents data)
         {
             Func<ISolutionEvent[], string, string> about = delegate(ISolutionEvent[] evt, string caption)
             {
@@ -60,22 +67,26 @@ namespace net.r_eg.vsSBE.UI.Plain
             Log._.raw(sb.ToString());
         }
 
-        public static void lineBegin()
+        public static void BuildBegin()
         {
-            Log._.raw(String.Format("{0}========== Build-Events started =========={0}", System.Environment.NewLine));
+            Log._.raw(
+                String.Format(
+                    "{0}========== [{1}] Build-Events started =========={0}",
+                    System.Environment.NewLine,
+                    Timestamp
+                )
+            );
         }
 
-        public static void summaryWarn(ToolWindowPane tool)
+        public static void BuildEnd()
         {
-            try {
-                Log._.raw(String.Format("========== Build-Events completed: {0} Warnings ==========", ((UI.Xaml.IStatusTool)tool.Content).Warnings));
-                //Log._.raw(String.Format("{0}{1}", new String('=', 80), System.Environment.NewLine));
-                //Log._.raw(String.Format("Warnings: {0}", ((UI.Xaml.IStatusTool)tool.Content).Warnings));
-                Log._.raw(String.Format("{0}{0}", System.Environment.NewLine));
-            }
-            catch(Exception ex) {
-                Log.Debug("Failed summaryWarn: '{0}'", ex.ToString());
-            }
+            Log._.raw(
+                String.Format(
+                    "========== [{1}] Build-Events completed =========={0}{0}",
+                    System.Environment.NewLine,
+                    Timestamp
+                )
+            );
         }
     }
 }

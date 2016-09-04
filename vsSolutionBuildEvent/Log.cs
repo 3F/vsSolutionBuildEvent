@@ -34,9 +34,9 @@ namespace net.r_eg.vsSBE
     internal class Log: ILog
     {
         /// <summary>
-        /// When is receiving message.
+        /// When message has been received.
         /// </summary>
-        public event EventHandler<MessageArgs> Receiving = delegate(object sender, MessageArgs e) { };
+        public event EventHandler<MessageArgs> Received = delegate(object sender, MessageArgs e) { };
 
         /// <summary>
         /// DTE context
@@ -331,7 +331,7 @@ namespace net.r_eg.vsSBE
             }
 
             if(Thread.CurrentThread.Name != LoggingEvent.IDENT_TH) {
-                Receiving(this, new MessageArgs() { Message =  message,  Level = (level)?? String.Empty });
+                Received(this, new MessageArgs() { Message =  message,  Level = (level)?? String.Empty });
             }
 
             try {

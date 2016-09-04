@@ -25,9 +25,9 @@ namespace net.r_eg.vsSBE.Logger
     internal interface ILog
     {
         /// <summary>
-        /// When is receiving message.
+        /// When message has been received.
         /// </summary>
-        event EventHandler<MessageArgs> Receiving;
+        event EventHandler<MessageArgs> Received;
 
         /// <summary>
         /// Getting instance of the NLog logger

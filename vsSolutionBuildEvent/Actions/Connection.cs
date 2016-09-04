@@ -716,13 +716,13 @@ namespace net.r_eg.vsSBE.Actions
         {
             lock(_lock) {
                 detachLoggingEvent();
-                Log._.Receiving += onLogging;
+                Log._.Received += onLogging;
             }
         }
 
         protected void detachLoggingEvent()
         {
-            Log._.Receiving -= onLogging;
+            Log._.Received -= onLogging;
         }
         
         /// <summary>

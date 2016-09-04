@@ -403,7 +403,7 @@ namespace net.r_eg.vsSBE.API
             //ConfigManager.addAndUse(config, userConfig, ContextType.Solution);
             refreshComponents();
 
-            UI.Plain.State.print(config.Data);
+            UI.Plain.State.Print(config.Data);
 
             Action.Cmd.MSBuild.initPropByDefault(); //LC: #815, #814
             OpenedSolution(this, new EventArgs());

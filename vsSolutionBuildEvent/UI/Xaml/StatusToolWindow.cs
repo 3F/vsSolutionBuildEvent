@@ -99,7 +99,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
         {
             lock(_eLock) {
                 detachEvents();
-                Log._.Receiving += onReceiving;
+                Log._.Received += onReceiving;
             }
             return this;
         }
@@ -110,7 +110,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
         /// <returns>self reference</returns>
         public IStatusToolEvents detachEvents()
         {
-            Log._.Receiving -= onReceiving;
+            Log._.Received -= onReceiving;
             return this;
         }
 

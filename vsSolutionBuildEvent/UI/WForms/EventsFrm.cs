@@ -33,8 +33,9 @@ using DomIcon = net.r_eg.vsSBE.SBEScripts.Dom.Icon;
 namespace net.r_eg.vsSBE.UI.WForms
 {
     /// <summary>
-    /// Please don't forget - it's older version /outbuilding from ~v0.5
-    /// This only contains the all manipulation with UI elements, 'as is'.
+    /// Please note: this is very old version from ~v0.5 (as and all UI namespace),
+    /// ...when it's only started and when we had no any big plans before...
+    /// Thus, for all new, I strongly recommend MVVM or similar pattern to improve IoC and more.
     /// </summary>
     public partial class EventsFrm: Form, ITransfer
     {

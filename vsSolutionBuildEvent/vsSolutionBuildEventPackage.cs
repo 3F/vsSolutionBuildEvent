@@ -187,7 +187,7 @@ namespace net.r_eg.vsSBE
         public int UpdateSolution_Begin(ref int pfCancelUpdate)
         {
             try {
-                UI.Plain.State.lineBegin();
+                UI.Plain.State.BuildBegin();
                 ((IStatusTool)StatusTool.Content).resetCounter();
             }
             catch(Exception ex) {
@@ -214,7 +214,8 @@ namespace net.r_eg.vsSBE
                 return Event.onPost(fSucceeded, fModified, fCancelCommand);
             }
             finally {
-                UI.Plain.State.summaryWarn(StatusTool);
+                //TODO: Summary of Errors / Warnings ~ ((IStatusTool)StatusTool.Content).Warnings
+                UI.Plain.State.BuildEnd();
             }
         }
 
