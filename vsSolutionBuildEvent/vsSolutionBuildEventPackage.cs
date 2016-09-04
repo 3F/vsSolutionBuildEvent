@@ -229,16 +229,6 @@ namespace net.r_eg.vsSBE
             return Event.onProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
         }
 
-        /// <summary>
-        /// CA1001: well, the VisualStudio.Shell.Package is already uses `void Dispose(bool disposing)`
-        ///         And this will never be used at all... but in addition and for CA we also implemented IDisposable
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         private void initAppEvents()
         {
             var usrCfg = new UserConfig();
@@ -419,11 +409,30 @@ namespace net.r_eg.vsSBE
                            out res));
             }
         }
+        #endregion
+        
+        #region IDisposable
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "configFrm")]
+        // To detect redundant calls
+        private bool disposed = false;
+
+        // To correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
         protected override void Dispose(bool disposing)
         {
-            UI.Util.closeTool(configFrm); //<- CA2213: the Util will manage this
+            if(disposed) {
+                return;
+            }
+            disposed = true;
+            //...
+
+            if(configFrm != null && !configFrm.IsDisposed) {
+                configFrm.Close();
+            }
 
             if(spSolutionBM != null && _pdwCookieSolutionBM != 0) {
                 spSolutionBM.UnadviseUpdateSolutionEvents(_pdwCookieSolutionBM);
@@ -435,6 +444,7 @@ namespace net.r_eg.vsSBE
 
             base.Dispose(disposing);
         }
+
         #endregion
     }
 }
