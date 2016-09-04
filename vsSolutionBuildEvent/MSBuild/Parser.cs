@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Evaluation;
 using net.r_eg.vsSBE.Bridge.CoreCommand;
@@ -167,6 +168,12 @@ namespace net.r_eg.vsSBE.MSBuild
                 }
                 finally {
                     project.RemoveProperty(project.GetProperty(container));
+
+                    // To fix "Save changes to the following items?"
+                    // Do not use the `project.Save();` because will be "File Modification Detected ... has been modified outside the environment."
+                    foreach(var dteprj in Env.ProjectsDTE.Where(p => p.FullName == project.FullPath)) {
+                        dteprj.Save();
+                    }
                 }
             }
         }
