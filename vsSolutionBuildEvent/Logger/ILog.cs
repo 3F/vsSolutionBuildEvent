@@ -91,5 +91,17 @@ namespace net.r_eg.vsSBE.Logger
         /// </summary>
         /// <param name="force">Including undelivered etc.</param>
         void clear(bool force);
+
+        /// <summary>
+        /// Checks specific level on error type.
+        /// </summary>
+        /// <param name="level"></param>
+        bool isError(string level);
+
+        /// <summary>
+        /// Checks specific level on warning type.
+        /// </summary>
+        /// <param name="level"></param>
+        bool isWarn(string level);
     }
 }

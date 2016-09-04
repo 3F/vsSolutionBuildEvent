@@ -489,6 +489,9 @@ namespace net.r_eg.vsSBE.API
             Environment.CoreCmdSender = this;
             attachCommandEvents();
 
+            Log._.Received -= onLogReceived;
+            Log._.Received += onLogReceived;
+
             //TODO: extract all below into new methods. It's valuable for CoreCommand etc.
             //+ do not forget about ClientLibrary, Provider, etc.
 
@@ -594,6 +597,18 @@ namespace net.r_eg.vsSBE.API
                 Type = CoreCommandType.RawCommand,
                 Args = new object[] { new KeyValuePair<string, bool>("DebugMode", e.Data) }
             });
+        }
+
+        private void onLogReceived(object sender, Logger.MessageArgs e)
+        {
+            if(Log._.isError(e.Level)) {
+                CoreCommand(
+                    sender, 
+                    new CoreCommandArgs() {
+                        Type = CoreCommandType.BuildCancel
+                    }
+                );
+            }
         }
 
         /// <summary>

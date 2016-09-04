@@ -563,6 +563,8 @@
     </Compile>
     <Compile Include="vsSolutionBuildEventPackage.cs" />
     <Compile Include="PkgCmdID.cs" />
+    <Compile Include="VSTools\ErrorList\IPane.cs" />
+    <Compile Include="VSTools\ErrorList\Pane.cs" />
     <Compile Include="VSTools\OW\PaneDTE.cs" />
     <Compile Include="VSTools\OW\PaneCOM.cs" />
     <Compile Include="VSTools\OW\IPane.cs" />

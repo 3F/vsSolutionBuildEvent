@@ -75,6 +75,11 @@ namespace net.r_eg.vsSBE
         private uint _pdwCookieSolutionBM;
 
         /// <summary>
+        /// For work with ErrorList pane of Visual Studio.
+        /// </summary>
+        private VSTools.ErrorList.IPane errorList;
+
+        /// <summary>
         /// Listener of the OutputWindowsPane
         /// </summary>
         private Receiver.Output.OWP _owpListener;
@@ -189,6 +194,7 @@ namespace net.r_eg.vsSBE
             try {
                 UI.Plain.State.BuildBegin();
                 ((IStatusTool)StatusTool.Content).resetCounter();
+                errorList.clear();
             }
             catch(Exception ex) {
                 Log.Debug("Failed reset of warnings counter: '{0}'", ex.Message);
@@ -286,6 +292,16 @@ namespace net.r_eg.vsSBE
             }
         }
 
+        private void onLogReceived(object sender, Logger.MessageArgs e)
+        {
+            if(Log._.isError(e.Level)) {
+                errorList.error(e.Message);
+            }
+            else if(Log._.isWarn(e.Level)) {
+                errorList.warn(e.Message);
+            }
+        }
+
         /// <summary>
         /// Handler of showing the status-tool window
         /// </summary>
@@ -361,6 +377,9 @@ namespace net.r_eg.vsSBE
 
             try
             {
+                errorList       = new VSTools.ErrorList.Pane(this);
+                Log._.Received  += onLogReceived;
+
                 initAppEvents();
 
                 OleMenuCommandService mcs = (OleMenuCommandService)GetService(typeof(IMenuCommandService));
@@ -432,6 +451,10 @@ namespace net.r_eg.vsSBE
 
             if(configFrm != null && !configFrm.IsDisposed) {
                 configFrm.Close();
+            }
+
+            if(errorList != null) {
+                ((IDisposable)errorList).Dispose();
             }
 
             if(spSolutionBM != null && _pdwCookieSolutionBM != 0) {
