@@ -224,7 +224,7 @@ namespace net.r_eg.vsSBE.MSBuild
                 Log.Trace("MSBuild - getProject: Trying of getting project instance - '{0}'", name);
                 return env.getProject(name);
             }
-            catch(MSBProjectNotFoundException) {
+            catch(NotFoundException) {
                 Log.Trace("MSBuild - getProject: use empty project by default.");
                 return new Project();
             }
