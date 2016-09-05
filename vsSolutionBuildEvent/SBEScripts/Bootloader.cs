@@ -112,6 +112,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// </summary>
         public virtual void register()
         {
+            register(new TryComponent(this));
             register(new CommentComponent());
             register(new ConditionComponent(this));
             register(new UserVariableComponent(this));

@@ -15,24 +15,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
     [TestClass()]
     public class ScriptTest
     {
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
-
         private static IEnvironment env         = new net.r_eg.vsSBE.Environment((EnvDTE80.DTE2)null);
         private static IUserVariable uvariable  = new UserVariable();
 

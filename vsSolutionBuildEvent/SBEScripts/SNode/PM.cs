@@ -327,23 +327,27 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
             return false;
         }
 
-        ///// <param name="raw">Initial raw data.</param>
-        //public PM(string raw)
-        //{
-        //    detect(raw);
-        //}
+        /// <summary>
+        /// Extracts all arguments from raw data.
+        /// </summary>
+        /// <param name="raw">Raw data of arguments.</param>
+        /// <param name="splitter">A character that delimits arguments.</param>
+        /// <returns>List of parsed arguments or null value if data is empty or null.</returns>
+        /// <exception cref="SyntaxIncorrectException">If incorrect data.</exception>
+        public Argument[] arguments(string raw, char splitter = ',')
+        {
+            if(String.IsNullOrWhiteSpace(raw)) {
+                return null;
+            }
+            return extractArgs(raw, splitter);
+        }
 
         /// <param name="raw">Initial raw data.</param>
         /// <param name="msbuild">To evaluate data with MSBuild engine where it's allowed.</param>
         /// <param name="type">Allowed types of evaluation with MSBuild.</param>
         public PM(string raw, IMSBuild msbuild = null, EvalType type = EvalType.ArgStringD /*| EvalType.RightOperandStd*/)
+            : this(msbuild, type)
         {
-            //if(msbuild == null) {
-            //    throw new InvalidArgumentException("PM: The `msbuild` argument cannot be null");
-            //}
-            this.msbuild    = msbuild;
-            teval           = type;
-
             detect(raw);
         }
 
@@ -351,6 +355,17 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
         public PM(List<ILevel> levels)
         {
             this.levels = levels;
+        }
+
+        /// <param name="msbuild">To evaluate data with MSBuild engine where it's allowed.</param>
+        /// <param name="type">Allowed types of evaluation with MSBuild.</param>
+        public PM(IMSBuild msbuild = null, EvalType type = EvalType.ArgStringD)
+        {
+            //if(msbuild == null) {
+            //    throw new InvalidArgumentException("PM: The `msbuild` argument cannot be null");
+            //}
+            this.msbuild    = msbuild;
+            teval           = type;
         }
 
         /// <summary>

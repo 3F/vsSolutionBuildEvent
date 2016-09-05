@@ -261,10 +261,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             data = script.parse(data);
             Log.Trace("Condition-evaluate: evaluated data: '{0}' :: ISBEScript", data);
 
-            if(PostProcessingMSBuild) {
+            //if(PostProcessingMSBuild) {
                 data = msbuild.parse(data);
                 Log.Trace("Condition-evaluate: evaluated data: '{0}' :: IMSBuild", data);
-            }
+            //}
             return data;
         }
 
