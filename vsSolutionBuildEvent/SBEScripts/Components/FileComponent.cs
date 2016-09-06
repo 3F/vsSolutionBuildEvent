@@ -739,7 +739,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
-        ///  `copy.file(string src, string dest, bool overwrite [, object except])`
+        ///  `copy.file((string src | object src), string dest, bool overwrite [, object except])`
         /// </summary>
         [Method("file",
                 "To copy selected file to the destination. Creates the destination path if not exists.",
@@ -762,6 +762,27 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 CValueType.Void,
                 CValueType.String, CValueType.String, CValueType.Boolean, CValueType.Object
         )]
+        [Method("file",
+                "To copy selected files to the destination. Creates the destination path if not exists.",
+                "copy", "stCopy",
+                new string[] { "srclist", "dest", "overwrite" },
+                new string[] { "List of source files as {\"f1\", \"path\\*.dll\", ..}",
+                                "The destination path. Should contain path to directory.",
+                                "Overwrite file/s if already exists." },
+                CValueType.Void,
+                CValueType.Object, CValueType.String, CValueType.Boolean
+        )]
+        [Method("file",
+                "To copy selected files to the destination. Creates the destination path if not exists.",
+                "copy", "stCopy",
+                new string[] { "srclist", "dest", "overwrite", "except" },
+                new string[] { "List of source files as {\"f1\", \"path\\*.dll\", ..}",
+                                "The destination path. Should contain path to directory.",
+                                "Overwrite file/s if already exists.",
+                                "List of files to exclude from input source as {\"f1\", \"path\\*.dll\", ...}" },
+                CValueType.Void,
+                CValueType.Object, CValueType.String, CValueType.Boolean, CValueType.Object
+        )]
         protected string copyFile(ILevel level, IPM pm)
         {
             if(level.Is(ArgumentType.StringDouble, ArgumentType.StringDouble, ArgumentType.Boolean)) {
@@ -770,8 +791,28 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(level.Is(ArgumentType.StringDouble, ArgumentType.StringDouble, ArgumentType.Boolean, ArgumentType.Object)) {
                 return copyFile(pm.pinTo(1), (string)level.Args[0].data, (string)level.Args[1].data, (bool)level.Args[2].data, (Argument[])level.Args[3].data);
             }
+            if(level.Is(ArgumentType.Object, ArgumentType.StringDouble, ArgumentType.Boolean)) {
+                return copyFile(pm.pinTo(1), (Argument[])level.Args[0].data, (string)level.Args[1].data, (bool)level.Args[2].data);
+            }
+            if(level.Is(ArgumentType.Object, ArgumentType.StringDouble, ArgumentType.Boolean, ArgumentType.Object)) {
+                return copyFile(pm.pinTo(1), (Argument[])level.Args[0].data, (string)level.Args[1].data, (bool)level.Args[2].data, (Argument[])level.Args[3].data);
+            }
 
-            throw new ArgumentPMException(level, "copy.file(string src, string dest, bool overwrite [, object except])");
+            throw new ArgumentPMException(level, "copy.file((string src | object srclist), string dest, bool overwrite [, object except])");
+        }
+
+        protected string copyFile(IPM pm, Argument[] files, string dest, bool overwrite, Argument[] except = null)
+        {
+            dest = dest.PathFormat();
+
+            foreach(Argument src in files) {
+                if(src.type != ArgumentType.StringDouble) {
+                    throw new InvalidArgumentException("Incorrect data from input files. Define as {\"f1\", \"f2\", ...}");
+                }
+                copyFile(pm, src.data.ToString(), dest, overwrite, except);
+            }
+
+            return Value.Empty;
         }
 
         protected string copyFile(IPM pm, string src, string dest, bool overwrite, Argument[] except = null)
