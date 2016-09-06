@@ -899,7 +899,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 Directory.CreateDirectory(dest);
             }
 
-            foreach(var file in files)
+            foreach(var file in files.ToArray())
             {
                 string from = file[0];
                 string to   = file[1];
