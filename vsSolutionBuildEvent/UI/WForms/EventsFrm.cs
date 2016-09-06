@@ -634,17 +634,24 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         protected void componentApply()
         {
-            List<Configuration.Component> list = new List<Configuration.Component>();
+            var list = new List<Configuration.Component>();
             foreach(DataGridViewRow row in dgvComponents.Rows)
             {
                 if(row.ReadOnly) {
                     continue;
                 }
+
+                var c = row.Cells[dgvComponentsClass.Name].Value?.ToString();
+                if(c == null || list.Any(p => p.ClassName == c)) {
+                    continue;
+                }
+
                 list.Add(new Configuration.Component() { 
-                    ClassName   = (row.Cells[dgvComponentsClass.Name].Value == null)? "" : row.Cells[dgvComponentsClass.Name].Value.ToString(),
+                    ClassName   = c,
                     Enabled     = Boolean.Parse(row.Cells[dgvComponentsEnabled.Name].Value.ToString()),
                 });
             }
+
             logic.updateComponents(list.ToArray());
         }
 

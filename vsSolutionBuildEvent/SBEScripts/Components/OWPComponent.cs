@@ -48,6 +48,18 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
         protected LogData logcopy;
 
+        /// <summary>
+        /// OutputWindowPane
+        /// </summary>
+        protected virtual IOW OWP
+        {
+            get {
+                if(env.OutputWindowPane == null) {
+                    throw new NotSupportedException("The OW pane is not available for current environment.");
+                }
+                return env.OutputWindowPane;
+            }
+        }
 
         /// <param name="env">Used environment</param>
         public OWPComponent(IEnvironment env)
@@ -227,14 +239,14 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(!createIfNotExist)
             {
                 try {
-                    pane = env.OutputWindowPane.getByName(name, false);
+                    pane = OWP.getByName(name, false);
                 }
                 catch(ArgumentException) {
                     throw new NotFoundException("The item '{0}' does not exist. Use 'force' flag for automatic creation if needed.", name);
                 }
             }
             else {
-                pane = env.OutputWindowPane.getByName(name, true);
+                pane = OWP.getByName(name, true);
             }
 
             if(newline) {
@@ -275,7 +287,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             Log.Debug("removing the item '{0}'", name);
             try {
-                env.OutputWindowPane.deleteByName(name);
+                OWP.deleteByName(name);
                 return Value.from(true);
             }
             catch(ArgumentException) {
@@ -315,7 +327,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             Log.Debug("Clearing the item '{0}'", name);
             try {
-                env.OutputWindowPane.getByName(name, false).Clear();
+                OWP.getByName(name, false).Clear();
                 return Value.from(true);
             }
             catch(ArgumentException) {
@@ -355,7 +367,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             Log.Debug("Activation the item '{0}'", name);
             try {
-                env.OutputWindowPane.getByName(name, false).Activate();
+                OWP.getByName(name, false).Activate();
                 return Value.from(true);
             }
             catch(ArgumentException) {

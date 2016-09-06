@@ -27,8 +27,9 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// <summary>
     /// try/catch for user scripts
     /// </summary>
-    [Definition("try{ }catch{ }", "try/catch\n\n Protects from errors in try{...} block and handles it in catch{...}")]
-    [Definition("try{ }catch(err, msg){ }", "try/catch with error type and its message.")]
+    [Definition("try", "try/catch")]
+    [Definition("{ }catch{ }", "try/catch\n\nProtects from errors in try{...} block and handles it in catch{...}", "try")]
+    [Definition("{ }catch(err, msg){ }", "try/catch with error type and its message.", "try")]
     public class TryComponent: Component, IComponent
     {
         /// <summary>
