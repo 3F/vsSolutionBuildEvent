@@ -39,6 +39,10 @@
       <!-- XML Doc -->
         <VsixLib Include="$(SolutionDir)\Bridge\$(OutputPath)\Bridge.xml" Condition="Exists('$(SolutionDir)\Bridge\$(OutputPath)\Bridge.xml')" />
 
+      <!-- tools -->
+        <VsixLib Include="$(SolutionDir)\tools\gnt.bat" />
+        <VsixLib Include="$(SolutionDir)\tools\msbuild.bat" />
+
     </ItemGroup>
     
     <ItemGroup>

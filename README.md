@@ -1,6 +1,6 @@
 # vsSolutionBuildEvent
 
-It presents handler of most events as the Event-Catcher with a variety of advanced Actions for service of your projects and libraries, the build processes and processes at runtime from Visual Studio and MSBuild Tools.
+It presents handler of most events as the Event-Catcher with variety of advanced Actions for service of your projects and libraries, the build processes and processes at runtime from Visual Studio and MSBuild Tools.
 
 **Flexible actions for all ...**
 

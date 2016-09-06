@@ -415,7 +415,8 @@ namespace net.r_eg.vsSBE
                         .FirstOrDefault();
 
             if(cfg.configuration == null || cfg.platform == null) {
-                Log.Error($"Something went wrong with project configuration. `{cfg.configuration}|{cfg.platform}`");
+                Log.Warn($"Something went wrong with project configuration. `{cfg.configuration}|{cfg.platform}`");
+                Log.Warn($"Are you sure that it's correct for your sln: `{properties["Configuration"]}|{properties["Platform"]}`");
                 return properties;
                 //throw new MismatchException();
             }

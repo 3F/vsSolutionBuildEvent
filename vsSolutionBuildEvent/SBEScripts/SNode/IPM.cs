@@ -169,7 +169,6 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
         /// <param name="raw">Raw data of arguments.</param>
         /// <param name="splitter">A character that delimits arguments.</param>
         /// <returns>List of parsed arguments or null value if data is empty or null.</returns>
-        /// <exception cref="SyntaxIncorrectException">If incorrect data.</exception>
         Argument[] arguments(string raw, char splitter = ',');
     }
 }

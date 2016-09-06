@@ -91,6 +91,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".version" />
+    <None Include="$(SolutionDir)\tools\gnt.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="$(SolutionDir)\tools\msbuild.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="CI.MSBuild.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="key.snk" />
   </ItemGroup>
   <ItemGroup>
