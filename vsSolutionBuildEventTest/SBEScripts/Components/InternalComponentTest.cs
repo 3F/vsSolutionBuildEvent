@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts;
@@ -7,31 +8,9 @@ using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 {
-    /// <summary>
-    ///This is a test class for InternalComponentTest and is intended
-    ///to contain all InternalComponentTest Unit Tests
-    ///</summary>
     [TestClass()]
     public class InternalComponentTest
     {
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
-
         /// <summary>
         ///A test for parse
         ///</summary>
@@ -39,7 +18,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(SyntaxIncorrectException))]
         public void parseTest()
         {
-            InternalComponent target = new InternalComponent();
+            InternalComponent target = new InternalComponent(new StubEnv());
             target.parse("#[vsSBE events.Type.item(1)]");
         }
 
@@ -50,7 +29,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(SyntaxIncorrectException))]
         public void parseTest2()
         {
-            InternalComponent target = new InternalComponent();
+            InternalComponent target = new InternalComponent(new StubEnv());
             target.parse("vsSBE events.Type.item(1)");
         }
 
@@ -61,7 +40,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(SubtypeNotFoundException))]
         public void parseTest3()
         {
-            InternalComponent target = new InternalComponent();
+            InternalComponent target = new InternalComponent(new StubEnv());
             target.parse("[vsSBE NoExist.Type]");
         }
 
@@ -72,7 +51,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(OperandNotFoundException))]
         public void stEventsParseTest1()
         {
-            InternalComponent target = new InternalComponent();
+            InternalComponent target = new InternalComponent(new StubEnv());
             target.parse("[vsSBE events.Type.item(name)]");
         }
 
@@ -83,7 +62,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(OperandNotFoundException))]
         public void stEventsParseTest2()
         {
-            InternalComponent target = new InternalComponent();
+            InternalComponent target = new InternalComponent(new StubEnv());
             target.parse("[vsSBE events.Type.item(1).test]");
         }
 
@@ -159,6 +138,52 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             target.parse("[vsSBE events.Pre.item(1).Status.NotExistProp]");
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(IncorrectNodeException))]
+        public void startUpProjectTest1()
+        {
+            var target = new InternalComponent(new StubEnv());
+            target.parse("[Core StartUpProject: test]");
+        }
+
+        [TestMethod]
+        public void startUpProjectTest2()
+        {
+            IEnvironment env    = new StubEnv();
+            var target          = new InternalComponent(env);
+            string defProject   = env.StartupProjectString;
+
+            Assert.AreEqual(env.StartupProjectString, target.parse("[Core StartUpProject]"));
+
+            Assert.AreEqual(String.Empty, target.parse("[Core StartUpProject = project1]"));
+            Assert.AreEqual("project1", env.StartupProjectString);
+            Assert.AreEqual(env.StartupProjectString, target.parse("[Core StartUpProject]"));
+
+            Assert.AreEqual(String.Empty, target.parse("[Core StartUpProject = \"project2\"]"));
+            Assert.AreEqual("project2", env.StartupProjectString);
+            Assert.AreEqual(env.StartupProjectString, target.parse("[Core StartUpProject]"));
+
+            Assert.AreEqual(String.Empty, target.parse("[Core StartUpProject = \"\"]"));
+            Assert.AreEqual(defProject, env.StartupProjectString);
+            Assert.AreEqual(env.StartupProjectString, target.parse("[Core StartUpProject]"));
+        }
+
+        [TestMethod]
+        public void startUpProjectTest3()
+        {
+            IEnvironment env    = new StubEnv();
+            var target          = new InternalComponent(env);
+            string defProject   = env.StartupProjectString;
+
+            Assert.AreEqual(String.Empty, target.parse("[Core StartUpProject = project1]"));
+            Assert.AreEqual("project1", env.StartupProjectString);
+            Assert.AreEqual(env.StartupProjectString, target.parse("[Core StartUpProject]"));
+
+            Assert.AreEqual(String.Empty, target.parse("[Core StartUpProject =]"));
+            Assert.AreEqual(defProject, env.StartupProjectString);
+            Assert.AreEqual(env.StartupProjectString, target.parse("[Core StartUpProject]"));
+        }
+
         /// <summary>
         ///A test for parse - stEventItem - pStdout
         ///</summary>
@@ -204,6 +229,12 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         private class InternalComponentAccessor: InternalComponent
         {
             private SBEEvent[] evt = null;
+
+            public InternalComponentAccessor()
+                : base(new StubEnv())
+            {
+
+            }
 
             protected override ISolutionEvent[] getEvent(SolutionEventType type)
             {

@@ -61,7 +61,7 @@ namespace net.r_eg.vsSBE
         IEnumerable<EnvDTE80.SolutionConfiguration2> SolutionConfigurations { get; }
 
         /// <summary>
-        /// Name from "Set as StartUp Project"
+        /// Project by default or "StartUp Project".
         /// </summary>
         string StartupProjectString { get; }
 
@@ -133,5 +133,11 @@ namespace net.r_eg.vsSBE
         /// <param name="name">Command name</param>
         /// <param name="args">Command arguments</param>
         void exec(string name, string args = "");
+
+        /// <summary>
+        /// To update the project by default or "StartUp Project".
+        /// </summary>
+        /// <param name="name">Uses default behavior if empty or null.</param>
+        void updateStartupProject(string name);
     }
 }

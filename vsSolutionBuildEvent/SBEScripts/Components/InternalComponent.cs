@@ -47,6 +47,13 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             get { return true; }
         }
 
+        /// <param name="env">Used environment</param>
+        public InternalComponent(IEnvironment env)
+            : base(env)
+        {
+
+        }
+
         /// <summary>
         /// Handler for current data
         /// </summary>
@@ -60,13 +67,59 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             Log.Trace("`{0}`: subtype - `{1}`, request - `{2}`", ToString(), subtype, request);
 
+            IPM pm = new PM(request);
             switch(subtype) {
+                case "StartUpProject": {
+                    return stStartUpProject(pm);
+                }
                 case "events": {
-                    return stEvents(new PM(request));
+                    return stEvents(pm);
                 }
             }
 
             throw new SubtypeNotFoundException("Subtype `{0}` is not found", subtype);
+        }
+
+        /// <param name="pm"></param>
+        /// <returns></returns>
+        [Property("StartUpProject", "To get/set the project by default or 'StartUp Project'.", CValueType.String, CValueType.String)]
+        protected string stStartUpProject(IPM pm)
+        {
+            if(!pm.It(LevelType.Property, "StartUpProject")) {
+                throw new IncorrectNodeException(pm);
+            }
+
+            // get
+
+            if(pm.IsRight(LevelType.RightOperandEmpty)) {
+                return env.StartupProjectString;
+            }
+
+            // set
+
+            if(!pm.IsRight(LevelType.RightOperandStd)) {
+                throw new IncorrectNodeException(pm);
+            }
+
+            ILevel level    = pm.Levels[0];
+            var val         = (new PM()).arguments(level.Data);
+
+            if(val == null || val.Length < 1) {
+                env.updateStartupProject(null);
+                return Value.Empty;
+            }
+
+            Argument pname = val[0];
+            if(val.Length > 1 || 
+                (pname.type != ArgumentType.StringDouble
+                    && pname.type != ArgumentType.EnumOrConst
+                    && pname.type != ArgumentType.Mixed))
+            {
+                throw new ArgumentPMException(level, "= string name");
+            }
+
+            env.updateStartupProject(pname.data.ToString());
+            return Value.Empty;
         }
 
         /// <summary>

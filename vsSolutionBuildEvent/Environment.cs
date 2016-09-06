@@ -167,14 +167,18 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Getting name from "Set as StartUp Project"
+        /// Project by default or "StartUp Project".
         /// </summary>
         public virtual string StartupProjectString
         {
             get
             {
-                if(!IsOpenedSolution || Dte2.Solution.SolutionBuild.StartupProjects == null) {
+                if(!IsOpenedSolution || Dte2?.Solution?.SolutionBuild?.StartupProjects == null) {
                     return null;
+                }
+
+                if(_startupProject != null) {
+                    return _startupProject;
                 }
 
                 foreach(string project in (Array)Dte2.Solution.SolutionBuild.StartupProjects)
@@ -186,6 +190,7 @@ namespace net.r_eg.vsSBE
                 return null;
             }
         }
+        private string _startupProject;
 
         /// <summary>
         /// Get status of opened solution.
@@ -285,6 +290,20 @@ namespace net.r_eg.vsSBE
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// To update the project by default or "StartUp Project".
+        /// </summary>
+        /// <param name="name">Uses default behavior if empty or null.</param>
+        public void updateStartupProject(string name)
+        {
+            if(name == String.Empty) {
+                name = null;
+            }
+
+            _startupProject = name;
+            Log.Debug($"'StartUp Project' has been updated = '{name}'");
         }
 
         /// <summary>

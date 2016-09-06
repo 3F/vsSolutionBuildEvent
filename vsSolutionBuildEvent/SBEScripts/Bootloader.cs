@@ -118,7 +118,7 @@ namespace net.r_eg.vsSBE.SBEScripts
             register(new UserVariableComponent(this));
             register(new OWPComponent(Env));
             register(new DTEComponent(Env));
-            register(new InternalComponent());
+            register(new InternalComponent(Env));
             register(new MSBuildComponent(this));
             register(new BuildComponent(Env));
             register(new FunctionComponent(this));

@@ -131,7 +131,7 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Name from the "Set as StartUp Project"
+        /// Project by default or "StartUp Project".
         /// </summary>
         public string StartupProjectString
         {
@@ -326,6 +326,26 @@ namespace net.r_eg.vsSBE
             Log.Warn("Disabled for this Environment. Command: '{0}', args: '{1}'", name, args);
         }
 
+        /// <summary>
+        /// To update the project by default or "StartUp Project".
+        /// </summary>
+        /// <param name="name">Uses default behavior if empty or null.</param>
+        public void updateStartupProject(string name)
+        {
+            if(name == String.Empty) {
+                name = null;
+            }
+
+            if(_sln?.projects != null && _sln.projects.Count > 0
+                && name == null)
+            {
+                name = _sln.projects[0].name;
+            }
+
+            StartupProjectString = name;
+            Log.Debug($"'StartUp Project' has been updated = '{name}'");
+        }
+
         /// <param name="solutionFile">Full path to solution file (.sln)</param>
         /// <param name="properties">Solution properties / global properties for all project collection</param>
         public IsolatedEnv(string solutionFile, TProp properties)
@@ -335,8 +355,9 @@ namespace net.r_eg.vsSBE
             SolutionFileName    = Path.GetFileNameWithoutExtension(SolutionFile);
 
             _sln = (new Sln.Parser()).parse(SolutionFile);
-            if(String.IsNullOrEmpty(StartupProjectString) && _sln.projects.Count > 0) {
-                StartupProjectString = _sln.projects[0].name;
+
+            if(String.IsNullOrEmpty(StartupProjectString)) {
+                updateStartupProject(null);
             }
             IsOpenedSolution = true;
 
