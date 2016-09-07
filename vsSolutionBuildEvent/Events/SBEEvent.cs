@@ -83,7 +83,7 @@ namespace net.r_eg.vsSBE.Events
         private bool ignoreIfBuildFailed = false;
 
         /// <summary>
-        /// The type of build action.
+        /// The context of action.
         /// </summary>
         public BuildType BuildType
         {

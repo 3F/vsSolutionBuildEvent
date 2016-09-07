@@ -30,12 +30,13 @@ using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Dom;
-using CEAfterEventHandler = EnvDTE._dispCommandEvents_AfterExecuteEventHandler;
-using CEBeforeEventHandler = EnvDTE._dispCommandEvents_BeforeExecuteEventHandler;
-using DomIcon = net.r_eg.vsSBE.SBEScripts.Dom.Icon;
 
 namespace net.r_eg.vsSBE.UI.WForms.Logic
 {
+    using CEAfterEventHandler   = EnvDTE._dispCommandEvents_AfterExecuteEventHandler;
+    using CEBeforeEventHandler  = EnvDTE._dispCommandEvents_BeforeExecuteEventHandler;
+    using DomIcon               = Icon;
+
     public class Events
     {
         /// <summary>
@@ -389,6 +390,15 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
 
             buildType.Add(BuildType.Deploy);
             combo.Items.Add("Deploy");
+
+            buildType.Add(BuildType.Before);
+            combo.Items.Add("Before");
+
+            buildType.Add(BuildType.After);
+            combo.Items.Add("After");
+
+            buildType.Add(BuildType.BeforeAndAfter);
+            combo.Items.Add("Before & After");
 
             buildType.Add(BuildType.Start);
             combo.Items.Add("Start Debugging");

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,14 +23,14 @@ namespace net.r_eg.vsSBE.UnifiedTypes.Build
     public class VSCommand
     {
         /// <summary>
-        /// Predefined list of commands.
+        /// Predefined list of VS commands.
         /// 
         /// *!* be careful with intersection
         ///     Scope of:
         ///      * {5EFC7975-14BC-11CF-9B2B-00AA00573819}
         ///      * {1496A755-94DE-11D0-8C3F-00C04FC2AAE2}
         /// </summary>
-        public enum CType
+        internal enum CType
         {
             /// <summary>
             /// Common context
@@ -150,14 +150,14 @@ namespace net.r_eg.vsSBE.UnifiedTypes.Build
             return (Bridge.BuildType)Enum.Parse(typeof(Bridge.BuildType), ((CType)id).ToString());
         }
 
-        /// <summary>
-        /// Get BuildType by predefined CType
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static Bridge.BuildType getByCommandId(CType type) /* throws Exception */
-        {
-            return (Bridge.BuildType)Enum.Parse(typeof(Bridge.BuildType), type.ToString());
-        }
+        ///// <summary>
+        ///// Get BuildType by predefined CType
+        ///// </summary>
+        ///// <param name="type"></param>
+        ///// <returns></returns>
+        //public static Bridge.BuildType getByCommandId(CType type) /* throws Exception */
+        //{
+        //    return (Bridge.BuildType)Enum.Parse(typeof(Bridge.BuildType), type.ToString());
+        //}
     }
 }

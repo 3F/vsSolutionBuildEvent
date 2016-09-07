@@ -1,7 +1,7 @@
 ﻿/*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,15 +28,41 @@ using System.Runtime.InteropServices;
 namespace net.r_eg.vsSBE.Bridge
 {
     /// <summary>
-    /// Represents available types of the build for any actions
+    /// Represents available context for actions.
     /// </summary>
     [Guid("70EC2620-D34E-407A-AB2B-6592D4974510")]
     public enum BuildType
     {
         /// <summary>
-        /// Common context - any type
+        /// Common context - any type or type by default
         /// </summary>
         Common = Int32.MaxValue,
+
+        /// <summary>
+        /// Unspecified type as Before action.
+        /// </summary>
+        Before = Common - 10,
+
+        /// <summary>
+        /// Unspecified type as After action.
+        /// </summary>
+        After = Common - 11,
+
+        /// <summary>
+        /// Unspecified type as Before and/then After action, 
+        /// i.e. double action.
+        /// </summary>
+        BeforeAndAfter = Common - 12,
+
+        /// <summary>
+        /// Reserved type 1
+        /// </summary>
+        Reserved1 = Common - 13,
+
+        /// <summary>
+        /// Reserved type 2
+        /// </summary>
+        Reserved2 = Common - 14,
 
         /// <summary>
         /// 'build' action

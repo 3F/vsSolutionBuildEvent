@@ -51,7 +51,7 @@ namespace net.r_eg.vsSBE
         string SolutionActiveCfgString { get; }
 
         /// <summary>
-        /// Specified type of current build action
+        /// Current context for actions.
         /// </summary>
         BuildType BuildType { get; set; }
 

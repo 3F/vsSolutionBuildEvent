@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -41,23 +41,23 @@ namespace net.r_eg.vsSBE.Actions
         IEnvironment Env { get; }
 
         /// <summary>
-        /// Specified Event type
+        /// Specified Event type.
         /// </summary>
         SolutionEventType EventType { get; }
 
         /// <summary>
-        /// Entry point for execution
+        /// Find and execute action by specified event.
         /// </summary>
-        /// <param name="evt">Configured event</param>
-        /// <param name="type">Type of event</param>
-        /// <returns>true value if has been processed</returns>
+        /// <param name="evt">Configured event.</param>
+        /// <param name="type">The type of event.</param>
+        /// <returns>true value if it was handled.</returns>
         bool exec(ISolutionEvent evt, SolutionEventType type);
 
         /// <summary>
-        /// Entry point for execution
+        /// Find and execute action with default event type.
         /// </summary>
-        /// <param name="evt">Configured event</param>
-        /// <returns>true value if has been processed</returns>
+        /// <param name="evt">Configured event.</param>
+        /// <returns>true value if it was handled.</returns>
         bool exec(ISolutionEvent evt);
     }
 }

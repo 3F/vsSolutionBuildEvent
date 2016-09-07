@@ -409,15 +409,22 @@ namespace net.r_eg.vsSBE.API
             OpenedSolution(this, new EventArgs());
 
             if(slnEvents == null) {
-                return slnOpened(pUnkReserved, fNewSolution); // we can work in normal mode
+                updateBuildType(BuildType.Common);
+                return slnOpened(pUnkReserved, fNewSolution);
             }
 
-            // delay calling
-            lock(_lock) {
-                slnEvents.Opened -= slnOpenedLowPriority;
-                slnEvents.Opened += slnOpenedLowPriority;
+            try {
+                // Early Sln-Opened ~ Before initializing projects
+                updateBuildType(BuildType.Before);
+                return slnOpened(pUnkReserved, fNewSolution);
             }
-            return Codes.Success;
+            finally {
+                // Late Sln-Opened (delay calling) ~ When all projects are opened in IDE
+                lock(_lock) {
+                    slnEvents.Opened -= slnOpenedLowPriority;
+                    slnEvents.Opened += slnOpenedLowPriority;
+                }
+            }
         }
 
         /// <summary>
@@ -568,6 +575,7 @@ namespace net.r_eg.vsSBE.API
                 if(slnEvents != null) {
                     slnEvents.Opened -= slnOpenedLowPriority;
                 }
+                updateBuildType(BuildType.After);
                 slnOpened(new object(), 0); //TODO: use from solutionOpened(object pUnkReserved, int fNewSolution)
             }
         }

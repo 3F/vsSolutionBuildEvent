@@ -111,11 +111,12 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Specified type of current build action
+        /// Current context for actions.
         /// </summary>
         public BuildType BuildType
         {
-            get; set;
+            get;
+            set;
         }
 
         /// <summary>

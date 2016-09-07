@@ -140,14 +140,13 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Specified type of current build action
+        /// Current context for actions.
         /// </summary>
         public BuildType BuildType
         {
-            get { return buildType; }
-            set { buildType = value; }
-        }
-        protected BuildType buildType = BuildType.Common;
+            get;
+            set;
+        } = BuildType.Common;
 
         /// <summary>
         /// All configurations for current solution

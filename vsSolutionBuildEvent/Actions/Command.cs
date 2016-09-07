@@ -31,6 +31,11 @@ namespace net.r_eg.vsSBE.Actions
     public class Command: ICommand
     {
         /// <summary>
+        /// Predefined actions.
+        /// </summary>
+        protected Dictionary<ModeType, IAction> actions = new Dictionary<ModeType, IAction>();
+
+        /// <summary>
         /// Work with SBE-Scripts
         /// </summary>
         public ISBEScript SBEScript
@@ -62,32 +67,37 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         public SolutionEventType EventType
         {
-            get { return type; }
+            get;
+            protected set;
+        } = SolutionEventType.General;
+
+        /// <summary>
+        /// Current context for actions.
+        /// </summary>
+        protected BuildType CurrentContext
+        {
+            get {
+                return Env.BuildType;
+            }
         }
-        protected SolutionEventType type = SolutionEventType.General;
 
         /// <summary>
-        /// Predefined actions.
+        /// Find and execute action by specified event.
         /// </summary>
-        protected volatile Dictionary<ModeType, IAction> actions = new Dictionary<ModeType, IAction>();
-
-
-        /// <summary>
-        /// Entry point for execution
-        /// </summary>
-        /// <param name="evt">Configured event</param>
-        /// <param name="type">Type of event</param>
-        /// <returns>true value if has been processed</returns>
+        /// <param name="evt">Configured event.</param>
+        /// <param name="type">The type of event.</param>
+        /// <returns>true value if it was handled.</returns>
         public bool exec(ISolutionEvent evt, SolutionEventType type)
         {
             if(!evt.Enabled){
                 return false;
             }
-            if(evt.BuildType != BuildType.Common && evt.BuildType != Env.BuildType) {
-                Log.Debug("Ignored context. Build type '{0}' should be '{1}'", Env.BuildType, evt.BuildType);
+            EventType = type;
+
+            if(!isContext(evt, type)) {
+                Log.Debug($"Ignored Context '{CurrentContext}'. Expected '{evt.BuildType}'");
                 return false;
             }
-            this.type = type;
 
             string cfg = Env.SolutionActiveCfgString;
 
@@ -108,10 +118,10 @@ namespace net.r_eg.vsSBE.Actions
         }
 
         /// <summary>
-        /// Entry point for execution
+        /// Find and execute action with default event type.
         /// </summary>
-        /// <param name="evt">Configured event</param>
-        /// <returns>true value if has been processed</returns>
+        /// <param name="evt">Configured event.</param>
+        /// <returns>true value if it was handled.</returns>
         public bool exec(ISolutionEvent evt)
         {
             return exec(evt, SolutionEventType.General);
@@ -198,10 +208,10 @@ namespace net.r_eg.vsSBE.Actions
             if(!evt.Confirmation) {
                 return true;
             }
-            Log.Debug("Ask user about action [{0}]:{1} '{2}'", type, evt.Name, evt.Caption);
+            Log.Debug("Ask user about action [{0}]:{1} '{2}'", EventType, evt.Name, evt.Caption);
 
-            string msg = String.Format("Execute the next action ?\n  [{0}]:{1} '{2}'\n\n* Cancel - to disable current action", 
-                                        type, evt.Name, evt.Caption);
+            string msg = String.Format("Execute the next action ?\n  [{0}]:{1} '{2}'\n\n* Cancel - to disable current action",
+                                        EventType, evt.Name, evt.Caption);
 
             System.Windows.Forms.DialogResult ret = System.Windows.Forms.MessageBox.Show(msg,
                                                                                         "Confirm the action", 
@@ -219,6 +229,38 @@ namespace net.r_eg.vsSBE.Actions
                 }
             }
             return false;
+        }
+
+        protected bool isContext(ISolutionEvent evt, SolutionEventType type)
+        {
+            var cfgContext = evt.BuildType;
+
+            // /LC: #799
+            if(type == SolutionEventType.SlnOpened)
+            {
+                if(cfgContext == BuildType.Common) {
+                    cfgContext = BuildType.Before; // consider it as default type
+                }
+
+                if(cfgContext != BuildType.Before 
+                    && cfgContext != BuildType.After 
+                    && cfgContext != BuildType.BeforeAndAfter)
+                {
+                    return false;
+                }
+
+                if(CurrentContext == BuildType.Common // Before & After are not possible at all, e.g. Isolated env etc., thus consider it as any possible
+                    || cfgContext == BuildType.BeforeAndAfter)
+                {
+                    return true;
+                }
+
+                if(cfgContext == BuildType.Before || cfgContext == BuildType.After) {
+                    return (cfgContext == CurrentContext);
+                }
+            }
+
+            return (cfgContext == BuildType.Common || cfgContext == CurrentContext);
         }
 
         /// <summary>
