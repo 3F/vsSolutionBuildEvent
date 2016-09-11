@@ -3,40 +3,16 @@ using System.Linq;
 using EnvDTE80;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.Test.MSBuild
 {
-    /// <summary>
-    ///This is a test class for MSBuildParserTest and is intended
-    ///to contain all MSBuildParserTest Unit Tests
-    ///</summary>
-    [TestClass()]
+    [TestClass]
     public class ParserTest
     {
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
-
-        /// <summary>
-        ///A test for getProperty
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void getPropertyTest()
         {
             var mockDte2                    = new Mock<EnvDTE80.DTE2>();
@@ -689,6 +665,141 @@ namespace net.r_eg.vsSBE.Test.MSBuild
 
             Assert.AreEqual("", target.parse("$(name = ' $( -_*~!@#$%^&= :) ')"));
             Assert.AreEqual(" $( -_*~!@#$%^&= :) ", target.uvariable.get("name"));
+        }
+
+        /// <summary>
+        ///A test for parse - string
+        ///</summary>
+        [TestMethod]
+        public void parseStringTest12()
+        {
+            var target = new MSBuildParserAccessor.ToParse();
+
+            Assert.AreEqual(String.Empty, target.parse("$(name = 'left\\'right')"));
+            Assert.AreEqual("left'right", target.uvariable.get("name"));
+
+            Assert.AreEqual(String.Empty, target.parse("$(name = \"left\\'right\")"));
+            Assert.AreEqual("left\\'right", target.uvariable.get("name"));
+
+            Assert.AreEqual(String.Empty, target.parse("$(name = 'left\\\"right')"));
+            Assert.AreEqual("left\\\"right", target.uvariable.get("name"));
+
+            Assert.AreEqual(String.Empty, target.parse("$(name = \"left\\\"right\")"));
+            Assert.AreEqual("left\"right", target.uvariable.get("name"));
+        }
+
+        /// <summary>
+        ///A test for parse - string
+        ///</summary>
+        [TestMethod]
+        [ExpectedException(typeof(IncorrectSyntaxException))]
+        public void parseStringTest13()
+        {
+            var target = new MSBuildParserAccessor.ToParse();
+            target.parse("$(name = 'left'right')");
+        }
+
+        /// <summary>
+        ///A test for parse - string
+        ///</summary>
+        [TestMethod]
+        [ExpectedException(typeof(IncorrectSyntaxException))]
+        public void parseStringTest14()
+        {
+            var target = new MSBuildParserAccessor.ToParse();
+            target.parse("$(name = \"left\"right\")");
+        }
+
+        /// <summary>
+        ///A test for parse - string
+        ///</summary>
+        [TestMethod]
+        public void parseStringTest15()
+        {
+            var target = new MSBuildParserAccessor.ToParse();
+            
+            Assert.AreEqual(String.Empty, target.parse("$(name   =   \"   left $(Path:project) right  \"   )"));
+            Assert.AreEqual("   left [P~Path~project] right  ", target.uvariable.get("name"));
+
+            Assert.AreEqual(String.Empty, target.parse("$(name   =   \"   left \\\"$(Path)\\\" right  \"   )"));
+            Assert.AreEqual("   left \"[P~Path~]\" right  ", target.uvariable.get("name"));
+
+            Assert.AreEqual(String.Empty, target.parse("$(name   =   \"   \\'left\\' $(Path:project) 'right'  \"   )"));
+            Assert.AreEqual("   \\'left\\' [P~Path~project] 'right'  ", target.uvariable.get("name"));
+        }
+
+        [TestMethod]
+        public void vtSignTest1()
+        {
+            var uvar    = new UserVariable();
+            var target  = new Parser(new StubEnv(), uvar);
+
+            Assert.AreEqual(String.Empty, target.parse("$(+name = 'myvar')"));
+            Assert.AreEqual("myvar", uvar.get("name"));
+
+            Assert.AreEqual(String.Empty, target.parse("$(+name += '12')"));
+            Assert.AreEqual("myvar12", uvar.get("name"));
+
+            Assert.AreEqual(String.Empty, target.parse("$(name += '34')"));
+            Assert.AreEqual("myvar1234", uvar.get("name"));
+        }
+
+        [TestMethod]
+        public void vtSignTest2()
+        {
+            var uvar = new UserVariable();
+            var target = new Parser(new StubEnv(), uvar);
+
+            Assert.AreEqual(String.Empty, target.parse("$(i = 0)"));
+            Assert.AreEqual(String.Empty, target.parse("$(i += 1)"));
+            Assert.AreEqual(String.Empty, target.parse("$(i += 2)$(i += 1)"));
+            Assert.AreEqual(String.Empty, target.parse("$(i -= 2)"));
+            Assert.AreEqual("2", uvar.get("i"));
+        }
+
+        [TestMethod]
+        public void vtSignTest3()
+        {
+            var uvar = new UserVariable();
+            var target = new Parser(new StubEnv(), uvar);
+            
+            Assert.AreEqual(String.Empty, target.parse("$(i += 1)"));
+            Assert.AreEqual("1", uvar.get("i"));
+
+            Assert.AreEqual(String.Empty, target.parse("$(j -= 1)"));
+            Assert.AreEqual("-1", uvar.get("j"));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidArgumentException))]
+        public void vtSignTest4()
+        {
+            var uvar    = new UserVariable();
+            var target  = new Parser(new StubEnv(), uvar);
+
+            Assert.AreEqual(String.Empty, target.parse("$(i = \"test\")"));
+            Assert.AreEqual(String.Empty, target.parse("$(i += 1)"));
+            Assert.AreEqual("test1", uvar.get("i"));
+
+            target.parse("$(i -= 1)");
+        }
+
+        [TestMethod]
+        public void vtSignTest5()
+        {
+            var uvar = new UserVariable();
+            var target = new Parser(new StubEnv(), uvar);
+
+            Assert.AreEqual(String.Empty, target.parse("$(i = 1)"));
+            Assert.AreEqual(String.Empty, target.parse("$(i += $(i))"));
+            Assert.AreEqual("2", uvar.get("i"));
+
+            //TODO: currently std. exception:
+            try {
+                Assert.AreEqual(String.Empty, target.parse("$(i += 'test')"));
+                Assert.Fail("1");
+            }
+            catch(Exception ex) { Assert.IsTrue(true /*ex.GetType() == typeof(NotFoundException)*/, ex.GetType().ToString()); }
         }
 
         /// <summary>

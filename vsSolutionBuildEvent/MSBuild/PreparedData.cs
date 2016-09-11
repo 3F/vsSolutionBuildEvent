@@ -43,17 +43,34 @@ namespace net.r_eg.vsSBE.MSBuild
             StringFromSingle,
         }
 
-        public enum VariableType
+        public enum TSignType
         {
             Default,
+
             /// <summary>
-            /// Set the msbuild property.
+            /// Set the global msbuild property.
             /// </summary>
             DefProperty,
+
             /// <summary>
-            /// Unset the msbuild property.
+            /// Unset the global msbuild property.
             /// </summary>
             UndefProperty,
+        }
+
+        public enum VSignType
+        {
+            Default,
+
+            /// <summary>
+            /// left += right
+            /// </summary>
+            Increment,
+
+            /// <summary>
+            /// left -= right
+            /// </summary>
+            Decrement,
         }
 
         public struct Variable
@@ -80,9 +97,14 @@ namespace net.r_eg.vsSBE.MSBuild
             public ValueType type;
 
             /// <summary>
-            /// Additional operation for current variable.
+            /// $({tSign}name = data)
             /// </summary>
-            public VariableType operation;
+            public TSignType tSign;
+
+            /// <summary>
+            /// $(name {vSign}= data)
+            /// </summary>
+            public VSignType vSign;
         }
 
         public struct Property

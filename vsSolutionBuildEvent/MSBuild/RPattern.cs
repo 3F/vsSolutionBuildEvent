@@ -38,6 +38,11 @@ namespace net.r_eg.vsSBE.MSBuild
                                                                         RegexOptions.Compiled);
 
         /// <summary>
+        /// Checks the numeric format.
+        /// </summary>
+        public static readonly Regex IsNumber = new Regex(@"^\d+([.,]\d+)?$", RegexOptions.Compiled);
+
+        /// <summary>
         /// State of the container
         /// </summary>
         public enum ContainerType
@@ -70,7 +75,9 @@ namespace net.r_eg.vsSBE.MSBuild
                                                          \s*
                                                          (?'tsign'-|\+)?
                                                          ([A-Za-z_0-9]+) # 1 -> variable name (optional)
-                                                         \s*=\s*
+                                                         \s*
+                                                         (?'vsign'-|\+)?
+                                                          =\s*
                                                          (?: {0}         # 2 -> string data inside double quotes
                                                              |
                                                              {1}         # 3 -> string data inside single quotes

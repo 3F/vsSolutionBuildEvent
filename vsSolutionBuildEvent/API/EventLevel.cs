@@ -17,6 +17,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Threading;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.API.Commands;
@@ -480,7 +482,6 @@ namespace net.r_eg.vsSBE.API
         /// </summary>
         protected void init()
         {
-
 #if DEBUG
             Log.Warn("Used [Debug version]");
 #else
@@ -488,6 +489,9 @@ namespace net.r_eg.vsSBE.API
                     Log.Warn("Used [Unofficial release]");
                 }
 #endif
+
+            Thread.CurrentThread.CurrentCulture     = CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentUICulture   = CultureInfo.InvariantCulture;
 
             if(Environment.Events != null) {
                 slnEvents = Environment.Events.SolutionEvents;

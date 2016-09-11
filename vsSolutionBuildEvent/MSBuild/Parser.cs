@@ -116,7 +116,6 @@ namespace net.r_eg.vsSBE.MSBuild
             }
             Log.Debug("getProperty: return default value");
             return PROP_VALUE_DEFAULT;
-            //throw new MSBPropertyNotFoundException("variable - '{0}' : project - '{1}'", name, (projectName == null)? "<default>" : projectName);
         }
 
         /// <summary>
@@ -327,6 +326,7 @@ namespace net.r_eg.vsSBE.MSBuild
             }
 
             Group rTSign            = m.Groups["tsign"];
+            Group rVSign            = m.Groups["vsign"];
             Group rVariable         = m.Groups[1];
             Group rStringDataD      = m.Groups[2];
             Group rStringDataS      = m.Groups[3];
@@ -348,27 +348,50 @@ namespace net.r_eg.vsSBE.MSBuild
             if(rVariable.Success)
             {
                 ret.variable.name = rVariable.Value;
+
                 switch(rTSign.Value) {
                     case "+": {
-                        ret.variable.operation = PreparedData.VariableType.DefProperty;
+                        ret.variable.tSign = PreparedData.TSignType.DefProperty;
                         break;
                     }
                     case "-": {
-                        ret.variable.operation = PreparedData.VariableType.UndefProperty;
+                        ret.variable.tSign = PreparedData.TSignType.UndefProperty;
                         break;
                     }
                     default: {
-                        ret.variable.operation = PreparedData.VariableType.Default;
+                        ret.variable.tSign = PreparedData.TSignType.Default;
                         break;
                     }
                 }
+
+                switch(rVSign.Value) {
+                    case "+": {
+                        ret.variable.vSign = PreparedData.VSignType.Increment;
+                        break;
+                    }
+                    case "-": {
+                        ret.variable.vSign = PreparedData.VSignType.Decrement;
+                        break;
+                    }
+                    default: {
+                        ret.variable.vSign = PreparedData.VSignType.Default;
+                        break;
+                    }
+                }
+
                 // all $() in right operand cannot be evaluated because it's escaped and already unwrapped property.
                 // i.e. this already should be evaluated with prev. steps - because we are moving upward from deepest container !
-                Log.Trace("prepare: variable name = '{0}'", ret.variable.name);
+                Log.Trace($"prepare: variable name = '{ret.variable.name}'; tSign({ret.variable.tSign}), vSign({ret.variable.vSign})");
             }
 
 
             /* Data */
+
+            if((rStringDataD.Success || rStringDataS.Success) 
+                && (rData.Success && !String.IsNullOrWhiteSpace(rData.Value)))
+            {
+                throw new IncorrectSyntaxException("Incorrect composition of data: string with raw data.");
+            }
 
             if(rStringDataD.Success) {
                 ret.property.unevaluated    = parse(Tokens.unescapeQuotes('"', rStringDataD.Value));
@@ -393,9 +416,7 @@ namespace net.r_eg.vsSBE.MSBuild
 
             ret.property.complex = !isPropertySimple(ref ret.property.unevaluated);
 
-            Log.Trace("prepare: value = '{0}'({1})", ret.property.unevaluated, ret.variable.type);
-            Log.Trace("prepare: complex {0}", ret.property.complex);
-
+            Log.Trace($"prepare: value = '{ret.property.unevaluated}'({ret.variable.type}); complex: {ret.property.complex}");
 
             /* Project */
 
@@ -524,27 +545,78 @@ namespace net.r_eg.vsSBE.MSBuild
             }
             Log.Debug("Evaluated: '{0}'", evaluated);
 
+            // updating of variables
 
-            // alternative to SBE-Scripts
-            if(!String.IsNullOrEmpty(prepared.variable.name))
-            {
-                Log.Debug("Evaluate: ready to define variable - '{0}':'{1}'", 
-                                                                        prepared.variable.name, 
-                                                                        prepared.variable.project);
-
-                uvariable.set(prepared.variable.name, prepared.variable.project, evaluated);
-                uvariable.evaluate(prepared.variable.name, prepared.variable.project, new EvaluatorBlank(), true);
-
-                if(prepared.variable.operation == PreparedData.VariableType.DefProperty) {
-                    defProperty(prepared.variable, evaluated);
-                }
-                else if(prepared.variable.operation == PreparedData.VariableType.UndefProperty) {
-                    undefProperty(prepared.variable);
-                }
-                evaluated = String.Empty;
+            if(!String.IsNullOrEmpty(prepared.variable.name)) {
+                evaluated = defineVariable(prepared, evaluated);
             }
 
             return evaluated;
+        }
+
+        protected string defineVariable(PreparedData prepared, string evaluated)
+        {
+            evaluated = vSignOperation(prepared, evaluated);
+
+            Log.Debug("Evaluate: ready to define variable - '{0}':'{1}'", 
+                                                                    prepared.variable.name, 
+                                                                    prepared.variable.project);
+
+            uvariable.set(prepared.variable.name, prepared.variable.project, evaluated);
+            uvariable.evaluate(prepared.variable.name, prepared.variable.project, new EvaluatorBlank(), true);
+
+            tSignOperation(prepared, ref evaluated);
+            return String.Empty;
+        }
+
+        protected string vSignOperation(PreparedData prepared, string val)
+        {
+            if(prepared.variable.vSign == PreparedData.VSignType.Default) {
+                return val;
+            }
+
+            var left        = uvariable.get(prepared.variable.name, prepared.variable.project)?? "0";
+            bool isNumber   = RPattern.IsNumber.IsMatch(left);
+
+            Log.Trace($"vSignOperation: '{prepared.variable.vSign}'; `{left}` (isNumber: {isNumber})");
+
+            if(prepared.variable.vSign == PreparedData.VSignType.Increment)
+            {
+                if(!isNumber) {
+                    // equiv.: $(var = $([System.String]::Concat($(var), "str")) )
+                    return left + val;
+                }
+
+                // $(var = $([MSBuild]::Add($(var), 1)) )
+                // TODO: additional check for errors from right string $(i += 'test') ... this correct: $(i += $(i))
+                return evaluate($"$([MSBuild]::Add('{left}', '{val}'))", prepared.variable.project);
+            }
+
+            if(prepared.variable.vSign == PreparedData.VSignType.Decrement)
+            {
+                if(!isNumber) {
+                    throw new InvalidArgumentException($"Argument `{val}` is not valid for operation '-=' or it is not supported yet.");
+                }
+
+                // $(var = $([MSBuild]::Subtract($(var), 1)) )
+                return evaluate($"$([MSBuild]::Subtract('{left}', '{val}'))", prepared.variable.project);
+            }
+
+            return val;
+        }
+
+        protected void tSignOperation(PreparedData prepared, ref string evaluated)
+        {
+#if DEBUG
+            Log.Trace($"tSignOperation: '{prepared.variable.tSign}'");
+#endif
+
+            if(prepared.variable.tSign == PreparedData.TSignType.DefProperty) {
+                defProperty(prepared.variable, evaluated);
+            }
+            else if(prepared.variable.tSign == PreparedData.TSignType.UndefProperty) {
+                undefProperty(prepared.variable);
+            }
         }
 
         /// <summary>
