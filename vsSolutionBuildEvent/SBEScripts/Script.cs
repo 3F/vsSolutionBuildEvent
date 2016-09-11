@@ -161,7 +161,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
-        /// Parse data for concrete component
+        /// Parse data for specific component
         /// </summary>
         /// <param name="data">Mixed data</param>
         /// <param name="c">Component</param>

@@ -158,7 +158,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(!pm.FinalEmptyIs(LevelType.Method, "get")) {
                 throw new IncorrectNodeException(pm);
             }
-            ILevel level = pm.Levels[0];
+            ILevel level = pm.FirstLevel;
 
             if(!level.Is(ArgumentType.StringDouble)) {
                 throw new ArgumentPMException(level, "get(string name)");
@@ -270,7 +270,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         )]
         protected string stCall(IPM pm, bool stdOut, bool silent)
         {
-            ILevel level = pm.Levels[0];
+            ILevel level = pm.FirstLevel;
 
             string file;
             string args = String.Empty;
@@ -319,11 +319,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         )]
         protected string stCmd(IPM pm)
         {
-            ILevel origin = pm.Levels[0];
+            ILevel origin = pm.FirstLevel;
 
             if(origin.Is(ArgumentType.StringDouble))
             {
-                pm.Levels[0] = new Level() {
+                pm.FirstLevel = new Level() {
                     Type        = LevelType.Method,
                     DataType    = origin.DataType,
                     Data        = "sout",
@@ -335,7 +335,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
             else if(origin.Is(ArgumentType.StringDouble, ArgumentType.Integer))
             {
-                pm.Levels[0] = new Level() {
+                pm.FirstLevel = new Level() {
                     Type        = LevelType.Method,
                     DataType    = origin.DataType,
                     Data        = "sout",
@@ -419,7 +419,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         )]
         protected string stWrite(IPM pm, bool append, bool newline, Encoding enc)
         {
-            ILevel level = pm.Levels[0];
+            ILevel level = pm.FirstLevel;
 
             string file = null;
             string std  = null;
@@ -555,7 +555,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             // arguments
 
-            ILevel level = pm.Levels[0];
+            ILevel level = pm.FirstLevel;
             
             if(!level.Is(ArgumentType.StringDouble, ArgumentType.StringDouble, ArgumentType.StringDouble)) {
                 throw new ArgumentPMException(level, "(string file, string pattern, string replacement)");
@@ -635,7 +635,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(!pm.It(LevelType.Property, "exists")) {
                 throw new IncorrectNodeException(pm);
             }
-            ILevel level = pm.Levels[0];
+            ILevel level = pm.FirstLevel;
 
             if(!pm.FinalEmptyIs(LevelType.Method, "directory")
                 && !pm.FinalEmptyIs(LevelType.Method, "file"))
@@ -692,7 +692,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(!pm.It(LevelType.Property, "remote")) {
                 throw new IncorrectNodeException(pm);
             }
-            ILevel level = pm.Levels[0];
+            ILevel level = pm.FirstLevel;
 
             if(pm.FinalEmptyIs(LevelType.Method, "download"))
             {
@@ -726,7 +726,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(!pm.It(LevelType.Property, "copy")) {
                 throw new IncorrectNodeException(pm);
             }
-            ILevel level = pm.Levels[0];
+            ILevel level = pm.FirstLevel;
 
             if(pm.FinalEmptyIs(LevelType.Method, "file")) {
                 return copyFile(level, pm);
@@ -961,7 +961,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(!pm.It(LevelType.Property, "delete")) {
                 throw new IncorrectNodeException(pm);
             }
-            ILevel level = pm.Levels[0];
+            ILevel level = pm.FirstLevel;
 
             if(pm.FinalEmptyIs(LevelType.Method, "files")) {
                 return deleteFiles(level, pm);

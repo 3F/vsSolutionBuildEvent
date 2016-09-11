@@ -100,7 +100,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 throw new IncorrectNodeException(pm);
             }
 
-            ILevel lvlHash = pm.Levels[0]; // level of the hash property
+            ILevel lvlHash = pm.FirstLevel; // level of the hash property
 
             // hash.MD5("data")
             if(pm.FinalEmptyIs(LevelType.Method, "MD5")) {

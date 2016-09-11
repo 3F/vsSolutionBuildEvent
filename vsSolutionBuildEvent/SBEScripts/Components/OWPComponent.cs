@@ -155,7 +155,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(!pm.Is(LevelType.Method, "item")) {
                 throw new IncorrectNodeException(pm);
             }
-            ILevel level = pm.Levels[0]; // level of the item() method
+            ILevel level = pm.FirstLevel; // level of the item() method
 
             if(!level.Is(ArgumentType.StringDouble)) {
                 throw new ArgumentPMException(level, "item(string name)");
@@ -169,7 +169,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             pm.pinTo(1);
-            switch(pm.Levels[0].Data)
+            switch(pm.FirstLevel.Data)
             {
                 case "write": {
                     return stItemWrite(name, false, pm);
@@ -227,7 +227,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             {
                 throw new IncorrectNodeException(pm);
             }
-            bool createIfNotExist = (bool)pm.Levels[0].Args[0].data;
+            bool createIfNotExist = (bool)pm.FirstLevel.Args[0].data;
 
             if(pm.Levels[1].Type != LevelType.RightOperandColon) {
                 throw new IncorrectNodeException(pm);
@@ -278,7 +278,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 throw new IncorrectNodeException(pm);
             }
 
-            if(!Value.toBoolean(pm.Levels[0].Data)) {
+            if(!Value.toBoolean(pm.FirstLevel.Data)) {
 #if DEBUG
                 Log.Trace("skip removing '{0}'", name);
 #endif
@@ -318,7 +318,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 throw new IncorrectNodeException(pm);
             }
 
-            if(!Value.toBoolean(pm.Levels[0].Data)) {
+            if(!Value.toBoolean(pm.FirstLevel.Data)) {
 #if DEBUG
                 Log.Trace("skip clearing '{0}'", name);
 #endif
@@ -358,7 +358,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 throw new IncorrectNodeException(pm);
             }
 
-            if(!Value.toBoolean(pm.Levels[0].Data)) {
+            if(!Value.toBoolean(pm.FirstLevel.Data)) {
 #if DEBUG
                 Log.Trace("skip activation of pane '{0}'", name);
 #endif
@@ -419,7 +419,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             if(pm.Is(LevelType.Method, "out"))
             {
-                ILevel lvlOut = pm.Levels[0];
+                ILevel lvlOut = pm.FirstLevel;
                 if(!lvlOut.Is(ArgumentType.StringDouble)
                     && !lvlOut.Is(ArgumentType.StringDouble, ArgumentType.Boolean))
                 {

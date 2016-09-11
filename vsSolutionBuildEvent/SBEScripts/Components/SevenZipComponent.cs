@@ -131,7 +131,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(!pm.It(LevelType.Property, "pack")) {
                 throw new IncorrectNodeException(pm);
             }
-            ILevel level = pm.Levels[0]; // level of the pack property
+            ILevel level = pm.FirstLevel; // level of the pack property
 
             if(pm.FinalEmptyIs(LevelType.Method, "files")) {
                 return packFiles(level, pm);
@@ -519,7 +519,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected string stUnpack(IPM pm)
         {
             if(pm.FinalEmptyIs(LevelType.Method, "unpack")) {
-                return unpack(pm.Levels[0], pm);
+                return unpack(pm.FirstLevel, pm);
             }
 
             //TODO: ~ unpack.files(...)
@@ -645,7 +645,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected string stCheck(IPM pm)
         {
             if(pm.FinalEmptyIs(LevelType.Method, "check")) {
-                return check(pm.Levels[0], pm);
+                return check(pm.FirstLevel, pm);
             }
 
             throw new IncorrectNodeException(pm);

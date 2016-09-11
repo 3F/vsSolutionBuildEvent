@@ -116,7 +116,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 throw new IncorrectNodeException(pm);
             }
 
-            if(Value.toBoolean(pm.Levels[0].Data)) {
+            if(Value.toBoolean(pm.FirstLevel.Data)) {
                 Log.Debug("attempt to cancel the build");
                 DTEO.exec("Build.Cancel");
             }
@@ -166,7 +166,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         )]
         protected string stProjectsFind(IPM pm)
         {
-            ILevel level = pm.Levels[0]; // level of the `find` property
+            ILevel level = pm.FirstLevel; // level of the `find` property
 
             if(level.Is(ArgumentType.StringDouble)) {
                 string name = (string)level.Args[0].data;
@@ -205,7 +205,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(pm.It(LevelType.Property, "IsBuildable"))
             {
                 if(pm.IsRight(LevelType.RightOperandStd)) {
-                    context.ShouldBuild = Value.toBoolean(pm.Levels[0].Data);
+                    context.ShouldBuild = Value.toBoolean(pm.FirstLevel.Data);
                     return Value.Empty;
                 }
 
@@ -217,7 +217,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(pm.It(LevelType.Property, "IsDeployable"))
             {
                 if(pm.IsRight(LevelType.RightOperandStd)) {
-                    context.ShouldDeploy = Value.toBoolean(pm.Levels[0].Data);
+                    context.ShouldDeploy = Value.toBoolean(pm.FirstLevel.Data);
                     return Value.Empty;
                 }
 
@@ -335,7 +335,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             if(pm.Is(LevelType.Method, "projectBy"))
             {
-                ILevel lvlPrjBy = pm.Levels[0];
+                ILevel lvlPrjBy = pm.FirstLevel;
                 lvlPrjBy.Is("projectBy(string guid)", ArgumentType.StringDouble);
                 return projectsMap(map.getProjectBy((string)lvlPrjBy.Args[0].data), pm.pinTo(1));
             }

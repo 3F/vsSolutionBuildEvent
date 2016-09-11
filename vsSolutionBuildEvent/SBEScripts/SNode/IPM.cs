@@ -31,6 +31,11 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
         List<ILevel> Levels { get; }
 
         /// <summary>
+        /// Access to first level.
+        /// </summary>
+        ILevel FirstLevel { get; set; }
+
+        /// <summary>
         /// Condition for analyzer.
         /// </summary>
         string Condition { get; }

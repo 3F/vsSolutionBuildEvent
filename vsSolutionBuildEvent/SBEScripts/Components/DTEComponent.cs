@@ -111,7 +111,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 throw new IncorrectNodeException(pm);
             }
 
-            string cmd = pm.Levels[0].Data.Trim();
+            string cmd = pm.FirstLevel.Data.Trim();
             if(String.IsNullOrWhiteSpace(cmd)) {
                 throw new InvalidArgumentException("The command cannot be empty.");
             }

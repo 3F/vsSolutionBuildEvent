@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
@@ -6,28 +7,9 @@ using net.r_eg.vsSBE.SBEScripts.SNode;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts.SNode
 {
-    /// <summary>
-    ///This is a test class for PMTest and is intended
-    ///to contain all PMTest Unit Tests
-    ///</summary>
-    [TestClass()]
+    [TestClass]
     public class PMTest
     {
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get {
-                return testContextInstance;
-            }
-            set {
-                testContextInstance = value;
-            }
-        }
-        private TestContext testContextInstance;
-
         /// <summary>
         ///A test for detect
         ///</summary>
@@ -408,10 +390,58 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.SNode
             Assert.AreEqual(pm.Levels[3].Data, " \"\\\"test 123\\\"\", '\\\"true\\\"'");
         }
 
+        [TestMethod]
+        public void FirstLevelTest1()
+        {
+            IPM pm = new PM("left.solution.right");
+
+            Assert.AreEqual(pm.FirstLevel.Data, pm.Levels[0].Data);
+            Assert.AreEqual(pm.FirstLevel.Type, pm.Levels[0].Type);
+
+            pm.pinTo(2);
+            Assert.AreEqual(pm.FirstLevel.Data, pm.Levels[0].Data);
+            Assert.AreEqual(pm.FirstLevel.Type, pm.Levels[0].Type);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidArgumentException))]
+        public void FirstLevelTest2()
+        {
+            IPM pm = new PM(new List<ILevel>()); 
+            Assert.AreEqual(0, pm.Levels.Count);
+
+            var lvl = pm.FirstLevel;
+        }
+
+        [TestMethod]
+        public void FirstLevelTest3()
+        {
+            IPM pm = new PM("left.solution.right");
+
+            Assert.AreEqual("left", pm.Levels[0].Data);
+
+            string newData = "Test";
+            pm.Levels[0] = new Level() {
+                Data = newData
+            };
+
+            Assert.AreEqual(newData, pm.Levels[0].Data);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidArgumentException))]
+        public void FirstLevelTest4()
+        {
+            IPM pm = new PM(new List<ILevel>());
+            Assert.AreEqual(0, pm.Levels.Count);
+
+            pm.FirstLevel = new Level() { };
+        }
+
         /// <summary>
         ///A test for Is
         ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void IsTest1()
         {
             IPM pm = new PM("solution=left.right");

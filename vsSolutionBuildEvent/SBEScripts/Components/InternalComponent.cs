@@ -101,7 +101,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 throw new IncorrectNodeException(pm);
             }
 
-            ILevel level    = pm.Levels[0];
+            ILevel level    = pm.FirstLevel;
             var val         = (new PM()).arguments(level.Data);
 
             if(val == null || val.Length < 1) {
@@ -193,7 +193,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         )]
         protected string stEventItem(SolutionEventType type, IPM pm)
         {
-            ILevel level = pm.Levels[0];
+            ILevel level = pm.FirstLevel;
 
             int index = -1;
             ISolutionEvent evt;
@@ -290,7 +290,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return Value.from(evt.Enabled);
             }
 
-            evt.Enabled = Value.toBoolean(pm.Levels[0].Data);
+            evt.Enabled = Value.toBoolean(pm.FirstLevel.Data);
 
             Log.Trace("pEnabled: updated status '{0}' for '{1}'", evt.Enabled, evt.Name);
             return Value.Empty;

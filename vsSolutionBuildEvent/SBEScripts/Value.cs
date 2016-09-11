@@ -265,7 +265,7 @@ namespace net.r_eg.vsSBE.SBEScripts
             }
 
             SNode.IPM pm            = new SNode.PM(String.Format("_({0})", arg));
-            SNode.Argument first    = pm.Levels[0].Args[0];
+            SNode.Argument first    = pm.FirstLevel.Args[0];
 
             if(first.type != SNode.ArgumentType.Object) {
                 return arg;
