@@ -23,6 +23,9 @@
             <Word>7z</Word>
             <Word>Core</Word>
             <Word>NuGet</Word>
+            <Word>try</Word>
+            <Word>Box</Word>
+            <Word>MSBuild</Word>
         </Keywords>
 
         <Keywords color="SysConst">
@@ -45,6 +48,8 @@
             <Word>Lzma2</Word>
             <Word>Ppmd</Word>
             <Word>Copy</Word>
+            <Word>err</Word>
+            <Word>msg</Word>
         </Keywords>
         
         <Rule color="Punctuation">

@@ -114,6 +114,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         {
             register(new TryComponent(this));
             register(new CommentComponent());
+            register(new BoxComponent(this));
             register(new ConditionComponent(this));
             register(new UserVariableComponent(this));
             register(new OWPComponent(Env));

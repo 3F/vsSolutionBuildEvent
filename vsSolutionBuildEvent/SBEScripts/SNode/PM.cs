@@ -449,7 +449,7 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
             for(int i = 0; i < raw.Length; ++i)
             {
                 string arg = h.recovery(raw[i]).Trim();
-                if(arg.Length < 1) {
+                if(arg.Length < 1 && splitter == ',') { // std: p1, p2, p3
                     throw new SyntaxIncorrectException("PM - extractArgs: incorrect arguments line '{0}'", data);
                 }
                 ret[i] = detectArgument(arg);

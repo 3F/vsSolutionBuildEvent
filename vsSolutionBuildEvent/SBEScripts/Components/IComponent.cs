@@ -47,7 +47,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         bool BeforeDeepen { get; }
 
         /// <summary>
-        /// Forced post analysis or not
+        /// To force post-analysis.
         /// </summary>
         bool PostParse { get; }
 

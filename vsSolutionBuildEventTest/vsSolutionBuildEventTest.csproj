@@ -106,6 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\DTEOperationTest.cs" />
+    <Compile Include="SBEScripts\Components\BoxComponentTest.cs" />
     <Compile Include="SBEScripts\Components\TryComponentTest.cs" />
     <Compile Include="SBEScripts\Components\MSBuildComponentTest.cs" />
     <Compile Include="SBEScripts\Components\NuGetComponentTest.cs" />

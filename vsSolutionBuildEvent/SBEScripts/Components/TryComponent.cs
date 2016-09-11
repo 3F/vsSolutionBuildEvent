@@ -41,7 +41,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
 
         /// <summary>
-        /// Forced post-analysis.
+        /// To force post-analysis.
         /// </summary>
         public override bool PostParse
         {
@@ -167,20 +167,6 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             finally {
                 delvar(err, msg);
             }
-        }
-
-        protected string evaluate(string data)
-        {
-            Log.Trace($"try/catch-evaluate: started with `{data}`");
-
-            data = script.parse(data);
-            Log.Trace($"try/catch-evaluate: evaluated data: `{data}` :: ISBEScript");
-
-            //if(PostProcessingMSBuild) {
-                data = msbuild.parse(data);
-                Log.Trace($"try/catch-evaluate: evaluated data: `{data}` :: IMSBuild");
-            //}
-            return data;
         }
 
         private void setvar(string name, string value)

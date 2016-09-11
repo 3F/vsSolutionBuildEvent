@@ -35,10 +35,18 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             get { return "\""; }
         }
 
+        /// <summary>
+        /// Should be located before deepening
+        /// </summary>
+        public override bool BeforeDeepen
+        {
+            get { return true; }
+        }
+
         public CommentComponent()
             : base()
         {
-            beforeDeepen = true; // Should be located before deepening
+
         }
 
         /// <summary>

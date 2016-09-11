@@ -68,5 +68,10 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// Format: { "p1", true, { 12, 'n', -4.5f }, 12d }
         /// </summary>
         Object,
+
+        /// <summary>
+        /// Mixed expressions like Conditional Expression etc.
+        /// </summary>
+        Expression,
     }
 }

@@ -64,47 +64,45 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// </summary>
         public virtual bool PostProcessingMSBuild
         {
-            get { return postProcessingMSBuild; }
-            set { postProcessingMSBuild = value; }
+            get;
+            set;
         }
-        protected bool postProcessingMSBuild = false;
 
         /// <summary>
         /// Activation status
         /// </summary>
         public virtual bool Enabled
         {
-            get { return enabled; }
-            set { enabled = value; }
-        }
-        protected bool enabled = true;
+            get;
+            set;
+        } = true;
 
         /// <summary>
         /// Sets location "as is" - after deepening
         /// </summary>
         public virtual bool BeforeDeepen
         {
-            get { return beforeDeepen; }
+            get;
+            protected set;
         }
-        protected bool beforeDeepen = false;
 
         /// <summary>
-        /// Disabled the forced post analysis
+        /// To force post-analysis.
         /// </summary>
         public virtual bool PostParse
         {
-            get { return postParse; }
+            get;
+            protected set;
         }
-        protected bool postParse = false;
 
         /// <summary>
         /// Using of the regex engine for property - Condition
         /// </summary>
         public virtual bool CRegex
         {
-            get { return cregex; }
+            get;
+            protected set;
         }
-        protected bool cregex = false;
 
         /// <param name="env">Used environment</param>
         /// <param name="uvariable">Instance of user-variables</param>
@@ -186,6 +184,25 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             return new KeyValuePair<string, string>(m.Groups["type"].Value, m.Groups["request"].Value);
+        }
+
+        protected virtual string evaluate(string data)
+        {
+            Log.Trace($"'{Condition}'-evaluate: started with `{data}`");
+
+            if(script != null) {
+                data = script.parse(data);
+                Log.Trace($"'{Condition}'-evaluate: evaluated data: `{data}` :: ISBEScript");
+            }
+
+            if(msbuild != null) {
+                //if(PostProcessingMSBuild) {
+                    data = msbuild.parse(data);
+                    Log.Trace($"'{Condition}'-evaluate: evaluated data: `{data}` :: IMSBuild");
+                //}
+            }
+
+            return data;
         }
     }
 }

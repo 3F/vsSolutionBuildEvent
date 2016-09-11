@@ -7,7 +7,7 @@ using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 {
-    [TestClass()]
+    [TestClass]
     public class TryComponentTest
     {
         [TestMethod]

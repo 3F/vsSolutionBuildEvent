@@ -258,6 +258,8 @@
     <Compile Include="Receiver\Output\Items.cs" />
     <Compile Include="Receiver\Output\ItemType.cs" />
     <Compile Include="SBEScripts\Components\Build\ProjectsMap.cs" />
+    <Compile Include="SBEScripts\Components\Condition\Expression.cs" />
+    <Compile Include="SBEScripts\Components\BoxComponent.cs" />
     <Compile Include="SBEScripts\Components\TryComponent.cs" />
     <Compile Include="SBEScripts\Components\MSBuildComponent.cs" />
     <Compile Include="SBEScripts\Components\NuGetComponent.cs" />
