@@ -27,6 +27,7 @@
     ==========================================
     * https://github.com/3F/GetNuTool
     
+    ~10 Kb to get CI.MSBuild in one click (Compiled by GetNuTool): vssbe.r-eg.net/doc/CI/get.CIM.bat 
     </description>
     <releaseNotes>Updated the vsSolutionBuildEvent library: v%vsSBE%</releaseNotes>
     <copyright>Copyright (c) 2013-2016  Denis Kuzmin (reg) [entry.reg@gmail.com]</copyright>

@@ -218,7 +218,9 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             Log.Debug($"doRepeat: condition `{condition}`; block `{block}`; silent: {silent}");
             string ret = String.Empty;
 
+#if DEBUG
             long idx = 0;
+#endif
             while(expression.isTrue(condition))
             {
                 if(silent) {
