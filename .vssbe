@@ -47,6 +47,10 @@
       "Enabled": true
     },
     {
+      "ClassName": "BoxComponent",
+      "Enabled": true
+    },
+    {
       "ClassName": "SevenZipComponent",
       "Enabled": true
     },
@@ -121,13 +125,13 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[\"\n    Prepares data - versions, revBuild & information from git\n\"]\n\n#[var tStart    = $([System.DateTime]::Parse(\"2016/02/02\").ToBinary())]\n#[var tNow      = $([System.DateTime]::UtcNow.Ticks)]\n#[var revBuild  = $([System.TimeSpan]::FromTicks($([MSBuild]::Subtract($(tNow), $(tStart)))).TotalMinutes.ToString(\"0\"))]\n\n#[var tplVersion = #[File get(\"Version.tpl\")]]\n\n#[var pDir          = vsSolutionBuildEvent/]\n#[var pDirBridge    = Bridge/]\n#[var pDirCIM       = CI.MSBuild/]\n#[var pDirDevenv    = Devenv\\]\n#[var pDirProvider  = Provider/]\n\n#[var numSBE        = #[File get(\".version\")]]\n#[var numBridge     = #[File get(\"#[var pDirBridge].version\")]]\n#[var numCIM        = #[File get(\"#[var pDirCIM].version\")]]\n#[var numDevenv     = #[File get(\"#[var pDirDevenv].version\")]]\n#[var numProvider   = #[File get(\"#[var pDirProvider].version\")]]\n\n#[\" the 0 number is reserved for patches from external assemblies /see AssemblyInfo \"]\n\n#[var num0Bridge     = #[var numBridge].0]\n#[var num0CIM        = #[var numCIM].0]\n#[var num0Devenv     = #[var numDevenv].0]\n#[var num0Provider   = #[var numProvider].0]\n\n#[var libCore       = #[var numSBE]]\n#[var libCoreInt    = $([System.Convert]::ToInt32(\"$(libCore.Replace('.', '0'))\"))]#[\" v0.12.5 -> 1205 \"]",
+        "Command": "#[\"\n    Prepares data - versions, revBuild & information from git\n\"]\n\n#[var tStart    = $([System.DateTime]::Parse(\"2016/09/09\").ToBinary())]\n#[var tNow      = $([System.DateTime]::UtcNow.Ticks)]\n#[var revBuild  = $([System.TimeSpan]::FromTicks($([MSBuild]::Subtract($(tNow), $(tStart)))).TotalMinutes.ToString(\"0\"))]\n\n#[var tplVersion = #[File get(\"Version.tpl\")]]\n\n#[var pDir          = vsSolutionBuildEvent/]\n#[var pDirBridge    = Bridge/]\n#[var pDirCIM       = CI.MSBuild/]\n#[var pDirDevenv    = Devenv\\]\n#[var pDirProvider  = Provider/]\n\n#[var numSBE        = #[File get(\".version\")]]\n#[var numBridge     = #[File get(\"#[var pDirBridge].version\")]]\n#[var numCIM        = #[File get(\"#[var pDirCIM].version\")]]\n#[var numDevenv     = #[File get(\"#[var pDirDevenv].version\")]]\n#[var numProvider   = #[File get(\"#[var pDirProvider].version\")]]\n\n#[\" the 0 number is reserved for patches from external assemblies /see AssemblyInfo \"]\n\n#[var num0Bridge     = #[var numBridge].0]\n#[var num0CIM        = #[var numCIM].0]\n#[var num0Devenv     = #[var numDevenv].0]\n#[var num0Provider   = #[var numProvider].0]\n\n#[var libCore       = #[var numSBE]]\n#[var libCoreInt    = $([System.Convert]::ToInt32(\"$(libCore.Replace('.', '0'))\"))]#[\" v0.12.5 -> 1205 \"]",
         "Command__": [
           "#[\"",
           "    Prepares data - versions, revBuild & information from git",
           "\"]",
           "",
-          "#[var tStart    = $([System.DateTime]::Parse(\"2016/02/02\").ToBinary())]",
+          "#[var tStart    = $([System.DateTime]::Parse(\"2016/09/09\").ToBinary())]",
           "#[var tNow      = $([System.DateTime]::UtcNow.Ticks)]",
           "#[var revBuild  = $([System.TimeSpan]::FromTicks($([MSBuild]::Subtract($(tNow), $(tStart)))).TotalMinutes.ToString(\"0\"))]",
           "",
@@ -790,7 +794,7 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[$(getcimName = 'get.CIM.bat')]\r\n#[IO copy.file(\"$(SolutionDir)\\tools\\gnt.bat\", \"$(odir)\\get.CIM.bat\", true)]\r\n\r\n#[File replace(\"$(odir)\\get.CIM.bat\", \"%tgnt% %*\", \"%tgnt% /p:ngpackages=\\\"vsSBE.CI.MSBuild\\\" %*\")]",
+        "Command": "#[$(getcimName = 'get.CIM.bat')]\n#[IO copy.file(\"$(SolutionDir)\\tools\\gnt.bat\", \"$(odir)\\get.CIM.bat\", true)]\n\n#[File replace(\"$(odir)\\get.CIM.bat\", \"%tgnt% %*\", \"%tgnt% /p:ngpackages=\\\"vsSBE.CI.MSBuild\\\" %*\")]",
         "Command__": [
           "#[$(getcimName = 'get.CIM.bat')]",
           "#[IO copy.file(\"$(SolutionDir)\\tools\\gnt.bat\", \"$(odir)\\get.CIM.bat\", true)]",

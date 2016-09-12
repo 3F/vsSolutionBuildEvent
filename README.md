@@ -18,9 +18,10 @@ It presents handler of most events as the Event-Catcher with variety of advanced
 
 *Components*:
 
-* [![nuget vsSBE.CI.MSBuild](https://img.shields.io/nuget/v/vsSBE.CI.MSBuild.svg)](https://www.nuget.org/packages/vsSBE.CI.MSBuild/) [![CI.MSBuild](http://vssbe.r-eg.net/etc/badges/CI.MSBuild.svg)](http://vssbe.r-eg.net/Changelist/#cim) [![Devenv](http://vssbe.r-eg.net/etc/badges/Devenv.svg)](http://vssbe.r-eg.net/Changelist/#devenv)  [![Provider](http://vssbe.r-eg.net/etc/badges/Provider.svg)](http://vssbe.r-eg.net/Changelist/#provider) [![API](http://vssbe.r-eg.net/etc/badges/API.svg)](http://vssbe.r-eg.net/Changelist/#api)
+[![nuget vsSBE.CI.MSBuild](https://img.shields.io/nuget/v/vsSBE.CI.MSBuild.svg)](https://www.nuget.org/packages/vsSBE.CI.MSBuild/) [![CI.MSBuild](http://vssbe.r-eg.net/etc/badges/CI.MSBuild.svg)](http://vssbe.r-eg.net/Changelist/#cim) [![Devenv](http://vssbe.r-eg.net/etc/badges/Devenv.svg)](http://vssbe.r-eg.net/Changelist/#devenv)  [![Provider](http://vssbe.r-eg.net/etc/badges/Provider.svg)](http://vssbe.r-eg.net/Changelist/#provider) [![API](http://vssbe.r-eg.net/etc/badges/API.svg)](http://vssbe.r-eg.net/Changelist/#api)
 
 -------
+
 [![Short Overview](http://vssbe.r-eg.net/doc/Resources/examples/overview-youtube.png)](http://youtu.be/FX5GiMX0ulI) 
 [![Event model](http://vssbe.r-eg.net/doc/Resources/events_model_small.png)](http://vssbe.r-eg.net/doc/Scheme/#model-of-events)
 

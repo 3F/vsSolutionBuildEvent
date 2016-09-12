@@ -1,5 +1,90 @@
 vsSolutionBuildEvent
-____________________
+_ _ _ _ _ _ _ _ _ _ 
+
+[v0.12.8] 2016.09.12
+    * FIXED: Fixed bug with Isolated Environment - mismatch of project configurations.
+    * FIXED: Fixed bug "Save changes to the following items?" VS IDE
+    * FIXED: [FileComponent] Fixed bug with copying to internal directory for `copy.directory`: 
+             Avoids of recursive duplicates of destination when it is internal part of source `D:\test -> D:\test\new`
+    
+    * FIXED: Fixed incorrect variable names if used Global MSBuild properties like `$(+name = ...)`.
+    * FIXED: Fixed access to $(vsSolutionBuildEvent) for several projects.
+    * FIXED: UI. Fixed default namespace for Wizard 'Automatic Version Numbering'.
+    * FIXED: UI. Fixed bugs in "Waiting for completion" & "Hide process".
+    * NEW: Support of ErrorList pane of Visual Studio - now see also the all errors/warnings here.
+    * NEW: [MSBuild] Implemented Syntactic sugar `+=` & `-=` - Increment & Decrement operators for numbers and strings
+            ```
+            $(n = 0)
+            $(n += 3.14)
+            $(n += $(n))
+
+            $(desc = "Hello ")
+            $(desc += "world !")
+            ```
+            The documentation here: http://vssbe.r-eg.net/doc/Scripts/MSBuild/#syntactic-sugar
+            
+    * NEW: [SBE-Scripts] Implemented new BoxComponent - Container of data for operations like a template, repeating, etc.
+            ```
+            #[Box iterate(i = 0; $(i) < 10; i += 1): 
+               ...
+            ]
+            ```
+            `repeat(expression condition [; boolean silent])`
+            `void data.pack(string name, boolean eval): In`
+            ...
+            The documentation here: http://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/Components/BoxComponent/
+            
+    * NEW: [InternalComponent] added StartUpProject property to get/set the project by default or 'StartUp Project.
+    * NEW: Added Context for Sln-Opened event to support of Early / Late Sln-Opened.
+           All details in the documentation: http://vssbe.r-eg.net/doc/Events/SlnOpened/
+            
+    * NEW: [SBE-Scripts] Added new TryComponent (try/catch) to handle errors:
+           ```
+            #[try
+            { 
+                ...
+            }
+            catch(err, msg)
+            {
+                $(err) - Type of Exception
+                $(msg) - Error Message
+                ...
+            }]
+           ```
+           The documentation here: http://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/Components/TryComponent/
+           
+    * NEW: Started support of Visual Studio 15 /tested on Enterprise Preview 4 (25618.00)
+    * NEW: [FileComponent] copy.file - new extended signature of `copy.file`:
+            `void copy.file((string src | object srclist), string dest, bool overwrite [, object except])`
+            ```
+            #[IO copy.file({
+                                "bin\client.zip",
+                                "bin\server\*.*"
+                           },
+                           "$(plugin)\beta",
+                           true,
+                           {
+                                "*debug*",
+                                "*.pdb"
+                           })]
+            ```
+            The documentation: http://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/Components/FileComponent/#copy
+            
+    * NEW: Added additional tool-helpers: `get.CIM.bat`, CI.MSBuild.bat, gnt.bat, msbuild.bat    
+    * NEW: Added new special MSBuild properties:
+            * `vsSBE_CommonPath` - Common path of library.
+            * `vsSBE_LibPath` - Full path to library.
+            * `vsSBE_WorkPath` - Working path for library.
+            
+    * CHANGED: C# Mode. IMSBuild: + getProject(string name);
+    * CHANGED: C# Mode. IEnvironment: added direct access to EnvDTE80.DTE2 (+EnvDTE), Build.Evaluation.Project + prepared list of EnvDTE projects.
+    * CHANGED: Added XML Documentation for main projects.
+    * CHANGED: Updated 7z.Libs v16.02, AvalonEdit v5.0.3, NLog v4.3.8, Newtonsoft.Json v9.0.1
+    * CHANGED: MSBuild colorization of errors/warnings for CIM, Devenv, etc.
+    * CHANGED: Abort of build after first script error (from our engines).
+    * CHANGED: Other trivial bug fixes and improvements. See log of commits.
+    * NOTE: Available .NET 4.0 and .NET 4.5 assemblies. Look the Downlods page. http://vssbe.r-eg.net/Downloads/
+    * NOTE: Public Issue Tracker will be soon moved on GitHub.
 
 [v0.12.7] 2016.02.04
     * FIXED: MSBuild engine. Bug with the unescape of double quotes from simply text data. The most common problem for C# Mode etc.
