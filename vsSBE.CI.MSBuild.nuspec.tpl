@@ -8,15 +8,15 @@
     <owners>reg</owners>
     <licenseUrl>https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/</licenseUrl>
     <projectUrl>https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/</projectUrl>
-    <iconUrl>https://bitbucket.org/3F/vssolutionbuildevent/raw/master/vsSolutionBuildEvent/Resources/Package.png</iconUrl>
+    <iconUrl>https://raw.githubusercontent.com/3F/vsSolutionBuildEvent/master/vsSolutionBuildEvent/Resources/Package.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Official package of libraries to support the CI /Build Servers for plugin vsSolutionBuildEvent.
+    <description>Event-Catcher with variety of advanced Actions for service of your projects and libraries, the build processes and processes at runtime from Visual Studio and MSBuild Tools.
     
-    * *!* Documentation: http://vssbe.r-eg.net -> http://vssbe.r-eg.net/doc/CI/CI.MSBuild/
+    Official package of libraries for support of the CI /Build Servers.
+    
+    * ! Documentation: http://vssbe.r-eg.net -> vssbe.r-eg.net/doc/CI/CI.MSBuild/
     * VS Gallery Page: https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/
-    * Source code &amp; Public Issue Tracker: 
-        * https://github.com/3F/vsSolutionBuildEvent
-        * https://bitbucket.org/3F/vssolutionbuildevent
+    * Source code &amp; Public Bug Tracker: https://github.com/3F/vsSolutionBuildEvent
         
     Package version: a.b.x[.y] -&gt; a &amp; b - CI.MSBuild (v%CIM%) -&gt; x - main library (%Lib% is a v%vsSBE%) -&gt; y - variant of package if exists
 
@@ -29,8 +29,12 @@
     
     ~10 Kb to get CI.MSBuild in one click (Compiled by GetNuTool): vssbe.r-eg.net/doc/CI/get.CIM.bat 
     </description>
-    <releaseNotes>Updated the vsSolutionBuildEvent library: v%vsSBE%</releaseNotes>
+    <summary>Event-Catcher with variety of advanced Actions for service of your projects and libraries, the build processes and processes at runtime from Visual Studio and MSBuild Tools.</summary>
+    <releaseNotes>
+        Updated the vsSolutionBuildEvent library: v%vsSBE%    
+        Changelog here: http://vssbe.r-eg.net/Changelist/
+    </releaseNotes>
     <copyright>Copyright (c) 2013-2016  Denis Kuzmin (reg) [entry.reg@gmail.com]</copyright>
-    <tags>Build Tools vsSolutionBuildEvent MSBuild logger automation Version vsSBE Scripts Events CI Solution Projects Versioning AppVeyor TeamCity Build-Server Continuous-Integration Build-automation</tags>
+    <tags>Build Tools vsSolutionBuildEvent MSBuild logger automation Version vsSBE Scripts Events CI Solution Projects Versioning AppVeyor TeamCity Build-Server Continuous-Integration Build-automation 7z 7zip</tags>
   </metadata>
 </package>

@@ -532,7 +532,6 @@
       <DependentUpon>EventsFrm.cs</DependentUpon>
     </Compile>
     <Compile Include="GuidList.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Events\ISolutionEvent.cs" />
     <Compile Include="Events\SBEEvent.cs" />
     <Compile Include="Configuration\Header.cs" />

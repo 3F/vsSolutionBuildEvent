@@ -9,7 +9,7 @@ It presents handler of most events as the Event-Catcher with variety of advanced
 [![VSPackage](http://vssbe.r-eg.net/etc/badges/VSPackage.svg)](http://vssbe.r-eg.net/Changelist/#vsix) [![D1](https://img.shields.io/sourceforge/dm/vssbe.svg)](https://sourceforge.net/projects/vssbe/files/latest/download) [![D2](https://img.shields.io/sourceforge/dt/vssbe.svg)](https://sourceforge.net/projects/vssbe/files/latest/download) [![LGPLv3](http://vssbe.r-eg.net/etc/badges/License.svg)](http://vssbe.r-eg.net/License/) 
 
 -------
-[Download .vsix](http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/referral/118151) (SourceForge.net) :: **[Downloads page](http://vssbe.r-eg.net/Downloads/)** (Binaries, Snapshots, Nightly builds, Libraries, ...)                    
+[Download .vsix](http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/referral/118151) (SourceForge.net) :: The **[Downloads page](http://vssbe.r-eg.net/Downloads/)** (Binaries, Snapshots, Nightly builds, Libraries, ...)
 ![statistic](http://vssbe.sourceforge.net/stat/)
 
 *MS Visual Studio Gallery*:
@@ -29,7 +29,7 @@ Advanced handler of most events from MS Visual Studio & MSBuild tools. Full cont
 
 * [CommandEvent](http://vssbe.r-eg.net/doc/Events/CommandEvent/), Errors, Warnings, Cancel-Build, Output-Build, Transmitter, Logging
 
-Ability to handle events for all subprojects at once in solution as Solution-Events or individually for each project.
+Ability to handle events for all subprojects at once in solution as a Solution-Events or individually for each.
 
 Different modes for what you want:
 
@@ -53,6 +53,6 @@ May work without Visual Studio and support the CI /Build Servers, Command-Line m
 
 -------
 * [Wiki](http://vssbe.r-eg.net/)
-* **[Public Issue Tracker](https://bitbucket.org/3F/vssolutionbuildevent/issues)** - *bug ? suggestions ? write here*
+* [Public Bug Tracker](https://github.com/3F/vsSolutionBuildEvent/issues) 
 
 [![Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=entry%2ereg%40gmail%2ecom&lc=US&item_name=3F%2dOpenSource%20%5b%20github%2ecom%2f3F&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted)
