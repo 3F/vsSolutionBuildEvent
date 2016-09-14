@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -1262,7 +1262,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void toolStripMenuGalleryPage_Click(object sender, EventArgs e)
         {
-            Util.openUrl("http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
+            Util.openUrl("https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
         }
 
         private void toolStripMenuChangelog_Click(object sender, EventArgs e)
@@ -1280,29 +1280,14 @@ namespace net.r_eg.vsSBE.UI.WForms
             Util.openUrl("http://vssbe.r-eg.net/doc/Examples/");
         }
 
-        private void menuDemo_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("http://vssbe.r-eg.net/doc/Examples/Demo/");
-        }
-
         private void toolStripMenuIssue_Click(object sender, EventArgs e)
         {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/issues");
+            Util.openUrl("https://github.com/3F/vsSolutionBuildEvent/issues?q=is%3Aissue");
         }
 
         private void toolStripMenuSources_Click(object sender, EventArgs e)
         {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/commits/all");
-        }
-
-        private void toolStripMenuForkGithub_Click(object sender, EventArgs e)
-        {
             Util.openUrl("https://github.com/3F/vsSolutionBuildEvent");
-        }
-
-        private void toolStripMenuForkBitbucket_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/overview");
         }
 
         private void toolStripMenuLicense_Click(object sender, EventArgs e)
@@ -1317,10 +1302,10 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void toolStripMenuReport_Click(object sender, EventArgs e)
         {
-            DialogResult ret = MessageBox.Show("Seen error or have a suggestion - Click 'Yes'", Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult ret = MessageBox.Show("Seen error or have a question - Click 'Yes'", Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if(ret == DialogResult.Yes) {
-                Util.openUrl("https://bitbucket.org/3F/vssolutionbuildevent/issues/new");
+                Util.openUrl("https://github.com/3F/vsSolutionBuildEvent/issues/new");
             }
         }
 

@@ -71,6 +71,7 @@
             this.toolStripMenuDTECmdExec = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItemSniffer = new System.Windows.Forms.ToolStripMenuItem();
             this.menuWizards = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuWizardVersion = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuTpl = new System.Windows.Forms.ToolStripMenuItem();
             this.menuTplTargets = new System.Windows.Forms.ToolStripMenuItem();
             this.menuTplTargetsDefault = new System.Windows.Forms.ToolStripMenuItem();
@@ -80,7 +81,6 @@
             this.toolStripMenuCI = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuCIMSBuild = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuDevenv = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuDemo = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuAPI = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuPlugin = new System.Windows.Forms.ToolStripMenuItem();
@@ -99,9 +99,6 @@
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuIssue = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuSources = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuForkGithub = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuForkBitbucket = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuLicense = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuAbout = new System.Windows.Forms.ToolStripMenuItem();
@@ -247,7 +244,6 @@
             this.pGridCompilerCfg = new System.Windows.Forms.PropertyGrid();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.linkAddAction = new System.Windows.Forms.LinkLabel();
-            this.menuWizardVersion = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuActions.SuspendLayout();
             this.panelStatusBR.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -315,62 +311,62 @@
             this.toolStripSeparator8,
             this.menuActionsReset});
             this.contextMenuActions.Name = "contextMenuManager";
-            this.contextMenuActions.Size = new System.Drawing.Size(144, 154);
+            this.contextMenuActions.Size = new System.Drawing.Size(143, 154);
             // 
             // menuActionsTogglePanel
             // 
             this.menuActionsTogglePanel.Name = "menuActionsTogglePanel";
-            this.menuActionsTogglePanel.Size = new System.Drawing.Size(143, 22);
+            this.menuActionsTogglePanel.Size = new System.Drawing.Size(142, 22);
             this.menuActionsTogglePanel.Text = "Toggle Panel";
             this.menuActionsTogglePanel.Click += new System.EventHandler(this.menuActionsTogglePanel_Click);
             // 
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(140, 6);
+            this.toolStripSeparator7.Size = new System.Drawing.Size(139, 6);
             // 
             // menuActionsAdd
             // 
             this.menuActionsAdd.Name = "menuActionsAdd";
-            this.menuActionsAdd.Size = new System.Drawing.Size(143, 22);
+            this.menuActionsAdd.Size = new System.Drawing.Size(142, 22);
             this.menuActionsAdd.Text = "Add";
             this.menuActionsAdd.Click += new System.EventHandler(this.menuActionsAdd_Click);
             // 
             // menuActionsClone
             // 
             this.menuActionsClone.Name = "menuActionsClone";
-            this.menuActionsClone.Size = new System.Drawing.Size(143, 22);
+            this.menuActionsClone.Size = new System.Drawing.Size(142, 22);
             this.menuActionsClone.Text = "Clone";
             this.menuActionsClone.Click += new System.EventHandler(this.menuActionsClone_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(140, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(139, 6);
             // 
             // menuActionsEdit
             // 
             this.menuActionsEdit.Name = "menuActionsEdit";
-            this.menuActionsEdit.Size = new System.Drawing.Size(143, 22);
+            this.menuActionsEdit.Size = new System.Drawing.Size(142, 22);
             this.menuActionsEdit.Text = "Edit Name";
             this.menuActionsEdit.Click += new System.EventHandler(this.menuActionsEdit_Click);
             // 
             // menuActionsRemove
             // 
             this.menuActionsRemove.Name = "menuActionsRemove";
-            this.menuActionsRemove.Size = new System.Drawing.Size(143, 22);
+            this.menuActionsRemove.Size = new System.Drawing.Size(142, 22);
             this.menuActionsRemove.Text = "Remove";
             this.menuActionsRemove.Click += new System.EventHandler(this.menuActionsRemove_Click);
             // 
             // toolStripSeparator8
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(140, 6);
+            this.toolStripSeparator8.Size = new System.Drawing.Size(139, 6);
             // 
             // menuActionsReset
             // 
             this.menuActionsReset.Name = "menuActionsReset";
-            this.menuActionsReset.Size = new System.Drawing.Size(143, 22);
+            this.menuActionsReset.Size = new System.Drawing.Size(142, 22);
             this.menuActionsReset.Text = "Reset";
             this.menuActionsReset.Click += new System.EventHandler(this.menuActionsReset_Click);
             // 
@@ -454,7 +450,6 @@
             this.toolStripMenuTpl,
             this.toolStripSeparator10,
             this.toolStripMenuCI,
-            this.menuDemo,
             this.toolStripMenuAPI,
             this.toolStripSeparator11,
             this.toolStripMenuPlugin,
@@ -513,47 +508,47 @@
             // menuSBEScript
             // 
             this.menuSBEScript.Name = "menuSBEScript";
-            this.menuSBEScript.Size = new System.Drawing.Size(216, 22);
+            this.menuSBEScript.Size = new System.Drawing.Size(215, 22);
             this.menuSBEScript.Text = "SBE-Scripts Testing tool";
             this.menuSBEScript.Click += new System.EventHandler(this.menuSBEScript_Click);
             // 
             // toolStripSeparator9
             // 
             this.toolStripSeparator9.Name = "toolStripSeparator9";
-            this.toolStripSeparator9.Size = new System.Drawing.Size(213, 6);
+            this.toolStripSeparator9.Size = new System.Drawing.Size(212, 6);
             // 
             // toolStripMenuMSBuildProp
             // 
             this.toolStripMenuMSBuildProp.Name = "toolStripMenuMSBuildProp";
-            this.toolStripMenuMSBuildProp.Size = new System.Drawing.Size(216, 22);
+            this.toolStripMenuMSBuildProp.Size = new System.Drawing.Size(215, 22);
             this.toolStripMenuMSBuildProp.Text = "MSBuild Properties";
             this.toolStripMenuMSBuildProp.Click += new System.EventHandler(this.toolStripMenuMSBuildProp_Click);
             // 
             // toolStripMenuEvaluatingProperty
             // 
             this.toolStripMenuEvaluatingProperty.Name = "toolStripMenuEvaluatingProperty";
-            this.toolStripMenuEvaluatingProperty.Size = new System.Drawing.Size(216, 22);
+            this.toolStripMenuEvaluatingProperty.Size = new System.Drawing.Size(215, 22);
             this.toolStripMenuEvaluatingProperty.Text = "Evaluating Property";
             this.toolStripMenuEvaluatingProperty.Click += new System.EventHandler(this.toolStripMenuEvaluatingProperty_Click);
             // 
             // toolStripMenuDTECmd
             // 
             this.toolStripMenuDTECmd.Name = "toolStripMenuDTECmd";
-            this.toolStripMenuDTECmd.Size = new System.Drawing.Size(216, 22);
+            this.toolStripMenuDTECmd.Size = new System.Drawing.Size(215, 22);
             this.toolStripMenuDTECmd.Text = "DTE-Commands";
             this.toolStripMenuDTECmd.Click += new System.EventHandler(this.toolStripMenuDTECmd_Click);
             // 
             // toolStripMenuDTECmdExec
             // 
             this.toolStripMenuDTECmdExec.Name = "toolStripMenuDTECmdExec";
-            this.toolStripMenuDTECmdExec.Size = new System.Drawing.Size(216, 22);
+            this.toolStripMenuDTECmdExec.Size = new System.Drawing.Size(215, 22);
             this.toolStripMenuDTECmdExec.Text = "Executing DTE-Commands";
             this.toolStripMenuDTECmdExec.Click += new System.EventHandler(this.toolStripMenuDTECmdExec_Click);
             // 
             // menuItemSniffer
             // 
             this.menuItemSniffer.Name = "menuItemSniffer";
-            this.menuItemSniffer.Size = new System.Drawing.Size(216, 22);
+            this.menuItemSniffer.Size = new System.Drawing.Size(215, 22);
             this.menuItemSniffer.Text = "EnvDTE Sniffer";
             this.menuItemSniffer.Click += new System.EventHandler(this.menuItemSniffer_Click);
             // 
@@ -564,6 +559,13 @@
             this.menuWizards.Name = "menuWizards";
             this.menuWizards.Size = new System.Drawing.Size(154, 22);
             this.menuWizards.Text = "Wizards";
+            // 
+            // menuWizardVersion
+            // 
+            this.menuWizardVersion.Name = "menuWizardVersion";
+            this.menuWizardVersion.Size = new System.Drawing.Size(235, 22);
+            this.menuWizardVersion.Text = "Automatic Version Numbering";
+            this.menuWizardVersion.Click += new System.EventHandler(this.menuWizardVersion_Click);
             // 
             // toolStripMenuTpl
             // 
@@ -579,7 +581,7 @@
             this.menuTplTargets.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuTplTargetsDefault});
             this.menuTplTargets.Name = "menuTplTargets";
-            this.menuTplTargets.Size = new System.Drawing.Size(147, 22);
+            this.menuTplTargets.Size = new System.Drawing.Size(146, 22);
             this.menuTplTargets.Text = "Targets Mode";
             // 
             // menuTplTargetsDefault
@@ -594,7 +596,7 @@
             this.menuTplCSharp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuTplCSharpDefault});
             this.menuTplCSharp.Name = "menuTplCSharp";
-            this.menuTplCSharp.Size = new System.Drawing.Size(147, 22);
+            this.menuTplCSharp.Size = new System.Drawing.Size(146, 22);
             this.menuTplCSharp.Text = "C# Mode";
             // 
             // menuTplCSharpDefault
@@ -631,13 +633,6 @@
             this.toolStripMenuDevenv.Size = new System.Drawing.Size(200, 22);
             this.toolStripMenuDevenv.Text = "Devenv Command-Line";
             this.toolStripMenuDevenv.Click += new System.EventHandler(this.toolStripMenuDevenv_Click);
-            // 
-            // menuDemo
-            // 
-            this.menuDemo.Name = "menuDemo";
-            this.menuDemo.Size = new System.Drawing.Size(154, 22);
-            this.menuDemo.Text = "Demo projects";
-            this.menuDemo.Click += new System.EventHandler(this.menuDemo_Click);
             // 
             // toolStripMenuAPI
             // 
@@ -708,9 +703,6 @@
             this.toolStripSeparator3,
             this.toolStripMenuIssue,
             this.toolStripMenuSources,
-            this.toolStripSeparator4,
-            this.toolStripMenuForkGithub,
-            this.toolStripMenuForkBitbucket,
             this.toolStripSeparator2,
             this.toolStripMenuLicense,
             this.toolStripMenuAbout});
@@ -724,14 +716,14 @@
             // tsMenuItemExamples
             // 
             this.tsMenuItemExamples.Name = "tsMenuItemExamples";
-            this.tsMenuItemExamples.Size = new System.Drawing.Size(187, 22);
+            this.tsMenuItemExamples.Size = new System.Drawing.Size(188, 22);
             this.tsMenuItemExamples.Text = "Examples";
             this.tsMenuItemExamples.Click += new System.EventHandler(this.tsMenuItemExamples_Click);
             // 
             // toolStripSeparator14
             // 
             this.toolStripSeparator14.Name = "toolStripSeparator14";
-            this.toolStripSeparator14.Size = new System.Drawing.Size(184, 6);
+            this.toolStripSeparator14.Size = new System.Drawing.Size(185, 6);
             // 
             // toolStripMenuDocItem
             // 
@@ -739,7 +731,7 @@
             this.toolStripMenuWiki,
             this.toolStripMenuGalleryPage});
             this.toolStripMenuDocItem.Name = "toolStripMenuDocItem";
-            this.toolStripMenuDocItem.Size = new System.Drawing.Size(187, 22);
+            this.toolStripMenuDocItem.Size = new System.Drawing.Size(188, 22);
             this.toolStripMenuDocItem.Text = "Documentation";
             // 
             // toolStripMenuWiki
@@ -759,64 +751,45 @@
             // toolStripMenuChangelog
             // 
             this.toolStripMenuChangelog.Name = "toolStripMenuChangelog";
-            this.toolStripMenuChangelog.Size = new System.Drawing.Size(187, 22);
+            this.toolStripMenuChangelog.Size = new System.Drawing.Size(188, 22);
             this.toolStripMenuChangelog.Text = "Changelist";
             this.toolStripMenuChangelog.Click += new System.EventHandler(this.toolStripMenuChangelog_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(184, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(185, 6);
             // 
             // toolStripMenuIssue
             // 
             this.toolStripMenuIssue.Name = "toolStripMenuIssue";
-            this.toolStripMenuIssue.Size = new System.Drawing.Size(187, 22);
-            this.toolStripMenuIssue.Text = "Public Issue Tracker";
+            this.toolStripMenuIssue.Size = new System.Drawing.Size(188, 22);
+            this.toolStripMenuIssue.Text = "Public Bug Tracker";
             this.toolStripMenuIssue.Click += new System.EventHandler(this.toolStripMenuIssue_Click);
             // 
             // toolStripMenuSources
             // 
             this.toolStripMenuSources.Name = "toolStripMenuSources";
-            this.toolStripMenuSources.Size = new System.Drawing.Size(187, 22);
-            this.toolStripMenuSources.Text = "Source code";
+            this.toolStripMenuSources.Size = new System.Drawing.Size(188, 22);
+            this.toolStripMenuSources.Text = "Source code [GitHub]";
             this.toolStripMenuSources.Click += new System.EventHandler(this.toolStripMenuSources_Click);
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(184, 6);
-            // 
-            // toolStripMenuForkGithub
-            // 
-            this.toolStripMenuForkGithub.Name = "toolStripMenuForkGithub";
-            this.toolStripMenuForkGithub.Size = new System.Drawing.Size(187, 22);
-            this.toolStripMenuForkGithub.Text = "Fork me on GitHub";
-            this.toolStripMenuForkGithub.Click += new System.EventHandler(this.toolStripMenuForkGithub_Click);
-            // 
-            // toolStripMenuForkBitbucket
-            // 
-            this.toolStripMenuForkBitbucket.Name = "toolStripMenuForkBitbucket";
-            this.toolStripMenuForkBitbucket.Size = new System.Drawing.Size(187, 22);
-            this.toolStripMenuForkBitbucket.Text = "Fork me on Bitbucket";
-            this.toolStripMenuForkBitbucket.Click += new System.EventHandler(this.toolStripMenuForkBitbucket_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(184, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(185, 6);
             // 
             // toolStripMenuLicense
             // 
             this.toolStripMenuLicense.Name = "toolStripMenuLicense";
-            this.toolStripMenuLicense.Size = new System.Drawing.Size(187, 22);
+            this.toolStripMenuLicense.Size = new System.Drawing.Size(188, 22);
             this.toolStripMenuLicense.Text = "License";
             this.toolStripMenuLicense.Click += new System.EventHandler(this.toolStripMenuLicense_Click);
             // 
             // toolStripMenuAbout
             // 
             this.toolStripMenuAbout.Name = "toolStripMenuAbout";
-            this.toolStripMenuAbout.Size = new System.Drawing.Size(187, 22);
+            this.toolStripMenuAbout.Size = new System.Drawing.Size(188, 22);
             this.toolStripMenuAbout.Text = "About";
             this.toolStripMenuAbout.Click += new System.EventHandler(this.toolStripMenuAbout_Click);
             // 
@@ -2618,13 +2591,6 @@
             this.linkAddAction.Text = "Add first action";
             this.linkAddAction.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkAddAction_LinkClicked);
             // 
-            // menuWizardVersion
-            // 
-            this.menuWizardVersion.Name = "menuWizardVersion";
-            this.menuWizardVersion.Size = new System.Drawing.Size(236, 22);
-            this.menuWizardVersion.Text = "Automatic Version Numbering";
-            this.menuWizardVersion.Click += new System.EventHandler(this.menuWizardVersion_Click);
-            // 
             // EventsFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2766,9 +2732,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuIssue;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuSources;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuForkGithub;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuForkBitbucket;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuLicense;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuAbout;
@@ -2901,7 +2864,6 @@
         private System.Windows.Forms.ToolStripMenuItem menuActionExec;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolStripMenuItem menuItemSniffer;
-        private System.Windows.Forms.ToolStripMenuItem menuDemo;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
         private System.Windows.Forms.ToolStripMenuItem menuCfgSuppressDualCmd;
