@@ -138,7 +138,7 @@ namespace net.r_eg.vsSBE
 
         /// <summary>
         /// Priority call with SVsSolution.
-        /// Part of IVsSolutionEvents - that the solution has been opened.
+        /// Part of IVsSolutionEvents - that the solution has been opened (Before initializing projects).
         /// http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivssolutionevents.onafteropensolution.aspx
         /// </summary>
         /// <param name="pUnkReserved"></param>
@@ -154,13 +154,15 @@ namespace net.r_eg.vsSBE
                 Log._.show();
                 eventsOfStatusTool(true);
 
-                int ret = Event.solutionOpened(pUnkReserved, fNewSolution);
-                _menuItemMain.Visible = (ret == VSConstants.S_OK);
-                return ret;
+                Event.OpenedSolution -= onLateOpenedSolution;
+                Event.OpenedSolution += onLateOpenedSolution;
+
+                return Event.solutionOpened(pUnkReserved, fNewSolution);
             }
             catch(Exception ex) {
                 Log.Fatal("Problem with loading solution: " + ex.Message);
             }
+
             return VSConstants.S_FALSE;
         }
 
@@ -272,6 +274,14 @@ namespace net.r_eg.vsSBE
                 return;
             }
             ste.detachEvents().detachEvents(Settings.CfgManager.Config).detachEvents(Event);
+        }
+
+        /// <summary>
+        /// When all projects are opened in IDE. 
+        /// </summary>
+        private void onLateOpenedSolution(object sender, EventArgs e)
+        {
+            _menuItemMain.Visible = true;
         }
 
         /// <summary>
