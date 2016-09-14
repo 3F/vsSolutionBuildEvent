@@ -17,8 +17,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using Microsoft.Build.Evaluation;
 using net.r_eg.vsSBE.Bridge.CoreCommand;
 using net.r_eg.vsSBE.Exceptions;
@@ -160,6 +162,9 @@ namespace net.r_eg.vsSBE.MSBuild
             Log.Trace("evaluate: '{0}' -> [{1}]", unevaluated, projectName);
             lock(_lock)
             {
+                CultureInfo origincul               = Thread.CurrentThread.CurrentCulture;
+                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
                 try {
                     defProperties(project);
                     project.SetProperty(container, Tokens.characters(_wrapProperty(ref unevaluated)));
@@ -167,6 +172,7 @@ namespace net.r_eg.vsSBE.MSBuild
                 }
                 finally {
                     project.RemoveProperty(project.GetProperty(container));
+                    Thread.CurrentThread.CurrentCulture = origincul;
 
                     // To fix "Save changes to the following items?"
                     // Do not use the `project.Save();` because will be "File Modification Detected ... has been modified outside the environment."

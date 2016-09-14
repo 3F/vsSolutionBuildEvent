@@ -17,8 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Threading;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.API.Commands;
@@ -29,10 +27,11 @@ using net.r_eg.vsSBE.Configuration;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.Scripts;
-using AppSettings = net.r_eg.vsSBE.Settings;
 
 namespace net.r_eg.vsSBE.API
 {
+    using AppSettings = vsSBE.Settings;
+
     /// <summary>
     /// TODO: add events for client library instead of direct call
     /// </summary>
@@ -489,9 +488,6 @@ namespace net.r_eg.vsSBE.API
                     Log.Warn("Used [Unofficial release]");
                 }
 #endif
-
-            Thread.CurrentThread.CurrentCulture     = CultureInfo.InvariantCulture;
-            Thread.CurrentThread.CurrentUICulture   = CultureInfo.InvariantCulture;
 
             if(Environment.Events != null) {
                 slnEvents = Environment.Events.SolutionEvents;

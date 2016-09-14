@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -25,10 +25,11 @@ using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.Scripts;
 using net.r_eg.vsSBE.UI.WForms.Controls;
-using AvalonEditWPF = ICSharpCode.AvalonEdit.TextEditor;
 
 namespace net.r_eg.vsSBE.UI.WForms
 {
+    using AvalonEditWPF = ICSharpCode.AvalonEdit.TextEditor;
+
     public partial class ScriptCheckFrm: Form
     {
         /// <summary>
@@ -110,8 +111,10 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         protected void initEditor()
         {
-            string exDate   = DateTime.Now.AddDays((new Random()).Next(-30, -2)).ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern);
+            // sortable format for InvariantCulture
+            string exDate   = DateTime.Now.AddDays((new Random()).Next(-30, -2)).ToString("yyyy/MM/dd", CultureInfo.InvariantCulture);
             _editor.Text    = Resource.StringScriptExampleSBE.Replace("%mdate%", exDate);
+
             textEditor.colorize(TextEditor.ColorSchema.SBEScripts);
             textEditor.codeCompletionInit(context.inspector, context.msbuild);
         }

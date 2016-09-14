@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using net.r_eg.vsSBE.Exceptions;
 
@@ -186,9 +187,12 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards.Version
             {
                 case RevNumber.Type.DeltaTime:
                 {
-                    string rev = Resource.ScriptRevisionTimeDelta;
-                    rev = rev.Replace("!RevTime!", ((RevNumber.DeltaTime)req.StepCfgData.revVal).timeBase.ToShortDateString());
-                    rev = rev.Replace("!RevType!", ((RevNumber.DeltaTime)req.StepCfgData.revVal).interval.ToString());
+                    string rev  = Resource.ScriptRevisionTimeDelta;
+                    var delta   = (RevNumber.DeltaTime)req.StepCfgData.revVal;
+
+                    // sortable format for InvariantCulture
+                    rev = rev.Replace("!RevTime!", delta.timeBase.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture));
+                    rev = rev.Replace("!RevType!", delta.interval.ToString());
                     return rev + LINE_BREAK;
                 }
                 case RevNumber.Type.Raw: {
