@@ -121,7 +121,7 @@
     <value>vsSolutionBuildEvent</value>
   </data>
   <data name="112" xml:space="preserve">
-    <value>Events-Catcher with a variety of advanced Actions for maintenance of your projects and libraries, building processes and processes at runtime from your Visual Studio and MSBuild Tool. Flexible actions for all..</value>
+    <value>Event-Catcher with variety of advanced Actions for service of your projects and libraries, the build processes and processes at runtime from Visual Studio and MSBuild Tools. Flexible actions for all..</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="400" type="System.Resources.ResXFileRef, System.Windows.Forms">

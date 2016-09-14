@@ -70,7 +70,7 @@ namespace net.r_eg.vsSBE {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Events-Catcher with a variety of advanced Actions for maintenance of your projects and libraries, building processes and processes at runtime from your Visual Studio and MSBuild Tool. Flexible actions for all...
+        ///   Looks up a localized string similar to Event-Catcher with variety of advanced Actions for service of your projects and libraries, the build processes and processes at runtime from Visual Studio and MSBuild Tools. Flexible actions for all...
         /// </summary>
         internal static string _112 {
             get {

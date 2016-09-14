@@ -3,8 +3,8 @@
     <Identifier Id="94ecd13f-15f3-4f51-9afd-17f0275c6266">
         <Name>vsSolutionBuildEvent</Name>
         <Author>github.com/3F</Author>
-        <Version>0.12.8</Version>
-        <Description xml:space="preserve">Event-Catcher with a variety of advanced Actions for service of your projects and libraries, the build processes and processes at runtime from Visual Studio and MSBuild Tools. Flexible actions for all..</Description>
+        <Version>0.12.9</Version>
+        <Description xml:space="preserve">Event-Catcher with variety of advanced Actions for service of your projects and libraries, the build processes and processes at runtime from Visual Studio and MSBuild Tools. Flexible actions for all..</Description>
         <Locale>1033</Locale>
         <MoreInfoUrl>http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/</MoreInfoUrl>
         <License>Resources/vsixinfo</License>

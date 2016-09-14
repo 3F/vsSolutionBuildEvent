@@ -1,6 +1,20 @@
 vsSolutionBuildEvent
 _ _ _ _ _ _ _ _ _ _ 
 
+[v0.12.9] 2016.09.14
+
+    * FIXED: Critical bug with WPF designer of VS IDE. Error 25012 - process terminated unexpectedly.
+    * FIXED: UI. Fixed problem when projects are not available in 'Execution order' list after loading solution.
+    * CHANGED: MSBuild core. Native expressions now uses InvariantCulture by default. For other culture use CultureInfo, for example:
+              ```
+              $([System.DateTime]::Parse("08/21/2016", '$([System.Globalization.CultureInfo]::GetCultureInfo("en-US"))').ToBinary())
+              ```
+              See documentation for details.
+
+    * CHANGED: Updated links to new public bug tracker, etc.
+               Now, GitHub is primary place for this project - fork, star, and improve all of what you want !
+               https://github.com/3F/vsSolutionBuildEvent
+
 [v0.12.8] 2016.09.12
     * FIXED: Fixed bug with Isolated Environment - mismatch of project configurations.
     * FIXED: Fixed bug "Save changes to the following items?" VS IDE
