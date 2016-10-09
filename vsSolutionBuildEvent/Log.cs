@@ -216,8 +216,12 @@ namespace net.r_eg.vsSBE
                 return false;
             }
 
-            // TODO: 
-            return level.Equals($"{LogLevel.Error}", StringComparison.OrdinalIgnoreCase);
+            // TODO:
+            Func<LogLevel, bool> _is = delegate(LogLevel t) {
+                return level.Equals($"{t}", StringComparison.OrdinalIgnoreCase);
+            };
+
+            return _is(LogLevel.Error) || _is(LogLevel.Fatal);
         }
 
         /// <summary>

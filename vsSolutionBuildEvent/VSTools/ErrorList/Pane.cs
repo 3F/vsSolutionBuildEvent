@@ -20,6 +20,8 @@ using Microsoft.VisualStudio.Shell;
 
 namespace net.r_eg.vsSBE.VSTools.ErrorList
 {
+    using ThreadTask = System.Threading.Tasks.Task;
+
     public class Pane: IPane, IDisposable
     {
         protected ErrorListProvider provider;
@@ -66,14 +68,18 @@ namespace net.r_eg.vsSBE.VSTools.ErrorList
 
         protected void task(string msg, TaskErrorCategory type = TaskErrorCategory.Message)
         {
-            provider.Tasks.Add(new ErrorTask()
+            ThreadTask.Factory.StartNew(() => // to prevent bug from `Process.ErrorDataReceived`
             {
-                Text                = msg,
-                Document            = Settings.APP_NAME_SHORT,
-                Category            = TaskCategory.User,
-                Checked             = true,
-                IsCheckedEditable   = true,
-                ErrorCategory       = type,
+                provider.Tasks.Add(new ErrorTask()
+                {
+                    Text                = msg,
+                    Document            = Settings.APP_NAME_SHORT,
+                    Category            = TaskCategory.User,
+                    Checked             = true,
+                    IsCheckedEditable   = true,
+                    ErrorCategory       = type,
+                });
+
             });
         }
 

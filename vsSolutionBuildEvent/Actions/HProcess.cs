@@ -97,16 +97,7 @@ namespace net.r_eg.vsSBE.Actions
         {
             Process p = prepareProcessFor(file, args, hidden);
             p.Start();
-
-            Log.Trace("time limit is '{0}'sec :: HProcess.run", timeout);
-            if(timeout != 0)
-            {
-                p.WaitForExit(timeout * 1000);
-                if(!p.HasExited) {
-                    Log.Warn("sigkill to the process - '{0}': limit in {1}sec for time is reached. Use any other value or 0 for unlimited time.", file, timeout);
-                    killProcessesFor(p.Id);
-                }
-            }
+            wait(p, file, timeout);
 
             if(!p.StartInfo.RedirectStandardError) {
                 return String.Empty;
@@ -143,12 +134,10 @@ namespace net.r_eg.vsSBE.Actions
                 }
 
                 string sdata                = reEncodeString(e.Data);
-                streamContainer(uid).stderr = sdata;
-                Log.Warn("stderr: received '{0}'", sdata.Length);
+                StreamContainer(uid).stderr = sdata;
 
-                if(!hidden) {
-                    Log.Warn("The command has been executed with error: `{0}`", sdata);
-                }
+                Log.Info("stderr: received '{0}'", sdata.Length);
+                Log.Warn("The command has been executed with error: `{0}`", sdata);
             };
 
             p.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>
@@ -158,49 +147,26 @@ namespace net.r_eg.vsSBE.Actions
                 }
 
                 string sdata                = reEncodeString(e.Data);
-                streamContainer(uid).stdout = sdata;
-                Log.Info("stdout: received '{0}'", sdata.Length);
+                StreamContainer(uid).stdout = sdata;
 
-                if(!hidden) {
-                    Log.Info("Result of the command: `{0}`", sdata);
-                }
+                Log.Info("stdout: received '{0}'", sdata.Length);
+                Log.Info("Result of the command: `{0}`", sdata);
             };
 
             p.Start();
 
-            if(!waiting)
-            {
-                if(p.StartInfo.RedirectStandardOutput) {
-                    p.BeginOutputReadLine();
-                }
+            if(p.StartInfo.RedirectStandardOutput) {
+                p.BeginOutputReadLine();
+            }
 
-                if(p.StartInfo.RedirectStandardError) {
-                    p.BeginErrorReadLine();
-                }
+            if(p.StartInfo.RedirectStandardError) {
+                p.BeginErrorReadLine();
+            }
 
+            if(!waiting) {
                 return;
             }
-
-            Log.Trace("time limit is '{0}'sec :: HProcess.useShell", timeout);
-            if(timeout != 0) {
-                p.WaitForExit(timeout * 1000);
-                if(!p.HasExited) {
-                    Log.Warn("sigkill to - '{0}': limit in {1}sec for time is reached. Use any other value or 0 for unlimited time.", cmd, timeout);
-                    killProcessesFor(p.Id);
-                }
-            }
-            else {
-                p.WaitForExit();
-            }
-
-            if(!p.StartInfo.RedirectStandardError) {
-                return;
-            }
-
-            string errors = p.StandardError.ReadToEnd();
-            if(errors.Length > 0) {
-                throw new SBEException(reEncodeString(errors));
-            }
+            wait(p, cmd, timeout);
         }
 
         public void useShell(string cmd, bool waiting, bool hidden, int timeout = 0)
@@ -208,23 +174,23 @@ namespace net.r_eg.vsSBE.Actions
             useShell(cmd, STDS, waiting, hidden, timeout);
         }
 
-        internal static string stdout(Guid id)
+        internal static string Stdout(Guid id)
         {
             try {
-                return streamContainer(id).stdout;
+                return StreamContainer(id).stdout;
             }
             finally {
-                streamContainer(id).stdout = null; //TODO: for clients by uid etc.
+                StreamContainer(id).stdout = null; //TODO: for clients by uid etc.
             }
         }
 
-        internal static string stderr(Guid id)
+        internal static string Stderr(Guid id)
         {
             try {
-                return streamContainer(id).stderr;
+                return StreamContainer(id).stderr;
             }
             finally {
-                streamContainer(id).stderr = null;
+                StreamContainer(id).stderr = null;
             }
         }
 
@@ -266,8 +232,9 @@ namespace net.r_eg.vsSBE.Actions
             p.StartInfo.RedirectStandardOutput  = true;
             p.StartInfo.RedirectStandardError   = true;
             p.StartInfo.RedirectStandardInput   = true;
-            p.StartInfo.StandardErrorEncoding   = p.StartInfo.StandardOutputEncoding
-                                                = EncodingOEM;  // by default, and we must to detect a charset for received data later
+            p.StartInfo.StandardErrorEncoding   = 
+            p.StartInfo.StandardOutputEncoding  = 
+                                                EncodingOEM;  // by default, and we must to detect a charset for received data later
             return p;
         }
 
@@ -327,15 +294,37 @@ namespace net.r_eg.vsSBE.Actions
 
         protected string reEncodeString(string str)
         {
+            if(String.IsNullOrWhiteSpace(str)) {
+                return String.Empty;
+            }
             return reEncodeString(str, EncodingOEM);
         }
 
-        private static TStream streamContainer(Guid id)
+        private static TStream StreamContainer(Guid id)
         {
             if(!stdstream.ContainsKey(id) || stdstream[id] == null) {
                 stdstream[id] = new TStream();
             }
             return stdstream[id];
+        }
+
+        private void wait(Process p, string cmd, int timeout)
+        {
+            if(p.HasExited) {
+                return;
+            }
+
+            Log.Trace($"HProcess: time limit is '{timeout}'sec");
+            if(timeout == 0) {
+                p.WaitForExit();
+                return;
+            }
+
+            p.WaitForExit(timeout * 1000);
+            if(!p.HasExited) {
+                Log.Warn($"sigkill for `{cmd}`: limit in {timeout}sec for time is reached. Use any other value or 0 for unlimited time.");
+                killProcessesFor(p.Id);
+            }
         }
     }
 }
