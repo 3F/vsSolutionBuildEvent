@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -21,11 +21,11 @@ namespace net.r_eg.vsSBE.Configuration
     {
         public string[] _ = new string[]
         {
-            " Current file requires a vsSolutionBuildEvent engine.", 
+            " This requires vsSolutionBuildEvent engine.", 
             " Free plugin for Visual Studio or MSBuild Tools:",
-            "  * http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/",
-            "  * http://vssbe.r-eg.net",
-            " Feedback: entry.reg@gmail.com"
+            "  * https://github.com/3F/vsSolutionBuildEvent",
+            "  * https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/",
+            " Feedback: github.com/3F  or entry.reg@gmail.com"
         };
 
         /// <summary>

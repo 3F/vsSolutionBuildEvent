@@ -156,7 +156,7 @@ namespace net.r_eg.vsSBE.MSBuild
         /// <returns>Evaluated value</returns>
         public virtual string evaluate(string unevaluated, string projectName = null)
         {
-            const string container  = "vsSBE_latestEvaluated";
+            const string container  = Settings.APP_NAME_SHORT + "_latestEvaluated";
             Project project         = getProject(projectName);
 
             Log.Trace("evaluate: '{0}' -> [{1}]", unevaluated, projectName);

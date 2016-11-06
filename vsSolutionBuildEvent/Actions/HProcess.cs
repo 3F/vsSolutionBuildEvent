@@ -125,7 +125,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="timeout">How long to wait the execution, in seconds. 0 value - infinitely</param>
         public void useShell(string cmd, Guid uid, bool waiting, bool hidden, int timeout = 0)
         {
-            Process p = prepareProcessFor("cmd", String.Format("/C {0}", cmd), hidden);
+            Process p = prepareProcessFor("cmd", $"/C \"{cmd}\"", hidden);
 
             p.ErrorDataReceived += (object sender, DataReceivedEventArgs e) =>
             {

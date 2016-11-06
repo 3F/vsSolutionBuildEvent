@@ -388,6 +388,7 @@ namespace net.r_eg.vsSBE
             try
             {
                 errorList       = new VSTools.ErrorList.Pane(this);
+                Log._.Received  -= onLogReceived;
                 Log._.Received  += onLogReceived;
 
                 initAppEvents();
