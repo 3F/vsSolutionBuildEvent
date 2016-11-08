@@ -22,7 +22,7 @@ using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
-    [Definition("$()", "Forcing evaluation with MSBuild engine.")]
+    [Definition("$()", "Advanced evaluation with MSBuild engine.")]
     public class MSBuildComponent: Component, IComponent
     {
         /// <summary>
@@ -49,13 +49,23 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         {
             Match m = Regex.Match(data, @"^\[(\$+)\(     # 1
                                               (?'exp'.+) # MSBuild expression
-                                               \)\]$", RegexOptions.IgnorePatternWhitespace);
+                                               \)\]$", 
+                                               RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
 
             if(!m.Success) {
                 throw new SyntaxIncorrectException("'{0}' Failed `{1}`", ToString(), data);
             }
 
-            return msbuild.parse(String.Format("{0}({1})", m.Groups[1].Value, m.Groups["exp"].Value));
+            string type = m.Groups[1].Value;
+            string exp  = m.Groups["exp"].Value;
+
+            return msbuild.parse($"{type}({multiline(exp)})");
+        }
+
+        protected virtual string multiline(string cmd)
+        {
+            // var hString = new StringHandler();
+            return Regex.Replace(cmd, @"[\r\n]\s*", String.Empty);
         }
     }
 }
