@@ -528,7 +528,7 @@
             // 
             this.toolStripMenuEvaluatingProperty.Name = "toolStripMenuEvaluatingProperty";
             this.toolStripMenuEvaluatingProperty.Size = new System.Drawing.Size(215, 22);
-            this.toolStripMenuEvaluatingProperty.Text = "Evaluating Property";
+            this.toolStripMenuEvaluatingProperty.Text = "Evaluate Property";
             this.toolStripMenuEvaluatingProperty.Click += new System.EventHandler(this.toolStripMenuEvaluatingProperty_Click);
             // 
             // toolStripMenuDTECmd
@@ -542,7 +542,7 @@
             // 
             this.toolStripMenuDTECmdExec.Name = "toolStripMenuDTECmdExec";
             this.toolStripMenuDTECmdExec.Size = new System.Drawing.Size(215, 22);
-            this.toolStripMenuDTECmdExec.Text = "Executing DTE-Commands";
+            this.toolStripMenuDTECmdExec.Text = "Execute commands";
             this.toolStripMenuDTECmdExec.Click += new System.EventHandler(this.toolStripMenuDTECmdExec_Click);
             // 
             // menuItemSniffer

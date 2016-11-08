@@ -32,15 +32,12 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.chkActivate = new System.Windows.Forms.CheckBox();
             this.groupBoxCESniffer = new System.Windows.Forms.GroupBox();
+            this.btnVSCE = new System.Windows.Forms.Button();
             this.buttonFlush = new System.Windows.Forms.Button();
             this.labelSep1 = new System.Windows.Forms.Label();
+            this.lightsTraffic = new net.r_eg.vsSBE.UI.WForms.Controls.Lights();
             this.panelTop = new System.Windows.Forms.Panel();
             this.panelMain = new System.Windows.Forms.Panel();
-            this.contextMenuMain = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.menuCopy = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuRemove = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuFlush = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.dgvCESniffer = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
             this.dgvCESnifferColumnStamp = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvCESnifferColumnPre = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -49,12 +46,16 @@
             this.dgvCESnifferColumnCustomIn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvCESnifferColumnCustomOut = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvCESnifferColumnEnum = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lightsTraffic = new net.r_eg.vsSBE.UI.WForms.Controls.Lights();
+            this.contextMenuMain = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.menuCopy = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuRemove = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.menuFlush = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxCESniffer.SuspendLayout();
             this.panelTop.SuspendLayout();
             this.panelMain.SuspendLayout();
-            this.contextMenuMain.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCESniffer)).BeginInit();
+            this.contextMenuMain.SuspendLayout();
             this.SuspendLayout();
             // 
             // chkActivate
@@ -73,6 +74,7 @@
             // 
             // groupBoxCESniffer
             // 
+            this.groupBoxCESniffer.Controls.Add(this.btnVSCE);
             this.groupBoxCESniffer.Controls.Add(this.buttonFlush);
             this.groupBoxCESniffer.Controls.Add(this.labelSep1);
             this.groupBoxCESniffer.Controls.Add(this.lightsTraffic);
@@ -85,6 +87,18 @@
             this.groupBoxCESniffer.Size = new System.Drawing.Size(743, 37);
             this.groupBoxCESniffer.TabIndex = 64;
             this.groupBoxCESniffer.TabStop = false;
+            // 
+            // btnVSCE
+            // 
+            this.btnVSCE.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnVSCE.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnVSCE.Location = new System.Drawing.Point(609, 10);
+            this.btnVSCE.Name = "btnVSCE";
+            this.btnVSCE.Size = new System.Drawing.Size(124, 23);
+            this.btnVSCE.TabIndex = 69;
+            this.btnVSCE.Text = "Advanced handler";
+            this.btnVSCE.UseVisualStyleBackColor = true;
+            this.btnVSCE.Click += new System.EventHandler(this.btnVSCE_Click);
             // 
             // buttonFlush
             // 
@@ -105,6 +119,13 @@
             this.labelSep1.TabIndex = 67;
             this.labelSep1.Text = "::";
             // 
+            // lightsTraffic
+            // 
+            this.lightsTraffic.Location = new System.Drawing.Point(4, 0);
+            this.lightsTraffic.Name = "lightsTraffic";
+            this.lightsTraffic.Size = new System.Drawing.Size(38, 9);
+            this.lightsTraffic.TabIndex = 65;
+            // 
             // panelTop
             // 
             this.panelTop.Controls.Add(this.groupBoxCESniffer);
@@ -123,42 +144,6 @@
             this.panelMain.Name = "panelMain";
             this.panelMain.Size = new System.Drawing.Size(747, 254);
             this.panelMain.TabIndex = 66;
-            // 
-            // contextMenuMain
-            // 
-            this.contextMenuMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuCopy,
-            this.menuRemove,
-            this.toolStripSeparator1,
-            this.menuFlush});
-            this.contextMenuMain.Name = "contextMenuMain";
-            this.contextMenuMain.Size = new System.Drawing.Size(118, 76);
-            // 
-            // menuCopy
-            // 
-            this.menuCopy.Name = "menuCopy";
-            this.menuCopy.Size = new System.Drawing.Size(117, 22);
-            this.menuCopy.Text = "Copy";
-            this.menuCopy.Click += new System.EventHandler(this.menuCopy_Click);
-            // 
-            // menuRemove
-            // 
-            this.menuRemove.Name = "menuRemove";
-            this.menuRemove.Size = new System.Drawing.Size(117, 22);
-            this.menuRemove.Text = "Remove";
-            this.menuRemove.Click += new System.EventHandler(this.menuRemove_Click);
-            // 
-            // menuFlush
-            // 
-            this.menuFlush.Name = "menuFlush";
-            this.menuFlush.Size = new System.Drawing.Size(117, 22);
-            this.menuFlush.Text = "Flush";
-            this.menuFlush.Click += new System.EventHandler(this.menuFlush_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(114, 6);
             // 
             // dgvCESniffer
             // 
@@ -274,12 +259,41 @@
             this.dgvCESnifferColumnEnum.ReadOnly = true;
             this.dgvCESnifferColumnEnum.ToolTipText = "Equivalent with Enum";
             // 
-            // lightsTraffic
+            // contextMenuMain
             // 
-            this.lightsTraffic.Location = new System.Drawing.Point(4, 0);
-            this.lightsTraffic.Name = "lightsTraffic";
-            this.lightsTraffic.Size = new System.Drawing.Size(38, 9);
-            this.lightsTraffic.TabIndex = 65;
+            this.contextMenuMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuCopy,
+            this.menuRemove,
+            this.toolStripSeparator1,
+            this.menuFlush});
+            this.contextMenuMain.Name = "contextMenuMain";
+            this.contextMenuMain.Size = new System.Drawing.Size(118, 76);
+            // 
+            // menuCopy
+            // 
+            this.menuCopy.Name = "menuCopy";
+            this.menuCopy.Size = new System.Drawing.Size(117, 22);
+            this.menuCopy.Text = "Copy";
+            this.menuCopy.Click += new System.EventHandler(this.menuCopy_Click);
+            // 
+            // menuRemove
+            // 
+            this.menuRemove.Name = "menuRemove";
+            this.menuRemove.Size = new System.Drawing.Size(117, 22);
+            this.menuRemove.Text = "Remove";
+            this.menuRemove.Click += new System.EventHandler(this.menuRemove_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(114, 6);
+            // 
+            // menuFlush
+            // 
+            this.menuFlush.Name = "menuFlush";
+            this.menuFlush.Size = new System.Drawing.Size(117, 22);
+            this.menuFlush.Text = "Flush";
+            this.menuFlush.Click += new System.EventHandler(this.menuFlush_Click);
             // 
             // EnvDteSniffer
             // 
@@ -298,8 +312,8 @@
             this.groupBoxCESniffer.PerformLayout();
             this.panelTop.ResumeLayout(false);
             this.panelMain.ResumeLayout(false);
-            this.contextMenuMain.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvCESniffer)).EndInit();
+            this.contextMenuMain.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -326,5 +340,6 @@
         private System.Windows.Forms.ToolStripMenuItem menuRemove;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem menuFlush;
+        private System.Windows.Forms.Button btnVSCE;
     }
 }

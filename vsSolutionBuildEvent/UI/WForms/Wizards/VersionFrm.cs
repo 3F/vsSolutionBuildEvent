@@ -229,6 +229,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards
                 cbRevTimeType.SelectedIndex = rev.IntervalTypeList.FindIndex(i => i.Key == rev.interval);
 
                 dtRevTimeBase.Value = rev.timeBase;
+
+                chkRevTimeMod.Checked   = rev.revMod.enabled;
+                numRevTimeMin.Value     = rev.revMod.min;
+                numRevTimeMax.Value     = rev.revMod.max;
             }
         }
 
@@ -355,6 +359,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards
 
                 rev.interval = rev.IntervalTypeList[cbRevTimeType.SelectedIndex].Key;
                 rev.timeBase = dtRevTimeBase.Value;
+
+                rev.revMod.enabled  = chkRevTimeMod.Checked;
+                rev.revMod.min      = (int)numRevTimeMin.Value;
+                rev.revMod.max      = (int)numRevTimeMax.Value;
             }
         }
 

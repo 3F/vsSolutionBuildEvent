@@ -34,6 +34,11 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards.Version.RevNumber
         public DateTime timeBase = DateTime.Today;
 
         /// <summary>
+        /// The revision of modulo
+        /// </summary>
+        public TRevModulo revMod;
+
+        /// <summary>
         /// The type of this revision number.
         /// </summary>
         public Type Type
@@ -54,6 +59,16 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards.Version.RevNumber
         }
 
         /// <summary>
+        /// The type for revision of modulo
+        /// </summary>
+        public struct TRevModulo
+        {
+            public bool enabled;
+            public int min;
+            public int max;
+        }
+
+        /// <summary>
         /// List of available types of intervals for 'Delta of time' method.
         /// </summary>
         public List<KeyValuePair<IntervalType, string>> IntervalTypeList
@@ -64,6 +79,14 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards.Version.RevNumber
 
         public DeltaTime()
         {
+            timeBase = DateTime.Today.AddDays(-2);
+
+            revMod = new TRevModulo() {
+                enabled = true,
+                min     = 100,
+                max     = 100000
+            };
+
             IntervalTypeList = Enum.GetValues(typeof(IntervalType))
                                     .Cast<IntervalType>()
                                     .Select(v => new KeyValuePair<IntervalType, string>(v, v.ToString()))

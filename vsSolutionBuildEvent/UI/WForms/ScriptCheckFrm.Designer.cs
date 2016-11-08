@@ -40,10 +40,16 @@
             this.groupBoxCommand = new System.Windows.Forms.GroupBox();
             this.textEditor = new net.r_eg.vsSBE.UI.WForms.Controls.TextEditor();
             this.panelBottomMain = new System.Windows.Forms.Panel();
+            this.chkStackTrace = new System.Windows.Forms.CheckBox();
             this.btnDoc = new System.Windows.Forms.Button();
             this.checkBoxMSBuildSupport = new System.Windows.Forms.CheckBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnExecute = new System.Windows.Forms.Button();
             this.richTextBoxExecuted = new System.Windows.Forms.RichTextBox();
+            this.menuResult = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.mItemCopySel = new System.Windows.Forms.ToolStripMenuItem();
+            this.mItemCopyAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.mItemClear = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBoxUVariables = new System.Windows.Forms.GroupBox();
             this.splitContainerUVariables = new System.Windows.Forms.SplitContainer();
             this.listBoxUVariables = new System.Windows.Forms.ListBox();
@@ -51,7 +57,6 @@
             this.richTextBoxUVariables = new System.Windows.Forms.RichTextBox();
             this.groupBoxComponents = new System.Windows.Forms.GroupBox();
             this.chkListComponents = new System.Windows.Forms.CheckedListBox();
-            this.chkStackTrace = new System.Windows.Forms.CheckBox();
             this.contextMenuUVariables.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMVertical)).BeginInit();
             this.splitContainerMVertical.Panel1.SuspendLayout();
@@ -64,6 +69,7 @@
             this.panelTopMain.SuspendLayout();
             this.groupBoxCommand.SuspendLayout();
             this.panelBottomMain.SuspendLayout();
+            this.menuResult.SuspendLayout();
             this.groupBoxUVariables.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerUVariables)).BeginInit();
             this.splitContainerUVariables.Panel1.SuspendLayout();
@@ -172,7 +178,7 @@
             this.groupBoxCommand.Size = new System.Drawing.Size(550, 166);
             this.groupBoxCommand.TabIndex = 6;
             this.groupBoxCommand.TabStop = false;
-            this.groupBoxCommand.Text = "To execution:";
+            this.groupBoxCommand.Text = "To execute:";
             // 
             // textEditor
             // 
@@ -189,12 +195,22 @@
             this.panelBottomMain.Controls.Add(this.chkStackTrace);
             this.panelBottomMain.Controls.Add(this.btnDoc);
             this.panelBottomMain.Controls.Add(this.checkBoxMSBuildSupport);
-            this.panelBottomMain.Controls.Add(this.button1);
+            this.panelBottomMain.Controls.Add(this.btnExecute);
             this.panelBottomMain.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panelBottomMain.Location = new System.Drawing.Point(0, 166);
             this.panelBottomMain.Name = "panelBottomMain";
             this.panelBottomMain.Size = new System.Drawing.Size(550, 25);
             this.panelBottomMain.TabIndex = 6;
+            // 
+            // chkStackTrace
+            // 
+            this.chkStackTrace.AutoSize = true;
+            this.chkStackTrace.Location = new System.Drawing.Point(189, 6);
+            this.chkStackTrace.Name = "chkStackTrace";
+            this.chkStackTrace.Size = new System.Drawing.Size(82, 17);
+            this.chkStackTrace.TabIndex = 11;
+            this.chkStackTrace.Text = "StackTrace";
+            this.chkStackTrace.UseVisualStyleBackColor = true;
             // 
             // btnDoc
             // 
@@ -221,20 +237,21 @@
             this.checkBoxMSBuildSupport.Text = "MSBuild core";
             this.checkBoxMSBuildSupport.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // btnExecute
             // 
-            this.button1.Location = new System.Drawing.Point(3, 2);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(85, 23);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "Execute";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.btnExecute_Click);
+            this.btnExecute.Location = new System.Drawing.Point(3, 2);
+            this.btnExecute.Name = "btnExecute";
+            this.btnExecute.Size = new System.Drawing.Size(85, 23);
+            this.btnExecute.TabIndex = 3;
+            this.btnExecute.Text = "Execute";
+            this.btnExecute.UseVisualStyleBackColor = true;
+            this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
             // 
             // richTextBoxExecuted
             // 
             this.richTextBoxExecuted.BackColor = System.Drawing.SystemColors.Control;
             this.richTextBoxExecuted.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.richTextBoxExecuted.ContextMenuStrip = this.menuResult;
             this.richTextBoxExecuted.Dock = System.Windows.Forms.DockStyle.Fill;
             this.richTextBoxExecuted.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.richTextBoxExecuted.Location = new System.Drawing.Point(0, 0);
@@ -243,6 +260,42 @@
             this.richTextBoxExecuted.Size = new System.Drawing.Size(550, 165);
             this.richTextBoxExecuted.TabIndex = 2;
             this.richTextBoxExecuted.Text = "";
+            // 
+            // menuResult
+            // 
+            this.menuResult.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mItemCopySel,
+            this.mItemCopyAll,
+            this.toolStripSeparator2,
+            this.mItemClear});
+            this.menuResult.Name = "menuResult";
+            this.menuResult.Size = new System.Drawing.Size(150, 76);
+            // 
+            // mItemCopySel
+            // 
+            this.mItemCopySel.Name = "mItemCopySel";
+            this.mItemCopySel.Size = new System.Drawing.Size(149, 22);
+            this.mItemCopySel.Text = "Copy Selected";
+            this.mItemCopySel.Click += new System.EventHandler(this.mItemCopySel_Click);
+            // 
+            // mItemCopyAll
+            // 
+            this.mItemCopyAll.Name = "mItemCopyAll";
+            this.mItemCopyAll.Size = new System.Drawing.Size(149, 22);
+            this.mItemCopyAll.Text = "Copy All";
+            this.mItemCopyAll.Click += new System.EventHandler(this.mItemCopyAll_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(146, 6);
+            // 
+            // mItemClear
+            // 
+            this.mItemClear.Name = "mItemClear";
+            this.mItemClear.Size = new System.Drawing.Size(149, 22);
+            this.mItemClear.Text = "Clear";
+            this.mItemClear.Click += new System.EventHandler(this.mItemClear_Click);
             // 
             // groupBoxUVariables
             // 
@@ -349,16 +402,6 @@
             this.chkListComponents.TabIndex = 0;
             this.chkListComponents.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.chkListComponents_ItemCheck);
             // 
-            // chkStackTrace
-            // 
-            this.chkStackTrace.AutoSize = true;
-            this.chkStackTrace.Location = new System.Drawing.Point(189, 6);
-            this.chkStackTrace.Name = "chkStackTrace";
-            this.chkStackTrace.Size = new System.Drawing.Size(82, 17);
-            this.chkStackTrace.TabIndex = 11;
-            this.chkStackTrace.Text = "StackTrace";
-            this.chkStackTrace.UseVisualStyleBackColor = true;
-            // 
             // ScriptCheckFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -382,6 +425,7 @@
             this.groupBoxCommand.ResumeLayout(false);
             this.panelBottomMain.ResumeLayout(false);
             this.panelBottomMain.PerformLayout();
+            this.menuResult.ResumeLayout(false);
             this.groupBoxUVariables.ResumeLayout(false);
             this.splitContainerUVariables.Panel1.ResumeLayout(false);
             this.splitContainerUVariables.Panel2.ResumeLayout(false);
@@ -410,7 +454,7 @@
         private System.Windows.Forms.Panel panelTopMain;
         private System.Windows.Forms.GroupBox groupBoxCommand;
         private System.Windows.Forms.Panel panelBottomMain;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnExecute;
         private System.Windows.Forms.CheckBox checkBoxMSBuildSupport;
         private System.Windows.Forms.RichTextBox richTextBoxExecuted;
         private System.Windows.Forms.Button btnDoc;
@@ -421,5 +465,10 @@
         private System.Windows.Forms.ToolStripMenuItem mItemUVarEdit;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.CheckBox chkStackTrace;
+        private System.Windows.Forms.ContextMenuStrip menuResult;
+        private System.Windows.Forms.ToolStripMenuItem mItemCopySel;
+        private System.Windows.Forms.ToolStripMenuItem mItemClear;
+        private System.Windows.Forms.ToolStripMenuItem mItemCopyAll;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
     }
 }

@@ -193,6 +193,17 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards.Version
                     // sortable format for InvariantCulture
                     rev = rev.Replace("!RevTime!", delta.timeBase.ToString("yyyy/MM/dd", CultureInfo.InvariantCulture));
                     rev = rev.Replace("!RevType!", delta.interval.ToString());
+
+                    string revMod = String.Empty;
+                    if(delta.revMod.enabled) {
+                        revMod = Resource.ScriptRevTimeModulo
+                                            .Replace("!revMin!", delta.revMod.min.ToString())
+                                            .Replace("!revMax!", delta.revMod.max.ToString());
+
+                        revMod = String.Format("{0}{0}{1}", System.Environment.NewLine, revMod);
+                    }
+                    rev = rev.Replace("!RevModulo!", revMod);
+
                     return rev + LINE_BREAK;
                 }
                 case RevNumber.Type.Raw: {

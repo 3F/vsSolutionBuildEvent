@@ -126,13 +126,14 @@ namespace net.r_eg.vsSBE.UI {
         ///
         ///#[($(Configuration) ~= Deb || true)
         ///{
-        ///    #[var tStart    = $([System.DateTime]::Parse(&quot;%mdate%&quot;).ToBinary())]
+        ///    #[var tBase     = $([System.DateTime]::Parse(&apos;%mdate%&apos;).ToBinary())]
         ///    #[var tNow      = $([System.DateTime]::UtcNow.Ticks)]
-        ///    #[var revBuild  = $([System.TimeSpan]::FromTicks($([MSBuild]::Subtract(#[var tNow], #[var tStart]))).TotalMinutes.ToString(&quot;0&quot;))]
-        ///    #[var v         = #[var v].$([MSBuild]::Modulo(#[var revBuild], $([System.Math]::Pow(2, 14))))]
+        ///    #[var revBuild  = $([System.TimeSpan]::FromTicks(&apos;$([MSBuild]::Subtract($(tNow), $(tBase)))&apos;).TotalMinutes.ToString(&apos;0&apos;))]
+        ///    
+        ///    #[var v = #[var v].$([MSBuild]::Modulo($(revBuild), $([System.Math]::Pow(2, 14))))]
         ///}]
         ///
-        ///#[var v = $([System.String]:: [rest of string was truncated]&quot;;.
+        ///#[var v = $([System.String]::Format(&quot;v{0}\ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string StringScriptExampleSBE {
             get {

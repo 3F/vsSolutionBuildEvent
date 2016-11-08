@@ -200,6 +200,13 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
+        private void setClipboardText(string text)
+        {
+            if(!String.IsNullOrWhiteSpace(text)) {
+                Clipboard.SetText(text);
+            }
+        }
+
         private void _lockUVarEditor(RichTextBox editor, bool disabled)
         {
             if(disabled) {
@@ -275,6 +282,21 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void listBoxUVariables_DoubleClick(object sender, EventArgs e)
         {
             mItemUVarEdit_Click(sender, e);
+        }
+
+        private void mItemClear_Click(object sender, EventArgs e)
+        {
+            richTextBoxExecuted.Clear();
+        }
+
+        private void mItemCopySel_Click(object sender, EventArgs e)
+        {
+            setClipboardText(richTextBoxExecuted.SelectedText);
+        }
+
+        private void mItemCopyAll_Click(object sender, EventArgs e)
+        {
+            setClipboardText(richTextBoxExecuted.Text);
         }
     }
 }
