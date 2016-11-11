@@ -325,8 +325,9 @@ namespace net.r_eg.vsSBE
         /// <returns>formatted</returns>
         protected virtual string format(string level, string message, string stamp)
         {
+            DateTime dt = new DateTime(long.Parse(stamp));
             return String.Format("{0} [{1}]: {2}{3}",
-                                (new DateTime(long.Parse(stamp))).ToString(CultureInfo.CurrentCulture.DateTimeFormat),
+                                dt.ToString(CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern + ".ffff"),
                                 level,
                                 message,
                                 System.Environment.NewLine);

@@ -27,11 +27,12 @@ using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.Logger;
 using net.r_eg.vsSBE.SBEScripts.Components;
-using OWPIdent = net.r_eg.vsSBE.Receiver.Output.Ident;
-using OWPItems = net.r_eg.vsSBE.Receiver.Output.Items;
 
 namespace net.r_eg.vsSBE.Actions
 {
+    using OWPIdent = Receiver.Output.Ident;
+    using OWPItems = Receiver.Output.Items;
+
     /// <summary>
     /// Binder / Coordinator of main routes.
     /// </summary>
@@ -41,7 +42,7 @@ namespace net.r_eg.vsSBE.Actions
         /// To support the 'execution order' features.
         /// Contains the current states of all projects.
         /// </summary>
-        protected Dictionary<string, ExecutionOrderType> projects;
+        protected Dictionary<string, EOProject> projects;
 
         /// <summary>
         /// Contains current incoming project.
@@ -52,6 +53,7 @@ namespace net.r_eg.vsSBE.Actions
         /// object synch.
         /// </summary>
         private Object _lock = new Object();
+        private Object _plock = new Object();
 
         /// <summary>
         /// The main handler of commands.
@@ -76,6 +78,12 @@ namespace net.r_eg.vsSBE.Actions
         protected ISolutionEvents SlnEvents
         {
             get { return Settings.Cfg; }
+        }
+
+        protected sealed class EOProject: ExecutionOrder
+        {
+            public string aProject;
+            public string aType;
         }
 
         /// <summary>
@@ -356,7 +364,7 @@ namespace net.r_eg.vsSBE.Actions
         public Connection(ICommand cmd)
         {
             this.Cmd = cmd;
-            projects = new Dictionary<string, ExecutionOrderType>();
+            projects = new Dictionary<string, EOProject>();
             attachLoggingEvent();
         }
 
@@ -590,7 +598,7 @@ namespace net.r_eg.vsSBE.Actions
 
             return evt.ExecutionOrder.Any(e =>
                                             projects.ContainsKey(e.Project)
-                                               && projects[e.Project] == e.Order
+                                               && projects[e.Project].Order == e.Order
                                           );
         }
 
@@ -621,11 +629,11 @@ namespace net.r_eg.vsSBE.Actions
                 if(eo.Order == ExecutionOrderType.Before)
                 {
                     // Before1 -> After1
-                    return (projects[eo.Project] == ExecutionOrderType.Before);
+                    return (projects[eo.Project].Order == ExecutionOrderType.Before);
                 }
 
                 // The 'After' base:
-                if(projects[eo.Project] != ExecutionOrderType.After) {
+                if(projects[eo.Project].Order != ExecutionOrderType.After) {
                     return false; // waiting for 'After' state..
                 }
 
@@ -644,11 +652,62 @@ namespace net.r_eg.vsSBE.Actions
 
         protected void onProject(string project, ExecutionOrderType type, bool fSuccess = true)
         {
-            projects[project]   = type;
-            current.Project     = project;
-            current.Order       = type;
+            lock(_plock)
+            {
+                var eop = new EOProject() { Project = project, Order = type };
 
-            Log.Trace("onProject: '{0}':{1} == {2}", project, type, fSuccess);
+                int max         = Cmd.Env.ProjectsDTE.Count();
+                var _projects   = projects.Where(p => !ExecutionOrder.IsSpecial(p.Key));
+                int count       = _projects.Count();
+
+                // 'First Project' & 'First Type' Before
+                if(count < 1) {
+                    eop.aProject    = ExecutionOrder.FIRST_PROJECT;
+                    eop.aType       = ExecutionOrder.FIRST_TYPE;
+                }
+                // 'Last Project' & 'Last Type' Before
+                else if(!projects.ContainsKey(project) && count + 1 == max) {
+                    eop.aProject    = ExecutionOrder.LAST_PROJECT;
+                    eop.aType       = ExecutionOrder.LAST_TYPE;
+                }
+                else
+                {
+                    // 'First Project' After
+                    if(projects.ContainsKey(project) && projects[project].aProject == ExecutionOrder.FIRST_PROJECT) {
+                        eop.aProject = ExecutionOrder.FIRST_PROJECT;
+                    }
+                    // 'Last Project' After
+                    else if(projects.ContainsKey(project) && projects[project].aProject == ExecutionOrder.LAST_PROJECT) {
+                        eop.aProject = ExecutionOrder.LAST_PROJECT;
+                    }
+
+                    // 'First Type' After
+                    if(type == ExecutionOrderType.After && !projects.Any(p => p.Value.Order == ExecutionOrderType.After)) {
+                        eop.aType = ExecutionOrder.FIRST_TYPE;
+                    }
+                    // 'Last Type' After
+                    else if(type == ExecutionOrderType.After && count == max) {
+                        var list = _projects.Where(p => p.Value.Order == ExecutionOrderType.Before);
+                        if(list.Count() == 1 && list.FirstOrDefault().Key == project) {
+                            eop.aType = ExecutionOrder.LAST_TYPE;
+                        }
+                    }
+                }
+
+                projects[project]   = eop;
+                current.Project     = project;
+                current.Order       = type;
+
+                if(eop.aProject != null) {
+                    projects[eop.aProject] = eop; // alias to 'First/Last Project'
+                }
+
+                if(eop.aType != null) {
+                    projects[eop.aType] = eop; // alias to 'First/Last Type'
+                }
+            }
+
+            Log.Trace($"onProject: '{project}'({projects[project].aProject}/{projects[project].aType}):{type} == {fSuccess}");
 
             if(Status._.contains(SolutionEventType.Pre, StatusType.Deferred)) {
                 monitoringPre(project, type, fSuccess);
@@ -685,8 +744,11 @@ namespace net.r_eg.vsSBE.Actions
                     return;
                 }
 
-                if(evt[i].ExecutionOrder.Any(o => o.Project == project && o.Order == type)) {
-                    Log.Info("Incoming '{0}'({1}) :: Execute the deferred action: '{2}'", project, type, evt[i].Caption);
+                if(evt[i].ExecutionOrder.Any(o => projects.ContainsKey(o.Project)
+                                                    && projects[o.Project].Project == project
+                                                    && o.Order == type))
+                {
+                    Log.Info("Incoming '{0}'({1}) :: Execute deferred action: '{2}'", project, type, evt[i].Caption);
                     Status._.update(SolutionEventType.Pre, i, (execPre(evt[i]) == Codes.Success)? StatusType.Success : StatusType.Fail);
                 }
             }

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2014  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,24 +19,40 @@ namespace net.r_eg.vsSBE.Events
 {
     public class ExecutionOrder: IExecutionOrder
     {
+        public const string FIRST_PROJECT   = ":?: First Project";
+        public const string LAST_PROJECT    = ":?: Last Project";
+        public const string FIRST_TYPE      = ":?: First Type";
+        public const string LAST_TYPE       = ":?: Last Type";
+
         /// <summary>
         /// Project name
         /// </summary>
         public string Project
         {
-            get { return project; }
-            set { project = value; }
+            get;
+            set;
         }
-        private string project;
 
         /// <summary>
         /// Range of execution
         /// </summary>
         public ExecutionOrderType Order
         {
-            get { return order; }
-            set { order = value; }
+            get;
+            set;
         }
-        private ExecutionOrderType order;
+
+        /// <summary>
+        /// Checks name for special types.
+        /// </summary>
+        /// <param name="name">Project name.</param>
+        /// <returns></returns>
+        public static bool IsSpecial(string name)
+        {
+            return name == FIRST_PROJECT
+                    || name == LAST_PROJECT
+                    || name == FIRST_TYPE
+                    || name == LAST_TYPE;
+        }
     }
 }

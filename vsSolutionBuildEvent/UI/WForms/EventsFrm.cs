@@ -850,11 +850,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         protected void executionOrder()
         {
-            if(dataGridViewOrder.Rows.Count < 1) {
-                foreach(string name in logic.Env.ProjectsList) {
-                    dataGridViewOrder.Rows.Add(false, name, dgvOrderType.Items[0]);
-                }
-            }
+            setExecutionOrderRecords();
 
             if(logic.SBEItem == null) {
                 return;
@@ -875,6 +871,41 @@ namespace net.r_eg.vsSBE.UI.WForms
                 }
                 row.Cells[dgvOrderEnabled.Name].Value = !String.IsNullOrEmpty(v.Project);
                 row.Cells[dgvOrderType.Name].Value = v.Order.ToString();
+            }
+        }
+
+        protected void setExecutionOrderRecords()
+        {
+            if(dataGridViewOrder.Rows.Count > 0) {
+                return;
+            }
+
+            var projects = logic.Env.ProjectsList;
+            if(projects.Count < 1) {
+                return;
+            }
+
+            foreach(string name in projects) {
+                addExecutionOrderRecord(name, Color.Empty);
+            }
+
+            // special records
+
+            Color sColor = Color.FromArgb(243, 239, 252);
+
+            addExecutionOrderRecord(ExecutionOrder.FIRST_PROJECT, sColor);
+            if(projects.Count > 1) {
+                addExecutionOrderRecord(ExecutionOrder.FIRST_TYPE, sColor);
+                addExecutionOrderRecord(ExecutionOrder.LAST_PROJECT, sColor);
+                addExecutionOrderRecord(ExecutionOrder.LAST_TYPE, sColor);
+            }
+        }
+
+        protected void addExecutionOrderRecord(string name, Color rowcolor)
+        {
+            int idx = dataGridViewOrder.Rows.Add(false, name, dgvOrderType.Items[0]);
+            if(rowcolor != Color.Empty) {
+                dataGridViewOrder.Rows[idx].DefaultCellStyle.BackColor = rowcolor;
             }
         }
 
