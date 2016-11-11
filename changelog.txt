@@ -1,6 +1,42 @@
 vsSolutionBuildEvent
 _ _ _ _ _ _ _ _ _ _ 
 
+[v0.12.10] 2016.11.11
+
+    * FIXED: Fixed bug - `BAT files no longer dumps to VS Output window "vsSolutionBuildEvent"` Bug #34
+    * FIXED: Fixed problem with white-space chars in Files & Interpreter Mode.
+             Message: `'...' is not recognized as an internal or external command, operable program or batch file.`
+
+    * FIXED: Added messages about errors for actions in another thread when this failed.
+    * NEW: SBE-Scripts. [MSBuildComponent] Added multiline support for MSBuild expressions:
+            ```
+            #[$(
+                [System.Math]::Exp('$(
+                    [MSBuild]::Multiply(
+                        $([System.Math]::Log(10)),
+                        4
+                    ))'
+                )
+            )]
+            ```
+            See the documentation.
+            
+    * NEW: SBE-Scripts. Implemented `boolean run([enum context])` To Execute Action with specific context. [InternalComponent]
+           Now you can easy call any actions from other actions.
+            ```
+            #[Core events.Pre.item("SpecBuild").run()]
+            #[Core events.Post.item(5).run(Build)]
+            ```
+            
+    * NEW: Implemented - "The revision of modulo" (Wizard)
+    * NEW: Added special types for `Execution order` - First / Last Project & Type
+           For convenient work with deferred Pre-Build event /Related question - #37
+           
+    * CHANGED: C# Mode: Error/Warn messages also for result of this action by compiler settings - `Warnings & Errors` - `TreatWarningsAsErrors`
+    * CHANGED: Updated time format for main Log-messages: without date + added ten thousandths of a second (.0000 - .9999)
+    * CHANGED: Updated 7-zip v16.04 & NLog 4.3.11
+    * CHANGED: Other trivial changes for UI. The commands to copy / clear etc.
+
 [v0.12.9] 2016.09.14
 
     * FIXED: Critical bug with WPF designer of VS IDE. Error 25012 - process terminated unexpectedly.

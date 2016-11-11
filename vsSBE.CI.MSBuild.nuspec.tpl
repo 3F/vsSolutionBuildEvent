@@ -14,7 +14,7 @@
     
     Official package of libraries for support of the CI /Build Servers.
     
-    * ! Documentation: http://vssbe.r-eg.net -> vssbe.r-eg.net/doc/CI/CI.MSBuild/
+    * ! Documentation: http://vssbe.r-eg.net
     * VS Gallery Page: https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/
     * Source code &amp; Public Bug Tracker: https://github.com/3F/vsSolutionBuildEvent
         
