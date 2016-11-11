@@ -4,6 +4,7 @@ _ _ _ _ _ _ _ _ _ _
 [v0.12.10] 2016.11.11
 
     * FIXED: Fixed bug - `BAT files no longer dumps to VS Output window "vsSolutionBuildEvent"` Bug #34
+    * FIXED: Possible deadlock from any output messages. Related Issue #35 - 'targets mode issue'
     * FIXED: Fixed problem with white-space chars in Files & Interpreter Mode.
              Message: `'...' is not recognized as an internal or external command, operable program or batch file.`
 
