@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2015  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -39,7 +39,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// Main class for user code.
         /// </summary>
-        public const string MAIN_CLASS = "vsSolutionBuildEvent.CSharpMode";
+        public const string MAIN_CLASS = Settings.APP_NAME + ".CSharpMode";
 
         /// <summary>
         /// Entry point for user code.
@@ -49,7 +49,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// Prefix to cached bytecode.
         /// </summary>
-        protected const string PREFIX_CACHE = "cached_vssbe.";
+        protected const string PREFIX_CACHE = "cached_" + Settings.APP_NAME_SHORT + ".";
 
         /// <summary>
         /// Where to look cache.
@@ -108,13 +108,24 @@ namespace net.r_eg.vsSBE.Actions
                 type = load(outputCacheFile(evt), assemblyName(evt));
             }
 
-            int ret = run(type, cmd, evt);
-            if(ret != 0)
-            {
-                Log.Warn("Return code '{0}'", ret);
-                return false;
+            if(type == null) {
+                Log.Error($"Compiled type is null. Something went wrong for C# Action '{evt.Name}'");
             }
-            return true;
+
+            int ret = run(type, cmd, evt);
+            if(ret == 0) {
+                return true;
+            }
+
+            string retmsg = $"Return code '{ret}'";
+
+            if(((IModeCSharp)evt.Mode).TreatWarningsAsErrors) {
+                Log.Error(retmsg);
+            }
+            else {
+                Log.Warn(retmsg);
+            }
+            return false;
         }
 
         /// <param name="cmd"></param>

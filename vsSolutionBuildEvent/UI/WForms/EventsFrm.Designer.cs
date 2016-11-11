@@ -475,7 +475,7 @@
             this.menuActionExec.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
             this.menuActionExec.Size = new System.Drawing.Size(154, 22);
             this.menuActionExec.Text = "Execute";
-            this.menuActionExec.ToolTipText = "Try current action";
+            this.menuActionExec.ToolTipText = "Try current action (Common Context)";
             this.menuActionExec.Click += new System.EventHandler(this.menuActionExec_Click);
             // 
             // toolStripMenuReset

@@ -378,7 +378,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 "stData",
                 new string[] { "name", "forceEval" },
                 new string[] { "The name of package.", "To force evaluate data of package before receiving." },
-                CValueType.Void,
+                CValueType.Mixed,
                 CValueType.String, CValueType.Boolean)]
         protected string dataGet(ILevel level, IPM pm)
         {
@@ -408,7 +408,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 "stData",
                 new string[] { "name", "count" },
                 new string[] { "The name of package.", "The number of clones." },
-                CValueType.Void,
+                CValueType.Mixed,
                 CValueType.String, CValueType.Integer)]
         [Method("clone",
                 "Multiple getting package data.",
@@ -416,7 +416,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 "stData",
                 new string[] { "name", "count", "forceEval" },
                 new string[] { "The name of package.", "The number of clones.", "To force evaluate data of package before receiving." },
-                CValueType.Void,
+                CValueType.Mixed,
                 CValueType.String, CValueType.Integer, CValueType.Boolean)]
         protected string dataClone(ILevel level, IPM pm)
         {

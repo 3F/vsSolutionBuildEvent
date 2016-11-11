@@ -374,7 +374,7 @@ namespace net.r_eg.vsSBE
         /// <param name="properties">Solution properties.</param>
         public IsolatedEnv(TProp properties)
         {
-
+            slnProperties = properties;
         }
 
         /// <summary>

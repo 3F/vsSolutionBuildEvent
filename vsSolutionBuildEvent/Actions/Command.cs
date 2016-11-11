@@ -180,8 +180,8 @@ namespace net.r_eg.vsSBE.Actions
             }
             
             string marker = null;
-            if(Thread.CurrentThread.Name == Events.LoggingEvent.IDENT_TH) {
-                marker = Events.LoggingEvent.IDENT_TH;
+            if(Thread.CurrentThread.Name == LoggingEvent.IDENT_TH) {
+                marker = LoggingEvent.IDENT_TH;
             }
 
             (new Task(() => {
@@ -189,8 +189,14 @@ namespace net.r_eg.vsSBE.Actions
                 if(Thread.CurrentThread.Name == null && marker != null) {
                     Thread.CurrentThread.Name = marker;
                 }
-                Log.Trace("Task for another thread is started for '{0}' /{1}", evt.Name, type);
-                actions[type].process(evt);
+
+                Log.Trace($"Task ({type}) for another thread is started for '{evt.Name}'");
+                try {
+                    actions[type].process(evt);
+                }
+                catch(Exception ex) {
+                    Log.Error($"Task ({type}) for another thread is failed. '{evt.Name}' Error: `{ex.Message}`");
+                }
 
             })).Start();
 

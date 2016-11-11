@@ -5,53 +5,111 @@ using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
+using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 {
-    [TestClass()]
+    [TestClass]
     public class InternalComponentTest
     {
+        private IBootloader bootloader;
+        private IEnvironment env = new StubEnv();
+        private IUserVariable uvariable = new UserVariable();
+
+        private IBootloader Loader
+        {
+            get {
+                if(bootloader == null) {
+                    bootloader = new Bootloader(env, uvariable);
+                    bootloader.register();
+                }
+                return bootloader;
+            }
+        }
+
+        [TestMethod]
+        public void eventsItemRunTest1()
+        {
+            var target = new InternalComponentAccessor();
+
+            try {
+                target.parse("[Core events.Pre.item(1).run]");
+                Assert.Fail("1");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
+
+            try {
+                target.parse("[Core events.Pre.item(1).run() = true]");
+                Assert.Fail("2");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
+
+            try {
+                target.parse("[Core events.Pre.item(1).run(): true]");
+                Assert.Fail("3");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
+
+            try {
+                target.parse("[Core events.Pre.item(1).run().m]");
+                Assert.Fail("4");
+            }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
+        }
+
+        [TestMethod]
+        public void eventsItemRunTest2()
+        {
+            var target = new InternalComponentAccessor();
+            Assert.AreEqual(Value.from(true), target.parse("[Core events.Pre.item(1).run()]"));
+            Assert.AreEqual(Value.from(true), target.parse("[Core events.Pre.item(1).run(Common)]"));
+            Assert.AreEqual(Value.from(false), target.parse("[Core events.Pre.item(2).run()]"));
+            Assert.AreEqual(Value.from(false), target.parse("[Core events.Pre.item(3).run()]"));
+            Assert.AreEqual(Value.from(false), target.parse("[Core events.Pre.item(3).run(Common)]"));
+            Assert.AreEqual(Value.from(true), target.parse("[Core events.Pre.item(3).run(Rebuild)]"));
+        }
+
         /// <summary>
         ///A test for parse
         ///</summary>
-        [TestMethod()]
+        [TestMethod]
         [ExpectedException(typeof(SyntaxIncorrectException))]
         public void parseTest()
         {
-            InternalComponent target = new InternalComponent(new StubEnv());
+            InternalComponent target = new InternalComponent(Loader);
             target.parse("#[vsSBE events.Type.item(1)]");
         }
 
         /// <summary>
         ///A test for parse
         ///</summary>
-        [TestMethod()]
+        [TestMethod]
         [ExpectedException(typeof(SyntaxIncorrectException))]
         public void parseTest2()
         {
-            InternalComponent target = new InternalComponent(new StubEnv());
+            InternalComponent target = new InternalComponent(Loader);
             target.parse("vsSBE events.Type.item(1)");
         }
 
         /// <summary>
         ///A test for parse
         ///</summary>
-        [TestMethod()]
+        [TestMethod]
         [ExpectedException(typeof(SubtypeNotFoundException))]
         public void parseTest3()
         {
-            InternalComponent target = new InternalComponent(new StubEnv());
+            InternalComponent target = new InternalComponent(Loader);
             target.parse("[vsSBE NoExist.Type]");
         }
 
         /// <summary>
         ///A test for parse - stEvents
         ///</summary>
-        [TestMethod()]
+        [TestMethod]
         [ExpectedException(typeof(OperandNotFoundException))]
         public void stEventsParseTest1()
         {
-            InternalComponent target = new InternalComponent(new StubEnv());
+            InternalComponent target = new InternalComponent(Loader);
             target.parse("[vsSBE events.Type.item(name)]");
         }
 
@@ -62,7 +120,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(OperandNotFoundException))]
         public void stEventsParseTest2()
         {
-            InternalComponent target = new InternalComponent(new StubEnv());
+            InternalComponent target = new InternalComponent(Loader);
             target.parse("[vsSBE events.Type.item(1).test]");
         }
 
@@ -142,7 +200,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(IncorrectNodeException))]
         public void startUpProjectTest1()
         {
-            var target = new InternalComponent(new StubEnv());
+            var target = new InternalComponent(Loader);
             target.parse("[Core StartUpProject: test]");
         }
 
@@ -242,12 +300,26 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                     return evt;
                 }
 
-                evt = new SBEEvent[2]{ 
+                evt = new SBEEvent[3]{ 
                     new SBEEvent(){
-                        Name = "Name1", Enabled = true
+                        Name = "Name1",
+                        SupportMSBuild = false,
+                        SupportSBEScripts = false,
+                        Mode = new ModeFile() { Command = "" },
+                        Enabled = true
                     },
                     new SBEEvent(){
-                        Name = "Name2", Enabled = false
+                        Name = "Name2",
+                        Mode = new ModeFile() { Command = "" },
+                        Enabled = false
+                    },
+                    new SBEEvent(){
+                        Name = "Name3",
+                        SupportMSBuild = false,
+                        SupportSBEScripts = false,
+                        BuildType = Bridge.BuildType.Rebuild,
+                        Mode = new ModeFile() { Command = "" },
+                        Enabled = true
                     }
                 };
                 return evt;
