@@ -46,8 +46,8 @@
     </ItemGroup>
     
     <ItemGroup>
-        <!-- 7z.dll x86 - v16.02 -->
-        <VsixLib Include="$(SolutionDir)packages\7z.Libs.16.2.0\bin\x86\7z.dll" /><!-- packages\7z.Libs.*\bin\x86\7z.dll -->
+        <!-- 7z.dll x86 -->
+        <VsixLib Include="$(SolutionDir)packages\7z.Libs.16.4.0\bin\x86\7z.dll" /><!-- packages\7z.Libs.*\bin\x86\7z.dll -->
     </ItemGroup>
   
 </Project>
