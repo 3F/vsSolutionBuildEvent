@@ -56,6 +56,8 @@ namespace net.r_eg.vsSBE
         {
             get
             {
+                ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+
                 foreach(var pname in ProjectsDTE.Select(p => getProjectNameFrom(p))) {
                     if(String.IsNullOrEmpty(pname)) {
                         yield return getProject(pname);
@@ -71,6 +73,8 @@ namespace net.r_eg.vsSBE
         {
             get
             {
+                ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+
                 try {
                     return _DTEProjects.Select(p => getProjectNameFrom(p)).ToList<string>();
                 }
@@ -279,7 +283,7 @@ namespace net.r_eg.vsSBE
 
                 foreach(EnvDTE.Project project in Dte2.Solution.Projects)
                 {
-                    if(project.Kind != ProjectKinds.vsProjectKindSolutionFolder) {
+                    if(project.Kind != "{66A26720-8FB5-11D2-AA7E-00C04F688DDE}") { // TODO: ProjectKinds.vsProjectKindSolutionFolder
                         yield return project;
                         continue;
                     }
@@ -316,6 +320,8 @@ namespace net.r_eg.vsSBE
         /// <returns>Microsoft.Build.Evaluation.Project</returns>
         public virtual Project getProject(string name = null)
         {
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+
             EnvDTE.Project selected = null;
             string startup          = StartupProjectString;
 
@@ -388,8 +394,9 @@ namespace net.r_eg.vsSBE
         /// <returns>project name from Microsoft.Build.Evaluation rules or null value if project not found in GlobalProjectCollection and force value is false</returns>
         public string getProjectNameFrom(IVsHierarchy pHierProj, bool force = false)
         {
-            Guid id;
-            pHierProj.GetGuidProperty((uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_ProjectIDGuid, out id);
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+
+            pHierProj.GetGuidProperty((uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_ProjectIDGuid, out Guid id);
 
             foreach(Project eProject in ProjectCollection.GlobalProjectCollection.LoadedProjects)
             {
@@ -402,8 +409,7 @@ namespace net.r_eg.vsSBE
             if(!force) {
                 return null;
             }
-            object dteProject;
-            pHierProj.GetProperty((uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_ExtObject, out dteProject);
+            pHierProj.GetProperty((uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_ExtObject, out object dteProject);
             return getProjectNameFrom(tryLoadPCollection((EnvDTE.Project)dteProject));
         }
 
@@ -442,6 +448,8 @@ namespace net.r_eg.vsSBE
         /// <returns></returns>
         protected bool isEquals(EnvDTE.Project dteProject, Project eProject)
         {
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+
             string ePrgName         = getProjectNameFrom(eProject);
             string ePrgCfg          = eProject.GetPropertyValue("Configuration");
             string ePrgPlatform     = eProject.GetPropertyValue("Platform");
@@ -470,6 +478,8 @@ namespace net.r_eg.vsSBE
         /// </summary>
         protected Project tryLoadPCollection(EnvDTE.Project dteProject)
         {
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+
             Dictionary<string, string> prop = getGlobalProperties(dteProject);
 
             Log.Debug("tryLoadPCollection :: '{0}' [{1} ; {2}]", dteProject.FullName, prop["Configuration"], prop["Platform"]);
@@ -486,9 +496,10 @@ namespace net.r_eg.vsSBE
         {
             //return dteProject.Name; // can be as 'AppName' and 'AppName_2013' for different .sln
 
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+
             IVsSolution sln = (IVsSolution)Package.GetGlobalService(typeof(SVsSolution));
-            IVsHierarchy hr;
-            sln.GetProjectOfUniqueName(dteProject.FullName, out hr);
+            sln.GetProjectOfUniqueName(dteProject.FullName, out IVsHierarchy hr);
 
             string projectName = getProjectNameFrom(hr, false);
             if(!String.IsNullOrEmpty(projectName)) {
@@ -511,7 +522,9 @@ namespace net.r_eg.vsSBE
         protected Dictionary<string, string> getGlobalProperties(EnvDTE.Project dteProject)
         {
             Dictionary<string, string> prop = new Dictionary<string, string>(ProjectCollection.GlobalProjectCollection.GlobalProperties); // copy from ProjectCollection
-            
+
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+
             if(!prop.ContainsKey("Configuration")) {
                 prop["Configuration"] = dteProject.ConfigurationManager.ActiveConfiguration.ConfigurationName;
             }
@@ -533,9 +546,8 @@ namespace net.r_eg.vsSBE
             {
                 // http://technet.microsoft.com/en-us/microsoft.visualstudio.shell.interop.__vsspropid%28v=vs.71%29.aspx
 
-                object dirObject = null;
                 IVsShell shell = (IVsShell)Package.GetGlobalService(typeof(SVsShell));
-                shell.GetProperty((int)__VSSPROPID.VSSPROPID_InstallDirectory, out dirObject);
+                shell.GetProperty((int)__VSSPROPID.VSSPROPID_InstallDirectory, out object dirObject);
 
                 string dir = (string)dirObject;
 
@@ -586,7 +598,7 @@ namespace net.r_eg.vsSBE
                     continue; //e.g. project is incompatible with used version of visual studio
                 }
 
-                if(item.SubProject.Kind != ProjectKinds.vsProjectKindSolutionFolder) {
+                if(item.SubProject.Kind != "{66A26720-8FB5-11D2-AA7E-00C04F688DDE}") { //TODO: ProjectKinds.vsProjectKindSolutionFolder
                     yield return item.SubProject;
                     continue;
                 }

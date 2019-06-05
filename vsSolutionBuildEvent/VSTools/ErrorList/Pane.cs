@@ -16,6 +16,8 @@
 */
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.Shell;
 
 namespace net.r_eg.vsSBE.VSTools.ErrorList
@@ -68,8 +70,10 @@ namespace net.r_eg.vsSBE.VSTools.ErrorList
 
         protected void task(string msg, TaskErrorCategory type = TaskErrorCategory.Message)
         {
-            ThreadTask.Factory.StartNew(() => // to prevent bug from `Process.ErrorDataReceived`
+            ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
             {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
                 provider.Tasks.Add(new ErrorTask()
                 {
                     Text                = msg,
@@ -79,7 +83,6 @@ namespace net.r_eg.vsSBE.VSTools.ErrorList
                     IsCheckedEditable   = true,
                     ErrorCategory       = type,
                 });
-
             });
         }
 

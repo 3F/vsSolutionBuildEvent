@@ -103,7 +103,7 @@
         <IDSymbol name="CMD_PANEL" value="0x0101" />
     </GuidSymbol>
 
-    <GuidSymbol name="guidImages" value="{5B7F235E-F4E8-4175-98BF-F7DCCB3BFE73}" >
+    <GuidSymbol name="guidImages" value="{5B7F235E-F4E8-4175-98BF-F7DCCB3BFE73}">
         <IDSymbol name="package16" value="1" />
     </GuidSymbol>
         

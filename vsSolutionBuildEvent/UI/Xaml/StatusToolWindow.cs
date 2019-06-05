@@ -122,6 +122,12 @@ namespace net.r_eg.vsSBE.UI.Xaml
             tool            = (IStatusTool)base.Content;
         }
 
+        public StatusToolWindow(string message)
+            : this()
+        {
+
+        }
+
         private void onCloseSolution(object sender, EventArgs e)
         {
             tool.enabledPanel(false);

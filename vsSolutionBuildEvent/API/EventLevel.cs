@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using EnvDTE80;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.API.Commands;
 using net.r_eg.vsSBE.Bridge;
@@ -243,6 +244,8 @@ namespace net.r_eg.vsSBE.API
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onProjectPre(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel)
         {
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+
             try {
                 int ret = Action.bindProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel);
 
@@ -263,6 +266,8 @@ namespace net.r_eg.vsSBE.API
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onProjectPre(string project)
         {
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+
             try {
                 int ret = Action.bindProjectPre(project);
 
@@ -288,6 +293,8 @@ namespace net.r_eg.vsSBE.API
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onProjectPost(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
         {
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+
             try {
                 int ret = Action.bindProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
 
@@ -309,6 +316,8 @@ namespace net.r_eg.vsSBE.API
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onProjectPost(string project, int fSuccess)
         {
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+
             try {
                 int ret = Action.bindProjectPost(project, fSuccess);
 

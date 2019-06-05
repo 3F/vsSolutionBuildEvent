@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Threading;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Logger;
@@ -135,6 +136,8 @@ namespace net.r_eg.vsSBE
         {
             Guid id = (upane != null)? upane.Guid : GuidList.OWP_SBE;
             paneDetach();
+
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
 
             if(ow != null) {
                 ow.DeletePane(ref id);

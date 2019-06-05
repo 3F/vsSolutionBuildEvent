@@ -65,6 +65,8 @@ namespace net.r_eg.vsSBE
         /// <param name="name"></param>
         public void deleteByName(string name)
         {
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+
             OutputWindowPane pane = getByName(name, false);
             deleteByGuid(new Guid(pane.Guid));
         }
@@ -75,6 +77,8 @@ namespace net.r_eg.vsSBE
         /// <param name="guid"></param>
         public void deleteByGuid(Guid guid)
         {
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+
             IVsOutputWindow ow = (IVsOutputWindow)Package.GetGlobalService(typeof(SVsOutputWindow));
             ow.DeletePane(ref guid);
         }

@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016,2019  Denis Kuzmin < entry.reg@gmail.com > GitHub/3F
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -16,23 +16,23 @@
 */
 
 using System;
-using System.ComponentModel.Design;
 using System.Diagnostics;
-using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.Bridge;
-using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.UI.Xaml;
+using Task = System.Threading.Tasks.Task;
 
 namespace net.r_eg.vsSBE
 {
     // Managed Package Registration
-    [PackageRegistration(UseManagedResourcesOnly = true)]
+    [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
 
     // To register the informations needed to in the Help/About dialog of Visual Studio
     [InstalledProductRegistration("#110", "#112", Version.numberWithRevString, IconResourceID = 400)]
@@ -41,14 +41,14 @@ namespace net.r_eg.vsSBE
     [ProvideMenuResource("Menus.ctmenu", 1)]
 
     //  To be automatically loaded when a specified UI context is active
-    [ProvideAutoLoad(UIContextGuids80.SolutionExists)]
+    [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
 
     // Registers the tool window
-    [ProvideToolWindow(typeof(UI.Xaml.StatusToolWindow), Height=25, Style=VsDockStyle.Linked, Orientation=ToolWindowOrientation.Top, Window=ToolWindowGuids80.Outputwindow)]
+    [ProvideToolWindow(typeof(StatusToolWindow), Height=25, Style=VsDockStyle.Linked, Orientation=ToolWindowOrientation.Top, Window=ToolWindowGuids80.Outputwindow)]
 
     // Package Guid
     [Guid(GuidList.PACKAGE_STRING)]
-    public sealed class vsSolutionBuildEventPackage: Package, IDisposable, IVsSolutionEvents, IVsUpdateSolutionEvents2
+    public sealed class vsSolutionBuildEventPackage: AsyncPackage, IDisposable, IVsSolutionEvents, IVsUpdateSolutionEvents2
     {
         /// <summary>
         /// For IVsSolutionEvents events
@@ -80,19 +80,19 @@ namespace net.r_eg.vsSBE
         private VSTools.ErrorList.IPane errorList;
 
         /// <summary>
+        /// The command for: Build / { main app tool }
+        /// </summary>
+        private MainToolCommand mainToolCmd;
+
+        /// <summary>
+        /// The command for: View / Other Windows / { Status Panel }
+        /// </summary>
+        private StatusToolCommand sToolCmd;
+
+        /// <summary>
         /// Listener of the OutputWindowsPane
         /// </summary>
         private Receiver.Output.OWP _owpListener;
-
-        /// <summary>
-        /// The command for menu - Build / Events Solution
-        /// </summary>
-        private MenuCommand _menuItemMain;
-        
-        /// <summary>
-        /// Main form of settings
-        /// </summary>
-        private UI.WForms.EventsFrm configFrm;
 
         /// <summary>
         /// DTE2 Context
@@ -100,7 +100,7 @@ namespace net.r_eg.vsSBE
         public DTE2 Dte2
         {
             get {
-                return (DTE2)Package.GetGlobalService(typeof(SDTE)); 
+                return (DTE2)GetGlobalService(typeof(SDTE));
             }
         }
 
@@ -113,28 +113,34 @@ namespace net.r_eg.vsSBE
             private set;
         }
 
-        /// <summary>
-        /// Gets instance of StatusToolWindow.
-        /// Ensures that the Frame of value is also != null
-        /// </summary>
-        private ToolWindowPane StatusTool
+        // VSSDK003: Visual Studio 2017 Update 6 or later:
+        #region async tool windows
+
+        public override IVsAsyncToolWindowFactory GetAsyncToolWindowFactory(Guid toolWindowType)
         {
-            get
-            {
-                if(statusTool != null) {
-                    return statusTool;
-                }
-
-                ToolWindowPane window = FindToolWindow(typeof(UI.Xaml.StatusToolWindow), 0, true); // find or create
-                if(window == null || window.Frame == null) {
-                    return null;
-                }
-
-                statusTool = window;
-                return statusTool;
+            if(toolWindowType == typeof(StatusToolWindow).GUID) {
+                return this;
             }
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+            return base.GetAsyncToolWindowFactory(toolWindowType);
         }
-        private ToolWindowPane statusTool;
+
+        protected override string GetToolWindowTitle(Type toolWindowType, int id)
+        {
+            if(toolWindowType == typeof(StatusToolWindow)) {
+                return $"{nameof(StatusToolWindow)} loading";
+            }
+
+            return base.GetToolWindowTitle(toolWindowType, id);
+        }
+
+        protected override async Task<object> InitializeToolWindowAsync(Type toolWindowType, int id, CancellationToken ct)
+        {
+            return await Task.FromResult(String.Empty); // this is passed to the tool window constructor
+        }
+
+        #endregion
 
         /// <summary>
         /// Priority call with SVsSolution.
@@ -175,11 +181,11 @@ namespace net.r_eg.vsSBE
         /// <returns></returns>
         public int OnAfterCloseSolution(object pUnkReserved)
         {
-            _menuItemMain.Visible = false;
+            mainToolCmd.setVisibility(false);
             try
             {
                 Event.solutionClosed(pUnkReserved);
-                UI.Util.closeTool(configFrm);
+                mainToolCmd.closeConfigForm();
 
                 eventsOfStatusTool(false);
                 //Log._.paneDetach((IVsOutputWindow)GetGlobalService(typeof(SVsOutputWindow)));
@@ -195,7 +201,7 @@ namespace net.r_eg.vsSBE
         {
             try {
                 UI.Plain.State.BuildBegin();
-                ((IStatusTool)StatusTool.Content).resetCounter();
+                sToolCmd.getTool().resetCounter();
                 errorList.clear();
             }
             catch(Exception ex) {
@@ -263,17 +269,25 @@ namespace net.r_eg.vsSBE
         /// <param name="attach"></param>
         private void eventsOfStatusTool(bool attach)
         {
-            if(StatusTool == null) {
+            IStatusToolEvents ste = sToolCmd.getToolEvents();
+
+            if(ste == null) {
                 Log.Debug("Cannot find or create UI.StatusToolWindow");
                 return;
             }
-            IStatusToolEvents ste = (IStatusToolEvents)StatusTool;
 
-            if(attach) {
-                ste.attachEvents(Event).attachEvents(Settings.CfgManager.Config).attachEvents();
+            if(attach)
+            {
+                ste.attachEvents(Event)
+                    .attachEvents(Settings.CfgManager.Config)
+                    .attachEvents();
+
                 return;
             }
-            ste.detachEvents().detachEvents(Settings.CfgManager.Config).detachEvents(Event);
+
+            ste.detachEvents()
+                .detachEvents(Settings.CfgManager.Config)
+                .detachEvents(Event);
         }
 
         /// <summary>
@@ -281,25 +295,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         private void onLateOpenedSolution(object sender, EventArgs e)
         {
-            _menuItemMain.Visible = true;
-        }
-
-        /// <summary>
-        /// Handler of showing the main window if clicked # Build / Events Solution
-        /// </summary>
-        private void _menuMainCallback(object sender, EventArgs e)
-        {
-            try
-            {
-                if(UI.Util.focusForm(configFrm)) {
-                    return;
-                }
-                configFrm = new UI.WForms.EventsFrm(Event.Bootloader);
-                configFrm.Show();
-            }
-            catch(Exception ex) {
-                Log.Error("Failed UI: `{0}`", ex.Message);
-            }
+            mainToolCmd.setVisibility(true);
         }
 
         private void onLogReceived(object sender, Logger.MessageArgs e)
@@ -312,20 +308,113 @@ namespace net.r_eg.vsSBE
             }
         }
 
-        /// <summary>
-        /// Handler of showing the status-tool window
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void _menuPanelCallback(object sender, EventArgs e)
+        private void free()
         {
-            if(StatusTool == null) {
-                throw new ComponentException("Cannot create UI.StatusToolWindow");
+            mainToolCmd.Dispose();
+
+            if(errorList != null) {
+                ((IDisposable)errorList).Dispose();
             }
-            ErrorHandler.ThrowOnFailure(((IVsWindowFrame)StatusTool.Frame).Show());
+
+            ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
+            {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+                if(spSolutionBM != null && _pdwCookieSolutionBM != 0) {
+                    spSolutionBM.UnadviseUpdateSolutionEvents(_pdwCookieSolutionBM);
+                }
+
+                if(spSolution != null && _pdwCookieSolution != 0) {
+                    spSolution.UnadviseSolutionEvents(_pdwCookieSolution);
+                }
+            });
         }
 
-        #region unused
+        /// <summary>
+        /// Initialization of the package; this method is called right after the package is sited.
+        /// </summary>
+        /// <param name="cancellationToken">A cancellation token to monitor for initialization cancellation, which can occur when VS is shutting down.</param>
+        /// <param name="progress">A provider for progress updates.</param>
+        protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
+        {
+            // When initialized asynchronously, the current thread may be a background thread at this point.
+            // Do any initialization that requires the UI thread after switching to the UI thread.
+            await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+            Trace.WriteLine($"Entering Initialize() of: { ToString() }");
+            try
+            {
+                errorList = new VSTools.ErrorList.Pane(this);
+
+                Log._.Received  -= onLogReceived;
+                Log._.Received  += onLogReceived;
+
+                initAppEvents();
+
+                mainToolCmd = await MainToolCommand.initAsync(this, Event);
+                mainToolCmd.setVisibility(false);
+
+                sToolCmd = await StatusToolCommand.initAsync(this);
+                await sToolCmd.findToolPaneAsync();
+
+                spSolution = await GetServiceAsync(typeof(SVsSolution)) as IVsSolution;
+                spSolution.AdviseSolutionEvents(this, out _pdwCookieSolution);
+
+                spSolutionBM = await GetServiceAsync(typeof(SVsSolutionBuildManager)) as IVsSolutionBuildManager2;
+                spSolutionBM.AdviseUpdateSolutionEvents(this, out _pdwCookieSolutionBM);
+            }
+            catch(Exception ex)
+            {
+                string msg = string.Format("{0}\n{1}\n\n-----\n{2}", 
+                                "Something went wrong -_-",
+                                "Try to restart IDE or reinstall current plugin in Extension Manager.", 
+                                ex.ToString());
+
+                Debug.WriteLine(msg);
+
+                Guid id = Guid.Empty;
+                IVsUIShell uiShell = await GetServiceAsync(typeof(SVsUIShell)) as IVsUIShell;
+
+                ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox
+                (
+                    0,
+                    ref id,
+                    $"Initialize { ToString() }",
+                    msg,
+                    String.Empty,
+                    0,
+                    OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST,
+                    OLEMSGICON.OLEMSGICON_WARNING,
+                    0,
+                    out int res
+                ));
+            }
+        }
+
+        #region IDisposable
+
+        private bool disposed = false;
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if(disposed) {
+                return;
+            }
+            disposed = true;
+
+            free();
+            base.Dispose(disposing);
+        }
+
+        #endregion
+
+        #region unused API
 
         public int UpdateSolution_StartUpdate(ref int pfCancelUpdate)
         {
@@ -375,108 +464,6 @@ namespace net.r_eg.vsSBE
         int IVsSolutionEvents.OnQueryUnloadProject(IVsHierarchy pRealHierarchy, ref int pfCancel)
         {
             return VSConstants.S_OK;
-        }
-
-        #endregion
-
-        #region maintenance
-        protected override void Initialize()
-        {
-            Trace.WriteLine(String.Format(CultureInfo.CurrentCulture, "Entering Initialize() of: {0}", this.ToString()));
-            base.Initialize();
-
-            try
-            {
-                errorList       = new VSTools.ErrorList.Pane(this);
-                Log._.Received  -= onLogReceived;
-                Log._.Received  += onLogReceived;
-
-                initAppEvents();
-
-                OleMenuCommandService mcs = (OleMenuCommandService)GetService(typeof(IMenuCommandService));
-
-                // Build / <Main App>
-                _menuItemMain = new MenuCommand(_menuMainCallback, new CommandID(GuidList.MAIN_CMD_SET, (int)PkgCmdIDList.CMD_MAIN));
-                _menuItemMain.Visible = false;
-                mcs.AddCommand(_menuItemMain);
-
-                // View / Other Windows / <Status Panel>
-                mcs.AddCommand(new MenuCommand(_menuPanelCallback, new CommandID(GuidList.PANEL_CMD_SET, (int)PkgCmdIDList.CMD_PANEL)));
-
-                // To listen events that fired as a IVsSolutionEvents
-                spSolution = (IVsSolution)ServiceProvider.GlobalProvider.GetService(typeof(SVsSolution));
-                spSolution.AdviseSolutionEvents(this, out _pdwCookieSolution);
-
-                // To listen events that fired as a IVsUpdateSolutionEvents2
-                spSolutionBM = (IVsSolutionBuildManager2)ServiceProvider.GlobalProvider.GetService(typeof(SVsSolutionBuildManager));
-                spSolutionBM.AdviseUpdateSolutionEvents(this, out _pdwCookieSolutionBM);
-            }
-            catch(Exception ex)
-            {
-                string msg = string.Format("{0}\n{1}\n\n-----\n{2}", 
-                                "Something went wrong -_-",
-                                "Try to restart IDE or reinstall current plugin in Extension Manager.", 
-                                ex.ToString());
-
-                Debug.WriteLine(msg);
-                
-                int res;
-                Guid id = Guid.Empty;
-                IVsUIShell uiShell = (IVsUIShell)GetService(typeof(SVsUIShell));
-
-                Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(
-                    uiShell.ShowMessageBox(
-                           0,
-                           ref id,
-                           "Initialize vsSolutionBuildEvent",
-                           msg,
-                           string.Empty,
-                           0,
-                           OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                           OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST,
-                           OLEMSGICON.OLEMSGICON_WARNING,
-                           0,
-                           out res));
-            }
-        }
-        #endregion
-        
-        #region IDisposable
-
-        // To detect redundant calls
-        private bool disposed = false;
-
-        // To correctly implement the disposable pattern.
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if(disposed) {
-                return;
-            }
-            disposed = true;
-            //...
-
-            if(configFrm != null && !configFrm.IsDisposed) {
-                configFrm.Close();
-            }
-
-            if(errorList != null) {
-                ((IDisposable)errorList).Dispose();
-            }
-
-            if(spSolutionBM != null && _pdwCookieSolutionBM != 0) {
-                spSolutionBM.UnadviseUpdateSolutionEvents(_pdwCookieSolutionBM);
-            }
-
-            if(spSolution != null && _pdwCookieSolution != 0) {
-                spSolution.UnadviseSolutionEvents(_pdwCookieSolution);
-            }
-
-            base.Dispose(disposing);
         }
 
         #endregion

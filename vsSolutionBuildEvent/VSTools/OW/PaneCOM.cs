@@ -16,6 +16,7 @@
 */
 
 using System;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 
 namespace net.r_eg.vsSBE.VSTools.OW
@@ -41,6 +42,8 @@ namespace net.r_eg.vsSBE.VSTools.OW
         /// </summary>
         public void Activate()
         {
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+
             pane.Activate();
         }
 
@@ -49,6 +52,8 @@ namespace net.r_eg.vsSBE.VSTools.OW
         /// </summary>
         public void Clear()
         {
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+
             pane.Clear();
         }
 
@@ -58,6 +63,8 @@ namespace net.r_eg.vsSBE.VSTools.OW
         /// <param name="text"></param>
         public void OutputString(string text)
         {
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+
             pane.OutputString(text);
         }
 
@@ -68,6 +75,8 @@ namespace net.r_eg.vsSBE.VSTools.OW
             if(ow == null) {
                 throw new ArgumentNullException("ow", "cannot be null");
             }
+
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
 
             Guid id = GuidList.OWP_SBE;
             ow.CreatePane(ref id, name, 1, 1);

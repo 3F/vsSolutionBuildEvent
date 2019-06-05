@@ -19,6 +19,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using Microsoft.VisualStudio.Shell;
 using net.r_eg.vsSBE.Events;
 
 namespace net.r_eg.vsSBE.UI.Xaml
@@ -67,14 +68,11 @@ namespace net.r_eg.vsSBE.UI.Xaml
         /// </summary>
         public void warn()
         {
-            try {
-                Application.Current.Dispatcher.BeginInvoke(new Action(() => {
-                    textInfo.Text = logic.addWarning().ToString();
-                }));
-            }
-            catch(Exception ex) {
-                Log.Debug("Failed StatusToolControl::notify: '{0}'", ex.Message);
-            }
+            ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
+            {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                textInfo.Text = logic.addWarning().ToString();
+            });
         }
 
         /// <summary>
@@ -123,16 +121,21 @@ namespace net.r_eg.vsSBE.UI.Xaml
         /// <param name="type"></param>
         protected void update(ToggleButton btn, SolutionEventType type)
         {
-            try {
+            try
+            {
                 logic.update(type);
-                Application.Current.Dispatcher.BeginInvoke(new Action(() => {
-                    btn.Content = caption(type, false);
-                    btn.IsChecked = !isDisabledAll(type);
-                }));
             }
             catch(Exception ex) {
                 Log.Warn("StatusToolControl: Failed update for type - '{0}' :: '{1}'", type, ex.Message);
             }
+
+            ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
+            {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+                btn.Content     = caption(type, false);
+                btn.IsChecked   = !isDisabledAll(type);
+            });
         }
 
         protected bool isDisabledAll(SolutionEventType type)
