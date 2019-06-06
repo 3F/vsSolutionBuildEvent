@@ -1,5 +1,5 @@
 ﻿/*
- * Copyright (c) 2013-2016  Denis Kuzmin (reg) <entry.reg@gmail.com>
+ * Copyright (c) 2013-2016,2019  Denis Kuzmin < entry.reg@gmail.com > GitHub/3F
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -110,6 +110,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected void initLib()
         {
             string cPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location).PathFormat();
+            Log.Debug($"7z: path '{cPath}'");
+
             try {
                 SevenZipBase.SetLibraryPath(Path.Combine(cPath, LIB_FULL));
                 isReady = true;

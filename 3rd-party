@@ -1,3 +1,6 @@
+vsSolutionBuildEvent  [ github.com/3F/vsSolutionBuildEvent ]
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
 # Third-party software components
 
 ## The vsSolutionBuildEvent includes:
@@ -8,9 +11,9 @@
     * Ude (code.google.com/p/ude/)
     * SevenZipSharp (sevenzipsharp.codeplex.com)
     * 7-Zip (www.7-zip.org)
-    * GetNuTool logic (github.com/3F/GetNuTool)
+    * GetNuTool core (github.com/3F/GetNuTool)
     
-## Maintenance of this project includes next additional software:
+## Maintaining of this project also includes the following tools:
 
     * Moq (www.moqthis.com)
     * VsixCompress (nuget.org/packages/VsixCompress)
