@@ -57,7 +57,7 @@ namespace net.r_eg.vsSBE
             get
             {
                 foreach(var pname in ProjectsDTE.Select(p => getProjectNameFrom(p))) {
-                    if(String.IsNullOrEmpty(pname)) {
+                    if(!String.IsNullOrWhiteSpace(pname)) {
                         yield return getProject(pname);
                     }
                 }

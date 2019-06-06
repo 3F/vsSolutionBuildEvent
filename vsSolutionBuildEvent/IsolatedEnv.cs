@@ -65,7 +65,7 @@ namespace net.r_eg.vsSBE
             {
                 foreach(var pname in ProjectsList)
                 {
-                    if(String.IsNullOrEmpty(pname)) {
+                    if(!String.IsNullOrWhiteSpace(pname)) {
                         yield return getProject(pname);
                     }
                 }
