@@ -201,7 +201,7 @@ namespace net.r_eg.vsSBE
         {
             try {
                 UI.Plain.State.BuildBegin();
-                sToolCmd.getTool().resetCounter();
+                sToolCmd.ToolContent.resetCounter();
                 errorList.clear();
             }
             catch(Exception ex) {
@@ -243,6 +243,67 @@ namespace net.r_eg.vsSBE
             return Event.onProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
         }
 
+        /// <summary>
+        /// Initialization of the package; this method is called right after the package is sited.
+        /// </summary>
+        /// <param name="cancellationToken">A cancellation token to monitor for initialization cancellation, which can occur when VS is shutting down.</param>
+        /// <param name="progress">A provider for progress updates.</param>
+        protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
+        {
+            // When initialized asynchronously, the current thread may be a background thread at this point.
+            // Do any initialization that requires the UI thread after switching to the UI thread.
+            await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+            Trace.WriteLine($"Entering Initialize() of: { ToString() }");
+            try
+            {
+                errorList = new VSTools.ErrorList.Pane(this);
+
+                Log._.Received  -= onLogReceived;
+                Log._.Received  += onLogReceived;
+
+                initAppEvents();
+
+                mainToolCmd = await MainToolCommand.initAsync(this, Event);
+                mainToolCmd.setVisibility(false);
+
+                sToolCmd = await StatusToolCommand.initAsync(this);
+
+                spSolution = await GetServiceAsync(typeof(SVsSolution)) as IVsSolution;
+                spSolution.AdviseSolutionEvents(this, out _pdwCookieSolution);
+
+                spSolutionBM = await GetServiceAsync(typeof(SVsSolutionBuildManager)) as IVsSolutionBuildManager2;
+                spSolutionBM.AdviseUpdateSolutionEvents(this, out _pdwCookieSolutionBM);
+            }
+            catch(Exception ex)
+            {
+                string msg = string.Format("{0}\n{1}\n\n-----\n{2}", 
+                                "Something went wrong -_-",
+                                "Try to restart IDE or reinstall current plugin in Extension Manager.", 
+                                ex.ToString());
+
+                Debug.WriteLine(msg);
+
+                Guid id = Guid.Empty;
+                IVsUIShell uiShell = await GetServiceAsync(typeof(SVsUIShell)) as IVsUIShell;
+
+                ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox
+                (
+                    0,
+                    ref id,
+                    $"Initialize { ToString() }",
+                    msg,
+                    String.Empty,
+                    0,
+                    OLEMSGBUTTON.OLEMSGBUTTON_OK,
+                    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST,
+                    OLEMSGICON.OLEMSGICON_WARNING,
+                    0,
+                    out int res
+                ));
+            }
+        }
+
         private void initAppEvents()
         {
             var usrCfg = new UserConfig();
@@ -269,7 +330,7 @@ namespace net.r_eg.vsSBE
         /// <param name="attach"></param>
         private void eventsOfStatusTool(bool attach)
         {
-            IStatusToolEvents ste = sToolCmd.getToolEvents();
+            IStatusToolEvents ste = sToolCmd.ToolEvents;
 
             if(ste == null) {
                 Log.Debug("Cannot find or create UI.StatusToolWindow");
@@ -328,68 +389,6 @@ namespace net.r_eg.vsSBE
                     spSolution.UnadviseSolutionEvents(_pdwCookieSolution);
                 }
             });
-        }
-
-        /// <summary>
-        /// Initialization of the package; this method is called right after the package is sited.
-        /// </summary>
-        /// <param name="cancellationToken">A cancellation token to monitor for initialization cancellation, which can occur when VS is shutting down.</param>
-        /// <param name="progress">A provider for progress updates.</param>
-        protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
-        {
-            // When initialized asynchronously, the current thread may be a background thread at this point.
-            // Do any initialization that requires the UI thread after switching to the UI thread.
-            await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-
-            Trace.WriteLine($"Entering Initialize() of: { ToString() }");
-            try
-            {
-                errorList = new VSTools.ErrorList.Pane(this);
-
-                Log._.Received  -= onLogReceived;
-                Log._.Received  += onLogReceived;
-
-                initAppEvents();
-
-                mainToolCmd = await MainToolCommand.initAsync(this, Event);
-                mainToolCmd.setVisibility(false);
-
-                sToolCmd = await StatusToolCommand.initAsync(this);
-                await sToolCmd.findToolPaneAsync();
-
-                spSolution = await GetServiceAsync(typeof(SVsSolution)) as IVsSolution;
-                spSolution.AdviseSolutionEvents(this, out _pdwCookieSolution);
-
-                spSolutionBM = await GetServiceAsync(typeof(SVsSolutionBuildManager)) as IVsSolutionBuildManager2;
-                spSolutionBM.AdviseUpdateSolutionEvents(this, out _pdwCookieSolutionBM);
-            }
-            catch(Exception ex)
-            {
-                string msg = string.Format("{0}\n{1}\n\n-----\n{2}", 
-                                "Something went wrong -_-",
-                                "Try to restart IDE or reinstall current plugin in Extension Manager.", 
-                                ex.ToString());
-
-                Debug.WriteLine(msg);
-
-                Guid id = Guid.Empty;
-                IVsUIShell uiShell = await GetServiceAsync(typeof(SVsUIShell)) as IVsUIShell;
-
-                ErrorHandler.ThrowOnFailure(uiShell.ShowMessageBox
-                (
-                    0,
-                    ref id,
-                    $"Initialize { ToString() }",
-                    msg,
-                    String.Empty,
-                    0,
-                    OLEMSGBUTTON.OLEMSGBUTTON_OK,
-                    OLEMSGDEFBUTTON.OLEMSGDEFBUTTON_FIRST,
-                    OLEMSGICON.OLEMSGICON_WARNING,
-                    0,
-                    out int res
-                ));
-            }
         }
 
         #region IDisposable

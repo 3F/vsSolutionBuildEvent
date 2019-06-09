@@ -42,6 +42,44 @@ namespace net.r_eg.vsSBE
             private set;
         }
 
+        public IStatusTool ToolContent
+        {
+            get => (IStatusTool)ToolPane.Content;
+        }
+
+        public IStatusToolEvents ToolEvents
+        {
+            get => (IStatusToolEvents)ToolPane;
+        }
+
+        /// <summary>
+        /// NOTE: we will use FindToolWindow() because async FindToolWindowAsync()/ShowToolWindowAsync() produces possible deadlocks.
+        ///       This is related to CreateToolWindow() problem:
+        ///       https://github.com/3F/vsSolutionBuildEvent/pull/45#pullrequestreview-246288512
+        /// </summary>
+        /// <returns></returns>
+        public ToolWindowPane ToolPane
+        {
+            get
+            {
+                if(window != null) {
+                    return window;
+                }
+
+                window = package.FindToolWindow(
+                    typeof(StatusToolWindow),
+                    1,
+                    true // find or create 
+                    //,package.DisposalToken
+                );
+
+                if(window == null || window.Frame == null) {
+                    throw new NotFoundException($"Cannot find or create { GetType().FullName }");
+                }
+                return window;
+            }
+        }
+
         /// <param name="package">Owner package.</param>
         public static async Task<StatusToolCommand> initAsync(AsyncPackage package)
         {
@@ -63,30 +101,6 @@ namespace net.r_eg.vsSBE
             return Instance;
         }
 
-        public async Task<ToolWindowPane> findToolPaneAsync()
-        {
-            window = await package.FindToolWindowAsync(
-                typeof(StatusToolWindow), 
-                1,
-                true, // find or create 
-                package.DisposalToken
-            );
-
-            if(window == null || window.Frame == null) {
-                throw new NotFoundException($"Cannot create { GetType().FullName }");
-            }
-            return window;
-        }
-
-        public IStatusTool getTool() => (IStatusTool)window.Content;
-
-        public IStatusToolEvents getToolEvents() => (IStatusToolEvents)window;
-
-        public void setVisibility(bool val)
-        {
-            mcmd.Visible = val;
-        }
-
         /// <param name="package">Owner package, not null.</param>
         /// <param name="svc">Command service to add command to, not null.</param>
         private StatusToolCommand(AsyncPackage package, OleMenuCommandService svc)
@@ -105,13 +119,9 @@ namespace net.r_eg.vsSBE
 
         private async void action(object sender, EventArgs e)
         {
-            if(window == null) {
-                throw new ArgumentNullException(nameof(window));
-            }
-
             await package.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-            IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
+            IVsWindowFrame windowFrame = (IVsWindowFrame)ToolPane.Frame;
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
         }
     }
