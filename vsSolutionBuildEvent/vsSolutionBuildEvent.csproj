@@ -22,6 +22,7 @@
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <IncludeDebugSymbolsInVSIXContainer>true</IncludeDebugSymbolsInVSIXContainer>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
@@ -192,6 +193,9 @@
     <Reference Include="Microsoft.VisualStudio.Threading, Version=15.6.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.VisualStudio.Threading.15.6.31\lib\net46\Microsoft.VisualStudio.Threading.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualStudio.Utilities, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.VisualStudio.Utilities.15.9.28307\lib\net46\Microsoft.VisualStudio.Utilities.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\$(NetTargetVName)\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -205,6 +209,9 @@
     <Reference Include="SevenZipSharp, Version=0.64.3890.29348, Culture=neutral, PublicKeyToken=20de82c62b055c88, processorArchitecture=MSIL">
       <HintPath>..\packages\SevenZipSharp.0.64\lib\SevenZipSharp.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="StreamJsonRpc, Version=1.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\StreamJsonRpc.1.3.23\lib\net45\StreamJsonRpc.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
