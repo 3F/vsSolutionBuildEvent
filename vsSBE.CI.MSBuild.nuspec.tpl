@@ -21,9 +21,9 @@
     Package version: a.b.x[.y] -&gt; a &amp; b - CI.MSBuild (v%CIM%) -&gt; x - main library (%Lib% is a v%vsSBE%) -&gt; y - variant of package if exists
 
     ~~~~~~~~
-    Alternative to get it:
+    Get it via GetNuTool:
     ==========================================
-    msbuild gnt.core /p:ngpackages="vsSBE.CI.MSBuild/%CIM%.%Lib%"
+    gnt /p:ngpackages="vsSBE.CI.MSBuild/%CIM%.%Lib%"
     ==========================================
     * https://github.com/3F/GetNuTool
     
