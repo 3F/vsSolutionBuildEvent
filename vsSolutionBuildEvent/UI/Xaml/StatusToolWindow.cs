@@ -117,7 +117,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
         public StatusToolWindow()
             : base(null)
         {
-            Caption         = Settings.OWP_ITEM_VSSBE;
+            Caption         = "Status Panel";
             base.Content    = new StatusToolControl();
             tool            = (IStatusTool)base.Content;
         }

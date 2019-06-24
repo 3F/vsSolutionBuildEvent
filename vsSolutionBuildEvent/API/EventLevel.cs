@@ -493,9 +493,9 @@ namespace net.r_eg.vsSBE.API
 #if DEBUG
             Log.Warn("Used [Debug version]");
 #else
-                if(vsSBE.Version.branchName.ToLower() != "releases") {
-                    Log.Warn("Used [Unofficial release]");
-                }
+            //if(vsSBE.Version.branchName.ToLower() != "releases") {
+            //    Log.Warn("Used [Unofficial release]");
+            //}
 #endif
 
             if(Environment.Events != null) {

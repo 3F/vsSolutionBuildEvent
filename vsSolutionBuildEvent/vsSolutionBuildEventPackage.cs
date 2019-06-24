@@ -34,13 +34,13 @@ namespace net.r_eg.vsSBE
     // Managed Package Registration
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
 
-    // To register the informations needed to in the Help/About dialog of Visual Studio
+    // Information for Visual Studio Help/About dialog.
     [InstalledProductRegistration("#110", "#112", Version.numberWithRevString, IconResourceID = 400)]
 
     // This attribute is needed to let the shell know that this package exposes some menus.
     [ProvideMenuResource("Menus.ctmenu", 1)]
 
-    //  To be automatically loaded when a specified UI context is active
+    // To be automatically loaded when a specified UI context is active
     [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
 
     // Registers the tool window
@@ -92,16 +92,21 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Listener of the OutputWindowsPane
         /// </summary>
-        private Receiver.Output.OWP _owpListener;
+        private Receiver.Output.OWP owpListener;
+
+        private object sync = new object();
+
+        /// <summary>
+        /// Reserved for future use with IVsSolutionEvents
+        /// </summary>
+        private readonly object pUnkReserved = new object();
 
         /// <summary>
         /// DTE2 Context
         /// </summary>
         public DTE2 Dte2
         {
-            get {
-                return (DTE2)GetGlobalService(typeof(SDTE));
-            }
+            get => (DTE2)GetGlobalService(typeof(SDTE));
         }
 
         /// <summary>
@@ -113,9 +118,11 @@ namespace net.r_eg.vsSBE
             private set;
         }
 
-        // VSSDK003: Visual Studio 2017 Update 6 or later:
-        #region async tool windows
-
+        /// <summary>
+        /// VSSDK003: Visual Studio 2017 Update 6 or later
+        /// </summary>
+        /// <param name="toolWindowType"></param>
+        /// <returns></returns>
         public override IVsAsyncToolWindowFactory GetAsyncToolWindowFactory(Guid toolWindowType)
         {
             if(toolWindowType == typeof(StatusToolWindow).GUID) {
@@ -125,22 +132,6 @@ namespace net.r_eg.vsSBE
             ThreadHelper.ThrowIfNotOnUIThread();
             return base.GetAsyncToolWindowFactory(toolWindowType);
         }
-
-        protected override string GetToolWindowTitle(Type toolWindowType, int id)
-        {
-            if(toolWindowType == typeof(StatusToolWindow)) {
-                return $"{nameof(StatusToolWindow)} loading";
-            }
-
-            return base.GetToolWindowTitle(toolWindowType, id);
-        }
-
-        protected override async Task<object> InitializeToolWindowAsync(Type toolWindowType, int id, CancellationToken ct)
-        {
-            return await Task.FromResult(String.Empty); // this is passed to the tool window constructor
-        }
-
-        #endregion
 
         /// <summary>
         /// Priority call with SVsSolution.
@@ -152,13 +143,15 @@ namespace net.r_eg.vsSBE
         /// <returns></returns>
         public int OnAfterOpenSolution(object pUnkReserved, int fNewSolution)
         {
+            Monitor.Enter(sync);
             try
             {
                 //Log.paneAttach(GetOutputPane(GuidList.OWP_SBE, Settings.OWP_ITEM_VSSBE)); // also may be problem with toolWindow as in other COM variant -_-
                 Log._.paneAttach(Settings.OWP_ITEM_VSSBE, Dte2);
                 Log._.clear(false);
                 Log._.show();
-                eventsOfStatusTool(true);
+
+                sToolCmd?.attachEvents();
 
                 Event.OpenedSolution -= onLateOpenedSolution;
                 Event.OpenedSolution += onLateOpenedSolution;
@@ -166,7 +159,10 @@ namespace net.r_eg.vsSBE
                 return Event.solutionOpened(pUnkReserved, fNewSolution);
             }
             catch(Exception ex) {
-                Log.Fatal("Problem with loading solution: " + ex.Message);
+                Log.Fatal("Problem when loading solution: " + ex.Message);
+            }
+            finally {
+                Monitor.Exit(sync);
             }
 
             return VSConstants.S_FALSE;
@@ -181,19 +177,25 @@ namespace net.r_eg.vsSBE
         /// <returns></returns>
         public int OnAfterCloseSolution(object pUnkReserved)
         {
-            mainToolCmd.setVisibility(false);
+            Monitor.Enter(sync);
+
+            mainToolCmd?.setVisibility(false);
             try
             {
                 Event.solutionClosed(pUnkReserved);
                 mainToolCmd.closeConfigForm();
 
-                eventsOfStatusTool(false);
+                sToolCmd?.detachEvents();
                 //Log._.paneDetach((IVsOutputWindow)GetGlobalService(typeof(SVsOutputWindow)));
                 return VSConstants.S_OK;
             }
             catch(Exception ex) {
-                Log.Fatal("Problem with closing solution: " + ex.Message);
+                Log.Fatal("Problem when closing solution: " + ex.Message);
             }
+            finally {
+                Monitor.Exit(sync);
+            }
+
             return VSConstants.S_FALSE;
         }
 
@@ -201,7 +203,7 @@ namespace net.r_eg.vsSBE
         {
             try {
                 UI.Plain.State.BuildBegin();
-                sToolCmd.ToolContent.resetCounter();
+                sToolCmd?.ToolContent.resetCounter();
                 errorList.clear();
             }
             catch(Exception ex) {
@@ -250,14 +252,17 @@ namespace net.r_eg.vsSBE
         /// <param name="progress">A provider for progress updates.</param>
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
+            Trace.WriteLine($"Entering InitializeAsync() of: { ToString() }");
+
+            await base.InitializeAsync(cancellationToken, progress);
+
             // When initialized asynchronously, the current thread may be a background thread at this point.
             // Do any initialization that requires the UI thread after switching to the UI thread.
             await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
-            Trace.WriteLine($"Entering Initialize() of: { ToString() }");
             try
             {
-                errorList = new VSTools.ErrorList.Pane(this);
+                errorList = new VSTools.ErrorList.Pane(this, cancellationToken);
 
                 Log._.Received  -= onLogReceived;
                 Log._.Received  += onLogReceived;
@@ -267,7 +272,16 @@ namespace net.r_eg.vsSBE
                 mainToolCmd = await MainToolCommand.initAsync(this, Event);
                 mainToolCmd.setVisibility(false);
 
-                sToolCmd = await StatusToolCommand.initAsync(this);
+                // VS bug: https://github.com/microsoft/extendvs/issues/68
+                _ = Task.Run(async () =>
+                {
+                    await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+
+                    sToolCmd = await StatusToolCommand.initAsync(this, Event);
+
+                    // https://github.com/3F/vsSolutionBuildEvent/pull/45#discussion_r291835939
+                    if(Dte2.Solution.IsOpen) OnAfterOpenSolution(pUnkReserved, 0);
+                });
 
                 spSolution = await GetServiceAsync(typeof(SVsSolution)) as IVsSolution;
                 spSolution.AdviseSolutionEvents(this, out _pdwCookieSolution);
@@ -304,6 +318,20 @@ namespace net.r_eg.vsSBE
             }
         }
 
+        protected override string GetToolWindowTitle(Type toolWindowType, int id)
+        {
+            if(toolWindowType == typeof(StatusToolWindow)) {
+                return $"{nameof(StatusToolWindow)} loading";
+            }
+
+            return base.GetToolWindowTitle(toolWindowType, id);
+        }
+
+        protected override async Task<object> InitializeToolWindowAsync(Type toolWindowType, int id, CancellationToken ct)
+        {
+            return await Task.FromResult(String.Empty); // this is passed to the tool window constructor
+        }
+
         private void initAppEvents()
         {
             var usrCfg = new UserConfig();
@@ -314,9 +342,9 @@ namespace net.r_eg.vsSBE
 
             // Receiver
 
-            _owpListener = new Receiver.Output.OWP(Event.Environment);
-            _owpListener.attachEvents();
-            _owpListener.Receiving += (object sender, Receiver.Output.PaneArgs e) =>
+            owpListener = new Receiver.Output.OWP(Event.Environment);
+            owpListener.attachEvents();
+            owpListener.Receiving += (object sender, Receiver.Output.PaneArgs e) =>
             {
                 if(e.Guid.CompareGuids(GuidList.OWP_BUILD_STRING)) {
                     Event.onBuildRaw(e.Raw);
@@ -325,38 +353,11 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Control of events for status tool - Solution Build-Events
-        /// </summary>
-        /// <param name="attach"></param>
-        private void eventsOfStatusTool(bool attach)
-        {
-            IStatusToolEvents ste = sToolCmd.ToolEvents;
-
-            if(ste == null) {
-                Log.Debug("Cannot find or create UI.StatusToolWindow");
-                return;
-            }
-
-            if(attach)
-            {
-                ste.attachEvents(Event)
-                    .attachEvents(Settings.CfgManager.Config)
-                    .attachEvents();
-
-                return;
-            }
-
-            ste.detachEvents()
-                .detachEvents(Settings.CfgManager.Config)
-                .detachEvents(Event);
-        }
-
-        /// <summary>
         /// When all projects are opened in IDE. 
         /// </summary>
         private void onLateOpenedSolution(object sender, EventArgs e)
         {
-            mainToolCmd.setVisibility(true);
+            mainToolCmd?.setVisibility(true);
         }
 
         private void onLogReceived(object sender, Logger.MessageArgs e)
@@ -367,28 +368,6 @@ namespace net.r_eg.vsSBE
             else if(Log._.isWarn(e.Level)) {
                 errorList.warn(e.Message);
             }
-        }
-
-        private void free()
-        {
-            mainToolCmd.Dispose();
-
-            if(errorList != null) {
-                ((IDisposable)errorList).Dispose();
-            }
-
-            ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
-            {
-                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
-                if(spSolutionBM != null && _pdwCookieSolutionBM != 0) {
-                    spSolutionBM.UnadviseUpdateSolutionEvents(_pdwCookieSolutionBM);
-                }
-
-                if(spSolution != null && _pdwCookieSolution != 0) {
-                    spSolution.UnadviseSolutionEvents(_pdwCookieSolution);
-                }
-            });
         }
 
         #region IDisposable
@@ -407,7 +386,26 @@ namespace net.r_eg.vsSBE
             }
             disposed = true;
 
-            free();
+            mainToolCmd?.Dispose();
+            sToolCmd?.Dispose();
+
+            if(errorList != null) {
+                ((IDisposable)errorList).Dispose();
+            }
+
+            ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
+            {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+
+                if(spSolutionBM != null && _pdwCookieSolutionBM != 0) {
+                    spSolutionBM.UnadviseUpdateSolutionEvents(_pdwCookieSolutionBM);
+                }
+
+                if(spSolution != null && _pdwCookieSolution != 0) {
+                    spSolution.UnadviseSolutionEvents(_pdwCookieSolution);
+                }
+            });
+
             base.Dispose(disposing);
         }
 

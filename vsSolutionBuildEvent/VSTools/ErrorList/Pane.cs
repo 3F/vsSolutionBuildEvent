@@ -17,16 +17,15 @@
 
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.Shell;
 
 namespace net.r_eg.vsSBE.VSTools.ErrorList
 {
-    using ThreadTask = System.Threading.Tasks.Task;
-
     public class Pane: IPane, IDisposable
     {
         protected ErrorListProvider provider;
+
+        protected CancellationToken cancellationToken;
 
         /// <summary>
         /// To add new error in ErrorList.
@@ -63,6 +62,12 @@ namespace net.r_eg.vsSBE.VSTools.ErrorList
             provider.Tasks.Clear();
         }
 
+        public Pane(IServiceProvider sp, CancellationToken ct)
+            : this(sp)
+        {
+            cancellationToken = ct;
+        }
+
         public Pane(IServiceProvider sp)
         {
             provider = new ErrorListProvider(sp);
@@ -70,9 +75,9 @@ namespace net.r_eg.vsSBE.VSTools.ErrorList
 
         protected void task(string msg, TaskErrorCategory type = TaskErrorCategory.Message)
         {
-            ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
+            ThreadHelper.JoinableTaskFactory.RunAsync(async () => // prevents possible bug from `Process.ErrorDataReceived` because of NLog
             {
-                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
                 provider.Tasks.Add(new ErrorTask()
                 {

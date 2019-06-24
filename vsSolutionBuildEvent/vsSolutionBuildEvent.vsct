@@ -58,7 +58,7 @@
         <Strings>
             <CommandName>vsSolutionBuildEvent</CommandName>
             <ButtonText>vsSolutionBuildEvent</ButtonText>
-            <MenuText>Events of Solution</MenuText>
+            <MenuText>vsSolutionBuildEvent</MenuText>
             <CanonicalName>vsSBE.Settings</CanonicalName>
         </Strings>
       </Button>
