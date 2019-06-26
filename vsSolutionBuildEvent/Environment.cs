@@ -56,7 +56,9 @@ namespace net.r_eg.vsSBE
         {
             get
             {
+#if VSSDK_15_AND_NEW
                 ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
 
                 foreach(var pname in ProjectsDTE.Select(p => getProjectNameFrom(p))) {
                     if(!String.IsNullOrWhiteSpace(pname)) {
@@ -73,7 +75,9 @@ namespace net.r_eg.vsSBE
         {
             get
             {
+#if VSSDK_15_AND_NEW
                 ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
 
                 try {
                     return _DTEProjects.Select(p => getProjectNameFrom(p)).ToList<string>();
@@ -320,7 +324,9 @@ namespace net.r_eg.vsSBE
         /// <returns>Microsoft.Build.Evaluation.Project</returns>
         public virtual Project getProject(string name = null)
         {
+#if VSSDK_15_AND_NEW
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
 
             EnvDTE.Project selected = null;
             string startup          = StartupProjectString;
@@ -394,7 +400,9 @@ namespace net.r_eg.vsSBE
         /// <returns>project name from Microsoft.Build.Evaluation rules or null value if project not found in GlobalProjectCollection and force value is false</returns>
         public string getProjectNameFrom(IVsHierarchy pHierProj, bool force = false)
         {
+#if VSSDK_15_AND_NEW
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
 
             pHierProj.GetGuidProperty((uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_ProjectIDGuid, out Guid id);
 
@@ -448,7 +456,9 @@ namespace net.r_eg.vsSBE
         /// <returns></returns>
         protected bool isEquals(EnvDTE.Project dteProject, Project eProject)
         {
+#if VSSDK_15_AND_NEW
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
 
             string ePrgName         = getProjectNameFrom(eProject);
             string ePrgCfg          = eProject.GetPropertyValue("Configuration");
@@ -478,7 +488,9 @@ namespace net.r_eg.vsSBE
         /// </summary>
         protected Project tryLoadPCollection(EnvDTE.Project dteProject)
         {
+#if VSSDK_15_AND_NEW
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
 
             Dictionary<string, string> prop = getGlobalProperties(dteProject);
 
@@ -496,7 +508,9 @@ namespace net.r_eg.vsSBE
         {
             //return dteProject.Name; // can be as 'AppName' and 'AppName_2013' for different .sln
 
+#if VSSDK_15_AND_NEW
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
 
             IVsSolution sln = (IVsSolution)Package.GetGlobalService(typeof(SVsSolution));
             sln.GetProjectOfUniqueName(dteProject.FullName, out IVsHierarchy hr);
@@ -523,7 +537,9 @@ namespace net.r_eg.vsSBE
         {
             Dictionary<string, string> prop = new Dictionary<string, string>(ProjectCollection.GlobalProjectCollection.GlobalProperties); // copy from ProjectCollection
 
+#if VSSDK_15_AND_NEW
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
 
             if(!prop.ContainsKey("Configuration")) {
                 prop["Configuration"] = dteProject.ConfigurationManager.ActiveConfiguration.ConfigurationName;

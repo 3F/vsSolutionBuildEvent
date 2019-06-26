@@ -137,7 +137,9 @@ namespace net.r_eg.vsSBE
             Guid id = (upane != null)? upane.Guid : GuidList.OWP_SBE;
             paneDetach();
 
+#if VSSDK_15_AND_NEW
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
 
             if(ow != null) {
                 ow.DeletePane(ref id);

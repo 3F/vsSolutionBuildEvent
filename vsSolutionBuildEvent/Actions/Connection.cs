@@ -159,7 +159,9 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         public int bindProjectPre(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel)
         {
+#if VSSDK_15_AND_NEW
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
 
             onProject(pHierProj, ExecutionOrderType.Before);
             return Codes.Success;
@@ -170,7 +172,9 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         public int bindProjectPre(string project)
         {
+#if VSSDK_15_AND_NEW
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
 
             onProject(project, ExecutionOrderType.Before);
             return Codes.Success;
@@ -181,7 +185,9 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         public int bindProjectPost(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
         {
+#if VSSDK_15_AND_NEW
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
 
             onProject(pHierProj, ExecutionOrderType.After, fSuccess == 1 ? true : false);
             return Codes.Success;
@@ -192,7 +198,9 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         public int bindProjectPost(string project, int fSuccess)
         {
+#if VSSDK_15_AND_NEW
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
 
             onProject(project, ExecutionOrderType.After, fSuccess == 1 ? true : false);
             return Codes.Success;
@@ -583,7 +591,9 @@ namespace net.r_eg.vsSBE.Actions
                 return projectName;
             }
 
+#if VSSDK_15_AND_NEW
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
 
             // http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivshierarchy.getproperty.aspx
             // http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.__vshpropid.aspx
@@ -657,7 +667,9 @@ namespace net.r_eg.vsSBE.Actions
 
         protected void onProject(IVsHierarchy pHierProj, ExecutionOrderType type, bool fSuccess = true)
         {
+#if VSSDK_15_AND_NEW
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
 
             onProject(getProjectName(pHierProj), type, fSuccess);
         }

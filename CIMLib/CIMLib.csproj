@@ -13,26 +13,26 @@
     <AssemblyName>CIMLib</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <NetTargetVName>net40</NetTargetVName>
-    <DefineConstants>NET_40</DefineConstants>
     <FileAlignment>512</FileAlignment>
+    <NoWarn>CS1591;IDE1006</NoWarn>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'REL_SDK10|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>$(DefineConstants)</DefineConstants>
+    <DefineConstants>NET_40</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>3</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release_net45|AnyCPU'">
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'REL_SDK15|AnyCPU' ">
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <NetTargetVName>net45</NetTargetVName>
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>NET_45</DefineConstants>
+    <DefineConstants></DefineConstants>
     <Optimize>true</Optimize>
     <WarningLevel>3</WarningLevel>
     <DebugType>pdbonly</DebugType>

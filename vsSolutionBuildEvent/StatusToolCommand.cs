@@ -17,13 +17,17 @@
 
 using System;
 using System.ComponentModel.Design;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.API;
 using net.r_eg.vsSBE.Bridge.Exceptions;
 using net.r_eg.vsSBE.Configuration;
 using net.r_eg.vsSBE.UI.Xaml;
+
+#if VSSDK_15_AND_NEW
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.Threading;
+#endif
 
 namespace net.r_eg.vsSBE
 {
@@ -32,11 +36,11 @@ namespace net.r_eg.vsSBE
     /// </summary>
     internal sealed class StatusToolCommand: IDisposable
     {
-        private readonly AsyncPackage package;
+        private readonly MenuCommand mcmd;
 
         private readonly IEventLevel apievt;
 
-        private readonly MenuCommand mcmd;
+        private readonly IPkg pkg;
 
         private ToolWindowPane toolPane;
 
@@ -61,23 +65,24 @@ namespace net.r_eg.vsSBE
             get => Settings.CfgManager.Config;
         }
 
-        /// <param name="package">Owner package.</param>
+#if VSSDK_15_AND_NEW
+
+        /// <param name="pkg">Owner package.</param>
         /// <param name="evt">Supported public events, not null.</param>
-        public static async Task<StatusToolCommand> initAsync(AsyncPackage package, IEventLevel evt)
+        public static async Task<StatusToolCommand> InitAsync(IPkg pkg, IEventLevel evt)
         {
             if(Instance != null) {
-                Log.Debug($"Dual initialization of the command: { nameof(StatusToolCommand) }");
                 return Instance;
             }
 
             // Switch to the main thread - the call to AddCommand in StatusToolCommand's constructor requires
             // the UI thread.
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(pkg.CancellationToken);
 
             Instance = new StatusToolCommand
             (
-                package, 
-                await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService,
+                pkg, 
+                await pkg.getSvcAsync(typeof(IMenuCommandService)) as OleMenuCommandService,
                 evt
             );
 
@@ -85,6 +90,30 @@ namespace net.r_eg.vsSBE
 
             return Instance;
         }
+
+#else
+
+        /// <param name="pkg">Owner package.</param>
+        /// <param name="evt">Supported public events, not null.</param>
+        public static StatusToolCommand Init(IPkg pkg, IEventLevel evt)
+        {
+            if(Instance != null) {
+                return Instance;
+            }
+
+            Instance = new StatusToolCommand
+            (
+                pkg, 
+                pkg.getSvc(typeof(IMenuCommandService)) as OleMenuCommandService,
+                evt
+            );
+
+            Instance.toolPane = Instance.initToolPane();
+
+            return Instance;
+        }
+
+#endif
 
         public void attachEvents() 
             => ToolEvents.attachEvents(apievt)
@@ -96,6 +125,8 @@ namespace net.r_eg.vsSBE
                             .detachEvents(Config)
                             .detachEvents(apievt);
 
+#if VSSDK_15_AND_NEW
+
         /// <summary>
         /// NOTE: Be careful with FindToolWindowAsync and ShowToolWindowAsync.
         ///       It may produce deadlocks when it is called from InitializeAsync thread:
@@ -104,15 +135,25 @@ namespace net.r_eg.vsSBE
         /// <returns></returns>
         private async Task<ToolWindowPane> initToolPaneAsync()
         {
-            var tool = await package.FindToolWindowAsync
-            (
-                typeof(StatusToolWindow),
-                1,
-                true, // find or create
-                package.DisposalToken
+            return initToolPane(
+                await pkg.getToolWindowAsync(typeof(StatusToolWindow), 1)
             );
+        }
 
-            Log.Trace("FindToolWindowAsync completed");
+#else
+
+        private ToolWindowPane initToolPane()
+        {
+            return initToolPane(
+                pkg.getToolWindow(typeof(StatusToolWindow), 1)
+            );
+        }
+
+#endif
+
+        private ToolWindowPane initToolPane(ToolWindowPane tool)
+        {
+            Log.Trace("FindToolWindow/Async completed");
 
             if(tool == null || tool.Frame == null) {
                 throw new NotFoundException($"Cannot find or create { nameof(StatusToolWindow) }");
@@ -120,33 +161,41 @@ namespace net.r_eg.vsSBE
             return tool;
         }
 
-        /// <param name="package">Owner package, not null.</param>
+        /// <param name="pkg">Owner package, not null.</param>
         /// <param name="svc">Command service to add command to, not null.</param>
         /// <param name="evt">Supported public events, not null.</param>
-        private StatusToolCommand(AsyncPackage package, OleMenuCommandService svc, IEventLevel evt)
+        private StatusToolCommand(IPkg pkg, OleMenuCommandService svc, IEventLevel evt)
         {
-            this.package    = package ?? throw new ArgumentNullException(nameof(package));
-            svc             = svc ?? throw new ArgumentNullException(nameof(svc));
-            apievt          = evt ?? throw new ArgumentNullException(nameof(evt));
+            this.pkg    = pkg ?? throw new ArgumentNullException(nameof(pkg));
+            svc         = svc ?? throw new ArgumentNullException(nameof(svc));
+            apievt      = evt ?? throw new ArgumentNullException(nameof(evt));
 
             mcmd = new MenuCommand
             (
-                action,
+                onAction,
                 new CommandID(GuidList.PANEL_CMD_SET, (int)PkgCmdIDList.CMD_PANEL)
             );
 
             svc.AddCommand(mcmd);
         }
 
-        private async void action(object sender, EventArgs e)
+        private void onAction(object sender, EventArgs e)
         {
-            await package.JoinableTaskFactory.SwitchToMainThreadAsync();
+#if VSSDK_15_AND_NEW
+            ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
+            {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(pkg.CancellationToken);
+#endif
 
-            IVsWindowFrame windowFrame = (IVsWindowFrame)toolPane.Frame;
-            Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
+                IVsWindowFrame windowFrame = (IVsWindowFrame)toolPane.Frame;
+                Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
+
+#if VSSDK_15_AND_NEW
+            });
+#endif
         }
 
-        #region IDisposable
+#region IDisposable
 
         private bool disposed = false;
 
@@ -165,6 +214,6 @@ namespace net.r_eg.vsSBE
             toolPane?.Dispose();
         }
 
-        #endregion
+#endregion
     }
 }

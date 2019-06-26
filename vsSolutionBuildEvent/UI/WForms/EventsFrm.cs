@@ -187,9 +187,9 @@ namespace net.r_eg.vsSBE.UI.WForms
             toolStripMenuDebugMode.Enabled  = false;
             toolStripMenuVersion.Text       = String.Format("based on {0}", Version.branchSha1);
 #else
-            if(Version.branchName.ToLower() != "releases") {
-                this.Text = String.Format("{0}  [Unofficial release]", Settings.APP_NAME);
-            }
+            //if(Version.branchName.ToLower() != "releases") {
+            //    this.Text = String.Format("{0}  [Unofficial release]", Settings.APP_NAME);
+            //}
             toolStripMenuVersion.Text = String.Format("v{0} [ {1} ]", Version.numberString, Version.branchSha1);
 #endif
             menuCfgSuppressDualCmd.Checked = Settings.CfgUser.Global.SuppressDualCommand;

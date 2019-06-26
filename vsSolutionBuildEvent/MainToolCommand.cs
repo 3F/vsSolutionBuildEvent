@@ -17,9 +17,12 @@
 
 using System;
 using System.ComponentModel.Design;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.Shell;
 using net.r_eg.vsSBE.API;
+
+#if VSSDK_15_AND_NEW
+using System.Threading.Tasks;
+#endif
 
 namespace net.r_eg.vsSBE
 {
@@ -28,13 +31,13 @@ namespace net.r_eg.vsSBE
     /// </summary>
     internal sealed class MainToolCommand: IDisposable
     {
-        private readonly AsyncPackage package;
+        private readonly MenuCommand mcmd;
 
         private readonly IEventLevel apievt;
 
-        private UI.WForms.EventsFrm configFrm;
+        private readonly IPkg pkg;
 
-        private readonly MenuCommand mcmd;
+        private UI.WForms.EventsFrm configFrm;
 
         public static MainToolCommand Instance
         {
@@ -52,50 +55,68 @@ namespace net.r_eg.vsSBE
             UI.Util.closeTool(configFrm);
         }
 
-        /// <param name="package">Owner package.</param>
-        public static async Task<MainToolCommand> initAsync(AsyncPackage package, IEventLevel evt)
+#if VSSDK_15_AND_NEW
+
+        public static async Task<MainToolCommand> InitAsync(IPkg pkg, IEventLevel evt)
         {
             if(Instance != null) {
-                Log.Debug($"Dual initialization of the command: { nameof(MainToolCommand) }");
                 return Instance;
             }
 
             // Switch to the main thread - the call to AddCommand in MainToolCommand's constructor requires
             // the UI thread.
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(pkg.CancellationToken);
 
             Instance = new MainToolCommand
             (
-                package, 
-                await package.GetServiceAsync(typeof(IMenuCommandService)) as OleMenuCommandService,
+                pkg,
+                await pkg.getSvcAsync(typeof(IMenuCommandService)) as OleMenuCommandService,
                 evt
             );
 
             return Instance;
         }
 
-        /// <param name="package">Owner package, not null.</param>
+#else
+
+        public static MainToolCommand Init(IPkg pkg, IEventLevel evt)
+        {
+            if(Instance != null) {
+                return Instance;
+            }
+
+            Instance = new MainToolCommand
+            (
+                pkg,
+                pkg.getSvc(typeof(IMenuCommandService)) as OleMenuCommandService, 
+                evt
+            );
+
+            return Instance;
+        }
+
+#endif
+
+        /// <param name="pkg"></param>
         /// <param name="svc">Command service to add command to, not null.</param>
         /// <param name="evt">Supported public events, not null.</param>
-        private MainToolCommand(AsyncPackage package, OleMenuCommandService svc, IEventLevel evt)
+        private MainToolCommand(IPkg pkg, OleMenuCommandService svc, IEventLevel evt)
         {
-            this.package    = package ?? throw new ArgumentNullException(nameof(package));
-            svc             = svc ?? throw new ArgumentNullException(nameof(svc));
-            apievt          = evt ?? throw new ArgumentNullException(nameof(evt));
+            this.pkg    = pkg ?? throw new ArgumentNullException(nameof(pkg));
+            svc         = svc ?? throw new ArgumentNullException(nameof(svc));
+            apievt      = evt ?? throw new ArgumentNullException(nameof(evt));
 
             mcmd = new MenuCommand
             (
-                action,
+                onAction,
                 new CommandID(GuidList.MAIN_CMD_SET, (int)PkgCmdIDList.CMD_MAIN)
             );
 
             svc.AddCommand(mcmd);
         }
 
-        private void action(object sender, EventArgs e)
+        private void onAction(object sender, EventArgs e)
         {
-            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
-
             try
             {
                 if(UI.Util.focusForm(configFrm)) {
@@ -116,7 +137,7 @@ namespace net.r_eg.vsSBE
             }
         }
 
-        #region IDisposable
+#region IDisposable
 
         private bool disposed = false;
 
@@ -135,6 +156,6 @@ namespace net.r_eg.vsSBE
             free();
         }
 
-        #endregion
+#endregion
     }
 }

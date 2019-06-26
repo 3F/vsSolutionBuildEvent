@@ -19,6 +19,11 @@ using System;
 using System.Threading;
 using Microsoft.VisualStudio.Shell;
 
+#if !VSSDK_15_AND_NEW
+using System.Threading.Tasks;
+using Task = System.Threading.Tasks.Task;
+#endif
+
 namespace net.r_eg.vsSBE.VSTools.ErrorList
 {
     public class Pane: IPane, IDisposable
@@ -75,23 +80,36 @@ namespace net.r_eg.vsSBE.VSTools.ErrorList
 
         protected void task(string msg, TaskErrorCategory type = TaskErrorCategory.Message)
         {
-            ThreadHelper.JoinableTaskFactory.RunAsync(async () => // prevents possible bug from `Process.ErrorDataReceived` because of NLog
+            // prevents possible bug from `Process.ErrorDataReceived` because of NLog
+
+#if VSSDK_15_AND_NEW
+            ThreadHelper.JoinableTaskFactory.RunAsync(async () => 
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-
-                provider.Tasks.Add(new ErrorTask()
-                {
-                    Text                = msg,
-                    Document            = Settings.APP_NAME_SHORT,
-                    Category            = TaskCategory.User,
-                    Checked             = true,
-                    IsCheckedEditable   = true,
-                    ErrorCategory       = type,
+#else
+            Task.Factory.StartNew(() =>
+            {
+#endif
+                provider.Tasks.Add(new ErrorTask() {
+                    Text = msg,
+                    Document = Settings.APP_NAME_SHORT,
+                    Category = TaskCategory.User,
+                    Checked = true,
+                    IsCheckedEditable = true,
+                    ErrorCategory = type,
                 });
+
+#if VSSDK_15_AND_NEW
             });
+#else
+            }, 
+            CancellationToken.None,
+            TaskCreationOptions.None,
+            TaskScheduler.Default);
+#endif
         }
 
-        #region IDisposable
+#region IDisposable
 
         // To detect redundant calls
         private bool disposed = false;
@@ -115,6 +133,6 @@ namespace net.r_eg.vsSBE.VSTools.ErrorList
             }
         }
 
-        #endregion
+#endregion
     }
 }

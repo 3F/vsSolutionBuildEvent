@@ -19,8 +19,11 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using Microsoft.VisualStudio.Shell;
 using net.r_eg.vsSBE.Events;
+
+#if VSSDK_15_AND_NEW
+using Microsoft.VisualStudio.Shell;
+#endif
 
 namespace net.r_eg.vsSBE.UI.Xaml
 {
@@ -68,11 +71,21 @@ namespace net.r_eg.vsSBE.UI.Xaml
         /// </summary>
         public void warn()
         {
-            ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
+#if VSSDK_15_AND_NEW
+            ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+#else
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+#endif
                 textInfo.Text = logic.addWarning().ToString();
+
+#if VSSDK_15_AND_NEW
             });
+#else
+            }));
+#endif
         }
 
         /// <summary>
@@ -129,13 +142,22 @@ namespace net.r_eg.vsSBE.UI.Xaml
                 Log.Warn("StatusToolControl: Failed update for type - '{0}' :: '{1}'", type, ex.Message);
             }
 
-            ThreadHelper.JoinableTaskFactory.RunAsync(async delegate
+#if VSSDK_15_AND_NEW
+            ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-
+#else
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+#endif
                 btn.Content     = caption(type, false);
                 btn.IsChecked   = !isDisabledAll(type);
+
+#if VSSDK_15_AND_NEW
             });
+#else
+            }));
+#endif
         }
 
         protected bool isDisabledAll(SolutionEventType type)
