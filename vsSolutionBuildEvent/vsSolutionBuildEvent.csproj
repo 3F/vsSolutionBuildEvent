@@ -711,13 +711,28 @@
     <Content Include="..\3rd-party">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <None Include="sdk10.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="sdk15.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="app.config" />
     <None Include="key.snk" />
     <Content Include="..\changelog.txt">
-      <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="..\LICENSE">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="LICENSE.vsixinfo">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\README.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <None Include="packages.config" />
@@ -756,10 +771,6 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Resource Include="Resources\Settings_16.png" />
-    <Content Include="Resources\vsixinfo">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <VSCTCompile Include="Pkg.vsct">
@@ -789,6 +800,7 @@
     <UseCodebase>true</UseCodebase>
   </PropertyGroup>
   <PropertyGroup Label="VsixCompress">
+    <VsixCompressTargets Condition=" $(Configuration.StartsWith('DBG_')) or $(Configuration.StartsWith('DCI_')) ">Disabled_VsixCompressTargets</VsixCompressTargets>
     <VsixCompressTargets Condition=" '$(VsixCompressTargets)'=='' ">$([System.IO.Path]::GetFullPath( $(MSBuildProjectDirectory)\..\packages\VsixCompress.1.0.1\tools\vsix-compress.targets ))</VsixCompressTargets>
   </PropertyGroup>
   <PropertyGroup>

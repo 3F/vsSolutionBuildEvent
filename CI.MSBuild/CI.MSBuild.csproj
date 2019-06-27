@@ -92,7 +92,7 @@
     <None Include="$(SolutionDir)\tools\gnt.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="$(SolutionDir)\tools\msbuild.bat">
+    <None Include="$(SolutionDir)\tools\hMSBuild.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="CI.MSBuild.bat">

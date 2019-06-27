@@ -136,7 +136,7 @@ namespace net.r_eg.vsSBE
         private async Task<ToolWindowPane> initToolPaneAsync()
         {
             return initToolPane(
-                await pkg.getToolWindowAsync(typeof(StatusToolWindow), 1)
+                await pkg.getToolWindowAsync(typeof(StatusToolWindow), 0)
             );
         }
 
@@ -145,7 +145,7 @@ namespace net.r_eg.vsSBE
         private ToolWindowPane initToolPane()
         {
             return initToolPane(
-                pkg.getToolWindow(typeof(StatusToolWindow), 1)
+                pkg.getToolWindow(typeof(StatusToolWindow), 0)
             );
         }
 

@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
+    <!-- Do not use '..\' for paths because of problems when uninstalling -->
     <Metadata>
-        <Identity Id="94ecd13f-15f3-4f51-9afd-17f0275c6266" Version="0.12.10" Language="en-US" Publisher="GitHub/3F" />
+        <Identity Id="94ecd13f-15f3-4f51-9afd-17f0275c6266" Version="0.12.10" Language="en-US" Publisher="GitHub3F" />
         <DisplayName>vsSolutionBuildEvent</DisplayName>
         <Description xml:space="preserve">Event-Catcher with variety of advanced Actions to service projects, libraries, the build processes and processes at runtime from VisualStudio and MSBuild Tools.</Description>
         <MoreInfo>https://github.com/3F/vsSolutionBuildEvent</MoreInfo>
-        <License>..\LICENSE</License>
-        <GettingStartedGuide>README.md</GettingStartedGuide>
-        <ReleaseNotes>changelog.txt</ReleaseNotes>
+        <License>LICENSE.vsixinfo</License>
+        <GettingStartedGuide>https://github.com/3F/vsSolutionBuildEvent#readme</GettingStartedGuide>
+        <ReleaseNotes>https://github.com/3F/vsSolutionBuildEvent/blob/master/changelog.txt</ReleaseNotes>
         <Icon>Resources\Package.png</Icon>
         <PreviewImage>Resources\preview.png</PreviewImage>
-        <Tags>build, events, MSBuild, automation, post-build, shell, build automation, scripting, zip, http, Compiler, Productivity, CSharp, solution, files, ftp, Commands, projects, CI, Scripts, DTE, EnvDTE, cmd, NuGet, Versioning, Continuous Integration, batch, TeamCity, Version, Usability, logger, pre-build, Warnings, Errors, Output, AppVeyor, replace in files, targets, downloader, GetNuTool, 7z, 7zip, archiver</Tags>
+        <Tags>build, automation, DevOps, events, MSBuild, CI, Scripts, DevTools, zip, http, Compiler, shell, Productivity, CSharp, solution, files, ftp, Commands, projects, DTE, EnvDTE, cmd, NuGet, build automation, post-build, Versioning, Continuous Integration, batch, scripting, TeamCity, Version, Usability, logger, pre-build, Warnings, Errors, Output, AppVeyor, replace in files, targets, Azure DevOps, downloader, GetNuTool, 7z, 7zip, archiver</Tags>
     </Metadata>
     <Installation>
         <InstallationTarget Version="[15.0,)" Id="Microsoft.VisualStudio.Pro" />

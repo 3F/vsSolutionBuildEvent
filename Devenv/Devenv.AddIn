@@ -13,8 +13,8 @@
         <Version>12.0</Version>
     </HostApplication>
     <Addin>
-        <FriendlyName>vsSolutionBuildEvent Devenv Command-Line</FriendlyName>
-        <Description>Add-in to vsSolutionBuildEvent</Description>
+        <FriendlyName>vsSolutionBuildEvent Devenv</FriendlyName>
+        <Description>vsSolutionBuildEvent Devenv Command-Line version</Description>
         <Assembly>Devenv/Devenv.dll</Assembly>
         <FullClassName>net.r_eg.vsSBE.Devenv.Connect</FullClassName>
         <LoadBehavior>4</LoadBehavior>
