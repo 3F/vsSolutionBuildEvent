@@ -41,7 +41,7 @@
 
       <!-- tools -->
         <VsixLib Include="$(SolutionDir)\tools\gnt.bat" />
-        <VsixLib Include="$(SolutionDir)\tools\msbuild.bat" />
+        <VsixLib Include="$(SolutionDir)\tools\hMSBuild.bat" />
 
     </ItemGroup>
     

@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using EnvDTE80;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.API.Commands;
 using net.r_eg.vsSBE.Bridge;
@@ -243,6 +244,10 @@ namespace net.r_eg.vsSBE.API
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onProjectPre(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel)
         {
+#if VSSDK_15_AND_NEW
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
+
             try {
                 int ret = Action.bindProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel);
 
@@ -263,6 +268,10 @@ namespace net.r_eg.vsSBE.API
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onProjectPre(string project)
         {
+#if VSSDK_15_AND_NEW
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
+
             try {
                 int ret = Action.bindProjectPre(project);
 
@@ -288,6 +297,10 @@ namespace net.r_eg.vsSBE.API
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onProjectPost(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
         {
+#if VSSDK_15_AND_NEW
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
+
             try {
                 int ret = Action.bindProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
 
@@ -309,6 +322,10 @@ namespace net.r_eg.vsSBE.API
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onProjectPost(string project, int fSuccess)
         {
+#if VSSDK_15_AND_NEW
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
+
             try {
                 int ret = Action.bindProjectPost(project, fSuccess);
 
@@ -484,9 +501,9 @@ namespace net.r_eg.vsSBE.API
 #if DEBUG
             Log.Warn("Used [Debug version]");
 #else
-                if(vsSBE.Version.branchName.ToLower() != "releases") {
-                    Log.Warn("Used [Unofficial release]");
-                }
+            //if(vsSBE.Version.branchName.ToLower() != "releases") {
+            //    Log.Warn("Used [Unofficial release]");
+            //}
 #endif
 
             if(Environment.Events != null) {

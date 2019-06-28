@@ -1,5 +1,7 @@
 ## Specific
 
+/vsSolutionBuildEvent/source.extension.vsixmanifest
+
 /vsSolutionBuildEvent/Version.cs
 /Bridge/Version.cs
 /CI.MSBuild/Version.cs

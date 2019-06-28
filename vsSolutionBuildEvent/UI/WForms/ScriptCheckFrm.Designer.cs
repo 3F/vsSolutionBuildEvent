@@ -253,7 +253,7 @@
             this.richTextBoxExecuted.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.richTextBoxExecuted.ContextMenuStrip = this.menuResult;
             this.richTextBoxExecuted.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBoxExecuted.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.richTextBoxExecuted.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.richTextBoxExecuted.Location = new System.Drawing.Point(0, 0);
             this.richTextBoxExecuted.Name = "richTextBoxExecuted";
             this.richTextBoxExecuted.ReadOnly = true;

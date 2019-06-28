@@ -1,1 +1,0 @@
-build\[CI_Debug][net40]

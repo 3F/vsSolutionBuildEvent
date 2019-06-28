@@ -1,8 +1,7 @@
-vsSolutionBuildEvent - Flexible actions for all ...
-* https://github.com/3F/vsSolutionBuildEvent 
-* https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334
+vsSolutionBuildEvent (vsSBE)
+https://github.com/3F/vsSolutionBuildEvent
 
-Copyright (c) 2013-2016  Denis Kuzmin [ entry.reg@gmail.com ]
+Copyright (c) 2013-2016,2019  Denis Kuzmin < entry.reg@gmail.com > GitHub/3F
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by

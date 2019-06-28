@@ -21,6 +21,10 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using net.r_eg.vsSBE.Events;
 
+#if VSSDK_15_AND_NEW
+using Microsoft.VisualStudio.Shell;
+#endif
+
 namespace net.r_eg.vsSBE.UI.Xaml
 {
     public partial class StatusToolControl: UserControl, IStatusTool
@@ -67,14 +71,21 @@ namespace net.r_eg.vsSBE.UI.Xaml
         /// </summary>
         public void warn()
         {
-            try {
-                Application.Current.Dispatcher.BeginInvoke(new Action(() => {
-                    textInfo.Text = logic.addWarning().ToString();
-                }));
-            }
-            catch(Exception ex) {
-                Log.Debug("Failed StatusToolControl::notify: '{0}'", ex.Message);
-            }
+#if VSSDK_15_AND_NEW
+            ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
+            {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+#else
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+#endif
+                textInfo.Text = logic.addWarning().ToString();
+
+#if VSSDK_15_AND_NEW
+            });
+#else
+            }));
+#endif
         }
 
         /// <summary>
@@ -123,16 +134,30 @@ namespace net.r_eg.vsSBE.UI.Xaml
         /// <param name="type"></param>
         protected void update(ToggleButton btn, SolutionEventType type)
         {
-            try {
+            try
+            {
                 logic.update(type);
-                Application.Current.Dispatcher.BeginInvoke(new Action(() => {
-                    btn.Content = caption(type, false);
-                    btn.IsChecked = !isDisabledAll(type);
-                }));
             }
             catch(Exception ex) {
                 Log.Warn("StatusToolControl: Failed update for type - '{0}' :: '{1}'", type, ex.Message);
             }
+
+#if VSSDK_15_AND_NEW
+            ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
+            {
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+#else
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+#endif
+                btn.Content     = caption(type, false);
+                btn.IsChecked   = !isDisabledAll(type);
+
+#if VSSDK_15_AND_NEW
+            });
+#else
+            }));
+#endif
         }
 
         protected bool isDisabledAll(SolutionEventType type)

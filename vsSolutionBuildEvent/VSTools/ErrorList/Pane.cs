@@ -16,15 +16,21 @@
 */
 
 using System;
+using System.Threading;
 using Microsoft.VisualStudio.Shell;
+
+#if !VSSDK_15_AND_NEW
+using System.Threading.Tasks;
+using Task = System.Threading.Tasks.Task;
+#endif
 
 namespace net.r_eg.vsSBE.VSTools.ErrorList
 {
-    using ThreadTask = System.Threading.Tasks.Task;
-
     public class Pane: IPane, IDisposable
     {
         protected ErrorListProvider provider;
+
+        protected CancellationToken cancellationToken;
 
         /// <summary>
         /// To add new error in ErrorList.
@@ -61,6 +67,12 @@ namespace net.r_eg.vsSBE.VSTools.ErrorList
             provider.Tasks.Clear();
         }
 
+        public Pane(IServiceProvider sp, CancellationToken ct)
+            : this(sp)
+        {
+            cancellationToken = ct;
+        }
+
         public Pane(IServiceProvider sp)
         {
             provider = new ErrorListProvider(sp);
@@ -68,22 +80,36 @@ namespace net.r_eg.vsSBE.VSTools.ErrorList
 
         protected void task(string msg, TaskErrorCategory type = TaskErrorCategory.Message)
         {
-            ThreadTask.Factory.StartNew(() => // to prevent bug from `Process.ErrorDataReceived`
+            // prevents possible bug from `Process.ErrorDataReceived` because of NLog
+
+#if VSSDK_15_AND_NEW
+            ThreadHelper.JoinableTaskFactory.RunAsync(async () => 
             {
-                provider.Tasks.Add(new ErrorTask()
-                {
-                    Text                = msg,
-                    Document            = Settings.APP_NAME_SHORT,
-                    Category            = TaskCategory.User,
-                    Checked             = true,
-                    IsCheckedEditable   = true,
-                    ErrorCategory       = type,
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+#else
+            Task.Factory.StartNew(() =>
+            {
+#endif
+                provider.Tasks.Add(new ErrorTask() {
+                    Text = msg,
+                    Document = Settings.APP_NAME_SHORT,
+                    Category = TaskCategory.User,
+                    Checked = true,
+                    IsCheckedEditable = true,
+                    ErrorCategory = type,
                 });
 
+#if VSSDK_15_AND_NEW
             });
+#else
+            }, 
+            CancellationToken.None,
+            TaskCreationOptions.None,
+            TaskScheduler.Default);
+#endif
         }
 
-        #region IDisposable
+#region IDisposable
 
         // To detect redundant calls
         private bool disposed = false;
@@ -107,6 +133,6 @@ namespace net.r_eg.vsSBE.VSTools.ErrorList
             }
         }
 
-        #endregion
+#endregion
     }
 }
