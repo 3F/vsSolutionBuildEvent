@@ -5,25 +5,24 @@
 **Flexible actions for all ...**
 
 [![Build status - master](https://ci.appveyor.com/api/projects/status/l38xn0j2c5an28e1/branch/master?svg=true)](https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/branch/master)
-[![D2](https://img.shields.io/sourceforge/dt/vssbe.svg)](https://sourceforge.net/projects/vssbe/files/latest/download)
+[![Tests](https://img.shields.io/appveyor/tests/3Fs/vssolutionbuildevent/master.svg)](https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/build/tests)
 [![VSPackage](https://vssbe.r-eg.net/etc/badges/VSPackage.svg)](https://vssbe.r-eg.net/Changelist/#vsix)
-[![Tests](https://img.shields.io/appveyor/tests/3Fs/mvssln/master.svg)](https://ci.appveyor.com/project/3Fs/mvssln/build/tests)
+[![nuget vsSBE.CI.MSBuild](https://img.shields.io/nuget/v/vsSBE.CI.MSBuild.svg)](https://www.nuget.org/packages/vsSBE.CI.MSBuild/)
 [![LGPLv3](https://vssbe.r-eg.net/etc/badges/License.svg)](https://vssbe.r-eg.net/License/)
 [![GetNuTool](https://vssbe.r-eg.net/etc/badges/GetNuTool.svg)](https://github.com/3F/GetNuTool)
 
-[![Build history](https://buildstats.info/appveyor/chart/3Fs/hmsbuild?buildCount=15&includeBuildsFromPullRequest=true&showStats=true)](https://ci.appveyor.com/project/3Fs/hmsbuild/history)
-[![Event model](https://vssbe.r-eg.net/doc/Resources/events_model_small.png)](https://vssbe.r-eg.net/doc/Scheme/#model-of-events)
+[![Build history](https://buildstats.info/appveyor/chart/3Fs/vssolutionbuildevent?buildCount=15&includeBuildsFromPullRequest=true&showStats=true)](https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/history)
+[![Event model](https://vssbe.r-eg.net/doc/Resources/events_model_small.png)]()
 [![Short Overview](https://vssbe.r-eg.net/doc/Resources/examples/overview-youtube.png)](https://youtu.be/FX5GiMX0ulI) 
 
-[![nuget vsSBE.CI.MSBuild](https://img.shields.io/nuget/v/vsSBE.CI.MSBuild.svg)](https://www.nuget.org/packages/vsSBE.CI.MSBuild/)
 [![CI.MSBuild](https://vssbe.r-eg.net/etc/badges/CI.MSBuild.svg)](https://vssbe.r-eg.net/Changelist/#cim)
 [![Devenv](https://vssbe.r-eg.net/etc/badges/Devenv.svg)](https://vssbe.r-eg.net/Changelist/#devenv)
 [![Provider](https://vssbe.r-eg.net/etc/badges/Provider.svg)](https://vssbe.r-eg.net/Changelist/#provider)
 [![API](https://vssbe.r-eg.net/etc/badges/API.svg)](https://vssbe.r-eg.net/Changelist/#api)
 
-**[Download](https://vssbe.r-eg.net/Downloads/)** (Binaries, Snapshots, Nightly builds, Libraries, ...)
+**[Download](https://vssbe.r-eg.net/Downloads/)** (Binaries, Snapshots, Nightly builds, Libraries, ...) / [![D2](https://img.shields.io/sourceforge/dt/vssbe.svg)](https://sourceforge.net/projects/vssbe/) (old releases via sf)
 
-* VisualStudio Marketplace: [Download .vsix](https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334)
+* [VisualStudio Marketplace](https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334)
 
 ## License
 
@@ -64,15 +63,14 @@ Provides also support of the CI-Build Servers (TeamCity, AppVeyor, Azure DevOps,
 [![Scheme of vsSolutionBuildEvent projects](https://vssbe.r-eg.net/doc/Resources/scheme.png)](https://vssbe.r-eg.net/doc/Scheme/)
 
 
-* [Changelog](https://vssbe.r-eg.net/Changelist/)
-* [How to build](https://vssbe.r-eg.net/doc/Dev/How%20to%20build/) ([Developer Zone](https://vssbe.r-eg.net/doc/Dev/))
+* [Install & Build](https://vssbe.r-eg.net/doc/Dev/How-to-build/) ([Developer Zone](https://vssbe.r-eg.net/doc/Dev/))
 * [Wiki](https://vssbe.r-eg.net/)
-* [Public Bug Tracker](https://github.com/3F/vsSolutionBuildEvent/issues) 
+* [Public Issue Tracker](https://github.com/3F/vsSolutionBuildEvent/issues) 
 
 
 ## Advanced MSBuild
 
-https://vssbe.r-eg.net/doc/Scripts/MSBuild/
+[https://vssbe.r-eg.net/doc/Scripts/MSBuild/](https://vssbe.r-eg.net/doc/Scripts/MSBuild/)
 
 ```js
 #[$(
@@ -110,7 +108,7 @@ $(pdir = $(ProjectDir.Replace('\', '/'):project))
 
 ## SBE-Scripts
 
-https://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/
+[https://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/](https://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/)
 
 ```js
 #["
@@ -192,7 +190,7 @@ else
 
 ## Processing modes
 
-https://vssbe.r-eg.net/doc/Modes/
+[https://vssbe.r-eg.net/doc/Modes/](https://vssbe.r-eg.net/doc/Modes/)
 
 From simple commands to C# or even msbuild targets:
 
@@ -275,7 +273,7 @@ Feel free to improve any our pages. Click [Edit] button or [Start new here.](htt
 
 Welcome:
 
-* https://github.com/3F/vsSolutionBuildEvent
+* [https://github.com/3F/vsSolutionBuildEvent](https://github.com/3F/vsSolutionBuildEvent)
 
 ## Screenshots
 

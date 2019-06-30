@@ -1,5 +1,47 @@
-vsSolutionBuildEvent
+vsSolutionBuildEvent - https://github.com/3F/vsSolutionBuildEvent
 _ _ _ _ _ _ _ _ _ _ 
+
+
+[v0.12.11] 2019.06.30
+
+    * NEW: Visual Studio 2019 full support. SDK15. PR #45.
+    
+    * NEW: Complete integration with VS2017. SDK15. PR #45.
+    
+           For VS2017 will be also available old SDK10 package implementation.
+           But SDK15 is recommended.
+    
+    * FIXED: Fixed IEnvironment.ProjectsMBE implementations.
+    
+    * CHANGED: netfx target platform changes:
+               
+               * 4.0 only: VS2010, VS2012, VS2013, VS2015, VS2017
+               * 4.6 only: VS2017, VS2019
+
+    * CHANGED: Replaced old msbuild helper on hMSBuild 2.1
+               https://github.com/3F/hMSBuild
+               
+    * CHANGED: Devenv netfx 4.0 only (SDK10).
+    
+    * KNOWN: Known problem with VS2019 when modern VS platform produces the case when 
+             Build can be started before activation of our plugin.
+                          
+             Solution: Just attach once our [status panel] and it will activate our plugin 
+             for early registering handlers.
+             
+    * KNOWN: Known problem with VS2017 when upgrading from SDK10 release to SDK15:
+             Deactivated [Status Panel] from `View` - `Other Windows`.
+             
+             Solution: Just close this panel. Then, open it again.
+            
+    * NOTE: Our new releases migrated from SourceForge to GitHub Release Page: 
+            https://github.com/3F/vsSolutionBuildEvent/releases
+            
+            Most actual information is still here: https://vssbe.r-eg.net/Downloads/
+            
+    * NOTE: About SDK10 / SDK15 versions:
+            https://vssbe.r-eg.net/doc/Usage/#sdk10--sdk15-versions
+            
 
 [v0.12.10] 2016.11.11
 
