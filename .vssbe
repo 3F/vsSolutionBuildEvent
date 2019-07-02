@@ -129,7 +129,7 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[\"\n    Prepares data - version, revBuild & information from git\n\"]\n\n#[var tBase     = $([System.DateTime]::Parse('$(revDeltaBase)').ToBinary())]\n#[var tNow      = $([System.DateTime]::UtcNow.Ticks)]\n#[var revBuild  = $([System.TimeSpan]::FromTicks('$([MSBuild]::Subtract($(tNow), $(tBase)))').TotalMinutes.ToString('0'))]\n#[var revBuild  = $([MSBuild]::Add($(revDeltaMin), $([MSBuild]::Modulo($(revBuild), $([MSBuild]::Subtract($(revDeltaMax), $(revDeltaMin)))))))]\n\n#[var tplVersion = #[File get(\"Version.tpl\")]]\n\n#[var pDir          = vsSolutionBuildEvent/]\n#[var pDirBridge    = Bridge/]\n#[var pDirCIM       = CI.MSBuild/]\n#[var pDirDevenv    = Devenv\\]\n#[var pDirProvider  = Provider/]\n\n#[var numSBE        = #[File get(\".version\")]]\n#[var numBridge     = #[File get(\"#[var pDirBridge].version\")]]\n#[var numCIM        = #[File get(\"#[var pDirCIM].version\")]]\n#[var numDevenv     = #[File get(\"#[var pDirDevenv].version\")]]\n#[var numProvider   = #[File get(\"#[var pDirProvider].version\")]]\n\n#[\" the 0 number is reserved for patches from external assemblies /see AssemblyInfo \"]\n\n#[var num0Bridge     = #[var numBridge].0]\n#[var num0CIM        = #[var numCIM].0]\n#[var num0Devenv     = #[var numDevenv].0]\n#[var num0Provider   = #[var numProvider].0]\n\n#[var libCore       = #[var numSBE]]\n#[var libCoreInt    = $([System.Convert]::ToInt32(\"$(libCore.Replace('.', '0'))\"))]#[\" v0.12.5 -> 1205 \"]\n\n#[var cfgSDK = #[( $(Configuration) =^ \"_SDK15\" ) {15} else {10} ]]",
+        "Command": "#[\"\n    Prepares data - version, revBuild & information from git\n\"]\n\n#[var tBase     = $([System.DateTime]::Parse('$(revDeltaBase)').ToBinary())]\n#[var tNow      = $([System.DateTime]::UtcNow.Ticks)]\n#[var revBuild  = $([System.TimeSpan]::FromTicks('$([MSBuild]::Subtract($(tNow), $(tBase)))').TotalMinutes.ToString('0'))]\n#[var revBuild  = $([MSBuild]::Add($(revDeltaMin), $([MSBuild]::Modulo($(revBuild), $([MSBuild]::Subtract($(revDeltaMax), $(revDeltaMin)))))))]\n\n#[var tplVersion = #[File get(\"Version.tpl\")]]\n\n#[var pDir          = vsSolutionBuildEvent/]\n#[var pDirBridge    = Bridge/]\n#[var pDirCIM       = CI.MSBuild/]\n#[var pDirDevenv    = Devenv\\]\n#[var pDirProvider  = Provider/]\n#[var pMvsSln       = MvsSln/]\n\n#[var numSBE        = #[File get(\".version\")]]\n#[var numBridge     = #[File get(\"#[var pDirBridge].version\")]]\n#[var numCIM        = #[File get(\"#[var pDirCIM].version\")]]\n#[var numDevenv     = #[File get(\"#[var pDirDevenv].version\")]]\n#[var numProvider   = #[File get(\"#[var pDirProvider].version\")]]\n\n#[\" the 0 number is reserved for patches from external assemblies /see AssemblyInfo \"]\n\n#[var num0Bridge     = #[var numBridge].0]\n#[var num0CIM        = #[var numCIM].0]\n#[var num0Devenv     = #[var numDevenv].0]\n#[var num0Provider   = #[var numProvider].0]\n\n#[var libCore       = #[var numSBE]]\n#[var libCoreInt    = $([System.Convert]::ToInt32(\"$(libCore.Replace('.', '0'))\"))]#[\" v0.12.5 -> 1205 \"]\n\n#[var cfgSDK = #[( $(Configuration) =^ \"_SDK15\" ) {15} else {10} ]]",
         "Command__": [
           "#[\"",
           "    Prepares data - version, revBuild & information from git",
@@ -147,6 +147,7 @@
           "#[var pDirCIM       = CI.MSBuild/]",
           "#[var pDirDevenv    = Devenv\\]",
           "#[var pDirProvider  = Provider/]",
+          "#[var pMvsSln       = MvsSln/]",
           "",
           "#[var numSBE        = #[File get(\".version\")]]",
           "#[var numBridge     = #[File get(\"#[var pDirBridge].version\")]]",
@@ -165,6 +166,43 @@
           "#[var libCoreInt    = $([System.Convert]::ToInt32(\"$(libCore.Replace('.', '0'))\"))]#[\" v0.12.5 -> 1205 \"]",
           "",
           "#[var cfgSDK = #[( $(Configuration) =^ \"_SDK15\" ) {15} else {10} ]]"
+        ]
+      }
+    },
+    {
+      "Enabled": true,
+      "Name": "ModulesAndPkg",
+      "Caption": "Submodules and dep packages",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": false,
+      "BuildType": "Common",
+      "Confirmation": false,
+      "ToConfiguration": [],
+      "ExecutionOrder": {
+        "$type": "net.r_eg.vsSBE.Events.ExecutionOrder[], vsSolutionBuildEvent",
+        "$values": []
+      },
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true,
+        "TimeLimit": 30
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
+        "Type": "Script",
+        "Command": "\r\n#[File call(\"submodules.bat\", \"$(pMvsSln)/MvsSln.sln\", 2000)]\r\n\r\n#[\" Packages \"]\r\n\r\n#[( !(#[IO exists.directory(\"packages\")]) || !(#[IO exists.directory(\"$(pMvsSln)/packages\")]) )\r\n{\r\n    #[File call(\"packages.cmd\", \"\", 2000)]\r\n}]",
+        "Command__": [
+          "",
+          "#[File call(\"submodules.bat\", \"$(pMvsSln)/MvsSln.sln\", 2000)]",
+          "",
+          "#[\" Packages \"]",
+          "",
+          "#[( !(#[IO exists.directory(\"packages\")]) || !(#[IO exists.directory(\"$(pMvsSln)/packages\")]) )",
+          "{",
+          "    #[File call(\"packages.cmd\", \"\", 2000)]",
+          "}]"
         ]
       }
     },
