@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Microsoft.Build.Framework;
+using net.r_eg.MvsSln;
+using net.r_eg.MvsSln.Extensions;
 
 namespace net.r_eg.vsSBE.CI.MSBuild
 {
@@ -154,19 +156,16 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         {
             Dictionary<string, string> ret = new Dictionary<string, string>();
 
-            string dir = Path.GetDirectoryName(sln);
-            if(dir[dir.Length - 1] != Path.DirectorySeparatorChar) {
-                dir += Path.DirectorySeparatorChar;
-            }
+            string dir = Path.GetDirectoryName(sln).DirectoryPathFormat();
 
-            ret["SolutionDir"]      = dir;
-            ret["SolutionExt"]      = Path.GetExtension(sln);
-            ret["SolutionFileName"] = Path.GetFileName(sln);
-            ret["SolutionName"]     = Path.GetFileNameWithoutExtension(sln);
-            ret["SolutionPath"]     = sln;
+            ret[PropertyNames.SLN_DIR]      = dir;
+            ret[PropertyNames.SLN_EXT]      = Path.GetExtension(sln);
+            ret[PropertyNames.SLN_FNAME]    = Path.GetFileName(sln);
+            ret[PropertyNames.SLN_NAME]     = Path.GetFileNameWithoutExtension(sln);
+            ret[PropertyNames.SLN_PATH]     = sln;
 
-            ret["Configuration"]    = configuration;
-            ret["Platform"]         = platform;
+            ret[PropertyNames.CONFIG]   = configuration;
+            ret[PropertyNames.PLATFORM] = platform;
 
             return ret;
         }

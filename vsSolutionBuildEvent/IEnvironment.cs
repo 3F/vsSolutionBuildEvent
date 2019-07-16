@@ -116,8 +116,7 @@ namespace net.r_eg.vsSBE
         Microsoft.Build.Evaluation.Project getProject(string name);
 
         /// <summary>
-        /// Gets configuration for specific format
-        /// e.g.: http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivscfg.get_displayname.aspx
+        /// Returns formatted configuration from the SolutionConfiguration2
         /// </summary>
         string SolutionCfgFormat(EnvDTE80.SolutionConfiguration2 cfg);
 

@@ -39,7 +39,8 @@
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <NetTargetVName>net45</NetTargetVName>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants></DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -81,6 +82,10 @@
     <ProjectReference Include="..\Bridge\Bridge.csproj">
       <Project>{73919171-44B6-4536-B892-F1FCA653887C}</Project>
       <Name>Bridge</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MvsSln\MvsSln\MvsSln.csproj">
+      <Project>{F905DFB2-2E67-4FF7-9001-924F6F2D645D}</Project>
+      <Name>MvsSln</Name>
     </ProjectReference>
     <ProjectReference Include="..\Provider\Provider.csproj">
       <Project>{4F8BB8CD-1116-4F07-9B8F-06D69FB8589B}</Project>

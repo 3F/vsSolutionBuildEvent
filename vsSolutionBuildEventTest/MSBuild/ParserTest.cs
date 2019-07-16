@@ -3,6 +3,7 @@ using System.Linq;
 using EnvDTE80;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using net.r_eg.MvsSln;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.Scripts;
@@ -28,8 +29,8 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             mockDte2.SetupGet(p => p.Solution).Returns(mockSolution.Object);
 
             Parser target = new Parser(new net.r_eg.vsSBE.Environment(mockDte2.Object));
-            Assert.IsNotNull(target.getProperty("Configuration"));
-            Assert.IsNotNull(target.getProperty("Platform"));
+            Assert.IsNotNull(target.getProperty(PropertyNames.CONFIG));
+            Assert.IsNotNull(target.getProperty(PropertyNames.PLATFORM));
         }
 
         /// <summary>

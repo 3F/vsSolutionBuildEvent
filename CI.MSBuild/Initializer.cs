@@ -31,6 +31,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Microsoft.Build.Framework;
+using net.r_eg.MvsSln;
+using net.r_eg.MvsSln.Extensions;
 using net.r_eg.vsSBE.Provider;
 
 namespace net.r_eg.vsSBE.CI.MSBuild
@@ -70,15 +72,8 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         /// </summary>
         public string RootPath
         {
-            get
-            {
-                string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-                if(path[path.Length - 1] != Path.DirectorySeparatorChar) {
-                    path += Path.DirectorySeparatorChar;
-                }
-                return path;
-            }
+            get => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+                        .DirectoryPathFormat();
         }
 
         /// <summary>
@@ -284,15 +279,15 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                 return pKeys.FirstOrDefault(p => p.Key.Equals(key, StringComparison.OrdinalIgnoreCase)).Value;
             };
 
-            string Configuration    = pValue("Configuration");
-            string Platform         = pValue("Platform");
+            string Configuration    = pValue(PropertyNames.CONFIG);
+            string Platform         = pValue(PropertyNames.PLATFORM);
 
             if(Configuration != null) {
-                init["Configuration"] = Configuration;
+                init[PropertyNames.CONFIG] = Configuration;
             }
 
             if(Platform != null) {
-                init["Platform"] = Platform;
+                init[PropertyNames.PLATFORM] = Platform;
             }
 
             if(log.IsDiagnostic)
@@ -317,26 +312,26 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             Dictionary<string, string> _properties = properties.OfType<DictionaryEntry>().ToDictionary(k => k.Key.ToString(), v => v.Value.ToString());
 
             Dictionary<string, string> ret = new Dictionary<string, string>();
-            if(_properties.ContainsKey("Configuration")) {
-                ret["Configuration"] = _properties["Configuration"];
+            if(_properties.ContainsKey(PropertyNames.CONFIG)) {
+                ret[PropertyNames.CONFIG] = _properties[PropertyNames.CONFIG];
             }
-            if(_properties.ContainsKey("Platform")) {
-                ret["Platform"] = _properties["Platform"];
+            if(_properties.ContainsKey(PropertyNames.PLATFORM)) {
+                ret[PropertyNames.PLATFORM] = _properties[PropertyNames.PLATFORM];
             }
-            if(_properties.ContainsKey("SolutionDir")) {
-                ret["SolutionDir"] = _properties["SolutionDir"];
+            if(_properties.ContainsKey(PropertyNames.SLN_DIR)) {
+                ret[PropertyNames.SLN_DIR] = _properties[PropertyNames.SLN_DIR];
             }
-            if(_properties.ContainsKey("SolutionName")) {
-                ret["SolutionName"] = _properties["SolutionName"];
+            if(_properties.ContainsKey(PropertyNames.SLN_NAME)) {
+                ret[PropertyNames.SLN_NAME] = _properties[PropertyNames.SLN_NAME];
             }
-            if(_properties.ContainsKey("SolutionFileName")) {
-                ret["SolutionFileName"] = _properties["SolutionFileName"];
+            if(_properties.ContainsKey(PropertyNames.SLN_FNAME)) {
+                ret[PropertyNames.SLN_FNAME] = _properties[PropertyNames.SLN_FNAME];
             }
-            if(_properties.ContainsKey("SolutionExt")) {
-                ret["SolutionExt"] = _properties["SolutionExt"];
+            if(_properties.ContainsKey(PropertyNames.SLN_EXT)) {
+                ret[PropertyNames.SLN_EXT] = _properties[PropertyNames.SLN_EXT];
             }
-            if(_properties.ContainsKey("SolutionPath")) {
-                ret["SolutionPath"] = _properties["SolutionPath"];
+            if(_properties.ContainsKey(PropertyNames.SLN_PATH)) {
+                ret[PropertyNames.SLN_PATH] = _properties[PropertyNames.SLN_PATH];
             }
 
             if(log.IsDiagnostic)

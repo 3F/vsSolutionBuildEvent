@@ -15,39 +15,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Diagnostics;
+using System.Collections.Generic;
 
-namespace net.r_eg.vsSBE.Sln
+namespace net.r_eg.vsSBE.Extensions
 {
-    /// <summary>
-    /// Properties of project in solution file
-    /// </summary>
-    [DebuggerDisplay("{name} [{pGuid}] = {fullPath}")]
-    public struct Project
+    public static class CollectionExtension
     {
         /// <summary>
-        /// Project type GUID
+        /// Returns either value from dictionary or configured default value.
         /// </summary>
-        public string type;
-
-        /// <summary>
-        /// Project name
-        /// </summary>
-        public string name;
-
-        /// <summary>
-        /// Relative path to project
-        /// </summary>
-        public string path;
-
-        /// <summary>
-        /// Full path to project 
-        /// </summary>
-        public string fullPath;
-
-        /// <summary>
-        /// Project GUID
-        /// </summary>
-        public string pGuid;
+        /// <typeparam name="TKey"></typeparam>
+        /// <typeparam name="TVal"></typeparam>
+        /// <param name="data"></param>
+        /// <param name="key"></param>
+        /// <param name="def">Use this if key is not found.</param>
+        /// <returns></returns>
+        public static TVal GetOrDefault<TKey, TVal>(this IDictionary<TKey, TVal> data, TKey key, TVal def = default(TVal))
+        {
+            if(data == null) {
+                return def;
+            }
+            return data.ContainsKey(key) ? data[key] : def;
+        }
     }
 }

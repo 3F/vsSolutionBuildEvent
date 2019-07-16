@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Build.Evaluation;
+using net.r_eg.MvsSln;
 
 namespace net.r_eg.vsSBE.Test
 {
@@ -18,7 +19,7 @@ namespace net.r_eg.vsSBE.Test
         }
 
         public StubEnv()
-            : this(new Dictionary<string, string>() { { "Configuration", "Debug" }, { "Platform", "x86" } })
+            : this(new Dictionary<string, string>() { { PropertyNames.CONFIG, "Debug" }, { PropertyNames.PLATFORM, "x86" } })
         {
 
         }

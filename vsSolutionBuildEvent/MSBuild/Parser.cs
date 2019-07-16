@@ -22,6 +22,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.Build.Evaluation;
+using net.r_eg.MvsSln;
 using net.r_eg.vsSBE.Bridge.CoreCommand;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild.Exceptions;
@@ -31,10 +32,8 @@ namespace net.r_eg.vsSBE.MSBuild
 {
     public class Parser: IMSBuild, IEvaluator
     {
-        /// <summary>
-        /// Default value for all undefined properties.
-        /// </summary>
-        public const string PROP_VALUE_DEFAULT = "*Undefined*";
+        [Obsolete("Use " + nameof(PropertyNames), false)]
+        public const string PROP_VALUE_DEFAULT = PropertyNames.UNDEFINED;
 
         /// <summary>
         /// Max of supported containers for processing.
@@ -117,7 +116,7 @@ namespace net.r_eg.vsSBE.MSBuild
                 return prop.EvaluatedValue;
             }
             Log.Debug("getProperty: return default value");
-            return PROP_VALUE_DEFAULT;
+            return PropertyNames.UNDEFINED;
         }
 
         /// <summary>

@@ -19,6 +19,7 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using net.r_eg.MvsSln.Extensions;
 
 namespace net.r_eg.vsSBE.Extensions
 {
@@ -49,21 +50,13 @@ namespace net.r_eg.vsSBE.Extensions
         }
 
         /// <summary>
-        /// Formatting path to directory.
+        /// Formatting of the path to directory.
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
         public static string PathFormat(this string path)
         {
-            if(String.IsNullOrWhiteSpace(path)) {
-                return Path.DirectorySeparatorChar.ToString();
-            }
-            path = path.Trim();
-
-            if(path[path.Length - 1] != Path.DirectorySeparatorChar) {
-                path += Path.DirectorySeparatorChar;
-            }
-            return path;
+            return path.DirectoryPathFormat();
         }
 
         /// <summary>

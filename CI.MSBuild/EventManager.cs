@@ -29,9 +29,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using net.r_eg.MvsSln;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Bridge.CoreCommand;
 using net.r_eg.vsSBE.Provider;
+using BuildType = net.r_eg.vsSBE.Bridge.BuildType;
 
 namespace net.r_eg.vsSBE.CI.MSBuild
 {
@@ -153,10 +155,10 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             }
 
             Dictionary<object, string> properties = e.Properties.OfType<DictionaryEntry>().ToDictionary(k => k.Key, v => v.Value.ToString());
-            if(properties.ContainsKey("ProjectName"))
+            if(properties.ContainsKey(PropertyNames.PRJ_NAME))
             {
                 projects[e.ProjectId] = new Project() {
-                    Name            = properties["ProjectName"],
+                    Name            = properties[PropertyNames.PRJ_NAME],
                     File            = e.ProjectFile,
                     Properties      = properties
                 };
