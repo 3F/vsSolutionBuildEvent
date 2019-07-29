@@ -164,20 +164,27 @@ namespace net.r_eg.vsSBE.MSBuild
                 CultureInfo origincul               = Thread.CurrentThread.CurrentCulture;
                 Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-                try {
+                try
+                {
+                    // To fix "Save changes to the following items"
+                    project.DisableMarkDirty = true;
+
                     defProperties(project);
                     project.SetProperty(container, Tokens.characters(_wrapProperty(ref unevaluated)));
                     return project.GetProperty(container).EvaluatedValue;
                 }
-                finally {
+                finally
+                {
                     project.RemoveProperty(project.GetProperty(container));
+                    project.DisableMarkDirty = false;
+
                     Thread.CurrentThread.CurrentCulture = origincul;
 
-                    // To fix "Save changes to the following items?"
-                    // Do not use the `project.Save();` because will be "File Modification Detected ... has been modified outside the environment."
-                    foreach(var dteprj in Env.ProjectsDTE.Where(p => p.FullName == project.FullPath)) {
-                        dteprj.Save();
-                    }
+                    // NOTE: about other solutions for "Save changes to the following items":
+
+                    // 1) Do not use the `.Save();` on `EProject` because of possible "File Modification Detected ... has been modified outside the environment."
+                    // 2) Do not use `.Save();` on `DProject` because of possible "Operation aborted (Exception from HRESULT: 0x80004004 (E_ABORT))"
+                    // For DProject it also activates "Save As" dialog in VS even inside try/catch
                 }
             }
         }
