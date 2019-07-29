@@ -19,6 +19,9 @@ using System;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.VisualStudio.Shell;
+using Microsoft.VisualStudio.Shell.Interop;
+using net.r_eg.MvsSln;
 using net.r_eg.MvsSln.Extensions;
 
 namespace net.r_eg.vsSBE.Extensions
@@ -57,6 +60,26 @@ namespace net.r_eg.vsSBE.Extensions
         public static string PathFormat(this string path)
         {
             return path.DirectoryPathFormat();
+        }
+
+        /// <summary>
+        /// BSTR. Directory where visual studio executable was installed.
+        /// http://technet.microsoft.com/en-us/microsoft.visualstudio.shell.interop.__vsspropid%28v=vs.71%29.aspx
+        /// </summary>
+        /// <param name="ptr">stub.</param>
+        /// <returns></returns>
+        public static string GetDevEnvDir(this string ptr)
+        {
+#if VSSDK_15_AND_NEW
+            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
+#endif
+
+            IVsShell shell = (IVsShell)Package.GetGlobalService(typeof(SVsShell));
+            shell.GetProperty((int)__VSSPROPID.VSSPROPID_InstallDirectory, out object dirObject);
+
+            string dir = (string)dirObject;
+
+            return string.IsNullOrEmpty(dir) ? PropertyNames.UNDEFINED : dir.DirectoryPathFormat();
         }
 
         /// <summary>

@@ -20,24 +20,33 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using EnvDTE80;
-using Microsoft.Build.Evaluation;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.MvsSln;
+using net.r_eg.MvsSln.Core;
 using net.r_eg.MvsSln.Extensions;
+using net.r_eg.vsSBE.API;
 using net.r_eg.vsSBE.Bridge.CoreCommand;
-using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.UnifiedTypes;
 using DProject = EnvDTE.Project;
 using EProject = Microsoft.Build.Evaluation.Project;
 
+#if VSSDK_15_AND_NEW
+using Microsoft.VisualStudio.Shell;
+#endif
+
 namespace net.r_eg.vsSBE
 {
+    // TODO: more unified integration with IsolatedEnv /EnvDTE to MvsSln as possible 
+    //       ~such as full processing by MvsSln through information about .sln file from EnvDTE.
     public class Environment: EnvAbstract, IEnvironment, IEnvironmentExt
     {
         [Obsolete("Use " + nameof(PropertyNames), false)]
         public const string PROP_UNAV_STRING = PropertyNames.UNDEFINED;
+
+        protected IEventLevel elvl;
+
+        private string startupProject;
 
         /// <summary>
         /// List of EnvDTE projects.
@@ -52,18 +61,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public IEnumerable<EProject> ProjectsMBE
         {
-            get
-            {
-#if VSSDK_15_AND_NEW
-                ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
-#endif
-
-                foreach(var pname in ProjectsDTE.Select(p => getProjectNameFrom(p))) {
-                    if(!String.IsNullOrWhiteSpace(pname)) {
-                        yield return getProject(pname);
-                    }
-                }
-            }
+            get => ProjectsDTE.Select(p => p.GetXProject(slnEnv, true)?.Project);
         }
 
         /// <summary>
@@ -76,13 +74,17 @@ namespace net.r_eg.vsSBE
 #if VSSDK_15_AND_NEW
                 ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
 #endif
-
-                try {
-                    return _DTEProjects.Select(p => getProjectNameFrom(p)).ToList();
+                try
+                {
+                    return ProjectsDTE
+                            .Select(p => getProjectNameFrom(p, true))
+                            .Where(name => !string.IsNullOrWhiteSpace(name))
+                            .ToList();
                 }
                 catch(Exception ex) {
-                    Log.Error("Failed getting project from EnvDTE: {0}", ex.Message);
+                    Log.Error($"Failed getting project from EnvDTE: {ex.Message}");
                 }
+
                 return new List<string>();
             }
         }
@@ -122,12 +124,12 @@ namespace net.r_eg.vsSBE
                 if(!IsOpenedSolution) {
                     return null;
                 }
-                return (SolutionConfiguration2)Dte2?.Solution.SolutionBuild.ActiveConfiguration;
+                return (SolutionConfiguration2)Dte2?.Solution?.SolutionBuild?.ActiveConfiguration;
             }
         }
 
         /// <summary>
-        /// Formatted string with active configuration for current solution
+        /// Formatted string with an active configuration for current solution.
         /// </summary>
         public string SolutionActiveCfgString
         {
@@ -135,7 +137,7 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// All configurations for current solution
+        /// All configurations for current solution.
         /// </summary>
         public IEnumerable<SolutionConfiguration2> SolutionConfigurations
         {
@@ -154,30 +156,42 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Project by default or "StartUp Project".
+        /// Project Name by default or "StartUp Project".
         /// </summary>
-        public virtual string StartupProjectString
+        public override string StartupProjectString
         {
             get
             {
-                if(!IsOpenedSolution || Dte2?.Solution?.SolutionBuild?.StartupProjects == null) {
+                if(!IsOpenedSolution) {
                     return null;
                 }
 
-                if(_startupProject != null) {
-                    return _startupProject;
+                var _st = Dte2?.Solution?.SolutionBuild?.StartupProjects;
+
+                if(_st == null || startupProject != null) {
+                    return startupProject;
                 }
 
-                foreach(string project in (Array)Dte2.Solution.SolutionBuild.StartupProjects)
+                // `Dte2.Solution.SolutionBuild.StartupProjects` represents relative path to project file:
+                //  [0] "miniupnpc\\miniupnpc.vcxproj"   object {string}
+                //  [0] "StrongDC.vcxproj"   object {string}
+                // https://docs.microsoft.com/en-us/dotnet/api/envdte.solutionbuild.startupprojects
+
+                foreach(string project in (Array)_st)
                 {
-                    if(!String.IsNullOrEmpty(project)) {
-                        return project;
+                    if(!string.IsNullOrEmpty(project))
+                    {
+                        return sln?.ProjectItems?
+                                .FirstOrDefault(p => p.path == project)
+                                .name;
                     }
                 }
+
                 return null;
             }
+
+            protected set => updateStartupProject(value);
         }
-        private string _startupProject;
 
         /// <summary>
         /// Get status of opened solution.
@@ -192,10 +206,8 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public string SolutionFile
         {
-            get {
-                // the state of the DTE2 object are always should be in modification
-                return getFullPathToSln(Dte2);
-            }
+            // the state of the DTE2 object are always should be in modification
+            get => getFullPathToSln(Dte2);
         }
 
         /// <summary>
@@ -203,23 +215,19 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public string SolutionPath
         {
-            get {
-                return Path.GetDirectoryName(SolutionFile);
-            }
+            get => Path.GetDirectoryName(SolutionFile);
         }
 
         /// <summary>
-        /// Name of used solution file without extension
+        /// Name of used solution file without extension.
         /// </summary>
         public string SolutionFileName
         {
-            get {
-                return Path.GetFileNameWithoutExtension(getFullPathToSln(Dte2));
-            }
+            get => Path.GetFileNameWithoutExtension(SolutionFile);
         }
 
         /// <summary>
-        /// Access to OutputWindowPane through IOW
+        /// Access to OutputWindowPane through IOW.
         /// </summary>
         public IOW OutputWindowPane
         {
@@ -230,8 +238,7 @@ namespace net.r_eg.vsSBE
                 }
                 return outputWindowPane;
             }
-        }
-        protected IOW outputWindowPane;
+        } protected IOW outputWindowPane;
 
         /// <summary>
         /// Getting projects from DTE
@@ -244,8 +251,9 @@ namespace net.r_eg.vsSBE
                 {
                     if(project.ConfigurationManager == null || project.Kind == MvsSln.Types.Kinds.PRJ_UNLOADED) {
                         Log.Trace($"Unloaded project '{project.Name}' is ignored");
-                        continue; // skip for all unloaded projects
+                        continue;
                     }
+
                     yield return project;
                 }
             }
@@ -274,71 +282,19 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// To update the project by default or "StartUp Project".
+        /// To update the Project Name by default aka "StartUp Project".
         /// </summary>
         /// <param name="name">Uses default behavior if empty or null.</param>
         public void updateStartupProject(string name)
         {
-            if(name == String.Empty) {
-                name = null;
-            }
-
-            _startupProject = name;
-            Log.Debug($"'StartUp Project' has been updated = '{name}'");
+            // null value will unlock accessing to SolutionBuild.StartupProjects above
+            startupProject = (name == string.Empty) ? null : name;
+            Log.Debug($"'StartUp Project' has been updated = '{startupProject}'");
         }
 
         /// <summary>
-        /// Gets instance of the Build.Evaluation.Project for accessing to properties etc.
-        /// 
-        /// Uses the 'StartUp Project' from list or first with the same Configuration|Platform if the name contains the null value.
-        /// Note: we work with DTE because the ProjectCollection.GlobalProjectCollection can be is empty
-        /// https://bitbucket.org/3F/vssolutionbuildevent/issue/8/
-        /// </summary>
-        /// <param name="name">Project name</param>
-        /// <returns>Microsoft.Build.Evaluation.Project</returns>
-        public virtual EProject getProject(string name)
-        {
-#if VSSDK_15_AND_NEW
-            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
-#endif
-
-            DProject selected   = null;
-            string startup      = StartupProjectString;
-
-            if(name == null) {
-                Log.Debug("default project is a '{0}'", startup);
-            }
-
-            foreach(DProject dteProject in _DTEProjects)
-            {
-                if(name == null && !String.IsNullOrEmpty(startup) && !dteProject.UniqueName.Equals(startup)) {
-                    continue;
-                }
-                else if(name != null && !getProjectNameFrom(dteProject).Equals(name)) {
-                    continue;
-                }
-
-                selected = dteProject;
-                Log.Trace("selected = dteProject: '{0}'", dteProject.FullName);
-
-                foreach(EProject eProject in ProjectCollection.GlobalProjectCollection.LoadedProjects)
-                {
-                    if(isEquals(dteProject, eProject)) {
-                        return eProject;
-                    }
-                }
-                break; // selected & LoadedProjects is empty
-            }
-
-            if(selected != null) {
-                Log.Debug("getProject->selected '{0}'", selected.FullName);
-                return tryLoadPCollection(selected);
-            }
-            throw new NotFoundException("The project '{0}' was not found. [startup: '{1}']", name, startup);
-        }
-
-        /// <summary>
-        /// Getting global(general for all existing projects) property
+        /// Getting an unified property for all existing projects. 
+        /// Aka "Solution property".
         /// </summary>
         /// <param name="name">Property name</param>
         public string getSolutionProperty(string name)
@@ -358,30 +314,15 @@ namespace net.r_eg.vsSBE
             return null;
         }
 
+        /// <summary>
+        /// Gets project name from IVsHierarchy.
+        /// </summary>
         /// <param name="pHierProj"></param>
-        /// <param name="force">Load in global collection with __VSHPROPID.VSHPROPID_ExtObject if true value</param>
-        /// <returns>project name from Microsoft.Build.Evaluation rules or null value if project not found in GlobalProjectCollection and force value is false</returns>
+        /// <param name="force">Load in global collection with __VSHPROPID.VSHPROPID_ExtObject if true.</param>
+        /// <returns></returns>
         public string getProjectNameFrom(IVsHierarchy pHierProj, bool force = false)
         {
-#if VSSDK_15_AND_NEW
-            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
-#endif
-
-            pHierProj.GetGuidProperty((uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_ProjectIDGuid, out Guid id);
-
-            foreach(EProject eProject in ProjectCollection.GlobalProjectCollection.LoadedProjects)
-            {
-                string guidString = eProject.GetPropertyValue(PropertyNames.PRJ_GUID);
-                if(!String.IsNullOrEmpty(guidString) && id == (new Guid(guidString))) {
-                    return getProjectNameFrom(eProject);
-                }
-            }
-
-            if(!force) {
-                return null;
-            }
-            pHierProj.GetProperty((uint)VSConstants.VSITEMID.Root, (int)__VSHPROPID.VSHPROPID_ExtObject, out object dteProject);
-            return getProjectNameFrom(tryLoadPCollection((DProject)dteProject));
+            return getProjectNameFrom(pHierProj.GetEnvDteProject(), force);
         }
 
         /// <summary>
@@ -405,151 +346,43 @@ namespace net.r_eg.vsSBE
         }
 
         /// <param name="dte2"></param>
-        public Environment(DTE2 dte2)
+        /// <param name="elvl"></param>
+        public Environment(DTE2 dte2, IEventLevel elvl = null)
         {
-            Dte2 = dte2;
+            Dte2        = dte2;
+            this.elvl   = elvl;
+
+            //TODO: ?disposing whole environment
+
+            updateSlnEnv();
+
+            if(elvl != null) {
+                elvl.OpenedSolution += onOpenedSolution;
+            }
         }
 
-        /// <summary>
-        /// Checks equality of projects from different types.
-        /// </summary>
-        /// <param name="dteProject">The instance for EnvDTE</param>
-        /// <param name="eProject">The instance for Build.Evaluation</param>
-        /// <returns></returns>
-        protected bool isEquals(DProject dteProject, EProject eProject)
+        protected void updateSlnEnv()
         {
-#if VSSDK_15_AND_NEW
-            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
-#endif
-
-            string ePrgName         = getProjectNameFrom(eProject);
-            string ePrgCfg          = eProject.GetPropertyValue(PropertyNames.CONFIG);
-            string ePrgPlatform     = eProject.GetPropertyValue(PropertyNames.PLATFORM);
-
-            string dtePrgName       = getProjectNameFrom(dteProject);
-            string dtePrgCfg        = dteProject.ConfigurationManager.ActiveConfiguration.ConfigurationName;
-            string dtePrgPlatform   = dteProject.ConfigurationManager.ActiveConfiguration.PlatformName;
-
-            Log.Trace("isEquals for '{0}' : '{1}' [{2} = {3} ; {4} = {5}]",
-                            eProject.FullPath, dtePrgName, dtePrgCfg, ePrgCfg, dtePrgPlatform, ePrgPlatform);
-
-            // see MS Connect Issue #503935 & https://bitbucket.org/3F/vssolutionbuildevent/issue/14/empty-property-outdir
-            bool isEqualPlatforms = ePrgPlatform.Replace(" ", "") == dtePrgPlatform.Replace(" ", "");
-
-            if(dtePrgName.Equals(ePrgName) && dtePrgCfg.Equals(ePrgCfg) && isEqualPlatforms)
-            {
-                Log.Trace("isEquals: matched");
-                return true;
+            var input = SolutionFile;
+            if(input == null || input == sln?.SolutionFile) {
+                return;
             }
-            return false;
+
+            ((IDisposable)slnEnv)?.Dispose();
+
+            sln = new SlnParser().Parse
+            (
+                input,
+                SlnItems.Projects | SlnItems.SolutionConfPlatforms | SlnItems.ProjectConfPlatforms
+            );
+
+            slnEnv = new MvsSln.Core.IsolatedEnv(sln);
+            slnEnv.Assign();
         }
 
-        /// <summary>
-        /// This solution for similar problems - MS Connect Issue #508628:
-        /// http://connect.microsoft.com/VisualStudio/feedback/details/508628/
-        /// </summary>
-        protected EProject tryLoadPCollection(DProject dteProject)
+        protected virtual string getProjectNameFrom(DProject dteProject, bool force = false)
         {
-#if VSSDK_15_AND_NEW
-            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
-#endif
-
-            Dictionary<string, string> prop = getGlobalProperties(dteProject);
-
-            Log.Debug("tryLoadPCollection :: '{0}' [{1} ; {2}]", dteProject.FullName, prop[PropertyNames.CONFIG], prop[PropertyNames.PLATFORM]);
-            //ProjectCollection.GlobalProjectCollection.LoadProject(dteProject.FullName, prop, null);
-            return new EProject(dteProject.FullName, prop, null, ProjectCollection.GlobalProjectCollection);
-        }
-
-        /// <summary>
-        /// Gets project name from EnvDTE.Project
-        /// </summary>
-        /// <param name="dteProject"></param>
-        /// <returns></returns>
-        protected virtual string getProjectNameFrom(DProject dteProject)
-        {
-            //return dteProject.Name; // can be as 'AppName' and 'AppName_2013' for different .sln
-
-#if VSSDK_15_AND_NEW
-            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
-#endif
-
-            IVsSolution sln = (IVsSolution)Package.GetGlobalService(typeof(SVsSolution));
-            sln.GetProjectOfUniqueName(dteProject.FullName, out IVsHierarchy hr);
-
-            string projectName = getProjectNameFrom(hr, false);
-            if(!String.IsNullOrEmpty(projectName)) {
-                return projectName;
-            }
-            return getProjectNameFrom(tryLoadPCollection(dteProject));
-        }
-
-        protected Dictionary<string, string> getGlobalProperties(DProject dteProject)
-        {
-            var prop = new Dictionary<string, string>(ProjectCollection.GlobalProjectCollection.GlobalProperties);
-
-#if VSSDK_15_AND_NEW
-            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
-#endif
-
-            if(!prop.ContainsKey(PropertyNames.CONFIG))
-            {
-                prop[PropertyNames.CONFIG] = cfgRule.Configuration(
-                    dteProject.ConfigurationManager.ActiveConfiguration.ConfigurationName
-                );
-            }
-
-            if(!prop.ContainsKey(PropertyNames.PLATFORM))
-            {
-                prop[PropertyNames.PLATFORM] = cfgRule.Platform(
-                    dteProject.ConfigurationManager.ActiveConfiguration.PlatformName
-                );
-            }
-            
-            if(!prop.ContainsKey(PropertyNames.VS_BUILD)) {
-                prop[PropertyNames.VS_BUILD] = "true";
-            }
-
-            if(!prop.ContainsKey(PropertyNames.DEVENV_DIR))
-            {
-                // http://technet.microsoft.com/en-us/microsoft.visualstudio.shell.interop.__vsspropid%28v=vs.71%29.aspx
-
-                IVsShell shell = (IVsShell)Package.GetGlobalService(typeof(SVsShell));
-                shell.GetProperty((int)__VSSPROPID.VSSPROPID_InstallDirectory, out object dirObject);
-
-                string dir = (string)dirObject;
-
-                if(String.IsNullOrEmpty(dir)) {
-                    prop[PropertyNames.DEVENV_DIR] = PropertyNames.UNDEFINED;
-                }
-                else {
-                    prop[PropertyNames.DEVENV_DIR] = dir.DirectoryPathFormat();
-                }
-            }
-
-            if(!prop.ContainsKey(PropertyNames.SLN_DIR)  
-               || !prop.ContainsKey(PropertyNames.SLN_NAME)
-               || !prop.ContainsKey(PropertyNames.SLN_FNAME)
-               || !prop.ContainsKey(PropertyNames.SLN_EXT)
-               || !prop.ContainsKey(PropertyNames.SLN_PATH))
-            {
-                IVsSolution solution = (IVsSolution)Package.GetGlobalService(typeof(SVsSolution));
-                solution.GetSolutionInfo(out string dir, out string file, out string opts);
-
-                var _s = file.GetFileProperties();
-
-                prop[PropertyNames.SLN_DIR]     = _s[PropertyNames.SLN_DIR];
-                prop[PropertyNames.SLN_NAME]    = _s[PropertyNames.SLN_NAME];
-                prop[PropertyNames.SLN_FNAME]   = _s[PropertyNames.SLN_FNAME];
-                prop[PropertyNames.SLN_EXT]     = _s[PropertyNames.SLN_EXT];
-                prop[PropertyNames.SLN_PATH]    = _s[PropertyNames.SLN_PATH];
-            }
-
-            if(!prop.ContainsKey(PropertyNames.CODE_ANAL_ORUN)) {
-                prop[PropertyNames.CODE_ANAL_ORUN] = "false";
-            }
-
-            return prop;
+            return dteProject?.GetProjectName(slnEnv, force);
         }
 
         protected IEnumerable<DProject> listSubProjectsDTE(DProject project)
@@ -557,7 +390,7 @@ namespace net.r_eg.vsSBE
             foreach(EnvDTE.ProjectItem item in project.ProjectItems)
             {
                 if(item.SubProject == null) {
-                    continue; //e.g. project is incompatible with used version of visual studio
+                    continue; //eg. project is incompatible with used version of visual studio
                 }
 
                 if(item.SubProject.Kind != MvsSln.Types.Kinds.PRJ_SLN_DIR) {
@@ -578,17 +411,26 @@ namespace net.r_eg.vsSBE
         /// <returns></returns>
         protected string getFullPathToSln(DTE2 dte2)
         {
-            try {
-                string path = dte2.Solution.FullName; // can be empty if it is the new solution
-                if(String.IsNullOrWhiteSpace(path)) {
+            string path = dte2?.Solution?.FullName; // can be empty when new solution is creating
+
+            try
+            {
+                if(string.IsNullOrWhiteSpace(path)) {
                     return dte2.Solution.Properties.Item("Path").Value.ToString();
                 }
+
                 return path;
             }
-            catch(Exception ex) {
+            catch(Exception ex)
+            {
                 Log.Debug("getFullPathToSln returns null: `{0}`", ex.Message);
                 return null;
             }
+        }
+
+        private void onOpenedSolution(object sender, EventArgs e)
+        {
+            updateSlnEnv();
         }
     }
 }

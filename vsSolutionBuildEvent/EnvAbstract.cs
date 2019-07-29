@@ -15,17 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Linq;
 using net.r_eg.MvsSln;
 using net.r_eg.MvsSln.Core;
 using net.r_eg.vsSBE.API.Commands;
+using net.r_eg.vsSBE.Exceptions;
 using BuildType = net.r_eg.vsSBE.Bridge.BuildType;
 using EProject = Microsoft.Build.Evaluation.Project;
+using ProjectItem = net.r_eg.MvsSln.Core.ProjectItem;
 
 namespace net.r_eg.vsSBE
 {
     public abstract class EnvAbstract
     {
-        protected IRuleOfConfig cfgRule = new RuleOfConfig();
+        /// <summary>
+        /// Parsed solution data.
+        /// </summary>
+        protected ISlnResult sln;
+
+        /// <summary>
+        /// Activated environment for projects processing.
+        /// </summary>
+        protected IXProjectEnv slnEnv;
+
+        //[Obsolete("integrate via IXProjectEnv use")]
+        //protected IRuleOfConfig cfgRule = new RuleOfConfig();
+
+        /// <summary>
+        /// Project by default or "StartUp Project".
+        /// </summary>
+        public abstract string StartupProjectString { get; protected set; }
 
         /// <summary>
         /// Current context for actions.
@@ -46,6 +66,31 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
+        /// Get instance of the Build.Evaluation.Project for accessing to properties etc.
+        /// </summary>
+        /// <param name="name">Specified project name. null value will use the name from startup-project.</param>
+        /// <returns>Found relevant Microsoft.Build.Evaluation.Project.</returns>
+        public virtual EProject getProject(string name = null)
+        {
+            // NOTE: Do not use ProjectCollection.GlobalProjectCollection from EnvDTE Environment because it can be empty.
+            //       https://github.com/3F/vsSolutionBuildEvent/issues/8
+            //       Either use DTE projects collection to refer to MBE projects, or use MvsSln's GetOrLoadProject
+
+            Log.Trace($"getProject: started with '{name}' /{StartupProjectString}");
+
+            if(String.IsNullOrEmpty(name)) {
+                name = StartupProjectString;
+            }
+
+            ProjectItem project = sln.ProjectItems.FirstOrDefault(p => p.name == name);
+            if(project.fullPath == null) {
+                throw new NotFoundException($"Project '{name}' was not found. ['{project.name}', '{project.pGuid}']");
+            }
+
+            return slnEnv.GetOrLoadProject(project);
+        }
+
+        /// <summary>
         /// Returns formatted configuration from the SolutionConfiguration2
         /// </summary>
         public string SolutionCfgFormat(EnvDTE80.SolutionConfiguration2 cfg)
@@ -54,17 +99,6 @@ namespace net.r_eg.vsSBE
                 return formatCfg(PropertyNames.UNDEFINED);
             }
             return formatCfg(cfg.Name, cfg.PlatformName);
-        }
-
-        /// <summary>
-        /// Gets project name from Microsoft.Build.Evaluation.Project
-        /// </summary>
-        /// <param name="eProject"></param>
-        /// <returns></returns>
-        protected virtual string getProjectNameFrom(EProject eProject)
-        {
-            //NOTE: this property can also define an unified project name between various .sln files (_2010.sln, _2017.sln)
-            return eProject.GetPropertyValue(PropertyNames.PRJ_NAME);
         }
 
         protected string formatCfg(string name, string platform = null)

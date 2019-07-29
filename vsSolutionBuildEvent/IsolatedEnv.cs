@@ -21,13 +21,12 @@ using System.Linq;
 using Microsoft.Build.Evaluation;
 using net.r_eg.MvsSln;
 using net.r_eg.MvsSln.Core;
+using net.r_eg.MvsSln.Extensions;
 using net.r_eg.vsSBE.Bridge.CoreCommand;
-using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.UnifiedTypes;
 using DProject = EnvDTE.Project;
 using EProject = Microsoft.Build.Evaluation.Project;
-using ProjectItem = net.r_eg.MvsSln.Core.ProjectItem;
 
 namespace net.r_eg.vsSBE
 {
@@ -37,16 +36,6 @@ namespace net.r_eg.vsSBE
     public class IsolatedEnv: EnvAbstract, IEnvironment
     {
         protected IDictionary<string, string> slnProperties = new Dictionary<string, string>();
-
-        /// <summary>
-        /// Parsed solution data.
-        /// </summary>
-        private ISlnResult sln;
-
-        /// <summary>
-        /// Activated environment for projects processing.
-        /// </summary>
-        private IXProjectEnv slnEnv;
 
         /// <summary>
         /// List of EnvDTE projects.
@@ -65,15 +54,8 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public IEnumerable<EProject> ProjectsMBE
         {
-            get
-            {
-                foreach(var pname in ProjectsList)
-                {
-                    if(!String.IsNullOrWhiteSpace(pname)) {
-                        yield return getProject(pname);
-                    }
-                }
-            }
+            get => slnEnv?.ValidProjects
+                    .Where(p => !string.IsNullOrWhiteSpace(p.GetProjectName()));
         }
 
         /// <summary>
@@ -81,12 +63,10 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public List<string> ProjectsList
         {
-            get => slnEnv?.PrjCollection.LoadedProjects
-                //.Where(p => p.GetPropertyValue(PropertyNames.CONFIG) == properties[PropertyNames.CONFIG] 
-                //            && p.GetPropertyValue(PropertyNames.PLATFORM) == properties[PropertyNames.PLATFORM]
-                //)
-                .Select(p => getProjectNameFrom(p))
-                .Where(name => !String.IsNullOrWhiteSpace(name))
+            get => slnEnv?.ValidProjects
+                // TODO: possible duplicates because only ProjectsDTE provides an uniqiue list
+                .Select(p => p.GetProjectName())
+                .Where(name => !string.IsNullOrWhiteSpace(name))
                 .ToList();
         }
 
@@ -100,7 +80,7 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Formatted string with active configuration for current solution
+        /// Formatted string with an active configuration for current solution.
         /// </summary>
         public string SolutionActiveCfgString
         {
@@ -121,9 +101,9 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Project by default or "StartUp Project".
+        /// Project Name by default or "StartUp Project".
         /// </summary>
-        public string StartupProjectString
+        public override string StartupProjectString
         {
             get;
             protected set;
@@ -198,28 +178,8 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// Gets instance of the Build.Evaluation.Project for accessing to properties etc.
-        /// </summary>
-        /// <param name="name">Specified project name. null value for project by default (~startup-project etc.)</param>
-        /// <returns>Microsoft.Build.Evaluation.Project</returns>
-        public virtual EProject getProject(string name)
-        {
-            Log.Trace($"getProject: started with '{name}' /{StartupProjectString}");
-
-            if(String.IsNullOrEmpty(name)) {
-                name = StartupProjectString;
-            }
-
-            ProjectItem project = sln.ProjectItems.FirstOrDefault(p => p.name == name);
-            if(project.fullPath == null) {
-                throw new NotFoundException($"Project '{name}' was not found. ['{project.name}', '{project.pGuid}']");
-            }
-
-            return slnEnv.GetOrLoadProject(project);
-        }
-
-        /// <summary>
-        /// Getting solution(for all projects) property
+        /// Getting an unified property for all existing projects. 
+        /// Aka "Solution property".
         /// </summary>
         /// <param name="name">Property name</param>
         public string getSolutionProperty(string name)
@@ -255,16 +215,12 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// To update the project by default or "StartUp Project".
+        /// To update the Project Name by default aka "StartUp Project".
         /// </summary>
         /// <param name="name">Uses default behavior if empty or null.</param>
         public void updateStartupProject(string name)
         {
-            if(name == String.Empty) {
-                name = null;
-            }
-
-            if(name == null) {
+            if(string.IsNullOrEmpty(name)) {
                 name = sln?.ProjectItems?.FirstOrDefault().name;
             }
 
@@ -293,6 +249,7 @@ namespace net.r_eg.vsSBE
             }
 
             slnEnv = new XProjectEnv(sln, properties);
+            slnEnv.Assign();
 
             slnProperties       = sln.Properties;
             SolutionPath        = sln.SolutionDir;

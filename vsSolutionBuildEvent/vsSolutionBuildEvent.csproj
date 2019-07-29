@@ -288,7 +288,8 @@
     <Compile Include="Clients\IClientLibrary.cs" />
     <Compile Include="Clients\Instance.cs" />
     <Compile Include="Clients\ClientLibrary.cs" />
-    <Compile Include="Extensions\CollectionExtension.cs" />
+    <Compile Include="Extensions\ProjectExtension.cs" />
+    <Compile Include="Extensions\IVsHierarchyExtension.cs" />
     <Compile Include="EnvAbstract.cs" />
     <Compile Include="IPkg.cs" />
     <Compile Include="StatusToolCommand.cs" />

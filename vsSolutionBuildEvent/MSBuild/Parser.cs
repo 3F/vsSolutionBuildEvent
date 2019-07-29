@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.Build.Evaluation;
@@ -32,7 +31,6 @@ namespace net.r_eg.vsSBE.MSBuild
 {
     public class Parser: IMSBuild, IEvaluator
     {
-        [Obsolete("Use " + nameof(PropertyNames), false)]
         public const string PROP_VALUE_DEFAULT = PropertyNames.UNDEFINED;
 
         /// <summary>
@@ -58,7 +56,7 @@ namespace net.r_eg.vsSBE.MSBuild
         /// <summary>
         /// object synch.
         /// </summary>
-        private Object _lock = new Object();
+        private readonly object _lock = new object();
 
         /// <summary>
         /// Used environment.
@@ -158,7 +156,8 @@ namespace net.r_eg.vsSBE.MSBuild
             const string container  = Settings.APP_NAME_SHORT + "_latestEvaluated";
             Project project         = getProject(projectName);
 
-            Log.Trace("evaluate: '{0}' -> [{1}]", unevaluated, projectName);
+            Log.Trace($"evaluate: '{unevaluated}' -> [{projectName}]");
+
             lock(_lock)
             {
                 CultureInfo origincul               = Thread.CurrentThread.CurrentCulture;

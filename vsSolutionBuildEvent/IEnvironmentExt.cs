@@ -19,16 +19,13 @@ using Microsoft.VisualStudio.Shell.Interop;
 
 namespace net.r_eg.vsSBE
 {
-    /// <summary>
-    /// Extended variant of environment
-    /// </summary>
     public interface IEnvironmentExt
     {
         /// <summary>
-        /// Gets project name from IVsHierarchy
+        /// Gets project name from IVsHierarchy.
         /// </summary>
         /// <param name="pHierProj"></param>
-        /// <param name="force">Load in global collection with __VSHPROPID.VSHPROPID_ExtObject if true value</param>
+        /// <param name="force">Load in global collection with __VSHPROPID.VSHPROPID_ExtObject if true.</param>
         /// <returns></returns>
         string getProjectNameFrom(IVsHierarchy pHierProj, bool force);
     }
