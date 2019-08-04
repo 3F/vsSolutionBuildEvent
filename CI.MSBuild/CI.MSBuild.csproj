@@ -75,7 +75,6 @@
     <Compile Include="ILog.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SolutionProperties.cs" />
     <Compile Include="Version.cs" />
   </ItemGroup>
   <ItemGroup>

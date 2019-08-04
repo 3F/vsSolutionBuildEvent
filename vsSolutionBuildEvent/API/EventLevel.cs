@@ -271,10 +271,6 @@ namespace net.r_eg.vsSBE.API
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onProjectPre(string project)
         {
-#if VSSDK_15_AND_NEW
-            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
-#endif
-
             try {
                 int ret = Action.bindProjectPre(project);
 
@@ -325,10 +321,6 @@ namespace net.r_eg.vsSBE.API
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onProjectPost(string project, int fSuccess)
         {
-#if VSSDK_15_AND_NEW
-            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
-#endif
-
             try {
                 int ret = Action.bindProjectPost(project, fSuccess);
 

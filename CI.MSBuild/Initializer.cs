@@ -32,6 +32,7 @@ using System.Reflection;
 using System.Threading;
 using Microsoft.Build.Framework;
 using net.r_eg.MvsSln;
+using net.r_eg.MvsSln.Core;
 using net.r_eg.MvsSln.Extensions;
 using net.r_eg.vsSBE.Provider;
 
@@ -57,6 +58,8 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         /// </summary>
         public const string LKEY_CULTURE_UI = "cultureUI";
 
+        internal ILog log;
+
         /// <summary>
         /// Defined properties for initializer
         /// </summary>
@@ -75,12 +78,6 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             get => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
                         .DirectoryPathFormat();
         }
-
-        /// <summary>
-        /// Used logger
-        /// </summary>
-        internal ILog log;
-
 
         /// <param name="parameters">User-defined parameters</param>
         /// <param name="logger"></param>
@@ -131,20 +128,27 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         {
             log.debug("Loading: '{0}' /'{1}'", prop.SolutionFile, prop.LibraryPath);
 
-            ILoader loader = new Loader(
-                                    new Provider.Settings()
-                                    {
-                                        DebugMode = log.IsDiagnostic,
-                                        LibSettings = new LibSettings()
-                                        {
-                                            DebugMode = log.IsDiagnostic,
-                                        },
-                                    }
-                                );
+            ILoader loader = new Loader
+            (
+                new Settings()
+                {
+                    DebugMode = log.IsDiagnostic,
+                    LibSettings = new LibSettings()
+                    {
+                        DebugMode = log.IsDiagnostic,
+                    },
+                }
+            );
 
             try
             {
-                ILibrary library = loader.load(prop.SolutionFile, prop.Properties, prop.LibraryPath);
+                ILibrary library = loader.load
+                (
+                    prop.SolutionFile, 
+                    new Dictionary<string, string>(prop.Properties), //TODO: API to IDictionary for more abstract cases
+                    prop.LibraryPath
+                );
+
                 log.info("Library: loaded from '{0}' :: v{1} [{2}] API: v{3} /'{4}':{5}", 
                                     library.Dllpath, 
                                     library.Version.Number.ToString(), 
@@ -164,11 +168,11 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                 log.info("");
                 log.info("* Define path to library, for example: /l:CI.MSBuild.dll;lib=<path_to_vsSolutionBuildEvent.dll>");
                 log.info("* Or install the vsSolutionBuildEvent as plugin for Visual Studio.");
-                log.info("* Or manually place the 'vsSolutionBuildEvent.dll' with dependencies into: '{0}\\'", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+                log.info("* Or place manually the 'vsSolutionBuildEvent.dll' with dependencies into: '{0}\\'", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
                 log.info("");
 
-                log.info("See documentation for more details:");
-                log.info("- http://vssbe.r-eg.net");
+                log.info("Details:");
+                log.info("- https://github.com/3F/vsSolutionBuildEvent");
                 log.info("- http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
                 log.info("");
 
@@ -190,7 +194,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                 }
             }
             catch(Exception ex) {
-                log.info("Error with loading: '{0}'", ex.ToString());
+                log.info($"Error when loading: '{ex.ToString()}'");
             }
 
             throw new LoggerException("Fatal error");
@@ -198,12 +202,12 @@ namespace net.r_eg.vsSBE.CI.MSBuild
 
         protected void header()
         {
-            log.info(new String('=', 60));
-            log.info("[[ vsSolutionBuildEvent CI.MSBuild ]] Welcomes You!");
-            log.info(new String('=', 60));
+            log.info(new String('=', 37));
+            log.info("[[ vsSolutionBuildEvent CI.MSBuild ]]");
+            log.info(new String('=', 37));
             log.info("Version: v{0}", System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
-            log.info("Feedback: entry.reg@gmail.com | vssbe.r-eg.net");
-            log.info(new String('_', 60));
+            log.info($"Copyright (c) 2013-{Math.Max(2019, DateTime.Now.Year)}  Denis Kuzmin < entry.reg@gmail.com > GitHub/3F");
+            log.info(new String('_', 70));
         }
 
         /// <summary>
@@ -219,9 +223,9 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             property    = null;
 
             // multi-keys support: `/p:prop1=val1 /p:prop2=val2` same as `/p:prop1=val1;prop2=val2`
-            Func<string, string, string> _concat = delegate(string key, string val) {
-                return (key != null)? String.Format("{0};{1}", key, val) : val;
-            };
+            string _concat(string key, string val) {
+                return (key != null) ? $"{key};{val}" : val;
+            }
 
             foreach(string arg in Environment.GetCommandLineArgs())
             {
@@ -258,7 +262,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         /// <summary>
         /// Find + get path to main library
         /// </summary>
-        protected string findLibraryPath(Dictionary<string, string> args)
+        protected string findLibraryPath(IDictionary<string, string> args)
         {
             if(args.ContainsKey(LKEY_LIB)) {
                 return Path.Combine(RootPath, args[LKEY_LIB]);
@@ -267,35 +271,36 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         }
 
         /// <summary>
-        /// To redefinition Configuration and Platform from user switches if exists, etc.
+        /// Redefines an Configuration and Platform by user switches if exists.
         /// </summary>
         /// <param name="cmd">Property of command line</param>
         /// <param name="init">Initial properties</param>
         /// <returns></returns>
-        protected Dictionary<string, string> finalizeProperties(string cmd, Dictionary<string, string> init)
+        protected IDictionary<string, string> finalizeProperties(string cmd, IDictionary<string, string> init)
         {
-            Dictionary<string, string> pKeys = extractArguments(cmd);
-            Func<string, string> pValue = delegate(string key) {
+            IDictionary<string, string> pKeys = extractArguments(cmd);
+            string pValue(string key) {
                 return pKeys.FirstOrDefault(p => p.Key.Equals(key, StringComparison.OrdinalIgnoreCase)).Value;
-            };
-
-            string Configuration    = pValue(PropertyNames.CONFIG);
-            string Platform         = pValue(PropertyNames.PLATFORM);
-
-            if(Configuration != null) {
-                init[PropertyNames.CONFIG] = Configuration;
             }
 
-            if(Platform != null) {
-                init[PropertyNames.PLATFORM] = Platform;
+            string userConfig   = pValue(PropertyNames.CONFIG);
+            string userPlatform = pValue(PropertyNames.PLATFORM);
+
+            if(userConfig != null) {
+                init[PropertyNames.CONFIG] = userConfig;
+            }
+
+            if(userPlatform != null) {
+                init[PropertyNames.PLATFORM] = userPlatform;
             }
 
             if(log.IsDiagnostic)
             {
-                foreach(KeyValuePair<string, string> p in init) {
-                    log.info(String.Format("Solution property def: ['{0}' => '{1}']", p.Key, p.Value));
+                foreach(var p in init) {
+                    log.info($"Solution property def: ['{p.Key}' => '{p.Value}']");
                 }
             }
+
             return init;
         }
 
@@ -307,71 +312,64 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         /// </summary>
         /// <param name="properties">DictionaryEntry properties</param>
         /// <returns></returns>
-        protected Dictionary<string, string> getSolutionProperties(IEnumerable properties)
+        protected IDictionary<string, string> getSolutionProperties(IEnumerable properties)
         {
-            Dictionary<string, string> _properties = properties.OfType<DictionaryEntry>().ToDictionary(k => k.Key.ToString(), v => v.Value.ToString());
+            var _props = properties.OfType<DictionaryEntry>()
+                            .ToDictionary(k => k.Key.ToString(), v => v.Value.ToString());
 
-            Dictionary<string, string> ret = new Dictionary<string, string>();
-            if(_properties.ContainsKey(PropertyNames.CONFIG)) {
-                ret[PropertyNames.CONFIG] = _properties[PropertyNames.CONFIG];
-            }
-            if(_properties.ContainsKey(PropertyNames.PLATFORM)) {
-                ret[PropertyNames.PLATFORM] = _properties[PropertyNames.PLATFORM];
-            }
-            if(_properties.ContainsKey(PropertyNames.SLN_DIR)) {
-                ret[PropertyNames.SLN_DIR] = _properties[PropertyNames.SLN_DIR];
-            }
-            if(_properties.ContainsKey(PropertyNames.SLN_NAME)) {
-                ret[PropertyNames.SLN_NAME] = _properties[PropertyNames.SLN_NAME];
-            }
-            if(_properties.ContainsKey(PropertyNames.SLN_FNAME)) {
-                ret[PropertyNames.SLN_FNAME] = _properties[PropertyNames.SLN_FNAME];
-            }
-            if(_properties.ContainsKey(PropertyNames.SLN_EXT)) {
-                ret[PropertyNames.SLN_EXT] = _properties[PropertyNames.SLN_EXT];
-            }
-            if(_properties.ContainsKey(PropertyNames.SLN_PATH)) {
-                ret[PropertyNames.SLN_PATH] = _properties[PropertyNames.SLN_PATH];
-            }
+            var ret = new Dictionary<string, string>()
+            {
+                [PropertyNames.CONFIG]      = _props.GetOrDefault(PropertyNames.CONFIG),
+                [PropertyNames.PLATFORM]    = _props.GetOrDefault(PropertyNames.PLATFORM),
+                [PropertyNames.SLN_DIR]     = _props.GetOrDefault(PropertyNames.SLN_DIR),
+                [PropertyNames.SLN_NAME]    = _props.GetOrDefault(PropertyNames.SLN_NAME),
+                [PropertyNames.SLN_FNAME]   = _props.GetOrDefault(PropertyNames.SLN_FNAME),
+                [PropertyNames.SLN_EXT]     = _props.GetOrDefault(PropertyNames.SLN_EXT),
+                [PropertyNames.SLN_PATH]    = _props.GetOrDefault(PropertyNames.SLN_PATH),
+            };
 
             if(log.IsDiagnostic)
             {
-                foreach(KeyValuePair<string, string> p in ret) {
-                    log.info(String.Format("SolutionProperty found: ['{0}' => '{1}']", p.Key, p.Value));
+                foreach(var p in ret) {
+                    log.info($"SolutionProperty found: ['{p.Key}' => '{p.Value}']");
                 }
             }
+
             return ret;
         }
 
         /// <param name="parameters">User-defined parameters</param>
         protected InitializerProperties extractProperties(string parameters)
         {
-            string targets  = null;
-            string property = null;
-            string sln      = findSln(out targets, out property);
-
-            if(sln == null) {
+            string slnFile = findSln(out string targets, out string property);
+            if(slnFile == null) {
                 throw new LoggerException("We can't detect .sln file in arguments.");
             }
-            sln = Path.Combine(Environment.CurrentDirectory, sln);
-            log.debug("Solution file is detected: '{0}'", sln);
 
-            SolutionProperties.Result slnData   = (new SolutionProperties(log)).parse(sln);
-            Dictionary<string, string> args     = extractArguments(parameters);
+            slnFile = Path.Combine(Environment.CurrentDirectory, slnFile);
+            log.debug("Solution file is detected: '{0}'", slnFile);
+
+            ISlnResult sln = new SlnParser().Parse
+            (
+                slnFile,
+                SlnItems.Projects | SlnItems.SolutionConfPlatforms | SlnItems.ProjectConfPlatforms
+            );
+
+            var args = extractArguments(parameters);
 
             return new InitializerProperties()
             {
-                SolutionFile    = sln,
-                Properties      = finalizeProperties(property, slnData.properties),
+                SolutionFile    = slnFile,
+                Properties      = finalizeProperties(property, sln.Properties.ExtractDictionary),
                 PropertyCmdRaw  = property,
-                Targets         = (targets)?? "Build", // 'Build' for targets by default
+                Targets         = targets ?? "Build", // 'Build' for targets by default
                 LibraryPath     = findLibraryPath(args),
                 Args            = args,
             };
         }
 
         /// <param name="keys">Defined cultures</param>
-        protected void setCulture(Dictionary<string, string> keys)
+        protected void setCulture(IDictionary<string, string> keys)
         {
             string culture      = null;
             string cultureUI    = (keys.ContainsKey(LKEY_CULTURE_UI))? keys[LKEY_CULTURE_UI] : "en-US";
@@ -389,7 +387,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         /// </summary>
         /// <param name="raw">Multiple properties separated by semicolon</param>
         /// <returns></returns>
-        protected Dictionary<string, string> extractArguments(string raw)
+        protected IDictionary<string, string> extractArguments(string raw)
         {
             if(String.IsNullOrEmpty(raw)) {
                 return new Dictionary<string, string>();

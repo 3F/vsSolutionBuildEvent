@@ -31,10 +31,6 @@ using net.r_eg.vsSBE.UnifiedTypes;
 using DProject = EnvDTE.Project;
 using EProject = Microsoft.Build.Evaluation.Project;
 
-#if VSSDK_15_AND_NEW
-using Microsoft.VisualStudio.Shell;
-#endif
-
 namespace net.r_eg.vsSBE
 {
     // TODO: more unified integration with IsolatedEnv /EnvDTE to MvsSln as possible 
@@ -61,7 +57,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public IEnumerable<EProject> ProjectsMBE
         {
-            get => ProjectsDTE.Select(p => p.GetXProject(slnEnv, true)?.Project);
+            get => ProjectsDTE.Select(p => p.GetXProject(SlnEnv, true)?.Project);
         }
 
         /// <summary>
@@ -71,9 +67,6 @@ namespace net.r_eg.vsSBE
         {
             get
             {
-#if VSSDK_15_AND_NEW
-                ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
-#endif
                 try
                 {
                     return ProjectsDTE
@@ -181,7 +174,7 @@ namespace net.r_eg.vsSBE
                 {
                     if(!string.IsNullOrEmpty(project))
                     {
-                        return sln?.ProjectItems?
+                        return Sln?.ProjectItems?
                                 .FirstOrDefault(p => p.path == project)
                                 .name;
                     }
@@ -204,10 +197,11 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Full path to solution file.
         /// </summary>
-        public string SolutionFile
+        public override string SolutionFile
         {
             // the state of the DTE2 object are always should be in modification
             get => getFullPathToSln(Dte2);
+            protected set => throw new NotSupportedException("Not available for EnvDTE mode");
         }
 
         /// <summary>
@@ -354,35 +348,20 @@ namespace net.r_eg.vsSBE
 
             //TODO: ?disposing whole environment
 
-            updateSlnEnv();
-
             if(elvl != null) {
-                elvl.OpenedSolution += onOpenedSolution;
+                elvl.ClosedSolution += onClosedSolution; 
             }
         }
 
-        protected void updateSlnEnv()
+        protected override void UpdateSlnEnv(ISlnResult sln)
         {
-            var input = SolutionFile;
-            if(input == null || input == sln?.SolutionFile) {
-                return;
-            }
-
-            ((IDisposable)slnEnv)?.Dispose();
-
-            sln = new SlnParser().Parse
-            (
-                input,
-                SlnItems.Projects | SlnItems.SolutionConfPlatforms | SlnItems.ProjectConfPlatforms
-            );
-
-            slnEnv = new MvsSln.Core.IsolatedEnv(sln);
-            slnEnv.Assign();
+            SlnEnv = new MvsSln.Core.IsolatedEnv(sln);
+            SlnEnv.Assign();
         }
 
         protected virtual string getProjectNameFrom(DProject dteProject, bool force = false)
         {
-            return dteProject?.GetProjectName(slnEnv, force);
+            return dteProject?.GetProjectName(SlnEnv, force);
         }
 
         protected IEnumerable<DProject> listSubProjectsDTE(DProject project)
@@ -423,14 +402,14 @@ namespace net.r_eg.vsSBE
             }
             catch(Exception ex)
             {
-                Log.Debug("getFullPathToSln returns null: `{0}`", ex.Message);
+                Log.Debug($"getFullPathToSln returns null: `{ex.Message}`");
                 return null;
             }
         }
 
-        private void onOpenedSolution(object sender, EventArgs e)
+        private void onClosedSolution(object sender, EventArgs e)
         {
-            updateSlnEnv();
+            ((IDisposable)_slnEnv)?.Dispose();
         }
     }
 }

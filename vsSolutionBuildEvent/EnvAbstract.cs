@@ -16,6 +16,7 @@
 */
 
 using System;
+using System.IO;
 using System.Linq;
 using net.r_eg.MvsSln;
 using net.r_eg.MvsSln.Core;
@@ -30,22 +31,16 @@ namespace net.r_eg.vsSBE
     public abstract class EnvAbstract
     {
         /// <summary>
-        /// Parsed solution data.
-        /// </summary>
-        protected ISlnResult sln;
-
-        /// <summary>
-        /// Activated environment for projects processing.
-        /// </summary>
-        protected IXProjectEnv slnEnv;
-
-        //[Obsolete("integrate via IXProjectEnv use")]
-        //protected IRuleOfConfig cfgRule = new RuleOfConfig();
-
-        /// <summary>
         /// Project by default or "StartUp Project".
         /// </summary>
         public abstract string StartupProjectString { get; protected set; }
+
+        /// <summary>
+        /// Full path to solution file.
+        /// </summary>
+        public abstract string SolutionFile { get; protected set; }
+
+        protected abstract void UpdateSlnEnv(ISlnResult sln);
 
         /// <summary>
         /// Current context for actions.
@@ -66,6 +61,30 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
+        /// Access to parsed solution data.
+        /// </summary>
+        protected ISlnResult Sln
+        {
+            get => UpdateSln();
+            set => _sln = value;
+
+        } protected ISlnResult _sln;
+
+        /// <summary>
+        /// Activated environment for projects processing.
+        /// </summary>
+        protected IXProjectEnv SlnEnv
+        {
+            get
+            {
+                UpdateSln();
+                return _slnEnv;
+            }
+            set => _slnEnv = value;
+
+        } protected IXProjectEnv _slnEnv;
+
+        /// <summary>
         /// Get instance of the Build.Evaluation.Project for accessing to properties etc.
         /// </summary>
         /// <param name="name">Specified project name. null value will use the name from startup-project.</param>
@@ -82,12 +101,12 @@ namespace net.r_eg.vsSBE
                 name = StartupProjectString;
             }
 
-            ProjectItem project = sln.ProjectItems.FirstOrDefault(p => p.name == name);
+            ProjectItem project = Sln.ProjectItems.FirstOrDefault(p => p.name == name);
             if(project.fullPath == null) {
                 throw new NotFoundException($"Project '{name}' was not found. ['{project.name}', '{project.pGuid}']");
             }
 
-            return slnEnv.GetOrLoadProject(project);
+            return SlnEnv?.GetOrLoadProject(project);
         }
 
         /// <summary>
@@ -104,6 +123,34 @@ namespace net.r_eg.vsSBE
         protected string formatCfg(string name, string platform = null)
         {
             return ConfigItem.Format(name, platform ?? name);
+        }
+
+        private ISlnResult UpdateSln()
+        {
+            var input = SolutionFile;
+
+            if(input == null) {
+                throw new ArgumentNullException(nameof(SolutionFile));
+            }
+
+            if(_sln?.SolutionFile == input) {
+                return _sln;
+            }
+
+            if(!File.Exists(input)) { // may not exist at this invoking when creating new solution)
+                throw new NotFoundException($"Sln file does not exist: {input}.");
+            }
+
+            Log.Debug($"Updating sln data: {input}");
+
+            _sln = new SlnParser().Parse
+            (
+                input,
+                SlnItems.Projects | SlnItems.SolutionConfPlatforms | SlnItems.ProjectConfPlatforms
+            );
+
+            UpdateSlnEnv(_sln);
+            return _sln;
         }
     }
 }

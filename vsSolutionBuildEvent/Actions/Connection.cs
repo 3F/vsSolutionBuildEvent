@@ -172,10 +172,6 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         public int bindProjectPre(string project)
         {
-#if VSSDK_15_AND_NEW
-            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
-#endif
-
             onProject(project, ExecutionOrderType.Before);
             return Codes.Success;
         }
@@ -198,10 +194,6 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         public int bindProjectPost(string project, int fSuccess)
         {
-#if VSSDK_15_AND_NEW
-            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
-#endif
-
             onProject(project, ExecutionOrderType.After, fSuccess == 1 ? true : false);
             return Codes.Success;
         }

@@ -37,6 +37,10 @@ namespace net.r_eg.vsSBE
     {
         protected IDictionary<string, string> slnProperties = new Dictionary<string, string>();
 
+        private string _startupProjectString;
+
+        private readonly IDictionary<string, string> _properties;
+
         /// <summary>
         /// List of EnvDTE projects.
         /// </summary>
@@ -54,7 +58,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public IEnumerable<EProject> ProjectsMBE
         {
-            get => slnEnv?.ValidProjects
+            get => SlnEnv?.ValidProjects
                     .Where(p => !string.IsNullOrWhiteSpace(p.GetProjectName()));
         }
 
@@ -63,7 +67,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public List<string> ProjectsList
         {
-            get => slnEnv?.ValidProjects
+            get => SlnEnv?.ValidProjects
                 // TODO: possible duplicates because only ProjectsDTE provides an uniqiue list
                 .Select(p => p.GetProjectName())
                 .Where(name => !string.IsNullOrWhiteSpace(name))
@@ -105,8 +109,15 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public override string StartupProjectString
         {
-            get;
-            protected set;
+            get
+            {
+                if(_startupProjectString == null) {
+                    updateStartupProject(null);
+                }
+                return _startupProjectString;
+            }
+
+            protected set => _startupProjectString = value;
         }
 
         /// <summary>
@@ -146,7 +157,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Full path to solution file.
         /// </summary>
-        public string SolutionFile
+        public override string SolutionFile
         {
             get;
             protected set;
@@ -221,7 +232,7 @@ namespace net.r_eg.vsSBE
         public void updateStartupProject(string name)
         {
             if(string.IsNullOrEmpty(name)) {
-                name = sln?.ProjectItems?.FirstOrDefault().name;
+                name = Sln?.ProjectItems?.FirstOrDefault().name;
             }
 
             StartupProjectString = name;
@@ -232,34 +243,17 @@ namespace net.r_eg.vsSBE
         /// <param name="properties">Solution properties / global properties for all project collection</param>
         public IsolatedEnv(string solutionFile, IDictionary<string, string> properties)
         {
-            SolutionFile = solutionFile ?? throw new ArgumentNullException(nameof(solutionFile));
-
-            if(properties == null) {
-                throw new ArgumentNullException(nameof(properties));
-            }
-
-            sln = new SlnParser().Parse
-            (
-                SolutionFile, 
-                SlnItems.Projects | SlnItems.SolutionConfPlatforms | SlnItems.ProjectConfPlatforms
-            );
+            SolutionFile    = solutionFile ?? throw new ArgumentNullException(nameof(solutionFile));
+            _properties     = properties ?? throw new ArgumentNullException(nameof(properties));
 
             foreach(var p in properties) {
                 ProjectCollection.GlobalProjectCollection.SetGlobalProperty(p.Key, p.Value);
             }
 
-            slnEnv = new XProjectEnv(sln, properties);
-            slnEnv.Assign();
-
-            slnProperties       = sln.Properties;
-            SolutionPath        = sln.SolutionDir;
+            SolutionPath        = Sln.SolutionDir;
+            slnProperties       = Sln.Properties;
             SolutionFileName    = slnProperties.GetOrDefault(PropertyNames.SLN_NAME, PropertyNames.UNDEFINED);
-
-            if(String.IsNullOrEmpty(StartupProjectString)) {
-                updateStartupProject(null);
-            }
-
-            IsOpenedSolution = true;
+            IsOpenedSolution    = true;
         }
 
         /// <summary>
@@ -271,11 +265,19 @@ namespace net.r_eg.vsSBE
             slnProperties = properties;
         }
 
+        protected override void UpdateSlnEnv(ISlnResult sln)
+        {
+            SlnEnv = new XProjectEnv(sln, _properties);
+            SlnEnv.Assign();
+        }
+
         protected string formatCfg(IDictionary<string, string> properties)
         {
+            IConfPlatform def = Sln?.DefaultConfig;
+
             return formatCfg(
-                properties.GetOrDefault(PropertyNames.CONFIG, sln?.DefaultConfig.Configuration),
-                properties.GetOrDefault(PropertyNames.PLATFORM, sln?.DefaultConfig.Platform)
+                properties.GetOrDefault(PropertyNames.CONFIG, def?.Configuration),
+                properties.GetOrDefault(PropertyNames.PLATFORM, def?.Platform)
             );
         }
 
