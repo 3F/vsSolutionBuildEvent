@@ -34,9 +34,9 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         public string Name { get; set; }
 
         /// <summary>
-        /// All available properties with msbuild
+        /// All available properties from msbuild instance
         /// </summary>
-        public Dictionary<object, string> Properties { get; set; }
+        public IDictionary<object, string> Properties { get; set; }
 
         /// <summary>
         /// Full path to project file

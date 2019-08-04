@@ -17,6 +17,7 @@
 
 using System;
 using System.Linq;
+using net.r_eg.MvsSln.Log;
 using NLog;
 using NLog.Config;
 using NLog.Filters;
@@ -78,10 +79,14 @@ namespace net.r_eg.vsSBE.Logger
             {
                 LogManager.ConfigurationChanged -= onCfgLoggerChanged;
                 LogManager.ConfigurationChanged += onCfgLoggerChanged;
+
                 initLoggerCfg();
+
+                LSender.SReceived -= onSReceived;
+                LSender.SReceived += onSReceived;
             }
             
-            Log.Trace(String.Format("Log('{0}') is configured for: '{1}'", target.ClassName, GuidList.PACKAGE_LOGGER));
+            Log.Trace($"Log('{target.ClassName}') is configured for: '{GuidList.PACKAGE_LOGGER}'");
         }
 
         /// <summary>
@@ -150,6 +155,11 @@ namespace net.r_eg.vsSBE.Logger
             fixLoggerCfg(e.OldConfiguration); // if we are in point after first initialization
             fixLoggerCfg(e.NewConfiguration); // if this is raised from others
             initLoggerCfg(); // we also should be ready to SimpleConfigurator from other assemblies etc.
+        }
+
+        private void onSReceived(object sender, Message e)
+        {
+            Log._.NLog.Log(LogLevel.FromOrdinal((int)e.type), $"{nameof(MvsSln)}: {e.content}");
         }
     }
 }

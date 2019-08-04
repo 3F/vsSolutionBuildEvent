@@ -17,41 +17,38 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Microsoft.Build.Evaluation;
-using net.r_eg.vsSBE.API.Commands;
-using net.r_eg.vsSBE.Bridge;
+using net.r_eg.MvsSln;
+using net.r_eg.MvsSln.Core;
+using net.r_eg.MvsSln.Extensions;
 using net.r_eg.vsSBE.Bridge.CoreCommand;
-using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.UnifiedTypes;
+using DProject = EnvDTE.Project;
+using EProject = Microsoft.Build.Evaluation.Project;
 
 namespace net.r_eg.vsSBE
 {
-    using TProp = Dictionary<string, string>;
-
     /// <summary>
     /// Isolated environment for work without DTE
     /// </summary>
-    public class IsolatedEnv: IEnvironment
+    public class IsolatedEnv: EnvAbstract, IEnvironment
     {
-        /// <summary>
-        /// Solution properties.
-        /// </summary>
-        protected TProp slnProperties = new TProp();
+        protected IDictionary<string, string> slnProperties = new Dictionary<string, string>();
 
-        /// <summary>
-        /// Solution data
-        /// </summary>
-        private Sln.Parser.Result _sln;
+        private string _startupProjectString;
+
+        private readonly IDictionary<string, string> _properties;
 
         /// <summary>
         /// List of EnvDTE projects.
         /// </summary>
-        public IEnumerable<EnvDTE.Project> ProjectsDTE
+        public IEnumerable<DProject> ProjectsDTE
         {
-            get {
-                Log.Debug("Accessing to property 'Projects' has been disabled in Isolated environment.");
+            get
+            {
+                __disabled(nameof(ProjectsDTE));
                 yield break;
             }
         }
@@ -59,17 +56,10 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// List of Microsoft.Build.Evaluation projects.
         /// </summary>
-        public IEnumerable<Project> ProjectsMBE
+        public IEnumerable<EProject> ProjectsMBE
         {
-            get
-            {
-                foreach(var pname in ProjectsList)
-                {
-                    if(!String.IsNullOrWhiteSpace(pname)) {
-                        yield return getProject(pname);
-                    }
-                }
-            }
+            get => SlnEnv?.ValidProjects
+                    .Where(p => !string.IsNullOrWhiteSpace(p.GetProjectName()));
         }
 
         /// <summary>
@@ -77,15 +67,11 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public List<string> ProjectsList
         {
-            get {
-                return ProjectCollection.GlobalProjectCollection.LoadedProjects
-                        //.Where(p => p.GetPropertyValue("Configuration") == properties["Configuration"] 
-                        //            && p.GetPropertyValue("Platform") == properties["Platform"]
-                        //)
-                        .Select(p => getProjectNameFrom(p))
-                        .Where(name => !String.IsNullOrEmpty(name))
-                        .ToList<string>();
-            }
+            get => SlnEnv?.ValidProjects
+                // TODO: possible duplicates because only ProjectsDTE provides an uniqiue list
+                .Select(p => p.GetProjectName())
+                .Where(name => !string.IsNullOrWhiteSpace(name))
+                .ToList();
         }
 
         /// <summary>
@@ -93,30 +79,16 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public EnvDTE80.SolutionConfiguration2 SolutionActiveCfg
         {
-            get {
-                //TODO:
-                Log.Debug("Accessing to property 'SolutionActiveCfg' has been disabled in Isolated environment.");
-                return null; 
-            }
+            //TODO:
+            get => __disabled<EnvDTE80.SolutionConfiguration2>(nameof(SolutionActiveCfg));
         }
 
         /// <summary>
-        /// Formatted string with active configuration for current solution
+        /// Formatted string with an active configuration for current solution.
         /// </summary>
         public string SolutionActiveCfgString
         {
-            get {
-                return formatCfg(slnProperties["Configuration"], slnProperties["Platform"]);
-            }
-        }
-
-        /// <summary>
-        /// Current context for actions.
-        /// </summary>
-        public BuildType BuildType
-        {
-            get;
-            set;
+            get => formatCfg(slnProperties);
         }
 
         /// <summary>
@@ -124,29 +96,28 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public IEnumerable<EnvDTE80.SolutionConfiguration2> SolutionConfigurations
         {
-            get {
+            get
+            {
                 //TODO: only list see in .sln -> SolutionConfigurationPlatforms
-                Log.Debug("Accessing to property 'SolutionConfigurations' has been disabled in Isolated environment.");
+                __disabled(nameof(SolutionConfigurations));
                 yield break;
             }
         }
 
         /// <summary>
-        /// Project by default or "StartUp Project".
+        /// Project Name by default or "StartUp Project".
         /// </summary>
-        public string StartupProjectString
+        public override string StartupProjectString
         {
-            get;
-            protected set;
-        }
+            get
+            {
+                if(_startupProjectString == null) {
+                    updateStartupProject(null);
+                }
+                return _startupProjectString;
+            }
 
-        /// <summary>
-        /// Get status of opened solution.
-        /// </summary>
-        public bool IsOpenedSolution
-        {
-            get;
-            set;
+            protected set => _startupProjectString = value;
         }
 
         /// <summary>
@@ -154,10 +125,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public EnvDTE80.DTE2 Dte2
         {
-            get {
-                Log.Debug("Accessing to property 'Dte2' has been disabled in Isolated environment.");
-                return null;
-            }
+            get => __disabled<EnvDTE80.DTE2>(nameof(Dte2));
         }
 
         /// <summary>
@@ -165,16 +133,13 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public EnvDTE.Events Events
         {
-            get {
-                Log.Debug("Accessing to property 'Events' has been disabled in Isolated environment.");
-                return null; 
-            }
+            get => __disabled<EnvDTE.Events>(nameof(Events));
         }
 
         /// <summary>
-        /// Sender of the core commands.
+        /// Get status of opened solution.
         /// </summary>
-        public IFireCoreCommand CoreCmdSender
+        public bool IsOpenedSolution
         {
             get;
             set;
@@ -192,7 +157,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Full path to solution file.
         /// </summary>
-        public string SolutionFile
+        public override string SolutionFile
         {
             get;
             protected set;
@@ -212,10 +177,7 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public EnvDTE.Commands Commands
         {
-            get {
-                Log.Debug("Accessing to property 'Commands' has been disabled in Isolated environment.");
-                return null; 
-            }
+            get => __disabled<EnvDTE.Commands>(nameof(Commands));
         }
 
         /// <summary>
@@ -223,76 +185,12 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public IOW OutputWindowPane
         {
-            get {
-                Log.Debug("Accessing to property 'OutputWindowPane' has been disabled in Isolated environment.");
-                return null;
-            }
+            get => __disabled<IOW>(nameof(OutputWindowPane));
         }
 
         /// <summary>
-        /// Gets instance of the Build.Evaluation.Project for accessing to properties etc.
-        /// </summary>
-        /// <param name="name">Specified project name. null value for project by default (~startup-project etc.)</param>
-        /// <returns>Microsoft.Build.Evaluation.Project</returns>
-        public virtual Project getProject(string name = null)
-        {
-            Log.Trace("getProject: started with '{0}'", name);
-
-            if(String.IsNullOrEmpty(name)) {
-                name = StartupProjectString;
-                Log.Trace("getProject: use the StartupProject '{0}'", name);
-            }
-            Sln.Project project;
-
-            foreach(Project eProject in ProjectCollection.GlobalProjectCollection.LoadedProjects)
-            {
-                string eConfiguration   = eProject.GetPropertyValue("Configuration");
-                string ePlatform        = eProject.GetPropertyValue("Platform");
-                string eCfg             = formatCfg(eConfiguration, ePlatform);
-
-                Log.Trace($"find in projects collection: `{eProject.FullPath}`");
-                project = _sln.projects.Find(p => p.fullPath == eProject.FullPath);
-
-                if(project.pGuid == null || project.fullPath == null) {
-                    continue;
-                }
-
-                TProp prop = projectProperties(project, slnProperties);
-                Log.Trace($" ? {prop["Configuration"]}|{prop["Platform"]} == {eCfg}");
-
-                if(eCfg == formatCfg(prop["Configuration"], prop["Platform"])) {
-                    return eProject;
-                }
-            }
-
-            project = _sln.projects.Find(p => p.name == name);
-
-            Log.Trace("trying to load project :: '{0}' ('{1}')", project.name, project.fullPath);
-            if(String.IsNullOrEmpty(project.fullPath)) {
-                throw new NotFoundException("Missed path to project '{0}' ['{1}', '{2}']", name, project.name, project.pGuid);
-            }
-
-            return new Project(
-                            project.fullPath, 
-                            projectProperties(project, slnProperties), 
-                            null, 
-                            ProjectCollection.GlobalProjectCollection
-            );
-        }
-
-        /// <summary>
-        /// Format configuration from the SolutionConfiguration2
-        /// </summary>
-        public string SolutionCfgFormat(EnvDTE80.SolutionConfiguration2 cfg)
-        {
-            if(cfg == null) {
-                return String.Format("{0}|{0}", Environment.PROP_UNAV_STRING);
-            }
-            return formatCfg(cfg.Name, cfg.PlatformName);
-        }
-
-        /// <summary>
-        /// Getting solution(for all projects) property
+        /// Getting an unified property for all existing projects. 
+        /// Aka "Solution property".
         /// </summary>
         /// <param name="name">Property name</param>
         public string getSolutionProperty(string name)
@@ -301,12 +199,12 @@ namespace net.r_eg.vsSBE
                 return null;
             }
 
-            if(name.Equals("Configuration") && slnProperties.ContainsKey("Configuration")) {
-                return slnProperties["Configuration"];
+            if(name.Equals(PropertyNames.CONFIG) && slnProperties.ContainsKey(PropertyNames.CONFIG)) {
+                return slnProperties[PropertyNames.CONFIG];
             }
 
-            if(name.Equals("Platform") && slnProperties.ContainsKey("Platform")) {
-                return slnProperties["Platform"];
+            if(name.Equals(PropertyNames.PLATFORM) && slnProperties.ContainsKey(PropertyNames.PLATFORM)) {
+                return slnProperties[PropertyNames.PLATFORM];
             }
 
             return null;
@@ -328,19 +226,13 @@ namespace net.r_eg.vsSBE
         }
 
         /// <summary>
-        /// To update the project by default or "StartUp Project".
+        /// To update the Project Name by default aka "StartUp Project".
         /// </summary>
         /// <param name="name">Uses default behavior if empty or null.</param>
         public void updateStartupProject(string name)
         {
-            if(name == String.Empty) {
-                name = null;
-            }
-
-            if(_sln?.projects != null && _sln.projects.Count > 0
-                && name == null)
-            {
-                name = _sln.projects[0].name;
+            if(string.IsNullOrEmpty(name)) {
+                name = Sln?.ProjectItems?.FirstOrDefault().name;
             }
 
             StartupProjectString = name;
@@ -349,130 +241,55 @@ namespace net.r_eg.vsSBE
 
         /// <param name="solutionFile">Full path to solution file (.sln)</param>
         /// <param name="properties">Solution properties / global properties for all project collection</param>
-        public IsolatedEnv(string solutionFile, TProp properties)
+        public IsolatedEnv(string solutionFile, IDictionary<string, string> properties)
         {
-            SolutionFile        = solutionFile;
-            SolutionPath        = Path.GetDirectoryName(SolutionFile);
-            SolutionFileName    = Path.GetFileNameWithoutExtension(SolutionFile);
+            SolutionFile    = solutionFile ?? throw new ArgumentNullException(nameof(solutionFile));
+            _properties     = properties ?? throw new ArgumentNullException(nameof(properties));
 
-            _sln = (new Sln.Parser()).parse(SolutionFile);
-
-            if(String.IsNullOrEmpty(StartupProjectString)) {
-                updateStartupProject(null);
+            foreach(var p in properties) {
+                ProjectCollection.GlobalProjectCollection.SetGlobalProperty(p.Key, p.Value);
             }
-            IsOpenedSolution = true;
 
-            slnProperties = propertiesByDefault(properties);
-            foreach(KeyValuePair<string, string> property in properties) {
-                ProjectCollection.GlobalProjectCollection.SetGlobalProperty(property.Key, property.Value);
-            }
+            SolutionPath        = Sln.SolutionDir;
+            slnProperties       = Sln.Properties;
+            SolutionFileName    = slnProperties.GetOrDefault(PropertyNames.SLN_NAME, PropertyNames.UNDEFINED);
+            IsOpenedSolution    = true;
         }
 
         /// <summary>
         /// Blank instance.
         /// </summary>
         /// <param name="properties">Solution properties.</param>
-        public IsolatedEnv(TProp properties)
+        public IsolatedEnv(IDictionary<string, string> properties)
         {
             slnProperties = properties;
         }
 
-        /// <summary>
-        /// Gets project name from Microsoft.Build.Evaluation.Project
-        /// </summary>
-        /// <param name="eProject"></param>
-        /// <returns></returns>
-        protected virtual string getProjectNameFrom(Project eProject)
+        protected override void UpdateSlnEnv(ISlnResult sln)
         {
-            return eProject.GetPropertyValue("ProjectName");
+            SlnEnv = new XProjectEnv(sln, _properties);
+            SlnEnv.Assign();
         }
 
-        protected TProp propertiesByDefault(TProp properties)
+        protected string formatCfg(IDictionary<string, string> properties)
         {
-            if(!properties.ContainsKey("Configuration"))
-            {
-                // ~
-                if(_sln.configs.Count > 0) {
-                    properties["Configuration"] = _sln.configs[0].configuration;
-                }
-                else {
-                    properties["Configuration"] = "Release";
-                }
-            }
+            IConfPlatform def = Sln?.DefaultConfig;
 
-            if(!properties.ContainsKey("Platform"))
-            {
-                // ~
-                if(_sln.configs.Count > 0) {
-                    properties["Platform"] = _sln.configs[0].platform;
-                }
-                else {
-                    properties["Platform"] = "x86";
-                }
-            }
-            else {
-                properties["Platform"] = platformName(properties["Platform"]);
-            }
-
-            return properties;
+            return formatCfg(
+                properties.GetOrDefault(PropertyNames.CONFIG, def?.Configuration),
+                properties.GetOrDefault(PropertyNames.PLATFORM, def?.Platform)
+            );
         }
 
-        protected TProp projectProperties(Sln.Project project, TProp properties)
+        private void __disabled(string name)
         {
-            Log.Debug($"-> sln['{properties["Configuration"]}'; '{properties["Platform"]}']");
-
-            if(!properties.ContainsKey("Configuration") || !properties.ContainsKey("Platform")) {
-                Log.Warn("Solution Configuration & Platform are not defined.");
-                return properties;
-            }
-            TProp ret = new TProp(properties);
-
-            var cfg = _sln
-                        .projectConfigs
-                        .Where(c => 
-                            c.pGuid == project.pGuid 
-                            && c.sln.configuration == properties["Configuration"]
-                            && platformName(c.sln.platform) == platformName(properties["Platform"])
-                        )
-                        .FirstOrDefault();
-
-            if(cfg.configuration == null || cfg.platform == null) {
-                Log.Warn($"Something went wrong with project configuration. `{cfg.configuration}|{cfg.platform}`");
-                Log.Warn($"Are you sure that it's correct for your sln: `{properties["Configuration"]}|{properties["Platform"]}`");
-                return properties;
-                //throw new MismatchException();
-            }
-
-            string platform = platformName(cfg.platform);
-            Log.Debug($"-> prj['{cfg.configuration}'; '{platform}']");
-
-            ret["Configuration"]    = cfg.configuration;
-            ret["Platform"]         = platform;
-
-            return ret;
+            Log.Debug($"Accessing to '{name}' is disabled in Isolated environment.");
         }
 
-        /// <summary>
-        /// Compatible format: 'configname'|'platformname'
-        /// http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivscfg.get_displayname.aspx
-        /// </summary>
-        protected string formatCfg(string name, string platform)
+        private T __disabled<T>(string name, T val = default(T))
         {
-            return String.Format("{0}|{1}", name, platform);
-        }
-
-        /// <summary>
-        /// Rules of platform names, for example: 'Any CPU' to 'AnyCPU'
-        /// see MS Connect Issue #503935 + https://bitbucket.org/3F/vssolutionbuildevent/issue/14/empty-property-outdir
-        /// </summary>
-        /// <param name="platform"></param>
-        /// <returns></returns>
-        private string platformName(string platform)
-        {
-            if(String.Compare(platform, "Any CPU", StringComparison.OrdinalIgnoreCase) == 0) {
-                return "AnyCPU";
-            }
-            return platform;
+            __disabled(name);
+            return val;
         }
     }
 }

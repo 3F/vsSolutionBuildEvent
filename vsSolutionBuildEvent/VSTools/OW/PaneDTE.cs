@@ -71,7 +71,6 @@ namespace net.r_eg.vsSBE.VSTools.OW
             }
 
             try {
-                Log.Trace("keep calm, the following message is possible 'Exception thrown: 'System.ArgumentException' in ...dll':");
                 pane = dte2.ToolWindows.OutputWindow.OutputWindowPanes.Item(name);
             }
             catch(ArgumentException) {

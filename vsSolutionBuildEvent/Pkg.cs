@@ -294,7 +294,7 @@ namespace net.r_eg.vsSBE
         {
             return await FindToolWindowAsync
             (
-                typeof(StatusToolWindow), 1, true, DisposalToken
+                typeof(StatusToolWindow), id, true, DisposalToken
             );
         }
 
@@ -333,7 +333,6 @@ namespace net.r_eg.vsSBE
         public Pkg()
         {
             Trace.WriteLine($"Plugin is activated: { ToString() }");
-
         }
 
 #if VSSDK_15_AND_NEW

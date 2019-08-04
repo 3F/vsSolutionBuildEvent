@@ -288,6 +288,9 @@
     <Compile Include="Clients\IClientLibrary.cs" />
     <Compile Include="Clients\Instance.cs" />
     <Compile Include="Clients\ClientLibrary.cs" />
+    <Compile Include="Extensions\ProjectExtension.cs" />
+    <Compile Include="Extensions\IVsHierarchyExtension.cs" />
+    <Compile Include="EnvAbstract.cs" />
     <Compile Include="IPkg.cs" />
     <Compile Include="StatusToolCommand.cs" />
     <Compile Include="MainToolCommand.cs" />
@@ -339,9 +342,6 @@
     <Compile Include="SBEScripts\SNode\LevelType.cs" />
     <Compile Include="SBEScripts\SNode\ILevel.cs" />
     <Compile Include="SBEScripts\SNode\PM.cs" />
-    <Compile Include="Sln\ConfigPrj.cs" />
-    <Compile Include="Sln\ConfigSln.cs" />
-    <Compile Include="Sln\Project.cs" />
     <Compile Include="UI\WForms\Controls\FileTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -530,7 +530,6 @@
     <Compile Include="SBEScripts\Value.cs" />
     <Compile Include="Scripts\StringProtector.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Sln\Parser.cs" />
     <Compile Include="Scripts\Tokens.cs" />
     <Compile Include="MSBuild\PreparedData.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
@@ -787,6 +786,10 @@
     <ProjectReference Include="..\Bridge\Bridge.csproj">
       <Project>{73919171-44B6-4536-B892-F1FCA653887C}</Project>
       <Name>Bridge</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MvsSln\MvsSln\MvsSln.csproj">
+      <Project>{f905dfb2-2e67-4ff7-9001-924f6f2d645d}</Project>
+      <Name>MvsSln</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

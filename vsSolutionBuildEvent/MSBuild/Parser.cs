@@ -18,10 +18,10 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.Build.Evaluation;
+using net.r_eg.MvsSln;
 using net.r_eg.vsSBE.Bridge.CoreCommand;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild.Exceptions;
@@ -31,10 +31,7 @@ namespace net.r_eg.vsSBE.MSBuild
 {
     public class Parser: IMSBuild, IEvaluator
     {
-        /// <summary>
-        /// Default value for all undefined properties.
-        /// </summary>
-        public const string PROP_VALUE_DEFAULT = "*Undefined*";
+        public const string PROP_VALUE_DEFAULT = PropertyNames.UNDEFINED;
 
         /// <summary>
         /// Max of supported containers for processing.
@@ -59,7 +56,7 @@ namespace net.r_eg.vsSBE.MSBuild
         /// <summary>
         /// object synch.
         /// </summary>
-        private Object _lock = new Object();
+        private readonly object _lock = new object();
 
         /// <summary>
         /// Used environment.
@@ -117,7 +114,7 @@ namespace net.r_eg.vsSBE.MSBuild
                 return prop.EvaluatedValue;
             }
             Log.Debug("getProperty: return default value");
-            return PROP_VALUE_DEFAULT;
+            return PropertyNames.UNDEFINED;
         }
 
         /// <summary>
@@ -159,7 +156,8 @@ namespace net.r_eg.vsSBE.MSBuild
             const string container  = Settings.APP_NAME_SHORT + "_latestEvaluated";
             Project project         = getProject(projectName);
 
-            Log.Trace("evaluate: '{0}' -> [{1}]", unevaluated, projectName);
+            Log.Trace($"evaluate: '{unevaluated}' -> [{projectName}]");
+
             lock(_lock)
             {
                 CultureInfo origincul               = Thread.CurrentThread.CurrentCulture;

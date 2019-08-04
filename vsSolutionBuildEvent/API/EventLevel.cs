@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using EnvDTE80;
-using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.vsSBE.API.Commands;
 using net.r_eg.vsSBE.Bridge;
@@ -28,6 +27,10 @@ using net.r_eg.vsSBE.Configuration;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.Scripts;
+
+#if VSSDK_15_AND_NEW
+using Microsoft.VisualStudio.Shell;
+#endif
 
 namespace net.r_eg.vsSBE.API
 {
@@ -134,7 +137,7 @@ namespace net.r_eg.vsSBE.API
         {
             configure(cfg);
             
-            this.Environment = new Environment((DTE2)dte2);
+            this.Environment = new Environment((DTE2)dte2, this);
             init();
 
             clientLib.tryLoad(this, dte2);
@@ -268,10 +271,6 @@ namespace net.r_eg.vsSBE.API
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onProjectPre(string project)
         {
-#if VSSDK_15_AND_NEW
-            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
-#endif
-
             try {
                 int ret = Action.bindProjectPre(project);
 
@@ -322,10 +321,6 @@ namespace net.r_eg.vsSBE.API
         /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
         public int onProjectPost(string project, int fSuccess)
         {
-#if VSSDK_15_AND_NEW
-            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
-#endif
-
             try {
                 int ret = Action.bindProjectPost(project, fSuccess);
 
@@ -424,7 +419,7 @@ namespace net.r_eg.vsSBE.API
             UI.Plain.State.Print(config.Data);
 
             Action.Cmd.MSBuild.initPropByDefault(); //LC: #815, #814
-            OpenedSolution(this, new EventArgs());
+            OpenedSolution(this, EventArgs.Empty);
 
             if(slnEvents == null) {
                 updateBuildType(BuildType.Common);
@@ -462,7 +457,7 @@ namespace net.r_eg.vsSBE.API
                 ret = Codes.Failed;
             }
 
-            ClosedSolution(this, new EventArgs());
+            ClosedSolution(this, EventArgs.Empty);
 
             ConfigManager.Config.unload();
             ConfigManager.UserConfig.unload();

@@ -27,9 +27,7 @@ using Microsoft.Build.Framework;
 
 namespace net.r_eg.vsSBE.CI.MSBuild
 {
-    /// <summary>
-    /// TODO: new lightweight logger or NLog from main plugin
-    /// </summary>
+    //TODO: Either use from MvsSln or NLog from main plugin
     internal class Log: ILog
     {
         /// <summary>
@@ -37,9 +35,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         /// </summary>
         public bool IsDiagnostic
         {
-            get {
-                return (level == LoggerVerbosity.Diagnostic);
-            }
+            get => level == LoggerVerbosity.Diagnostic;
         }
 
         /// <summary>

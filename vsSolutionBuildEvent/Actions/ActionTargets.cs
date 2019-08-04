@@ -22,6 +22,7 @@ using Microsoft.Build.Construction;
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Execution;
 using Microsoft.Build.Framework;
+using net.r_eg.MvsSln;
 using net.r_eg.vsSBE.Events;
 
 namespace net.r_eg.vsSBE.Actions
@@ -158,7 +159,7 @@ namespace net.r_eg.vsSBE.Actions
         {
             Dictionary<string, string> prop = new Dictionary<string, string>(cmd.Env.getProject(null).GlobalProperties);
             
-            prop.Add("ProjectName", String.Format("_{0}", evt.Name));
+            prop.Add(PropertyNames.PRJ_NAME, String.Format("_{0}", evt.Name));
             prop.Add("ActionName", evt.Name);
             prop.Add("BuildType", cmd.Env.BuildType.ToString());
             prop.Add("EventType", cmd.EventType.ToString());

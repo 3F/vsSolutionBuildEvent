@@ -19,6 +19,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using net.r_eg.vsSBE.API.Commands;
 using net.r_eg.vsSBE.Bridge;
+using DProject = EnvDTE.Project;
+using EProject = Microsoft.Build.Evaluation.Project;
 
 namespace net.r_eg.vsSBE
 {
@@ -28,12 +30,12 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// List of EnvDTE projects.
         /// </summary>
-        IEnumerable<EnvDTE.Project> ProjectsDTE { get; }
+        IEnumerable<DProject> ProjectsDTE { get; }
 
         /// <summary>
         /// List of Microsoft.Build.Evaluation projects.
         /// </summary>
-        IEnumerable<Microsoft.Build.Evaluation.Project> ProjectsMBE { get; }
+        IEnumerable<EProject> ProjectsMBE { get; }
 
         /// <summary>
         /// Simple list of names from EnvDTE projects
@@ -41,12 +43,12 @@ namespace net.r_eg.vsSBE
         List<string> ProjectsList { get; }
 
         /// <summary>
-        /// Should provide active configuration for current solution
+        /// Active configuration for current solution.
         /// </summary>
         EnvDTE80.SolutionConfiguration2 SolutionActiveCfg { get; }
 
         /// <summary>
-        /// Formatted string with active configuration for current solution
+        /// Formatted string with an active configuration for current solution.
         /// </summary>
         string SolutionActiveCfgString { get; }
 
@@ -56,12 +58,12 @@ namespace net.r_eg.vsSBE
         BuildType BuildType { get; set; }
 
         /// <summary>
-        /// Should provide all configurations for current solution
+        /// All configurations for current solution.
         /// </summary>
         IEnumerable<EnvDTE80.SolutionConfiguration2> SolutionConfigurations { get; }
 
         /// <summary>
-        /// Project by default or "StartUp Project".
+        /// Project Name by default or "StartUp Project".
         /// </summary>
         string StartupProjectString { get; }
 
@@ -111,18 +113,20 @@ namespace net.r_eg.vsSBE
         IOW OutputWindowPane { get; }
 
         /// <summary>
-        /// Should provide instance of the Build.Evaluation.Project by project name
+        /// Get instance of the Build.Evaluation.Project for accessing to properties etc.
         /// </summary>
-        Microsoft.Build.Evaluation.Project getProject(string name);
+        /// <param name="name">Specified project name. null value will use the name from startup-project.</param>
+        /// <returns>Found relevant Microsoft.Build.Evaluation.Project.</returns>
+        EProject getProject(string name = null);
 
         /// <summary>
-        /// Gets configuration for specific format
-        /// e.g.: http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivscfg.get_displayname.aspx
+        /// Returns formatted configuration from the SolutionConfiguration2
         /// </summary>
         string SolutionCfgFormat(EnvDTE80.SolutionConfiguration2 cfg);
 
         /// <summary>
-        /// Provide global property for all existing projects
+        /// Getting an unified property for all existing projects. 
+        /// Aka "Solution property".
         /// </summary>
         /// <param name="name">Property name</param>
         string getSolutionProperty(string name);
@@ -135,7 +139,7 @@ namespace net.r_eg.vsSBE
         void exec(string name, string args = "");
 
         /// <summary>
-        /// To update the project by default or "StartUp Project".
+        /// To update the Project Name by default aka "StartUp Project".
         /// </summary>
         /// <param name="name">Uses default behavior if empty or null.</param>
         void updateStartupProject(string name);

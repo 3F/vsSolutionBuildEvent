@@ -29,9 +29,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using net.r_eg.vsSBE.Bridge;
+using net.r_eg.MvsSln;
 using net.r_eg.vsSBE.Bridge.CoreCommand;
 using net.r_eg.vsSBE.Provider;
+using BuildType = net.r_eg.vsSBE.Bridge.BuildType;
 
 namespace net.r_eg.vsSBE.CI.MSBuild
 {
@@ -49,7 +50,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         /// <summary>
         /// Our the vsSolutionBuildEvent library
         /// </summary>
-        public Provider.ILibrary library;
+        public ILibrary library;
 
         /// <summary>
         /// Internal logging
@@ -69,7 +70,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         /// <summary>
         /// About projects by ident
         /// </summary>
-        protected Dictionary<int, Project> projects = new Dictionary<int, Project>();
+        protected IDictionary<int, Project> projects = new Dictionary<int, Project>();
 
         /// <summary>
         /// All received CoreCommand from library.
@@ -84,18 +85,14 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         /// <summary>
         /// Reserved for future use with IVsSolutionEvents
         /// </summary>
-        private object pUnkReserved = new object();
+        private readonly object pUnkReserved = new object();
 
         /// <summary>
         /// To abort all processes as soon as possible
         /// </summary>
         private volatile bool abort = false;
 
-        /// <summary>
-        /// Object synch.
-        /// </summary>
-        private Object _lock = new Object();
-
+        private readonly object _sync = new object();
 
         /// <summary>
         /// Initializer of the Build.Framework.ILogger objects.
@@ -152,11 +149,12 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                 return;
             }
 
-            Dictionary<object, string> properties = e.Properties.OfType<DictionaryEntry>().ToDictionary(k => k.Key, v => v.Value.ToString());
-            if(properties.ContainsKey("ProjectName"))
+            var properties = e.Properties.OfType<DictionaryEntry>().ToDictionary(k => k.Key, v => v.Value.ToString());
+
+            if(properties.ContainsKey(PropertyNames.PRJ_NAME))
             {
                 projects[e.ProjectId] = new Project() {
-                    Name            = properties["ProjectName"],
+                    Name            = properties[PropertyNames.PRJ_NAME],
                     File            = e.ProjectFile,
                     Properties      = properties
                 };
@@ -251,7 +249,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             if(!e.Succeeded) {
                 library.Event.onCancel();
             }
-            library.Event.onPost((e.Succeeded)? 1 : 0, 0, 0);
+            library.Event.onPost((e.Succeeded ? 1 : 0), 0, 0);
         }
 
         /// <summary>
@@ -333,7 +331,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                 return false;
             }
 
-            lock(_lock) {
+            lock(_sync) {
                 detachCoreCommandListener(library);
                 library.EntryPoint.CoreCommand += command;
             }
@@ -346,7 +344,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                 return false;
             }
 
-            lock(_lock) {
+            lock(_sync) {
                 library.EntryPoint.CoreCommand -= command;
             }
             return true;
@@ -419,7 +417,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         /// <returns></returns>
         protected virtual string formatEW(string type, string code, string msg, string file, int line)
         {
-            return String.Format("{0}({1}): {2} {3}: {4}", file, line, type, code, msg);
+            return $"{file}({line}): {type} {code}: {msg}";
         }
 
         private void msg(string data, params object[] args)

@@ -1,0 +1,3 @@
+[submodule "MvsSln"]
+	path = MvsSln
+	url = https://github.com/3F/MvsSln.git
