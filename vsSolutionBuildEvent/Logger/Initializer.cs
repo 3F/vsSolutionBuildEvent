@@ -152,8 +152,9 @@ namespace net.r_eg.vsSBE.Logger
         /// <param name="e"></param>
         private void onCfgLoggerChanged(object sender, LoggingConfigurationChangedEventArgs e)
         {
-            fixLoggerCfg(e.OldConfiguration); // if we are in point after first initialization
-            fixLoggerCfg(e.NewConfiguration); // if this is raised from others
+            fixLoggerCfg(e.ActivatedConfiguration /*NLog PR#1897: OldConfiguration*/); // if we're at the point after first initialization
+            fixLoggerCfg(e.DeactivatedConfiguration /*NLog PR#1897: NewConfiguration*/); // if this was raised from others
+
             initLoggerCfg(); // we also should be ready to SimpleConfigurator from other assemblies etc.
         }
 

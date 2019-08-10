@@ -371,10 +371,10 @@ namespace net.r_eg.vsSBE
                 });
 
                 spSolution = await GetServiceAsync(typeof(SVsSolution)) as IVsSolution;
-                spSolution.AdviseSolutionEvents(this, out _pdwCookieSolution);
+                spSolution?.AdviseSolutionEvents(this, out _pdwCookieSolution);
 
                 spSolutionBM = await GetServiceAsync(typeof(SVsSolutionBuildManager)) as IVsSolutionBuildManager2;
-                spSolutionBM.AdviseUpdateSolutionEvents(this, out _pdwCookieSolutionBM);
+                spSolutionBM?.AdviseUpdateSolutionEvents(this, out _pdwCookieSolutionBM);
             }
             catch(Exception ex)
             {

@@ -1,0 +1,22 @@
+#
+# Dependabot config file for https://github.com/3F/vsSolutionBuildEvent
+#
+# Docs:
+# https://dependabot.com/docs/config-file/
+# https://dependabot.com/docs/config-file/validator/
+
+version: 1
+update_configs:
+  - package_manager: "dotnet:nuget"
+    directory: "/"
+    update_schedule: "monthly"
+
+    ignored_updates:
+
+    # https://github.com/3F/vsSolutionBuildEvent/pull/48#issuecomment-508131050
+    - match:
+        dependency_name: "Microsoft.VisualStudio.Shell.15.0"
+
+    # https://github.com/3F/vsSolutionBuildEvent/pull/46#issuecomment-508131304
+    - match:
+        dependency_name: "Microsoft.VisualStudio.Shell.Framework"

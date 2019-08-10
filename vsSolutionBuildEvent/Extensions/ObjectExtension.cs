@@ -100,20 +100,25 @@ namespace net.r_eg.vsSBE.Extensions
             if(obj == null) {
                 return default(T2);
             }
-            return JsonConvert.DeserializeObject<T2>(
-                                JsonConvert.SerializeObject(
-                                        obj, 
-                                        Formatting.None, 
-                                        new JsonSerializerSettings()
-                                        {
-                                            NullValueHandling   = NullValueHandling.Include,
-                                            Formatting          = Formatting.None,
-                                            TypeNameHandling    = TypeNameHandling.All,
-                                        }
-                                ),
-                                new JsonSerializerSettings() {
-                                    Binder = new JsonSerializationBinder(),
-                                });
+
+            return JsonConvert.DeserializeObject<T2>
+            (
+                JsonConvert.SerializeObject
+                (
+                    obj, 
+                    Formatting.None, 
+                    new JsonSerializerSettings()
+                    {
+                        NullValueHandling   = NullValueHandling.Include,
+                        Formatting          = Formatting.None,
+                        TypeNameHandling    = TypeNameHandling.All,
+                    }
+                ),
+
+                new JsonSerializerSettings() {
+                    SerializationBinder = new JsonSerializationBinder(),
+                }
+            );
         }
 
         /// <summary>

@@ -2,7 +2,7 @@
 
 **Event**-Catcher with variety of advanced **Actions** to service projects, libraries, the build processes and processes at runtime from Visual Studio and MSBuild Tools.
 
-**Flexible actions for all ...**
+**Control everything: Visual Studio, MSBuild Tools, CI, and more …**
 
 [![Build status - master](https://ci.appveyor.com/api/projects/status/l38xn0j2c5an28e1/branch/master?svg=true)](https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/branch/master)
 [![Tests](https://img.shields.io/appveyor/tests/3Fs/vssolutionbuildevent/master.svg)](https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/build/tests)

@@ -17,14 +17,15 @@
 
 using System;
 using System.Runtime.Serialization;
+using Newtonsoft.Json.Serialization;
 
 namespace net.r_eg.vsSBE
 {
-    public class JsonSerializationBinder: SerializationBinder
+    public class JsonSerializationBinder: SerializationBinder, ISerializationBinder
     {
         public override Type BindToType(string assemblyName, string typeName)
         {
-            return Type.GetType(String.Format("{0}, {1}", typeName, assemblyName));
+            return Type.GetType($"{typeName}, {assemblyName}");
         }
     }
 }
