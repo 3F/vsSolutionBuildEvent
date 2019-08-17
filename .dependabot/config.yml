@@ -20,3 +20,21 @@ update_configs:
     # https://github.com/3F/vsSolutionBuildEvent/pull/46#issuecomment-508131304
     - match:
         dependency_name: "Microsoft.VisualStudio.Shell.Framework"
+
+    # Microsoft.VisualStudio.Shell.15.0.15.9.28307 can't work with Microsoft.VisualStudio.Threading 16.0.102/16.3.13
+    - match:
+        dependency_name: "Microsoft.VisualStudio.Threading"
+    - match:
+        dependency_name: "Microsoft.VisualStudio.Threading.Analyzers"
+
+    # Microsoft.VisualStudio.Utilities depends on Microsoft.VisualStudio.Threading
+    - match:
+        dependency_name: "Microsoft.VisualStudio.Utilities"
+
+    # StreamJsonRpc depends on Microsoft.VisualStudio.Threading
+    - match:
+        dependency_name: "StreamJsonRpc"
+
+  - package_manager: "submodules"
+    directory: "/"
+    update_schedule: "monthly"

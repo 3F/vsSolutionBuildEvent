@@ -1,16 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
     
-    The main VSPackage uses this for adding into vsix the all libraries below.
-    e.g. ~
+    The main VSPackage uses this for adding into vsix something as Content below.
+    eg. ~
 
        <Content Include="bin\*.dll">
          <Visible>false</Visible>
          <Link>%(Filename)%(Extension)</Link>
          <IncludeInVSIX>true</IncludeInVSIX>
        </Content>
-    -
-    
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   
@@ -18,36 +16,15 @@
         <_SDK_Lib>$(SolutionDir)packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(NetTargetVName)</_SDK_Lib>
     </PropertyGroup>
     
-    <ItemGroup Condition="'$(_SDK_Lib)' != ''">
-        <VsixLib Include="$(_SDK_Lib)\EnvDTE.dll" />
-        <VsixLib Include="$(_SDK_Lib)\EnvDTE80.dll" />
-        <VsixLib Include="$(_SDK_Lib)\microsoft.msxml.dll" />
-        <VsixLib Include="$(_SDK_Lib)\Microsoft.VisualStudio.OLE.Interop.dll" />
-        <VsixLib Include="$(_SDK_Lib)\Microsoft.VisualStudio.ProjectAggregator.dll" />
-        <VsixLib Include="$(_SDK_Lib)\Microsoft.VisualStudio.Settings.dll" />
-        <VsixLib Include="$(_SDK_Lib)\Microsoft.VisualStudio.Shell.10.0.dll" />
-        <VsixLib Include="$(_SDK_Lib)\Microsoft.VisualStudio.Shell.Immutable.10.0.dll" />
-        <VsixLib Include="$(_SDK_Lib)\Microsoft.VisualStudio.Shell.Interop.8.0.dll" />
-        <VsixLib Include="$(_SDK_Lib)\Microsoft.VisualStudio.Shell.Interop.9.0.dll" />
-        <VsixLib Include="$(_SDK_Lib)\Microsoft.VisualStudio.Shell.Interop.10.0.dll" />
-        <VsixLib Include="$(_SDK_Lib)\Microsoft.VisualStudio.Shell.Interop.dll" />
-        <VsixLib Include="$(_SDK_Lib)\Microsoft.VisualStudio.TextManager.Interop.8.0.dll" />
-        <VsixLib Include="$(_SDK_Lib)\Microsoft.VisualStudio.TextManager.Interop.dll" />
-        <VsixLib Include="$(_SDK_Lib)\Microsoft.VisualStudio.VSHelp.dll" />
-        <VsixLib Include="$(_SDK_Lib)\stdole.dll" />
+    <ItemGroup>
 
-      <!-- XML Doc -->
-        <VsixLib Include="$(SolutionDir)\Bridge\$(OutputPath)\Bridge.xml" Condition="Exists('$(SolutionDir)\Bridge\$(OutputPath)\Bridge.xml')" />
-
-      <!-- tools -->
+        <!-- tools -->
         <VsixLib Include="$(SolutionDir)\tools\gnt.bat" />
         <VsixLib Include="$(SolutionDir)\tools\hMSBuild.bat" />
 
-    </ItemGroup>
-    
-    <ItemGroup>
         <!-- 7z.dll x86 -->
-        <VsixLib Include="$(SolutionDir)packages\7z.Libs.16.4.0\bin\x86\7z.dll" /><!-- packages\7z.Libs.*\bin\x86\7z.dll -->
+        <VsixLib Include="$(SolutionDir)packages\7z.Libs.*\bin\x86\7z.dll" /><!-- packages\7z.Libs.*\bin\x86\7z.dll -->
+
     </ItemGroup>
   
 </Project>
