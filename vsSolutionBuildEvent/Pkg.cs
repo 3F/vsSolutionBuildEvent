@@ -57,7 +57,7 @@ namespace net.r_eg.vsSBE
     [ProvideMenuResource("Menus.ctmenu", 1)]
 
     // Registers the tool window
-    [ProvideToolWindow(typeof(StatusToolWindow), Height=25, Style=VsDockStyle.Linked, Orientation=ToolWindowOrientation.Top, Window=ToolWindowGuids80.Outputwindow)]
+    [ProvideToolWindow(typeof(StatusToolWindow), Height=38, Style=VsDockStyle.Linked, Orientation=ToolWindowOrientation.Top, Window=ToolWindowGuids80.ErrorList)]
 
     // Package Guid
     [Guid(GuidList.PACKAGE_STRING)]
@@ -288,13 +288,14 @@ namespace net.r_eg.vsSBE
         /// Finds or creates tool window.
         /// </summary>
         /// <param name="type">tool window type</param>
+        /// <param name="create">try to create tool when true</param>
         /// <param name="id">tool window id</param>
         /// <returns></returns>
-        public async Task<ToolWindowPane> getToolWindowAsync(Type type, int id)
+        public async Task<ToolWindowPane> getToolWindowAsync(Type type, bool create = true, int id = 0)
         {
             return await FindToolWindowAsync
             (
-                typeof(StatusToolWindow), id, true, DisposalToken
+                type, id, create, DisposalToken
             );
         }
 
@@ -314,11 +315,12 @@ namespace net.r_eg.vsSBE
         /// Finds or creates tool window.
         /// </summary>
         /// <param name="type">tool window type</param>
+        /// <param name="create">try to create tool when true</param>
         /// <param name="id">tool window id</param>
         /// <returns></returns>
-        public ToolWindowPane getToolWindow(Type type, int id)
+        public ToolWindowPane getToolWindow(Type type, bool create = true, int id = 0)
         {
-            return FindToolWindow(typeof(StatusToolWindow), id, true);
+            return FindToolWindow(type, id, create);
         }
 
         /// <summary>
@@ -360,11 +362,18 @@ namespace net.r_eg.vsSBE
                 mainToolCmd.setVisibility(false);
 
                 // VS bug: https://github.com/microsoft/extendvs/issues/68
+                // MSVS Shell.15.0 15.7.27703
+                // MSVS Threading 15.8.209
                 _ = Task.Run(async () =>
                 {
+                    // this line fixes related bug in new MSVS Shell.15.0 15.9.28307
+                    // when tool is already attached when starting VS.
+                    // do not use true value in non-UI thread ........................v
+                    var tool = await getToolWindowAsync(StatusToolCommand.ToolType, false);
+
                     await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
-                    sToolCmd = await StatusToolCommand.InitAsync(this, Event);
+                    sToolCmd = await StatusToolCommand.InitAsync(this, Event, tool);
 
                     // https://github.com/3F/vsSolutionBuildEvent/pull/45#discussion_r291835939
                     if(Dte2.Solution.IsOpen) OnAfterOpenSolution(pUnkReserved, 0);

@@ -160,7 +160,14 @@ namespace net.r_eg.vsSBE.Logger
 
         private void onSReceived(object sender, Message e)
         {
-            Log._.NLog.Log(LogLevel.FromOrdinal((int)e.type), $"{nameof(MvsSln)}: {e.content}");
+            Log._.NLog.Log
+            (
+                LogLevel.FromOrdinal
+                (
+                    (int)(e.type == Message.Level.Info ? Message.Level.Debug : e.type)
+                ), 
+                $"{nameof(MvsSln)}: {e.content}"
+            );
         }
     }
 }

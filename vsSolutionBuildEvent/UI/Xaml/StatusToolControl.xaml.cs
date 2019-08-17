@@ -29,21 +29,15 @@ namespace net.r_eg.vsSBE.UI.Xaml
 {
     public partial class StatusToolControl: UserControl, IStatusTool
     {
+        protected Logic.StatusTool logic;
+
         /// <summary>
         /// Get number from Warnings counter
         /// </summary>
         public int Warnings
         {
-            get {
-                return logic.Warnings;
-            }
+            get => logic.Warnings;
         }
-
-        /// <summary>
-        /// Logic for this UI
-        /// </summary>
-        protected Logic.StatusTool logic;
-
 
         /// <summary>
         /// Availability of main panel for user

@@ -35,9 +35,10 @@ namespace net.r_eg.vsSBE
         /// Finds or creates tool window.
         /// </summary>
         /// <param name="type">tool window type</param>
+        /// <param name="create">try to create tool when true</param>
         /// <param name="id">tool window id</param>
         /// <returns></returns>
-        Task<ToolWindowPane> getToolWindowAsync(Type type, int id);
+        Task<ToolWindowPane> getToolWindowAsync(Type type, bool create = true, int id = 0);
 
         /// <param name="type">service type.</param>
         /// <returns></returns>
@@ -49,9 +50,10 @@ namespace net.r_eg.vsSBE
         /// Finds or creates tool window.
         /// </summary>
         /// <param name="type">tool window type</param>
+        /// <param name="create">try to create tool when true</param>
         /// <param name="id">tool window id</param>
         /// <returns></returns>
-        ToolWindowPane getToolWindow(Type type, int id);
+        ToolWindowPane getToolWindow(Type type, bool create = true, int id = 0);
 
         /// <param name="type">service type.</param>
         /// <returns></returns>

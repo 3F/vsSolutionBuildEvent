@@ -44,32 +44,26 @@ namespace net.r_eg.vsSBE
 
         private ToolWindowPane toolPane;
 
+        public static Type ToolType => typeof(StatusToolWindow);
+
         public static StatusToolCommand Instance
         {
             get;
             private set;
         }
 
-        public IStatusTool ToolContent
-        {
-            get => (IStatusTool)toolPane.Content;
-        }
+        public IStatusTool ToolContent => (IStatusTool)toolPane.Content;
 
-        public IStatusToolEvents ToolEvents
-        {
-            get => (IStatusToolEvents)toolPane;
-        }
+        public IStatusToolEvents ToolEvents => (IStatusToolEvents)toolPane;
 
-        private IConfig<ISolutionEvents> Config
-        {
-            get => Settings.CfgManager.Config;
-        }
+        private IConfig<ISolutionEvents> Config => Settings.CfgManager.Config;
 
 #if VSSDK_15_AND_NEW
 
         /// <param name="pkg">Owner package.</param>
         /// <param name="evt">Supported public events, not null.</param>
-        public static async Task<StatusToolCommand> InitAsync(IPkg pkg, IEventLevel evt)
+        /// <param name="tool">Tool pane instance to use this instead of new when null is passed.</param>
+        public static async Task<StatusToolCommand> InitAsync(IPkg pkg, IEventLevel evt, ToolWindowPane tool = null)
         {
             if(Instance != null) {
                 return Instance;
@@ -86,7 +80,7 @@ namespace net.r_eg.vsSBE
                 evt
             );
 
-            Instance.toolPane = await Instance.initToolPaneAsync();
+            Instance.toolPane = await Instance.initToolPaneAsync(tool as StatusToolWindow);
 
             return Instance;
         }
@@ -132,20 +126,19 @@ namespace net.r_eg.vsSBE
         ///       It may produce deadlocks when it is called from InitializeAsync thread:
         ///       https://github.com/3F/vsSolutionBuildEvent/pull/45#pullrequestreview-246288512
         /// </summary>
-        /// <returns></returns>
-        private async Task<ToolWindowPane> initToolPaneAsync()
+        private async Task<ToolWindowPane> initToolPaneAsync(StatusToolWindow tool = null)
         {
             return initToolPane(
-                await pkg.getToolWindowAsync(typeof(StatusToolWindow), 0)
+                tool ?? await pkg.getToolWindowAsync(ToolType)
             );
         }
 
 #else
 
-        private ToolWindowPane initToolPane()
+        private ToolWindowPane initToolPane(StatusToolWindow tool = null)
         {
             return initToolPane(
-                pkg.getToolWindow(typeof(StatusToolWindow), 0)
+                tool ?? pkg.getToolWindow(ToolType)
             );
         }
 
@@ -155,7 +148,7 @@ namespace net.r_eg.vsSBE
         {
             Log.Trace("FindToolWindow/Async completed");
 
-            if(tool == null || tool.Frame == null) {
+            if(tool?.Frame == null) {
                 throw new NotFoundException($"Cannot find or create { nameof(StatusToolWindow) }");
             }
             return tool;
