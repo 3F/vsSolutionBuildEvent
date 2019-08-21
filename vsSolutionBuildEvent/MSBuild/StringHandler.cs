@@ -15,12 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Text.RegularExpressions;
+using net.r_eg.Varhead;
 
 namespace net.r_eg.vsSBE.MSBuild
 {
-    public class StringHandler: Scripts.StringProtector
+    public class StringHandler: StringProtector
     {
         /// <summary>
         /// Specific format of double quotes with content
@@ -45,14 +45,14 @@ namespace net.r_eg.vsSBE.MSBuild
         /// <returns>protected string</returns>
         public string protectEscContainer(string data)
         {
-            lock(_lock)
+            lock(sync)
             {
                 return Regex.Replace(data, RPattern.ContainerEscOuter, delegate(Match m)
                 {
                     uint ident      = IdentNext;
                     strings[ident]  = "$" + m.Groups[1].Value;
                     Log.Trace("StringHandler: protect the escaped outer container '{0}' :: '{1}'", strings[ident], ident);
-                    return replacementIn(ident);
+                    return ReplacementIn(ident);
                 },
                 RegexOptions.IgnorePatternWhitespace);
             }

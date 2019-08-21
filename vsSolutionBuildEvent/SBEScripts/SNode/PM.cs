@@ -20,10 +20,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using net.r_eg.Varhead;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.SBEScripts.SNode
 {
@@ -396,7 +396,7 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
             Log.Trace("PM-detect: entered with '{0}'", data);
 
             StringHandler h = new StringHandler();
-            data            = h.protectMixedQuotes(data);
+            data            = h.ProtectMixedQuotes(data);
 
             Match m = Rcon.Match(data);
             if(!m.Success) {
@@ -422,11 +422,11 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
                 Levels.Add(new Level() {
                     Type = LevelType.Method,
                     Data = method,
-                    Args = extractArgs(h.recovery(arguments)),
+                    Args = extractArgs(h.Recovery(arguments)),
                 });
             }
 
-            detect(h.recovery(operation));
+            detect(h.Recovery(operation));
         }
 
         /// <summary>
@@ -448,7 +448,7 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
             Argument[] ret = new Argument[raw.Length];
             for(int i = 0; i < raw.Length; ++i)
             {
-                string arg = h.recovery(raw[i]).Trim();
+                string arg = h.Recovery(raw[i]).Trim();
                 if(arg.Length < 1 && splitter == ',') { // std: p1, p2, p3
                     throw new SyntaxIncorrectException("PM - extractArgs: incorrect arguments line '{0}'", data);
                 }
@@ -501,11 +501,11 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
             {
                 if(m.Groups[1].Success) {
                     return new Argument() { type = ArgumentType.StringDouble,
-                                            data = eval(EvalType.ArgStringD, Tokens.unescapeQuotes('"', m.Groups[1].Value)) };
+                                            data = eval(EvalType.ArgStringD, Tokens.UnescapeQuotes('"', m.Groups[1].Value)) };
                 }
 
                 return new Argument() { type = ArgumentType.StringSingle,
-                                        data = eval(EvalType.ArgStringS, Tokens.unescapeQuotes('\'', m.Groups[2].Value)) };
+                                        data = eval(EvalType.ArgStringS, Tokens.UnescapeQuotes('\'', m.Groups[2].Value)) };
             }
 
             // Integer
@@ -591,7 +591,7 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
             string type = m.Groups[1].Value;
             string raw  = m.Groups[2].Value;
 
-            string ldata = (handler == null)? raw : handler.recovery(raw);
+            string ldata = (handler == null)? raw : handler.Recovery(raw);
 
             if(type == ":") {
                 return new Level() { Type = LevelType.RightOperandColon, Data = eval(EvalType.RightOperandColon, ldata) };

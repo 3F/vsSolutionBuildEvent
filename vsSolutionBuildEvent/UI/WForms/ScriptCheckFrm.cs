@@ -19,11 +19,11 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
+using net.r_eg.Varhead;
 using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Dom;
-using net.r_eg.vsSBE.Scripts;
 using net.r_eg.vsSBE.UI.WForms.Controls;
 
 namespace net.r_eg.vsSBE.UI.WForms
@@ -158,7 +158,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             try {
                 evaluateVariable(ident);
-                return context.uvariable.get(ident);
+                return context.uvariable.GetValue(ident);
             }
             catch(Exception ex) {
                 return String.Format("Fail: {0}", ex.Message);
@@ -167,13 +167,13 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         protected void evaluateVariable(string ident)
         {
-            if(!context.uvariable.isUnevaluated(ident)) {
+            if(!context.uvariable.IsUnevaluated(ident)) {
                 return;
             }
 
-            context.uvariable.evaluate(ident, (IEvaluator)context.script, true);
+            context.uvariable.Evaluate(ident, (IEvaluator)context.script, true);
             if(MSBuildSupport) {
-                context.uvariable.evaluate(ident, (IEvaluator)context.msbuild, false);
+                context.uvariable.Evaluate(ident, (IEvaluator)context.msbuild, false);
             }
         }
 
@@ -232,13 +232,13 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(listBoxUVariables.SelectedIndex == -1) {
                 return;
             }
-            context.uvariable.unset(listBoxUVariables.Text);
+            context.uvariable.Unset(listBoxUVariables.Text);
             listBoxUVariables.Items.RemoveAt(listBoxUVariables.SelectedIndex);
         }
 
         private void menuItemUVarUnsetAll_Click(object sender, EventArgs e)
         {
-            context.uvariable.unsetAll();
+            context.uvariable.UnsetAll();
             listBoxUVariables.Items.Clear();
             _lockUVarEditor(richTextBoxUVariables, true);
             richTextBoxUVariables.Text = String.Empty;
@@ -276,7 +276,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                 return;
             }
             _lockUVarEditor(richTextBoxUVariables, true);
-            ((IUserVariableDebug)context.uvariable).debSetEvaluated(listBoxUVariables.Text, richTextBoxUVariables.Text);
+            ((IUserVariableExt)context.uvariable).SetEvaluated(listBoxUVariables.Text, richTextBoxUVariables.Text);
         }
 
         private void listBoxUVariables_DoubleClick(object sender, EventArgs e)

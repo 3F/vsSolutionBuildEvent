@@ -19,10 +19,10 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using net.r_eg.Varhead;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.SBEScripts
 {
@@ -98,7 +98,7 @@ namespace net.r_eg.vsSBE.SBEScripts
                 _depthLevel = 0;
                 postMSBuild = allowMSBuild;
                 StringHandler hString = new StringHandler();
-                return hString.recovery(parse(hString.protect(data), _depthLevel, hString));
+                return hString.Recovery(parse(hString.protect(data), _depthLevel, hString));
             }
         }
 
@@ -108,11 +108,11 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
-        /// Evaluating data with current object
+        /// Evaluates mixed data through some engine like E-MSBuild etc.
         /// </summary>
-        /// <param name="data">mixed data</param>
-        /// <returns>Evaluated end value</returns>
-        public string evaluate(string data)
+        /// <param name="data">Mixed input data.</param>
+        /// <returns>Evaluated end value.</returns>
+        public string Evaluate(string data)
         {
             return parse(data);
         }
@@ -156,7 +156,7 @@ namespace net.r_eg.vsSBE.SBEScripts
                                         return "#" + escapeMSBuildData(raw, true);
                                     }
 
-                                    return selector((hString != null)? hString.recovery(raw) : raw);
+                                    return selector((hString != null)? hString.Recovery(raw) : raw);
                                 });
         }
 

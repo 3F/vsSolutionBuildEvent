@@ -17,11 +17,11 @@
 
 using System;
 using System.Text.RegularExpressions;
+using net.r_eg.Varhead;
 using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts.Components.Condition;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
@@ -135,14 +135,14 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         {
             var hString = new StringHandler();
 
-            Match m = CRule.Match(hString.protectMixedQuotes(data.Trim()));
+            Match m = CRule.Match(hString.ProtectMixedQuotes(data.Trim()));
             if(!m.Success) {
                 throw new SyntaxIncorrectException("Failed ConditionComponent - '{0}'", data);
             }
 
-            string condition    = hString.recovery(m.Groups[1].Value);
-            string bodyIfTrue   = hString.recovery(m.Groups[2].Value);
-            string bodyIfFalse  = (m.Groups[3].Success)? hString.recovery(m.Groups[3].Value) : Value.Empty;
+            string condition    = hString.Recovery(m.Groups[1].Value);
+            string bodyIfTrue   = hString.Recovery(m.Groups[2].Value);
+            string bodyIfFalse  = (m.Groups[3].Success)? hString.Recovery(m.Groups[3].Value) : Value.Empty;
 
             return parse(condition, bodyIfTrue, bodyIfFalse);
         }

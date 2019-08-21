@@ -75,7 +75,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.Condition
             }
 
             exp = hString.protectCores(
-                hString.protectMixedQuotes(exp)
+                hString.ProtectMixedQuotes(exp)
             );
 
             Log.Trace("Expression-parse: started with - '{0}' :: '{1}' :: '{2}'", exp);
@@ -91,7 +91,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.Condition
         protected bool calculate(string data)
         {
             Log.Trace("Condition->calculate: started with - '{0}'", data);
-            data = hString.recovery(data);
+            data = hString.Recovery(data);
             Log.Trace("Condition->calculate: after recovery - '{0}'", data);
 
             Match m = Regex.Match(data.Trim(), 

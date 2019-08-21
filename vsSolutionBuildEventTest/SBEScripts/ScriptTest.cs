@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using net.r_eg.Varhead;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts
 {
@@ -83,7 +83,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
         [TestMethod()]
         public void parseTest5()
         {
-            uvariable.unsetAll();
+            uvariable.UnsetAll();
             Script target = new Script(env, uvariable);
 
             target.parse("#[( 2 < 1) { #[var name = value] } else { #[var name = value2] }]");
@@ -100,7 +100,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
         [TestMethod()]
         public void parseTest6()
         {
-            uvariable.unsetAll();
+            uvariable.UnsetAll();
             Script target = new Script(env, uvariable);
 
             Assert.AreEqual(String.Empty, target.parse("#[\" #[var name = value] \"]"));
@@ -118,7 +118,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
 
             Assert.AreEqual("ne]", target.parse("#[var name = value\nli]ne]"));
             Assert.AreEqual(1, uvar.Variables.Count());
-            Assert.AreEqual("value\nli", uvar.get("name"));
+            Assert.AreEqual("value\nli", uvar.GetValue("name"));
         }
 
         /// <summary>
@@ -132,7 +132,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
 
             Assert.AreEqual(String.Empty, target.parse("#[var name = <#data>value\nli]ne</#data>]"));
             Assert.AreEqual(1, uvar.Variables.Count());
-            Assert.AreEqual("value\nli]ne", uvar.get("name"));
+            Assert.AreEqual("value\nli]ne", uvar.GetValue("name"));
         }
 
         /// <summary>
@@ -144,12 +144,12 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
             var uvar = new UserVariable();
             Script target = new Script(env, uvar);
 
-            uvar.set("mx", null, "<#data>value\nli]ne</#data>");
-            uvar.evaluate("mx", null, new EvaluatorBlank(), true);
+            uvar.SetVariable("mx", null, "<#data>value\nli]ne</#data>");
+            uvar.Evaluate("mx", null, new EvaluatorBlank(), true);
 
             Assert.AreEqual(String.Empty, target.parse("#[var name = #[var mx]]"));
             Assert.AreEqual(2, uvar.Variables.Count());
-            Assert.AreEqual("value\nli]ne", uvar.get("name"));
+            Assert.AreEqual("value\nli]ne", uvar.GetValue("name"));
         }
 
         /// <summary>
@@ -161,12 +161,12 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
             var uvar        = new UserVariable();
             Script target   = new Script(env, uvar);
 
-            uvar.set("mx", null, "<#data>value\nli]ne</#data>");
-            uvar.evaluate("mx", null, new EvaluatorBlank(), true);
+            uvar.SetVariable("mx", null, "<#data>value\nli]ne</#data>");
+            uvar.Evaluate("mx", null, new EvaluatorBlank(), true);
 
             Assert.AreEqual(String.Empty, target.parse("#[var name = <#data>#[var mx]|value\nli]ne</#data>]"));
             Assert.AreEqual(2, uvar.Variables.Count());
-            Assert.AreEqual("value\nli]ne|value\nli]ne", uvar.get("name"));
+            Assert.AreEqual("value\nli]ne|value\nli]ne", uvar.GetValue("name"));
         }
 
         /// <summary>
@@ -178,12 +178,12 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
             var uvar        = new UserVariable();
             Script target   = new Script(env, uvar);
 
-            uvar.set("mx", null, "<#data>value\nli]ne</#data>");
-            uvar.evaluate("mx", null, new EvaluatorBlank(), true);
+            uvar.SetVariable("mx", null, "<#data>value\nli]ne</#data>");
+            uvar.Evaluate("mx", null, new EvaluatorBlank(), true);
 
             Assert.AreEqual(String.Empty, target.parse("#[var name = #[var mx]]"));
             Assert.AreEqual(2, uvar.Variables.Count());
-            Assert.AreEqual("value\nli]ne", uvar.get("name"));
+            Assert.AreEqual("value\nli]ne", uvar.GetValue("name"));
         }
 
         /// <summary>
@@ -197,7 +197,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
 
             Assert.AreEqual(String.Empty, target.parse("#[var name = left [box1] right]"));
             Assert.AreEqual(1, uvar.Variables.Count());
-            Assert.AreEqual("left [box1] right", uvar.get("name"));
+            Assert.AreEqual("left [box1] right", uvar.GetValue("name"));
         }
 
         /// <summary>
@@ -214,7 +214,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
 
             Assert.AreEqual(String.Empty, target.parse("#[var name = \"left [box1 right\"]"));
             Assert.AreEqual(1, uvar.Variables.Count());
-            Assert.AreEqual("\"left [box1 right\"", uvar.get("name"));
+            Assert.AreEqual("\"left [box1 right\"", uvar.GetValue("name"));
         }
 
         /// <summary>
@@ -228,8 +228,8 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
 
             Assert.AreEqual("test - cc", target.parse("#[var sres = <#data>Data1</#data>]test - cc#[var sres2 = <#data>Data2</#data>]"));
             Assert.AreEqual(2, uvar.Variables.Count());
-            Assert.AreEqual("Data1", uvar.get("sres"));
-            Assert.AreEqual("Data2", uvar.get("sres2"));
+            Assert.AreEqual("Data1", uvar.GetValue("sres"));
+            Assert.AreEqual("Data2", uvar.GetValue("sres2"));
         }
 
         /// <summary>
@@ -243,8 +243,8 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
 
             Assert.AreEqual("test - cc", target.parse("#[var sres = <#data>Data1\n\nEnd</#data>]test - cc#[var sres2 = <#data>Data2\n\nEnd</#data>]"));
             Assert.AreEqual(2, uvar.Variables.Count());
-            Assert.AreEqual("Data1\n\nEnd", uvar.get("sres"));
-            Assert.AreEqual("Data2\n\nEnd", uvar.get("sres2"));
+            Assert.AreEqual("Data1\n\nEnd", uvar.GetValue("sres"));
+            Assert.AreEqual("Data2\n\nEnd", uvar.GetValue("sres2"));
         }
 
         /// <summary>
@@ -322,10 +322,10 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
 
             msbuild.parse(sbe.parse("#[var test = $$(test)]#[var test = 1 $(test) 2]", true));
 
-            uvar.unsetAll();
+            uvar.UnsetAll();
             msbuild.parse(sbe.parse("#[var test = $$(test)]#[var test = 1 $(test.Replace('1', '2')) 2]", true));
 
-            uvar.unsetAll();
+            uvar.UnsetAll();
             msbuild.parse(sbe.parse("#[var test = $(test)]#[var test = 1 $(test) 2]", true));
         }
 
@@ -344,8 +344,8 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
             Assert.AreEqual("0", msbuild.parse(sbe.parse(data, true)));
             Assert.AreEqual("0", msbuild.parse(sbe.parse(data, true)));
 
-            uvar.set("test", null, "7");
-            uvar.evaluate("test", null, new EvaluatorBlank(), true);
+            uvar.SetVariable("test", null, "7");
+            uvar.Evaluate("test", null, new EvaluatorBlank(), true);
             Assert.AreEqual("7", msbuild.parse(sbe.parse(data, true)));
         }
 

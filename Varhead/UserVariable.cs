@@ -1,29 +1,37 @@
 ﻿/*
- * Copyright (c) 2013-2016,2019  Denis Kuzmin < entry.reg@gmail.com > GitHub/3F
+ * The MIT License (MIT)
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Copyright (c) 2013-2019  Denis Kuzmin < x-3F@outlook.com > GitHub/3F
+ * Copyright (c) Varhead contributors: https://github.com/3F/Varhead/graphs/contributors
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
 */
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.Components;
 
-namespace net.r_eg.vsSBE.Scripts
+namespace net.r_eg.Varhead
 {
-    public class UserVariable: IUserVariable, IUserVariableDebug
+    public class UserVariable: IUserVariable, IUserVariableExt
     {
         /// <summary>
         /// Contains all defined user-variables.
@@ -36,17 +44,15 @@ namespace net.r_eg.vsSBE.Scripts
         /// </summary>
         protected Dictionary<string, TUserVariable> definitions = new Dictionary<string, TUserVariable>();
 
-        /// <summary>
-        /// object synch.
-        /// </summary>
-        private Object _lock = new Object();
+        private readonly object sync = new object();
 
         /// <summary>
         /// Exposes the enumerable for defined names of user-variables
         /// </summary>
         public IEnumerable<string> Definitions
         {
-            get {
+            get
+            {
                 foreach(KeyValuePair<string, TUserVariable> def in definitions.ToArray()) {
                     yield return def.Key;
                 }
@@ -58,7 +64,8 @@ namespace net.r_eg.vsSBE.Scripts
         /// </summary>
         public IEnumerable<TUserVariable> Variables
         {
-            get {
+            get
+            {
                 foreach(KeyValuePair<string, TUserVariable> def in definitions.ToArray()) {
                     yield return def.Value;
                 }
@@ -71,9 +78,9 @@ namespace net.r_eg.vsSBE.Scripts
         /// <param name="name">variable name</param>
         /// <param name="project">project name</param>
         /// <returns>evaluated value of variable or null if variable not defined</returns>
-        public string get(string name, string project)
+        public string GetValue(string name, string project)
         {
-            return get(defIndex(name, project));
+            return GetValue(DefIndex(name, project));
         }
 
         /// <summary>
@@ -81,9 +88,9 @@ namespace net.r_eg.vsSBE.Scripts
         /// </summary>
         /// <param name="ident">Unique identificator</param>
         /// <returns>Evaluated value of variable</returns>
-        public string get(string ident)
+        public string GetValue(string ident)
         {
-            lock(_lock)
+            lock(sync)
             {
                 if(!definitions.ContainsKey(ident)) {
                     return null;
@@ -91,8 +98,8 @@ namespace net.r_eg.vsSBE.Scripts
                 string evaluated = definitions[ident].evaluated;
 
                 if(evaluated == null) {
-                    Log.Debug("getValue: evaluated value of '{0}' is null", ident);
-                    evaluated = String.Empty;
+                    LSender.Send(this, $"getValue: evaluated value of '{ident}' is null");
+                    evaluated = string.Empty;
                 }
                 return evaluated;
             }
@@ -104,9 +111,9 @@ namespace net.r_eg.vsSBE.Scripts
         /// <param name="name">variable name</param>
         /// <param name="project">project name</param>
         /// <returns>Struct of user-variable</returns>
-        public TUserVariable getVariable(string name, string project)
+        public TUserVariable GetVariable(string name, string project)
         {
-            return getVariable(defIndex(name, project));
+            return GetVariable(DefIndex(name, project));
         }
 
         /// <summary>
@@ -114,9 +121,9 @@ namespace net.r_eg.vsSBE.Scripts
         /// </summary>
         /// <param name="ident">Unique identificator</param>
         /// <returns>Struct of user-variable</returns>
-        public TUserVariable getVariable(string ident)
+        public TUserVariable GetVariable(string ident)
         {
-            lock(_lock)
+            lock(sync)
             {
                 if(definitions.ContainsKey(ident)) {
                     return definitions[ident];
@@ -132,29 +139,29 @@ namespace net.r_eg.vsSBE.Scripts
         /// <param name="name">variable name</param>
         /// <param name="project">project name or null if project is default</param>
         /// <param name="unevaluated">mixed string. Converted to empty string if value is null</param>
-        public void set(string name, string project, string unevaluated)
+        public void SetVariable(string name, string project, string unevaluated)
         {
-            if(!isValidName(name) || !isValidProject(project)) {
-                throw new InvalidArgumentException("name - '{0}' or project - '{1}' is not valid for variable", name, project);
+            if(!IsValidName(name) || !IsValidProject(project)) {
+                throw new ArgumentException($"name - '{name}' or project - '{project}' is not valid for variable");
             }
-            string defindex = defIndex(name, project);
+            string defindex = DefIndex(name, project);
 
             if(unevaluated == null) {
                 unevaluated = String.Empty;
             }
 
-            lock(_lock)
+            lock(sync)
             {
                 definitions[defindex] = new TUserVariable() {
                     unevaluated = unevaluated,
                     ident       = defindex,
                     name        = name,
                     project     = project,
-                    status      = TUserVariable.StatusType.Unevaluated,
+                    status      = ValStatus.Unevaluated,
                     prev        = (definitions.ContainsKey(defindex))? definitions[defindex] : new TUserVariable(),
                     evaluated   = null
                 };
-                Log.Debug("User-variable: defined '{0}' = '{1}'", defindex, unevaluated);
+                LSender.Send(this, $"User-variable: defined '{defindex}' = '{unevaluated}'");
             }
         }
 
@@ -166,9 +173,9 @@ namespace net.r_eg.vsSBE.Scripts
         /// <param name="project">Project name</param>
         /// <param name="evaluator">IEvaluator objects for evaluating</param>
         /// <param name="resetting">Evaluating from the unevaluated data if true, otherwise evaluation in the chain of others IEvaluator's</param>
-        public void evaluate(string name, string project, IEvaluator evaluator, bool resetting)
+        public void Evaluate(string name, string project, IEvaluator evaluator, bool resetting)
         {
-            evaluate(defIndex(name, project), evaluator, resetting);
+            Evaluate(DefIndex(name, project), evaluator, resetting);
         }
 
         /// <summary>
@@ -178,32 +185,32 @@ namespace net.r_eg.vsSBE.Scripts
         /// <param name="ident">Unique identificator</param>
         /// <param name="evaluator">IEvaluator objects for evaluating</param>
         /// <param name="resetting">Evaluating from the unevaluated data if true, otherwise evaluation in the chain of others IEvaluator's</param>
-        public void evaluate(string ident, IEvaluator evaluator, bool resetting)
+        public void Evaluate(string ident, IEvaluator evaluator, bool resetting)
         {
-            lock(_lock)
+            if(evaluator == null) {
+                throw new ArgumentNullException(nameof(evaluator));
+            }
+
+            lock(sync)
             {
                 if(!definitions.ContainsKey(ident)) {
-                    throw new NotFoundException("Variable '{0}' is not found.", ident);
-                }
-
-                if(evaluator == null) {
-                    throw new InvalidArgumentException("Evaluation of variable: evaluator is null");
+                    throw new KeyNotFoundException($"Variable '{ident}' is not found.");
                 }
 
                 TUserVariable var = new TUserVariable(definitions[ident]) {
-                    status = TUserVariable.StatusType.Started
+                    status = ValStatus.Started
                 };
                 definitions[ident] = var;
 
                 if(resetting) {
-                    var.evaluated = evaluator.evaluate(var.unevaluated);
+                    var.evaluated = evaluator.Evaluate(var.unevaluated);
                 }
                 else {
-                    var.evaluated = evaluator.evaluate(var.evaluated);
+                    var.evaluated = evaluator.Evaluate(var.evaluated);
                 }
-                var.status          = TUserVariable.StatusType.Evaluated;
+                var.status          = ValStatus.Evaluated;
                 definitions[ident]  = var;
-                Log.Trace("IEvaluator '{0}': Evaluation of variable '{1}' is completed.", evaluator.GetType().ToString(), ident);
+                LSender.Send(this, $"IEvaluator '{evaluator.GetType().ToString()}': Evaluation of variable '{ident}' is completed.", MsgLevel.Trace);
             }
         }
 
@@ -214,9 +221,9 @@ namespace net.r_eg.vsSBE.Scripts
         /// <param name="name">Variable name</param>
         /// <param name="project">Project name</param>
         /// <returns></returns>
-        public bool isUnevaluated(string name, string project)
+        public bool IsUnevaluated(string name, string project)
         {
-            return isUnevaluated(defIndex(name, project));
+            return IsUnevaluated(DefIndex(name, project));
         }
 
         /// <summary>
@@ -225,9 +232,9 @@ namespace net.r_eg.vsSBE.Scripts
         /// </summary>
         /// <param name="ident">Unique identificator</param>
         /// <returns></returns>
-        public bool isUnevaluated(string ident)
+        public bool IsUnevaluated(string ident)
         {
-            return (definitions[ident].status == TUserVariable.StatusType.Unevaluated);
+            return (definitions[ident].status == ValStatus.Unevaluated);
         }
 
         /// <summary>
@@ -237,9 +244,9 @@ namespace net.r_eg.vsSBE.Scripts
         /// <param name="name">Variable name</param>
         /// <param name="project">Project name</param>
         /// <returns></returns>
-        public bool isExist(string name, string project)
+        public bool IsExist(string name, string project)
         {
-            return isExist(defIndex(name, project));
+            return IsExist(DefIndex(name, project));
         }
 
         /// <summary>
@@ -248,7 +255,7 @@ namespace net.r_eg.vsSBE.Scripts
         /// </summary>
         /// <param name="ident">Unique identificator</param>
         /// <returns></returns>
-        public bool isExist(string ident)
+        public bool IsExist(string ident)
         {
             return definitions.ContainsKey(ident);
         }
@@ -258,9 +265,9 @@ namespace net.r_eg.vsSBE.Scripts
         /// </summary>
         /// <param name="name">variable name</param>
         /// <returns>Is valid or not</returns>
-        public virtual bool isValidName(string name)
+        public virtual bool IsValidName(string name)
         {
-            if(String.IsNullOrEmpty(name)) {
+            if(string.IsNullOrEmpty(name)) {
                 return false;
             }
             return Regex.Match(name, "^[a-z_][a-z_0-9]*$", RegexOptions.IgnoreCase).Success;
@@ -271,9 +278,9 @@ namespace net.r_eg.vsSBE.Scripts
         /// </summary>
         /// <param name="project">project name</param>
         /// <returns>Is valid or not</returns>
-        public virtual bool isValidProject(string project)
+        public virtual bool IsValidProject(string project)
         {
-            if(String.IsNullOrEmpty(project)) {
+            if(string.IsNullOrEmpty(project)) {
                 return true;
             }
             //TODO:
@@ -287,9 +294,9 @@ namespace net.r_eg.vsSBE.Scripts
         /// <param name="name">variable name</param>
         /// <param name="project">project name</param>
         /// <exception cref="ArgumentNullException">key is null</exception>
-        public void unset(string name, string project)
+        public void Unset(string name, string project)
         {
-            unset(defIndex(name, project));
+            Unset(DefIndex(name, project));
         }
 
         /// <summary>
@@ -297,27 +304,27 @@ namespace net.r_eg.vsSBE.Scripts
         /// by using unique identification
         /// </summary>
         /// <param name="ident">Unique identificator</param>
-        public void unset(string ident)
+        public void Unset(string ident)
         {
-            lock(_lock)
+            lock(sync)
             {
                 if(definitions.Remove(ident)) {
-                    Log.Debug("User-variable is successfully unset '{0}'", ident);
+                    LSender.Send(this, $"User-variable is successfully unset '{ident}'");
                     return;
                 }
             }
-            Log.Debug("Cannot unset the user-variable '{0}'", ident);
+            LSender.Send(this, $"Cannot unset the user-variable '{ident}'");
         }
 
         /// <summary>
         /// Remove all user-variables
         /// </summary>
-        public void unsetAll()
+        public void UnsetAll()
         {
-            lock(_lock) {
+            lock(sync) {
                 definitions.Clear();
             }
-            Log.Trace("Reseted all User-variables");
+            LSender.Send(this, "Reseted all User-variables", MsgLevel.Trace);
         }
 
         /// <summary>
@@ -325,34 +332,34 @@ namespace net.r_eg.vsSBE.Scripts
         /// </summary>
         /// <param name="ident">Unique identificator</param>
         /// <param name="evaluated">mixed string with evaluated data</param>
-        public void debSetEvaluated(string ident, string evaluated)
+        public void SetEvaluated(string ident, string evaluated)
         {
             if(evaluated == null) {
                 evaluated = String.Empty;
             }
 
-            lock(_lock)
+            lock(sync)
             {
                 definitions[ident] = new TUserVariable() {
                     unevaluated = evaluated,
                     ident       = ident,
-                    status      = TUserVariable.StatusType.Evaluated,
+                    status      = ValStatus.Evaluated,
                     prev        = (definitions.ContainsKey(ident))? definitions[ident] : new TUserVariable(),
                     evaluated   = evaluated
                 };
-                Log.Debug("User-variable(Debug service): updated '{0}' with evaluated value '{1}'", ident, evaluated);
+                LSender.Send(this, $"User-variable(Debug service): updated '{ident}' with evaluated value '{evaluated}'");
             }
         }
 
         /// <summary>
         /// Used key-index for definitions
         /// </summary>
-        protected string defIndex(string name, string project)
+        protected string DefIndex(string name, string project)
         {
-            if(String.IsNullOrEmpty(project)) {
+            if(string.IsNullOrEmpty(project)) {
                 return name;
             }
-            return String.Format("{0}_{1}", name, project);
+            return $"{name}_{project}";
         }
     }
 }

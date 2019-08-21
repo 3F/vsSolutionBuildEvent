@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using net.r_eg.Varhead;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 {
@@ -56,7 +56,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             target.parse("#[try{ $(test = '123') }catch{ $(test2 = '456') }]");
 
             Assert.AreEqual(1, uvar.Variables.Count());
-            Assert.AreEqual("123", uvar.get("test", null));
+            Assert.AreEqual("123", uvar.GetValue("test", null));
         }
 
         [TestMethod]
@@ -69,7 +69,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             target.parse("#[try{ #[notrealcomponentToError]  $(test = '123') }catch{ $(test2 = '456') }]");
 
             Assert.AreEqual(1, uvar.Variables.Count());
-            Assert.AreEqual("456", uvar.get("test2", null));
+            Assert.AreEqual("456", uvar.GetValue("test2", null));
         }
 
         [TestMethod]
@@ -108,12 +108,12 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                             }] ");
 
             Assert.AreEqual(3, uvar.Variables.Count());
-            Assert.AreEqual(null, uvar.get("test1", null));
-            Assert.AreEqual("456", uvar.get("test2", null));
-            Assert.AreEqual(true, !string.IsNullOrWhiteSpace(uvar.get("exErr", null)));
-            Assert.AreEqual(true, !string.IsNullOrWhiteSpace(uvar.get("exMsg", null)));
-            Assert.AreEqual(null, uvar.get("err", null));
-            Assert.AreEqual(null, uvar.get("msg", null));
+            Assert.AreEqual(null, uvar.GetValue("test1", null));
+            Assert.AreEqual("456", uvar.GetValue("test2", null));
+            Assert.AreEqual(true, !string.IsNullOrWhiteSpace(uvar.GetValue("exErr", null)));
+            Assert.AreEqual(true, !string.IsNullOrWhiteSpace(uvar.GetValue("exMsg", null)));
+            Assert.AreEqual(null, uvar.GetValue("err", null));
+            Assert.AreEqual(null, uvar.GetValue("msg", null));
         }
 
         [TestMethod]
@@ -150,10 +150,10 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                             }] ");
 
             Assert.AreEqual(1, uvar.Variables.Count());
-            Assert.AreEqual(null, uvar.get("test1", null));
-            Assert.AreEqual("456", uvar.get("test2", null));
-            Assert.AreEqual(null, uvar.get("err", null));
-            Assert.AreEqual(null, uvar.get("msg", null));
+            Assert.AreEqual(null, uvar.GetValue("test1", null));
+            Assert.AreEqual("456", uvar.GetValue("test2", null));
+            Assert.AreEqual(null, uvar.GetValue("err", null));
+            Assert.AreEqual(null, uvar.GetValue("msg", null));
         }
 
         [TestMethod]
@@ -181,8 +181,8 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                         ");
 
             Assert.AreEqual(1, uvar.Variables.Count());
-            Assert.AreEqual(null, uvar.get("test1", null));
-            Assert.AreEqual("456", uvar.get("test2", null));
+            Assert.AreEqual(null, uvar.GetValue("test1", null));
+            Assert.AreEqual("456", uvar.GetValue("test2", null));
         }
 
     }

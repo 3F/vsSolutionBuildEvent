@@ -17,45 +17,41 @@
 
 using System;
 using System.Text.RegularExpressions;
+using net.r_eg.Varhead;
 
 namespace net.r_eg.vsSBE.SBEScripts
 {
-    public class StringHandler: Scripts.StringProtector
+    public class StringHandler: StringProtector
     {
         /// <summary>
         /// Specific format of double quotes with content
         /// </summary>
         public override string DoubleQuotesContentFull
-        {
-            get { return RPattern.DoubleQuotesContentFull; }
-        }
+            => RPattern.DoubleQuotesContentFull;
 
         /// <summary>
         /// Specific format of single quotes with content
         /// </summary>
         public override string SingleQuotesContentFull
-        {
-            get { return RPattern.SingleQuotesContentFull; }
-        }
+            => RPattern.SingleQuotesContentFull;
 
         /// <summary>
         /// Protects the MSBuild/SBE-Scripts containers.
         /// </summary>
         /// <param name="data"></param>
         /// <returns>protected string</returns>
-        public string protectCores(string data)
-        {
-            lock(_lock)
-            {
-                return Regex.Replace(data, 
-                                        String.Format(@"({0}|{1})",                             // #1 - mixed
-                                                @"\#{1,2}" + RPattern.SquareBracketsContent,    // #2 -  #[..]
-                                                @"\${1,2}" + RPattern.RoundBracketsContent      // #3 -  $(..)
-                                        ), 
-                                        replacerIn,
-                                        RegexOptions.IgnorePatternWhitespace);
-            }
-        }
+        public string protectCores(string data) => Regex.Replace
+        (
+            data, 
+            string.Format
+            (
+                @"({0}|{1})",                                   // #1 - mixed
+                @"\#{1,2}" + RPattern.SquareBracketsContent,    // #2 -  #[..]
+                @"\${1,2}" + RPattern.RoundBracketsContent      // #3 -  $(..)
+            ), 
+            ReplacerIn,
+            RegexOptions.IgnorePatternWhitespace
+        );
 
         /// <summary>
         /// Protects ArrayContent data.
@@ -64,7 +60,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <returns>protected string</returns>
         public string protectArray(string data)
         {
-            return protectByPattern(data, String.Format("({0})", RPattern.ObjectContent));
+            return ProtectByPattern(data, $"({RPattern.ObjectContent})");
         }
 
         /// <summary>
@@ -74,7 +70,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <returns>protected string</returns>
         public string protectArguments(string data)
         {
-            return protectArray(protectMixedQuotes(data));
+            return protectArray(ProtectMixedQuotes(data));
         }
 
         /// <summary>
@@ -82,13 +78,8 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public string protectDataSection(string data)
-        {
-            // <#data> ... </#data>
-            lock (_lock) {
-                return Regex.Replace(data, @"<#data>(.*?)<\/#data>", replacerIn, RegexOptions.Singleline);
-            }
-        }
+        public string protectDataSection(string data) // <#data> ... </#data>
+            => Regex.Replace(data, @"<#data>(.*?)<\/#data>", ReplacerIn, RegexOptions.Singleline);
 
         /// <summary>
         /// Protection methods by default.
@@ -97,7 +88,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <returns></returns>
         public string protect(string data)
         {
-            return protectMixedQuotes(protectDataSection(data));
+            return ProtectMixedQuotes(protectDataSection(data));
         }
 
         /// <summary>
@@ -123,7 +114,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <returns>String with unescaped quote symbols.</returns>
         public static string unescapeQuotes(char type, string data)
         {
-            return Scripts.Tokens.unescapeQuotes(type, data);
+            return Tokens.UnescapeQuotes(type, data);
         }
 
         /// <summary>

@@ -26,7 +26,7 @@ using net.r_eg.vsSBE.Clients;
 using net.r_eg.vsSBE.Configuration;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts;
-using net.r_eg.vsSBE.Scripts;
+using net.r_eg.Varhead;
 
 #if VSSDK_15_AND_NEW
 using Microsoft.VisualStudio.Shell;
@@ -223,7 +223,7 @@ namespace net.r_eg.vsSBE.API
             {
                 int ret = Action.bindPost(fSucceeded, fModified, fCancelCommand);
                 if(Action.reset()) {
-                    uvariable.unsetAll();
+                    uvariable.UnsetAll();
                 }
 
                 clientLib.Event.onPost(fSucceeded, fModified, fCancelCommand);

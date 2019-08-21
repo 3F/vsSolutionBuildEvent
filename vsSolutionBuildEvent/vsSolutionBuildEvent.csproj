@@ -112,6 +112,9 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <IsVSSDK15 Condition="$(DefineConstants.Contains('VSSDK_15_AND_NEW'))">true</IsVSSDK15>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
       <HintPath>..\packages\AvalonEdit.5.0.4\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
@@ -143,7 +146,7 @@
   </ItemGroup>
   <Choose>
     <!-- SDK15+ -->
-    <When Condition="$(DefineConstants.Contains('VSSDK_15_AND_NEW'))">
+    <When Condition=" '$(IsVSSDK15)' == 'true' ">
       <ItemGroup>
         <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
           <HintPath>..\packages\EnvDTE.8.0.2\lib\net10\EnvDTE.dll</HintPath>
@@ -229,7 +232,7 @@
     </When>
     <!-- /SDK15+ -->
     <!-- SDK10 -->
-    <When Condition="$(DefineConstants.Contains('VSSDK_15_AND_NEW'))==false">
+    <When Condition=" '$(IsVSSDK15)' != 'true' ">
       <ItemGroup>
         <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
           <EmbedInteropTypes>False</EmbedInteropTypes>
@@ -506,8 +509,6 @@
     <Compile Include="SBEScripts\Exceptions\OperandNotFoundException.cs" />
     <Compile Include="SBEScripts\Exceptions\OperationNotFoundException.cs" />
     <Compile Include="SBEScripts\IBootloader.cs" />
-    <Compile Include="Scripts\EvaluatorBlank.cs" />
-    <Compile Include="Scripts\IEvaluator.cs" />
     <Compile Include="SBEScripts\Exceptions\NotSupportedOperationException.cs" />
     <Compile Include="IMatchWords.cs" />
     <Compile Include="Events\IModeFile.cs" />
@@ -526,8 +527,6 @@
     <Compile Include="SBEScripts\Components\InternalComponent.cs" />
     <Compile Include="Actions\IStatus.cs" />
     <Compile Include="Actions\Status.cs" />
-    <Compile Include="Scripts\IUserVariableDebug.cs" />
-    <Compile Include="Scripts\IUserVariable.cs" />
     <Compile Include="SBEScripts\ISBEScript.cs" />
     <Compile Include="MatchWords.cs" />
     <Compile Include="Events\ModeFile.cs" />
@@ -549,12 +548,8 @@
     <Compile Include="SBEScripts\Script.cs" />
     <Compile Include="SBEScripts\Dom\MethodAttribute.cs" />
     <Compile Include="SBEScripts\StringHandler.cs" />
-    <Compile Include="Scripts\TUserVariable.cs" />
-    <Compile Include="Scripts\UserVariable.cs" />
     <Compile Include="SBEScripts\Value.cs" />
-    <Compile Include="Scripts\StringProtector.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Scripts\Tokens.cs" />
     <Compile Include="MSBuild\PreparedData.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
     <Compile Include="UI\Plain\State.cs" />
@@ -815,6 +810,12 @@
       <Project>{f905dfb2-2e67-4ff7-9001-924f6f2d645d}</Project>
       <Name>MvsSln</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Varhead\Varhead.csproj">
+      <Project>{05265510-62d5-42a8-9975-acc02823f0c8}</Project>
+      <Name>Varhead</Name>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' != 'true' ">TargetFramework=net40</AdditionalProperties>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' == 'true' ">TargetFramework=netstandard2.0</AdditionalProperties>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <UseCodebase>true</UseCodebase>
@@ -853,7 +854,7 @@
   </ItemGroup>
   <!-- SDK15+ -->
   <Choose>
-    <When Condition="$(DefineConstants.Contains('VSSDK_15_AND_NEW'))">
+    <When Condition=" '$(IsVSSDK15)' == 'true' ">
       <PropertyGroup>
         <NoWarn>$(NoWarn);IDE1003</NoWarn>
         <!-- TODO: IDE1003. Analyzer assembly ... depends on netstandard 2 -->

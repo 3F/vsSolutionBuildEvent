@@ -22,10 +22,10 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.Build.Evaluation;
 using net.r_eg.MvsSln;
+using net.r_eg.Varhead;
 using net.r_eg.vsSBE.Bridge.CoreCommand;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild.Exceptions;
-using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.MSBuild
 {
@@ -93,7 +93,7 @@ namespace net.r_eg.vsSBE.MSBuild
         /// <returns>Evaluated value of property</returns>
         public virtual string getProperty(string name, string projectName)
         {
-            if(uvariable.isExist(name, projectName)) {
+            if(uvariable.IsExist(name, projectName)) {
                 Log.Debug("Evaluate: use '{0}:{1}' from user-variable", name, projectName);
                 return getUVariableValue(name, projectName);
             }
@@ -169,7 +169,7 @@ namespace net.r_eg.vsSBE.MSBuild
                     project.DisableMarkDirty = true;
 
                     defProperties(project);
-                    project.SetProperty(container, Tokens.characters(_wrapProperty(ref unevaluated)));
+                    project.SetProperty(container, Tokens.EscapeCharacters(_wrapProperty(ref unevaluated)));
                     return project.GetProperty(container).EvaluatedValue;
                 }
                 finally
@@ -207,10 +207,10 @@ namespace net.r_eg.vsSBE.MSBuild
             lock(_lock)
             {
                 return hquotes(
-                            sh.recovery(
+                            sh.Recovery(
                                 containerIn(
                                     sh.protectEscContainer(
-                                        sh.protectMixedQuotes(data)
+                                        sh.ProtectMixedQuotes(data)
                                     ),
                                     sh, 
                                     CONTAINERS_LIMIT
@@ -221,11 +221,11 @@ namespace net.r_eg.vsSBE.MSBuild
         }
 
         /// <summary>
-        /// Evaluate data with MSBuild.
+        /// Evaluates mixed data through some engine like E-MSBuild etc.
         /// </summary>
-        /// <param name="data">mixed data</param>
-        /// <returns>Evaluated value</returns>
-        public string evaluate(string data)
+        /// <param name="data">Mixed input data.</param>
+        /// <returns>Evaluated end value.</returns>
+        public string Evaluate(string data)
         {
             return parse(data);
         }
@@ -303,7 +303,7 @@ namespace net.r_eg.vsSBE.MSBuild
             do
             {
                 if(step++ > limit) {
-                    sh.flush();
+                    sh.Flush();
                     throw new LimitException("Restriction of supported containers '{0}' reached. Aborted.", limit);
                 }
 
@@ -312,12 +312,12 @@ namespace net.r_eg.vsSBE.MSBuild
                                     {
                                         string raw = m.Groups[1].Value;
                                         Log.Trace("containerIn: raw - `{0}`", raw);
-                                        return evaluate(prepare(sh.recovery(raw)));
+                                        return evaluate(prepare(sh.Recovery(raw)));
                                     },
                                     maxRep);
 
                 // protect before new checking
-                data = sh.protectEscContainer(sh.protectMixedQuotes(data));
+                data = sh.protectEscContainer(sh.ProtectMixedQuotes(data));
 
             } while(con.IsMatch(data));
 
@@ -405,11 +405,11 @@ namespace net.r_eg.vsSBE.MSBuild
             }
 
             if(rStringDataD.Success) {
-                ret.property.unevaluated    = parse(Tokens.unescapeQuotes('"', rStringDataD.Value));
+                ret.property.unevaluated    = parse(Tokens.UnescapeQuotes('"', rStringDataD.Value));
                 ret.variable.type           = PreparedData.ValueType.StringFromDouble;
             }
             else if(rStringDataS.Success) {
-                ret.property.unevaluated    = Tokens.unescapeQuotes('\'', rStringDataS.Value);
+                ret.property.unevaluated    = Tokens.UnescapeQuotes('\'', rStringDataS.Value);
                 ret.variable.type           = PreparedData.ValueType.StringFromSingle;
             }
             else {
@@ -573,8 +573,8 @@ namespace net.r_eg.vsSBE.MSBuild
                                                                     prepared.variable.name, 
                                                                     prepared.variable.project);
 
-            uvariable.set(prepared.variable.name, prepared.variable.project, evaluated);
-            uvariable.evaluate(prepared.variable.name, prepared.variable.project, new EvaluatorBlank(), true);
+            uvariable.SetVariable(prepared.variable.name, prepared.variable.project, evaluated);
+            uvariable.Evaluate(prepared.variable.name, prepared.variable.project, new EvaluatorBlank(), true);
 
             tSignOperation(prepared, ref evaluated);
             return String.Empty;
@@ -586,7 +586,7 @@ namespace net.r_eg.vsSBE.MSBuild
                 return val;
             }
 
-            var left        = uvariable.get(prepared.variable.name, prepared.variable.project)?? "0";
+            var left        = uvariable.GetValue(prepared.variable.name, prepared.variable.project)?? "0";
             bool isNumber   = RPattern.IsNumber.IsMatch(left);
 
             Log.Trace($"vSignOperation: '{prepared.variable.vSign}'; `{left}` (isNumber: {isNumber})");
@@ -638,10 +638,10 @@ namespace net.r_eg.vsSBE.MSBuild
         /// <returns>Evaluated value of variable</returns>
         protected string getUVariableValue(string name, string project)
         {
-            if(uvariable.isUnevaluated(name, project)) {
-                uvariable.evaluate(name, project, this, true);
+            if(uvariable.IsUnevaluated(name, project)) {
+                uvariable.Evaluate(name, project, this, true);
             }
-            return uvariable.get(name, project);
+            return uvariable.GetValue(name, project);
         }
 
         /// <summary>
@@ -651,10 +651,10 @@ namespace net.r_eg.vsSBE.MSBuild
         /// <returns>Evaluated value of variable</returns>
         protected string getUVariableValue(string ident)
         {
-            if(uvariable.isUnevaluated(ident)) {
-                uvariable.evaluate(ident, this, true);
+            if(uvariable.IsUnevaluated(ident)) {
+                uvariable.Evaluate(ident, this, true);
             }
-            return uvariable.get(ident);
+            return uvariable.GetValue(ident);
         }
 
         /// <summary>
@@ -670,7 +670,7 @@ namespace net.r_eg.vsSBE.MSBuild
 
         protected void defProperty(TUserVariable uvar, Project project)
         {
-            if(uvar.status != TUserVariable.StatusType.Started) {
+            if(uvar.status != ValStatus.Started) {
                 setGlobalProperty(project, uvar.ident, getUVariableValue(uvar.ident));
                 return;
             }

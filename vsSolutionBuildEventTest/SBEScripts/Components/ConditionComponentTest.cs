@@ -1,9 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using net.r_eg.Varhead;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 {
@@ -309,9 +309,9 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void disclosureTest1()
         {
             IUserVariable uv = new UserVariable();
-            uv.set("test", null, "(data");
-            uv.set("test2", null, "data)");
-            uv.set("test3", null, "true");
+            uv.SetVariable("test", null, "(data");
+            uv.SetVariable("test2", null, "data)");
+            uv.SetVariable("test3", null, "true");
 
             ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, uv);
             Assert.AreEqual("yes", target.parse("[( #[var test] ~= \"(data\"){yes}else{no}]"));
@@ -349,9 +349,9 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void disclosureTest4()
         {
             IUserVariable uv = new UserVariable();
-            uv.set("test", null, "data(str)");
-            uv.set("test2", null, "true");
-            uv.set("test3", null, "4");
+            uv.SetVariable("test", null, "data(str)");
+            uv.SetVariable("test2", null, "true");
+            uv.SetVariable("test3", null, "4");
 
             ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, uv);
             target.PostProcessingMSBuild = true;
@@ -385,7 +385,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void compositeTest1()
         {
             IUserVariable uv = new UserVariable();
-            uv.set("test", null, "(data");
+            uv.SetVariable("test", null, "(data");
 
             ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, uv);
             Assert.AreEqual("no", target.parse("[( #[var test] ~= \"(data && 1 < 2\" ){yes}else{no}]"));
@@ -467,8 +467,8 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void compositeTest7()
         {
             IUserVariable uv = new UserVariable();
-            uv.set("test", null, "data1 && data|2");
-            uv.set("test2", null, "data1 || data&2");
+            uv.SetVariable("test", null, "data1 && data|2");
+            uv.SetVariable("test2", null, "data1 || data&2");
 
             ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, uv);
             Assert.AreEqual("yes", target.parse("[( #[var test] == \"data1 && data|2\" ){yes}else{no}]"));

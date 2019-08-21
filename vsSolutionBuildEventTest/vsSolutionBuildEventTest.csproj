@@ -96,6 +96,10 @@
       <Project>{F905DFB2-2E67-4FF7-9001-924F6F2D645D}</Project>
       <Name>MvsSln</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Varhead\Varhead.csproj">
+      <Project>{05265510-62d5-42a8-9975-acc02823f0c8}</Project>
+      <Name>Varhead</Name>
+    </ProjectReference>
     <ProjectReference Include="..\vsSolutionBuildEvent\vsSolutionBuildEvent.csproj">
       <Project>{32E44995-F621-4E77-B46A-8F65D64E7FEA}</Project>
       <Name>vsSolutionBuildEvent</Name>
@@ -133,7 +137,6 @@
     <Compile Include="SBEScripts\SNode\PMTest.cs" />
     <Compile Include="SBEScripts\StringHandlerTest.cs" />
     <Compile Include="SBEScripts\Components\UserVariableComponentTest.cs" />
-    <Compile Include="Scripts\UserVariableTest.cs" />
     <Compile Include="SBEScripts\ValueTest.cs" />
   </ItemGroup>
   <ItemGroup>

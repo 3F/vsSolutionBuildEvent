@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using net.r_eg.Varhead;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 {
@@ -31,7 +31,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                                                 ]", target));
 
             Assert.AreEqual(1, uvar.Variables.Count());
-            Assert.AreEqual("4", uvar.get("i", null));
+            Assert.AreEqual("4", uvar.GetValue("i", null));
         }
 
         [TestMethod]
@@ -47,7 +47,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                                                 ]", target));
 
             Assert.AreEqual(1, uvar.Variables.Count());
-            Assert.AreEqual("8", uvar.get("i", null));
+            Assert.AreEqual("8", uvar.GetValue("i", null));
         }
 
         [TestMethod]
@@ -62,7 +62,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                                                 ]", target));
 
             Assert.AreEqual(1, uvar.Variables.Count());
-            Assert.AreEqual("8", uvar.get("i", null));
+            Assert.AreEqual("8", uvar.GetValue("i", null));
         }
 
         [TestMethod]
@@ -77,7 +77,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                                                 ]", target));
 
             Assert.AreEqual(1, uvar.Variables.Count());
-            Assert.AreEqual("4", uvar.get("i", null));
+            Assert.AreEqual("4", uvar.GetValue("i", null));
         }
 
         [TestMethod]
@@ -132,7 +132,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                                                 ]", target));
 
             Assert.AreEqual(1, uvar.Variables.Count());
-            Assert.AreEqual("4", uvar.get("i", null));
+            Assert.AreEqual("4", uvar.GetValue("i", null));
         }
 
         [TestMethod]
@@ -147,7 +147,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                                                 ]", target));
 
             Assert.AreEqual(1, uvar.Variables.Count());
-            Assert.AreEqual("4", uvar.get("i", null));
+            Assert.AreEqual("4", uvar.GetValue("i", null));
         }
 
         [TestMethod]
@@ -162,7 +162,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                                                 ]", target));
 
             Assert.AreEqual(1, uvar.Variables.Count());
-            Assert.AreEqual("4", uvar.get("i", null));
+            Assert.AreEqual("4", uvar.GetValue("i", null));
         }
 
         [TestMethod]
@@ -215,8 +215,8 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             var uvar    = new UserVariable();
             var target  = new Script(new StubEnv(), uvar);
 
-            uvar.set("p1", null, "v1");
-            uvar.evaluate("p1", null, new EvaluatorBlank(), true);
+            uvar.SetVariable("p1", null, "v1");
+            uvar.Evaluate("p1", null, new EvaluatorBlank(), true);
 
             Assert.AreEqual(String.Empty, target.parse("#[Box data.pack(\"test1\", false): $(p1)#[Box operators.sleep(10)] ]"));
             Assert.AreEqual(String.Empty, target.parse("#[Box data.pack(\"test2\", true): $(p1) #[Box operators.sleep(10)] ]"));
@@ -265,8 +265,8 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             var uvar = new UserVariable();
             var target = new Script(new StubEnv(), uvar);
 
-            uvar.set("p1", null, "ab!");
-            uvar.evaluate("p1", null, new EvaluatorBlank(), true);
+            uvar.SetVariable("p1", null, "ab!");
+            uvar.Evaluate("p1", null, new EvaluatorBlank(), true);
 
             Assert.AreEqual(String.Empty, target.parse("#[Box data.pack(\"test1\", false): $(p1) ]"));
             Assert.AreEqual(String.Empty, target.parse("#[Box data.pack(\"test2\", true): $(p1) ]"));

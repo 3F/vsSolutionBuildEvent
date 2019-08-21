@@ -4,9 +4,9 @@ using EnvDTE80;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using net.r_eg.MvsSln;
+using net.r_eg.Varhead;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.MSBuild;
-using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.Test.MSBuild
 {
@@ -263,8 +263,8 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             string data = "$(var=$(Path.Replace('\\', '/')):project)";
 
             Assert.AreEqual("", target.parse(data));
-            Assert.AreEqual(null, target.uvariable.get("var"));
-            Assert.AreEqual("[E~Path.Replace('\\', '/')~]", target.uvariable.get("var", "project"));
+            Assert.AreEqual(null, target.uvariable.GetValue("var"));
+            Assert.AreEqual("[E~Path.Replace('\\', '/')~]", target.uvariable.GetValue("var", "project"));
         }
 
         /// <summary>
@@ -278,7 +278,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             string data = "$(var = $$(Path:project))";
 
             Assert.AreEqual("", target.parse(data));
-            Assert.AreEqual("$(Path:project)", target.uvariable.get("var"));
+            Assert.AreEqual("$(Path:project)", target.uvariable.GetValue("var"));
         }
 
         /// <summary>
@@ -316,7 +316,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             string data = "$(var = $(Path:project))";
 
             Assert.AreEqual("", target.parse(data));
-            Assert.AreEqual("[P~Path~project]", target.uvariable.get("var"));
+            Assert.AreEqual("[P~Path~project]", target.uvariable.GetValue("var"));
         }
 
         /// <summary>
@@ -331,7 +331,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
 
             Assert.IsTrue(target.uvariable.Variables.Count() < 1);
             Assert.AreEqual("", target.parse(data));
-            Assert.AreEqual("[P~Path~project2]", target.uvariable.get("var", "project"));
+            Assert.AreEqual("[P~Path~project2]", target.uvariable.GetValue("var", "project"));
             Assert.IsTrue(target.uvariable.Variables.Count() == 1);
         }
 
@@ -343,7 +343,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
         {
             MSBuildParserAccessor.ToUserVariables target = new MSBuildParserAccessor.ToUserVariables();
 
-            target.uvariable.set("var", "project", "is a Windows_NT"); //"$(var.Replace('%OS%', $(OS)):project)";
+            target.uvariable.SetVariable("var", "project", "is a Windows_NT"); //"$(var.Replace('%OS%', $(OS)):project)";
 
             string actual = target.parse("$(var:project)");
             Assert.AreEqual("is a Windows_NT", actual);
@@ -364,8 +364,8 @@ namespace net.r_eg.vsSBE.Test.MSBuild
              */
             string data = "$(p1 = $(Platform))$(p2 = $(p1))$(p2)";
             Assert.AreEqual("[P~Platform~]", target.parse(data));
-            Assert.AreEqual("[P~Platform~]", target.uvariable.get("p1"));
-            Assert.AreEqual("[P~Platform~]", target.uvariable.get("p2"));
+            Assert.AreEqual("[P~Platform~]", target.uvariable.GetValue("p1"));
+            Assert.AreEqual("[P~Platform~]", target.uvariable.GetValue("p2"));
         }
 
         /// <summary>
@@ -383,8 +383,8 @@ namespace net.r_eg.vsSBE.Test.MSBuild
              */
             string data = "$(p1 = $(Platform))$(p2 = $$(p1))$(p2)";
             Assert.AreEqual("[P~Platform~]", target.parse(data));
-            Assert.AreEqual("[P~Platform~]", target.uvariable.get("p1"));
-            Assert.AreEqual("$(p1)", target.uvariable.get("p2"));
+            Assert.AreEqual("[P~Platform~]", target.uvariable.GetValue("p1"));
+            Assert.AreEqual("$(p1)", target.uvariable.GetValue("p2"));
         }
 
 
@@ -403,8 +403,8 @@ namespace net.r_eg.vsSBE.Test.MSBuild
              */
             string data = "$(p1 = $(Platform))$(p2 = $$$(p1))$(p2)";
             Assert.AreEqual("$(p1)", target.parse(data));
-            Assert.AreEqual("[P~Platform~]", target.uvariable.get("p1"));
-            Assert.AreEqual("$$(p1)", target.uvariable.get("p2"));
+            Assert.AreEqual("[P~Platform~]", target.uvariable.GetValue("p1"));
+            Assert.AreEqual("$$(p1)", target.uvariable.GetValue("p2"));
         }
 
         /// <summary>
@@ -422,8 +422,8 @@ namespace net.r_eg.vsSBE.Test.MSBuild
              */
             string data = "$(p1 = $(Platform))$(p2 = $$$$(p1))$(p2)";
             Assert.AreEqual("$$(p1)", target.parse(data));
-            Assert.AreEqual("[P~Platform~]", target.uvariable.get("p1"));
-            Assert.AreEqual("$$$(p1)", target.uvariable.get("p2"));
+            Assert.AreEqual("[P~Platform~]", target.uvariable.GetValue("p1"));
+            Assert.AreEqual("$$$(p1)", target.uvariable.GetValue("p2"));
         }
 
         /// <summary>
@@ -436,7 +436,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
 
             string data = "$(p2 = $(Platform))";
             Assert.AreEqual("", target.parse(data));
-            Assert.AreEqual("[P~Platform~]", target.uvariable.get("p2"));
+            Assert.AreEqual("[P~Platform~]", target.uvariable.GetValue("p2"));
         }
 
         /// <summary>
@@ -449,7 +449,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
 
             string data = "$(p2 = $$(Platform))";
             Assert.AreEqual("", target.parse(data));
-            Assert.AreEqual("$(Platform)", target.uvariable.get("p2"));
+            Assert.AreEqual("$(Platform)", target.uvariable.GetValue("p2"));
         }
 
         /// <summary>
@@ -462,7 +462,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
 
             string data = "$(p2 = $$$(Platform))";
             Assert.AreEqual("", target.parse(data));
-            Assert.AreEqual("$$(Platform)", target.uvariable.get("p2"));
+            Assert.AreEqual("$$(Platform)", target.uvariable.GetValue("p2"));
         }
 
         /// <summary>
@@ -475,7 +475,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
 
             string data = "$(p2 = $$$$(Platform))";
             Assert.AreEqual("", target.parse(data));
-            Assert.AreEqual("$$$(Platform)", target.uvariable.get("p2"));
+            Assert.AreEqual("$$$(Platform)", target.uvariable.GetValue("p2"));
         }
 
         /// <summary>
@@ -492,7 +492,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
              */
             string data = "$(p1 = $(Platform))$(p1)";
             Assert.AreEqual("[P~Platform~]", target.parse(data));
-            Assert.AreEqual("[P~Platform~]", target.uvariable.get("p1"));
+            Assert.AreEqual("[P~Platform~]", target.uvariable.GetValue("p1"));
         }
 
         /// <summary>
@@ -509,7 +509,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
              */
             string data = "$(p1 = $(Platform))$$(p1)";
             Assert.AreEqual("$(p1)", target.parse(data));
-            Assert.AreEqual("[P~Platform~]", target.uvariable.get("p1"));
+            Assert.AreEqual("[P~Platform~]", target.uvariable.GetValue("p1"));
         }
 
         /// <summary>
@@ -523,7 +523,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             string data = "$(var = \"$(Path:project)\")";
 
             Assert.AreEqual("", target.parse(data));
-            Assert.AreEqual("[P~Path~project]", target.uvariable.get("var"));
+            Assert.AreEqual("[P~Path~project]", target.uvariable.GetValue("var"));
         }
 
         /// <summary>
@@ -537,7 +537,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             string data = "$(var = \" mixed $(Path:project) \" )";
 
             Assert.AreEqual("", target.parse(data));
-            Assert.AreEqual(" mixed [P~Path~project] ", target.uvariable.get("var"));
+            Assert.AreEqual(" mixed [P~Path~project] ", target.uvariable.GetValue("var"));
         }
 
         /// <summary>
@@ -549,10 +549,10 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
 
             Assert.AreEqual(String.Empty, target.parse("$(var = \" $$(Path:project) \")"));
-            Assert.AreEqual(" $(Path:project) ", target.uvariable.get("var"));
+            Assert.AreEqual(" $(Path:project) ", target.uvariable.GetValue("var"));
 
             Assert.AreEqual(String.Empty, target.parse("$(var = ' $$(Path:project) ')"));
-            Assert.AreEqual(" $$(Path:project) ", target.uvariable.get("var"));
+            Assert.AreEqual(" $$(Path:project) ", target.uvariable.GetValue("var"));
         }
 
         /// <summary>
@@ -566,7 +566,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             string data = "$(var = ' $(Path:project) ')";
 
             Assert.AreEqual("", target.parse(data));
-            Assert.AreEqual(" $(Path:project) ", target.uvariable.get("var"));
+            Assert.AreEqual(" $(Path:project) ", target.uvariable.GetValue("var"));
         }
 
         /// <summary>
@@ -580,7 +580,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             string data = @"$(var = '$(Path.Replace(\'1\', \'2\'))')";
 
             Assert.AreEqual("", target.parse(data));
-            Assert.AreEqual("$(Path.Replace('1', '2'))", target.uvariable.get("var"));
+            Assert.AreEqual("$(Path.Replace('1', '2'))", target.uvariable.GetValue("var"));
         }
 
         /// <summary>
@@ -594,7 +594,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             string data = "$(var = '$(Path.Replace(\\\"1\\\", \\\"2\\\"))')";
 
             Assert.AreEqual("", target.parse(data));
-            Assert.AreEqual("$(Path.Replace(\\\"1\\\", \\\"2\\\"))", target.uvariable.get("var"));
+            Assert.AreEqual("$(Path.Replace(\\\"1\\\", \\\"2\\\"))", target.uvariable.GetValue("var"));
         }
 
         /// <summary>
@@ -608,7 +608,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             string data = "$(var = \"$(Path.Replace(\\'1\\', \\'2\\'))\")";
 
             Assert.AreEqual("", target.parse(data));
-            Assert.AreEqual("[E~Path.Replace(\\'1\\', \\'2\\')~]", target.uvariable.get("var"));
+            Assert.AreEqual("[E~Path.Replace(\\'1\\', \\'2\\')~]", target.uvariable.GetValue("var"));
         }
 
         /// <summary>
@@ -622,7 +622,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             string data = "$(var = \"$(Path.Replace(\\\"1\\\", \\\"2\\\"))\")";
 
             Assert.AreEqual("", target.parse(data));
-            Assert.AreEqual("[E~Path.Replace(\"1\", \"2\")~]", target.uvariable.get("var"));
+            Assert.AreEqual("[E~Path.Replace(\"1\", \"2\")~]", target.uvariable.GetValue("var"));
         }
 
         /// <summary>
@@ -636,7 +636,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             string data = @"$(var = $(Path.Replace(\'1\', '2')))";
 
             Assert.AreEqual("", target.parse(data));
-            Assert.AreEqual(@"[E~Path.Replace(\'1\', '2')~]", target.uvariable.get("var"));
+            Assert.AreEqual(@"[E~Path.Replace(\'1\', '2')~]", target.uvariable.GetValue("var"));
         }
 
         /// <summary>
@@ -650,7 +650,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             string data = "$(var = $(Path.Replace(\\\"1\\\", \"2\")))";
 
             Assert.AreEqual("", target.parse(data));
-            Assert.AreEqual("[E~Path.Replace(\\\"1\\\", \"2\")~]", target.uvariable.get("var"));
+            Assert.AreEqual("[E~Path.Replace(\\\"1\\\", \"2\")~]", target.uvariable.GetValue("var"));
         }
 
         /// <summary>
@@ -662,10 +662,10 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             MSBuildParserAccessor.ToParse target = new MSBuildParserAccessor.ToParse();
             
             Assert.AreEqual("", target.parse("$(name = ' test 12345  -_*~!@#$%^&= :) ')"));
-            Assert.AreEqual(" test 12345  -_*~!@#$%^&= :) ", target.uvariable.get("name"));
+            Assert.AreEqual(" test 12345  -_*~!@#$%^&= :) ", target.uvariable.GetValue("name"));
 
             Assert.AreEqual("", target.parse("$(name = ' $( -_*~!@#$%^&= :) ')"));
-            Assert.AreEqual(" $( -_*~!@#$%^&= :) ", target.uvariable.get("name"));
+            Assert.AreEqual(" $( -_*~!@#$%^&= :) ", target.uvariable.GetValue("name"));
         }
 
         /// <summary>
@@ -677,16 +677,16 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             var target = new MSBuildParserAccessor.ToParse();
 
             Assert.AreEqual(String.Empty, target.parse("$(name = 'left\\'right')"));
-            Assert.AreEqual("left'right", target.uvariable.get("name"));
+            Assert.AreEqual("left'right", target.uvariable.GetValue("name"));
 
             Assert.AreEqual(String.Empty, target.parse("$(name = \"left\\'right\")"));
-            Assert.AreEqual("left\\'right", target.uvariable.get("name"));
+            Assert.AreEqual("left\\'right", target.uvariable.GetValue("name"));
 
             Assert.AreEqual(String.Empty, target.parse("$(name = 'left\\\"right')"));
-            Assert.AreEqual("left\\\"right", target.uvariable.get("name"));
+            Assert.AreEqual("left\\\"right", target.uvariable.GetValue("name"));
 
             Assert.AreEqual(String.Empty, target.parse("$(name = \"left\\\"right\")"));
-            Assert.AreEqual("left\"right", target.uvariable.get("name"));
+            Assert.AreEqual("left\"right", target.uvariable.GetValue("name"));
         }
 
         /// <summary>
@@ -720,13 +720,13 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             var target = new MSBuildParserAccessor.ToParse();
             
             Assert.AreEqual(String.Empty, target.parse("$(name   =   \"   left $(Path:project) right  \"   )"));
-            Assert.AreEqual("   left [P~Path~project] right  ", target.uvariable.get("name"));
+            Assert.AreEqual("   left [P~Path~project] right  ", target.uvariable.GetValue("name"));
 
             Assert.AreEqual(String.Empty, target.parse("$(name   =   \"   left \\\"$(Path)\\\" right  \"   )"));
-            Assert.AreEqual("   left \"[P~Path~]\" right  ", target.uvariable.get("name"));
+            Assert.AreEqual("   left \"[P~Path~]\" right  ", target.uvariable.GetValue("name"));
 
             Assert.AreEqual(String.Empty, target.parse("$(name   =   \"   \\'left\\' $(Path:project) 'right'  \"   )"));
-            Assert.AreEqual("   \\'left\\' [P~Path~project] 'right'  ", target.uvariable.get("name"));
+            Assert.AreEqual("   \\'left\\' [P~Path~project] 'right'  ", target.uvariable.GetValue("name"));
         }
 
         [TestMethod]
@@ -736,13 +736,13 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             var target  = new Parser(new StubEnv(), uvar);
 
             Assert.AreEqual(String.Empty, target.parse("$(+name = 'myvar')"));
-            Assert.AreEqual("myvar", uvar.get("name"));
+            Assert.AreEqual("myvar", uvar.GetValue("name"));
 
             Assert.AreEqual(String.Empty, target.parse("$(+name += '12')"));
-            Assert.AreEqual("myvar12", uvar.get("name"));
+            Assert.AreEqual("myvar12", uvar.GetValue("name"));
 
             Assert.AreEqual(String.Empty, target.parse("$(name += '34')"));
-            Assert.AreEqual("myvar1234", uvar.get("name"));
+            Assert.AreEqual("myvar1234", uvar.GetValue("name"));
         }
 
         [TestMethod]
@@ -755,7 +755,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             Assert.AreEqual(String.Empty, target.parse("$(i += 1)"));
             Assert.AreEqual(String.Empty, target.parse("$(i += 2)$(i += 1)"));
             Assert.AreEqual(String.Empty, target.parse("$(i -= 2)"));
-            Assert.AreEqual("2", uvar.get("i"));
+            Assert.AreEqual("2", uvar.GetValue("i"));
         }
 
         [TestMethod]
@@ -765,10 +765,10 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             var target = new Parser(new StubEnv(), uvar);
             
             Assert.AreEqual(String.Empty, target.parse("$(i += 1)"));
-            Assert.AreEqual("1", uvar.get("i"));
+            Assert.AreEqual("1", uvar.GetValue("i"));
 
             Assert.AreEqual(String.Empty, target.parse("$(j -= 1)"));
-            Assert.AreEqual("-1", uvar.get("j"));
+            Assert.AreEqual("-1", uvar.GetValue("j"));
         }
 
         [TestMethod]
@@ -780,7 +780,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
 
             Assert.AreEqual(String.Empty, target.parse("$(i = \"test\")"));
             Assert.AreEqual(String.Empty, target.parse("$(i += 1)"));
-            Assert.AreEqual("test1", uvar.get("i"));
+            Assert.AreEqual("test1", uvar.GetValue("i"));
 
             target.parse("$(i -= 1)");
         }
@@ -793,7 +793,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
 
             Assert.AreEqual(String.Empty, target.parse("$(i = 1)"));
             Assert.AreEqual(String.Empty, target.parse("$(i += $(i))"));
-            Assert.AreEqual("2", uvar.get("i"));
+            Assert.AreEqual("2", uvar.GetValue("i"));
 
             //TODO: currently std. exception:
             try {
@@ -1013,10 +1013,10 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             var target = new Parser(new StubEnv());
 
             Assert.AreEqual(String.Empty, target.parse("$(name = \" $([System.Math]::Pow(2, 16)) \")"));
-            Assert.AreEqual(" 65536 ", target.UVariable.get("name", null));
+            Assert.AreEqual(" 65536 ", target.UVariable.GetValue("name", null));
 
             Assert.AreEqual(String.Empty, target.parse("$(name = ' $([System.Math]::Pow(2, 16)) ')"));
-            Assert.AreEqual(" $([System.Math]::Pow(2, 16)) ", target.UVariable.get("name", null));
+            Assert.AreEqual(" $([System.Math]::Pow(2, 16)) ", target.UVariable.GetValue("name", null));
         }
 
         /// <summary>
@@ -1042,13 +1042,13 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             var target = new Parser(new StubEnv());
 
             Assert.AreEqual(String.Empty, target.parse("$(tpl = \"My version - '%Ver%'\")"));
-            Assert.AreEqual("My version - '%Ver%'", target.UVariable.get("tpl", null));
+            Assert.AreEqual("My version - '%Ver%'", target.UVariable.GetValue("tpl", null));
 
             Assert.AreEqual(String.Empty, target.parse("$(ver = '1.2.3')"));
-            Assert.AreEqual("1.2.3", target.UVariable.get("ver", null));
+            Assert.AreEqual("1.2.3", target.UVariable.GetValue("ver", null));
 
             Assert.AreEqual(String.Empty, target.parse("$(rev = '2417')"));
-            Assert.AreEqual("2417", target.UVariable.get("rev", null));
+            Assert.AreEqual("2417", target.UVariable.GetValue("rev", null));
 
             Assert.AreEqual("My version - '1, 2, 3, 2417'", target.parse("$(tpl.Replace(\"%Ver%\", \"$(ver.Replace('.', ', ')), $(rev)\"))"));
             Assert.AreEqual("1.2.3 version - '1.2.3.2417'", target.parse("$(tpl.Replace(\"%Ver%\", \"$(ver).$(rev)\").Replace(\"My\", \"$(ver)\"))"));
@@ -1062,8 +1062,8 @@ namespace net.r_eg.vsSBE.Test.MSBuild
         {
             var target = new Parser(new StubEnv());
 
-            target.UVariable.set("name", "project", "test123");
-            target.UVariable.evaluate("name", "project", new EvaluatorBlank(), true);
+            target.UVariable.SetVariable("name", "project", "test123");
+            target.UVariable.Evaluate("name", "project", new EvaluatorBlank(), true);
 
             //Assert.AreEqual("test123", target.parse("$([System.String]::Concat('$(name:project)'))")); //TODO: read note from hquotes
             Assert.AreEqual("test123", target.parse("$([System.String]::Concat(\"$(name:project)\"))")); // $([System.DateTime]::Parse(\"$([System.DateTime]::UtcNow.Ticks)\").ToBinary())
@@ -1077,8 +1077,8 @@ namespace net.r_eg.vsSBE.Test.MSBuild
         {
             var target = new Parser(new StubEnv());
 
-            target.UVariable.set("name", null, "test123");
-            target.UVariable.evaluate("name", null, new EvaluatorBlank(), true);
+            target.UVariable.SetVariable("name", null, "test123");
+            target.UVariable.Evaluate("name", null, new EvaluatorBlank(), true);
 
             Assert.AreEqual("test123", target.parse("$([System.String]::Concat(\"$(name)\"))"));
             Assert.AreEqual("test123", target.parse("$([System.String]::Concat('$(name)'))"));
@@ -1106,9 +1106,9 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             var uvar    = new UserVariable();
             var target  = new Parser(new StubEnv(), uvar);
 
-            uvar.set("lp", null, "s1\\dir");
-            uvar.evaluate("lp", null, new EvaluatorBlank(), true);
-            Assert.AreEqual("s1\\dir", uvar.get("lp", null));
+            uvar.SetVariable("lp", null, "s1\\dir");
+            uvar.Evaluate("lp", null, new EvaluatorBlank(), true);
+            Assert.AreEqual("s1\\dir", uvar.GetValue("lp", null));
 
             Assert.AreEqual("\"s1\\dir\\p1.exe\"", target.parse("\"$(lp)\\p1.exe\""));
             Assert.AreEqual("'$(lp)\\p2.exe'", target.parse("'$(lp)\\p2.exe'"));
@@ -1124,9 +1124,9 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             var uvar    = new UserVariable();
             var target  = new Parser(new StubEnv(), uvar);
 
-            uvar.set("lp", null, "'s2\\dir'");
-            uvar.evaluate("lp", null, new EvaluatorBlank(), true);
-            Assert.AreEqual("'s2\\dir'", uvar.get("lp", null));
+            uvar.SetVariable("lp", null, "'s2\\dir'");
+            uvar.Evaluate("lp", null, new EvaluatorBlank(), true);
+            Assert.AreEqual("'s2\\dir'", uvar.GetValue("lp", null));
 
             Assert.AreEqual("\"'s2\\dir'\\p1.exe\"", target.parse("\"$(lp)\\p1.exe\""));
             //Assert.AreEqual("''s2\\dir'\\p2.exe'", target.parse("'$(lp)\\p2.exe'")); // ? TODO: unspecified for current time
@@ -1142,9 +1142,9 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             var uvar    = new UserVariable();
             var target  = new Parser(new StubEnv(), uvar);
 
-            uvar.set("lp", null, "\"s3\\dir\"");
-            uvar.evaluate("lp", null, new EvaluatorBlank(), true);
-            Assert.AreEqual("\"s3\\dir\"", uvar.get("lp", null));
+            uvar.SetVariable("lp", null, "\"s3\\dir\"");
+            uvar.Evaluate("lp", null, new EvaluatorBlank(), true);
+            Assert.AreEqual("\"s3\\dir\"", uvar.GetValue("lp", null));
 
             //Assert.AreEqual("\"\"s3\\dir\"\\p1.exe\"", target.parse("\"$(lp)\\p1.exe\"")); // ? TODO: unspecified for current time
             Assert.AreEqual("'$(lp)\\p2.exe'", target.parse("'$(lp)\\p2.exe'"));
@@ -1159,8 +1159,8 @@ namespace net.r_eg.vsSBE.Test.MSBuild
         {
             var target = new Parser(new StubEnv());
 
-            target.UVariable.set("name", null, "test123");
-            target.UVariable.evaluate("name", null, new EvaluatorBlank(), true);
+            target.UVariable.SetVariable("name", null, "test123");
+            target.UVariable.Evaluate("name", null, new EvaluatorBlank(), true);
 
             Assert.AreEqual("test123)", target.parse("$([System.String]::Concat(\"$(name))\"))"));
             Assert.AreEqual("(test123", target.parse("$([System.String]::Concat(\"($(name)\"))"));
@@ -1210,7 +1210,7 @@ namespace net.r_eg.vsSBE.Test.MSBuild
 
                 public override string getProperty(string name, string project)
                 {
-                    if(uvariable.isExist(name, project)) {
+                    if(uvariable.IsExist(name, project)) {
                         return getUVariableValue(name, project);
                     }
                     return String.Format("[P~{0}~{1}]", name, project);

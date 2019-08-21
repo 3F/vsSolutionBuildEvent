@@ -1,11 +1,11 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using net.r_eg.Varhead;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 {
@@ -183,15 +183,15 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 
             protected override void evaluate(string name, string project = null)
             {
-                uvariable.evaluate(name, project, new Evaluator1(), true);
+                uvariable.Evaluate(name, project, new Evaluator1(), true);
             }
         }
 
         private class Evaluator1: IEvaluator
         {
-            public string evaluate(string data)
+            public string Evaluate(string data)
             {
-                return String.Format("[E1:{0}]", data);
+                return $"[E1:{data}]";
             }
         }
     }

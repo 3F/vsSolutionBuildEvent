@@ -17,10 +17,10 @@
 
 using System;
 using System.Text.RegularExpressions;
+using net.r_eg.Varhead;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.SNode;
-using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
@@ -120,14 +120,14 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         {
             var hString = new StringHandler();
 
-            Match m = CRule.Match(hString.protectMixedQuotes(data.Trim()));
+            Match m = CRule.Match(hString.ProtectMixedQuotes(data.Trim()));
             if(!m.Success) {
                 throw new SyntaxIncorrectException("Failed TryComponent - '{0}'", data);
             }
 
-            string blockTry     = hString.recovery(m.Groups[1].Value);
-            string blockCatch   = hString.recovery(m.Groups[2].Value);
-            string args         = (m.Groups["args"].Success)? hString.recovery(m.Groups["args"].Value) : null;
+            string blockTry     = hString.Recovery(m.Groups[1].Value);
+            string blockCatch   = hString.Recovery(m.Groups[2].Value);
+            string args         = (m.Groups["args"].Success)? hString.Recovery(m.Groups["args"].Value) : null;
 
             try {
                 return evaluate(blockTry);
@@ -171,8 +171,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         private void setvar(string name, string value)
         {
-            uvariable.set(name, null, value);
-            uvariable.evaluate(name, null, new EvaluatorBlank(), true);
+            uvariable.SetVariable(name, null, value);
+            uvariable.Evaluate(name, null, new EvaluatorBlank(), true);
         }
 
         private void delvar(params string[] names)
@@ -182,7 +182,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             foreach(string name in names) {
-                uvariable.unset(name, null);
+                uvariable.Unset(name, null);
             }
         }
     }

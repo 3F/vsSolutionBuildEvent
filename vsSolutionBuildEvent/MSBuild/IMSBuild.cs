@@ -18,7 +18,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Microsoft.Build.Evaluation;
-using net.r_eg.vsSBE.Scripts;
+using net.r_eg.Varhead;
 
 namespace net.r_eg.vsSBE.MSBuild
 {

@@ -16,10 +16,10 @@
 */
 
 using System.Text.RegularExpressions;
+using net.r_eg.Varhead;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.Scripts;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
@@ -152,7 +152,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="value">Mixed value for variable</param>
         protected void set(string name, string project, string value)
         {
-            uvariable.set(name, project, value);
+            uvariable.SetVariable(name, project, value);
             evaluate(name, project);
         }
 
@@ -173,7 +173,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="project">project name</param>
         protected void unset(string name, string project = null)
         {
-            uvariable.unset(name, project);
+            uvariable.Unset(name, project);
         }
 
         /// <summary>
@@ -185,21 +185,21 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <exception cref="NotFoundException">if not found</exception>
         protected string get(string name, string project = null)
         {
-            if(!uvariable.isExist(name, project)) {
+            if(!uvariable.IsExist(name, project)) {
                 throw new NotFoundException("UVariable '{0}:{1}' not found", name, project);
             }
 
-            if(uvariable.isUnevaluated(name, project)) {
+            if(uvariable.IsUnevaluated(name, project)) {
                 evaluate(name, project);
             }
-            return uvariable.get(name, project);
+            return uvariable.GetValue(name, project);
         }
 
         protected virtual void evaluate(string name, string project = null)
         {
-            uvariable.evaluate(name, project, (IEvaluator)script, true);
+            uvariable.Evaluate(name, project, (IEvaluator)script, true);
             if(PostProcessingMSBuild) {
-                uvariable.evaluate(name, project, (IEvaluator)msbuild, false);
+                uvariable.Evaluate(name, project, (IEvaluator)msbuild, false);
             }
         }
     }
