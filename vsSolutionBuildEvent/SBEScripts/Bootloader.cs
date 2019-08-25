@@ -66,7 +66,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <summary>
         /// Current container of user-variables
         /// </summary>
-        public IUserVariable UVariable
+        public IUVars UVariable
         {
             get;
             protected set;
@@ -182,7 +182,7 @@ namespace net.r_eg.vsSBE.SBEScripts
 
         /// <param name="env">Used environment</param>
         /// <param name="uvariable">Used instance of user-variable</param>
-        public Bootloader(IEnvironment env, IUserVariable uvariable)
+        public Bootloader(IEnvironment env, IUVars uvariable)
         {
             Env         = env;
             UVariable   = uvariable;

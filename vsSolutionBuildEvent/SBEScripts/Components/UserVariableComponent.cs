@@ -16,6 +16,7 @@
 */
 
 using System.Text.RegularExpressions;
+using net.r_eg.EvMSBuild;
 using net.r_eg.Varhead;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
@@ -37,7 +38,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// Default value for user-variables.
         /// The '*Undefined*' as value for compatibility with MSBuild core.
         /// </summary>
-        public const string UVARIABLE_VALUE_DEFAULT = MSBuild.Parser.PROP_VALUE_DEFAULT;
+        public const string UVARIABLE_VALUE_DEFAULT = EvMSBuilder.UNDEF_VAL;
 
         /// <summary>
         /// Ability to work with data for current component
@@ -49,7 +50,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         /// <param name="env">Used environment</param>
         /// <param name="uvariable">Instance of used user-variables</param>
-        public UserVariableComponent(IEnvironment env, IUserVariable uvariable)
+        public UserVariableComponent(IEnvironment env, IUVars uvariable)
             : base(env, uvariable)
         {
 

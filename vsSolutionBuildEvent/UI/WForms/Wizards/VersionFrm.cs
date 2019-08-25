@@ -19,6 +19,7 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using net.r_eg.EvMSBuild;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.Extensions;
@@ -57,7 +58,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards
             editorStepGen.setBackgroundFromString("#F4F4F4");
 
             editorFinalScript.colorize(TextEditor.ColorSchema.SBEScripts);
-            editorFinalScript.codeCompletionInit(new Inspector(bootloader), new MSBuild.Parser(bootloader.Env, bootloader.UVariable));
+            editorFinalScript.codeCompletionInit(new Inspector(bootloader), MSBuild.MakeEvaluator(bootloader.Env, bootloader.UVariable));
             editorFinalScript.CodeCompletionEnabled = true;
             editorFinalScript._.WordWrap            = false;
 

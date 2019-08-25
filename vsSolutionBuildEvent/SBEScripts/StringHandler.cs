@@ -21,7 +21,7 @@ using net.r_eg.Varhead;
 
 namespace net.r_eg.vsSBE.SBEScripts
 {
-    public class StringHandler: StringProtector
+    public class StringHandler: SProtectorAbstract
     {
         /// <summary>
         /// Specific format of double quotes with content

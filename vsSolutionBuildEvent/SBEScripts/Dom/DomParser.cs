@@ -20,7 +20,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using ICSharpCode.AvalonEdit.CodeCompletion;
-using net.r_eg.vsSBE.MSBuild;
+using net.r_eg.EvMSBuild;
 
 namespace net.r_eg.vsSBE.SBEScripts.Dom
 {
@@ -29,7 +29,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <summary>
         /// Caching of retrieved properties
         /// </summary>
-        private ConcurrentDictionary<string, List<PropertyItem>> pcache = new ConcurrentDictionary<string, List<PropertyItem>>();
+        private ConcurrentDictionary<string, IEnumerable<PropertyItem>> pcache = new ConcurrentDictionary<string, IEnumerable<PropertyItem>>();
 
         public enum KeysCommand
         {
@@ -65,7 +65,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
             protected set;
         }
 
-        public IMSBuild MSBuild
+        public IEvMSBuild MSBuild
         {
             get;
             protected set;
@@ -143,7 +143,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
             return find(cmd, component, (m.Groups[2].Success)? m.Groups[2].Value : null);
         }
 
-        public DomParser(IInspector inspector, IMSBuild msbuild = null)
+        public DomParser(IInspector inspector, IEvMSBuild msbuild = null)
         {
             Inspector   = inspector;
             MSBuild     = msbuild;
@@ -275,7 +275,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
 
         protected IEnumerable<ICompletionData> listMSBuildProperties(string project = null)
         {
-            foreach(MSBuild.PropertyItem prop in getMSBProperties(project)) {
+            foreach(PropertyItem prop in getMSBProperties(project)) {
                 if(!String.IsNullOrWhiteSpace(prop.name)) {
                     yield return new CompletionData(prop.name, prop.value, InfoType.Definition);
                 }
@@ -337,7 +337,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
             return null;
         }
 
-        private List<PropertyItem> getMSBProperties(string project)
+        private IEnumerable<PropertyItem> getMSBProperties(string project)
         {
             string key = project;
             if(String.IsNullOrEmpty(key)) {
@@ -349,7 +349,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
                 if(MSBuild == null) {
                     return new List<PropertyItem>();
                 }
-                pcache[key] = MSBuild.listProperties(project);
+                pcache[key] = MSBuild.ListProperties(project);
                 Log.Debug("Properties has been saved in cache ['{0}']", key);
             }
             return pcache[key];

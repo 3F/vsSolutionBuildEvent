@@ -27,6 +27,7 @@ using net.r_eg.vsSBE.Configuration;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.Varhead;
+using net.r_eg.EvMSBuild;
 
 #if VSSDK_15_AND_NEW
 using Microsoft.VisualStudio.Shell;
@@ -59,7 +60,7 @@ namespace net.r_eg.vsSBE.API
         /// <summary>
         /// Container of user-variables
         /// </summary>
-        protected IUserVariable uvariable = new UserVariable();
+        protected IUVars uvariable = new UVars();
 
         /// <summary>
         /// Provides command events for automation clients
@@ -418,7 +419,7 @@ namespace net.r_eg.vsSBE.API
 
             UI.Plain.State.Print(config.Data);
 
-            Action.Cmd.MSBuild.initPropByDefault(); //LC: #815, #814
+            initPropByDefault(Action.Cmd.MSBuild); //LC: #815, #814
             OpenedSolution(this, EventArgs.Empty);
 
             if(slnEvents == null) {
@@ -520,7 +521,7 @@ namespace net.r_eg.vsSBE.API
             Action = new Actions.Connection(
                             new Actions.Command(Environment,
                                          new Script(Bootloader),
-                                         new MSBuild.Parser(Environment, uvariable))
+                                         MSBuild.MakeEvaluator(Environment, uvariable))
             );
         }
 
@@ -547,6 +548,21 @@ namespace net.r_eg.vsSBE.API
                 return;
             }
             this.Bootloader.updateActivation(AppSettings.CfgManager.Config.Data);
+        }
+
+        /// <summary>
+        /// To initialize properties by default for project.
+        /// </summary>
+        /// <param name="project">Uses GlobalProjectCollection if null.</param>
+        protected virtual void initPropByDefault(IEvMSBuild msbuild)
+        {
+            IAppSettings app = AppSettings._;
+            const string _PFX = AppSettings.APP_NAME_SHORT;
+
+            msbuild.SetGlobalProperty(AppSettings.APP_NAME, vsSBE.Version.numberWithRevString);
+            msbuild.SetGlobalProperty($"{_PFX}_CommonPath", app.CommonPath);
+            msbuild.SetGlobalProperty($"{_PFX}_LibPath", app.LibPath);
+            msbuild.SetGlobalProperty($"{_PFX}_WorkPath", app.WorkPath);
         }
 
         protected void attachCommandEvents()

@@ -85,10 +85,21 @@ namespace net.r_eg.vsSBE
         } protected IXProjectEnv _slnEnv;
 
         /// <summary>
+        /// Get Project instance for work with data inside specified scope.
+        /// </summary>
+        /// <param name="ident">Abstract identifier of the specified scope. It can be a GUID, or FullPath, or project name, etc.</param>
+        /// <returns>Expected the instance that is associated with the identifier or any default instance if not found any related to pushed ident.</returns>
+        public EProject GetProject(object ident)
+        {
+            return getProject(ident?.ToString());
+        }
+
+        /// <summary>
         /// Get instance of the Build.Evaluation.Project for accessing to properties etc.
         /// </summary>
         /// <param name="name">Specified project name. null value will use the name from startup-project.</param>
         /// <returns>Found relevant Microsoft.Build.Evaluation.Project.</returns>
+        [Obsolete]
         public virtual EProject getProject(string name = null)
         {
             // NOTE: Do not use ProjectCollection.GlobalProjectCollection from EnvDTE Environment because it can be empty.

@@ -27,7 +27,14 @@ using System.Collections.Generic;
 
 namespace net.r_eg.Varhead
 {
-    public interface IUserVariable
+    /// <summary>
+    /// [Varhead]
+    /// 
+    /// Evaluator of user variables and more.
+    /// Designed for SobaScript, E-MSBuild, and so on.
+    /// https://github.com/3F/Varhead
+    /// </summary>
+    public interface IUVars
     {
         /// <summary>
         /// Exposes the enumerable for defined names of user-variables.
@@ -37,7 +44,7 @@ namespace net.r_eg.Varhead
         /// <summary>
         /// Exposes the enumerable for defined user-variables.
         /// </summary>
-        IEnumerable<TUserVariable> Variables { get; }
+        IEnumerable<TVariable> Variables { get; }
 
         /// <summary>
         /// Getting value of user-variable by using scope of project.
@@ -60,14 +67,14 @@ namespace net.r_eg.Varhead
         /// <param name="name">variable name.</param>
         /// <param name="project">project name.</param>
         /// <returns>Struct of user-variable.</returns>
-        TUserVariable GetVariable(string name, string project);
+        TVariable GetVariable(string name, string project);
 
         /// <summary>
         /// Get user-variable struct by using unique identification.
         /// </summary>
         /// <param name="ident">Unique identificator.</param>
         /// <returns>Struct of user-variable.</returns>
-        TUserVariable GetVariable(string ident);
+        TVariable GetVariable(string ident);
 
         /// <summary>
         /// Defines user-variable.

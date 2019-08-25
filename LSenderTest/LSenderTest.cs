@@ -209,6 +209,8 @@ namespace LSenderTest
         [Fact]
         public void CtorTest1()
         {
+            LSender.Reset();
+
             // valid if no exception
 
             LSender.Send(this, string.Empty);
@@ -218,6 +220,8 @@ namespace LSenderTest
         [Fact]
         public void SenderObjectTest1()
         {
+            LSender.Reset();
+
             LSender.Sent += (object sender, Message e) 
                 => Assert.Equal(typeof(LSenderTest), sender.GetType());
 
@@ -227,6 +231,8 @@ namespace LSenderTest
         [Fact]
         public void SenderObjectTest2()
         {
+            LSender.Reset();
+
             LSender.Sent += (object sender, Message e) 
                 => Assert.Equal(typeof(LSenderTest), sender);
 

@@ -318,6 +318,7 @@
     <Compile Include="Extensions\ProjectExtension.cs" />
     <Compile Include="Extensions\IVsHierarchyExtension.cs" />
     <Compile Include="EnvAbstract.cs" />
+    <Compile Include="MSBuild.cs" />
     <Compile Include="IPkg.cs" />
     <Compile Include="StatusToolCommand.cs" />
     <Compile Include="MainToolCommand.cs" />
@@ -343,7 +344,6 @@
     <Compile Include="ISolutionEvents.cs" />
     <Compile Include="IAppSettings.cs" />
     <Compile Include="DataArgs.cs" />
-    <Compile Include="MSBuild\Exceptions\PossibleLoopException.cs" />
     <Compile Include="Receiver\Output\EWType.cs" />
     <Compile Include="Receiver\Output\Ident.cs" />
     <Compile Include="Receiver\Output\IItemEW.cs" />
@@ -476,11 +476,6 @@
     <Compile Include="IOW.cs" />
     <Compile Include="IsolatedEnv.cs" />
     <Compile Include="JsonSerializationBinder.cs" />
-    <Compile Include="MSBuild\Exceptions\MSBProjectNotFoundException.cs" />
-    <Compile Include="MSBuild\Exceptions\MSBPropertyNotFoundException.cs" />
-    <Compile Include="MSBuild\PropertyItem.cs" />
-    <Compile Include="MSBuild\RPattern.cs" />
-    <Compile Include="MSBuild\StringHandler.cs" />
     <Compile Include="OW.cs" />
     <Compile Include="SBEScripts\Bootloader.cs" />
     <Compile Include="SBEScripts\Components\Component.cs" />
@@ -550,7 +545,6 @@
     <Compile Include="SBEScripts\StringHandler.cs" />
     <Compile Include="SBEScripts\Value.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="MSBuild\PreparedData.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
     <Compile Include="UI\Plain\State.cs" />
     <Compile Include="UI\Resource.Designer.cs">
@@ -599,11 +593,8 @@
     <Compile Include="UI\WForms\PropertiesFrm.Designer.cs">
       <DependentUpon>PropertiesFrm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MSBuild\IMSBuild.cs" />
     <Compile Include="Receiver\Output\OWP.cs" />
     <Compile Include="Receiver\Output\ItemEW.cs" />
-    <Compile Include="MSBuild\Parser.cs" />
-    <Compile Include="MSBuild\Exceptions\MSBPropertyParseException.cs" />
     <Compile Include="Actions\Command.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="UI\WForms\EventsFrm.cs">
@@ -805,6 +796,12 @@
     <ProjectReference Include="..\Bridge\Bridge.csproj">
       <Project>{73919171-44B6-4536-B892-F1FCA653887C}</Project>
       <Name>Bridge</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\E-MSBuild\E-MSBuild.csproj">
+      <Project>{8cd35630-2352-4945-a721-5391056409fd}</Project>
+      <Name>E-MSBuild</Name>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' != 'true' ">TargetFramework=net40</AdditionalProperties>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' == 'true' ">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\MvsSln\MvsSln\MvsSln.csproj">
       <Project>{f905dfb2-2e67-4ff7-9001-924f6f2d645d}</Project>

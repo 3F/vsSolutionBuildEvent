@@ -15,14 +15,14 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(SubtypeNotFoundException))]
         public void parseTest1()
         {
-            var target = new Script(new StubEnv(), new UserVariable());
+            var target = new Script(new StubEnv(), new UVars());
             target.parse(@"#[Box notrealnode]");
         }
 
         [TestMethod]
         public void repeatTest1()
         {
-            var uvar    = new UserVariable();
+            var uvar    = new UVars();
             var target  = new Script(new StubEnv(), uvar);
 
             Assert.AreEqual("ab!ab!ab!ab!", noSpaces(@"
@@ -37,7 +37,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod]
         public void repeatTest2()
         {
-            var uvar    = new UserVariable();
+            var uvar    = new UVars();
             var target  = new Script(new StubEnv(), uvar);
 
             Assert.AreEqual("ab!ab!ab!", noSpaces(@"
@@ -53,7 +53,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod]
         public void repeatTest3()
         {
-            var uvar    = new UserVariable();
+            var uvar    = new UVars();
             var target  = new Script(new StubEnv(), uvar);
 
             Assert.AreEqual(String.Empty, noSpaces(@"
@@ -68,7 +68,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod]
         public void repeatTest4()
         {
-            var uvar    = new UserVariable();
+            var uvar    = new UVars();
             var target  = new Script(new StubEnv(), uvar);
 
             Assert.AreEqual("ab!ab!ab!ab!", noSpaces(@"
@@ -84,7 +84,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(InvalidArgumentException))]
         public void repeatTest5()
         {
-            var target = new Script(new StubEnv(), new UserVariable());
+            var target = new Script(new StubEnv(), new UVars());
             noSpaces(@"#[Box repeat(false; false; true): ]", target);
         }
 
@@ -92,7 +92,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(InvalidArgumentException))]
         public void repeatTest6()
         {
-            var target = new Script(new StubEnv(), new UserVariable());
+            var target = new Script(new StubEnv(), new UVars());
             noSpaces(@"#[Box repeat( ): ]", target);
         }
 
@@ -100,7 +100,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(InvalidArgumentException))]
         public void repeatTest7()
         {
-            var target = new Script(new StubEnv(), new UserVariable());
+            var target = new Script(new StubEnv(), new UVars());
             noSpaces(@"#[Box repeat(false; 123): ]", target); // int type instead of bool
         }
 
@@ -108,7 +108,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(IncorrectNodeException))]
         public void repeatTest8()
         {
-            var target = new Script(new StubEnv(), new UserVariable());
+            var target = new Script(new StubEnv(), new UVars());
             noSpaces(@"#[Box repeat: ]", target);
         }
 
@@ -116,14 +116,14 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(IncorrectNodeException))]
         public void iterateTest1()
         {
-            var target = new Script(new StubEnv(), new UserVariable());
+            var target = new Script(new StubEnv(), new UVars());
             noSpaces(@"#[Box iterate: ]", target);
         }
 
         [TestMethod]
         public void iterateTest2()
         {
-            var uvar    = new UserVariable();
+            var uvar    = new UVars();
             var target  = new Script(new StubEnv(), uvar);
 
             Assert.AreEqual("ab!ab!ab!ab!", noSpaces(@"
@@ -138,7 +138,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod]
         public void iterateTest3()
         {
-            var uvar    = new UserVariable();
+            var uvar    = new UVars();
             var target  = new Script(new StubEnv(), uvar);
 
             Assert.AreEqual("ab!ab!ab!", noSpaces(@"
@@ -153,7 +153,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod]
         public void iterateTest4()
         {
-            var uvar    = new UserVariable();
+            var uvar    = new UVars();
             var target  = new Script(new StubEnv(), uvar);
 
             Assert.AreEqual("ab!ab!ab!", noSpaces(@"
@@ -169,7 +169,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(InvalidArgumentException))]
         public void iterateTest5()
         {
-            var target = new Script(new StubEnv(), new UserVariable());
+            var target = new Script(new StubEnv(), new UVars());
             target.parse(@"#[Box iterate(i = 1; $(i) < 4; i = $([MSBuild]::Add($(i), 1)); ): ]");
         }
 
@@ -177,7 +177,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(InvalidArgumentException))]
         public void iterateTest6()
         {
-            var target = new Script(new StubEnv(), new UserVariable());
+            var target = new Script(new StubEnv(), new UVars());
             target.parse(@"#[Box iterate(; i = 1; $(i) < 4; i = $([MSBuild]::Add($(i), 1)) ): ]");
         }
 
@@ -185,7 +185,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(InvalidArgumentException))]
         public void opSleepTest1()
         {
-            var target = new Script(new StubEnv(), new UserVariable());
+            var target = new Script(new StubEnv(), new UVars());
             target.parse(@"#[Box operators.sleep()]");
         }
 
@@ -193,14 +193,14 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(IncorrectNodeException))]
         public void opSleepTest2()
         {
-            var target = new Script(new StubEnv(), new UserVariable());
+            var target = new Script(new StubEnv(), new UVars());
             target.parse(@"#[Box operators.notrealProperty]");
         }
 
         [TestMethod]
         public void opSleepTest3()
         {
-            var target = new Script(new StubEnv(), new UserVariable());
+            var target = new Script(new StubEnv(), new UVars());
 
             var start = DateTime.Now;
             target.parse(@"#[Box operators.sleep(1000)]");
@@ -212,7 +212,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod]
         public void stDataTest1()
         {
-            var uvar    = new UserVariable();
+            var uvar    = new UVars();
             var target  = new Script(new StubEnv(), uvar);
 
             uvar.SetVariable("p1", null, "v1");
@@ -232,7 +232,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(LimitException))]
         public void stDataTest2()
         {
-            var uvar    = new UserVariable();
+            var uvar    = new UVars();
             var target  = new Script(new StubEnv(), uvar);
 
             target.parse("#[Box data.pack(\"test1\", false): 123]");
@@ -243,7 +243,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(NotFoundException))]
         public void stDataTest3()
         {
-            var uvar    = new UserVariable();
+            var uvar    = new UVars();
             var target  = new Script(new StubEnv(), uvar);
 
             target.parse("#[Box data.get(\"notexists\", false)]");
@@ -253,7 +253,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(NotSupportedOperationException))]
         public void stDataTest4()
         {
-            var uvar = new UserVariable();
+            var uvar = new UVars();
             var target = new Script(new StubEnv(), uvar);
 
             target.parse("#[Box data.get(\"test1\", false): 123]");
@@ -262,7 +262,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod]
         public void stDataTest5()
         {
-            var uvar = new UserVariable();
+            var uvar = new UVars();
             var target = new Script(new StubEnv(), uvar);
 
             uvar.SetVariable("p1", null, "ab!");
@@ -286,7 +286,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(NotFoundException))]
         public void stDataTest6()
         {
-            var uvar    = new UserVariable();
+            var uvar    = new UVars();
             var target  = new Script(new StubEnv(), uvar);
             
             target.parse("#[Box data.clone(\"notexists\", 4)]");
@@ -296,7 +296,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(NotFoundException))]
         public void stDataTest7()
         {
-            var uvar    = new UserVariable();
+            var uvar    = new UVars();
             var target  = new Script(new StubEnv(), uvar);
             
             Assert.AreEqual(String.Empty, target.parse("#[Box data.pack(\"test1\", false): 123 ]"));
@@ -309,7 +309,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(NotSupportedOperationException))]
         public void stDataTest8()
         {
-            var uvar    = new UserVariable();
+            var uvar    = new UVars();
             var target  = new Script(new StubEnv(), uvar);
 
             target.parse("#[Box data.free(\"test1\"): 123]");
@@ -318,7 +318,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod]
         public void stDataTest9()
         {
-            var uvar = new UserVariable();
+            var uvar = new UVars();
             var target = new Script(new StubEnv(), uvar);
 
             Assert.AreEqual(String.Empty, target.parse("#[Box data.free(\"test1\")]"));

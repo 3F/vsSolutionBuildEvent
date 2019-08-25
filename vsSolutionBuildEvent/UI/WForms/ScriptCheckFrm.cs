@@ -19,8 +19,8 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
+using net.r_eg.EvMSBuild;
 using net.r_eg.Varhead;
-using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Dom;
@@ -48,12 +48,12 @@ namespace net.r_eg.vsSBE.UI.WForms
             /// <summary>
             /// Container of user-variables
             /// </summary>
-            public IUserVariable uvariable = new UserVariable();
+            public IUVars uvariable = new UVars();
 
             /// <summary>
             /// Work with MSBuild
             /// </summary>
-            public IMSBuild msbuild;
+            public IEvMSBuild msbuild;
 
             /// <summary>
             /// Work with SBE-Scripts
@@ -79,7 +79,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
                 inspector   = new Inspector(bootloader);
                 script      = new Script(bootloader);
-                msbuild     = new MSBuild.Parser(env, uvariable);
+                msbuild     = MSBuild.MakeEvaluator(env, uvariable);
             }
         }
         private static ToolContext context;
@@ -182,7 +182,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             try {
                 string ret;
                 if(MSBuildSupport) {
-                    ret = context.msbuild.parse(context.script.parse(data, true));
+                    ret = context.msbuild.Eval(context.script.parse(data, true));
                 }
                 else {
                     ret = context.script.parse(data);
@@ -276,7 +276,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                 return;
             }
             _lockUVarEditor(richTextBoxUVariables, true);
-            ((IUserVariableExt)context.uvariable).SetEvaluated(listBoxUVariables.Text, richTextBoxUVariables.Text);
+            ((IUVarsExt)context.uvariable).SetEvaluated(listBoxUVariables.Text, richTextBoxUVariables.Text);
         }
 
         private void listBoxUVariables_DoubleClick(object sender, EventArgs e)

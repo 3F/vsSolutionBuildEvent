@@ -2,7 +2,7 @@
  * The MIT License (MIT)
  *
  * Copyright (c) 2013-2019  Denis Kuzmin < x-3F@outlook.com > GitHub/3F
- * Copyright (c) Varhead contributors: https://github.com/3F/Varhead/graphs/contributors
+ * Copyright (c) E-MSBuild contributors: https://github.com/3F/E-MSBuild/graphs/contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,18 +23,23 @@
  * THE SOFTWARE.
 */
 
-namespace net.r_eg.Varhead
+namespace net.r_eg.EvMSBuild
 {
     /// <summary>
-    /// Debugging and complex support for IUserVariable
+    /// $(name {vSign}= data)
     /// </summary>
-    public interface IUserVariableExt
+    public enum VSignType
     {
+        Default,
+
         /// <summary>
-        /// Re/Defines user-variable with evaluated value.
+        /// left += right
         /// </summary>
-        /// <param name="ident">Unique identificator</param>
-        /// <param name="evaluated">mixed string with evaluated data</param>
-        void SetEvaluated(string ident, string evaluated);
+        Increment,
+
+        /// <summary>
+        /// left -= right
+        /// </summary>
+        Decrement,
     }
 }

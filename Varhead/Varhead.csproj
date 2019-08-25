@@ -13,12 +13,13 @@
     <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Copyright>Copyright (c) 2013-2019  Denis Kuzmin &lt; x-3F@outlook.com &gt; GitHub/3F</Copyright>
+    <Title>[ Varhead ] Evaluator of user variables and more</Title>
     <Description>Evaluator of user variables and more. Designed for SobaScript, E-MSBuild, and so on.</Description>
     <PackageOwners>reg</PackageOwners>
     <PackageProjectUrl>https://github.com/3F/Varhead</PackageProjectUrl>
     <RepositoryUrl>https://github.com/3F/Varhead</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>SobaScript scripts variables evaluator strings parser E-MSBuild vsSBE SBE-Scripts vsSolutionBuildEvent vsCommandEvent</PackageTags>
+    <PackageTags>scripts variables evaluator strings parser scripting SobaScript E-MSBuild vsSBE SBE-Scripts vsSolutionBuildEvent vsCommandEvent Varhead</PackageTags>
     <PackageReleaseNotes>https://github.com/3F/Varhead/blob/master/changelog.txt</PackageReleaseNotes>
     <Authors>github.com/3F/Varhead</Authors>
     <DocumentationFile>$(OutputPath)\$(AssemblyName).xml</DocumentationFile>
@@ -37,6 +38,10 @@
 
   <ItemGroup>
     <None Include="License.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="Readme.md">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>

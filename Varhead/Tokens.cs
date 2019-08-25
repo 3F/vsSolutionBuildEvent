@@ -32,7 +32,7 @@ namespace net.r_eg.Varhead
     public static class Tokens
     {
         /// <summary>
-        /// Handler of the escape-sequence.
+        /// Handler of the escape-sequences.
         /// 
         ///     hexadecimal-escape-sequence:
         ///         \x   0-0xF  [0-0xF  [0-0xF  [0-0xF]]]
@@ -44,7 +44,7 @@ namespace net.r_eg.Varhead
         ///     https://msdn.microsoft.com/en-us/library/aa664669%28v=vs.71%29.aspx
         /// </summary>
         /// <param name="data"></param>
-        /// <param name="limited">a limited set of combinations if true</param>
+        /// <param name="limited">Use limited set of combinations if true.</param>
         /// <returns></returns>
         public static string EscapeCharacters(string data, bool limited = true)
         {
@@ -90,9 +90,9 @@ namespace net.r_eg.Varhead
         /// <summary>
         /// Unescape quote symbols from string.
         /// </summary>
-        /// <param name="type">Quote symbol.</param>
+        /// <param name="type">The quote character.</param>
         /// <param name="data"></param>
-        /// <returns>String with unescaped quote symbols.</returns>
+        /// <returns>Final string with an unescaped quote symbols.</returns>
         public static string UnescapeQuotes(char type, string data)
         {
             if(string.IsNullOrWhiteSpace(data)) {

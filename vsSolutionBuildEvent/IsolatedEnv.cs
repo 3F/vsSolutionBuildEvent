@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Build.Evaluation;
+using net.r_eg.EvMSBuild;
 using net.r_eg.MvsSln;
 using net.r_eg.MvsSln.Core;
 using net.r_eg.MvsSln.Extensions;
@@ -33,7 +34,7 @@ namespace net.r_eg.vsSBE
     /// <summary>
     /// Isolated environment for work without DTE
     /// </summary>
-    public class IsolatedEnv: EnvAbstract, IEnvironment
+    public class IsolatedEnv: EnvAbstract, IEnvironment, IEvEnv
     {
         protected IDictionary<string, string> slnProperties = new Dictionary<string, string>();
 
@@ -186,6 +187,17 @@ namespace net.r_eg.vsSBE
         public IOW OutputWindowPane
         {
             get => __disabled<IOW>(nameof(OutputWindowPane));
+        }
+
+        /// <summary>
+        /// An unified unscoped and out of Project instance the property value by its name.
+        /// Remarks: Any property values cannot be null.
+        /// </summary>
+        /// <param name="name">Property name.</param>
+        /// <returns>Found non-null property value or null if not.</returns>
+        public string GetMutualPropValue(string name)
+        {
+            return getSolutionProperty(name);
         }
 
         /// <summary>

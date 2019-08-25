@@ -13,7 +13,6 @@
     <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Copyright>Copyright (c) 2013-2019  Denis Kuzmin &lt; x-3F@outlook.com &gt; GitHub/3F</Copyright>
-    <PackageTitle>[ LSender ] Ascetic aggregative repeater for loggers etc.</PackageTitle>
     <Title>[ LSender ] Ascetic aggregative repeater for loggers etc.</Title>
     <Description>Ascetic aggregative repeater for loggers etc.</Description>
     <PackageOwners>reg</PackageOwners>
@@ -39,6 +38,10 @@
 
   <ItemGroup>
     <None Include="License.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="Readme.md">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>

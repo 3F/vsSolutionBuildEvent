@@ -59,7 +59,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string type = m.Groups[1].Value;
             string exp  = m.Groups["exp"].Value;
 
-            return msbuild.parse($"{type}({multiline(exp)})");
+            return msbuild.Eval($"{type}({multiline(exp)})");
         }
 
         protected virtual string multiline(string cmd)

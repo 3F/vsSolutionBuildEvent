@@ -57,7 +57,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <summary>
         /// Support of User-variables.
         /// </summary>
-        protected IUserVariable uvariable;
+        protected IUVars uvariable;
 
         /// <summary>
         /// Provides operation with environment
@@ -108,7 +108,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         }
 
         /// <summary>
-        /// Evaluates mixed data through some engine like E-MSBuild etc.
+        /// Evaluates mixed data through some engine like E-MSBuild, SobaScript, etc.
         /// </summary>
         /// <param name="data">Mixed input data.</param>
         /// <returns>Evaluated end value.</returns>
@@ -119,7 +119,7 @@ namespace net.r_eg.vsSBE.SBEScripts
 
         /// <param name="env">Used environment</param>
         /// <param name="uvariable">Used instance of user-variable</param>
-        public Script(IEnvironment env, IUserVariable uvariable)
+        public Script(IEnvironment env, IUVars uvariable)
         {
             this.env = env;
             this.uvariable = uvariable;
@@ -186,7 +186,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         {
             string pattern = String.Format(@"{0}{1}", 
                                             (force)? String.Empty : @"(?<!\$)", 
-                                            MSBuild.RPattern.ContainerOuter);
+                                            EvMSBuild.RPattern.ContainerOuter);
             return Regex.Replace(data, pattern, delegate(Match m) { return "$" + m.Value; }, RegexOptions.IgnorePatternWhitespace);
         }
 

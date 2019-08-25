@@ -22,7 +22,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest()
         {
             var mockEnv = new Mock<IEnvironment>();
-            var mockUVar = new Mock<IUserVariable>();
+            var mockUVar = new Mock<IUVars>();
             ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
             target.parse("#[(true){body1}]");
         }
@@ -35,7 +35,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest2()
         {
             var mockEnv = new Mock<IEnvironment>();
-            var mockUVar = new Mock<IUserVariable>();
+            var mockUVar = new Mock<IUVars>();
             ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
             target.parse("[(true)]");
         }
@@ -47,7 +47,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest4()
         {
             var mockEnv = new Mock<IEnvironment>();
-            var mockUVar = new Mock<IUserVariable>();
+            var mockUVar = new Mock<IUVars>();
             ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
             Assert.AreEqual(Value.Empty, target.parse("[ (true * 1) { body1 } ]"));
             Assert.AreEqual(" body1 ", target.parse("[ (!true * 1) { body1 } ]"));
@@ -61,7 +61,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest5()
         {
             var mockEnv = new Mock<IEnvironment>();
-            var mockUVar = new Mock<IUserVariable>();
+            var mockUVar = new Mock<IUVars>();
             ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
             target.parse("[ (!) { body1 } ]");
         }
@@ -73,7 +73,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest6()
         {
             var mockEnv = new Mock<IEnvironment>();
-            var mockUVar = new Mock<IUserVariable>();
+            var mockUVar = new Mock<IUVars>();
             ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
             Assert.AreEqual(" body1 ", target.parse("[ (true) { body1 } ]"));
             Assert.AreEqual(" body1 ", target.parse("[ (true == 1) { body1 } ]"));
@@ -94,7 +94,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest7()
         {
             var mockEnv = new Mock<IEnvironment>();
-            var mockUVar = new Mock<IUserVariable>();
+            var mockUVar = new Mock<IUVars>();
             ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
             Assert.AreEqual(" body2 ", target.parse("[ (false) { body1 } else { body2 } ]"));
             Assert.AreEqual(" body1 ", target.parse("[ (false == 0) { body1 } else { body2 } ]"));
@@ -112,7 +112,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest8()
         {
             var mockEnv = new Mock<IEnvironment>();
-            var mockUVar = new Mock<IUserVariable>();
+            var mockUVar = new Mock<IUVars>();
             ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
             Assert.AreEqual(" body1 ", target.parse("[(!false){ body1 }else{ body2 }]"));
             Assert.AreEqual(Value.Empty, target.parse("[(!true){ body1 }]"));
@@ -125,7 +125,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest9()
         {
             var mockEnv = new Mock<IEnvironment>();
-            var mockUVar = new Mock<IUserVariable>();
+            var mockUVar = new Mock<IUVars>();
             ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
 
             Assert.AreEqual(" body1 ", target.parse("[(str1 === str1){ body1 }else{ body2 }]"));
@@ -145,7 +145,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest10()
         {
             var mockEnv = new Mock<IEnvironment>();
-            var mockUVar = new Mock<IUserVariable>();
+            var mockUVar = new Mock<IUVars>();
             ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
 
             Assert.AreEqual(" body2 ", target.parse("[(str1 !== str1){ body1 }else{ body2 }]"));
@@ -163,7 +163,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest11()
         {
             var mockEnv = new Mock<IEnvironment>();
-            var mockUVar = new Mock<IUserVariable>();
+            var mockUVar = new Mock<IUVars>();
             ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
 
             Assert.AreEqual(" body1 ", target.parse("[(Test123Data ~= 12){ body1 }else{ body2 }]"));
@@ -179,7 +179,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest12()
         {
             var mockEnv = new Mock<IEnvironment>();
-            var mockUVar = new Mock<IUserVariable>();
+            var mockUVar = new Mock<IUVars>();
             ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
 
             Assert.AreEqual(" body2 ", target.parse("[(1 > 1){ body1 }else{ body2 }]"));
@@ -199,7 +199,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest13()
         {
             var mockEnv = new Mock<IEnvironment>();
-            var mockUVar = new Mock<IUserVariable>();
+            var mockUVar = new Mock<IUVars>();
             ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
 
             Assert.AreEqual(" body2 ", target.parse("[(!str1 === str1){ body1 }else{ body2 }]"));
@@ -239,7 +239,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest14()
         {
             var mockEnv = new Mock<IEnvironment>();
-            var mockUVar = new Mock<IUserVariable>();
+            var mockUVar = new Mock<IUVars>();
             ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
             target.parse("[(1 > ){ body1 }else{ body2 }]");
         }
@@ -252,7 +252,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest15()
         {
             var mockEnv = new Mock<IEnvironment>();
-            var mockUVar = new Mock<IUserVariable>();
+            var mockUVar = new Mock<IUVars>();
             ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
             target.parse("[(1 === ){ body1 }else{ body2 }]");
         }
@@ -265,7 +265,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest16()
         {
             var mockEnv = new Mock<IEnvironment>();
-            var mockUVar = new Mock<IUserVariable>();
+            var mockUVar = new Mock<IUVars>();
             ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
             target.parse("[(1 >= ){ body1 }else{ body2 }]");
         }
@@ -278,7 +278,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest17()
         {
             var mockEnv = new Mock<IEnvironment>();
-            var mockUVar = new Mock<IUserVariable>();
+            var mockUVar = new Mock<IUVars>();
             ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
             target.parse("[(2 > 1test ){ body1 }else{ body2 }]");
         }
@@ -290,7 +290,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest18()
         {
             var mockEnv = new Mock<IEnvironment>();
-            var mockUVar = new Mock<IUserVariable>();
+            var mockUVar = new Mock<IUVars>();
             ConditionComponent target = new ConditionComponent(mockEnv.Object, mockUVar.Object);
 
             Assert.AreEqual(" body1 ", target.parse("[(ConsoleApplication_1 ^= Console){ body1 }else{ body2 }]"));
@@ -308,7 +308,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void disclosureTest1()
         {
-            IUserVariable uv = new UserVariable();
+            IUVars uv = new UVars();
             uv.SetVariable("test", null, "(data");
             uv.SetVariable("test2", null, "data)");
             uv.SetVariable("test3", null, "true");
@@ -327,7 +327,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(SyntaxIncorrectException))]
         public void disclosureTest2()
         {
-            ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, (new Mock<IUserVariable>()).Object);
+            ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, (new Mock<IUVars>()).Object);
             target.parse("[( 1 < 2 && 2 == 2 || ((2 >= 2) && true)) ){yes}else{no}]");
         }
 
@@ -338,7 +338,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(SyntaxIncorrectException))]
         public void disclosureTest3()
         {
-            ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, (new Mock<IUserVariable>()).Object);
+            ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, (new Mock<IUVars>()).Object);
             target.parse("[( 1 < 2 && () || (((2 >= 2) && true)) ){yes}else{no}]");
         }
 
@@ -348,7 +348,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void disclosureTest4()
         {
-            IUserVariable uv = new UserVariable();
+            IUVars uv = new UVars();
             uv.SetVariable("test", null, "data(str)");
             uv.SetVariable("test2", null, "true");
             uv.SetVariable("test3", null, "4");
@@ -369,7 +369,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void invertTest1()
         {
-            ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, (new Mock<IUserVariable>()).Object);
+            ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, (new Mock<IUVars>()).Object);
             Assert.AreEqual("no", target.parse("[( (!2 == 2) && 1 < 2 ){yes}else{no}]"));
             Assert.AreEqual("no", target.parse("[( (!2 == 2) && (!1 < 2) ){yes}else{no}]"));
             Assert.AreEqual("no", target.parse("[( (!2 == 2) && (!1 > 2) ){yes}else{no}]"));
@@ -384,7 +384,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void compositeTest1()
         {
-            IUserVariable uv = new UserVariable();
+            IUVars uv = new UVars();
             uv.SetVariable("test", null, "(data");
 
             ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, uv);
@@ -399,7 +399,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(SyntaxIncorrectException))]
         public void compositeTest2()
         {
-            ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, (new Mock<IUserVariable>()).Object);
+            ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, (new Mock<IUVars>()).Object);
             target.parse("[( 2 == 2 & 1 < 2 ){yes}else{no}]");
         }
 
@@ -410,7 +410,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(SyntaxIncorrectException))]
         public void compositeTest3()
         {
-            ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, (new Mock<IUserVariable>()).Object);
+            ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, (new Mock<IUVars>()).Object);
             target.parse("[( 2 == 2 | 1 < 2 ){yes}else{no}]");
         }
 
@@ -420,7 +420,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void compositeTest4()
         {
-            ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, (new Mock<IUserVariable>()).Object);
+            ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, (new Mock<IUVars>()).Object);
             Assert.AreEqual("yes", target.parse("[( 2 == 2 && 1 < 2 ){yes}else{no}]"));
             Assert.AreEqual("no", target.parse("[( 2 == 2 && 1 > 2 ){yes}else{no}]"));
             Assert.AreEqual("no", target.parse("[( 2 != 2 && 1 < 2 ){yes}else{no}]"));
@@ -436,7 +436,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void compositeTest5()
         {
-            ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, (new Mock<IUserVariable>()).Object);
+            ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, (new Mock<IUVars>()).Object);
             Assert.AreEqual("no", target.parse("[( 2 == 2 && 1 < 2 && (7 == 4) ){yes}else{no}]"));
             Assert.AreEqual("yes", target.parse("[( 2 != 2 && 1 > 2 || (7 != 4) ){yes}else{no}]"));
             Assert.AreEqual("yes", target.parse("[( true && ((1 < 2) || (((2 >= 2) && true))) ){yes}else{no}]"));
@@ -453,7 +453,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void compositeTest6()
         {
-            ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, (new Mock<IUserVariable>()).Object);
+            ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, (new Mock<IUVars>()).Object);
             Assert.AreEqual("no", target.parse("[( (1 < 2 && 2 == 2 &&(((false || 2 >= 2) && (1 && (false) && true)))) ){yes}else{no}]"));
             Assert.AreEqual("no", target.parse("[( (1 < 2 && 2 == 2 &&(((false || 2 >= 2) && (1 > 7 && true)))) ){yes}else{no}]"));
             Assert.AreEqual("yes", target.parse("[( (1 < 2 && 2 == 2 ||(((2 >= 2) && true))) ){yes}else{no}]"));
@@ -466,7 +466,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void compositeTest7()
         {
-            IUserVariable uv = new UserVariable();
+            IUVars uv = new UVars();
             uv.SetVariable("test", null, "data1 && data|2");
             uv.SetVariable("test2", null, "data1 || data&2");
 
@@ -481,7 +481,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void compositeTest8()
         {
-            ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, (new Mock<IUserVariable>()).Object);
+            ConditionComponent target = new ConditionComponent((new Mock<IEnvironment>()).Object, (new Mock<IUVars>()).Object);
             Assert.AreEqual("yes", target.parse("[( (1 < 2 && 2 == 2 && ( true || ((false || 2 >= 2) && (1 > 7 && true)))) ){yes}else{no}]"));
             Assert.AreEqual("no", target.parse("[( (1 < 2 && 2 == 2 && ( true && ((false || 2 >= 2) && (1 > 7 && true)))) ){yes}else{no}]"));
             Assert.AreEqual("yes", target.parse("[( (1 < 2 && 2 == 2 || ( true && ((false || 2 >= 2) && (1 > 7 && true)))) ){yes}else{no}]"));

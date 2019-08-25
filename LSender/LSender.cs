@@ -28,7 +28,10 @@ using System;
 namespace net.r_eg.Components
 {
     /// <summary>
+    /// [LSender]
+    /// 
     /// Ascetic aggregative repeater for loggers etc.
+    /// https://github.com/3F/LSender
     /// </summary>
     public sealed class LSender: ISender
     {

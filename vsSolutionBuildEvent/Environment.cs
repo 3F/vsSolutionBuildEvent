@@ -21,6 +21,7 @@ using System.IO;
 using System.Linq;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell.Interop;
+using net.r_eg.EvMSBuild;
 using net.r_eg.MvsSln;
 using net.r_eg.MvsSln.Core;
 using net.r_eg.MvsSln.Extensions;
@@ -35,7 +36,7 @@ namespace net.r_eg.vsSBE
 {
     // TODO: more unified integration with IsolatedEnv /EnvDTE to MvsSln as possible 
     //       ~such as full processing by MvsSln through information about .sln file from EnvDTE.
-    public class Environment: EnvAbstract, IEnvironment, IEnvironmentExt
+    public class Environment: EnvAbstract, IEnvironment, IEnvironmentExt, IEvEnv
     {
         [Obsolete("Use " + nameof(PropertyNames), false)]
         public const string PROP_UNAV_STRING = PropertyNames.UNDEFINED;
@@ -273,6 +274,17 @@ namespace net.r_eg.vsSBE
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// An unified unscoped and out of Project instance the property value by its name.
+        /// Remarks: Any property values cannot be null.
+        /// </summary>
+        /// <param name="name">Property name.</param>
+        /// <returns>Found non-null property value or null if not.</returns>
+        public string GetMutualPropValue(string name)
+        {
+            return getSolutionProperty(name);
         }
 
         /// <summary>

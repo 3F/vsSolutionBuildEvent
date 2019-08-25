@@ -28,17 +28,17 @@ using System;
 namespace net.r_eg.Components
 {
     [Serializable]
-    public class Message: EventArgs
+    public sealed class Message: EventArgs
     {
-        public DateTime stamp;
+        public readonly DateTime stamp;
 
-        public string content;
+        public readonly string content;
 
-        public Exception exception;
+        public readonly Exception exception;
 
-        public object data;
+        public readonly object data;
 
-        public MsgLevel level;
+        public readonly MsgLevel level;
 
         public Message(string msg, MsgLevel level = MsgLevel.Debug)
         {

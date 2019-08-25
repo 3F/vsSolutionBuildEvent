@@ -25,7 +25,7 @@
 
 namespace net.r_eg.Varhead
 {
-    public struct TUserVariable
+    public struct TVariable
     {
         /// <summary>
         /// Contains the evaluated data or escaped variable/property (without escape symbol)
@@ -73,8 +73,7 @@ namespace net.r_eg.Varhead
         /// <remarks>reserved</remarks>
         public bool persistence;
 
-        public TUserVariable(TUserVariable origin)
-            : this()
+        public TVariable(TVariable origin)
         {
             evaluated       = origin.evaluated;
             unevaluated     = origin.unevaluated;

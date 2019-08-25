@@ -42,7 +42,7 @@ namespace net.r_eg.vsSBE.SBEScripts
         /// <summary>
         /// Container for user-variables
         /// </summary>
-        IUserVariable UVariable { get; }
+        IUVars UVariable { get; }
 
         /// <summary>
         /// Getting component for selected type

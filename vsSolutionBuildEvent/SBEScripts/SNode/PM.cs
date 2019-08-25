@@ -20,9 +20,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using net.r_eg.EvMSBuild;
 using net.r_eg.Varhead;
 using net.r_eg.vsSBE.Exceptions;
-using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.SNode
@@ -32,7 +32,7 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
     /// </summary>
     public class PM: IPM
     {
-        protected IMSBuild msbuild;
+        protected IEvMSBuild msbuild;
         protected EvalType teval = EvalType.None;
 
         /// <summary>
@@ -364,7 +364,7 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
         /// <param name="raw">Initial raw data.</param>
         /// <param name="msbuild">To evaluate data with MSBuild engine where it's allowed.</param>
         /// <param name="type">Allowed types of evaluation with MSBuild.</param>
-        public PM(string raw, IMSBuild msbuild = null, EvalType type = EvalType.ArgStringD /*| EvalType.RightOperandStd*/)
+        public PM(string raw, IEvMSBuild msbuild = null, EvalType type = EvalType.ArgStringD /*| EvalType.RightOperandStd*/)
             : this(msbuild, type)
         {
             detect(raw);
@@ -378,7 +378,7 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
 
         /// <param name="msbuild">To evaluate data with MSBuild engine where it's allowed.</param>
         /// <param name="type">Allowed types of evaluation with MSBuild.</param>
-        public PM(IMSBuild msbuild = null, EvalType type = EvalType.ArgStringD)
+        public PM(IEvMSBuild msbuild = null, EvalType type = EvalType.ArgStringD)
         {
             //if(msbuild == null) {
             //    throw new InvalidArgumentException("PM: The `msbuild` argument cannot be null");
@@ -605,7 +605,7 @@ namespace net.r_eg.vsSBE.SBEScripts.SNode
                 return raw;
             }
 
-            return ((teval & type) == type)? msbuild.parse(raw) : raw;
+            return ((teval & type) == type)? msbuild.Eval(raw) : raw;
         }
 
         /// <summary>

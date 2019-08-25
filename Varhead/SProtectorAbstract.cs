@@ -38,7 +38,7 @@ namespace net.r_eg.Varhead
     /// As alternative for this, we should implement the nodes storing (like SobaScript SNode) to abstract build of all final strings by tokens etc. 
     /// Well, currently we're simple :)
     /// </summary>
-    public abstract class StringProtector
+    public abstract class SProtectorAbstract
     {
         /// <summary>
         /// Maximum of nesting level to recovery operation
@@ -51,7 +51,7 @@ namespace net.r_eg.Varhead
         /// </summary>
         protected ConcurrentDictionary<uint, string> strings = new ConcurrentDictionary<uint, string>();
 
-        protected object sync = new object();
+        protected readonly object sync = new object();
 
         /// <summary>
         /// Current level of nesting recovery operation.
@@ -210,7 +210,7 @@ namespace net.r_eg.Varhead
 
         protected virtual string FormatId() => "([0-9a-f]+)";
 
-        protected StringProtector()
+        protected SProtectorAbstract()
         {
             lock(sync)
             {

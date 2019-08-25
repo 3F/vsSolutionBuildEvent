@@ -31,7 +31,14 @@ using net.r_eg.Components;
 
 namespace net.r_eg.Varhead
 {
-    public class UserVariable: IUserVariable, IUserVariableExt
+    /// <summary>
+    /// [Varhead]
+    /// 
+    /// Evaluator of user variables and more.
+    /// Designed for SobaScript, E-MSBuild, and so on.
+    /// https://github.com/3F/Varhead
+    /// </summary>
+    public class UVars: IUVars, IUVarsExt
     {
         /// <summary>
         /// Contains all defined user-variables.
@@ -42,7 +49,7 @@ namespace net.r_eg.Varhead
         /// 
         /// Also variant use the both SynchronizedCollection/BlockingCollection + ConcurrentDictionary for O(1) operations
         /// </summary>
-        protected Dictionary<string, TUserVariable> definitions = new Dictionary<string, TUserVariable>();
+        protected Dictionary<string, TVariable> definitions = new Dictionary<string, TVariable>();
 
         private readonly object sync = new object();
 
@@ -53,7 +60,7 @@ namespace net.r_eg.Varhead
         {
             get
             {
-                foreach(KeyValuePair<string, TUserVariable> def in definitions.ToArray()) {
+                foreach(KeyValuePair<string, TVariable> def in definitions.ToArray()) {
                     yield return def.Key;
                 }
             }
@@ -62,11 +69,11 @@ namespace net.r_eg.Varhead
         /// <summary>
         /// Exposes the enumerable for defined user-variables
         /// </summary>
-        public IEnumerable<TUserVariable> Variables
+        public IEnumerable<TVariable> Variables
         {
             get
             {
-                foreach(KeyValuePair<string, TUserVariable> def in definitions.ToArray()) {
+                foreach(KeyValuePair<string, TVariable> def in definitions.ToArray()) {
                     yield return def.Value;
                 }
             }
@@ -111,7 +118,7 @@ namespace net.r_eg.Varhead
         /// <param name="name">variable name</param>
         /// <param name="project">project name</param>
         /// <returns>Struct of user-variable</returns>
-        public TUserVariable GetVariable(string name, string project)
+        public TVariable GetVariable(string name, string project)
         {
             return GetVariable(DefIndex(name, project));
         }
@@ -121,14 +128,14 @@ namespace net.r_eg.Varhead
         /// </summary>
         /// <param name="ident">Unique identificator</param>
         /// <returns>Struct of user-variable</returns>
-        public TUserVariable GetVariable(string ident)
+        public TVariable GetVariable(string ident)
         {
             lock(sync)
             {
                 if(definitions.ContainsKey(ident)) {
                     return definitions[ident];
                 }
-                return default(TUserVariable);
+                return default(TVariable);
             }
         }
 
@@ -152,13 +159,13 @@ namespace net.r_eg.Varhead
 
             lock(sync)
             {
-                definitions[defindex] = new TUserVariable() {
+                definitions[defindex] = new TVariable() {
                     unevaluated = unevaluated,
                     ident       = defindex,
                     name        = name,
                     project     = project,
                     status      = ValStatus.Unevaluated,
-                    prev        = (definitions.ContainsKey(defindex))? definitions[defindex] : new TUserVariable(),
+                    prev        = (definitions.ContainsKey(defindex))? definitions[defindex] : new TVariable(),
                     evaluated   = null
                 };
                 LSender.Send(this, $"User-variable: defined '{defindex}' = '{unevaluated}'");
@@ -197,7 +204,7 @@ namespace net.r_eg.Varhead
                     throw new KeyNotFoundException($"Variable '{ident}' is not found.");
                 }
 
-                TUserVariable var = new TUserVariable(definitions[ident]) {
+                TVariable var = new TVariable(definitions[ident]) {
                     status = ValStatus.Started
                 };
                 definitions[ident] = var;
@@ -340,11 +347,11 @@ namespace net.r_eg.Varhead
 
             lock(sync)
             {
-                definitions[ident] = new TUserVariable() {
+                definitions[ident] = new TVariable() {
                     unevaluated = evaluated,
                     ident       = ident,
                     status      = ValStatus.Evaluated,
-                    prev        = (definitions.ContainsKey(ident))? definitions[ident] : new TUserVariable(),
+                    prev        = (definitions.ContainsKey(ident))? definitions[ident] : new TVariable(),
                     evaluated   = evaluated
                 };
                 LSender.Send(this, $"User-variable(Debug service): updated '{ident}' with evaluated value '{evaluated}'");

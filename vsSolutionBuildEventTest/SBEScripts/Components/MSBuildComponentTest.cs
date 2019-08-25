@@ -4,6 +4,7 @@ using net.r_eg.Varhead;
 using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
+using net.r_eg.EvMSBuild;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 {
@@ -11,8 +12,8 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
     public class MSBuildComponentTest
     {
         private IBootloader bootloader;
-        private IEnvironment env = new StubEnv();
-        private IUserVariable uvariable = new UserVariable();
+        private readonly IEnvironment env = new StubEnv();
+        private readonly IUVars uvariable = new UVars();
 
         private IBootloader Loader
         {
@@ -32,7 +33,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void parseTest1()
         {
             var target = new MSBuildComponent(Loader);
-            Assert.AreEqual(vsSBE.MSBuild.Parser.PROP_VALUE_DEFAULT, target.parse("[$(notRealVariablename)]"));
+            Assert.AreEqual(EvMSBuilder.UNDEF_VAL, target.parse("[$(notRealVariablename)]"));
             Assert.AreEqual("65536", target.parse("[$([System.Math]::Pow(2, 16))]"));
         }
 

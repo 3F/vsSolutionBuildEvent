@@ -14,7 +14,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
     {
         private IBootloader bootloader;
         private IEnvironment env = new StubEnv();
-        private IUserVariable uvariable = new UserVariable();
+        private IUVars uvariable = new UVars();
 
         private IBootloader Loader
         {

@@ -98,7 +98,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         /// <param name="env">Used environment</param>
         /// <param name="uvariable">Instance of user-variables</param>
-        public TryComponent(IEnvironment env, IUserVariable uvariable)
+        public TryComponent(IEnvironment env, IUVars uvariable)
             : base(env, uvariable)
         {
 

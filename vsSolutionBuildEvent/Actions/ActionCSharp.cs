@@ -389,7 +389,7 @@ namespace net.r_eg.vsSBE.Actions
             {
                 return cfg.References
                             .Where(r => !String.IsNullOrEmpty(r))
-                            .Select(r => (msbuild)? cmd.MSBuild.parse(r) : r)
+                            .Select(r => (msbuild)? cmd.MSBuild.Eval(r) : r)
                             .ToArray();
             }
             
@@ -398,7 +398,7 @@ namespace net.r_eg.vsSBE.Actions
                         .Where(r => !String.IsNullOrEmpty(r))
                         .Select(r =>
                                     gac.getPathToAssembly(
-                                            (msbuild)? cmd.MSBuild.parse(r) : r,
+                                            (msbuild)? cmd.MSBuild.Eval(r) : r,
                                             true
                                     )
                                 )
@@ -463,7 +463,7 @@ namespace net.r_eg.vsSBE.Actions
 
             string path = (cfg.OutputPath)?? String.Empty;
             if(evt.SupportMSBuild) {
-                path = cmd.MSBuild.parse(path);
+                path = cmd.MSBuild.Eval(path);
             }
 
             return Path.Combine(BasePathToCache, path, fileName(evt));

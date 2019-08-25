@@ -18,8 +18,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using net.r_eg.EvMSBuild;
 using net.r_eg.Varhead;
-using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
@@ -34,7 +34,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <summary>
         /// For evaluation with MSBuild
         /// </summary>
-        protected IMSBuild msbuild;
+        protected IEvMSBuild msbuild;
 
         /// <summary>
         /// Provides operation with environment
@@ -44,7 +44,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <summary>
         /// Current container of user-variables
         /// </summary>
-        protected IUserVariable uvariable;
+        protected IUVars uvariable;
 
         /// <summary>
         /// Ability to work with data for current component
@@ -106,7 +106,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         /// <param name="env">Used environment</param>
         /// <param name="uvariable">Instance of user-variables</param>
-        public Component(IEnvironment env, IUserVariable uvariable)
+        public Component(IEnvironment env, IUVars uvariable)
             : this()
         {
             init(env, uvariable);
@@ -123,20 +123,25 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         /// <param name="script">Instance of SBE-Scripts core</param>
         /// <param name="msbuild">Instance of MSBuild core</param>
-        public Component(ISBEScript script, IMSBuild msbuild)
-            : this(msbuild)
+        [Obsolete]
+        public Component(ISBEScript script, IEvMSBuild msbuild)
+            //: this(msbuild)
         {
             this.script = script;
-        }
 
-        /// <param name="msbuild">Instance of MSBuild core</param>
-        public Component(IMSBuild msbuild)
-            : this()
-        {
-            env             = msbuild.Env;
-            uvariable       = msbuild.UVariable;
+            env             = script.Bootloader.Env;
+            uvariable       = msbuild.Variables;
             this.msbuild    = msbuild;
         }
+
+        ///// <param name="msbuild">Instance of MSBuild core</param>
+        //public Component(IMSBuild msbuild)
+        //    : this()
+        //{
+        //    env             = msbuild.Env;        // TODO: E-MSBuild
+        //    uvariable       = msbuild.UVariable;
+        //    this.msbuild    = msbuild;
+        //}
 
         /// <param name="env">Used environment</param>
         public Component(IEnvironment env)
@@ -150,11 +155,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             Log.Trace("init: '{0}'", GetType().FullName);
         }
 
-        protected void init(IEnvironment env, IUserVariable uvariable)
+        protected void init(IEnvironment env, IUVars uvariable)
         {
             this.env        = env;
             this.uvariable  = uvariable;
-            msbuild         = new MSBuild.Parser(env, uvariable);
+            msbuild         = MSBuild.MakeEvaluator(env, uvariable);
         }
 
         /// <summary>
@@ -197,7 +202,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             if(msbuild != null) {
                 //if(PostProcessingMSBuild) {
-                    data = msbuild.parse(data);
+                    data = msbuild.Eval(data);
                     Log.Trace($"'{Condition}'-evaluate: evaluated data: `{data}` :: IMSBuild");
                 //}
             }

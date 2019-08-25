@@ -16,8 +16,8 @@
 */
 
 using System.Runtime.InteropServices;
+using net.r_eg.EvMSBuild;
 using net.r_eg.vsSBE.Events;
-using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts;
 
 namespace net.r_eg.vsSBE.Actions
@@ -33,7 +33,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// MSBuild core
         /// </summary>
-        IMSBuild MSBuild { get; }
+        IEvMSBuild MSBuild { get; }
 
         /// <summary>
         /// Used environment

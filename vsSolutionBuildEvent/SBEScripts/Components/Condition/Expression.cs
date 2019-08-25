@@ -17,8 +17,8 @@
 
 using System;
 using System.Text.RegularExpressions;
+using net.r_eg.EvMSBuild;
 using net.r_eg.vsSBE.Exceptions;
-using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components.Condition
@@ -41,7 +41,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.Condition
         /// <summary>
         /// For evaluation with MSBuild
         /// </summary>
-        protected IMSBuild msbuild;
+        protected IEvMSBuild msbuild;
 
         /// <summary>
         /// Current level of nesting brackets.
@@ -82,7 +82,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.Condition
             return (disclosure(exp) == Value.VTRUE);
         }
 
-        public Expression(ISBEScript script, IMSBuild msbuild)
+        public Expression(ISBEScript script, IEvMSBuild msbuild)
         {
             this.script     = script;
             this.msbuild    = msbuild;
@@ -175,7 +175,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.Condition
                 return Value.VTRUE;
             }
 
-            if(String.IsNullOrWhiteSpace(op) || op == MSBuild.Parser.PROP_VALUE_DEFAULT) {
+            if(String.IsNullOrWhiteSpace(op) || op == EvMSBuilder.UNDEF_VAL) {
                 return Value.VFALSE;
             }
 

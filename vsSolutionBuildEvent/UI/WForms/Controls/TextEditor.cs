@@ -32,8 +32,8 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Search;
+using net.r_eg.EvMSBuild;
 using net.r_eg.vsSBE.Configuration.User;
-using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.UI.WForms.Controls.TextEditorElements;
 using AvalonEditorWPF = ICSharpCode.AvalonEdit.TextEditor;
@@ -156,7 +156,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
         /// </summary>
         /// <param name="inspector"></param>
         /// <param name="msbuild"></param>
-        public void codeCompletionInit(IInspector inspector, IMSBuild msbuild = null)
+        public void codeCompletionInit(IInspector inspector, IEvMSBuild msbuild = null)
         {
             dom = new DomParser(inspector, msbuild);
             Log.Trace("Code completion has been initialized for '{0}'", Name);

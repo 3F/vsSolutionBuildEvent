@@ -28,7 +28,7 @@ namespace net.r_eg.Varhead
     public interface IEvaluator
     {
         /// <summary>
-        /// Evaluates mixed data through some engine like E-MSBuild etc.
+        /// Evaluates mixed data through some engine like E-MSBuild, SobaScript, etc.
         /// </summary>
         /// <param name="data">Mixed input data.</param>
         /// <returns>Evaluated end value.</returns>

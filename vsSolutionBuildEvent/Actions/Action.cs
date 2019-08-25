@@ -60,7 +60,7 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             if(evt.SupportMSBuild) {
-                data = cmd.MSBuild.parse(data);
+                data = cmd.MSBuild.Eval(data);
             }
 
             return data;

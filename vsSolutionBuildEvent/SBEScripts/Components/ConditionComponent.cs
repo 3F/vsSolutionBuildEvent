@@ -17,8 +17,8 @@
 
 using System;
 using System.Text.RegularExpressions;
+using net.r_eg.EvMSBuild;
 using net.r_eg.Varhead;
-using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts.Components.Condition;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.SBEScripts.Exceptions;
@@ -69,7 +69,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return cond.evaluate(data);
             }
 
-            public ConditionalExpression(ConditionComponent cond, ISBEScript script, IMSBuild msbuild)
+            public ConditionalExpression(ConditionComponent cond, ISBEScript script, IEvMSBuild msbuild)
                 : base(script, msbuild)
             {
                 this.cond = cond;
@@ -116,7 +116,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         /// <param name="env">Used environment</param>
         /// <param name="uvariable">Instance of user-variables</param>
-        public ConditionComponent(IEnvironment env, IUserVariable uvariable)
+        public ConditionComponent(IEnvironment env, IUVars uvariable)
             : base(env, uvariable)
         {
             init();

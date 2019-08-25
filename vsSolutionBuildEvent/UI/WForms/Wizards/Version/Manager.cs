@@ -16,6 +16,7 @@
 */
 
 using System.Collections.Generic;
+using net.r_eg.EvMSBuild;
 using net.r_eg.vsSBE.Exceptions;
 
 namespace net.r_eg.vsSBE.UI.WForms.Wizards.Version
@@ -101,7 +102,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards.Version
                     return steps[type];
                 }
                 case StepsType.Struct: {
-                    steps[type] = new StepStruct(new MSBuild.Parser(env)) {
+                    steps[type] = new StepStruct(MSBuild.MakeEvaluator(env)) {
                         fnumber = StepStruct.NumberType.NativeStruct
                     };
                     return steps[type];

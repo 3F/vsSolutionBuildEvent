@@ -20,10 +20,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using net.r_eg.EvMSBuild;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
-using net.r_eg.vsSBE.MSBuild;
 using net.r_eg.vsSBE.SBEScripts;
 
 namespace net.r_eg.vsSBE.Actions
@@ -47,7 +47,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// Work with MSBuild
         /// </summary>
-        public IMSBuild MSBuild
+        public IEvMSBuild MSBuild
         {
             get;
             protected set;
@@ -130,7 +130,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="env">Used environment</param>
         /// <param name="script">Used SBE-Scripts</param>
         /// <param name="msbuild">Used MSBuild</param>
-        public Command(IEnvironment env, ISBEScript script, IMSBuild msbuild)
+        public Command(IEnvironment env, ISBEScript script, IEvMSBuild msbuild)
         {
             Env         = env;
             SBEScript   = script;

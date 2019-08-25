@@ -92,6 +92,10 @@
       <Project>{73919171-44b6-4536-b892-f1fca653887c}</Project>
       <Name>Bridge</Name>
     </ProjectReference>
+    <ProjectReference Include="..\E-MSBuild\E-MSBuild.csproj">
+      <Project>{8cd35630-2352-4945-a721-5391056409fd}</Project>
+      <Name>E-MSBuild</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MvsSln\MvsSln\MvsSln.csproj">
       <Project>{F905DFB2-2E67-4FF7-9001-924F6F2D645D}</Project>
       <Name>MvsSln</Name>

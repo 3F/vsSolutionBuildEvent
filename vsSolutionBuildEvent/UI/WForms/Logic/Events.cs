@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using net.r_eg.EvMSBuild;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Configuration;
 using net.r_eg.vsSBE.Configuration.User;
@@ -866,7 +867,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             }
             Actions.ICommand cmd = new Actions.Command(Bootloader.Env,
                                                         new Script(Bootloader),
-                                                        new MSBuild.Parser(Bootloader.Env, Bootloader.UVariable));
+                                                        MSBuild.MakeEvaluator(Bootloader.Env, Bootloader.UVariable));
 
             ISolutionEvent evt      = SBEItem;
             SolutionEventType type  = SBE.type;

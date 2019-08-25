@@ -60,7 +60,7 @@ namespace net.r_eg.vsSBE.Actions
 
             string handler = ((IModeInterpreter)evt.Mode).Handler;
             if(evt.SupportMSBuild) {
-                handler = cmd.MSBuild.parse(handler);
+                handler = cmd.MSBuild.Eval(handler);
             }
 
             shell(evt, string.Format("{0} {1}", handler, script));

@@ -13,7 +13,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod]
         public void parseTest1()
         {
-            var uvar    = new UserVariable();
+            var uvar    = new UVars();
             var target  = new TryComponent(new StubEnv(), uvar);
 
             Assert.AreEqual(Value.Empty, target.parse("[try{}catch{ if error }]"));
@@ -25,7 +25,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod]
         public void parseTest2()
         {
-            var target = new TryComponent(new StubEnv(), new UserVariable());
+            var target = new TryComponent(new StubEnv(), new UVars());
 
             Assert.AreEqual(Value.Empty, target.parse("[try\n{}\ncatch\n{ if error }]"));
             Assert.AreEqual(Value.Empty, target.parse("[try\n{}\n catch\n { \n} ]"));
@@ -35,7 +35,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(SyntaxIncorrectException))]
         public void parseTest3()
         {
-            var target = new TryComponent(new StubEnv(), new UserVariable());
+            var target = new TryComponent(new StubEnv(), new UVars());
             target.parse("[try{ }]");
         }
 
@@ -43,14 +43,14 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(NotSupportedOperationException))]
         public void parseTest4()
         {
-            var target = new TryComponent(new StubEnv(), new UserVariable());
+            var target = new TryComponent(new StubEnv(), new UVars());
             target.parse("[try{ #[notrealcomponentToError] }catch('err', 'msg'){ }]");
         }
 
         [TestMethod]
         public void catchTest1()
         {
-            var uvar    = new UserVariable();
+            var uvar    = new UVars();
             var target  = new Script(new StubEnv(), uvar);       
 
             target.parse("#[try{ $(test = '123') }catch{ $(test2 = '456') }]");
@@ -62,7 +62,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod]
         public void catchTest2()
         {
-            var uvar    = new UserVariable();
+            var uvar    = new UVars();
             var target  = new Script(new StubEnv(), uvar);
 
             Assert.AreEqual(0, uvar.Variables.Count());
@@ -75,7 +75,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod]
         public void catchTest3()
         {
-            var uvar    = new UserVariable();
+            var uvar    = new UVars();
             var target  = new Script(new StubEnv(), uvar);
 
             Assert.AreEqual(0, uvar.Variables.Count());
@@ -119,7 +119,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod]
         public void catchTest4()
         {
-            var uvar    = new UserVariable();
+            var uvar    = new UVars();
             var target  = new Script(new StubEnv(), uvar);
 
             Assert.AreEqual(0, uvar.Variables.Count());
@@ -159,7 +159,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod]
         public void catchTest5()
         {
-            var uvar    = new UserVariable();
+            var uvar    = new UVars();
             var target  = new Script(new StubEnv(), uvar);
 
             Assert.AreEqual(0, uvar.Variables.Count());

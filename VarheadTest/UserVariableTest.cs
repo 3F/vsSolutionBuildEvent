@@ -10,7 +10,7 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void DefTest1()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
 
             Assert.Empty(target.Definitions);
             Assert.Empty(target.Variables);
@@ -19,7 +19,7 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void SetTest1()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
             target.SetVariable("name", null, "unevaluated");
 
             Assert.Single(target.Definitions);
@@ -47,16 +47,16 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void SetTest3()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
             target.SetVariable("name", null, "unevaluated");
             Assert.Single(target.Variables);
 
-            foreach(TUserVariable v in target.Variables)
+            foreach(TVariable v in target.Variables)
             {
                 Assert.Null(v.evaluated);
                 Assert.Equal("name", v.ident);
                 Assert.False(v.persistence);
-                Assert.Equal(new TUserVariable(), v.prev);
+                Assert.Equal(new TVariable(), v.prev);
                 Assert.Equal(ValStatus.Unevaluated, v.status);
                 Assert.Equal("unevaluated", v.unevaluated);
             }
@@ -71,11 +71,11 @@ namespace net.r_eg.vsSBE.Test.Scripts
             target.SetVariable(name, project, "unevaluated");
             Assert.Single(target.Variables);
 
-            foreach(TUserVariable v in target.Variables) {
+            foreach(TVariable v in target.Variables) {
                 Assert.Null(v.evaluated);
                 Assert.Equal(target.DefIndex(name, project), v.ident);
                 Assert.False(v.persistence);
-                Assert.Equal(new TUserVariable(), v.prev);
+                Assert.Equal(new TVariable(), v.prev);
                 Assert.Equal(ValStatus.Unevaluated, v.status);
                 Assert.Equal("unevaluated", v.unevaluated);
             }
@@ -84,7 +84,7 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void SetTest5()
         {
-            var target = new UserVariable();
+            var target = new UVars();
 
             Assert.Throws<ArgumentException>(() => {
                 target.SetVariable("na%me", "project", "unevaluated");
@@ -94,11 +94,11 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void SetTest6()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
             target.SetVariable("name", "project", null);
 
             Assert.Single(target.Variables);
-            foreach(TUserVariable v in target.Variables) {
+            foreach(TVariable v in target.Variables) {
                 Assert.Equal(v.unevaluated, String.Empty);
             }
         }
@@ -106,7 +106,7 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void UnsetAllTest1()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
             target.SetVariable("name", null, "unevaluated");
             target.UnsetAll();
             Assert.Empty(target.Variables);
@@ -115,7 +115,7 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void UnsetTest1()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
             target.SetVariable("name", null, "unevaluated");
             target.SetVariable("name2", null, "unevaluated2");
 
@@ -130,7 +130,7 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void UnsetTest2()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
             target.SetVariable("name", null, "unevaluated");
             target.SetVariable("name2", null, "unevaluated2");
 
@@ -145,7 +145,7 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void IsValidNameTest1()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
 
             Assert.True(target.IsValidName("name"));
             Assert.True(target.IsValidName("n"));
@@ -160,7 +160,7 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void IsUnevaluatedTest1()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
 
             Assert.Throws<KeyNotFoundException>(() => {
                 target.IsUnevaluated("name", "project");
@@ -174,7 +174,7 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void IsUnevaluatedTest2()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
             target.SetVariable("name", null, "val");
 
             Assert.True(target.IsUnevaluated("name"));
@@ -183,7 +183,7 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void IsUnevaluatedTest3()
         {
-            var target = new UserVariable();
+            var target = new UVars();
             target.SetVariable("name", "project", "val");
 
             Assert.True(target.IsUnevaluated("name", "project"));
@@ -192,21 +192,21 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void IsExistTest1()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
             Assert.False(target.IsExist("name", "project"));
         }
 
         [Fact]
         public void IsExistTest2()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
             Assert.False(target.IsExist("name"));
         }
 
         [Fact]
         public void IsExistTest3()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
             target.SetVariable("name", "project", "val");
             Assert.True(target.IsExist("name", "project"));
         }
@@ -224,7 +224,7 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void GetTest1()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
             Assert.Null(target.GetValue("name"));
             Assert.Null(target.GetValue("name", "project"));
         }
@@ -242,7 +242,7 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void GetTest3()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
             target.SetVariable("name", null, "val");
             Assert.Equal(string.Empty, target.GetValue("name"));
         }
@@ -250,7 +250,7 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void EvaluateTest1()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
 
             Assert.Throws<KeyNotFoundException>(() => {
                 target.Evaluate("name", "project", new Evaluator1(), true);
@@ -264,7 +264,7 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void EvaluateTest2()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
             string name = "name";
             string project = "project";
 
@@ -278,7 +278,7 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void EvaluateTest3()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
             string name = "name";
             string project = "project";
 
@@ -290,7 +290,7 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void EvaluateTest4()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
             string name = "name";
             string project = "project";
 
@@ -303,7 +303,7 @@ namespace net.r_eg.vsSBE.Test.Scripts
         [Fact]
         public void EvaluateTest5()
         {
-            UserVariable target = new UserVariable();
+            UVars target = new UVars();
             string name = "name";
             string project = "project";
 
@@ -313,7 +313,7 @@ namespace net.r_eg.vsSBE.Test.Scripts
             Assert.Equal("[E2:val]", target.GetValue(name, project));
         }
 
-        private class UserVariableAccessor: UserVariable
+        private class UserVariableAccessor: UVars
         {
             public new string DefIndex(string name, string project)
             {
