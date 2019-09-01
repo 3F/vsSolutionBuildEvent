@@ -28,7 +28,7 @@ using System;
 namespace net.r_eg.EvMSBuild.Exceptions
 {
     [Serializable]
-    public class IncorrectSyntaxException: UnspecifiedEvMSBuildException
+    public class IncorrectSyntaxException: UnspecEvMSBuildException
     {
         public IncorrectSyntaxException()
         {

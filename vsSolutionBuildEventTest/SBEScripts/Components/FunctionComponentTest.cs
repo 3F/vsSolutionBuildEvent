@@ -1,8 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.SobaScript.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Components;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 {
@@ -13,25 +12,6 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
     [TestClass()]
     public class FunctionComponentTest
     {
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get {
-                return testContextInstance;
-            }
-            set {
-                testContextInstance = value;
-            }
-        }
-
-        /// <summary>
-        ///A test for parse
-        ///</summary>
         [TestMethod()]
         [ExpectedException(typeof(SubtypeNotFoundException))]
         public void parseTest1()
@@ -147,37 +127,37 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[Func hash.MD5()]");
                 Assert.Fail("1");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[Func hash.SHA1()]");
                 Assert.Fail("2");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[Func hash.MD5(test)]");
                 Assert.Fail("3");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[Func hash.SHA1(test)]");
                 Assert.Fail("4");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[Func hash.MD5(\"test\", true)]");
                 Assert.Fail("5");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[Func hash.SHA1(\"test\", true)]");
                 Assert.Fail("6");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using net.r_eg.Varhead;
+using net.r_eg.Varhead.Exceptions;
 using Xunit;
 
 namespace net.r_eg.vsSBE.Test.Scripts
@@ -252,11 +253,11 @@ namespace net.r_eg.vsSBE.Test.Scripts
         {
             UVars target = new UVars();
 
-            Assert.Throws<KeyNotFoundException>(() => {
+            Assert.Throws<DefinitionNotFoundException>(() => {
                 target.Evaluate("name", "project", new Evaluator1(), true);
             });
 
-            Assert.Throws<KeyNotFoundException>(() => {
+            Assert.Throws<DefinitionNotFoundException>(() => {
                 target.Evaluate("name", new Evaluator1(), true);
             });
         }

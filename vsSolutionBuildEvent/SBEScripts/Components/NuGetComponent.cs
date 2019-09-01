@@ -15,16 +15,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Components;
+using net.r_eg.SobaScript.Exceptions;
+using net.r_eg.SobaScript.SNode;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Components.NuGet.GetNuTool;
 using net.r_eg.vsSBE.SBEScripts.Dom;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.SBEScripts.SNode;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
     [Component("NuGet", "Support of NuGet packages")]
-    public class NuGetComponent: Component, IComponent
+    public class NuGetComponent: ComponentAbstract, IComponent
     {
         /// <summary>
         /// GetNuTool core
@@ -34,19 +36,18 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <summary>
         /// Ability to work with data for current component
         /// </summary>
-        public override string Condition
-        {
-            get { return "NuGet "; }
-        }
+        public override string Condition => "NuGet ";
 
-        /// <param name="loader">Initialize with loader</param>
-        public NuGetComponent(IBootloader loader)
-            : base(loader)
+        public NuGetComponent(ISobaScript soba)
+            : base(soba)
         {
 
         }
 
-        public NuGetComponent() { }
+        public NuGetComponent()
+        {
+
+        }
 
         /// <summary>
         /// Handler for current data
@@ -68,7 +69,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 }
             }
 
-            throw new SubtypeNotFoundException("Subtype `{0}` is not found", subtype);
+            throw new SubtypeNotFoundException(subtype);
         }
 
         /// <summary>
@@ -117,7 +118,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return Value.Empty;
             }
 
-            throw new InvalidArgumentException("Incorrect arguments to `gnt.raw(string command)`");
+            throw new PMLevelException(level, "`gnt.raw(string command)`");
         }
     }
 }

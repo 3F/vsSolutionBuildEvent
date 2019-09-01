@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using net.r_eg.EvMSBuild;
 using net.r_eg.vsSBE.Exceptions;
@@ -125,7 +126,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards.Version
                     return steps[type];
                 }
             }
-            throw new NotFoundException("getStep: the type - `{0}` is not found.", type);
+            throw new NotSupportedException($"getStep: the type - `{type}` is not found.");
         }
     }
 }

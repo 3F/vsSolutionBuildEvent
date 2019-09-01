@@ -20,9 +20,9 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using net.r_eg.EvMSBuild;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Components;
 using net.r_eg.Varhead;
-using net.r_eg.vsSBE.SBEScripts;
-using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.UI.WForms.Controls;
 
@@ -30,7 +30,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 {
     using AvalonEditWPF = ICSharpCode.AvalonEdit.TextEditor;
 
-    public partial class ScriptCheckFrm: Form
+    internal partial class ScriptCheckFrm: Form
     {
         /// <summary>
         /// Flag of supporting MSBuild
@@ -48,7 +48,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             /// <summary>
             /// Container of user-variables
             /// </summary>
-            public IUVars uvariable = new UVars();
+            public IUVars uvars = new UVars();
 
             /// <summary>
             /// Work with MSBuild
@@ -58,12 +58,12 @@ namespace net.r_eg.vsSBE.UI.WForms
             /// <summary>
             /// Work with SBE-Scripts
             /// </summary>
-            public ISBEScript script;
+            public ISobaScript script;
 
             /// <summary>
             /// Loader of the IComponent's
             /// </summary>
-            public IBootloader bootloader;
+            public ISobaCLoader cloader;
 
             /// <summary>
             /// Mapper of the available components
@@ -74,12 +74,13 @@ namespace net.r_eg.vsSBE.UI.WForms
             {
                 Log.Trace("Initialization of the clean context for testing.");
 
-                bootloader = new Bootloader(env, uvariable);
-                bootloader.register();
+                var soba = new Soba(MSBuild.MakeEvaluator(env, uvars), uvars);
+                Bootloader._.Configure(soba);
 
-                inspector   = new Inspector(bootloader);
-                script      = new Script(bootloader);
-                msbuild     = MSBuild.MakeEvaluator(env, uvariable);
+                cloader     = soba;
+                inspector   = new Inspector(soba);
+                script      = soba;
+                msbuild     = soba.EvMSBuild;
             }
         }
         private static ToolContext context;
@@ -122,7 +123,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         protected void fillComponents()
         {
             chkListComponents.Items.Clear();
-            foreach(IComponent c in context.bootloader.Registered)
+            foreach(IComponent c in context.cloader.Registered)
             {
                 Type type = c.GetType();
                 if(!Inspector.isComponent(type)) {
@@ -137,7 +138,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             for(int i = 0; i < chkListComponents.Items.Count; ++i)
             {
                 string name = chkListComponents.Items[i].ToString();
-                IComponent found = context.bootloader.Registered.Where(c => c.GetType().Name == name).FirstOrDefault();
+                IComponent found = context.cloader.Registered.Where(c => c.GetType().Name == name).FirstOrDefault();
                 if(found != null) {
                     found.Enabled = (index == i)? newValue : chkListComponents.GetItemChecked(i);
                 }
@@ -149,7 +150,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             listBoxUVariables.Items.Clear();
             richTextBoxUVariables.Text = String.Empty;
 
-            foreach(string var in context.uvariable.Definitions) {
+            foreach(string var in context.uvars.Definitions) {
                 listBoxUVariables.Items.Add(var);
             }
         }
@@ -158,7 +159,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             try {
                 evaluateVariable(ident);
-                return context.uvariable.GetValue(ident);
+                return context.uvars.GetValue(ident);
             }
             catch(Exception ex) {
                 return String.Format("Fail: {0}", ex.Message);
@@ -167,13 +168,13 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         protected void evaluateVariable(string ident)
         {
-            if(!context.uvariable.IsUnevaluated(ident)) {
+            if(!context.uvars.IsUnevaluated(ident)) {
                 return;
             }
 
-            context.uvariable.Evaluate(ident, (IEvaluator)context.script, true);
+            context.uvars.Evaluate(ident, (IEvaluator)context.script, true);
             if(MSBuildSupport) {
-                context.uvariable.Evaluate(ident, (IEvaluator)context.msbuild, false);
+                context.uvars.Evaluate(ident, (IEvaluator)context.msbuild, false);
             }
         }
 
@@ -232,13 +233,13 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(listBoxUVariables.SelectedIndex == -1) {
                 return;
             }
-            context.uvariable.Unset(listBoxUVariables.Text);
+            context.uvars.Unset(listBoxUVariables.Text);
             listBoxUVariables.Items.RemoveAt(listBoxUVariables.SelectedIndex);
         }
 
         private void menuItemUVarUnsetAll_Click(object sender, EventArgs e)
         {
-            context.uvariable.UnsetAll();
+            context.uvars.UnsetAll();
             listBoxUVariables.Items.Clear();
             _lockUVarEditor(richTextBoxUVariables, true);
             richTextBoxUVariables.Text = String.Empty;
@@ -276,7 +277,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                 return;
             }
             _lockUVarEditor(richTextBoxUVariables, true);
-            ((IUVarsExt)context.uvariable).SetEvaluated(listBoxUVariables.Text, richTextBoxUVariables.Text);
+            ((IUVarsExt)context.uvars).SetEvaluated(listBoxUVariables.Text, richTextBoxUVariables.Text);
         }
 
         private void listBoxUVariables_DoubleClick(object sender, EventArgs e)

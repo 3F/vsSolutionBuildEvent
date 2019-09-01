@@ -16,13 +16,15 @@
 */
 
 using System;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Components;
+using net.r_eg.SobaScript.Exceptions;
+using net.r_eg.SobaScript.SNode;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.SBEScripts.SNode;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
@@ -30,36 +32,24 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// All internal operations with vsSBE
     /// </summary>
     [Component("vsSBE", new string[] { "Core" }, "All internal operations with vsSBE")]
-    public class InternalComponent: Component, IComponent
+    public class InternalComponent: ComponentAbstract, IComponent
     {
+        protected IEnvironment env;
+
         /// <summary>
         /// Ability to work with data for current component
         /// </summary>
-        public override string Condition
-        {
-            get { return @"(?:vsSBE|Core)\s"; }
-        }
+        public override string Condition => @"(?:vsSBE|Core)\s";
 
         /// <summary>
         /// Use regex engine
         /// </summary>
-        public override bool CRegex
+        public override bool CRegex => true;
+
+        public InternalComponent(ISobaScript soba, IEnvironment env)
+            : base(soba)
         {
-            get { return true; }
-        }
-
-        /// <param name="loader">Initialization with loader</param>
-        public InternalComponent(IBootloader loader)
-            : base(loader)
-        {
-
-        }
-
-        /// <param name="env">Used environment</param>
-        public InternalComponent(IEnvironment env)
-            : base(env)
-        {
-
+            this.env = env;
         }
 
         /// <summary>
@@ -85,7 +75,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 }
             }
 
-            throw new SubtypeNotFoundException("Subtype `{0}` is not found", subtype);
+            throw new SubtypeNotFoundException(subtype);
         }
 
         /// <param name="pm"></param>
@@ -123,7 +113,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     && pname.type != ArgumentType.EnumOrConst
                     && pname.type != ArgumentType.Mixed))
             {
-                throw new ArgumentPMException(level, "= string name");
+                throw new PMLevelException(level, "= string name");
             }
 
             env.updateStartupProject(pname.data.ToString());
@@ -165,7 +155,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     type = (SolutionEventType)Enum.Parse(typeof(SolutionEventType), etype.Data);
                 }
                 catch(ArgumentException) {
-                    throw new OperandNotFoundException("The event type `{0}` was not found.", etype.Data);
+                    throw new OperandNotFoundException(etype.Data);
                 }
                 return stEventItem(type, pm.pinTo(2));
             }
@@ -214,7 +204,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 evt     = getEventByIndex(type, index);
             }
             else {
-                throw new InvalidArgumentException("Incorrect arguments to `item( string name | integer index )`");
+                throw new PMLevelException(level, "`item( string name | integer index )`");
             }
 
             // .item(...).
@@ -341,10 +331,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 buildType = (BuildType)Enum.Parse(typeof(BuildType), (string)level.Args[0].data);
             }
             else {
-                throw new ArgumentPMException(level, "run([enum context])");
+                throw new PMLevelException(level, "run([enum context])");
             }
 
-            ICommand cmd = new Actions.Command(env, script, msbuild);
+            ICommand cmd = new Actions.Command(env, soba, msbuild);
             Log.Info($"Execute action by user-script: '{evt.Name}'(context: {buildType}) /as '{type}' event");
 
             cmd.Env.BuildType = buildType;
@@ -357,7 +347,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return Settings.Cfg.getEvent(type); //TODO:
             }
             catch(NotFoundException) {
-                throw new NotSupportedOperationException("The event type '{0}' is not supported yet.", type);
+                throw new NotSupportedOperationException($"The event type '{type}' is not supported yet.");
             }
         }
 
@@ -367,8 +357,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns></returns>
         private ISolutionEvent getEventByName(SolutionEventType type, string name, out int index)
         {
-            if(String.IsNullOrWhiteSpace(name)) {
-                throw new NotFoundException("The name of event type is null or empty.");
+            if(string.IsNullOrWhiteSpace(name)) {
+                throw new ArgumentNullException(nameof(name));
             }
 
             index = -1;
@@ -379,7 +369,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 }
             }
 
-            throw new NotFoundException("The event type '{0}' with name '{1}' is not exists.", type, name);
+            throw new NotFoundException(name, $"Event type `{type}`.", type);
         }
 
         private ISolutionEvent getEventByIndex(SolutionEventType type, int index)
@@ -389,7 +379,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return evt[index - 1]; // starts with 1
             }
             catch(IndexOutOfRangeException) {
-                throw new NotFoundException("Incorrect index '{0}' for event type - `{1}`  /{2}", index, type, evt.Length);
+                throw new NotFoundException(type, $"For index '{index}'  /{evt.Length}", index, evt.Length);
             }
         }
     }

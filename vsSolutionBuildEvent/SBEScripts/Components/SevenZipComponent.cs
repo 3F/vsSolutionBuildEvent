@@ -19,11 +19,14 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Components;
+using net.r_eg.SobaScript.Exceptions;
+using net.r_eg.SobaScript.SNode;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.SBEScripts.SNode;
 using SevenZip;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
@@ -32,7 +35,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// Support of archives via 7-Zip engine
     /// </summary>
     [Component("7z", "7-Zip.\nFile archiver with high compression ratio.\nwww.7-zip.org")]
-    public class SevenZipComponent: Component, IComponent
+    public class SevenZipComponent: ComponentAbstract, IComponent
     {
         /// <summary>
         /// Name of library with full 7-Zip engine for work with all available formats.
@@ -57,14 +60,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <summary>
         /// Ability to work with data for current component
         /// </summary>
-        public override string Condition
-        {
-            get { return "7z "; }
-        }
+        public override string Condition => "7z ";
 
-        /// <param name="loader">Initialize with loader</param>
-        public SevenZipComponent(IBootloader loader)
-            : base(loader)
+        public SevenZipComponent(ISobaScript soba)
+            : base(soba)
         {
             initLib();
         }
@@ -82,7 +81,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         public override string parse(string data)
         {
             if(!isReady) {
-                throw new ComponentException("`{0}` is not ready for work with 7-zip engine. Details in log.", ToString());
+                throw new ExternalException($"`{ToString()}` is not ready for work with 7-zip engine. Details in log.");
             }
 
             var point       = entryPoint(data);
@@ -104,7 +103,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 }
             }
 
-            throw new SubtypeNotFoundException("Subtype `{0}` is not found", subtype);
+            throw new SubtypeNotFoundException(subtype);
         }
 
         protected void initLib()
@@ -187,7 +186,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                             pm.pinTo(1));
             }
 
-            throw new ArgumentPMException(level, "pack.files(object files, string output [, object except][, enum format, enum method, integer level])");
+            throw new PMLevelException(level, "pack.files(object files, string output [, object except][, enum format, enum method, integer level])");
         }
 
         /// <summary>
@@ -298,20 +297,20 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         {
             Log.Trace("stPackFiles: `{0}` : type({1}), method({2}), level({3})", name, type, method, rate);
 
-            if(String.IsNullOrWhiteSpace(name)) {
-                throw new InvalidArgumentException("The output name of archive is empty.");
+            if(string.IsNullOrWhiteSpace(name)) {
+                throw new ArgumentException("The output name of archive is empty.");
             }
 
             if(files.Length < 1) {
-                throw new InvalidArgumentException("List of files is empty.");
+                throw new PMArgException(files, "List of files cannot be empty.");
             }
 
             if(files.Any(p => p.type != ArgumentType.StringDouble)) {
-                throw new InvalidArgumentException("Incorrect data from input files. Define as {\"f1\", \"f2\", ...}");
+                throw new PMArgException(files, "Define as {\"f1\", \"f2\", ...}");
             }
 
             if(except != null && except.Any(p => p.type != ArgumentType.StringDouble)) {
-                throw new InvalidArgumentException("Incorrect data from the 'except' argument. Define as {\"f1\", \"f2\", ...}");
+                throw new PMArgException(except, "'except' argument. Define as {\"f1\", \"f2\", ...}");
             }
 
             // additional checking of input files. 
@@ -330,7 +329,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             if(input.Length < 1) {
-                throw new InvalidArgumentException("The input files was not found. Check your mask and the exception list if used.");
+                throw new PMArgException(files, "The input files was not found. Check your mask and the exception list if used.");
             }
 
             SevenZipCompressor zip = new SevenZipCompressor()
@@ -379,7 +378,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                             pm.pinTo(1));
             }
 
-            throw new ArgumentPMException(level, "pack.directory(string dir, string output [, enum format, enum method, integer level])");
+            throw new PMLevelException(level, "pack.directory(string dir, string output [, enum format, enum method, integer level])");
         }
 
         /// <summary>
@@ -432,12 +431,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         {
             Log.Trace("stPackDirectory: `{0}` -> `{1}` : type({2}), method({3}), level({4})", dir, name, type, method, rate);
 
-            if(String.IsNullOrWhiteSpace(dir)) {
-                throw new InvalidArgumentException("The path to directory is empty.");
+            if(string.IsNullOrWhiteSpace(dir)) {
+                throw new ArgumentException("The path to directory is empty.");
             }
 
-            if(String.IsNullOrWhiteSpace(name)) {
-                throw new InvalidArgumentException("The output name of archive is empty.");
+            if(string.IsNullOrWhiteSpace(name)) {
+                throw new ArgumentException("The output name of archive is empty.");
             }
 
             string fullpath = location(dir);
@@ -445,7 +444,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             // additional checking of input directory. 
             // The SevenZipSharp creates empty file of archive even if the input directory is not exist o_O
             if(!Directory.Exists(fullpath)) {
-                throw new NotFoundException("Directory `{0}` is not found. Looked as `{1}`", dir, fullpath);
+                throw new NotFoundException(dir, $"Directory inside `{fullpath}`", fullpath);
             }
 
             SevenZipCompressor zip = new SevenZipCompressor()
@@ -572,7 +571,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return stUnpackMethod(pm, (string)level.Args[0].data, null, (bool)level.Args[1].data, (string)level.Args[2].data);
             }
 
-            throw new InvalidArgumentException("Incorrect arguments to `unpack(string file [, string output][, boolean delete][, string pwd])`");
+            throw new PMLevelException(level, "`unpack(string file [, string output][, boolean delete][, string pwd])`");
         }
 
         /// <summary>
@@ -594,8 +593,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             if(output == null) {
                 output = getDirectoryFromFile(file); // same path
             }
-            else if(String.IsNullOrWhiteSpace(output)) {
-                throw new InvalidArgumentException("The `output` argument can't be empty.");
+            else if(string.IsNullOrWhiteSpace(output)) {
+                throw new ArgumentException("The `output` argument can't be empty.");
             }
             else {
                 output = location(output);
@@ -617,7 +616,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     zip.ExtractArchive(output);
                 }
                 catch(SevenZipArchiveException ex) {
-                    throw new SBEException("Failed extraction data from archive. Check also your password if it's required.", ex);
+                    throw new UnspecSBEException("Failed extraction data from archive. Check also your password if it's required.", ex);
                 }
             }
 
@@ -672,7 +671,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return stCheckMethod(pm, (string)level.Args[0].data, (string)level.Args[1].data);
             }
 
-            throw new InvalidArgumentException("Incorrect arguments to `check(string file [, string pwd])`");
+            throw new PMLevelException(level, "`check(string file [, string pwd])`");
         }
 
         /// <summary>
@@ -700,7 +699,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     return Value.from(zip.Check());
                 }
                 catch(SevenZipArchiveException ex) {
-                    throw new SBEException("Failed extraction data from archive. Check also your password if it's required.", ex);
+                    throw new UnspecSBEException("Failed extraction data from archive. Check also your password if it's required.", ex);
                 }
             }
         }
@@ -727,21 +726,35 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns></returns>
         private string pathToFile(string file, int idx = -1)
         {
-            if(String.IsNullOrWhiteSpace(file)) {
-                throw new InvalidArgumentException("File name is empty. {0}", 
-                                                    (idx != -1)? String.Format("Fail in '{0}' position.", idx) : "");
+            if(string.IsNullOrWhiteSpace(file))
+            {
+                throw new ArgumentException(
+                    $"File name is empty. {GetFailedInMsg(idx)}"
+                );
             }
 
             string fullpath = location(file);
 
-            if(fullpath.IndexOf('*') == -1 && !File.Exists(fullpath)) { // check existence of file if it's non-mask
-                throw new NotFoundException("File `{0}` is not found. Looked as `{1}`. {2}", 
-                                                file, 
-                                                fullpath, 
-                                                (idx != -1)? String.Format("Fail in '{0}' position.", idx) : "");
+            // check existence of file if it's non-mask
+            if(fullpath.IndexOf('*') == -1 && !File.Exists(fullpath))
+            {
+                throw new NotFoundException
+                (
+                    file,
+                    $"File inside `{fullpath}`; {GetFailedInMsg(idx)}",
+                    fullpath, idx
+                );
             }
 
             return fullpath;
+        }
+
+        private string GetFailedInMsg(int idx)
+        {
+            if(idx == -1) {
+                return string.Empty;
+            }
+            return $"Failed in '{idx}' position.";
         }
     }
 }

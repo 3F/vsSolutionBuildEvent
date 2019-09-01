@@ -15,10 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Components;
+using net.r_eg.SobaScript.Exceptions;
+using net.r_eg.SobaScript.SNode;
 using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.SBEScripts.SNode;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
@@ -26,24 +28,23 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// Mixed supported functions
     /// </summary>
     [Component("Func", "Mixed functions.")]
-    public class FunctionComponent: Component, IComponent
+    public class FunctionComponent: ComponentAbstract, IComponent
     {
         /// <summary>
         /// Ability to work with data for current component
         /// </summary>
-        public override string Condition
-        {
-            get { return "Func "; }
-        }
+        public override string Condition => "Func ";
 
-        /// <param name="loader">Initialize with loader</param>
-        public FunctionComponent(IBootloader loader)
-            : base(loader)
+        public FunctionComponent(ISobaScript soba)
+            : base(soba)
         {
 
         }
 
-        public FunctionComponent() { }
+        public FunctionComponent()
+        {
+
+        }
 
         /// <summary>
         /// Handler for current data
@@ -65,7 +66,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 }
             }
 
-            throw new SubtypeNotFoundException("Subtype `{0}` is not found", subtype);
+            throw new SubtypeNotFoundException(subtype);
         }
 
         /// <summary>

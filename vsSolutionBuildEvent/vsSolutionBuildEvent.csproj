@@ -298,7 +298,7 @@
     <Compile Include="Actions\ActionTargets.cs" />
     <Compile Include="Actions\ActionScript.cs" />
     <Compile Include="Actions\ActionInterpreter.cs" />
-    <Compile Include="Actions\Connection.cs" />
+    <Compile Include="Actions\Binder.cs" />
     <Compile Include="Actions\DTEOperation.cs" />
     <Compile Include="Actions\HProcess.cs" />
     <Compile Include="Actions\IAction.cs" />
@@ -318,6 +318,7 @@
     <Compile Include="Extensions\ProjectExtension.cs" />
     <Compile Include="Extensions\IVsHierarchyExtension.cs" />
     <Compile Include="EnvAbstract.cs" />
+    <Compile Include="Bootloader.cs" />
     <Compile Include="MSBuild.cs" />
     <Compile Include="IPkg.cs" />
     <Compile Include="StatusToolCommand.cs" />
@@ -359,16 +360,6 @@
     <Compile Include="SBEScripts\Components\NuGet\GetNuTool\Core.cs" />
     <Compile Include="SBEScripts\Components\NuGet\GetNuTool\GNT.cs" />
     <Compile Include="SBEScripts\Components\SevenZipComponent.cs" />
-    <Compile Include="SBEScripts\Exceptions\IncorrectNodeException.cs" />
-    <Compile Include="SBEScripts\Exceptions\ArgumentPMException.cs" />
-    <Compile Include="SBEScripts\SNode\EvalType.cs" />
-    <Compile Include="SBEScripts\SNode\ArgumentType.cs" />
-    <Compile Include="SBEScripts\SNode\IPM.cs" />
-    <Compile Include="SBEScripts\SNode\Argument.cs" />
-    <Compile Include="SBEScripts\SNode\Level.cs" />
-    <Compile Include="SBEScripts\SNode\LevelType.cs" />
-    <Compile Include="SBEScripts\SNode\ILevel.cs" />
-    <Compile Include="SBEScripts\SNode\PM.cs" />
     <Compile Include="UI\WForms\Controls\FileTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -463,12 +454,6 @@
     <Compile Include="Events\EventProcess.cs" />
     <Compile Include="Events\IEventProcess.cs" />
     <Compile Include="Events\IExecutionOrder.cs" />
-    <Compile Include="Exceptions\IncorrectSyntaxException.cs" />
-    <Compile Include="Exceptions\MismatchException.cs" />
-    <Compile Include="Exceptions\InvalidArgumentException.cs" />
-    <Compile Include="Exceptions\LimitException.cs" />
-    <Compile Include="Exceptions\NotFoundException.cs" />
-    <Compile Include="Exceptions\ComponentException.cs" />
     <Compile Include="Extensions\ArrayExtension.cs" />
     <Compile Include="Extensions\ObjectExtension.cs" />
     <Compile Include="IEnvironmentExt.cs" />
@@ -477,13 +462,10 @@
     <Compile Include="IsolatedEnv.cs" />
     <Compile Include="JsonSerializationBinder.cs" />
     <Compile Include="OW.cs" />
-    <Compile Include="SBEScripts\Bootloader.cs" />
-    <Compile Include="SBEScripts\Components\Component.cs" />
     <Compile Include="SBEScripts\Dom\CompletionData.cs" />
     <Compile Include="SBEScripts\Dom\ComponentAttribute.cs" />
     <Compile Include="SBEScripts\Dom\IAttrDomLevelA.cs" />
     <Compile Include="SBEScripts\Dom\DefinitionAttribute.cs" />
-    <Compile Include="SBEScripts\CValueType.cs" />
     <Compile Include="SBEScripts\Dom\IAttrDomLevelB.cs" />
     <Compile Include="SBEScripts\Dom\Icon.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -497,14 +479,6 @@
     <Compile Include="SBEScripts\Dom\NodeIdent.cs" />
     <Compile Include="SBEScripts\Dom\NodeInfo.cs" />
     <Compile Include="SBEScripts\Dom\DomParser.cs" />
-    <Compile Include="SBEScripts\Exceptions\ScriptException.cs" />
-    <Compile Include="SBEScripts\Exceptions\SelectorMismatchException.cs" />
-    <Compile Include="SBEScripts\Exceptions\SyntaxIncorrectException.cs" />
-    <Compile Include="SBEScripts\Exceptions\SubtypeNotFoundException.cs" />
-    <Compile Include="SBEScripts\Exceptions\OperandNotFoundException.cs" />
-    <Compile Include="SBEScripts\Exceptions\OperationNotFoundException.cs" />
-    <Compile Include="SBEScripts\IBootloader.cs" />
-    <Compile Include="SBEScripts\Exceptions\NotSupportedOperationException.cs" />
     <Compile Include="IMatchWords.cs" />
     <Compile Include="Events\IModeFile.cs" />
     <Compile Include="Events\IModeInterpreter.cs" />
@@ -518,17 +492,15 @@
     <Compile Include="SBEScripts\Components\DTEComponent.cs" />
     <Compile Include="SBEScripts\Components\BuildComponent.cs" />
     <Compile Include="SBEScripts\Components\UserVariableComponent.cs" />
-    <Compile Include="SBEScripts\Components\IComponent.cs" />
     <Compile Include="SBEScripts\Components\InternalComponent.cs" />
     <Compile Include="Actions\IStatus.cs" />
     <Compile Include="Actions\Status.cs" />
-    <Compile Include="SBEScripts\ISBEScript.cs" />
     <Compile Include="MatchWords.cs" />
     <Compile Include="Events\ModeFile.cs" />
     <Compile Include="Events\ModeInterpreter.cs" />
     <Compile Include="Events\ModeOperation.cs" />
     <Compile Include="Events\SolutionEventType.cs" />
-    <Compile Include="Exceptions\SBEException.cs" />
+    <Compile Include="Exceptions\UnspecSBEException.cs" />
     <Compile Include="IEnvironment.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Receiver\Output\Matcher.cs" />
@@ -539,11 +511,7 @@
     <Compile Include="Events\SBEEventEW.cs" />
     <Compile Include="Events\SBETransmitter.cs" />
     <Compile Include="SBEScripts\Dom\PropertyAttribute.cs" />
-    <Compile Include="SBEScripts\RPattern.cs" />
-    <Compile Include="SBEScripts\Script.cs" />
     <Compile Include="SBEScripts\Dom\MethodAttribute.cs" />
-    <Compile Include="SBEScripts\StringHandler.cs" />
-    <Compile Include="SBEScripts\Value.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
     <Compile Include="UI\Plain\State.cs" />
@@ -812,6 +780,12 @@
     <ProjectReference Include="..\MvsSln\MvsSln\MvsSln.csproj">
       <Project>{f905dfb2-2e67-4ff7-9001-924f6f2d645d}</Project>
       <Name>MvsSln</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SobaScript\SobaScript.csproj">
+      <Project>{ba838edb-52e0-440d-866a-b9c48f3efb1d}</Project>
+      <Name>SobaScript</Name>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' != 'true' ">TargetFramework=net40</AdditionalProperties>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' == 'true' ">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\Varhead\Varhead.csproj">
       <Project>{05265510-62d5-42a8-9975-acc02823f0c8}</Project>

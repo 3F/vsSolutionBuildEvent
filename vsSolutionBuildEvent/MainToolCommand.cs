@@ -122,7 +122,7 @@ namespace net.r_eg.vsSBE
                 if(UI.Util.focusForm(configFrm)) {
                     return;
                 }
-                configFrm = new UI.WForms.EventsFrm(apievt.Bootloader);
+                configFrm = new UI.WForms.EventsFrm(Bootloader._);
                 configFrm.Show();
             }
             catch(Exception ex) {

@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using net.r_eg.vsSBE.Exceptions;
 
 namespace net.r_eg.vsSBE.Configuration.User
@@ -40,7 +41,7 @@ namespace net.r_eg.vsSBE.Configuration.User
                     }
                     return data.Cache[value.Guid];
                 }
-                throw new InvalidArgumentException("Configuration Manager: not supported type '{0}'", value.Type);
+                throw new ArgumentException("Configuration Manager: not supported type '{value.Type}'");
             }
         }
 
@@ -112,11 +113,11 @@ namespace net.r_eg.vsSBE.Configuration.User
         protected void checkOnNull()
         {
             if(data == null) {
-                throw new InvalidArgumentException("Configuration Manager: container is not initialized.");
+                throw new ArgumentException("Configuration Manager: container is not initialized.");
             }
 
             if(value == null) {
-                throw new InvalidArgumentException("Configuration Manager: IUserValue value is not initialized.");
+                throw new ArgumentException("Configuration Manager: IUserValue value is not initialized.");
             }
         }
     }

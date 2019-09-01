@@ -17,6 +17,7 @@
 
 using System;
 using System.Linq;
+using net.r_eg.SobaScript;
 
 namespace net.r_eg.vsSBE.SBEScripts.Dom
 {

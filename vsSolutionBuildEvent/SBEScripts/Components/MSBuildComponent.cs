@@ -17,25 +17,23 @@
 
 using System;
 using System.Text.RegularExpressions;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Components;
+using net.r_eg.SobaScript.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
     [Definition("$()", "Advanced evaluation with MSBuild engine.")]
-    public class MSBuildComponent: Component, IComponent
+    public class MSBuildComponent: ComponentAbstract, IComponent
     {
         /// <summary>
         /// Ability to work with data for current component
         /// </summary>
-        public override string Condition
-        {
-            get { return "$("; }
-        }
-        
-        /// <param name="loader">Initialization with loader</param>
-        public MSBuildComponent(IBootloader loader)
-            : base(loader)
+        public override string Condition => "$(";
+
+        public MSBuildComponent(ISobaScript soba)
+            : base(soba)
         {
 
         }
@@ -53,7 +51,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                                RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
 
             if(!m.Success) {
-                throw new SyntaxIncorrectException("'{0}' Failed `{1}`", ToString(), data);
+                throw new IncorrectSyntaxException($"'{ToString()}' Failed `{data}`");
             }
 
             string type = m.Groups[1].Value;

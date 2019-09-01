@@ -28,7 +28,7 @@ using System;
 namespace net.r_eg.EvMSBuild.Exceptions
 {
     [Serializable]
-    public class PossibleLoopException: UnspecifiedEvMSBuildException
+    public class PossibleLoopException: UnspecEvMSBuildException
     {
         public PossibleLoopException()
         {

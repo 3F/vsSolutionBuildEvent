@@ -105,7 +105,7 @@ namespace net.r_eg.vsSBE.Actions
 
             string errors = p.StandardError.ReadToEnd();
             if(errors.Length > 0) {
-                throw new ComponentException(reEncodeString(errors));
+                throw new ExternalException(reEncodeString(errors));
             }
 
             string ret = reEncodeString(p.StandardOutput.ReadToEnd());

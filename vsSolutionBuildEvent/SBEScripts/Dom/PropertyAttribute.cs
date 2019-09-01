@@ -16,6 +16,7 @@
 */
 
 using System;
+using net.r_eg.SobaScript;
 
 namespace net.r_eg.vsSBE.SBEScripts.Dom
 {

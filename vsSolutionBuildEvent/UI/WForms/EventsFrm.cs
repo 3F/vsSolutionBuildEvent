@@ -20,12 +20,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using net.r_eg.EvMSBuild;
+using net.r_eg.SobaScript;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Events.CommandEvents;
 using net.r_eg.vsSBE.Extensions;
-using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.UI.WForms.Components;
 using net.r_eg.vsSBE.UI.WForms.Controls;
@@ -38,7 +37,7 @@ namespace net.r_eg.vsSBE.UI.WForms
     /// ...when it's only started and when we had no any big plans before...
     /// Thus, for all new, I strongly recommend MVVM or similar pattern to improve IoC and more.
     /// </summary>
-    public partial class EventsFrm: Form, ITransfer
+    internal partial class EventsFrm: Form, ITransfer
     {
         public const int WM_SYSCOMMAND  = 0x0112;
         public const int SC_RESTORE     = 0xF120;
@@ -168,16 +167,16 @@ namespace net.r_eg.vsSBE.UI.WForms
             MessageBox.Show(String.Format("The new action `{0}`:\n`{1}` has been added.", evt.Name, evt.Caption), "New action");
         }
 
-        /// <param name="bootloader"></param>
-        public EventsFrm(IBootloader bootloader)
+        /// <param name="loader"></param>
+        public EventsFrm(Bootloader loader)
         {
             InitializeComponent();
             defaultSizes();
             updateColors();
 
-            IInspector inspector    = new Inspector(bootloader);
-            logic                   = new Logic.Events(bootloader, inspector);
-            textEditor.codeCompletionInit(inspector, MSBuild.MakeEvaluator(bootloader.Env, bootloader.UVariable));
+            IInspector inspector    = new Inspector(loader.Soba);
+            logic                   = new Logic.Events(loader, inspector);
+            textEditor.codeCompletionInit(inspector, loader.Soba.EvMSBuild);
             
             Icon = Resource.Package_32;
             toolTip.SetToolTip(pictureBoxWarnWait, Resource.StringWarnForWaiting);
@@ -1553,7 +1552,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(Util.focusForm(frmWizVersion)) {
                 return;
             }
-            frmWizVersion = new Wizards.VersionFrm(logic.Bootloader, this);
+            frmWizVersion = new Wizards.VersionFrm(logic.Loader, this);
             frmWizVersion.Show();
         }
 

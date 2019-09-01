@@ -1,8 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using net.r_eg.vsSBE.Exceptions;
+using net.r_eg.SobaScript.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Components;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 {
@@ -59,7 +58,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[NuGet gnt.raw()]");
                 Assert.Fail("1");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[NuGet gnt.raw(\"the is not a correct command\")]");

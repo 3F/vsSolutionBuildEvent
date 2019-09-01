@@ -2,65 +2,42 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.EvMSBuild;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Exceptions;
 using net.r_eg.Varhead;
-using net.r_eg.vsSBE.SBEScripts;
+using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Dom;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts
 {
-    /// <summary>
-    ///This is a test class for ScriptTest and is intended
-    ///to contain all ScriptTest Unit Tests
-    ///</summary>
-    [TestClass()]
+    [TestClass]
     public class ScriptTest
     {
-        private static readonly IEnvironment env    = new Environment((EnvDTE80.DTE2)null);
-        private static IUVars uvariable      = new UVars();
+        private static readonly IEnvironment env = new Environment((EnvDTE80.DTE2)null);
+        private static IUVars uvariable = new UVars();
 
-        /// <summary>
-        /// Use ClassInitialize to run code before running the first test in the class
-        /// </summary>
-        /// <param name="testContext"></param>
-        [ClassInitialize()]
-        public static void ScriptTestInitialize(TestContext testContext)
-        {
-
-        }
-
-        /// <summary>
-        ///A test for parse
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void parseTest()
         {
-            IEnvironment env = new net.r_eg.vsSBE.Environment((EnvDTE80.DTE2)null);
-            Script target = new Script(env, new UVars());
+            Soba target = new Soba();
 
             string expected = "#[( 2 > 1) { #[var name = value] } else { #[var name = value2] }]";
             string actual   = target.parse("##[( 2 > 1) { #[var name = value] } else { #[var name = value2] }]");
             Assert.AreEqual(expected, actual);
         }
 
-        /// <summary>
-        ///A test for parse
-        ///</summary>
-        [TestMethod()]
-        [ExpectedException(typeof(SelectorMismatchException))]
+        [TestMethod]
+        [ExpectedException(typeof(MismatchException))]
         public void parseTest2()
         {
-            Script target = new Script(env, new UVars());
+            var target = StubSoba.MakeNew();
             target.parse("#[NotRealComponent prop.Test]");
         }
 
-        /// <summary>
-        ///A test for parse
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void parseTest3()
         {
-            Script target = new Script(env, new UVars());
+            var target = StubSoba.MakeNew();
             Assert.AreEqual("[( 2 > 1) { body }]", target.parse("[( 2 > 1) { body }]"));
             Assert.AreEqual("( 2 > 1) { body }", target.parse("( 2 > 1) { body }"));
             Assert.AreEqual(" test ", target.parse(" test "));
@@ -68,24 +45,18 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
             Assert.AreEqual(" \"test\" ", target.parse(" \"test\" "));
         }
 
-        /// <summary>
-        ///A test for parse
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void parseTest4()
         {
-            Script target = new Script(env, new UVars());
+            var target = StubSoba.MakeNew();
             Assert.AreEqual("B4 ", target.parse("#[(true) {\n #[(1 > 2){ B3 } \n else {B4} ] } else {\n B2 }]"));
         }
 
-        /// <summary>
-        ///A test for parse
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void parseTest5()
         {
             uvariable.UnsetAll();
-            Script target = new Script(env, uvariable);
+            var target = StubSoba.MakeNew(uvariable);
 
             target.parse("#[( 2 < 1) { #[var name = value] } else { #[var name = value2] }]");
             Assert.AreEqual(1, uvariable.Variables.Count());
@@ -95,55 +66,43 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
             }
         }
 
-        /// <summary>
-        ///A test for parse
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void parseTest6()
         {
             uvariable.UnsetAll();
-            Script target = new Script(env, uvariable);
+            var target = StubSoba.MakeNew(uvariable);
 
             Assert.AreEqual(String.Empty, target.parse("#[\" #[var name = value] \"]"));
             Assert.AreEqual(0, uvariable.Variables.Count());
         }
 
-        /// <summary>
-        ///A test for container
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void containerTest1()
         {
-            var uvar        = new UVars();
-            Script target   = new Script(env, uvar);
+            var uvar    = new UVars();
+            var target  = StubSoba.MakeNew(uvar);
 
             Assert.AreEqual("ne]", target.parse("#[var name = value\nli]ne]"));
             Assert.AreEqual(1, uvar.Variables.Count());
             Assert.AreEqual("value\nli", uvar.GetValue("name"));
         }
 
-        /// <summary>
-        ///A test for container
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void containerTest2()
         {
-            var uvar = new UVars();
-            Script target = new Script(env, uvar);
+            var uvar    = new UVars();
+            var target  = StubSoba.MakeNew(uvar);
 
-            Assert.AreEqual(String.Empty, target.parse("#[var name = <#data>value\nli]ne</#data>]"));
+            Assert.AreEqual(string.Empty, target.parse("#[var name = <#data>value\nli]ne</#data>]"));
             Assert.AreEqual(1, uvar.Variables.Count());
             Assert.AreEqual("value\nli]ne", uvar.GetValue("name"));
         }
 
-        /// <summary>
-        ///A test for container
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void containerTest3()
         {
             var uvar = new UVars();
-            Script target = new Script(env, uvar);
+            var target  = StubSoba.MakeNew(uvar);
 
             uvar.SetVariable("mx", null, "<#data>value\nli]ne</#data>");
             uvar.Evaluate("mx", null, new EvaluatorBlank(), true);
@@ -153,14 +112,11 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
             Assert.AreEqual("value\nli]ne", uvar.GetValue("name"));
         }
 
-        /// <summary>
-        ///A test for container
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void containerTest4()
         {
-            var uvar        = new UVars();
-            Script target   = new Script(env, uvar);
+            var uvar    = new UVars();
+            var target  = StubSoba.MakeNew(uvar);
 
             uvar.SetVariable("mx", null, "<#data>value\nli]ne</#data>");
             uvar.Evaluate("mx", null, new EvaluatorBlank(), true);
@@ -170,14 +126,11 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
             Assert.AreEqual("value\nli]ne|value\nli]ne", uvar.GetValue("name"));
         }
 
-        /// <summary>
-        ///A test for container
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void containerTest5()
         {
-            var uvar        = new UVars();
-            Script target   = new Script(env, uvar);
+            var uvar    = new UVars();
+            var target  = StubSoba.MakeNew(uvar);
 
             uvar.SetVariable("mx", null, "<#data>value\nli]ne</#data>");
             uvar.Evaluate("mx", null, new EvaluatorBlank(), true);
@@ -187,28 +140,22 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
             Assert.AreEqual("value\nli]ne", uvar.GetValue("name"));
         }
 
-        /// <summary>
-        ///A test for container
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void containerTest6()
         {
-            var uvar = new UVars();
-            Script target = new Script(env, uvar);
+            var uvar    = new UVars();
+            var target  = StubSoba.MakeNew(uvar);
 
             Assert.AreEqual(String.Empty, target.parse("#[var name = left [box1] right]"));
             Assert.AreEqual(1, uvar.Variables.Count());
             Assert.AreEqual("left [box1] right", uvar.GetValue("name"));
         }
 
-        /// <summary>
-        ///A test for container
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void containerTest7()
         {
-            var uvar = new UVars();
-            Script target = new Script(env, uvar);
+            var uvar    = new UVars();
+            var target  = StubSoba.MakeNew(uvar);
 
             Assert.AreEqual("#[var name = left [box1 right]", target.parse("#[var name = left [box1 right]"));
             Assert.AreEqual(0, uvar.Variables.Count());
@@ -218,14 +165,11 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
             Assert.AreEqual("\"left [box1 right\"", uvar.GetValue("name"));
         }
 
-        /// <summary>
-        ///A test for container
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void containerTest8()
         {
             var uvar = new UVars();
-            Script target = new Script(env, uvar);
+            var target  = StubSoba.MakeNew(uvar);
 
             Assert.AreEqual("test - cc", target.parse("#[var sres = <#data>Data1</#data>]test - cc#[var sres2 = <#data>Data2</#data>]"));
             Assert.AreEqual(2, uvar.Variables.Count());
@@ -233,14 +177,11 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
             Assert.AreEqual("Data2", uvar.GetValue("sres2"));
         }
 
-        /// <summary>
-        ///A test for container
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void containerTest9()
         {
             var uvar = new UVars();
-            Script target = new Script(env, uvar);
+            var target  = StubSoba.MakeNew(uvar);
 
             Assert.AreEqual("test - cc", target.parse("#[var sres = <#data>Data1\n\nEnd</#data>]test - cc#[var sres2 = <#data>Data2\n\nEnd</#data>]"));
             Assert.AreEqual(2, uvar.Variables.Count());
@@ -248,78 +189,63 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
             Assert.AreEqual("Data2\n\nEnd", uvar.GetValue("sres2"));
         }
 
-        /// <summary>
-        ///A test for parse - unlooping with MSBuild
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         [ExpectedException(typeof(Varhead.Exceptions.LimitException))]
         public void parseMSBuildUnloopingTest1()
         {
             var env     = new StubEnv();
             var uvar    = new UVars();
             var msbuild = new EvMSBuilder(env, uvar);
-            var sbe     = new Script(env, uvar);
+            var sbe     = StubSoba.MakeNew(uvar);
 
             // p4 -> p2 -> p3 -> p1 -> p4
             msbuild.Eval(sbe.parse("#[var p1 = $$(p2)]#[var p2 = $$(p1)]#[var p3 = $(p2)]", true));
         }
 
-        /// <summary>
-        ///A test for parse - unlooping with MSBuild
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         [ExpectedException(typeof(Varhead.Exceptions.LimitException))]
         public void parseMSBuildUnloopingTest2()
         {
             var env     = new StubEnv();
             var uvar    = new UVars();
             var msbuild = new EvMSBuilder(env, uvar);
-            var sbe     = new Script(env, uvar);
+            var sbe     = StubSoba.MakeNew(uvar);
 
             msbuild.Eval(sbe.parse("#[var p1 = $$(p4)]#[var p2 = $$(p3)]#[var p3 = $$(p1)]#[var p4 = $(p2)]", true));
         }
 
-        /// <summary>
-        ///A test for parse - unlooping with MSBuild
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void parseMSBuildUnloopingTest3()
         {
             var env     = new StubEnv();
             var uvar    = new UVars();
             var msbuild = new EvMSBuilder(env, uvar);
-            var sbe     = new Script(env, uvar);
+            var sbe     = StubSoba.MakeNew(uvar);
 
             msbuild.Eval(sbe.parse("#[var p2 = $$(p1)]#[var p6 = $$(p2)]#[var p7 = $$(p5)]#[var p5 = $(p6)]", true));
             Assert.IsTrue(true); // no problems for stack & heap
         }
 
-        /// <summary>
-        ///A test for parse - unlooping with MSBuild
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         [ExpectedException(typeof(Varhead.Exceptions.LimitException))]
         public void parseMSBuildUnloopingTest4()
         {
             var env     = new StubEnv();
             var uvar    = new UVars();
             var msbuild = new EvMSBuilder(env, uvar);
-            var sbe     = new Script(env, uvar);
+            var sbe     = StubSoba.MakeNew(uvar);
 
             msbuild.Eval(sbe.parse("#[var p2 = $$(p1) to $$(p8), and new ($$(p7.Replace('1', '2'))) s$$(p9)]#[var p6 = $$(p2)]#[var p7 = $$(p5)]#[var p5 = $(p6)]", true));
             Assert.IsTrue(true); // no problems for stack & heap
         }
 
-        /// <summary>
-        ///A test for parse - unlooping with MSBuild
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void parseMSBuildUnloopingTest5()
         {
             var env     = new StubEnv();
             var uvar    = new UVars();
             var msbuild = new EvMSBuilder(env, uvar);
-            var sbe     = new Script(env, uvar);
+            var sbe     = StubSoba.MakeNew(uvar);
 
             msbuild.Eval(sbe.parse("#[var test = $$(test)]#[var test = 1 $(test) 2]", true));
 
@@ -330,16 +256,13 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
             msbuild.Eval(sbe.parse("#[var test = $(test)]#[var test = 1 $(test) 2]", true));
         }
 
-        /// <summary>
-        ///A test for parse - unlooping with MSBuild
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void parseMSBuildUnloopingTest6()
         {
             var env     = new StubEnv();
             var uvar    = new UVars();
             var msbuild = new EvMSBuilder(env, uvar);
-            var sbe     = new Script(env, uvar);
+            var sbe     = StubSoba.MakeNew(uvar);
 
             string data = "#[var test = #[($(test) == \""+ EvMSBuilder.UNDEF_VAL + "\"){0}else{$(test)}]]#[var test]";
             Assert.AreEqual("0", msbuild.Eval(sbe.parse(data, true)));
@@ -350,22 +273,19 @@ namespace net.r_eg.vsSBE.Test.SBEScripts
             Assert.AreEqual("7", msbuild.Eval(sbe.parse(data, true)));
         }
 
-        /// <summary>
-        ///A test for selector
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void selectorTest1()
         {
-            var target  = new Script(new StubEnv(), new UVars());
-            var dom     = new Inspector(target.Bootloader);
+            var target  = new Soba(new UVars());
+            var dom     = new Inspector(target);
             
             // Compliance Test - entry point to component + CRegex flag
             foreach(var c in dom.Root)
             {
                 try {
-                    target.parse(String.Format("#[{0} ]", c.Name));
+                    target.parse($"#[{c.Name} ]");
                 }
-                catch(SelectorMismatchException ex) {
+                catch(MismatchException ex) {
                     Assert.Fail("`{0}` <- `{1}`", c.Name, ex.Message);
                 }
                 catch { }

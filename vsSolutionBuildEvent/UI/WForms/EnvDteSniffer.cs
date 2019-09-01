@@ -17,7 +17,7 @@
 
 using System;
 using System.Windows.Forms;
-using net.r_eg.vsSBE.SBEScripts;
+using net.r_eg.SobaScript;
 using net.r_eg.vsSBE.UI.WForms.Controls;
 using CEAfterEventHandler = EnvDTE._dispCommandEvents_AfterExecuteEventHandler;
 using CEBeforeEventHandler = EnvDTE._dispCommandEvents_BeforeExecuteEventHandler;

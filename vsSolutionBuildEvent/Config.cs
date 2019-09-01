@@ -153,7 +153,7 @@ namespace net.r_eg.vsSBE
                 {
                     Data = deserialize(stream);
                     if(Data == null) {
-                        throw new SBEException("file is empty");
+                        throw new UnspecSBEException("file is empty");
                     }
                     compatibility(stream);
                 }

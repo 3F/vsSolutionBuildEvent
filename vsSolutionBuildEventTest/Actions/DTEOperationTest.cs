@@ -1,41 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using net.r_eg.EvMSBuild.Exceptions;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events;
-using net.r_eg.vsSBE.Exceptions;
 
 namespace net.r_eg.vsSBE.Test.Actions
 {
-    /// <summary>
-    ///This is a test class for DTEOperationTest and is intended
-    ///to contain all DTEOperationTest Unit Tests
-    ///</summary>
-    [TestClass()]
+    [TestClass]
     public class DTEOperationTest
     {
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
-
-        /// <summary>
-        ///A test for DTEPrepared
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void dtePreparedTest()
         {
             DTEOperation target = new DTEOperation((IEnvironment)null, SolutionEventType.General);
@@ -47,10 +23,7 @@ namespace net.r_eg.vsSBE.Test.Actions
             Assert.AreEqual("\"c:\\path\\app.sln\"", actual.args);
         }
 
-        /// <summary>
-        ///A test for DTEPrepared
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void dtePreparedTest2()
         {
             DTEOperation target = new DTEOperation((IEnvironment)null, SolutionEventType.General);
@@ -62,10 +35,7 @@ namespace net.r_eg.vsSBE.Test.Actions
             Assert.AreEqual("", actual.args);
         }
 
-        /// <summary>
-        ///A test for DTEPrepared
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         [ExpectedException(typeof(IncorrectSyntaxException))]
         public void dtePreparedTest3()
         {
@@ -75,10 +45,7 @@ namespace net.r_eg.vsSBE.Test.Actions
             DTEOperation.DTEPrepared actual = target.parse(line);
         }
 
-        /// <summary>
-        ///A test for DTEPrepared
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         [ExpectedException(typeof(IncorrectSyntaxException))]
         public void dtePreparedTest4()
         {
@@ -88,10 +55,7 @@ namespace net.r_eg.vsSBE.Test.Actions
             DTEOperation.DTEPrepared actual = target.parse(line);
         }
 
-        /// <summary>
-        ///A test for DTEPrepared
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void dtePreparedTest5()
         {
             DTEOperation target = new DTEOperation((IEnvironment)null, SolutionEventType.General);
@@ -103,10 +67,7 @@ namespace net.r_eg.vsSBE.Test.Actions
             Assert.AreEqual("arg", actual.args);
         }
 
-        /// <summary>
-        ///A test for exec
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void execTest()
         {
             DTEOperationAccessor.ToExec target = new DTEOperationAccessor.ToExec(-1);
@@ -125,14 +86,11 @@ namespace net.r_eg.vsSBE.Test.Actions
             Assert.IsTrue(actual.Count == expected.Length);
 
             foreach(DTEOperation.DTEPrepared obj in expected) {
-                Assert.AreEqual(actual.Dequeue(), obj);                
+                Assert.AreEqual(actual.Dequeue(), obj);
             }
         }
 
-        /// <summary>
-        ///A test for exec
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void execTest2()
         {
             DTEOperationAccessor.ToExec target = new DTEOperationAccessor.ToExec(1);
@@ -148,7 +106,7 @@ namespace net.r_eg.vsSBE.Test.Actions
             try {
                 target.exec(commands, false);
             }
-            catch(ComponentException) {
+            catch(ExternalException) {
                 // other type should fail the current test
             }
 
@@ -160,10 +118,7 @@ namespace net.r_eg.vsSBE.Test.Actions
             }
         }
 
-        /// <summary>
-        ///A test for exec
-        ///</summary>
-        [TestMethod()]
+        [TestMethod]
         public void execTest3()
         {
             DTEOperationAccessor.ToExec target = new DTEOperationAccessor.ToExec(2);
@@ -180,7 +135,7 @@ namespace net.r_eg.vsSBE.Test.Actions
             try {
                 target.exec(commands, true);
             }
-            catch(ComponentException) {
+            catch(ExternalException) {
                 // other type should fail the current test
             }
 

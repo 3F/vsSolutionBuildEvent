@@ -1,7 +1,7 @@
 ﻿/*
  * The MIT License (MIT)
  *
- * Copyright (c) 2013-2019  Denis Kuzmin < x-3F@outlook.com > GitHub/3F
+ * Copyright (c) 2014-2019  Denis Kuzmin < x-3F@outlook.com > GitHub/3F
  * Copyright (c) Varhead contributors: https://github.com/3F/Varhead/graphs/contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,27 +24,12 @@
 */
 
 using System;
-using System.Runtime.Serialization;
-using System.Security.Permissions;
 
 namespace net.r_eg.Varhead.Exceptions
 {
     [Serializable]
-    public class LimitException: UnspecifiedVarheadException
+    public class LimitException: UnspecVarheadException
     {
-        public object Value
-        {
-            get;
-            protected set;
-        }
-
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-            info.AddValue(nameof(Value), Value);
-        }
-
         public LimitException(string message)
             : base(message)
         {
@@ -52,9 +37,9 @@ namespace net.r_eg.Varhead.Exceptions
         }
 
         public LimitException(string message, object value)
-            : base(message)
+            : base(message, value)
         {
-            Value = value;
+            
         }
     }
 }

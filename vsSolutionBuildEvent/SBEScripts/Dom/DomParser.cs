@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using net.r_eg.EvMSBuild;
+using net.r_eg.SobaScript;
 
 namespace net.r_eg.vsSBE.SBEScripts.Dom
 {
@@ -191,8 +192,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
                 }
             }
 
-            string[] parts = Regex.Replace(ident, 
-                                            RPattern.RoundBracketsContent, 
+            string[] parts = Regex.Replace(ident,
+                                            SobaScript.RPattern.RoundBracketsContent, 
                                             "()", 
                                             RegexOptions.IgnorePatternWhitespace
                                            ).Split('.');
@@ -233,7 +234,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
                 }
 
                 string elem = (new StringHandler()).ProtectMixedQuotes(info.Name);
-                elem = Regex.Replace(elem, RPattern.RoundBracketsContent, "()", RegexOptions.IgnorePatternWhitespace);
+                elem = Regex.Replace(elem, SobaScript.RPattern.RoundBracketsContent, "()", RegexOptions.IgnorePatternWhitespace);
                 
                 if((strict && elem == name)
                     || (!strict && elem.Contains(name)))

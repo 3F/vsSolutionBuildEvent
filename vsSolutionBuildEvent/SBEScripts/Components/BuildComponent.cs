@@ -19,12 +19,13 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 using EnvDTE;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Components;
+using net.r_eg.SobaScript.Exceptions;
+using net.r_eg.SobaScript.SNode;
 using net.r_eg.vsSBE.Actions;
-using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Components.Build;
 using net.r_eg.vsSBE.SBEScripts.Dom;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.SBEScripts.SNode;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
@@ -32,43 +33,26 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// Managing of build process at runtime. And similar operations for projects and solution.
     /// </summary>
     [Component("Build", "Managing of build process at runtime.")]
-    public class BuildComponent: Component, IComponent
+    public class BuildComponent: ComponentAbstract, IComponent
     {
+        protected IEnvironment env;
+        protected readonly Lazy<DTEOperation> _dteo;
+
         /// <summary>
         /// Ability to work with data for current component
         /// </summary>
-        public override string Condition
-        {
-            get { return "Build "; }
-        }
+        public override string Condition => "Build ";
 
         /// <summary>
         /// Work with DTE-Commands
         /// </summary>
-        protected DTEOperation DTEO
+        protected DTEOperation DTEO => _dteo.Value;
+
+        public BuildComponent(ISobaScript soba, IEnvironment env)
+            : base(soba)
         {
-            get {
-                if(dteo == null) {
-                    Debug.Assert(env != null);
-                    dteo = new DTEOperation(env, Events.SolutionEventType.General);
-                }
-                return dteo;
-            }
-        }
-        protected DTEOperation dteo;
-
-        /// <param name="env">Used environment</param>
-        public BuildComponent(IEnvironment env)
-            : base(env)
-        {
-
-        }
-
-        /// <param name="loader">Initialize with loader</param>
-        public BuildComponent(IBootloader loader)
-            : base(loader)
-        {
-
+            this.env    = env;
+            _dteo       = new Lazy<DTEOperation>(() => new DTEOperation(env, Events.SolutionEventType.General));
         }
 
         /// <summary>
@@ -100,7 +84,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 }
             }
 
-            throw new SubtypeNotFoundException("Subtype `{0}` is not found", subtype);
+            throw new SubtypeNotFoundException(subtype);
         }
 
         /// <summary>
@@ -173,7 +157,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return projectCfg(getContextByProject(name), pm.pinTo(1));
             }
 
-            throw new ArgumentPMException(level, "find(string name)");
+            throw new PMLevelException(level, "find(string name)");
         }
 
         /// <summary>
@@ -309,7 +293,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected string stSlnPMap(string sln, IPM pm)
         {
             if(String.IsNullOrWhiteSpace(sln)) {
-                throw new InvalidArgumentException("Failed stSlnPMap: sln is empty");
+                throw new ArgumentException("Failed stSlnPMap: sln is empty");
             }
             ProjectsMap map = getProjectsMap(sln);
 
@@ -403,7 +387,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 }
             }
 
-            throw new NotFoundException("The project '{0}' was not found.", name);
+            throw new NotFoundException(name);
         }
     }
 }

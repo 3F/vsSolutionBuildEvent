@@ -17,6 +17,7 @@
 
 using System.Runtime.InteropServices;
 using net.r_eg.EvMSBuild;
+using net.r_eg.SobaScript;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.SBEScripts;
 
@@ -28,7 +29,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// SBE-Scripts core
         /// </summary>
-        ISBEScript SBEScript { get; }
+        ISobaScript SBEScript { get; }
 
         /// <summary>
         /// MSBuild core

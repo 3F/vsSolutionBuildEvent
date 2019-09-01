@@ -1,31 +1,30 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Exceptions;
 using net.r_eg.Varhead;
 using net.r_eg.vsSBE.Events;
-using net.r_eg.vsSBE.Exceptions;
-using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 {
     [TestClass]
     public class InternalComponentTest
     {
-        private IBootloader bootloader;
+        //private IBootloader bootloader;
         private IEnvironment env = new StubEnv();
         private IUVars uvariable = new UVars();
 
-        private IBootloader Loader
-        {
-            get {
-                if(bootloader == null) {
-                    bootloader = new Bootloader(env, uvariable);
-                    bootloader.register();
-                }
-                return bootloader;
-            }
-        }
+        //private IBootloader Loader
+        //{
+        //    get {
+        //        if(bootloader == null) {
+        //            bootloader = new Bootloader(env, uvariable);
+        //            bootloader.register();
+        //        }
+        //        return bootloader;
+        //    }
+        //}
 
         [TestMethod]
         public void eventsItemRunTest1()
@@ -73,10 +72,10 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse
         ///</summary>
         [TestMethod]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
+        [ExpectedException(typeof(IncorrectSyntaxException))]
         public void parseTest()
         {
-            InternalComponent target = new InternalComponent(Loader);
+            InternalComponent target = new InternalComponent(new Soba(uvariable), new StubEnv());
             target.parse("#[vsSBE events.Type.item(1)]");
         }
 
@@ -84,10 +83,10 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse
         ///</summary>
         [TestMethod]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
+        [ExpectedException(typeof(IncorrectSyntaxException))]
         public void parseTest2()
         {
-            InternalComponent target = new InternalComponent(Loader);
+            InternalComponent target = new InternalComponent(new Soba(uvariable), new StubEnv());
             target.parse("vsSBE events.Type.item(1)");
         }
 
@@ -98,7 +97,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(SubtypeNotFoundException))]
         public void parseTest3()
         {
-            InternalComponent target = new InternalComponent(Loader);
+            InternalComponent target = new InternalComponent(new Soba(uvariable), new StubEnv());
             target.parse("[vsSBE NoExist.Type]");
         }
 
@@ -109,7 +108,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(OperandNotFoundException))]
         public void stEventsParseTest1()
         {
-            InternalComponent target = new InternalComponent(Loader);
+            InternalComponent target = new InternalComponent(new Soba(uvariable), new StubEnv());
             target.parse("[vsSBE events.Type.item(name)]");
         }
 
@@ -120,7 +119,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(OperandNotFoundException))]
         public void stEventsParseTest2()
         {
-            InternalComponent target = new InternalComponent(Loader);
+            InternalComponent target = new InternalComponent(new Soba(uvariable), new StubEnv());
             target.parse("[vsSBE events.Type.item(1).test]");
         }
 
@@ -200,7 +199,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(IncorrectNodeException))]
         public void startUpProjectTest1()
         {
-            var target = new InternalComponent(Loader);
+            var target = new InternalComponent(new Soba(uvariable), new StubEnv());
             target.parse("[Core StartUpProject: test]");
         }
 
@@ -208,7 +207,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void startUpProjectTest2()
         {
             IEnvironment env    = new StubEnv();
-            var target          = new InternalComponent(env);
+            var target          = new InternalComponent(new Soba(), env);
             string defProject   = env.StartupProjectString;
 
             Assert.AreEqual(env.StartupProjectString, target.parse("[Core StartUpProject]"));
@@ -230,7 +229,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void startUpProjectTest3()
         {
             IEnvironment env    = new StubEnv();
-            var target          = new InternalComponent(env);
+            var target          = new InternalComponent(new Soba(), env);
             string defProject   = env.StartupProjectString;
 
             Assert.AreEqual(String.Empty, target.parse("[Core StartUpProject = project1]"));
@@ -289,7 +288,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             private SBEEvent[] evt = null;
 
             public InternalComponentAccessor()
-                : base(new StubEnv())
+                : base(new Soba(), new StubEnv())
             {
 
             }

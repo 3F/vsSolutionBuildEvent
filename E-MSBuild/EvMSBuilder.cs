@@ -198,14 +198,14 @@ namespace net.r_eg.EvMSBuild
             }
         }
 
-        public EvMSBuilder(IEvEnv env, IUVars uvars)
+        public EvMSBuilder()
+            : this(new EvEnvBlank())
         {
-            this.env    = env ?? throw new ArgumentNullException(nameof(env));
-            UVars       = uvars ?? throw new ArgumentNullException(nameof(uvars));
+
         }
 
-        public EvMSBuilder(IEvEnv env)
-            : this(env, new UVars())
+        public EvMSBuilder(IUVars uvars)
+            : this(new EvEnvBlank(), uvars)
         {
 
         }
@@ -220,6 +220,18 @@ namespace net.r_eg.EvMSBuild
             : this(new EvEnvBlank(ev), uvars)
         {
 
+        }
+
+        public EvMSBuilder(IEvEnv env)
+            : this(env, new UVars())
+        {
+
+        }
+
+        public EvMSBuilder(IEvEnv env, IUVars uvars)
+        {
+            this.env    = env ?? throw new ArgumentNullException(nameof(env));
+            UVars       = uvars ?? throw new ArgumentNullException(nameof(uvars));
         }
 
         protected virtual bool IsSimpleProperty(ref string data) 
@@ -545,7 +557,7 @@ namespace net.r_eg.EvMSBuild
             {
                 if(step++ > limit) {
                     sh.Flush();
-                    throw new LimitException("Restriction of supported containers '{0}' reached. Aborted.", limit);
+                    throw new LimitException($"Restriction of supported containers '{limit}' reached. Aborted.", limit);
                 }
 
                 data = con.Replace

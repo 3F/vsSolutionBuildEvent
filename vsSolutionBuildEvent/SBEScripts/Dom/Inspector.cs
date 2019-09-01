@@ -20,7 +20,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using net.r_eg.vsSBE.SBEScripts.Components;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Components;
 
 namespace net.r_eg.vsSBE.SBEScripts.Dom
 {
@@ -39,7 +40,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <summary>
         /// Used loader
         /// </summary>
-        protected IBootloader bootloader;
+        protected ISobaCLoader bootloader;
 
         /// <summary>
         /// Main storage
@@ -97,7 +98,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// Construct data from used components with IBootloader
         /// </summary>
         /// <param name="bootloader"></param>
-        public Inspector(IBootloader bootloader)
+        public Inspector(ISobaCLoader bootloader)
         {
             this.bootloader = bootloader;
             foreach(IComponent c in bootloader.Registered) {

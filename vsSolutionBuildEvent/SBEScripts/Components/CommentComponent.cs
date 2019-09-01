@@ -16,8 +16,10 @@
 */
 
 using System.Text.RegularExpressions;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Components;
+using net.r_eg.SobaScript.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
@@ -25,23 +27,17 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// The comments for scripts.
     /// </summary>
     [Definition("\" \"", "The multiline comment.")]
-    public class CommentComponent: Component, IComponent
+    public class CommentComponent: ComponentAbstract, IComponent
     {
         /// <summary>
         /// Ability to work with data for current component
         /// </summary>
-        public override string Condition
-        {
-            get { return "\""; }
-        }
+        public override string Condition => "\"";
 
         /// <summary>
         /// Should be located before deepening
         /// </summary>
-        public override bool BeforeDeepen
-        {
-            get { return true; }
-        }
+        public override bool BeforeDeepen => true;
 
         public CommentComponent()
             : base()
@@ -61,7 +57,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                               ""\]$", RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
 
             if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed CommentComponent - '{0}'", data);
+                throw new IncorrectSyntaxException($"Failed CommentComponent - '{data}'");
             }
 
             return Value.Empty; // silent

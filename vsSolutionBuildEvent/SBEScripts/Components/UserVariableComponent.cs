@@ -17,10 +17,13 @@
 
 using System.Text.RegularExpressions;
 using net.r_eg.EvMSBuild;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Components;
+using net.r_eg.SobaScript.Exceptions;
 using net.r_eg.Varhead;
+using net.r_eg.Varhead.Exceptions;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
@@ -32,7 +35,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     [Definition("name = ", "Set mixed data for variable 'name'", "var")]
     [Definition("-name", "Unset variable 'name'", "var")]
     [Definition("+name", "Default value for variable 'name'", "var")]
-    public class UserVariableComponent: Component, IComponent
+    public class UserVariableComponent: ComponentAbstract, IComponent
     {
         /// <summary>
         /// Default value for user-variables.
@@ -43,22 +46,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <summary>
         /// Ability to work with data for current component
         /// </summary>
-        public override string Condition
-        {
-            get { return "var "; }
-        }
+        public override string Condition => "var ";
 
-        /// <param name="env">Used environment</param>
-        /// <param name="uvariable">Instance of used user-variables</param>
-        public UserVariableComponent(IEnvironment env, IUVars uvariable)
-            : base(env, uvariable)
-        {
-
-        }
-
-        /// <param name="loader">Initialization with loader</param>
-        public UserVariableComponent(IBootloader loader)
-            : base(loader)
+        public UserVariableComponent(ISobaScript soba)
+            : base(soba)
         {
 
         }
@@ -70,16 +61,20 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <returns>prepared and evaluated data</returns>
         public override string parse(string data)
         {
-            Match m = Regex.Match(data, @"^\[var
-                                              \s+
-                                              (\+|-)           #1 - operation
-                                              ([A-Za-z_0-9]+)  #2 - name
-                                              (?:
-                                                :([^=\]]+)     #3 - project (optional)
-                                              )?
-                                              \s*
-                                           \]$",
-                                           RegexOptions.IgnorePatternWhitespace);
+            Match m = Regex.Match
+            (
+                data, 
+                @"^\[var
+                    \s+
+                    (\+|-)           #1 - operation
+                    ([A-Za-z_0-9]+)  #2 - name
+                    (?:
+                    :([^=\]]+)     #3 - project (optional)
+                    )?
+                    \s*
+                \]$",
+                RegexOptions.IgnorePatternWhitespace
+            );
 
             if(!m.Success) {
                 return std(data);
@@ -89,7 +84,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string name     = m.Groups[2].Value;
             string project  = (m.Groups[3].Success)? m.Groups[3].Value.Trim() : null;
 
-            Log.Trace("`{0}`: found `{0}` as operation", ToString(), op);
+            Log.Trace($"`{ToString()}`: found `{op}` as operation");
             switch(op)
             {
                 case "+": {
@@ -104,7 +99,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 }
             }
 
-            throw new SubtypeNotFoundException("UVariable: the type '{0}' of operation was  not found :: `{1}`", op, data);
+            throw new SubtypeNotFoundException(op, $"data: {data}");
         }
 
         /// <summary>
@@ -130,7 +125,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                                            RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
 
             if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed UserVariableComponent - '{0}'", data);
+                throw new IncorrectSyntaxException($"Failed UserVariableComponent - '{data}'");
             }
 
             string name     = m.Groups[1].Value;
@@ -153,7 +148,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="value">Mixed value for variable</param>
         protected void set(string name, string project, string value)
         {
-            uvariable.SetVariable(name, project, value);
+            uvars.SetVariable(name, project, value);
             evaluate(name, project);
         }
 
@@ -174,7 +169,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <param name="project">project name</param>
         protected void unset(string name, string project = null)
         {
-            uvariable.Unset(name, project);
+            uvars.Unset(name, project);
         }
 
         /// <summary>
@@ -186,21 +181,21 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <exception cref="NotFoundException">if not found</exception>
         protected string get(string name, string project = null)
         {
-            if(!uvariable.IsExist(name, project)) {
-                throw new NotFoundException("UVariable '{0}:{1}' not found", name, project);
+            if(!uvars.IsExist(name, project)) {
+                throw new DefinitionNotFoundException($"{name}:{project}");
             }
 
-            if(uvariable.IsUnevaluated(name, project)) {
+            if(uvars.IsUnevaluated(name, project)) {
                 evaluate(name, project);
             }
-            return uvariable.GetValue(name, project);
+            return uvars.GetValue(name, project);
         }
 
         protected virtual void evaluate(string name, string project = null)
         {
-            uvariable.Evaluate(name, project, (IEvaluator)script, true);
+            uvars.Evaluate(name, project, (IEvaluator)soba, true);
             if(PostProcessingMSBuild) {
-                uvariable.Evaluate(name, project, (IEvaluator)msbuild, false);
+                uvars.Evaluate(name, project, (IEvaluator)msbuild, false);
             }
         }
     }

@@ -21,10 +21,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using net.r_eg.EvMSBuild;
+using net.r_eg.SobaScript;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
-using net.r_eg.vsSBE.SBEScripts;
 
 namespace net.r_eg.vsSBE.Actions
 {
@@ -38,7 +38,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// Work with SBE-Scripts
         /// </summary>
-        public ISBEScript SBEScript
+        public ISobaScript SBEScript
         {
             get;
             protected set;
@@ -130,7 +130,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="env">Used environment</param>
         /// <param name="script">Used SBE-Scripts</param>
         /// <param name="msbuild">Used MSBuild</param>
-        public Command(IEnvironment env, ISBEScript script, IEvMSBuild msbuild)
+        public Command(IEnvironment env, ISobaScript script, IEvMSBuild msbuild)
         {
             Env         = env;
             SBEScript   = script;
@@ -231,7 +231,7 @@ namespace net.r_eg.vsSBE.Actions
                 case System.Windows.Forms.DialogResult.Cancel: {
                     evt.Enabled = false;
                     Settings.CfgManager.Config.save();
-                    throw new SBEException("Aborted by user");
+                    throw new UnspecSBEException("Aborted by user");
                 }
             }
             return false;

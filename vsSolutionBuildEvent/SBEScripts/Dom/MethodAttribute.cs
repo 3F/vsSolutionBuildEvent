@@ -17,6 +17,8 @@
 
 using System;
 using System.Linq;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Exceptions;
 using net.r_eg.vsSBE.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Dom
@@ -135,7 +137,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <param name="ret">Return value</param>
         /// <param name="args">Arguments of method</param>
         public MethodAttribute(string name, string parent, string method, CValueType ret = CValueType.Void, params CValueType[] args)
-            : this(name, String.Empty, parent, method, ret, args)
+            : this(name, string.Empty, parent, method, ret, args)
         {
 
         }
@@ -150,11 +152,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
             : this(name, description, ret, args)
         {
             if(argsName == null || argsDesc == null) {
-                throw new InvalidArgumentException("null value is not valid for argsName/argsDesc");
+                throw new ArgumentException($"null value is not valid for {nameof(argsName)}/{nameof(argsDesc)}");
             }
 
             if(args.Length != argsName.Length || args.Length != argsDesc.Length) {
-                throw new MismatchException("CValueType[] is not equal by count with argsName/argsDesc :: {0}", name);
+                throw new MismatchException($"CValueType[] is not equal by count with argsName/argsDesc :: {name}");
             }
 
             Arguments = args.Select((arg, i) => new TArguments(arg, argsName[i], argsDesc[i])).ToArray();
@@ -166,7 +168,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Dom
         /// <param name="ret">Return value</param>
         /// <param name="args">Arguments of method</param>
         public MethodAttribute(string name, string[] argsName, string[] argsDesc, CValueType ret, params CValueType[] args)
-            : this(name, String.Empty, argsName, argsDesc, ret, args)
+            : this(name, string.Empty, argsName, argsDesc, ret, args)
         {
 
         }

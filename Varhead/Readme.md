@@ -19,7 +19,7 @@ SobaScript, E-MSBuild, vsSolutionBuildEvent, vsCommandEvent, ...
 Licensed under the [MIT License](https://github.com/3F/Varhead/blob/master/License.txt)
 
 ```
-Copyright (c) 2013-2019  Denis Kuzmin < x-3F@outlook.com > GitHub/3F
+Copyright (c) 2014-2019  Denis Kuzmin < x-3F@outlook.com > GitHub/3F
 ```
 
 [ [ ☕ Donate ](https://3F.github.com/Donation/) ]

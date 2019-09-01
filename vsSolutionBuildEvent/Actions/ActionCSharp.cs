@@ -23,6 +23,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Microsoft.CSharp;
+using net.r_eg.SobaScript.Exceptions;
 using net.r_eg.vsSBE.Configuration.User;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
@@ -248,7 +249,7 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             if(!File.Exists(file)) {
-                throw new MismatchException("oops., something went wrong... while we thought, cache '{0}' disappeared. Try again.", file);
+                throw new MismatchException($"oops., something went wrong... while we thought, cache '{file}' disappeared. Try again.");
             }
 
             // into memory without blocking - it's important for CSharpCodeProvider with GenerateInMemory = false
@@ -302,7 +303,7 @@ namespace net.r_eg.vsSBE.Actions
             string command  = cfg.Command;
 
             if(String.IsNullOrWhiteSpace(command)) {
-                throw new InvalidArgumentException("[Compiler] code is not found. abort;");
+                throw new ArgumentException("[Compiler] code is not found. abort;");
             }
             command = parse(evt, command);
 

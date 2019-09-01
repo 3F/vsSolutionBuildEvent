@@ -20,17 +20,20 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
 using net.r_eg.EvMSBuild;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Components;
+using net.r_eg.SobaScript.Exceptions;
+using net.r_eg.SobaScript.SNode;
 using net.r_eg.Varhead;
+using net.r_eg.Varhead.Exceptions;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Components.Condition;
 using net.r_eg.vsSBE.SBEScripts.Dom;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.SBEScripts.SNode;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
     [Component("Box", "Container of data for operations like a template, repeating, etc.")]
-    public class BoxComponent: Component, IComponent
+    public class BoxComponent: ComponentAbstract, IComponent
     {
         /// <summary>
         /// Soft limit of iterations for user scripts.
@@ -50,18 +53,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <summary>
         /// Ability to work with data for current component
         /// </summary>
-        public override string Condition
-        {
-            get { return "Box"; }
-        }
+        public override string Condition => "Box";
 
         /// <summary>
         /// Should be located before deepening
         /// </summary>
-        public override bool BeforeDeepen
-        {
-            get { return true; }
-        }
+        public override bool BeforeDeepen => true;
 
         protected sealed class ConditionalExpression: Expression
         {
@@ -72,7 +69,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return cond.evaluate(data);
             }
 
-            public ConditionalExpression(BoxComponent cond, ISBEScript script, IEvMSBuild msbuild)
+            public ConditionalExpression(BoxComponent cond, ISobaScript script, IEvMSBuild msbuild)
                 : base(script, msbuild)
             {
                 this.cond = cond;
@@ -83,19 +80,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         {
             get;
             private set;
-        } = new Regex(RPattern.RoundBracketsContent, RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
+        } = new Regex(SobaScript.RPattern.RoundBracketsContent, RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
 
-        /// <param name="env">Used environment</param>
-        /// <param name="uvariable">Instance of user-variables</param>
-        public BoxComponent(IEnvironment env, IUVars uvariable)
-            : base(env, uvariable)
-        {
-            init();
-        }
-
-        /// <param name="loader">Initialization with loader</param>
-        public BoxComponent(IBootloader loader)
-            : base(loader)
+        public BoxComponent(ISobaScript soba)
+            : base(soba)
         {
             init();
         }
@@ -138,7 +126,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 }
             }
 
-            throw new SubtypeNotFoundException("Subtype `{0}` is not found", subtype);
+            throw new SubtypeNotFoundException(subtype);
         }
 
         /// <summary>
@@ -164,7 +152,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             Argument[] args = (new PM()).arguments(expression, ';');
             if(args == null || args.Length > 2 || args.Length < 1) {
-                throw new InvalidArgumentException($"Incorrect arguments: {args?.Length} `{expression}`");
+                throw new PMArgException(args, expression);
             }
 
             string condition    = args[0].data.ToString();
@@ -172,7 +160,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             if(args.Length == 2) {
                 if(args[1].type != ArgumentType.Boolean) {
-                    throw new InvalidArgumentException($"Incorrect type of argument `silent`: {args[1].type}");
+                    throw new PMArgException(args[1], $"bool type for argument `silent`");
                 }
                 silent = (bool)args[1].data;
             }
@@ -197,7 +185,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             Argument[] args = (new PM()).arguments(expression, ';');
             if(args == null || args.Length != 3) {
-                throw new InvalidArgumentException($"Incorrect arguments `iterate(; condition; )`: {args?.Length} `{expression}`");
+                throw new PMArgException(args, $"iterate(; condition; ) `{expression}`");
             }
 
             string initializer  = args[0].data.ToString();
@@ -236,7 +224,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
 #if DEBUG
                 if(++idx > iterationLimit) {
-                    throw new LimitException($"Iteration Limit of '{iterationLimit}' reached. Aborted.");
+                    throw new LimitException($"Iteration Limit of '{iterationLimit}' reached. Aborted.", iterationLimit);
                 }
 #endif
             }
@@ -318,7 +306,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return dataPack(pm.pinTo(1), (string)level.Args[0].data, (bool)level.Args[1].data);
             }
 
-            throw new ArgumentPMException(level, "data.pack(string name, boolean eval)");
+            throw new PMLevelException(level, "data.pack(string name, boolean eval)");
         }
 
         protected string dataPack(IPM pm, string name, bool eval)
@@ -328,7 +316,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             if(content.ContainsKey(name)) {
-                throw new LimitException($"Package of data with name '{name}' is already defined before. Use `data.free` to release data and avoid this error.");
+                throw new LimitException($"Package of data with name '{name}' is already defined before. Use `data.free` to release data and avoid this error.", name);
             }
 
             Log.Trace($"`data.pack('{name}', {eval}): {pm.FirstLevel.Data}`");
@@ -356,7 +344,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return dataFree(pm.pinTo(1), (string)level.Args[0].data);
             }
 
-            throw new ArgumentPMException(level, "data.free(string name)");
+            throw new PMLevelException(level, "data.free(string name)");
         }
 
         protected string dataFree(IPM pm, string name)
@@ -386,7 +374,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return dataGet(pm.pinTo(1), (string)level.Args[0].data, (bool)level.Args[1].data);
             }
 
-            throw new ArgumentPMException(level, "data.get(string name, boolean forceEval)");
+            throw new PMLevelException(level, "data.get(string name, boolean forceEval)");
         }
 
         protected string dataGet(IPM pm, string name, bool forceEval)
@@ -395,7 +383,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return forceEval ? evaluate(content[name]) : content[name];
             }
 
-            throw new NotFoundException($"Package of data with name '{name}' was not found.");
+            throw new NotFoundException(name);
         }
 
         /// <summary>
@@ -428,22 +416,22 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return dataClone(pm.pinTo(1), (string)level.Args[0].data, (int)level.Args[1].data, (bool)level.Args[2].data);
             }
 
-            throw new ArgumentPMException(level, "data.clone(string name, integer count [, boolean forceEval])");
+            throw new PMLevelException(level, "data.clone(string name, integer count [, boolean forceEval])");
         }
 
         protected string dataClone(IPM pm, string name, int count, bool forceEval = false)
         {
             if(!content.ContainsKey(name)) {
-                throw new NotFoundException($"Package of data with name '{name}' was not found.");
+                throw new NotFoundException(name);
             }
 
             if(count < 1) {
-                return String.Empty;
+                return string.Empty;
             }
 
             string val = forceEval ? evaluate(content[name]) : content[name];
 
-            string ret = String.Empty;
+            string ret = string.Empty;
             for(int i = 0; i < count; ++i) {
                 ret += val;
             }
@@ -469,7 +457,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         protected void init()
         {
-            expression = new ConditionalExpression(this, script, msbuild);
+            expression = new ConditionalExpression(this, soba, msbuild);
         }
     }
 }

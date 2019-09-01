@@ -19,7 +19,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components.NuGet.GetNuTool
 {
@@ -85,7 +86,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.NuGet.GetNuTool
                 }
             }
 
-            throw new OperandNotFoundException("`{0}` Can't find command - `{1}` :: raw({2})", ToString(), target, data);
+            throw new OperandNotFoundException(target, $"`{ToString()}`: raw({data})");
         }
 
         /// <param name="packages"></param>

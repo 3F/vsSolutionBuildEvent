@@ -1,9 +1,8 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using net.r_eg.vsSBE.Exceptions;
-using net.r_eg.vsSBE.SBEScripts;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Components;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
 using SevenZip;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts.Components
@@ -46,7 +45,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[7z pack.files()]");
                 Assert.Fail("3");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -61,19 +60,19 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[7z pack.files(\"files\", \"output\")]");
                 Assert.Fail("1");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[7z pack.files({\"f1\", 12}, \"output\")]");
                 Assert.Fail("2");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[7z pack.files({\"f1\", \"f2\"}, \"output\", SevenZip)]");
                 Assert.Fail("3");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[7z pack.files({\"f1\"}, \"output\").right]");
@@ -85,7 +84,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[7z pack.files()]");
                 Assert.Fail("5");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -100,7 +99,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[7z pack.files({}, \"output\")]");
                 Assert.Fail("1");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
 
             using(var tf = new TempFile())
             {
@@ -108,19 +107,19 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                     target.parse("[7z pack.files({\"" + tf.file + "\", \" \"}, \"output\")]");
                     Assert.Fail("2");
                 }
-                catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+                catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
 
                 try {
                     target.parse("[7z pack.files({\" \", \"" + tf.file + "\"}, \"output\")]");
                     Assert.Fail("3");
                 }
-                catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+                catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
 
                 try {
                     target.parse("[7z pack.files({\"" + tf.file + "\"}, \" \")]");
                     Assert.Fail("4");
                 }
-                catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+                catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
             }
 
             try {
@@ -133,7 +132,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[7z pack.files({\" \"}, \"output\")]");
                 Assert.Fail("6");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -189,25 +188,25 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[7z pack.directory(\" \", \"name.zip\")]");
                 Assert.Fail("1");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[7z pack.directory(\"pathtodir\", \" \")]");
                 Assert.Fail("2");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[7z pack.directory(\"dir\")]");
                 Assert.Fail("3");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[7z pack.directory(\"dir\", \"output\", SevenZip)]");
                 Assert.Fail("4");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[7z pack.directory(\"dir\", \"output\").right]");
@@ -219,7 +218,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[7z pack.directory()]");
                 Assert.Fail("6");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentPMException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -262,7 +261,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[7z unpack()]");
                 Assert.Fail("2");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -283,7 +282,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[7z  unpack(\" \")]");
                 Assert.Fail("2");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
 
             using(var tf = new TempFile(false, ".zip")) {
                 Assert.AreEqual(Value.Empty, target.parse("[7z  unpack(\""+ tf.file + "\")]"));
@@ -324,7 +323,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 }
                 Assert.Fail("1");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
 
             using(var tf = new TempFile(false, ".zip")) {
                 Assert.AreEqual(Value.Empty, target.parse("[7z  unpack(\"" + tf.file + "\", \"output-path\")]"));
@@ -377,7 +376,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[7z check()]");
                 Assert.Fail("2");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -398,7 +397,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[7z  check(\" \")]");
                 Assert.Fail("2");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(InvalidArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
 
             using(var tf = new TempFile(false, ".zip")) {
                 target.parse("[7z  check(\""+ tf.file +"\")]");

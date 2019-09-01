@@ -1,7 +1,7 @@
 ﻿/*
  * The MIT License (MIT)
  *
- * Copyright (c) 2013-2019  Denis Kuzmin < x-3F@outlook.com > GitHub/3F
+ * Copyright (c) 2014-2019  Denis Kuzmin < x-3F@outlook.com > GitHub/3F
  * Copyright (c) Varhead contributors: https://github.com/3F/Varhead/graphs/contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using net.r_eg.Components;
+using net.r_eg.Varhead.Exceptions;
 
 namespace net.r_eg.Varhead
 {
@@ -43,13 +44,13 @@ namespace net.r_eg.Varhead
         /// <summary>
         /// Contains all defined user-variables.
         /// 
-        /// Note: ConcurrentDictionary used Nodes! order is unpredictable - see m_tables and internal adding
+        /// !!! Note: ConcurrentDictionary used Nodes! order is unpredictable - see m_tables and internal adding
         /// http://referencesource.microsoft.com/#mscorlib/system/Collections/Concurrent/ConcurrentDictionary.cs
         /// https://bitbucket.org/3F/vssolutionbuildevent/commits/34cdc43df67#comment-1330734
         /// 
         /// Also variant use the both SynchronizedCollection/BlockingCollection + ConcurrentDictionary for O(1) operations
         /// </summary>
-        protected Dictionary<string, TVariable> definitions = new Dictionary<string, TVariable>();
+        protected IDictionary<string, TVariable> definitions = new Dictionary<string, TVariable>();
 
         private readonly object sync = new object();
 
@@ -201,7 +202,7 @@ namespace net.r_eg.Varhead
             lock(sync)
             {
                 if(!definitions.ContainsKey(ident)) {
-                    throw new KeyNotFoundException($"Variable '{ident}' is not found.");
+                    throw new DefinitionNotFoundException(ident);
                 }
 
                 TVariable var = new TVariable(definitions[ident]) {

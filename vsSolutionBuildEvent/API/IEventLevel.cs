@@ -16,8 +16,8 @@
 */
 
 using System;
+using net.r_eg.SobaScript;
 using net.r_eg.vsSBE.Configuration;
-using net.r_eg.vsSBE.SBEScripts;
 
 namespace net.r_eg.vsSBE.API
 {
@@ -34,11 +34,6 @@ namespace net.r_eg.vsSBE.API
         event EventHandler ClosedSolution;
 
         /// <summary>
-        /// Loader of components
-        /// </summary>
-        IBootloader Bootloader { get; }
-
-        /// <summary>
         /// Used Environment
         /// </summary>
         IEnvironment Environment { get; }
@@ -46,7 +41,7 @@ namespace net.r_eg.vsSBE.API
         /// <summary>
         /// Binder of action
         /// </summary>
-        Actions.Connection Action { get; }
+        Actions.Binder Action { get; }
 
         /// <summary>
         /// Manager of configurations.

@@ -18,8 +18,9 @@
 using System;
 using System.Text.RegularExpressions;
 using net.r_eg.EvMSBuild;
-using net.r_eg.vsSBE.Exceptions;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Exceptions;
+using net.r_eg.Varhead.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components.Condition
 {
@@ -36,7 +37,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.Condition
         /// <summary>
         /// For evaluation with SBE-Scripts
         /// </summary>
-        protected ISBEScript script;
+        protected ISobaScript script;
 
         /// <summary>
         /// For evaluation with MSBuild
@@ -82,7 +83,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.Condition
             return (disclosure(exp) == Value.VTRUE);
         }
 
-        public Expression(ISBEScript script, IEvMSBuild msbuild)
+        public Expression(ISobaScript script, IEvMSBuild msbuild)
         {
             this.script     = script;
             this.msbuild    = msbuild;
@@ -127,7 +128,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.Condition
                                                RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed ConditionComponent->calculate - '{0}'", data);
+                throw new IncorrectSyntaxException($"Failed ConditionComponent->calculate - '{data}'");
             }
 
             bool invert         = m.Groups[1].Success;
@@ -146,7 +147,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.Condition
                     case "!==":
                     case ">=":
                     case "<=": {
-                        throw new SyntaxIncorrectException("Failed ConditionComponent: reserved combination- '{0}'", data);
+                        throw new IncorrectSyntaxException($"Failed ConditionComponent: reserved combination- '{data}'");
                     }
                 }
                 right = spaces(right);
@@ -195,11 +196,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.Condition
                                                     |
                                                       (.*)  #2 - without
                                                     )?",
-                                                    RPattern.DoubleQuotesContent
+                                                    SobaScript.RPattern.DoubleQuotesContent
                                                  ), RegexOptions.IgnorePatternWhitespace);
 
             if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed ConditionComponent->spaces - '{0}'", data);
+                throw new IncorrectSyntaxException($"Failed ConditionComponent->spaces - '{data}'");
             }
 
             if(m.Groups[1].Success) {
@@ -218,7 +219,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.Condition
         {
             if(_depthBracketsLevel >= DEPTH_BRACKETS_LIMIT) {
                 _depthBracketsLevel = 0;
-                throw new LimitException("Condition-disclosure: Nesting level of '{0}' reached. Aborted.", DEPTH_BRACKETS_LIMIT);
+                throw new LimitException($"Condition-disclosure: Nesting level of '{DEPTH_BRACKETS_LIMIT}' reached. Aborted.", DEPTH_BRACKETS_LIMIT);
             }
 
             string ret = Regex.Replace(data, @"
@@ -234,7 +235,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.Condition
                 Log.Trace("Condition-disclosure: expression - '{0}' /level: {1}", exp, _depthBracketsLevel);
 
                 if(String.IsNullOrEmpty(exp)) {
-                    throw new SyntaxIncorrectException("Condition-disclosure: empty brackets are not allowed.");
+                    throw new IncorrectSyntaxException("Condition-disclosure: empty brackets are not allowed.");
                 }
                 return composite(exp);
             },
@@ -276,7 +277,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components.Condition
                     ||
                     (curr == '&' && next != '&'))
                 {
-                    throw new SyntaxIncorrectException("Condition-composite: allowed only logical operators - '&&' and '||'");
+                    throw new IncorrectSyntaxException("Condition-composite: allowed only logical operators - '&&' and '||'");
                 }
 
                 string exp = null;

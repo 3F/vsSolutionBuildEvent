@@ -33,14 +33,30 @@ namespace net.r_eg.EvMSBuild
         private readonly IEvMin ev;
         private readonly Project prj;
 
-        public string GetMutualPropValue(string name) => ev.GetMutualPropValue(name);
+        /// <summary>
+        /// An unified unscoped and out of Project instance the property value by its name.
+        /// Remarks: Any property values cannot be null.
+        /// </summary>
+        /// <param name="name">Property name.</param>
+        /// <returns>Found non-null property value or null if not.</returns>
+        public string GetMutualPropValue(string name) => ev?.GetMutualPropValue(name);
 
+        /// <summary>
+        /// Get Project instance for work with data inside specified scope.
+        /// </summary>
+        /// <param name="ident">Abstract identifier of the specified scope. It can be a GUID, or FullPath, or project name, etc.</param>
+        /// <returns>Expected the instance that is associated with the identifier or any default instance if not found any related to pushed ident.</returns>
         public Project GetProject(object ident) => prj;
 
+        public EvEnvBlank()
+        {
+            prj = new Project();
+        }
+
         public EvEnvBlank(IEvMin ev)
+            : this()
         {
             this.ev = ev ?? throw new ArgumentNullException(nameof(ev));
-            prj = new Project();
         }
     }
 }

@@ -17,10 +17,12 @@
 
 using System;
 using System.Text.RegularExpressions;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Components;
+using net.r_eg.SobaScript.Exceptions;
+using net.r_eg.SobaScript.SNode;
 using net.r_eg.Varhead;
 using net.r_eg.vsSBE.SBEScripts.Dom;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.SBEScripts.SNode;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
@@ -30,85 +32,57 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     [Definition("try", "try/catch")]
     [Definition("{ }catch{ }", "try/catch\n\nProtects from errors in try{...} block and handles it in catch{...}", "try")]
     [Definition("{ }catch(err, msg){ }", "try/catch with error type and its message.", "try")]
-    public class TryComponent: Component, IComponent
+    public class TryComponent: ComponentAbstract, IComponent
     {
+        private readonly Lazy<Regex> _crule;
+
         /// <summary>
         /// Ability to work with data for current component
         /// </summary>
-        public override string Condition
-        {
-            get { return "try"; }
-        }
+        public override string Condition => "try";
 
         /// <summary>
         /// To force post-analysis.
         /// </summary>
-        public override bool PostParse
-        {
-            get { return true; }
-        }
+        public override bool PostParse => true;
 
         /// <summary>
         /// Should be located before deepening
         /// </summary>
-        public override bool BeforeDeepen
-        {
-            get { return true; }
-        }
+        public override bool BeforeDeepen => true;
 
         /// <summary>
         /// Main rule of container.
         /// </summary>
-        protected string Rule
-        {
-            get
-            {
-                return String.Format(
-                                @"^\[\s*
-                                      try
-                                      \s*{0}\s*             #1      - try
-                                      catch
-                                      (?:\s*
-                                        \((?'args'.*?)\)    #args   - optional arguments
-                                      \s*)?
-                                      \s*{0}\s*             #2      - catch
-                                   \]",
-                                   RPattern.CurlyBracketsContent
-                );
-            }
-        }
+        protected string Rule => string.Format
+        (
+            @"^\[\s*
+                    try
+                    \s*{0}\s*             #1      - try
+                    catch
+                    (?:\s*
+                    \((?'args'.*?)\)    #args   - optional arguments
+                    \s*)?
+                    \s*{0}\s*             #2      - catch
+                \]",
+                RPattern.CurlyBracketsContent
+        );
 
         /// <summary>
         /// Compiled rule.
         /// </summary>
-        protected Regex CRule
+        protected Regex CRule => _crule.Value;
+
+        public TryComponent(ISobaScript soba)
+            : base(soba)
         {
-            get
-            {
-                if(crule == null) {
-                    crule = new Regex(Rule,
-                                        RegexOptions.IgnorePatternWhitespace |
-                                        RegexOptions.Singleline |
-                                        RegexOptions.Compiled);
-                }
-                return crule;
-            }
-        }
-        private Regex crule;
-
-        /// <param name="env">Used environment</param>
-        /// <param name="uvariable">Instance of user-variables</param>
-        public TryComponent(IEnvironment env, IUVars uvariable)
-            : base(env, uvariable)
-        {
-
-        }
-
-        /// <param name="loader">Initialization with loader</param>
-        public TryComponent(IBootloader loader)
-            : base(loader)
-        {
-
+            _crule = new Lazy<Regex>(() => new Regex
+            (
+                Rule,
+                RegexOptions.IgnorePatternWhitespace |
+                RegexOptions.Singleline |
+                RegexOptions.Compiled
+            ));
         }
 
         /// <summary>
@@ -122,7 +96,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             Match m = CRule.Match(hString.ProtectMixedQuotes(data.Trim()));
             if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed TryComponent - '{0}'", data);
+                throw new IncorrectSyntaxException($"Failed TryComponent - '{data}'");
             }
 
             string blockTry     = hString.Recovery(m.Groups[1].Value);
@@ -171,8 +145,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         private void setvar(string name, string value)
         {
-            uvariable.SetVariable(name, null, value);
-            uvariable.Evaluate(name, null, new EvaluatorBlank(), true);
+            uvars.SetVariable(name, null, value);
+            uvars.Evaluate(name, null, new EvaluatorBlank(), true);
         }
 
         private void delvar(params string[] names)
@@ -182,7 +156,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             foreach(string name in names) {
-                uvariable.Unset(name, null);
+                uvars.Unset(name, null);
             }
         }
     }

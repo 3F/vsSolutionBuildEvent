@@ -22,11 +22,13 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Components;
+using net.r_eg.SobaScript.Exceptions;
+using net.r_eg.SobaScript.SNode;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.SBEScripts.SNode;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
@@ -35,7 +37,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// But, it can be changed for major release...
     /// </summary>
     [Component("File", new string[]{ "IO" }, "I/O File operations.")]
-    public class FileComponent: Component, IComponent
+    public class FileComponent: ComponentAbstract, IComponent
     {
         /// <summary>
         /// Default limit in seconds for execution processes.
@@ -50,18 +52,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <summary>
         /// Ability to work with data for current component
         /// </summary>
-        public override string Condition
-        {
-            get { return @"(?:File|IO)\s"; }
-        }
+        public override string Condition =>  @"(?:File|IO)\s";
 
         /// <summary>
         /// Use regex engine for the Condition property
         /// </summary>
-        public override bool CRegex
-        {
-            get { return true; }
-        }
+        public override bool CRegex => true;
 
         protected enum SearchType
         {
@@ -78,13 +74,19 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         {
             get
             {
-                if(envPath == null) {
-                    envPath = String.Format("{0};{1};{2};{3};{4}", 
-                                            System.Environment.SystemDirectory,
-                                            System.Environment.GetEnvironmentVariable("SystemRoot"),
-                                            System.Environment.GetEnvironmentVariable("SystemRoot") + @"\System32\Wbem",
-                                            System.Environment.GetEnvironmentVariable("SystemRoot") + @"\System32\WindowsPowerShell\v1.0\",
-                                            System.Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process)).Split(';');
+                //TODO: 
+                if(envPath == null)
+                 {
+                    envPath = string.Format
+                    (
+                        "{0};{1};{2};{3};{4}", 
+                        System.Environment.SystemDirectory,
+                        System.Environment.GetEnvironmentVariable("SystemRoot"),
+                        System.Environment.GetEnvironmentVariable("SystemRoot") + @"\System32\Wbem",
+                        System.Environment.GetEnvironmentVariable("SystemRoot") + @"\System32\WindowsPowerShell\v1.0\",
+                        System.Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process)
+                    )
+                    .Split(';');
                 }
 
                 foreach(string dir in envPath) {
@@ -94,14 +96,16 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         }
         protected string[] envPath = null;
 
-        /// <param name="loader">Initialize with loader</param>
-        public FileComponent(IBootloader loader)
-            : base(loader)
+        public FileComponent(ISobaScript soba)
+            : base(soba)
         {
 
         }
 
-        public FileComponent() { }
+        public FileComponent()
+        {
+
+        }
 
         /// <summary>
         /// Handler for current data
@@ -161,16 +165,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             ILevel level = pm.FirstLevel;
 
             if(!level.Is(ArgumentType.StringDouble)) {
-                throw new ArgumentPMException(level, "get(string name)");
+                throw new PMLevelException(level, "get(string name)");
             }
             string file = location((string)level.Args[0].data);
 
-            try {
-                return readToEnd(file, detectEncodingFromFile(file));
-            }
-            catch(FileNotFoundException ex) {
-                throw new ScriptException("File '{0}' is not found :: `{1}`", file, ex.Message);
-            }
+            return readToEnd(file, detectEncodingFromFile(file));
+            // NOTE: x NotFoundException -> FileNotFoundException
         }
 
         /// <param name="pm"></param>
@@ -289,12 +289,12 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 timeout = (int)level.Args[2].data;
             }
             else {
-                throw new ArgumentPMException(level, level.Data + "(string filename [, string args [, uinteger timeout]])");
+                throw new PMLevelException(level, level.Data + "(string filename [, string args [, uinteger timeout]])");
             }
 
             string pfile = findFile(file);
             if(String.IsNullOrEmpty(pfile)) {
-                throw new NotFoundException("File '{0}' was not found.", file);
+                throw new NotFoundException(file);
             }
             return run(pfile, args, silent, stdOut, timeout);
         }
@@ -347,7 +347,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 };
             }
             else {
-                throw new ArgumentPMException(origin, "string cmd(string args [, integer timeout])");
+                throw new PMLevelException(origin, "string cmd(string args [, integer timeout])");
             }
 
             Log.Trace("stCmd redirect to stCall");
@@ -445,7 +445,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 enc     = encoding((string)level.Args[3].data);
             }
             else {
-                throw new ArgumentPMException(level, "write( (string name | const STD) [, boolean append, boolean newline, string encoding]); writeLine(string name | const STD); append/appendLine(string name)");
+                throw new PMLevelException(level, "write( (string name | const STD) [, boolean append, boolean newline, string encoding]); writeLine(string name | const STD); append/appendLine(string name)");
             }
 
             // content
@@ -483,7 +483,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     return Value.Empty;
                 }
                 default: {
-                    throw new InvalidArgumentException("Incorrect stream type `{0}`", std);
+                    throw new IncorrectSyntaxException($"Incorrect stream type `{std}`");
                 }
             }
 
@@ -558,7 +558,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             ILevel level = pm.FirstLevel;
             
             if(!level.Is(ArgumentType.StringDouble, ArgumentType.StringDouble, ArgumentType.StringDouble)) {
-                throw new ArgumentPMException(level, "(string file, string pattern, string replacement)");
+                throw new PMLevelException(level, "(string file, string pattern, string replacement)");
             }
 
             string file         = location((string)level.Args[0].data);
@@ -650,7 +650,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return stExists(pm.IsData("file"), (string)level.Args[0].data, (bool)level.Args[1].data);
             }
 
-            throw new ArgumentPMException(level, level.Data + "(string path [, boolean environment])");
+            throw new PMLevelException(level, level.Data + "(string path [, boolean environment])");
         }
 
         protected string stExists(bool tFile, string item, bool environment)
@@ -703,7 +703,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     return download((string)level.Args[0].data, (string)level.Args[1].data, (string)level.Args[2].data, (string)level.Args[3].data);
                 }
 
-                throw new ArgumentPMException(level, "(string addr, string output [, string user, string pwd])");
+                throw new PMLevelException(level, "(string addr, string output [, string user, string pwd])");
             }
 
             throw new IncorrectNodeException(pm);
@@ -798,7 +798,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return copyFile(pm.pinTo(1), (Argument[])level.Args[0].data, (string)level.Args[1].data, (bool)level.Args[2].data, (Argument[])level.Args[3].data);
             }
 
-            throw new ArgumentPMException(level, "copy.file((string src | object srclist), string dest, bool overwrite [, object except])");
+            throw new PMLevelException(level, "copy.file((string src | object srclist), string dest, bool overwrite [, object except])");
         }
 
         protected string copyFile(IPM pm, Argument[] files, string dest, bool overwrite, Argument[] except = null)
@@ -807,7 +807,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             foreach(Argument src in files) {
                 if(src.type != ArgumentType.StringDouble) {
-                    throw new InvalidArgumentException("Incorrect data from input files. Define as {\"f1\", \"f2\", ...}");
+                    throw new PMArgException(src, "Input files. Define as {\"f1\", \"f2\", ...}");
                 }
                 copyFile(pm, src.data.ToString(), dest, overwrite, except);
             }
@@ -818,11 +818,11 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected string copyFile(IPM pm, string src, string dest, bool overwrite, Argument[] except = null)
         {
             if(String.IsNullOrWhiteSpace(src) || String.IsNullOrWhiteSpace(dest)) {
-                throw new InvalidArgumentException("The source file or the destination path argument is empty.");
+                throw new ArgumentException("The source file or the destination path argument is empty.");
             }
 
             if(except != null && except.Any(p => p.type != ArgumentType.StringDouble)) {
-                throw new InvalidArgumentException("Incorrect data from the 'except' argument. Define as {\"f1\", \"f2\", ...}");
+                throw new PMArgException(except, "'except' argument. Define as {\"f1\", \"f2\", ...}");
             }
 
             dest = location(dest.TrimEnd());
@@ -845,7 +845,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             if(input.Length < 1) {
-                throw new InvalidArgumentException("The input files was not found. Check your mask and the exception list if used.");
+                throw new ArgumentException("The input files was not found. Check your mask and the exception list if used.");
             }
 
             copyFile(destDir, destFile, overwrite, input);
@@ -860,11 +860,19 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             bool isDestFile = !String.IsNullOrWhiteSpace(destFile);
-            if(isDestFile && files.Length > 1) {
-                throw new InvalidArgumentException("The destination path `{0}` cannot contain file name `{1}` if the source has 2 or more files for used mask. End with `{1}\\` or `{1}/` if it directory.", destDir, destFile);
+            if(isDestFile && files.Length > 1)
+            {
+                throw new ArgumentException(
+                    string.Format(
+                        "The destination path `{0}` cannot contain file name `{1}` if the source has 2 or more files for used mask. End with `{1}\\` or `{1}/` if it directory.", 
+                        destDir, 
+                        destFile
+                    )
+                );
             }
 
-            foreach(string file in files) {
+            foreach(string file in files)
+            {
                 string dest = Path.Combine(destDir, isDestFile ? destFile : Path.GetFileName(file));
                 Log.Trace("Copy file `{0}` to `{1}` overwrite({2})", file, dest, overwrite);
                 File.Copy(file, dest, overwrite);
@@ -902,23 +910,24 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return copyDirectory(pm.pinTo(1), (string)level.Args[0].data, (string)level.Args[1].data, (bool)level.Args[2].data, (bool)level.Args[3].data);
             }
 
-            throw new ArgumentPMException(level, "copy.directory(string src, string dest, bool force [, bool overwrite])");
+            throw new PMLevelException(level, "copy.directory(string src, string dest, bool force [, bool overwrite])");
         }
 
         protected string copyDirectory(IPM pm, string src, string dest, bool force, bool overwrite = false)
         {
-            if(String.IsNullOrWhiteSpace(dest)) {
-                throw new InvalidArgumentException("The destination directory argument is empty.");
+            if(string.IsNullOrWhiteSpace(dest)) {
+                throw new ArgumentException("The destination directory argument is empty.");
             }
 
             dest = Path.GetDirectoryName(location(dest.PathFormat()));
 
-            if(String.IsNullOrWhiteSpace(src)) {
+            if(string.IsNullOrWhiteSpace(src))
+            {
                 if(force) {
                     mkdir(dest);
                     return Value.Empty;
                 }
-                throw new InvalidArgumentException("Use `force` flag if you want to create directory `{0}`", dest);
+                throw new ArgumentException($"Use `force` flag if you want to create directory `{dest}`");
             }
 
             src = location(src.PathFormat());
@@ -934,7 +943,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         {
             if(!Directory.Exists(dest)) {
                 if(!force) {
-                    throw new NotFoundException("Part of path `{0}` of the destination directory is not exists. Check path or use `force` flag", dest);
+                    throw new NotFoundException(dest, "Check path or use `force` flag");
                 }
                 Log.Trace("Trying to create directory `{0}`", dest);
                 Directory.CreateDirectory(dest);
@@ -1001,25 +1010,26 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return deleteFiles(pm.pinTo(1), (Argument[])level.Args[0].data, (Argument[])level.Args[1].data);
             }
 
-            throw new ArgumentPMException(level, "delete.files(object files [, object except])");
+            throw new PMLevelException(level, "delete.files(object files [, object except])");
         }
 
         protected string deleteFiles(IPM pm, Argument[] files, Argument[] except = null)
         {
             if(files.Any(p => p.type != ArgumentType.StringDouble)) {
-                throw new InvalidArgumentException("Incorrect data from input files. Define as {\"f1\", \"f2\", ...}");
+                throw new PMArgException(files, "Input files. Define as {\"f1\", \"f2\", ...}");
             }
 
             if(except != null && except.Any(p => p.type != ArgumentType.StringDouble)) {
-                throw new InvalidArgumentException("Incorrect data from the 'except' argument. Define as {\"f1\", \"f2\", ...}");
+                throw new PMArgException(except, "'except' argument. Define as {\"f1\", \"f2\", ...}");
             }
 
-            Func<string, int, string> exs = delegate(string file, int idx) {
-                if(!String.IsNullOrWhiteSpace(file)) {
+            string exs(string file, int idx)
+            {
+                if(!string.IsNullOrWhiteSpace(file)) {
                     return location(file);
                 }
-                throw new InvalidArgumentException("File name is empty. Fail in '{0}' position.", idx);
-            };
+                throw new ArgumentException($"File name is empty. Fail in '{idx}' position.");
+            }
 
             string[] input = files.Select((f, i) => exs((string)f.data, i)).ToArray().ExtractFiles();
 #if DEBUG
@@ -1035,7 +1045,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             if(input.Length < 1) {
-                throw new InvalidArgumentException("The input files was not found. Check your mask and the exception list if used.");
+                throw new PMArgException(files, "Input files was not found. Check your mask and the exception list if used.");
             }
 
             deleteFiles(input);
@@ -1067,13 +1077,13 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return deleteDirectory(pm.pinTo(1), (string)level.Args[0].data, (bool)level.Args[1].data);
             }
 
-            throw new ArgumentPMException(level, "delete.directory(string dir, bool force)");
+            throw new PMLevelException(level, "delete.directory(string dir, bool force)");
         }
 
         protected string deleteDirectory(IPM pm, string src, bool force)
         {
-            if(String.IsNullOrWhiteSpace(src)) {
-                throw new InvalidArgumentException("The source directory is empty.");
+            if(string.IsNullOrWhiteSpace(src)) {
+                throw new ArgumentException("The source directory is empty.");
             }
             deleteDirectory(location(src), force);
             return Value.Empty;
@@ -1258,8 +1268,8 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         private Encoding encoding(string name)
         {
-            if(String.IsNullOrWhiteSpace(name)) {
-                throw new InvalidArgumentException("Name of encoding is null or empty.");
+            if(string.IsNullOrWhiteSpace(name)) {
+                throw new ArgumentException("Name of encoding is null or empty.");
             }
 
             if(name.Equals("utf-8", StringComparison.OrdinalIgnoreCase)) {

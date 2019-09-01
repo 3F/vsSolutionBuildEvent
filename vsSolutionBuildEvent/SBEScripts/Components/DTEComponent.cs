@@ -16,18 +16,22 @@
 */
 
 using System;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Components;
+using net.r_eg.SobaScript.Exceptions;
+using net.r_eg.SobaScript.SNode;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events.CommandEvents;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.SBEScripts.SNode;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
     [Component("DTE", "For work with EnvDTE.\nAssembly-wrapped COM library containing the objects and members for Visual Studio core automation.\n- http://msdn.microsoft.com/en-us/library/EnvDTE.aspx")]
-    public class DTEComponent: Component, IComponent
+    public class DTEComponent: ComponentAbstract, IComponent
     {
+        protected IEnvironment env;
+
         /// <summary>
         /// Provides command-events for automation clients.
         /// </summary>
@@ -46,27 +50,20 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <summary>
         /// object synch.
         /// </summary>
-        private Object _lock = new Object();
+        private readonly object sync = new object();
 
         /// <summary>
         /// Ability to work with data for current component
         /// </summary>
-        public override string Condition
-        {
-            get { return "DTE "; }
-        }
+        public override string Condition => "DTE ";
 
         /// <summary>
         /// Ability of work with CommandEvent.
         /// </summary>
-        protected bool IsAvaialbleCommandEvent
-        {
-            get { return env != null && env.Events != null; }
-        }
+        protected bool IsAvaialbleCommandEvent => env?.Events != null;
 
-        /// <param name="env">Used environment</param>
-        public DTEComponent(IEnvironment env)
-            : base(env)
+        public DTEComponent(ISobaScript soba, IEnvironment env)
+            :base(soba)
         {
             dteo = new DTEOperation(env, Events.SolutionEventType.General);
             attachCommandEvents();
@@ -83,7 +80,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             string subtype  = point.Key;
             string request  = point.Value;
 
-            Log.Trace("`{0}`: subtype - `{1}`, request - `{2}`", ToString(), subtype, request);
+            Log.Trace($"`{ToString()}`: subtype - `{subtype}`, request - `{request}`");
 
             switch(subtype)
             {
@@ -95,7 +92,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 }
             }
 
-            throw new SubtypeNotFoundException("Subtype `{0}` is not found", subtype);
+            throw new SubtypeNotFoundException(subtype);
         }
 
         /// <summary>
@@ -112,10 +109,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             string cmd = pm.FirstLevel.Data.Trim();
-            if(String.IsNullOrWhiteSpace(cmd)) {
-                throw new InvalidArgumentException("The command cannot be empty.");
+            if(string.IsNullOrWhiteSpace(cmd)) {
+                throw new ArgumentException("The command cannot be empty.");
             }
-            Log.Debug("Execute command `{0}`", cmd);
+            Log.Debug($"Execute command `{cmd}`");
 
             dteo.exec(new string[] { cmd }, false);
             return Value.Empty;
@@ -189,7 +186,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             }
 
             cmdEvents = env.Events.CommandEvents;
-            lock(_lock) {
+            lock(sync) {
                 detachCommandEvents();
                 cmdEvents.BeforeExecute += commandEventBefore;
                 cmdEvents.AfterExecute  += commandEventAfter;
@@ -202,7 +199,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return;
             }
 
-            lock(_lock) {
+            lock(sync) {
                 cmdEvents.BeforeExecute -= commandEventBefore;
                 cmdEvents.AfterExecute  -= commandEventAfter;
             }

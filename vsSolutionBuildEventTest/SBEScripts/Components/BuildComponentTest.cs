@@ -5,48 +5,22 @@ using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Exceptions;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
-using net.r_eg.vsSBE.Exceptions;
-using net.r_eg.vsSBE.SBEScripts;
 using net.r_eg.vsSBE.SBEScripts.Components;
 using net.r_eg.vsSBE.SBEScripts.Components.Build;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 {
-    /// <summary>
-    ///This is a test class for BuildComponentTest and is intended
-    ///to contain all BuildComponentTest Unit Tests
-    ///</summary>
-    [TestClass()]
+    [TestClass]
     public class BuildComponentTest
     {
         private const string EXIST_GUID     = "{11111111-1111-1111-1111-111111111111}";
         private const string NOTEXIST_GUID  = "{00000000-0000-0000-0000-000000000000}";
 
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
-
-        /// <summary>
-        /// Mock of IEnvironment for current tests
-        /// </summary>
         public IEnvironment Env
         {
             get
@@ -114,7 +88,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - stCancel
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
+        [ExpectedException(typeof(IncorrectSyntaxException))]
         public void stCancelTest1()
         {
             BuildComponentAccessor target = new BuildComponentAccessor();
@@ -125,7 +99,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - stCancel
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
+        [ExpectedException(typeof(IncorrectSyntaxException))]
         public void stCancelTest2()
         {
             BuildComponentAccessor target = new BuildComponentAccessor();
@@ -186,7 +160,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         public void stTypeTest1()
         {
             IEnvironment _env       = new Environment((DTE2)(new Mock<DTE2>()).Object);
-            BuildComponent target   = new BuildComponent(_env);
+            BuildComponent target   = new BuildComponent(new Soba(), _env);
 
             Assert.AreEqual(BuildType.Common.ToString(), target.parse("[Build type]"));
 
@@ -204,7 +178,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(IncorrectNodeException))]
         public void stTypeTest2()
         {
-            BuildComponent target = new BuildComponent(Env);
+            BuildComponent target = new BuildComponent(new Soba(), Env);
             target.parse("[Build type = true]");
         }
 
@@ -213,7 +187,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///#[Build projects.find("name")]
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(ArgumentPMException))]
+        [ExpectedException(typeof(PMArgException))]
         public void stProjectsTest1()
         {
             BuildComponentAccessor target = new BuildComponentAccessor();
@@ -225,10 +199,10 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///#[Build projects.find("name")]
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(SyntaxIncorrectException))]
+        [ExpectedException(typeof(IncorrectSyntaxException))]
         public void stProjectsTest2()
         {
-            BuildComponent target = new BuildComponent(Env);
+            BuildComponent target = new BuildComponent(new Soba(), Env);
             target.parse("[Build projects.find(\"NotExist\").]");
         }
 
@@ -239,7 +213,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(IncorrectSyntaxException))]
         public void stProjectConfTest1()
         {
-            BuildComponent target = new BuildComponent(Env);
+            BuildComponent target = new BuildComponent(new Soba(), Env);
             target.parse("[Build projects.find(\"project1\").IsBuildable = val]");
         }
 
@@ -250,7 +224,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(IncorrectNodeException))]
         public void stProjectConfTest2()
         {
-            BuildComponent target = new BuildComponent(Env);
+            BuildComponent target = new BuildComponent(new Soba(), Env);
             target.parse("[Build projects.find(\"project1\").NotExist = true]");
         }
 
@@ -260,7 +234,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void isBuildableTest1()
         {
-            BuildComponent target = new BuildComponent(Env);
+            BuildComponent target = new BuildComponent(new Soba(), Env);
             Assert.AreEqual(Value.Empty, target.parse("[Build projects.find(\"project1\").IsBuildable = true]"));
         }
 
@@ -270,7 +244,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void isBuildableTest2()
         {
-            BuildComponent target = new BuildComponent(Env);
+            BuildComponent target = new BuildComponent(new Soba(), Env);
             Assert.AreEqual("true", target.parse("[Build projects.find(\"project1\").IsBuildable]"));
             Assert.AreEqual("false", target.parse("[Build projects.find(\"project2\").IsBuildable]"));
         }
@@ -281,7 +255,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void isDeployableTest1()
         {
-            BuildComponent target = new BuildComponent(Env);
+            BuildComponent target = new BuildComponent(new Soba(), Env);
             Assert.AreEqual(Value.Empty, target.parse("[Build projects.find(\"project1\").IsDeployable = true]"));
         }
 
@@ -291,7 +265,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [TestMethod()]
         public void isDeployableTest2()
         {
-            BuildComponent target = new BuildComponent(Env);
+            BuildComponent target = new BuildComponent(new Soba(), Env);
             Assert.AreEqual("true", target.parse("[Build projects.find(\"project1\").IsDeployable]"));
             Assert.AreEqual("false", target.parse("[Build projects.find(\"project2\").IsDeployable]"));
         }
@@ -321,7 +295,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - stSolution
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(InvalidArgumentException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void stSolutionTest2()
         {
             BuildComponent target = new BuildComponentAccessor(Env);
@@ -335,7 +309,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         [ExpectedException(typeof(IncorrectNodeException))]
         public void stSolutionTest3()
         {
-            BuildComponent target = new BuildComponent(Env);
+            BuildComponent target = new BuildComponent(new Soba(), Env);
             Assert.AreEqual(Value.Empty, target.parse("[Build solution.NotRealProperty]"));
         }
 
@@ -437,7 +411,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - stSolution  - stSlnPMap
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(InvalidArgumentException))]
+        [ExpectedException(typeof(ArgumentException))]
         public void stSlnPMapTest5()
         {
             BuildComponent target = new BuildComponentAccessor(Env);
@@ -526,16 +500,22 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
 
         private class BuildComponentAccessor: BuildComponent
         {
-            public BuildComponentAccessor()
-                : base((IEnvironment)null)
+            protected new DTEOperation DTEO
             {
-                var mock = new Mock<DTEOperation>((IEnvironment)null, SolutionEventType.General);
+                get;
+                private set;
+            }
+
+            public BuildComponentAccessor()
+                : base(new Soba(), (IEnvironment)null)
+            {
+                var mock = new Mock<DTEOperation>(null, SolutionEventType.General);
                 mock.Setup(m => m.exec(It.IsAny<string[]>(), It.IsAny<bool>()));
-                dteo = mock.Object;
+                DTEO = mock.Object;
             }
 
             public BuildComponentAccessor(IEnvironment env)
-                : base(env)
+                : base(new Soba(), env)
             {
 
             }

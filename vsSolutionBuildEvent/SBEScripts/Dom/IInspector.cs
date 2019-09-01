@@ -17,7 +17,7 @@
 
 using System;
 using System.Collections.Generic;
-using net.r_eg.vsSBE.SBEScripts.Components;
+using net.r_eg.SobaScript.Components;
 
 namespace net.r_eg.vsSBE.SBEScripts.Dom
 {

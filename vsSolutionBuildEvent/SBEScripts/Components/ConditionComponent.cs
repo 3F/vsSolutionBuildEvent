@@ -18,10 +18,12 @@
 using System;
 using System.Text.RegularExpressions;
 using net.r_eg.EvMSBuild;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Components;
+using net.r_eg.SobaScript.Exceptions;
 using net.r_eg.Varhead;
 using net.r_eg.vsSBE.SBEScripts.Components.Condition;
 using net.r_eg.vsSBE.SBEScripts.Dom;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
@@ -29,8 +31,10 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
     /// Conditional statement for user scripts.
     /// </summary>
     [Definition("(true) { }", "Conditionals statements\n\n(1 > 2) {\n ... \n}")]
-    public class ConditionComponent: Component, IComponent
+    public class ConditionComponent: ComponentAbstract, IComponent
     {
+        private readonly Lazy<Regex> _crule;
+
         /// <summary>
         /// Core of conditional expressions.
         /// </summary>
@@ -39,26 +43,17 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <summary>
         /// Ability to work with data for current component
         /// </summary>
-        public override string Condition
-        {
-            get { return "("; }
-        }
+        public override string Condition => "(";
 
         /// <summary>
         /// To force post-analysis.
         /// </summary>
-        public override bool PostParse
-        {
-            get { return true; }
-        }
+        public override bool PostParse => true;
 
         /// <summary>
         /// Should be located before deepening
         /// </summary>
-        public override bool BeforeDeepen
-        {
-            get { return true; }
-        }
+        public override bool BeforeDeepen => true;
 
         protected sealed class ConditionalExpression: Expression
         {
@@ -69,7 +64,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 return cond.evaluate(data);
             }
 
-            public ConditionalExpression(ConditionComponent cond, ISBEScript script, IEvMSBuild msbuild)
+            public ConditionalExpression(ConditionComponent cond, ISobaScript script, IEvMSBuild msbuild)
                 : base(script, msbuild)
             {
                 this.cond = cond;
@@ -79,54 +74,36 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         /// <summary>
         /// Main rule of container.
         /// </summary>
-        protected string Rule
-        {
-            get
-            {
-                return String.Format(@"^\[\s*
-                                          {0}            #1 - Condition
-                                          \s*
-                                          {1}            #2 - Body if true
-                                          (?:
-                                            \s*else\s*
-                                            {1}          #3 - Body if false (optional)
-                                          )?\s*\]",
-                                          RPattern.RoundBracketsContent,
-                                          RPattern.CurlyBracketsContent
-                );
-            }
-        }
+        protected string Rule => string.Format
+        (
+            @"^\[\s*
+                {0}            #1 - Condition
+                \s*
+                {1}            #2 - Body if true
+                (?:
+                \s*else\s*
+                {1}          #3 - Body if false (optional)
+                )?\s*\]",
+                SobaScript.RPattern.RoundBracketsContent,
+                SobaScript.RPattern.CurlyBracketsContent
+        );
 
         /// <summary>
         /// Compiled rule.
         /// </summary>
-        protected Regex CRule
-        {
-            get
-            {
-                if(crule == null) {
-                    crule = new Regex(Rule,
-                                        RegexOptions.IgnorePatternWhitespace |
-                                        RegexOptions.Compiled);
-                }
-                return crule;
-            }
-        }
-        private Regex crule;
+        protected Regex CRule => _crule.Value;
 
-        /// <param name="env">Used environment</param>
-        /// <param name="uvariable">Instance of user-variables</param>
-        public ConditionComponent(IEnvironment env, IUVars uvariable)
-            : base(env, uvariable)
+        public ConditionComponent(ISobaScript soba)
+            : base(soba)
         {
-            init();
-        }
+            expression = new ConditionalExpression(this, soba, msbuild);
 
-        /// <param name="loader">Initialization with loader</param>
-        public ConditionComponent(IBootloader loader)
-            : base(loader)
-        {
-            init();
+            _crule = new Lazy<Regex>(() => new Regex
+            (
+                Rule,
+                RegexOptions.IgnorePatternWhitespace |
+                RegexOptions.Compiled                
+            ));
         }
 
         /// <param name="data">mixed data</param>
@@ -137,7 +114,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
             Match m = CRule.Match(hString.ProtectMixedQuotes(data.Trim()));
             if(!m.Success) {
-                throw new SyntaxIncorrectException("Failed ConditionComponent - '{0}'", data);
+                throw new IncorrectSyntaxException($"Failed ConditionComponent - '{data}'");
             }
 
             string condition    = hString.Recovery(m.Groups[1].Value);
@@ -151,11 +128,6 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         {
             Log.Trace("Condition-parse: started with - '{0}' :: '{1}' :: '{2}'", condition, ifTrue, ifFalse);
             return expression.isTrue(condition) ? ifTrue : ifFalse;
-        }
-
-        protected void init()
-        {
-            expression = new ConditionalExpression(this, script, msbuild);
         }
     }
 }

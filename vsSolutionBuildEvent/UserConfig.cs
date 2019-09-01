@@ -140,7 +140,7 @@ namespace net.r_eg.vsSBE
                 {
                     Data = deserialize(stream);
                     if(Data == null) {
-                        throw new SBEException("file is empty");
+                        throw new UnspecSBEException("file is empty");
                     }
                 }
                 Log.Trace("User settings: has been loaded from '{0}'", link);

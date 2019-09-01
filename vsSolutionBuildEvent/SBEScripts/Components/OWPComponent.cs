@@ -17,26 +17,27 @@
 
 using System;
 using System.Text.RegularExpressions;
+using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Components;
+using net.r_eg.SobaScript.Exceptions;
+using net.r_eg.SobaScript.SNode;
 using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.Receiver.Output;
 using net.r_eg.vsSBE.SBEScripts.Dom;
-using net.r_eg.vsSBE.SBEScripts.Exceptions;
-using net.r_eg.vsSBE.SBEScripts.SNode;
 using OWPIdent = net.r_eg.vsSBE.Receiver.Output.Ident;
 using OWPItems = net.r_eg.vsSBE.Receiver.Output.Items;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
 {
     [Component("OWP", "For work with OWP (Output Window Pane)")]
-    public class OWPComponent: Component, IComponent, ILogData
+    public class OWPComponent: ComponentAbstract, IComponent, ILogData
     {
+        protected IEnvironment env;
+
         /// <summary>
         /// Ability to work with data for current component
         /// </summary>
-        public override string Condition
-        {
-            get { return "OWP "; }
-        }
+        public override string Condition => "OWP ";
 
         /// <summary>
         /// atomic unit
@@ -49,23 +50,23 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
         protected LogData logcopy;
 
         /// <summary>
-        /// OutputWindowPane
+        /// Access to OutputWindowPane
         /// </summary>
         protected virtual IOW OWP
         {
-            get {
+            get
+            {
                 if(env.OutputWindowPane == null) {
-                    throw new NotSupportedException("The OW pane is not available for current environment.");
+                    throw new NotSupportedException("OW pane is not available for current environment.");
                 }
                 return env.OutputWindowPane;
             }
         }
 
-        /// <param name="env">Used environment</param>
-        public OWPComponent(IEnvironment env)
-            : base(env)
+        public OWPComponent(ISobaScript soba, IEnvironment env)
+            : base(soba)
         {
-
+            this.env = env;
         }
 
         /// <summary>
@@ -105,7 +106,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     return stItem(new PM(request));
                 }
             }
-            throw new SubtypeNotFoundException("Subtype `{0}` is not found", subtype);
+            throw new SubtypeNotFoundException(subtype);
         }
 
         /// <summary>
@@ -158,14 +159,14 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             ILevel level = pm.FirstLevel; // level of the item() method
 
             if(!level.Is(ArgumentType.StringDouble)) {
-                throw new ArgumentPMException(level, "item(string name)");
+                throw new PMLevelException(level, "item(string name)");
             }
             string name = (string)level.Args[0].data;
 
-            if(String.IsNullOrWhiteSpace(name) 
+            if(string.IsNullOrWhiteSpace(name) 
                 /*|| name.Trim().Equals(Settings.OWP_ITEM_VSSBE, StringComparison.OrdinalIgnoreCase)*/)
             {
-                throw new NotSupportedOperationException("The OW pane '{0}' is not available for current operation.", name);
+                throw new NotSupportedOperationException($"The OW pane '{name}' is not supported for current operation.");
             }
 
             pm.pinTo(1);
@@ -242,7 +243,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                     pane = OWP.getByName(name, false);
                 }
                 catch(ArgumentException) {
-                    throw new NotFoundException("The item '{0}' does not exist. Use 'force' flag for automatic creation if needed.", name);
+                    throw new NotFoundException(name, "Use 'force' flag for automatic creation if needed.");
                 }
             }
             else {
@@ -423,7 +424,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
                 if(!lvlOut.Is(ArgumentType.StringDouble)
                     && !lvlOut.Is(ArgumentType.StringDouble, ArgumentType.Boolean))
                 {
-                    throw new InvalidArgumentException("Incorrect arguments to `out(string ident [, boolean isGuid])`");
+                    throw new PMLevelException(lvlOut, "`out(string ident [, boolean isGuid])`");
                 }
                 Argument[] args = lvlOut.Args;
 
