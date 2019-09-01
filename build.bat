@@ -32,11 +32,9 @@ if "%reltype%"=="" (
 
 set __p_call=1
 
-:: Packages
+:: Activate vsSBE
 
-call .\packages.cmd || goto err
-
-:: call %_msbuild% ".gnt/gnt.core" /p:ngpath="%cd%/packages" /p:ngconfig="%cd%/.gnt/packages.config;%cd%/vsSolutionBuildEvent/packages.config;%cd%/vsSolutionBuildEventTest/packages.config" /nologo /v:m
+call %_gnt% /p:ngpath="%cd%/packages" /p:ngconfig="%cd%/.gnt/packages.config" || goto err
 
 :: Build
 

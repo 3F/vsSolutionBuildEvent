@@ -46,7 +46,7 @@ namespace net.r_eg.EvMSBuild
         /// <summary>
         /// Container of user-variables through Varhead.
         /// </summary>
-        IUVars Variables { get; }
+        IUVars UVars { get; }
 
         /// <summary>
         /// Prepare, parse, and evaluate mixed data through E-MSBuild supported syntax.

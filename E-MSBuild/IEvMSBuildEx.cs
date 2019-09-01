@@ -23,36 +23,16 @@
  * THE SOFTWARE.
 */
 
+using Microsoft.Build.Evaluation;
+
 namespace net.r_eg.EvMSBuild
 {
-    public struct AProperty
+    internal interface IEvMSBuildEx: IEvMSBuild
     {
         /// <summary>
-        /// Either complex phrase or simple property.
-        /// For example:
-        ///  * Property Function:   $([System.DateTime]::UtcNow.Ticks)
-        ///  * Simple property:     $(Configuration)
+        /// Define properties using user-variables and specific project instance.
         /// </summary>
-        public bool complex;
-
-        /// <summary>
-        /// Prepared but unevaluated data, ie. the evaluation should be from this.
-        /// </summary>
-        public string unevaluated;
-
-        /// <summary>
-        /// The left definition of property.
-        /// </summary>
-        public string name;
-
-        /// <summary>
-        /// Specified scope where it was placed.
-        /// </summary>
-        public string scope;
-
-        /// <summary>
-        /// Initial data.
-        /// </summary>
-        public string raw;
+        /// <param name="project"></param>
+        void DefProperties(Project project);
     }
 }

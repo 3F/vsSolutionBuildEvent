@@ -25,9 +25,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Text.RegularExpressions;
-using System.Threading;
 using Microsoft.Build.Evaluation;
 using net.r_eg.Components;
 using net.r_eg.EvMSBuild.Exceptions;
@@ -45,7 +43,7 @@ namespace net.r_eg.EvMSBuild
     /// 
     /// Please note: initially it was part of https://github.com/3F/vsSolutionBuildEvent
     /// </summary>
-    public class EvMSBuilder: IEvMSBuild, IEvaluator
+    public class EvMSBuilder: IEvMSBuild, IEvaluator, IEvMSBuildEx
     {
         public const string UNDEF_VAL = "*Undefined*";
 
@@ -53,8 +51,6 @@ namespace net.r_eg.EvMSBuild
         /// Max of supported containers for processing.
         /// </summary>
         protected const uint CONTAINERS_LIMIT = 1 << 16;
-
-        protected const string CONTAINER = nameof(EvMSBuild) + "__e_container";
 
         public event EventHandler<PropertyArgs> GlobalPropertyChanged = delegate (object sender, PropertyArgs msg) { };
 
@@ -67,15 +63,12 @@ namespace net.r_eg.EvMSBuild
 
         private readonly char[] simprop = new char[] { '.', ':', '(', ')', '\'', '"', '[', ']' };
 
-        /// <summary>
-        /// object synch.
-        /// </summary>
         private readonly object sync = new object();
 
         /// <summary>
         /// Container of user-variables through Varhead.
         /// </summary>
-        public IUVars Variables
+        public IUVars UVars
         {
             get;
             protected set;
@@ -132,7 +125,7 @@ namespace net.r_eg.EvMSBuild
         /// <returns>Evaluated value.</returns>
         public virtual string GetPropValue(string name, string scope = null)
         {
-            if(Variables.IsExist(name, scope)) {
+            if(UVars.IsExist(name, scope)) {
                 LSender.Send(this, $"Evaluate: use '{name}:{scope}' from user-variable");
                 return GetUVarValue(name, scope);
             }
@@ -146,8 +139,7 @@ namespace net.r_eg.EvMSBuild
                 }
             }
 
-            Project project         = GetProject(scope);
-            ProjectProperty prop    = project?.GetProperty(name);
+            ProjectProperty prop = GetProject(scope).GetProperty(name);
 
             if(prop != null) {
                 return prop.EvaluatedValue;
@@ -165,8 +157,7 @@ namespace net.r_eg.EvMSBuild
         {
             var properties = new List<PropertyItem>();
 
-            Project project = GetProject(scope);
-            foreach(ProjectProperty property in project.Properties)
+            foreach(ProjectProperty property in GetProject(scope).Properties)
             {
                 string eValue = property.EvaluatedValue;
                 if(scope == null)
@@ -188,18 +179,29 @@ namespace net.r_eg.EvMSBuild
         /// <param name="scope">Where to place. null value for global or unspecified scope.</param>
         /// <returns>Returns true if the value has changes, otherwise false.</returns>
         public bool SetGlobalProperty(string name, string value, string scope = null)
-            => SetGlobalProperty(GetProject(scope), name, value);
+            => SetGlobalProperty(scope == null ? null : GetProject(scope), name, value);
 
         /// <param name="name"></param>
         /// <param name="scope">Where is placed. null value for global or unspecified scope.</param>
         /// <returns>Returns true if the property was removed.</returns>
         public bool RemoveGlobalProperty(string name, string scope = null)
-            => RemoveGlobalProperty(GetProject(scope), name);
+            => RemoveGlobalProperty(scope == null ? null : GetProject(scope), name);
+
+        /// <summary>
+        /// Define properties using user-variables and specific project instance.
+        /// </summary>
+        /// <param name="project"></param>
+        void IEvMSBuildEx.DefProperties(Project project)
+        {
+            foreach(TVariable uvar in UVars.Variables) {
+                DefProperty(uvar, project);
+            }
+        }
 
         public EvMSBuilder(IEvEnv env, IUVars uvars)
         {
-            this.env    = env;
-            Variables   = uvars ?? throw new ArgumentNullException(nameof(uvars));
+            this.env    = env ?? throw new ArgumentNullException(nameof(env));
+            UVars       = uvars ?? throw new ArgumentNullException(nameof(uvars));
         }
 
         public EvMSBuilder(IEvEnv env)
@@ -234,7 +236,7 @@ namespace net.r_eg.EvMSBuild
             string custom = CustomRule
             (
                 prepared.property.unevaluated, 
-                prepared.property.project
+                prepared.property.scope
             );
 
             if(custom != null)
@@ -260,14 +262,14 @@ namespace net.r_eg.EvMSBuild
             {
                 LSender.Send(this, "Evaluate: use getProperty", MsgLevel.Trace);
 
-                evaluated = GetPropValue(prepared.property.unevaluated, prepared.property.project);
+                evaluated = GetPropValue(prepared.property.unevaluated, prepared.property.scope);
 
                 try {
                     evaluated = Unlooping(evaluated, prepared, false);
                 }
                 catch(PossibleLoopException) {
                     // last chance with direct evaluation
-                    evaluated = Obtain(prepared.property.unevaluated, prepared.property.project);
+                    evaluated = Obtain(prepared.property.unevaluated, prepared.property.scope);
                     evaluated = Unlooping(evaluated, prepared, true);
                 }
             }
@@ -275,7 +277,7 @@ namespace net.r_eg.EvMSBuild
             {
                 LSender.Send(this, "Evaluate: use std evaluation engine", MsgLevel.Trace);
 
-                evaluated = Obtain(prepared.property.unevaluated, prepared.property.project);
+                evaluated = Obtain(prepared.property.unevaluated, prepared.property.scope);
                 evaluated = Unlooping(evaluated, prepared, true);
             }
 
@@ -300,9 +302,9 @@ namespace net.r_eg.EvMSBuild
             /*
                 The all original expressions can be evaluated by original engine inside double quotes.
                 For all other (including incorrect data) we should evaluate it manually if used protection of course
-                ~ $([System.DateTime]::Parse("$(p:project)").ToBinary()); $([System.DateTime]::Parse("$([System.DateTime]::UtcNow.Ticks)").ToBinary()) etc.
+                ~ $([System.DateTime]::Parse("$(p:scope)").ToBinary()); $([System.DateTime]::Parse("$([System.DateTime]::UtcNow.Ticks)").ToBinary()) etc.
 
-                Mainly, it's important only for ~ $(p:project) expressions with protection... so TODO
+                Mainly, it's important only for ~ $(p:scope) expressions with protection... so TODO
             */
 
             string h(string _data, char qtype)
@@ -361,64 +363,38 @@ namespace net.r_eg.EvMSBuild
 
         protected virtual string Obtain(string unevaluated, string scope = null)
         {
-            LSender.Send(this, $"evaluate '{unevaluated}' -> [{scope}]", MsgLevel.Trace);
-            Project project = GetProject(scope);
+            LSender.Send(this, $"{nameof(VaLier)} '{unevaluated}' -> [{scope}]", MsgLevel.Trace);
 
-            lock(sync)
-            {
-                CultureInfo origincul               = Thread.CurrentThread.CurrentCulture;
-                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
-                try
-                {
-                    // To fix "Save changes to the following items"
-                    project.DisableMarkDirty = true;
-
-                    DefProperties(project);
-                    project.SetProperty(CONTAINER, Tokens.EscapeCharacters(WrapProperty(ref unevaluated)));
-                    return project.GetProperty(CONTAINER).EvaluatedValue;
-                }
-                finally
-                {
-                    project.RemoveProperty(project.GetProperty(CONTAINER));
-                    project.DisableMarkDirty = false;
-
-                    Thread.CurrentThread.CurrentCulture = origincul;
-
-                    // NOTE: about other solutions for "Save changes to the following items":
-
-                    // 1) Do not use the `.Save();` on `EProject` because of possible "File Modification Detected ... has been modified outside the environment."
-                    // 2) Do not use `.Save();` on `DProject` because of possible "Operation aborted (Exception from HRESULT: 0x80004004 (E_ABORT))"
-                    // For DProject it also activates "Save As" dialog in VS even inside try/catch
-                }
+            using(var v = new VaLier(GetProject(scope), this)) {
+                return v.Compute(Tokens.EscapeCharacters(WrapProperty(ref unevaluated)));
             }
         }
 
         /// <summary>
-        /// Getting value from User-Variable by using scope of project
+        /// Getting value from User-Variables by using scope.
         /// </summary>
-        /// <param name="name">Variable name</param>
-        /// <param name="project">Project name</param>
-        /// <returns>Evaluated value of variable</returns>
-        protected string GetUVarValue(string name, string project)
+        /// <param name="name">Variable name.</param>
+        /// <param name="scope"></param>
+        /// <returns>Evaluated value.</returns>
+        protected string GetUVarValue(string name, string scope)
         {
-            if(Variables.IsUnevaluated(name, project)) {
-                Variables.Evaluate(name, project, this, true);
+            if(UVars.IsUnevaluated(name, scope)) {
+                UVars.Evaluate(name, scope, this, true);
             }
-            return Variables.GetValue(name, project);
+            return UVars.GetValue(name, scope);
         }
 
         /// <summary>
-        /// Getting value from User-Variable by using unique identification
+        /// Getting value from User-Variables by using an unique identifier.
         /// </summary>
-        /// <param name="ident">Unique identificator</param>
-        /// <returns>Evaluated value of variable</returns>
+        /// <param name="ident">Unique identificator.</param>
+        /// <returns>Evaluated value.</returns>
         protected string GetUVarValue(string ident)
         {
-            if(Variables.IsUnevaluated(ident)) {
-                Variables.Evaluate(ident, this, true);
+            if(UVars.IsUnevaluated(ident)) {
+                UVars.Evaluate(ident, this, true);
             }
-            return Variables.GetValue(ident);
+            return UVars.GetValue(ident);
         }
 
         /// <summary>
@@ -439,7 +415,7 @@ namespace net.r_eg.EvMSBuild
             Group rStringDataD      = m.Groups[2];
             Group rStringDataS      = m.Groups[3];
             Group rDataWithProject  = m.Groups[4];
-            Group rProject          = m.Groups[5];
+            Group rScope            = m.Groups[5];
             Group rData             = m.Groups[6];
 
             Analysis ret = new Analysis()
@@ -530,18 +506,18 @@ namespace net.r_eg.EvMSBuild
 
             if(rDataWithProject.Success)
             {
-                string project = rProject.Value.Trim();
+                string scope = rScope.Value.Trim();
 
                 if(rVariable.Success) {
-                    //TODO: non standard! but it also can be as a $(varname = $($(..data..):project))
-                    ret.variable.project = project;
+                    //TODO: non standard! but it also can be as a $(varname = $($(..data..):scope))
+                    ret.variable.scope = scope;
                 }
                 else {
-                    ret.property.project = project;
+                    ret.property.scope = scope;
                 }
             }
 
-            LSender.Send(this, $"prepare: project [v:'{ret.variable.project}'; p:'{ret.property.project}']", MsgLevel.Trace);
+            LSender.Send(this, $"prepare: scope [v:'{ret.variable.scope}'; p:'{ret.property.scope}']", MsgLevel.Trace);
             return ret;
         }
 
@@ -549,7 +525,7 @@ namespace net.r_eg.EvMSBuild
         /// Handler of the general containers.
         /// Moving upward from deepest container.
         /// 
-        /// $(name) or $(name:project) or $([MSBuild]::MakeRelative($(path1), ...):project) ..
+        /// $(name) or $(name:scope) or $([MSBuild]::MakeRelative($(path1), ...):scope) ..
         /// https://msdn.microsoft.com/en-us/library/vstudio/dd633440%28v=vs.120%29.aspx
         /// </summary>
         /// <param name="data"></param>
@@ -593,14 +569,18 @@ namespace net.r_eg.EvMSBuild
             return data;
         }
 
+        /// <param name="ident"></param>
+        /// <returns>never null</returns>
         private protected Project GetProject(string ident)
         {
-            try {
-                LSender.Send(this, $"MSBuild - getProject: Trying of getting project instance - '{ident}'", MsgLevel.Trace);
-                return env.GetProject(ident);
+            try
+            {
+                LSender.Send(this, $"Trying to get a project instance: '{ident}'", MsgLevel.Trace);
+                return env.GetProject(ident) ?? new Project();
             }
-            catch(Exception ex) {
-                LSender.Send(this, $"Use empty project by default due to: {ex.Message}", MsgLevel.Trace);
+            catch(Exception ex)
+            {
+                LSender.Send(this, $"Use empty project by default due to: {ex.Message}", MsgLevel.Debug);
                 return new Project();
             }
         }
@@ -609,10 +589,10 @@ namespace net.r_eg.EvMSBuild
         {
             evaluated = VSignOperation(prepared, evaluated);
 
-            LSender.Send(this, $"Evaluate: ready to define variable - '{prepared.variable.name}':'{prepared.variable.project}'");
+            LSender.Send(this, $"Evaluate: ready to define variable - '{prepared.variable.name}':'{prepared.variable.scope}'");
 
-            Variables.SetVariable(prepared.variable.name, prepared.variable.project, evaluated);
-            Variables.Evaluate(prepared.variable.name, prepared.variable.project, new EvaluatorBlank(), true);
+            UVars.SetVariable(prepared.variable.name, prepared.variable.scope, evaluated);
+            UVars.Evaluate(prepared.variable.name, prepared.variable.scope, new EvaluatorBlank(), true);
 
             TSignOperation(prepared, ref evaluated);
             return string.Empty;
@@ -624,7 +604,7 @@ namespace net.r_eg.EvMSBuild
                 return val;
             }
 
-            var left        = Variables.GetValue(prepared.variable.name, prepared.variable.project) ?? "0";
+            var left        = UVars.GetValue(prepared.variable.name, prepared.variable.scope) ?? "0";
             bool isNumber   = RPattern.IsNumber.IsMatch(left);
 
             LSender.Send(this, $"vSignOperation: '{prepared.variable.vSign}'; `{left}` (isNumber: {isNumber})", MsgLevel.Trace);
@@ -638,7 +618,7 @@ namespace net.r_eg.EvMSBuild
 
                 // $(var = $([MSBuild]::Add($(var), 1)) )
                 // TODO: additional check for errors from right string $(i += 'test') ... this correct: $(i += $(i))
-                return Obtain($"$([MSBuild]::Add('{left}', '{val}'))", prepared.variable.project);
+                return Obtain($"$([MSBuild]::Add('{left}', '{val}'))", prepared.variable.scope);
             }
 
             if(prepared.variable.vSign == VSignType.Decrement)
@@ -648,7 +628,7 @@ namespace net.r_eg.EvMSBuild
                 }
 
                 // $(var = $([MSBuild]::Subtract($(var), 1)) )
-                return Obtain($"$([MSBuild]::Subtract('{left}', '{val}'))", prepared.variable.project);
+                return Obtain($"$([MSBuild]::Subtract('{left}', '{val}'))", prepared.variable.scope);
             }
 
             return val;
@@ -715,17 +695,6 @@ namespace net.r_eg.EvMSBuild
             }
         }
 
-        /// <summary>
-        /// Define properties of project context from user-variables.
-        /// </summary>
-        /// <param name="project"></param>
-        private protected void DefProperties(Project project)
-        {
-            foreach(TVariable uvar in Variables.Variables) {
-                DefProperty(uvar, project);
-            }
-        }
-
         private protected void DefProperty(TVariable uvar, Project project)
         {
             if(uvar.status != ValStatus.Started) {
@@ -742,18 +711,18 @@ namespace net.r_eg.EvMSBuild
 
         private protected void DefProperty(AVariable variable, string evaluated)
         {
-            LSender.Send(this, $"Set property: `{variable.name}`:`{variable.project}`");
+            LSender.Send(this, $"Set property: `{variable.name}`:`{variable.scope}`");
 
-            //defProperty(uvariable.getVariable(variable.name, variable.project), getProject(variable.project));
-            SetGlobalProperty(GetProject(variable.project), variable.name, evaluated);
+            //defProperty(uvariable.getVariable(variable.name, variable.scope), getProject(variable.scope));
+            SetGlobalProperty(GetProject(variable.scope), variable.name, evaluated);
         }
 
         private protected bool UndefProperty(AVariable variable)
         {
-            LSender.Send(this, $"Unset property: `{variable.name}`:`{variable.project}`");
-            Project project = GetProject(variable.project);
+            LSender.Send(this, $"Unset property: `{variable.name}`:`{variable.scope}`");
+            Project project = GetProject(variable.scope);
 
-            //uvariable.unset(variable.name, variable.project); //leave for sbe-scripts
+            //uvariable.unset(variable.name, variable.scope); //leave for sbe-scripts
             return RemoveGlobalProperty(project, variable.name);
         }
 

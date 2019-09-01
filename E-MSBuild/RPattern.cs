@@ -66,7 +66,7 @@ namespace net.r_eg.EvMSBuild
                     (?:
                         (.+)           # 4 -> unevaluated data
                         (?<!:):
-                        ([^:)]+)       # 5 -> specific project for variable if 1 is present or for unevaluated data
+                        ([^:)]+)       # 5 -> scope for variable (if #1 is true) or for unevaluated data
                     |                # or:
                         (.+)           # 6 -> unevaluated data
                     )?

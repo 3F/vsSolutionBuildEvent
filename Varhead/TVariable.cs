@@ -40,22 +40,22 @@ namespace net.r_eg.Varhead
         public string unevaluated;
 
         /// <summary>
-        /// Identifier of current variable
+        /// Identifier of current variable.
         /// </summary>
         public string ident;
 
         /// <summary>
-        /// Front-end variable name if used
+        /// Front-end variable name if used.
         /// </summary>
         public string name;
 
         /// <summary>
-        /// Context of variable if used
+        /// Context of variable if used.
         /// </summary>
-        public string project;
+        public string scope;
 
         /// <summary>
-        /// Current status of evaluation
+        /// Current status of evaluation.
         /// </summary>
         public ValStatus status;
 
@@ -67,8 +67,8 @@ namespace net.r_eg.Varhead
         public object prev;
 
         /// <summary>
-        /// Storing in the projects files ~ .csproj, .vcxproj, .. 
-        /// or with the external containers
+        /// Flag of permanent storage.
+        /// External containers or ~ .csproj, .vcxproj, ... etc.
         /// </summary>
         /// <remarks>reserved</remarks>
         public bool persistence;
@@ -79,7 +79,7 @@ namespace net.r_eg.Varhead
             unevaluated     = origin.unevaluated;
             ident           = origin.ident;
             name            = origin.name;
-            project         = origin.project;
+            scope           = origin.scope;
             status          = origin.status;
             persistence     = origin.persistence;
             prev            = origin.prev;

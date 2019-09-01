@@ -33,10 +33,10 @@ namespace net.r_eg.EvMSBuild
         public string name;
 
         /// <summary>
-        /// Project context for variable.
-        /// or specific project where to store.
+        /// Specified context for variable.
+        /// ie. specific scope where to store.
         /// </summary>
-        public string project;
+        public string scope;
 
         /// <summary>
         /// Permanent storage in project files etc.

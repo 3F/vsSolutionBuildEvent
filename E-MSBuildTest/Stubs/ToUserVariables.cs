@@ -6,8 +6,8 @@ namespace EvMSBuildTest.Stubs
     {
         public IUVars AccessToVariables
         {
-            get => Variables;
-            set => Variables = value;
+            get => UVars;
+            set => UVars = value;
         }
     }
 }

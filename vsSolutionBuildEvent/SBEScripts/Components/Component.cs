@@ -130,7 +130,7 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
             this.script = script;
 
             env             = script.Bootloader.Env;
-            uvariable       = msbuild.Variables;
+            uvariable       = msbuild.UVars;
             this.msbuild    = msbuild;
         }
 

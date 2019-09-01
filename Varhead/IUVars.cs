@@ -47,12 +47,12 @@ namespace net.r_eg.Varhead
         IEnumerable<TVariable> Variables { get; }
 
         /// <summary>
-        /// Getting value of user-variable by using scope of project.
+        /// Getting value of user-variable by using specific scope.
         /// </summary>
-        /// <param name="name">variable name.</param>
-        /// <param name="project">project name.</param>
-        /// <returns>evaluated value of variable.</returns>
-        string GetValue(string name, string project);
+        /// <param name="name">Variable name.</param>
+        /// <param name="scope">Specified scope for this variable.</param>
+        /// <returns>Evaluated value of variable or null if variable not defined.</returns>
+        string GetValue(string name, string scope);
 
         /// <summary>
         /// Getting value of user-variable by using unique identification.
@@ -62,12 +62,12 @@ namespace net.r_eg.Varhead
         string GetValue(string ident);
 
         /// <summary>
-        /// Get user-variable struct by using scope of project.
+        /// Get user-variable struct by using specific scope.
         /// </summary>
-        /// <param name="name">variable name.</param>
-        /// <param name="project">project name.</param>
+        /// <param name="name">Variable name.</param>
+        /// <param name="scope">Specified scope for this variable.</param>
         /// <returns>Struct of user-variable.</returns>
-        TVariable GetVariable(string name, string project);
+        TVariable GetVariable(string name, string scope);
 
         /// <summary>
         /// Get user-variable struct by using unique identification.
@@ -80,38 +80,37 @@ namespace net.r_eg.Varhead
         /// Defines user-variable.
         /// Value setted as unevaluated.
         /// </summary>
-        /// <param name="name">variable name.</param>
-        /// <param name="project">project name.</param>
-        /// <param name="unevaluated">mixed string with unevaluated data.</param>
-        void SetVariable(string name, string project, string unevaluated);
+        /// <param name="name">Variable name.</param>
+        /// <param name="scope">Specified scope for this variable.</param>
+        /// <param name="unevaluated">Mixed string with unevaluated data.</param>
+        void SetVariable(string name, string scope, string unevaluated);
 
         /// <summary>
-        /// Evaluation user-variable with IEvaluator by using scope of project
-        /// Evaluated value should be updated for variable.
+        /// Evaluate user-variable with IEvaluator by using specific scope.
+        /// An evaluated value should be updated for variable.
         /// </summary>
         /// <param name="name">Variable name for evaluating</param>
-        /// <param name="project">Project name</param>
+        /// <param name="scope">Specified scope for this variable.</param>
         /// <param name="evaluator">IEvaluator objects for evaluating</param>
-        /// <param name="resetting">Evaluation can be in the chain of others IEvaluator's, this flag should reset this to initial state</param>
-        void Evaluate(string name, string project, IEvaluator evaluator, bool resetting);
+        /// <param name="resetting">To reset IEvaluator chain to initial state if true. Otherwise, evaluation can be in the chain of other evaluators.</param>
+        void Evaluate(string name, string scope, IEvaluator evaluator, bool resetting);
 
         /// <summary>
-        /// Evaluation user-variable with IEvaluator by using unique identification
-        /// Evaluated value should be updated for variable.
+        /// Evaluate user-variable with IEvaluator by using unique identification.
+        /// An evaluated value should be updated for variable.
         /// </summary>
         /// <param name="ident">Unique identificator</param>
         /// <param name="evaluator">IEvaluator objects for evaluating</param>
-        /// <param name="resetting">Evaluation can be in the chain of others IEvaluator's, this flag should reset this to initial state</param>
+        /// <param name="resetting">To reset IEvaluator chain to initial state if true. Otherwise, evaluation can be in the chain of other evaluators.</param>
         void Evaluate(string ident, IEvaluator evaluator, bool resetting);
 
         /// <summary>
-        /// Checking for variable - completed evaluation or not
-        /// by using scope of project
+        /// Is this variable with completed evaluation or not?
         /// </summary>
-        /// <param name="name">Variable name</param>
-        /// <param name="project">Project name</param>
+        /// <param name="name">Variable name.</param>
+        /// <param name="scope">Specified scope for this variable.</param>
         /// <returns></returns>
-        bool IsUnevaluated(string name, string project);
+        bool IsUnevaluated(string name, string scope);
 
         /// <summary>
         /// Checking for variable - completed evaluation or not
@@ -123,12 +122,12 @@ namespace net.r_eg.Varhead
 
         /// <summary>
         /// Checking existence of variable
-        /// by using scope of project
+        /// by using specifc scope.
         /// </summary>
-        /// <param name="name">Variable name</param>
-        /// <param name="project">Project name</param>
+        /// <param name="name">Variable name.</param>
+        /// <param name="scope">Specified scope for this variable.</param>
         /// <returns></returns>
-        bool IsExist(string name, string project);
+        bool IsExist(string name, string scope);
 
         /// <summary>
         /// Checking existence of variable 
@@ -140,11 +139,11 @@ namespace net.r_eg.Varhead
 
         /// <summary>
         /// Removes user-variable
-        /// by using scope of project
+        /// by using specifc scope.
         /// </summary>
-        /// <param name="name">variable name</param>
-        /// <param name="project">project name</param>
-        void Unset(string name, string project);
+        /// <param name="name">Variable name.</param>
+        /// <param name="scope">Specified scope for this variable.</param>
+        void Unset(string name, string scope);
 
         /// <summary>
         /// Removes user-variable

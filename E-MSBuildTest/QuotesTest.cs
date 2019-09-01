@@ -13,10 +13,10 @@ namespace EvMSBuildTest
             var target = new EvMSBuilderStub();
 
             Assert.Equal(string.Empty, target.Eval("$(name = \" $([System.Math]::Pow(2, 16)) \")"));
-            Assert.Equal(" 65536 ", target.Variables.GetValue("name", null));
+            Assert.Equal(" 65536 ", target.UVars.GetValue("name", null));
 
             Assert.Equal(string.Empty, target.Eval("$(name = ' $([System.Math]::Pow(2, 16)) ')"));
-            Assert.Equal(" $([System.Math]::Pow(2, 16)) ", target.Variables.GetValue("name", null));
+            Assert.Equal(" $([System.Math]::Pow(2, 16)) ", target.UVars.GetValue("name", null));
         }
 
         [Fact]
@@ -36,13 +36,13 @@ namespace EvMSBuildTest
             var target = new EvMSBuilderStub();
 
             Assert.Equal(string.Empty, target.Eval("$(tpl = \"My version - '%Ver%'\")"));
-            Assert.Equal("My version - '%Ver%'", target.Variables.GetValue("tpl", null));
+            Assert.Equal("My version - '%Ver%'", target.UVars.GetValue("tpl", null));
 
             Assert.Equal(string.Empty, target.Eval("$(ver = '1.2.3')"));
-            Assert.Equal("1.2.3", target.Variables.GetValue("ver", null));
+            Assert.Equal("1.2.3", target.UVars.GetValue("ver", null));
 
             Assert.Equal(string.Empty, target.Eval("$(rev = '2417')"));
-            Assert.Equal("2417", target.Variables.GetValue("rev", null));
+            Assert.Equal("2417", target.UVars.GetValue("rev", null));
 
             Assert.Equal("My version - '1, 2, 3, 2417'", target.Eval("$(tpl.Replace(\"%Ver%\", \"$(ver.Replace('.', ', ')), $(rev)\"))"));
             Assert.Equal("1.2.3 version - '1.2.3.2417'", target.Eval("$(tpl.Replace(\"%Ver%\", \"$(ver).$(rev)\").Replace(\"My\", \"$(ver)\"))"));
@@ -53,8 +53,8 @@ namespace EvMSBuildTest
         {
             var target = new EvMSBuilderStub();
 
-            target.Variables.SetVariable("name", "project", "test123");
-            target.Variables.Evaluate("name", "project", new EvaluatorBlank(), true);
+            target.UVars.SetVariable("name", "project", "test123");
+            target.UVars.Evaluate("name", "project", new EvaluatorBlank(), true);
 
             //Assert.Equal("test123", target.parse("$([System.String]::Concat('$(name:project)'))")); //TODO: read note from hquotes
             Assert.Equal("test123", target.Eval("$([System.String]::Concat(\"$(name:project)\"))")); // $([System.DateTime]::Parse(\"$([System.DateTime]::UtcNow.Ticks)\").ToBinary())
@@ -65,8 +65,8 @@ namespace EvMSBuildTest
         {
             var target = new EvMSBuilderStub();
 
-            target.Variables.SetVariable("name", null, "test123");
-            target.Variables.Evaluate("name", null, new EvaluatorBlank(), true);
+            target.UVars.SetVariable("name", null, "test123");
+            target.UVars.Evaluate("name", null, new EvaluatorBlank(), true);
 
             Assert.Equal("test123", target.Eval("$([System.String]::Concat(\"$(name)\"))"));
             Assert.Equal("test123", target.Eval("$([System.String]::Concat('$(name)'))"));
@@ -132,8 +132,8 @@ namespace EvMSBuildTest
         {
             var target = new EvMSBuilderStub();
 
-            target.Variables.SetVariable("name", null, "test123");
-            target.Variables.Evaluate("name", null, new EvaluatorBlank(), true);
+            target.UVars.SetVariable("name", null, "test123");
+            target.UVars.Evaluate("name", null, new EvaluatorBlank(), true);
 
             Assert.Equal("test123)", target.Eval("$([System.String]::Concat(\"$(name))\"))"));
             Assert.Equal("(test123", target.Eval("$([System.String]::Concat(\"($(name)\"))"));

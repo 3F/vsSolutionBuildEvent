@@ -80,14 +80,14 @@ namespace net.r_eg.Varhead
         }
 
         /// <summary>
-        /// Getting value of user-variable by using scope of project
+        /// Getting value of user-variable by using specific scope.
         /// </summary>
-        /// <param name="name">variable name</param>
-        /// <param name="project">project name</param>
-        /// <returns>evaluated value of variable or null if variable not defined</returns>
-        public string GetValue(string name, string project)
+        /// <param name="name">Variable name.</param>
+        /// <param name="scope">Specified scope for this variable.</param>
+        /// <returns>Evaluated value of variable or null if variable not defined.</returns>
+        public string GetValue(string name, string scope)
         {
-            return GetValue(DefIndex(name, project));
+            return GetValue(DefIndex(name, scope));
         }
 
         /// <summary>
@@ -113,14 +113,14 @@ namespace net.r_eg.Varhead
         }
 
         /// <summary>
-        /// Get user-variable struct by using scope of project
+        /// Get user-variable struct by using specific scope.
         /// </summary>
-        /// <param name="name">variable name</param>
-        /// <param name="project">project name</param>
-        /// <returns>Struct of user-variable</returns>
-        public TVariable GetVariable(string name, string project)
+        /// <param name="name">Variable name.</param>
+        /// <param name="scope">Specified scope for this variable.</param>
+        /// <returns>Struct of user-variable.</returns>
+        public TVariable GetVariable(string name, string scope)
         {
-            return GetVariable(DefIndex(name, project));
+            return GetVariable(DefIndex(name, scope));
         }
 
         /// <summary>
@@ -140,18 +140,18 @@ namespace net.r_eg.Varhead
         }
 
         /// <summary>
-        /// Defines user-variable
-        /// Value setted as unevaluated
+        /// Defines user-variable.
+        /// Value setted as unevaluated.
         /// </summary>
-        /// <param name="name">variable name</param>
-        /// <param name="project">project name or null if project is default</param>
-        /// <param name="unevaluated">mixed string. Converted to empty string if value is null</param>
-        public void SetVariable(string name, string project, string unevaluated)
+        /// <param name="name">Variable name.</param>
+        /// <param name="scope">Specified scope for this variable.</param>
+        /// <param name="unevaluated">Mixed string with unevaluated data.</param>
+        public void SetVariable(string name, string scope, string unevaluated)
         {
-            if(!IsValidName(name) || !IsValidProject(project)) {
-                throw new ArgumentException($"name - '{name}' or project - '{project}' is not valid for variable");
+            if(!IsValidName(name) || !IsValidScope(scope)) {
+                throw new ArgumentException($"name - '{name}' or scope - '{scope}' is not valid for variable");
             }
-            string defindex = DefIndex(name, project);
+            string defindex = DefIndex(name, scope);
 
             if(unevaluated == null) {
                 unevaluated = String.Empty;
@@ -163,7 +163,7 @@ namespace net.r_eg.Varhead
                     unevaluated = unevaluated,
                     ident       = defindex,
                     name        = name,
-                    project     = project,
+                    scope       = scope,
                     status      = ValStatus.Unevaluated,
                     prev        = (definitions.ContainsKey(defindex))? definitions[defindex] : new TVariable(),
                     evaluated   = null
@@ -173,25 +173,25 @@ namespace net.r_eg.Varhead
         }
 
         /// <summary>
-        /// Evaluation user-variable with IEvaluator by using scope of project
-        /// Evaluated value should be updated for variable.
+        /// Evaluate user-variable with IEvaluator by using specific scope.
+        /// An evaluated value should be updated for variable.
         /// </summary>
         /// <param name="name">Variable name for evaluating</param>
-        /// <param name="project">Project name</param>
+        /// <param name="scope">Specified scope for this variable.</param>
         /// <param name="evaluator">IEvaluator objects for evaluating</param>
-        /// <param name="resetting">Evaluating from the unevaluated data if true, otherwise evaluation in the chain of others IEvaluator's</param>
-        public void Evaluate(string name, string project, IEvaluator evaluator, bool resetting)
+        /// <param name="resetting">To reset IEvaluator chain to initial state if true. Otherwise, evaluation can be in the chain of other evaluators.</param>
+        public void Evaluate(string name, string scope, IEvaluator evaluator, bool resetting)
         {
-            Evaluate(DefIndex(name, project), evaluator, resetting);
+            Evaluate(DefIndex(name, scope), evaluator, resetting);
         }
 
         /// <summary>
-        /// Evaluation user-variable with IEvaluator by using unique identification
-        /// Evaluated value should be updated for variable.
+        /// Evaluate user-variable with IEvaluator by using unique identification.
+        /// An evaluated value should be updated for variable.
         /// </summary>
         /// <param name="ident">Unique identificator</param>
         /// <param name="evaluator">IEvaluator objects for evaluating</param>
-        /// <param name="resetting">Evaluating from the unevaluated data if true, otherwise evaluation in the chain of others IEvaluator's</param>
+        /// <param name="resetting">To reset IEvaluator chain to initial state if true. Otherwise, evaluation can be in the chain of other evaluators.</param>
         public void Evaluate(string ident, IEvaluator evaluator, bool resetting)
         {
             if(evaluator == null) {
@@ -222,15 +222,14 @@ namespace net.r_eg.Varhead
         }
 
         /// <summary>
-        /// Checking for variable - completed evaluation or not
-        /// by using scope of project
+        /// Is this variable with completed evaluation or not?
         /// </summary>
-        /// <param name="name">Variable name</param>
-        /// <param name="project">Project name</param>
+        /// <param name="name">Variable name.</param>
+        /// <param name="scope">Specified scope for this variable.</param>
         /// <returns></returns>
-        public bool IsUnevaluated(string name, string project)
+        public bool IsUnevaluated(string name, string scope)
         {
-            return IsUnevaluated(DefIndex(name, project));
+            return IsUnevaluated(DefIndex(name, scope));
         }
 
         /// <summary>
@@ -246,14 +245,14 @@ namespace net.r_eg.Varhead
 
         /// <summary>
         /// Checking existence of variable
-        /// by using scope of project
+        /// by using specifc scope.
         /// </summary>
-        /// <param name="name">Variable name</param>
-        /// <param name="project">Project name</param>
+        /// <param name="name">Variable name.</param>
+        /// <param name="scope">Specified scope for this variable.</param>
         /// <returns></returns>
-        public bool IsExist(string name, string project)
+        public bool IsExist(string name, string scope)
         {
-            return IsExist(DefIndex(name, project));
+            return IsExist(DefIndex(name, scope));
         }
 
         /// <summary>
@@ -281,29 +280,30 @@ namespace net.r_eg.Varhead
         }
 
         /// <summary>
-        /// Validation of project name
+        /// Validation of scope name.
         /// </summary>
-        /// <param name="project">project name</param>
+        /// <param name="scope"></param>
         /// <returns>Is valid or not</returns>
-        public virtual bool IsValidProject(string project)
+        public virtual bool IsValidScope(string scope)
         {
-            if(string.IsNullOrEmpty(project)) {
+            if(string.IsNullOrEmpty(scope)) {
                 return true;
             }
+
             //TODO:
             return true;
         }
 
         /// <summary>
-        /// Remove user-variable
-        /// by using scope of project
+        /// Removes user-variable
+        /// by using specifc scope.
         /// </summary>
-        /// <param name="name">variable name</param>
-        /// <param name="project">project name</param>
+        /// <param name="name">Variable name.</param>
+        /// <param name="scope">Specified scope for this variable.</param>
         /// <exception cref="ArgumentNullException">key is null</exception>
-        public void Unset(string name, string project)
+        public void Unset(string name, string scope)
         {
-            Unset(DefIndex(name, project));
+            Unset(DefIndex(name, scope));
         }
 
         /// <summary>
@@ -361,12 +361,12 @@ namespace net.r_eg.Varhead
         /// <summary>
         /// Used key-index for definitions
         /// </summary>
-        protected string DefIndex(string name, string project)
+        protected string DefIndex(string name, string scope)
         {
-            if(string.IsNullOrEmpty(project)) {
+            if(string.IsNullOrEmpty(scope)) {
                 return name;
             }
-            return $"{name}_{project}";
+            return $"{name}_{scope}";
         }
     }
 }
