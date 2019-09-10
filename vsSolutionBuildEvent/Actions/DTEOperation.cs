@@ -199,7 +199,7 @@ namespace net.r_eg.vsSBE.Actions
 
         public virtual void exec(string name, string args = "")
         {
-            env.exec(name, args);
+            env?.exec(name, args);
         }
 
         public void flushQueue()

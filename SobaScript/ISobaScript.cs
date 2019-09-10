@@ -23,9 +23,11 @@
  * THE SOFTWARE.
 */
 
+using net.r_eg.Varhead;
+
 namespace net.r_eg.SobaScript
 {
-    public interface ISobaScript: ISobaCLoader
+    public interface ISobaScript: ISobaCLoader, IEvaluator
     {
         /// <summary>
         /// Handler of mixed data SBE-Scripts

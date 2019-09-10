@@ -4,6 +4,7 @@ using Moq;
 using net.r_eg.SobaScript;
 using net.r_eg.SobaScript.Exceptions;
 using net.r_eg.Varhead;
+using net.r_eg.Varhead.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Components;
 
 namespace net.r_eg.vsSBE.Test.SBEScripts.Components
@@ -43,7 +44,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse -> '-' operation
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(NotFoundException))]
+        [ExpectedException(typeof(DefinitionNotFoundException))]
         public void parseTest3()
         {
             UserVariableComponentAccessor target = new UserVariableComponentAccessor(new UVars());
@@ -115,7 +116,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for std
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(NotFoundException))]
+        [ExpectedException(typeof(DefinitionNotFoundException))]
         public void stdTest1()
         {
             UserVariableComponent target = new UserVariableComponent(new Soba());

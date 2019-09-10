@@ -23,18 +23,34 @@
  * THE SOFTWARE.
 */
 
-using System;
-using net.r_eg.SobaScript.Components;
-
 namespace net.r_eg.SobaScript
 {
-    [Obsolete]
-    public interface ISolutionEvents
+    internal sealed class SData
     {
         /// <summary>
-        /// Configuration of components.
+        /// Flag of post-processing with E-MSBuild engine.
+        /// 
+        /// Some components may require immediate processing with evaluation before passing control to the next level.
+        /// This flag allows processing if needed.
         /// </summary>
-        [Obsolete]
-        ComponentCfg[] Components { get; set; }
+        public bool postEvM;
+
+        /// <summary>
+        /// Actual data for evaluators.
+        /// </summary>
+        public string content;
+
+        public static implicit operator string(SData data) => data?.content;
+
+        public SData()
+        {
+
+        }
+
+        public SData(string content, bool postEvM)
+        {
+            this.content = content;
+            this.postEvM = postEvM;
+        }
     }
 }

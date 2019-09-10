@@ -110,13 +110,13 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[OWP out()]");
                 Assert.Fail("1");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMLevelException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[OWP out().All]");
                 Assert.Fail("2");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMLevelException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -248,7 +248,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - stItem
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(PMArgException))]
+        [ExpectedException(typeof(PMLevelException))]
         public void stItemParseTest4()
         {
             OWPComponent target = new OWPComponent(new Soba(), (IEnvironment)null);

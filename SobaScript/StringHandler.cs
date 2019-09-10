@@ -23,7 +23,6 @@
  * THE SOFTWARE.
 */
 
-using System;
 using System.Text.RegularExpressions;
 using net.r_eg.Varhead;
 

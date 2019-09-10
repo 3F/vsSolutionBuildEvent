@@ -187,7 +187,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///#[Build projects.find("name")]
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(PMArgException))]
+        [ExpectedException(typeof(PMLevelException))]
         public void stProjectsTest1()
         {
             BuildComponentAccessor target = new BuildComponentAccessor();

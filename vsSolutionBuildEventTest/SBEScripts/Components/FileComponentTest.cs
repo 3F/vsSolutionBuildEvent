@@ -41,7 +41,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - stGet
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(PMArgException))]
+        [ExpectedException(typeof(PMLevelException))]
         public void stGetParseTest1()
         {
             FileComponent target = new FileComponent();
@@ -62,7 +62,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - stGet
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(UnspecSobaScriptException))]
+        [ExpectedException(typeof(FileNotFoundException))]
         public void stGetParseTest3()
         {
             FileComponentAccessor target = new FileComponentAccessor(true);
@@ -81,13 +81,13 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[File call(file)]");
                 Assert.Fail("1");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMLevelException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File out(file)]");
                 Assert.Fail("2");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMLevelException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - stCall
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(PMArgException))]
+        [ExpectedException(typeof(PMLevelException))]
         public void stCallParseTest5()
         {
             FileComponentAccessor target = new FileComponentAccessor();
@@ -120,7 +120,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
         ///A test for parse - stCall
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(PMArgException))]
+        [ExpectedException(typeof(PMLevelException))]
         public void stCallParseTest6()
         {
             FileComponentAccessor target = new FileComponentAccessor();
@@ -205,44 +205,44 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[File write(\"file\", true):data]");
                 Assert.Fail("1");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMLevelException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File write(\"file\", true, true):data]");
                 Assert.Fail("2");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMLevelException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File write(\"file\", \"true\", \"true\", \"utf-8\"):data]");
                 Assert.Fail("3");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMLevelException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File append(\"file\", true, true, \"utf-8\"):data]");
                 Assert.Fail("4");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMLevelException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File appendLine(\"file\", true, true, \"utf-8\"):data]");
                 Assert.Fail("5");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMLevelException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File writeLine(\"file\", true, true, \"utf-8\"):data]");
                 Assert.Fail("6");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMLevelException), ex.GetType().ToString()); }
         }
 
         /// <summary>
         ///A test for parse - stReplace
         ///</summary>
         [TestMethod()]
-        [ExpectedException(typeof(PMArgException))]
+        [ExpectedException(typeof(PMLevelException))]
         public void stReplaceParseTest1()
         {
             FileComponentAccessor target = new FileComponentAccessor();
@@ -402,19 +402,19 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[File remote.download()]");
                 Assert.Fail("1");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMLevelException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File remote.download(\"addr\")]");
                 Assert.Fail("2");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMLevelException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File remote.download(\"addr\", \"file\", \"user\")]");
                 Assert.Fail("3");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMLevelException), ex.GetType().ToString()); }
         }
 
         /// <summary>
@@ -477,13 +477,13 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[File copy.file()]");
                 Assert.Fail("1");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMLevelException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File copy.file(false)]");
                 Assert.Fail("2");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMLevelException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File copy.file(\" \", \"dest\", false)]");
@@ -518,7 +518,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[File copy.file(\"src\", \"dest\", false, {\"notexists\", false})]");
                 Assert.Fail("2");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
 
 
             Assert.AreEqual(Value.Empty, target.parse("[File copy.file(\"path\\subdir1\\file1.txt\", \"path2\\file2.txt\", true)]"));
@@ -573,13 +573,13 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[File copy.directory()]");
                 Assert.Fail("1");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMLevelException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File copy.directory(false)]");
                 Assert.Fail("2");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMLevelException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File copy.directory(\" \", \"dest\", false)]");
@@ -680,7 +680,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 Assert.Fail("1");
             }
             catch(Exception ex) {
-                Assert.IsTrue(ex.GetType() == typeof(PMArgException));
+                Assert.IsTrue(ex.GetType() == typeof(PMLevelException));
             }
 
             try {
@@ -688,7 +688,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 Assert.Fail("2");
             }
             catch(Exception ex) {
-                Assert.IsTrue(ex.GetType() == typeof(ArgumentException));
+                Assert.IsTrue(ex.GetType() == typeof(PMArgException));
             }
 
             try {
@@ -696,7 +696,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 Assert.Fail("3");
             }
             catch(Exception ex) {
-                Assert.IsTrue(ex.GetType() == typeof(ArgumentException));
+                Assert.IsTrue(ex.GetType() == typeof(PMArgException));
             }
         }
 
@@ -740,7 +740,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[File delete.directory(\"dir\")]");
                 Assert.Fail("1");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMArgException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMLevelException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[File delete.directory(\"  \", false)]");

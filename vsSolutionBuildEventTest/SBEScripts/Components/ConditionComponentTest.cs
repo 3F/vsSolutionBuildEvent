@@ -313,7 +313,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             uv.SetVariable("test2", null, "data)");
             uv.SetVariable("test3", null, "true");
 
-            ConditionComponent target = new ConditionComponent(new Soba(uv));
+            ConditionComponent target = new ConditionComponent(StubSoba.MakeNew(uv));
             Assert.AreEqual("yes", target.parse("[( #[var test] ~= \"(data\"){yes}else{no}]"));
             Assert.AreEqual("no", target.parse("[( #[var test2] ~= \"(data\"){yes}else{no}]"));
             Assert.AreEqual("yes", target.parse("[( (#[var test3]) ){yes}else{no}]"));
@@ -353,7 +353,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             uv.SetVariable("test2", null, "true");
             uv.SetVariable("test3", null, "4");
 
-            ConditionComponent target = new ConditionComponent(new Soba(uv));
+            ConditionComponent target = new ConditionComponent(StubSoba.MakeNew(uv));
             target.PostProcessingMSBuild = true;
 
             Assert.AreEqual("yes", target.parse("[(  $(test) == \"data(str)\" ){yes}else{no}]"));
@@ -387,7 +387,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             IUVars uv = new UVars();
             uv.SetVariable("test", null, "(data");
 
-            ConditionComponent target = new ConditionComponent(new Soba(uv));
+            ConditionComponent target = new ConditionComponent(StubSoba.MakeNew(uv));
             Assert.AreEqual("no", target.parse("[( #[var test] ~= \"(data && 1 < 2\" ){yes}else{no}]"));
             Assert.AreEqual("yes", target.parse("[( #[var test] ~= \"(data\" && 1 < 2 ){yes}else{no}]"));
         }
@@ -470,7 +470,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
             uv.SetVariable("test", null, "data1 && data|2");
             uv.SetVariable("test2", null, "data1 || data&2");
 
-            ConditionComponent target = new ConditionComponent(new Soba(uv));
+            ConditionComponent target = new ConditionComponent(StubSoba.MakeNew(uv));
             Assert.AreEqual("yes", target.parse("[( #[var test] == \"data1 && data|2\" ){yes}else{no}]"));
             Assert.AreEqual("yes", target.parse("[( #[var test2] == \"data1 || data&2\" ){yes}else{no}]"));
         }

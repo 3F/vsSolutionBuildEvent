@@ -37,6 +37,14 @@ using net.r_eg.Varhead.Exceptions;
 
 namespace net.r_eg.SobaScript
 {
+    /// <summary>
+    /// [ #SobaScript ]
+    /// 
+    /// Extensible Modular Scripting Programming Language.
+    /// https://github.com/3F/SobaScript
+    /// 
+    /// Please note: initially it was part of https://github.com/3F/vsSolutionBuildEvent
+    /// </summary>
     public class Soba: ISobaScript, IEvaluator, ISobaCLoader
     {
         /// <summary>
@@ -45,13 +53,6 @@ namespace net.r_eg.SobaScript
         const int DEPTH_LIMIT = 70;
 
         protected ConcurrentDictionary<Type, IComponent> components = new ConcurrentDictionary<Type, IComponent>();
-
-        /// <summary>
-        /// Flag of post-processing with MSBuild core.
-        /// In general, some components can require immediate processing with evaluation before passing control to next level.
-        /// This flag allows processing if needed.
-        /// </summary>
-        protected bool postMSBuild;
 
         /// <summary>
         /// Current level of nesting data.
@@ -93,19 +94,27 @@ namespace net.r_eg.SobaScript
             protected set;
         }
 
-        /// <param name="data">mixed data</param>
-        /// <param name="allowMSBuild">Allows post-processing with MSBuild or not.
-        /// Some components can require immediate processing with evaluation, before passing control to next level.
+        /// <param name="data">Mixed data for evaluation.</param>
+        /// <param name="allowEvM">Allows post-processing with E-MSBuild.
+        /// Some components may require immediate processing with evaluation before passing control to the next level.
         /// </param>
-        /// <returns>prepared and evaluated data</returns>
-        public string parse(string data, bool allowMSBuild)
+        /// <returns>Prepared and evaluated data through SobaScript.</returns>
+        public string parse(string data, bool allowEvM)
         {
+            var hString = new StringHandler();
+
             lock(sync)
             {
                 _depthLevel = 0;
-                postMSBuild = allowMSBuild;
-                StringHandler hString = new StringHandler();
-                return hString.Recovery(parse(hString.protect(data), _depthLevel, hString));
+                return hString.Recovery
+                (
+                    parse
+                    (
+                        new SData(hString.protect(data), allowEvM),
+                        _depthLevel,
+                        hString
+                    )
+                );
             }
         }
 
@@ -195,7 +204,7 @@ namespace net.r_eg.SobaScript
         /// <param name="level">Nesting level</param>
         /// <param name="hString">Handler of strings if exists</param>
         /// <returns>Prepared and evaluated data</returns>
-        protected string parse(string data, int level, StringHandler hString = null)
+        private protected string parse(SData data, int level, StringHandler hString = null)
         {
             if(level >= DEPTH_LIMIT) {
                 _depthLevel = 0;
@@ -216,7 +225,9 @@ namespace net.r_eg.SobaScript
                         return "#" + escapeMSBuildData(raw, true);
                     }
 
-                    return selector((hString != null)? hString.Recovery(raw) : raw);
+                    data.content = hString != null ? hString.Recovery(raw) : raw;
+
+                    return selector(data);
                 }
             );
         }
@@ -227,17 +238,17 @@ namespace net.r_eg.SobaScript
         /// <param name="data">Mixed data</param>
         /// <param name="c">Component</param>
         /// <returns>Prepared + evaluated data by component</returns>
-        protected string parse(string data, IComponent c)
+        private protected string parse(SData data, IComponent c)
         {
-            string ret = c.parse(data);
+            data.content = c.parse(data);
 
             if(c.PostParse)
             {
                 ++_depthLevel;
-                ret = parse(ret, _depthLevel);
+                data.content = parse(data, _depthLevel);
                 --_depthLevel;
             }
-            return ret;
+            return data;
         }
 
         /// <param name="data"></param>
@@ -270,13 +281,13 @@ namespace net.r_eg.SobaScript
 
         /// <param name="data">mixed data</param>
         /// <returns>prepared and evaluated data</returns>
-        protected string selector(string data)
+        private protected string selector(SData data)
         {
             LSender.Send(this, $"Selector: started with `{data}`", MsgLevel.Trace);
 
             foreach(IComponent c in Components)
             {
-                c.PostProcessingMSBuild = postMSBuild;
+                c.PostProcessingMSBuild = data.postEvM;
 
                 if(!c.BeforeDeepen) {
                     continue;
@@ -287,9 +298,9 @@ namespace net.r_eg.SobaScript
                 }
             }
 
-            if(deepen(ref data)) {
+            if(deepen(ref data.content)) {
                 ++_depthLevel;
-                data = parse(data, _depthLevel);
+                data.content = parse(data, _depthLevel);
                 --_depthLevel;
             }
 

@@ -58,7 +58,7 @@ namespace net.r_eg.vsSBE.Test.SBEScripts.Components
                 target.parse("[NuGet gnt.raw()]");
                 Assert.Fail("1");
             }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(ArgumentException), ex.GetType().ToString()); }
+            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(PMLevelException), ex.GetType().ToString()); }
 
             try {
                 target.parse("[NuGet gnt.raw(\"the is not a correct command\")]");

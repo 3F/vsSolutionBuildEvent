@@ -22,7 +22,6 @@ using net.r_eg.SobaScript.Components;
 using net.r_eg.SobaScript.Exceptions;
 using net.r_eg.Varhead;
 using net.r_eg.Varhead.Exceptions;
-using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.SBEScripts.Dom;
 
 namespace net.r_eg.vsSBE.SBEScripts.Components
@@ -193,9 +192,9 @@ namespace net.r_eg.vsSBE.SBEScripts.Components
 
         protected virtual void evaluate(string name, string project = null)
         {
-            uvars.Evaluate(name, project, (IEvaluator)soba, true);
+            uvars.Evaluate(name, project, soba, true);
             if(PostProcessingMSBuild) {
-                uvars.Evaluate(name, project, (IEvaluator)msbuild, false);
+                uvars.Evaluate(name, project, msbuild, false);
             }
         }
     }
