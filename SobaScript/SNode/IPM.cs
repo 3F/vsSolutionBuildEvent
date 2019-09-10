@@ -24,7 +24,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace net.r_eg.SobaScript.SNode
@@ -33,19 +32,14 @@ namespace net.r_eg.SobaScript.SNode
     public interface IPM
     {
         /// <summary>
-        /// Found levels.
+        /// Access to found levels.
         /// </summary>
-        List<ILevel> Levels { get; }
+        RLevels Levels { get; }
 
         /// <summary>
         /// Access to first level.
         /// </summary>
         ILevel FirstLevel { get; set; }
-
-        /// <summary>
-        /// Condition for analyzer.
-        /// </summary>
-        string Condition { get; }
 
         /// <summary>
         /// Checks equality for level.
@@ -79,28 +73,28 @@ namespace net.r_eg.SobaScript.SNode
         /// </summary>
         /// <param name="level">New start position.</param>
         /// <returns>Self reference.</returns>
-        IPM pinTo(int level);
+        IPM PinTo(int level);
 
         /// <summary>
         /// Get all levels from selected.
         /// </summary>
         /// <param name="level">Start position.</param>
         /// <returns>New instance of IPM.</returns>
-        IPM getFrom(int level);
+        IPM GetFrom(int level);
 
         /// <summary>
         /// The string of diagnostic information about level.
         /// </summary>
         /// <param name="level"></param>
         /// <returns></returns>
-        string traceLevel(int level = 0);
+        string TraceLevel(int level = 0);
 
         /// <summary>
         /// Throws error for level.
         /// </summary>
         /// <param name="level"></param>
         /// <param name="ident">Custom id of place where occurred.</param>
-        void fail(int level = 0, string ident = null);
+        void Fail(int level = 0, string ident = null);
 
         /// <summary>
         /// Checks equality for zero level.
@@ -181,6 +175,6 @@ namespace net.r_eg.SobaScript.SNode
         /// <param name="raw">Raw data of arguments.</param>
         /// <param name="splitter">A character that delimits arguments.</param>
         /// <returns>List of parsed arguments or null value if data is empty or null.</returns>
-        Argument[] arguments(string raw, char splitter = ',');
+        RArgs GetArguments(string raw, char splitter = ',');
     }
 }

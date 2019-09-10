@@ -24,6 +24,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.CSharp;
 using net.r_eg.SobaScript.Exceptions;
+using net.r_eg.SobaScript.Z.Ext.Extensions;
 using net.r_eg.vsSBE.Configuration.User;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
@@ -368,12 +369,20 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             Log.Trace("[Compiler] use as list of files with source code.");
-            if(String.IsNullOrEmpty(hash)) {
-                return provider.CompileAssemblyFromFile(parameters, filesFromCommand(source).ExtractFiles());
+            if(string.IsNullOrEmpty(hash))
+            {
+                return provider.CompileAssemblyFromFile(
+                    parameters, 
+                    filesFromCommand(source).ExtractFiles(Settings.WPath)
+                );
             }
 
-            using(TempAssemblyInfo f = new TempAssemblyInfo(hash)) {
-                return provider.CompileAssemblyFromFile(parameters, filesFromCommand(String.Format("{0}\n{1}", source, f.FullPath)).ExtractFiles());
+            using(TempAssemblyInfo f = new TempAssemblyInfo(hash))
+            {
+                return provider.CompileAssemblyFromFile(
+                    parameters, 
+                    filesFromCommand($"{source}\n{f.FullPath}").ExtractFiles(Settings.WPath)
+                );
             }
         }
 

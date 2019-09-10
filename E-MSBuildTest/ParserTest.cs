@@ -9,7 +9,7 @@ namespace EvMSBuildTest
         [Fact]
         public void BasicParseTest1()
         {
-            var target = new EvMSBuilderStub();
+            var target = new EvMSBuilderAcs();
 
             string actual   = target.Eval("FooBar");
             string expected = "FooBar";
@@ -76,7 +76,7 @@ namespace EvMSBuildTest
         [Fact]
         public void BasicParseTest6()
         {
-            var target = new EvMSBuilderStub();
+            var target = new EvMSBuilderAcs();
 
             string actual = target.Eval("$$(Path.Replace('\', '/'):project)");
             string expected = "$(Path.Replace('\', '/'):project)";

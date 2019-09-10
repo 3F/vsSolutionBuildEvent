@@ -47,13 +47,13 @@ namespace SobaScriptTest
 
             Assert.True(pm.IsData("pname"));
             Assert.False(pm.IsData("pname "));
-            pm.pinTo(1);
+            pm.PinTo(1);
 
             Assert.True(pm.IsData("m1"));
-            pm.pinTo(1);
+            pm.PinTo(1);
 
             Assert.True(pm.IsData("right"));
-            pm.pinTo(1);
+            pm.PinTo(1);
 
             Assert.True(pm.IsData(" true"));
         }

@@ -6,8 +6,4 @@ Uses the following third-party components:
 
 * [Varhead](https://github.com/3F/Varhead)
 
-* [Json.NET](https://github.com/JamesNK/Newtonsoft.Json)
-  Actually, only for this line: `((JArray)data).ToObject(typeof(object[]))`.
-  This dependency is still being considered.
-
 * [LSender](https://github.com/3F/LSender)

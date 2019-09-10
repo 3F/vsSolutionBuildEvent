@@ -50,7 +50,7 @@ namespace net.r_eg.SobaScript.SNode
         /// <summary>
         /// Arguments of level if used.
         /// </summary>
-        public Argument[] Args
+        public RArgs Args
         {
             get;
             set;
@@ -59,7 +59,7 @@ namespace net.r_eg.SobaScript.SNode
         /// <summary>
         /// Type of data.
         /// </summary>
-        public CValueType DataType
+        public CValType DataType
         {
             get;
             set;
@@ -72,11 +72,11 @@ namespace net.r_eg.SobaScript.SNode
         /// <returns>True value if the Args contains arguments with specified types.</returns>
         public bool Is(params ArgumentType[] types)
         {
-            if(Args == null || types == null || Args.Length != types.Length) {
+            if(Args == null || types == null || Args.Count != types.Length) {
                 return false;
             }
 
-            for(int i = 0; i < Args.Length; ++i)
+            for(int i = 0; i < Args.Count; ++i)
             {
                 if(Args[i].type != types[i]) {
                     return false;
@@ -101,6 +101,12 @@ namespace net.r_eg.SobaScript.SNode
             }
 
             return val;
+        }
+
+        public Level(params Argument[] args)
+            : this()
+        {
+            Args = new RArgs(args);
         }
     }
 }

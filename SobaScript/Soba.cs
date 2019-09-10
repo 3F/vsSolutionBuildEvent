@@ -50,7 +50,7 @@ namespace net.r_eg.SobaScript
         /// <summary>
         /// Maximum of nesting level
         /// </summary>
-        const int DEPTH_LIMIT = 70;
+        protected readonly int depthLimit = 70;
 
         protected ConcurrentDictionary<Type, IComponent> components = new ConcurrentDictionary<Type, IComponent>();
 
@@ -60,9 +60,6 @@ namespace net.r_eg.SobaScript
         /// </summary>
         private volatile int _depthLevel = 0;
 
-        /// <summary>
-        /// object synch.
-        /// </summary>
         private readonly object sync = new object();
 
         /// <summary>
@@ -94,12 +91,19 @@ namespace net.r_eg.SobaScript
             protected set;
         }
 
+        /// <summary>
+        /// Prepare, parse, and evaluate mixed data through SobaScript supported syntax.
+        /// </summary>
+        /// <param name="data">Mixed input data.</param>
+        /// <returns>Evaluated end value.</returns>
+        public string Eval(string data) => Eval(data, false);
+
         /// <param name="data">Mixed data for evaluation.</param>
         /// <param name="allowEvM">Allows post-processing with E-MSBuild.
         /// Some components may require immediate processing with evaluation before passing control to the next level.
         /// </param>
         /// <returns>Prepared and evaluated data through SobaScript.</returns>
-        public string parse(string data, bool allowEvM)
+        public string Eval(string data, bool allowEvM)
         {
             var hString = new StringHandler();
 
@@ -110,7 +114,7 @@ namespace net.r_eg.SobaScript
                 (
                     parse
                     (
-                        new SData(hString.protect(data), allowEvM),
+                        new SData(hString.Protect(data), allowEvM),
                         _depthLevel,
                         hString
                     )
@@ -118,21 +122,26 @@ namespace net.r_eg.SobaScript
             }
         }
 
-        public string parse(string data) => parse(data, false);
-
         /// <summary>
         /// Evaluates mixed data through some engine like E-MSBuild, SobaScript, etc.
         /// </summary>
         /// <param name="data">Mixed input data.</param>
         /// <returns>Evaluated end value.</returns>
-        public string Evaluate(string data) => parse(data);
+        public string Evaluate(string data) => Eval(data);
+
+        /// <summary>
+        /// Get component for specified type.
+        /// </summary>
+        /// <typeparam name="T">The type of registered component.</typeparam>
+        /// <returns>Found instance or null value if this type is not registered.</returns>
+        public object GetComponent<T>() => GetComponent(typeof(T));
 
         /// <summary>
         /// Get component for specified type.
         /// </summary>
         /// <param name="type">The type of registered component.</param>
         /// <returns>Found instance or null value if this type is not registered.</returns>
-        public IComponent GetComponent(Type type)
+        public object GetComponent(Type type)
         {
             if(components.ContainsKey(type)) {
                 return components[type];
@@ -148,8 +157,8 @@ namespace net.r_eg.SobaScript
         /// <exception cref="ComponentException"></exception>
         public bool Register(IComponent component)
         {
-            if(string.IsNullOrEmpty(component.Condition)) {
-                throw new ComponentException($"Invalid component. {nameof(component.Condition)} property is null or empty. `{component.ToString()}`");
+            if(string.IsNullOrEmpty(component.Activator)) {
+                throw new ComponentException($"Invalid component. {nameof(component.Activator)} property is null or empty. `{component.ToString()}`");
             }
 
             Type ident = component.GetType();
@@ -168,8 +177,11 @@ namespace net.r_eg.SobaScript
         /// </summary>
         /// <param name="component"></param>
         /// <returns></returns>
-        public bool Unregister(IComponent component)
-            => components.TryRemove(component.GetType(), out IComponent v);
+        public bool Unregister(IComponent component) => components.TryRemove
+        (
+            (component ?? throw new ArgumentNullException(nameof(component))).GetType(), 
+            out IComponent v
+        );
 
         /// <summary>
         /// Unregister all available components.
@@ -206,11 +218,11 @@ namespace net.r_eg.SobaScript
         /// <returns>Prepared and evaluated data</returns>
         private protected string parse(SData data, int level, StringHandler hString = null)
         {
-            if(level >= DEPTH_LIMIT) {
+            if(level >= depthLimit) {
                 _depthLevel = 0;
-                throw new LimitException($"Nesting level of '{DEPTH_LIMIT}' reached. Aborted.", DEPTH_LIMIT);
+                throw new LimitException($"Nesting level of '{depthLimit}' reached. Aborted.", depthLimit);
             }
-            var rcon = RPattern.Container;
+            var rcon = Pattern.Container;
 
             return rcon.Replace
             (
@@ -240,7 +252,7 @@ namespace net.r_eg.SobaScript
         /// <returns>Prepared + evaluated data by component</returns>
         private protected string parse(SData data, IComponent c)
         {
-            data.content = c.parse(data);
+            data.content = c.Eval(data);
 
             if(c.PostParse)
             {
@@ -260,7 +272,7 @@ namespace net.r_eg.SobaScript
             (
                 @"{0}{1}", 
                 force ? string.Empty : @"(?<!\$)",
-                net.r_eg.EvMSBuild.RPattern.ContainerOuter
+                net.r_eg.EvMSBuild.Pattern.ContainerOuter
             );
             return Regex.Replace(data, pattern, (Match m) => "$" + m.Value, RegexOptions.IgnorePatternWhitespace);
         }
@@ -273,10 +285,10 @@ namespace net.r_eg.SobaScript
         /// <returns>ready to parse or not</returns>
         protected bool isReadyToParse(string data, IComponent c)
         {
-            if(!c.CRegex) {
-                return data.StartsWith(string.Format("[{0}", c.Condition));
+            if(!c.ARegex) {
+                return data.StartsWith(string.Format("[{0}", c.Activator));
             }
-            return Regex.IsMatch(data, string.Format("^\\[{0}", c.Condition), RegexOptions.IgnorePatternWhitespace);
+            return Regex.IsMatch(data, string.Format("^\\[{0}", c.Activator), RegexOptions.IgnorePatternWhitespace);
         }
 
         /// <param name="data">mixed data</param>
@@ -289,7 +301,7 @@ namespace net.r_eg.SobaScript
             {
                 c.PostProcessingMSBuild = data.postEvM;
 
-                if(!c.BeforeDeepen) {
+                if(!c.BeforeDeepening) {
                     continue;
                 }
 
@@ -306,7 +318,7 @@ namespace net.r_eg.SobaScript
 
             foreach(IComponent c in Components)
             {
-                if(c.BeforeDeepen) {
+                if(c.BeforeDeepening) {
                     continue; // should already parsed above
                 }
 
@@ -322,7 +334,7 @@ namespace net.r_eg.SobaScript
 
         protected bool deepen(ref string data)
         {
-            return RPattern.Container.IsMatch(data);
+            return Pattern.Container.IsMatch(data);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace SobaScriptTest
             Assert.True(pm.Is(LevelType.Method, "solution"));
             Assert.Equal(10, pm.Levels[0].Args.Length);
 
-            Argument[] args = pm.Levels[0].Args;
+            var args = pm.Levels[0].Args;
             Assert.Equal(ArgumentType.StringDouble, args[0].type);
             Assert.Equal("str data", args[0].data);
 
@@ -53,7 +53,7 @@ namespace SobaScriptTest
             Assert.True(pm.Is(LevelType.Method, "solution"));
             Assert.Equal(6, pm.Levels[0].Args.Length);
 
-            Argument[] args = pm.Levels[0].Args;
+            var args = pm.Levels[0].Args;
             Assert.Equal(ArgumentType.Double, args[0].type);
             Assert.Equal(1.5d, args[0].data);
 
@@ -74,13 +74,13 @@ namespace SobaScriptTest
         }
 
         [Fact]
-        public void detectArgumentTest3()
+        public void DetectArgumentTest3()
         {
             IPM pm = new PM(" m77(\"guid\", 12, {\"p1\", {4, \"test\", 8, 'y'}, true}, {false, 'p2'}) ");
 
             Assert.True(pm.Is(LevelType.Method, "m77"));
 
-            Argument[] args = pm.Levels[0].Args;
+            var args = pm.Levels[0].Args;
             Assert.Equal(4, args.Length);
 
             Assert.Equal(ArgumentType.StringDouble, args[0].type);
@@ -91,7 +91,7 @@ namespace SobaScriptTest
 
             Assert.Equal(ArgumentType.Object, args[2].type);
             {
-                Argument[] args2 = (Argument[])args[2].data;
+                RArgs args2 = (RArgs)args[2].data;
                 Assert.Equal(3, args2.Length);
 
                 Assert.Equal(ArgumentType.StringDouble, args2[0].type);
@@ -99,7 +99,7 @@ namespace SobaScriptTest
 
                 Assert.Equal(ArgumentType.Object, args2[1].type);
                 {
-                    Argument[] args21 = (Argument[])args2[1].data;
+                    RArgs args21 = (RArgs)args2[1].data;
                     Assert.Equal(4, args21.Length);
 
                     Assert.Equal(ArgumentType.Integer, args21[0].type);
@@ -121,7 +121,7 @@ namespace SobaScriptTest
 
             Assert.Equal(ArgumentType.Object, args[3].type);
             {
-                Argument[] args3 = (Argument[])args[3].data;
+                RArgs args3 = (RArgs)args[3].data;
                 Assert.Equal(2, args3.Length);
 
                 Assert.Equal(ArgumentType.Boolean, args3[0].type);
@@ -140,7 +140,7 @@ namespace SobaScriptTest
             Assert.True(pm.Is(LevelType.Method, "solution"));
             Assert.Equal(4, pm.Levels[0].Args.Length);
 
-            Argument[] args = pm.Levels[0].Args;
+            var args = pm.Levels[0].Args;
             Assert.Equal(ArgumentType.StringDouble, args[0].type);
             Assert.Equal("str \" data1 \" ", args[0].data);
 

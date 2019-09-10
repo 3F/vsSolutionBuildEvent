@@ -24,21 +24,23 @@
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using net.r_eg.Components;
 using net.r_eg.SobaScript.Exceptions;
-using net.r_eg.SobaScript.Extensions;
+using net.r_eg.SobaScript.SNode;
 
 namespace net.r_eg.SobaScript
 {
     /// <summary>
-    /// TODO: specification for SBE-Script
+    /// TODO: standardization
     /// </summary>
     public static class Value
     {
-        public const string VTRUE   = "true";
-        public const string VFALSE  = "false";
+        public const string TRUE    = "true";
+        public const string FALSE   = "false";
 
         /// <summary>
         /// Separator for array data.
@@ -48,149 +50,120 @@ namespace net.r_eg.SobaScript
         /// <summary>
         /// Empty value by default.
         /// </summary>
-        public static string Empty
-        {
-            get { return string.Empty; }
-        }
+        public static string Empty => string.Empty;
 
         /// <summary>
-        /// Getting boolean value
-        /// Boolean.Parse() - converts only true/false value from string
+        /// A boolean value from string data.
         /// </summary>
         /// <param name="val"></param>
         /// <returns></returns>
-        public static bool toBoolean(string val)
+        public static bool ToBoolean(string val)
         {
             val = val.Trim();//.ToLower();
-            switch(val) {
+
+            // Boolean.Parse() converts only true/false value from string
+            switch(val)
+            {
                 case "1":
                 case "True":
                 case "TRUE":
-                case VTRUE: {
+                case TRUE: {
                     return true;
                 }
+
                 case "0":
                 case "False":
                 case "FALSE":
-                case VFALSE: {
+                case FALSE: {
                     return false;
                 }
             }
+
             throw new IncorrectSyntaxException($"Values: incorrect boolean value - '{val}'");
         }
 
         /// <summary>
-        /// Getting Int32 value
+        /// Int32 value from string data.
         /// </summary>
         /// <param name="val"></param>
         /// <returns></returns>
-        public static int toInt32(string val)
-        {
-            return Int32.Parse(val.Trim());
-        }
+        public static int ToInt32(string val) => Int32.Parse(val.Trim());
 
         /// <summary>
-        /// Getting Unsigned Int32 value
+        /// Unsigned Int32 value from string data.
         /// </summary>
         /// <param name="val"></param>
         /// <returns></returns>
-        public static uint toUInt32(string val)
-        {
-            return UInt32.Parse(val.Trim());
-        }
+        public static uint ToUInt32(string val) => UInt32.Parse(val.Trim());
 
         /// <summary>
-        /// Getting of floating-point number with single-precision.
+        /// Floating-point number with single-precision from string data.
         /// </summary>
         /// <param name="val"></param>
         /// <returns></returns>
-        public static float toFloat(string val)
-        {
-            return Single.Parse(val.Trim(), CultureInfo.InvariantCulture);
-        }
+        public static float ToFloat(string val) => Single.Parse(val.Trim(), CultureInfo.InvariantCulture);
 
         /// <summary>
-        /// Getting of floating-point number with double-precision.
+        /// Floating-point number with double-precision from string data.
         /// </summary>
         /// <param name="val"></param>
         /// <returns></returns>
-        public static double toDouble(string val)
-        {
-            return Double.Parse(val.Trim(), CultureInfo.InvariantCulture);
-        }
+        public static double ToDouble(string val) => Double.Parse(val.Trim(), CultureInfo.InvariantCulture);
 
         /// <summary>
-        /// Getting of symbol as char.
+        /// A symbol as char from string data.
         /// </summary>
         /// <param name="val"></param>
         /// <returns></returns>
-        public static char toChar(string val)
-        {
-            return Char.Parse(val.Trim());
-        }
+        public static char ToChar(string val) => char.Parse(val.Trim());
 
         /// <param name="val"></param>
         /// <returns></returns>
-        public static string from(bool val)
-        {
-            return val.ToString().ToLower();
-        }
+        public static string From(bool val) => val.ToString().ToLower();
 
         /// <param name="val"></param>
         /// <returns></returns>
-        public static string from(List<string> val)
-        {
-            return string.Join(ARRAY_SEPARATOR, val);
-        }
+        public static string From(List<string> val) => string.Join(ARRAY_SEPARATOR, val);
 
         /// <param name="val"></param>
         /// <returns></returns>
-        public static string from(int val)
-        {
-            return val.ToString();
-        }
+        public static string From(int val) => val.ToString();
 
         /// <param name="val"></param>
         /// <returns></returns>
-        public static string from(Enum val)
-        {
-            return val.ToString();
-        }
+        public static string From(Enum val) => val.ToString();
 
-        /// <param name="val">Including array of data</param>
+        /// <param name="val">Including array of data.</param>
         /// <returns></returns>
-        public static string from(object val)
+        public static string From(object val)
         {
             if(val == null) {
                 return string.Empty;
             }
 
-            if(val.GetType().IsArray) {
-                string[] arr = Array.ConvertAll((object[])val, i => i.ToString());
-                return string.Join(ARRAY_SEPARATOR, arr);
+            if(val is IEnumerable arr) {
+                return string.Join(ARRAY_SEPARATOR, arr.Cast<string>());
             }
+
             return val.ToString();
         }
 
         /// <param name="val"></param>
         /// <returns></returns>
-        public static string from(string val)
-        {
-            return (val)?? string.Empty;
-        }
+        public static string From(string val) => val ?? string.Empty;
 
         /// <summary>
-        /// Extract SNode.Argument[] into system object[] data.
+        /// Extract SNode.RArguments into system object[] data.
         /// </summary>
         /// <param name="args">SNode arguments.</param>
         /// <returns></returns>
-        public static object[] extract(SNode.Argument[] args)
+        public static object[] Extract(RArgs args)
         {
             object[] ret = new object[args.Length];
             for(int i = 0; i < args.Length; ++i)
             {
-                if(args[i].data is SNode.Argument[]) {
-                    ret[i] = extract((SNode.Argument[])args[i].data);
+                if(args[i].data is RArgs) {
+                    ret[i] = Extract((RArgs)args[i].data);
                     continue;
                 }
                 ret[i] = args[i].data;
@@ -207,54 +180,53 @@ namespace net.r_eg.SobaScript
         /// </summary>
         /// <param name="data">Mixed data inc. complex object.</param>
         /// <returns>string with mixed data.</returns>
-        public static string pack(object data)
+        public static string Pack(object data)
         {
             if(data == null) {
                 return null;
             }
-            data = data.ToSystemObject();
 
             if(!data.GetType().IsArray) {
                 return data.ToString();
             }
-            List<object> ret = new List<object>();
+
+            var ret = new List<object>();
 
             foreach(object val in (object[])data)
             {
-                object sys = val.ToSystemObject();
-
-                if(sys.GetType().IsArray) {
-                    ret.Add(pack(sys));
+                if(val.GetType().IsArray) {
+                    ret.Add(Pack(val));
                     continue;
                 }
 
-                if(sys is string) {
-                    ret.Add(string.Format("\"{0}\"", sys));
+                if(val is string) {
+                    ret.Add($"\"{val}\"");
                     continue;
                 }
 
-                if(sys is bool) {
-                    ret.Add(sys.ToString().ToLower());
+                if(val is bool) {
+                    ret.Add(val.ToString().ToLower());
                     continue;
                 }
 
-                if(sys is char) {
-                    ret.Add(string.Format("'{0}'", sys));
+                if(val is char) {
+                    ret.Add($"'{val}'");
                     continue;
                 }
 
-                if(sys is Single) {
-                    ret.Add(string.Format("{0}f", sys.ToString().Replace(',', '.')));
+                if(val is Single) {
+                    ret.Add($"{val.ToString().Replace(',', '.')}f");
                     continue;
                 }
 
-                if(sys is Double) {
-                    ret.Add(sys.ToString().Replace(',', '.'));
+                if(val is Double) {
+                    ret.Add(val.ToString().Replace(',', '.'));
                     continue;
                 }
 
-                ret.Add(sys);
+                ret.Add(val);
             }
+
             return string.Format("{{{0}}}", string.Join(", ", ret));
         }
 
@@ -263,7 +235,7 @@ namespace net.r_eg.SobaScript
         /// </summary>
         /// <param name="arg">Argument for packing.</param>
         /// <returns></returns>
-        public static object packArgument(object arg)
+        public static object PackArgument(object arg)
         {
             if(arg == null) {
                 return null;
@@ -273,23 +245,23 @@ namespace net.r_eg.SobaScript
                 return arg;
             }
 
-            SNode.IPM pm            = new SNode.PM(string.Format("_({0})", arg));
-            SNode.Argument first    = pm.FirstLevel.Args[0];
+            IPM pm          = new PM($"_({arg})");
+            Argument first  = pm.FirstLevel.Args[0];
 
-            if(first.type != SNode.ArgumentType.Object) {
+            if(first.type != ArgumentType.Object) {
                 return arg;
             }
-            return extract((SNode.Argument[])first.data);
+            return Extract((RArgs)first.data);
         }
 
         /// <summary>
-        /// Comparing values
+        /// Comparing values.
         /// </summary>
         /// <param name="left">Left operand</param>
         /// <param name="right">Right operand</param>
         /// <param name="coperator">Operator of comparison</param>
         /// <returns>Result of comparison</returns>
-        public static bool cmp(string left, string right = VTRUE, string coperator = "===")
+        public static bool Cmp(string left, string right = TRUE, string coperator = "===")
         {
             switch(coperator)
             {
@@ -303,10 +275,10 @@ namespace net.r_eg.SobaScript
                     return (left.Contains(right));
                 }
                 case "==": {
-                    return isEqual(left, right);
+                    return Equal(left, right);
                 }
                 case "!=": {
-                    return !isEqual(left, right);
+                    return !Equal(left, right);
                 }
                 case "^=": {
                     return left.StartsWith(right);
@@ -315,16 +287,16 @@ namespace net.r_eg.SobaScript
                     return left.EndsWith(right);
                 }
                 case ">": {
-                    return (toInt32(left) > toInt32(right));
+                    return (ToInt32(left) > ToInt32(right));
                 }
                 case ">=": {
-                    return (toInt32(left) >= toInt32(right));
+                    return (ToInt32(left) >= ToInt32(right));
                 }
                 case "<": {
-                    return (toInt32(left) < toInt32(right));
+                    return (ToInt32(left) < ToInt32(right));
                 }
                 case "<=": {
-                    return (toInt32(left) <= toInt32(right));
+                    return (ToInt32(left) <= ToInt32(right));
                 }
             }
 
@@ -337,7 +309,7 @@ namespace net.r_eg.SobaScript
         /// <param name="left">left operand</param>
         /// <param name="right">right operand</param>
         /// <returns></returns>
-        private static bool isEqual(string left, string right)
+        private static bool Equal(string left, string right)
         {
             if(Int32.TryParse(left, out int lNumber) && Int32.TryParse(right, out int rNumber))
             {
@@ -347,7 +319,7 @@ namespace net.r_eg.SobaScript
 
             try
             {
-                bool ret = (toBoolean(left) == toBoolean(right));
+                bool ret = (ToBoolean(left) == ToBoolean(right));
                 LSender.Send(typeof(Value), $"Values-isEqual: as boolean '{left}' == '{right}'", MsgLevel.Trace);
                 return ret;
             }

@@ -15,7 +15,7 @@
     <Copyright>Copyright (c) 2014-2019  Denis Kuzmin &lt; x-3F@outlook.com &gt; GitHub/3F</Copyright>
     <Title>[ #SobaScript ] Extensible Modular Scripting Programming Language</Title>
     <Description>Interpreted Embedded Domain Specific a Weakly Typed an Extensible at runtime Modular Scripting Programming Language -- #SobaScript.
-    
+    https://github.com/3F/SobaScript
     </Description>
     <PackageOwners>reg</PackageOwners>
     <PackageProjectUrl>https://github.com/3F/SobaScript</PackageProjectUrl>
@@ -48,10 +48,6 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
 
   <ItemGroup>

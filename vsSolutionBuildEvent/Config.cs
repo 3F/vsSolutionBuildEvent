@@ -17,13 +17,10 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
+using net.r_eg.MvsSln.Extensions;
 using net.r_eg.vsSBE.Configuration;
 using net.r_eg.vsSBE.Exceptions;
-using net.r_eg.vsSBE.SBEScripts;
-using net.r_eg.vsSBE.Extensions;
-using net.r_eg.vsSBE.SBEScripts.Components;
 
 namespace net.r_eg.vsSBE
 {
@@ -90,7 +87,7 @@ namespace net.r_eg.vsSBE
         /// <returns>true value if loaded from existing file, otherwise loaded as new.</returns>
         public bool load(string link)
         {
-            Link = link.PathFormat();
+            Link = link.DirectoryPathFormat();
             return load(Link, null);
         }
 

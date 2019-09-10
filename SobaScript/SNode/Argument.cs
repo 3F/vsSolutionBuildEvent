@@ -28,12 +28,12 @@ namespace net.r_eg.SobaScript.SNode
     public struct Argument
     {
         /// <summary>
-        /// Value of argument.
+        /// Value of this argument.
         /// </summary>
         public object data;
 
         /// <summary>
-        /// Type of argument.
+        /// Type of this argument.
         /// </summary>
         public ArgumentType type;
     }

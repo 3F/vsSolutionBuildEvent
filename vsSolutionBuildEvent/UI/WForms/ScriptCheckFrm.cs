@@ -22,8 +22,8 @@ using System.Windows.Forms;
 using net.r_eg.EvMSBuild;
 using net.r_eg.SobaScript;
 using net.r_eg.SobaScript.Components;
+using net.r_eg.SobaScript.Mapper;
 using net.r_eg.Varhead;
-using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.UI.WForms.Controls;
 
 namespace net.r_eg.vsSBE.UI.WForms
@@ -126,7 +126,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             foreach(IComponent c in context.cloader.Registered)
             {
                 Type type = c.GetType();
-                if(!Inspector.isComponent(type)) {
+                if(!Inspector.IsComponent(type)) {
                     continue;
                 }
                 chkListComponents.Items.Add(type.Name, c.Enabled);
@@ -183,10 +183,10 @@ namespace net.r_eg.vsSBE.UI.WForms
             try {
                 string ret;
                 if(MSBuildSupport) {
-                    ret = context.msbuild.Eval(context.script.parse(data, true));
+                    ret = context.msbuild.Eval(context.script.Eval(data, true));
                 }
                 else {
-                    ret = context.script.parse(data);
+                    ret = context.script.Eval(data);
                 }
                 return ret;
             }

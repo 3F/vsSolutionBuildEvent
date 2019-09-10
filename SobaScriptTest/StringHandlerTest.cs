@@ -10,19 +10,19 @@ namespace SobaScriptTest
         [Fact]
         public void NormalizeTest()
         {
-            Assert.Equal("\"test\"", StringHandler.normalize("\\\"test\\\""));
+            Assert.Equal("\"test\"", StringHandler.Normalize("\\\"test\\\""));
         }
 
         [Fact]
         public void EscapeQuotesTest()
         {
-            Assert.Equal(" \\\"test\\\" ", StringHandler.escapeQuotes(" \"test\" "));
+            Assert.Equal(" \\\"test\\\" ", StringHandler.EscapeQuotes(" \"test\" "));
         }
 
         [Fact]
         public void NormalizeTest2()
         {
-            Assert.Equal(String.Empty, StringHandler.normalize(null));
+            Assert.Equal(String.Empty, StringHandler.Normalize(null));
         }
 
         [Fact]
@@ -30,8 +30,8 @@ namespace SobaScriptTest
         {
             StringHandler target = new StringHandler();
             string actual = target.ProtectMixedQuotes("test \"str1\" - 'str2' data");
-            Assert.False(Regex.IsMatch(actual, RPattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace));
-            Assert.False(Regex.IsMatch(actual, RPattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace));
+            Assert.False(Regex.IsMatch(actual, Pattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace));
+            Assert.False(Regex.IsMatch(actual, Pattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace));
         }
 
         [Fact]

@@ -10,7 +10,7 @@ namespace SobaScriptTest
         public void SquareBracketsContentTest()
         {
             string data = " #[var name] ";
-            Match actual = Regex.Match(data, RPattern.SquareBracketsContent, RegexOptions.IgnorePatternWhitespace);
+            Match actual = Regex.Match(data, Pattern.SquareBracketsContent, RegexOptions.IgnorePatternWhitespace);
             Assert.True(actual.Success);
             Assert.Equal("var name", actual.Groups[1].Value);
         }
@@ -19,7 +19,7 @@ namespace SobaScriptTest
         public void SquareBracketsContentTest2()
         {
             string data = " [ test [name [ data]  ]] ";
-            Match actual = Regex.Match(data, RPattern.SquareBracketsContent, RegexOptions.IgnorePatternWhitespace);
+            Match actual = Regex.Match(data, Pattern.SquareBracketsContent, RegexOptions.IgnorePatternWhitespace);
             Assert.True(actual.Success);
             Assert.Equal(" test [name [ data]  ]", actual.Groups[1].Value);
         }
@@ -28,7 +28,7 @@ namespace SobaScriptTest
         public void SquareBracketsContentTest3()
         {
             string data = " [ test name [ data]  p]] ";
-            Match actual = Regex.Match(data, RPattern.SquareBracketsContent, RegexOptions.IgnorePatternWhitespace);
+            Match actual = Regex.Match(data, Pattern.SquareBracketsContent, RegexOptions.IgnorePatternWhitespace);
             Assert.True(actual.Success);
             Assert.Equal(" test name [ data]  p", actual.Groups[1].Value);
         }
@@ -37,7 +37,7 @@ namespace SobaScriptTest
         public void SquareBracketsContentTest4()
         {
             string data = " data] [test ";
-            bool actual = Regex.IsMatch(data, RPattern.SquareBracketsContent, RegexOptions.IgnorePatternWhitespace);
+            bool actual = Regex.IsMatch(data, Pattern.SquareBracketsContent, RegexOptions.IgnorePatternWhitespace);
             Assert.False(actual);
         }
 
@@ -45,7 +45,7 @@ namespace SobaScriptTest
         public void SquareBracketsContentTest5()
         {
             string data = " data ";
-            bool actual = Regex.IsMatch(data, RPattern.SquareBracketsContent, RegexOptions.IgnorePatternWhitespace);
+            bool actual = Regex.IsMatch(data, Pattern.SquareBracketsContent, RegexOptions.IgnorePatternWhitespace);
             Assert.False(actual);
         }
 
@@ -53,7 +53,7 @@ namespace SobaScriptTest
         public void RoundBracketsContentTest()
         {
             string data = " $(var name) ";
-            Match actual = Regex.Match(data, RPattern.RoundBracketsContent, RegexOptions.IgnorePatternWhitespace);
+            Match actual = Regex.Match(data, Pattern.RoundBracketsContent, RegexOptions.IgnorePatternWhitespace);
             Assert.True(actual.Success);
             Assert.Equal("var name", actual.Groups[1].Value);
         }
@@ -62,7 +62,7 @@ namespace SobaScriptTest
         public void RoundBracketsContentTest2()
         {
             string data = " ( test (name ( data)  )) ";
-            Match actual = Regex.Match(data, RPattern.RoundBracketsContent, RegexOptions.IgnorePatternWhitespace);
+            Match actual = Regex.Match(data, Pattern.RoundBracketsContent, RegexOptions.IgnorePatternWhitespace);
             Assert.True(actual.Success);
             Assert.Equal(" test (name ( data)  )", actual.Groups[1].Value);
         }
@@ -71,7 +71,7 @@ namespace SobaScriptTest
         public void RoundBracketsContentTest3()
         {
             string data = " ( test name ( data)  p)) ";
-            Match actual = Regex.Match(data, RPattern.RoundBracketsContent, RegexOptions.IgnorePatternWhitespace);
+            Match actual = Regex.Match(data, Pattern.RoundBracketsContent, RegexOptions.IgnorePatternWhitespace);
             Assert.True(actual.Success);
             Assert.Equal(" test name ( data)  p", actual.Groups[1].Value);
         }
@@ -80,7 +80,7 @@ namespace SobaScriptTest
         public void RoundBracketsContentTest4()
         {
             string data = " data) (test ";
-            bool actual = Regex.IsMatch(data, RPattern.RoundBracketsContent, RegexOptions.IgnorePatternWhitespace);
+            bool actual = Regex.IsMatch(data, Pattern.RoundBracketsContent, RegexOptions.IgnorePatternWhitespace);
             Assert.False(actual);
         }
 
@@ -88,7 +88,7 @@ namespace SobaScriptTest
         public void RoundBracketsContentTest5()
         {
             string data = " data ";
-            bool actual = Regex.IsMatch(data, RPattern.RoundBracketsContent, RegexOptions.IgnorePatternWhitespace);
+            bool actual = Regex.IsMatch(data, Pattern.RoundBracketsContent, RegexOptions.IgnorePatternWhitespace);
             Assert.False(actual);
         }
 
@@ -96,7 +96,7 @@ namespace SobaScriptTest
         public void CurlyBracketsContentTest()
         {
             string data = " { body1 } ";
-            Match actual = Regex.Match(data, RPattern.CurlyBracketsContent, RegexOptions.IgnorePatternWhitespace);
+            Match actual = Regex.Match(data, Pattern.CurlyBracketsContent, RegexOptions.IgnorePatternWhitespace);
             Assert.True(actual.Success);
             Assert.Equal(" body1 ", actual.Groups[1].Value);
         }
@@ -105,7 +105,7 @@ namespace SobaScriptTest
         public void CurlyBracketsContentTest2()
         {
             string data = " { test {name { data}  }} ";
-            Match actual = Regex.Match(data, RPattern.CurlyBracketsContent, RegexOptions.IgnorePatternWhitespace);
+            Match actual = Regex.Match(data, Pattern.CurlyBracketsContent, RegexOptions.IgnorePatternWhitespace);
             Assert.True(actual.Success);
             Assert.Equal(" test {name { data}  }", actual.Groups[1].Value);
         }
@@ -114,7 +114,7 @@ namespace SobaScriptTest
         public void CurlyBracketsContentTest3()
         {
             string data = " { test name { data}  p}} ";
-            Match actual = Regex.Match(data, RPattern.CurlyBracketsContent, RegexOptions.IgnorePatternWhitespace);
+            Match actual = Regex.Match(data, Pattern.CurlyBracketsContent, RegexOptions.IgnorePatternWhitespace);
             Assert.True(actual.Success);
             Assert.Equal(" test name { data}  p", actual.Groups[1].Value);
         }
@@ -123,7 +123,7 @@ namespace SobaScriptTest
         public void CurlyBracketsContentTest4()
         {
             string data = " data} {test ";
-            bool actual = Regex.IsMatch(data, RPattern.CurlyBracketsContent, RegexOptions.IgnorePatternWhitespace);
+            bool actual = Regex.IsMatch(data, Pattern.CurlyBracketsContent, RegexOptions.IgnorePatternWhitespace);
             Assert.False(actual);
         }
 
@@ -131,7 +131,7 @@ namespace SobaScriptTest
         public void CurlyBracketsContentTest5()
         {
             string data = " data ";
-            bool actual = Regex.IsMatch(data, RPattern.CurlyBracketsContent, RegexOptions.IgnorePatternWhitespace);
+            bool actual = Regex.IsMatch(data, Pattern.CurlyBracketsContent, RegexOptions.IgnorePatternWhitespace);
             Assert.False(actual);
         }
 
@@ -139,7 +139,7 @@ namespace SobaScriptTest
         public void DoubleQuotesContentTest()
         {
             string data = " test \"123\" ";
-            Match actual = Regex.Match(data, RPattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace);
+            Match actual = Regex.Match(data, Pattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace);
             Assert.True(actual.Success);
             Assert.Equal("123", actual.Groups[1].Value);
         }
@@ -148,7 +148,7 @@ namespace SobaScriptTest
         public void DoubleQuotesContentTest2()
         {
             string data = " test \\\"123\\\" "; // \"data\"
-            bool actual = Regex.IsMatch(data, RPattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace);
+            bool actual = Regex.IsMatch(data, Pattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace);
             Assert.False(actual);
         }
 
@@ -156,7 +156,7 @@ namespace SobaScriptTest
         public void DoubleQuotesContentTest3()
         {
             string data = " test 123\" ";
-            Assert.False(Regex.IsMatch(data, RPattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace));
+            Assert.False(Regex.IsMatch(data, Pattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace));
         }
 
         [Fact]
@@ -164,7 +164,7 @@ namespace SobaScriptTest
         {
             string data     = "\"\\\",\"p\""; //->  "\","p"
             string expected = "\\\","; //->  \",
-            Assert.Equal(expected, Regex.Match(data, RPattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
+            Assert.Equal(expected, Regex.Match(data, Pattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
         }
 
         [Fact]
@@ -172,7 +172,7 @@ namespace SobaScriptTest
         {
             string data     = "\"\\\\\",\"p\""; //->  "\\","p"
             string expected = "\\\\"; //->  \\
-            Assert.Equal(expected, Regex.Match(data, RPattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
+            Assert.Equal(expected, Regex.Match(data, Pattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
         }
 
         [Fact]
@@ -180,7 +180,7 @@ namespace SobaScriptTest
         {
             string data = "\"\\ \",\"p\""; //->  "\ ","p"
             string expected = "\\ "; //->  \ 
-            Assert.Equal(expected, Regex.Match(data, RPattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
+            Assert.Equal(expected, Regex.Match(data, Pattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
         }
 
         [Fact]
@@ -188,14 +188,14 @@ namespace SobaScriptTest
         {
             string data = "\"\\\\\\\",\"p\""; //->  "\\\","p"
             string expected = "\\\\\\\","; //->  \\\",
-            Assert.Equal(expected, Regex.Match(data, RPattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
+            Assert.Equal(expected, Regex.Match(data, Pattern.DoubleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
         }
 
         [Fact]
         public void SingleQuotesContentTest()
         {
             string data = " test '123' ";
-            Match actual = Regex.Match(data, RPattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace);
+            Match actual = Regex.Match(data, Pattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace);
             Assert.True(actual.Success);
             Assert.Equal("123", actual.Groups[1].Value);
         }
@@ -204,7 +204,7 @@ namespace SobaScriptTest
         public void SingleQuotesContentTest2()
         {
             string data = " test \\'123\\' "; // \'data\'
-            bool actual = Regex.IsMatch(data, RPattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace);
+            bool actual = Regex.IsMatch(data, Pattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace);
             Assert.False(actual);
         }
 
@@ -212,7 +212,7 @@ namespace SobaScriptTest
         public void SingleQuotesContentTest3()
         {
             string data = " test 123' ";
-            bool actual = Regex.IsMatch(data, RPattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace);
+            bool actual = Regex.IsMatch(data, Pattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace);
             Assert.False(actual);
         }
 
@@ -221,7 +221,7 @@ namespace SobaScriptTest
         {
             string data     = "'\\','p'"; //-> '\','p'
             string expected = "\\',"; //-> \',
-            Assert.Equal(expected, Regex.Match(data, RPattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
+            Assert.Equal(expected, Regex.Match(data, Pattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
         }
 
         [Fact]
@@ -229,7 +229,7 @@ namespace SobaScriptTest
         {
             string data = "'\\\\','p'"; //->  '\\','p'
             string expected = "\\\\"; //->  \\
-            Assert.Equal(expected, Regex.Match(data, RPattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
+            Assert.Equal(expected, Regex.Match(data, Pattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
         }
 
         [Fact]
@@ -237,7 +237,7 @@ namespace SobaScriptTest
         {
             string data = "'\\ ','p'"; //->  '\ ','p'
             string expected = "\\ "; //->  \ 
-            Assert.Equal(expected, Regex.Match(data, RPattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
+            Assert.Equal(expected, Regex.Match(data, Pattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
         }
 
         [Fact]
@@ -245,7 +245,7 @@ namespace SobaScriptTest
         {
             string data = "'\\\\\\','p'"; //->  '\\\','p'
             string expected = "\\\\\\',"; //->  \\\',
-            Assert.Equal(expected, Regex.Match(data, RPattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
+            Assert.Equal(expected, Regex.Match(data, Pattern.SingleQuotesContent, RegexOptions.IgnorePatternWhitespace).Groups[1].Value);
         }
     }
 }

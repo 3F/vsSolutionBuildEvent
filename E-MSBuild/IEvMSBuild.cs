@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Microsoft.Build.Evaluation;
 using net.r_eg.Varhead;
 
 namespace net.r_eg.EvMSBuild
@@ -37,6 +36,8 @@ namespace net.r_eg.EvMSBuild
     /// Advanced Evaluator of MSBuild scripts aka Advanced MSBuild 
     /// with user-variables support through Varhead and more.
     /// https://github.com/3F/E-MSBuild
+    /// 
+    /// Please note: initially it was part of https://github.com/3F/vsSolutionBuildEvent
     /// </summary>
     [Guid("958B9A32-BE6F-4B74-A98A-AC99099A63A5")]
     public interface IEvMSBuild: IEvaluator

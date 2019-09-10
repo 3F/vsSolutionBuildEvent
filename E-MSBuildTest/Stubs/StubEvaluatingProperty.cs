@@ -1,6 +1,6 @@
 ﻿namespace EvMSBuildTest.Stubs
 {
-    internal class StubEvaluatingProperty: EvMSBuilderStub
+    internal class StubEvaluatingProperty: EvMSBuilderAcs
     {
         public override string GetPropValue(string name, string project)
         {

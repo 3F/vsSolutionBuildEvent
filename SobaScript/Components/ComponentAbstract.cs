@@ -26,54 +26,44 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using net.r_eg.EvMSBuild;
-using net.r_eg.Varhead;
-using net.r_eg.SobaScript.Exceptions;
 using net.r_eg.Components;
+using net.r_eg.EvMSBuild;
+using net.r_eg.SobaScript.Exceptions;
+using net.r_eg.Varhead;
 
 namespace net.r_eg.SobaScript.Components
 {
     public abstract class ComponentAbstract: IComponent
     {
         /// <summary>
-        /// For evaluation with SBE-Scripts
+        /// Activated SobaScript engine.
         /// </summary>
         protected ISobaScript soba;
 
         /// <summary>
-        /// For evaluation with MSBuild
+        /// Activated E-MSBuild engine.
         /// </summary>
-        protected IEvMSBuild msbuild;
+        protected IEvMSBuild emsbuild;
 
         /// <summary>
-        /// Current container of user-variables
+        /// Container of user-variables through Varhead.
         /// </summary>
         protected IUVars uvars;
 
         /// <summary>
-        /// Ability to work with data for current component
+        /// Expression when to start processing.
         /// </summary>
-        public abstract string Condition { get; }
+        public abstract string Activator { get; }
 
         /// <summary>
-        /// Handler for current data
+        /// Prepare, parse, and evaluate mixed data through SobaScript supported syntax.
         /// </summary>
-        /// <param name="data">mixed data</param>
-        /// <returns>prepared and evaluated data</returns>
-        public abstract string parse(string data);
+        /// <param name="data">Mixed input data.</param>
+        /// <returns>Evaluated end value.</returns>
+        public abstract string Eval(string data);
 
         /// <summary>
-        /// Allows post-processing with MSBuild core.
-        /// In general, some components can require immediate processing with evaluation, before passing control to next level
-        /// </summary>
-        public virtual bool PostProcessingMSBuild
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Activation status
+        /// An activation status of this component.
         /// </summary>
         public virtual bool Enabled
         {
@@ -82,9 +72,19 @@ namespace net.r_eg.SobaScript.Components
         } = true;
 
         /// <summary>
-        /// Sets location "as is" - after deepening
+        /// Allows post-processing with MSBuild core.
+        /// Some components may require immediate processing with evaluation before passing control to the next level.
         /// </summary>
-        public virtual bool BeforeDeepen
+        public virtual bool PostProcessingMSBuild
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Will be located before deepening if true.
+        /// </summary>
+        public virtual bool BeforeDeepening
         {
             get;
             protected set;
@@ -100,31 +100,38 @@ namespace net.r_eg.SobaScript.Components
         }
 
         /// <summary>
-        /// Using of the regex engine for property - Condition
+        /// Using regex engine in {Activator}.
         /// </summary>
-        public virtual bool CRegex
+        public virtual bool ARegex
         {
             get;
             protected set;
         }
 
+        /// <param name="soba">Used SobaScript engine.</param>
         public ComponentAbstract(ISobaScript soba)
             : this(soba, soba?.EvMSBuild, soba?.UVars)
         {
 
         }
 
+        /// <param name="soba">Used SobaScript engine.</param>
+        /// <param name="evmaker">Custom maker of the E-MSBuild engine.</param>
+        /// <param name="uvars">Varhead container.</param>
         public ComponentAbstract(ISobaScript soba, IEvMSBuildMaker evmaker, IUVars uvars)
             : this(soba, evmaker?.MakeEvaluator(uvars), uvars)
         {
 
         }
 
+        /// <param name="soba">Used SobaScript engine.</param>
+        /// <param name="evm">E-MSBuild engine.</param>
+        /// <param name="uvars">Varhead container.</param>
         public ComponentAbstract(ISobaScript soba, IEvMSBuild evm, IUVars uvars)
             : this()
         {
             this.soba       = soba ?? throw new ArgumentNullException(nameof(soba));
-            this.msbuild    = evm ?? throw new ArgumentNullException(nameof(evm));
+            this.emsbuild   = evm ?? throw new ArgumentNullException(nameof(evm));
             this.uvars      = uvars ?? throw new ArgumentNullException(nameof(uvars));
         }
 
@@ -139,21 +146,26 @@ namespace net.r_eg.SobaScript.Components
         /// <param name="data">Raw data.</param>
         /// <param name="opt">Additional options to engine.</param>
         /// <returns></returns>
-        protected virtual KeyValuePair<string, string> entryPoint(string data, RegexOptions opt = RegexOptions.None)
+        protected virtual KeyValuePair<string, string> EntryPoint(string data, RegexOptions opt = RegexOptions.None)
         {
-            Match m = Regex.Match(data, 
-                                    string.Format(@"^\[{0}
-                                                        \s*
-                                                        (?'request'
-                                                           (?'type'
-                                                              [A-Za-z_0-9]+
-                                                           )
-                                                           .*
-                                                        )
-                                                     \]$", 
-                                                     (CRegex)? Condition : Condition.Replace(" ", @"\s")
-                                    ),
-                                    RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | opt);
+            Match m = Regex.Match
+            (
+                data, 
+                string.Format
+                (
+                    @"^\[{0}
+                        \s*
+                        (?'request'
+                            (?'type'
+                                [A-Za-z_0-9]+
+                            )
+                            .*
+                        )
+                        \]$", 
+                        ARegex ? Activator : Activator.Replace(" ", @"\s")
+                ),
+                RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | opt
+            );
 
             if(!m.Success) {
                 throw new IncorrectSyntaxException($"Failed {GetType().FullName} - `{data}`");
@@ -162,19 +174,21 @@ namespace net.r_eg.SobaScript.Components
             return new KeyValuePair<string, string>(m.Groups["type"].Value, m.Groups["request"].Value);
         }
 
-        protected virtual string evaluate(string data)
+        protected virtual string Evaluate(string data)
         {
-            LSender.Send(this, $"'{Condition}'-evaluate: started with `{data}`", MsgLevel.Trace);
+            LSender.Send(this, $"'{Activator}'-evaluate: started with `{data}`", MsgLevel.Trace);
 
-            if(soba != null) {
-                data = soba.parse(data);
-                LSender.Send(this, $"'{Condition}'-evaluate: evaluated data: `{data}` :: ISBEScript", MsgLevel.Trace);
+            if(soba != null)
+            {
+                data = soba.Eval(data);
+                LSender.Send(this, $"'{Activator}'-evaluate: evaluated data: `{data}` :: ISBEScript", MsgLevel.Trace);
             }
 
-            if(msbuild != null) {
+            if(emsbuild != null)
+            {
                 //if(PostProcessingMSBuild) {
-                    data = msbuild.Eval(data);
-                    LSender.Send(this, $"'{Condition}'-evaluate: evaluated data: `{data}` :: IMSBuild", MsgLevel.Trace);
+                    data = emsbuild.Eval(data);
+                    LSender.Send(this, $"'{Activator}'-evaluate: evaluated data: `{data}` :: IMSBuild", MsgLevel.Trace);
                 //}
             }
 

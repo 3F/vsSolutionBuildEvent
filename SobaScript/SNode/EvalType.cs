@@ -26,7 +26,7 @@
 namespace net.r_eg.SobaScript.SNode
 {
     /// <summary>
-    /// Available statuses for evaluation with MSBuild and other engines.
+    /// Evaluation states for E-MSBuild and other engines.
     /// </summary>
     public enum EvalType
     {

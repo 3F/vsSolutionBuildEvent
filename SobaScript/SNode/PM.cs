@@ -28,48 +28,40 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using net.r_eg.EvMSBuild;
-using net.r_eg.Varhead;
-using net.r_eg.SobaScript.Exceptions;
 using net.r_eg.Components;
+using net.r_eg.EvMSBuild;
+using net.r_eg.SobaScript.Exceptions;
+using net.r_eg.SobaScript.Extensions;
+using net.r_eg.Varhead;
 
 namespace net.r_eg.SobaScript.SNode
 {
-    /// <summary>
-    /// Detector of PM levels.
-    /// </summary>
     public class PM: IPM
     {
-        protected IEvMSBuild msbuild;
+        protected IEvMSBuild emsbuild;
+
         protected EvalType teval = EvalType.None;
 
-        /// <summary>
-        /// Condition for analyzer.
-        /// </summary>
-        public string Condition
-        {
-            get
-            {
-                return @"^\s*\.?\s*
-                         (?:
-                            ([A-Za-z_0-9]+)\s*    #1 - method
-                            \((.*?)\)             #2 - arguments
-                          |
-                            ([A-Za-z_0-9]+)       #3 - property
-                         )
-                         \s*(.*)                  #4 - operation
-                         ";
-            }
-        }
+        protected IList<ILevel> levels = new List<ILevel>(7);
+
+        private readonly Lazy<Regex> _pmAnalyzer = new Lazy<Regex>(() => new Regex
+        (@"
+           ^\s*\.?\s*
+            (?:
+               ([A-Za-z_0-9]+)\s*    #1 - method
+               \((.*?)\)             #2 - arguments
+             |
+               ([A-Za-z_0-9]+)       #3 - property
+            )
+            \s*(.*)                  #4 - operation
+            ",
+            RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Compiled
+        ));
 
         /// <summary>
-        /// Found levels.
+        /// Access to found levels.
         /// </summary>
-        public List<ILevel> Levels
-        {
-            get;
-            protected set;
-        } = new List<ILevel>();
+        public RLevels Levels => levels.AsRLevels();
 
         /// <summary>
         /// Access to first level.
@@ -78,37 +70,24 @@ namespace net.r_eg.SobaScript.SNode
         {
             get
             {
-                if(Levels.Count < 1) {
+                if(levels.Count < 1) {
                     throw new ArgumentException("PM: The first level is not initialized or not exists anymore.");
                 }
-                return Levels[0];
+                return levels[0];
             }
             set
             {
-                if(Levels.Count < 1) {
+                if(levels.Count < 1) {
                     throw new ArgumentException("PM: Allowed only updating. Initialize first.");
                 }
-                Levels[0] = value;
+                levels[0] = value;
             }
         }
 
         /// <summary>
         /// Compiled rules of nodes.
         /// </summary>
-        protected Regex Rcon
-        {
-            get
-            {
-                if(rcon == null) {
-                    rcon = new Regex(Condition,
-                                        RegexOptions.IgnorePatternWhitespace |
-                                        RegexOptions.Singleline |
-                                        RegexOptions.Compiled);
-                }
-                return rcon;
-            }
-        }
-        private Regex rcon;
+        protected Regex Rcon => _pmAnalyzer.Value;
 
         /// <summary>
         /// Checks equality for level.
@@ -119,12 +98,13 @@ namespace net.r_eg.SobaScript.SNode
         /// <returns>true value if selected level is equal to selected type and data, otherwise false.</returns>
         public bool Is(int level, LevelType type, string data = null)
         {
-            if(level < 0 || level >= Levels.Count) {
+            if(level < 0 || level >= levels.Count) {
                 return false;
             }
-            ILevel lvl = Levels[level];
 
-            return (lvl.Type == type && lvl.Data == data);
+            ILevel lvl = levels[level];
+
+            return lvl.Type == type && lvl.Data == data;
         }
 
         /// <summary>
@@ -142,17 +122,17 @@ namespace net.r_eg.SobaScript.SNode
                 return false;
             }
 
-            if(isLastLevel(Levels[level])) {
+            if(IsLastLevel(levels[level])) {
                 return true; // if current is also the last
             }
 
             // check next level
-            if(isLastLevel(Levels[level + 1])) {
+            if(IsLastLevel(levels[level + 1])) {
                 return true; // 'as is' if next level is final.
             }
             
             // the next level is not latest
-            throw new NotSupportedOperationException($"PM - FinalIs: the level '{Levels[level].Data}'({Levels[level].Type}) is not final.");
+            throw new NotSupportedOperationException($"PM - FinalIs: the level '{levels[level].Data}'({levels[level].Type}) is not final.");
         }
 
         /// <summary>
@@ -170,17 +150,17 @@ namespace net.r_eg.SobaScript.SNode
                 return false;
             }
 
-            if(Levels[level].Type == LevelType.RightOperandEmpty) {
+            if(levels[level].Type == LevelType.RightOperandEmpty) {
                 return true; // if current is also the last
             }
 
             // check next level
-            if(Levels[level + 1].Type == LevelType.RightOperandEmpty) {
+            if(levels[level + 1].Type == LevelType.RightOperandEmpty) {
                 return true; // 'as is' if next level is final and is RightOperandEmpty.
             }
 
             // the next level is not latest or RightOperandEmpty 
-            throw new NotSupportedOperationException($"PM - FinalEmptyIs: the level '{Levels[level].Data}'({Levels[level].Type}) is not final.");
+            throw new NotSupportedOperationException($"PM - FinalEmptyIs: the level '{levels[level].Data}'({levels[level].Type}) is not final.");
         }
         
         /// <summary>
@@ -188,9 +168,9 @@ namespace net.r_eg.SobaScript.SNode
         /// </summary>
         /// <param name="level">New start position.</param>
         /// <returns>Self reference.</returns>
-        public IPM pinTo(int level)
+        public IPM PinTo(int level)
         {
-            Levels = sliceLevels(level);
+            levels = SliceLevels(level);
             return this;
         }
 
@@ -199,9 +179,9 @@ namespace net.r_eg.SobaScript.SNode
         /// </summary>
         /// <param name="level">Start position.</param>
         /// <returns>New instance of IPM.</returns>
-        public IPM getFrom(int level)
+        public IPM GetFrom(int level)
         {
-            return new PM(sliceLevels(level));
+            return new PM(SliceLevels(level));
         }
 
         /// <summary>
@@ -209,14 +189,14 @@ namespace net.r_eg.SobaScript.SNode
         /// </summary>
         /// <param name="level"></param>
         /// <returns></returns>
-        public string traceLevel(int level = 0)
+        public string TraceLevel(int level = 0)
         {
-            if(level < 0 || level >= Levels.Count) {
-                return string.Format("Level '{0}' is not exists. /{1}", level, Levels.Count);
+            if(level < 0 || level >= levels.Count) {
+                return string.Format("Level '{0}' is not exists. /{1}", level, levels.Count);
             }
-            ILevel l = Levels[level];
+            ILevel l = levels[level];
             return string.Format("Data({0}), Type({1}), LevelType({2}), Args = {3}, Level({4}/{5})", 
-                                    l.Data, l.DataType, l.Type, (l.Args == null) ? 0 : l.Args.Length, level, Levels.Count);
+                                    l.Data, l.DataType, l.Type, (l.Args == null) ? 0 : l.Args.Count, level, levels.Count);
         }
 
         /// <summary>
@@ -225,10 +205,10 @@ namespace net.r_eg.SobaScript.SNode
         /// <param name="level"></param>
         /// <param name="ident">Custom id of place where occurred.</param>
         /// <exception cref="IncorrectNodeException"></exception>
-        public void fail(int level = 0, string ident = null)
+        public void Fail(int level = 0, string ident = null)
         {
             string stMethod = ident ?? (new StackTrace()).GetFrame(1).GetMethod().Name;
-            throw new IncorrectNodeException($"`{stMethod}` Node - {traceLevel(level)} is not correct for this way.");
+            throw new IncorrectNodeException($"`{stMethod}` Node - {TraceLevel(level)} is not correct for this way.");
         }
 
         /// <summary>
@@ -277,11 +257,11 @@ namespace net.r_eg.SobaScript.SNode
                 return false;
             }
 
-            if(Levels.Count == 1) {
-                Levels.Clear(); // current level is already checked
+            if(levels.Count == 1) {
+                levels.Clear(); // current level is already checked
             }
             else {
-                pinTo(level + 1); // move to next
+                PinTo(level + 1); // move to next
             }
             return true;
         }
@@ -306,7 +286,7 @@ namespace net.r_eg.SobaScript.SNode
         /// <returns></returns>
         public bool IsMethodWithArgs(int level, string name, params ArgumentType[] types)
         {
-            return Is(level, LevelType.Method, name) && Levels[level].Is(types);
+            return Is(level, LevelType.Method, name) && levels[level].Is(types);
         }
 
         /// <summary>
@@ -327,7 +307,7 @@ namespace net.r_eg.SobaScript.SNode
         /// <returns>true value if the right operand is equal to selected level type, otherwise false.</returns>
         public bool IsRight(LevelType type)
         {
-            return Levels.Count > 0 && Levels[0].Type == type;
+            return levels.Count > 0 && levels[0].Type == type;
         }
 
         /// <summary>
@@ -338,10 +318,10 @@ namespace net.r_eg.SobaScript.SNode
         /// <returns>true value if selected level is equal to selected data, otherwise false.</returns>
         public bool IsData(string data, params string[] variants)
         {
-            if(Levels.Count < 1) {
+            if(levels.Count < 1) {
                 return false;
             }
-            string ldata = Levels[0].Data;
+            string ldata = levels[0].Data;
 
             if(ldata == data) {
                 return true;
@@ -361,12 +341,12 @@ namespace net.r_eg.SobaScript.SNode
         /// <param name="splitter">A character that delimits arguments.</param>
         /// <returns>List of parsed arguments or null value if data is empty or null.</returns>
         /// <exception cref="IncorrectSyntaxException">If incorrect data.</exception>
-        public Argument[] arguments(string raw, char splitter = ',')
+        public RArgs GetArguments(string raw, char splitter = ',')
         {
             if(string.IsNullOrWhiteSpace(raw)) {
                 return null;
             }
-            return extractArgs(raw, splitter);
+            return ExtractArgs(raw, splitter);
         }
 
         /// <param name="raw">Initial raw data.</param>
@@ -375,23 +355,23 @@ namespace net.r_eg.SobaScript.SNode
         public PM(string raw, IEvMSBuild msbuild = null, EvalType type = EvalType.ArgStringD /*| EvalType.RightOperandStd*/)
             : this(msbuild, type)
         {
-            detect(raw);
+            Detect(raw);
         }
 
         /// <param name="levels">predefined levels.</param>
-        public PM(List<ILevel> levels)
+        public PM(IList<ILevel> levels)
         {
-            Levels = levels;
+            this.levels = levels;
         }
 
-        /// <param name="msbuild">To evaluate data with MSBuild engine where it's allowed.</param>
+        /// <param name="emsbuild">To evaluate data with MSBuild engine where it's allowed.</param>
         /// <param name="type">Allowed types of evaluation with MSBuild.</param>
-        public PM(IEvMSBuild msbuild = null, EvalType type = EvalType.ArgStringD)
+        public PM(IEvMSBuild emsbuild = null, EvalType type = EvalType.ArgStringD)
         {
             //if(msbuild == null) {
             //    throw new InvalidArgumentException("PM: The `msbuild` argument cannot be null");
             //}
-            this.msbuild    = msbuild;
+            this.emsbuild   = emsbuild;
             teval           = type;
         }
 
@@ -399,16 +379,16 @@ namespace net.r_eg.SobaScript.SNode
         /// Entry point of analyser.
         /// </summary>
         /// <param name="data">mixed data</param>
-        protected void detect(string data)
+        protected void Detect(string data)
         {
             LSender.Send(this, $"PM-detect: entered with '{data}'", MsgLevel.Trace);
 
-            StringHandler h = new StringHandler();
-            data            = h.ProtectMixedQuotes(data);
+            var h   = new StringHandler();
+            data    = h.ProtectMixedQuotes(data);
 
             Match m = Rcon.Match(data);
             if(!m.Success) {
-                Levels.Add(getRightOperand(data, h));
+                levels.Add(GetRightOperand(data, h));
                 return;
             }
 
@@ -420,21 +400,21 @@ namespace net.r_eg.SobaScript.SNode
             
             if(property != null)
             {
-                Levels.Add(new Level() {
+                levels.Add(new Level() {
                     Type = LevelType.Property,
                     Data = property,
                 });
             }
             else
             {
-                Levels.Add(new Level() {
+                levels.Add(new Level() {
                     Type = LevelType.Method,
                     Data = method,
-                    Args = extractArgs(h.Recovery(arguments)),
+                    Args = ExtractArgs(h.Recovery(arguments)),
                 });
             }
 
-            detect(h.Recovery(operation));
+            Detect(h.Recovery(operation));
         }
 
         /// <summary>
@@ -444,14 +424,14 @@ namespace net.r_eg.SobaScript.SNode
         /// <param name="splitter">A character that delimits arguments.</param>
         /// <returns>List of parsed arguments or null value if data is empty.</returns>
         /// <exception cref="IncorrectSyntaxException">If incorrect arguments line.</exception>
-        protected Argument[] extractArgs(string data, char splitter = ',')
+        protected RArgs ExtractArgs(string data, char splitter = ',')
         {
             if(string.IsNullOrWhiteSpace(data)) {
-                return new Argument[0];
+                return new RArgs(new Argument[0]);
             }
             
             StringHandler h = new StringHandler();
-            string[] raw    = h.protectArguments(data).Split(splitter);
+            string[] raw    = h.ProtectArguments(data).Split(splitter);
 
             Argument[] ret = new Argument[raw.Length];
             for(int i = 0; i < raw.Length; ++i)
@@ -460,9 +440,10 @@ namespace net.r_eg.SobaScript.SNode
                 if(arg.Length < 1 && splitter == ',') { // std: p1, p2, p3
                     throw new IncorrectSyntaxException($"PM - extractArgs: incorrect arguments line '{data}'");
                 }
-                ret[i] = detectArgument(arg);
+                ret[i] = DetectArgument(arg);
             }
-            return ret;
+
+            return new RArgs(ret);
         }
 
         /// <summary>
@@ -470,27 +451,27 @@ namespace net.r_eg.SobaScript.SNode
         /// </summary>
         /// <param name="raw"></param>
         /// <returns>Prepared struct.</returns>
-        protected Argument detectArgument(string raw)
+        protected Argument DetectArgument(string raw)
         {
             // Object - { "p1", true, 12 }
 
-            Match m = Regex.Match(raw, string.Format("^{0}$", RPattern.ObjectContent), RegexOptions.IgnorePatternWhitespace);
+            Match m = Regex.Match(raw, string.Format("^{0}$", Pattern.ObjectContent), RegexOptions.IgnorePatternWhitespace);
             if(m.Success)
             {
                 return new Argument() {
                     type = ArgumentType.Object,
-                    data = extractArgs(m.Groups[1].Value.Trim())
+                    data = ExtractArgs(m.Groups[1].Value.Trim())
                 };
             }
 
             // Char
 
-            m = Regex.Match(raw, string.Format("^{0}$", RPattern.CharContent));
+            m = Regex.Match(raw, string.Format("^{0}$", Pattern.CharContent));
             if(m.Success)
             {
                 return new Argument() { 
                     type = ArgumentType.Char,
-                    data = Value.toChar(m.Groups[1].Value)
+                    data = Value.ToChar(m.Groups[1].Value)
                 };
             }
 
@@ -502,67 +483,67 @@ namespace net.r_eg.SobaScript.SNode
                                                 {0}   #1  - Content from double quotes
                                               |
                                                 {1}   #2  - Content from single quotes
-                                             )$", RPattern.DoubleQuotesContent, RPattern.SingleQuotesContent
+                                             )$", Pattern.DoubleQuotesContent, Pattern.SingleQuotesContent
                              ),
                              RegexOptions.IgnorePatternWhitespace);
             if(m.Success)
             {
                 if(m.Groups[1].Success) {
                     return new Argument() { type = ArgumentType.StringDouble,
-                                            data = eval(EvalType.ArgStringD, Tokens.UnescapeQuotes('"', m.Groups[1].Value)) };
+                                            data = Eval(EvalType.ArgStringD, Tokens.UnescapeQuotes('"', m.Groups[1].Value)) };
                 }
 
                 return new Argument() { type = ArgumentType.StringSingle,
-                                        data = eval(EvalType.ArgStringS, Tokens.UnescapeQuotes('\'', m.Groups[2].Value)) };
+                                        data = Eval(EvalType.ArgStringS, Tokens.UnescapeQuotes('\'', m.Groups[2].Value)) };
             }
 
             // Integer
 
-            m = Regex.Match(raw, string.Format("^{0}$", RPattern.IntegerContent));
+            m = Regex.Match(raw, string.Format("^{0}$", Pattern.IntegerContent));
             if(m.Success)
             {
                 return new Argument() { 
                     type = ArgumentType.Integer,
-                    data = Value.toInt32(m.Groups[1].Value)
+                    data = Value.ToInt32(m.Groups[1].Value)
                 };
             }
 
             // Float
 
-            m = Regex.Match(raw, string.Format("^{0}$", RPattern.FloatContent));
+            m = Regex.Match(raw, string.Format("^{0}$", Pattern.FloatContent));
             if(m.Success)
             {
                 return new Argument() { 
                     type = ArgumentType.Float,
-                    data = Value.toFloat(m.Groups[1].Value)
+                    data = Value.ToFloat(m.Groups[1].Value)
                 };
             }
 
             // Double
 
-            m = Regex.Match(raw, string.Format("^{0}$", RPattern.DoubleContent));
+            m = Regex.Match(raw, string.Format("^{0}$", Pattern.DoubleContent));
             if(m.Success)
             {
                 return new Argument() {
                     type = ArgumentType.Double,
-                    data = Value.toDouble(m.Groups[1].Value)
+                    data = Value.ToDouble(m.Groups[1].Value)
                 };
             }
 
             // Boolean
 
-            m = Regex.Match(raw, string.Format("^{0}$", RPattern.BooleanContent));
+            m = Regex.Match(raw, string.Format("^{0}$", Pattern.BooleanContent));
             if(m.Success)
             {
                 return new Argument() { 
                     type = ArgumentType.Boolean,
-                    data = Value.toBoolean(m.Groups[1].Value)
+                    data = Value.ToBoolean(m.Groups[1].Value)
                 };
             }
 
             // Enum or Const
 
-            m = Regex.Match(raw, string.Format("^{0}$", RPattern.EnumOrConstContent));
+            m = Regex.Match(raw, string.Format("^{0}$", Pattern.EnumOrConstContent));
             if(m.Success)
             {
                 return new Argument() { 
@@ -585,7 +566,7 @@ namespace net.r_eg.SobaScript.SNode
         /// <param name="data">raw data</param>
         /// <param name="handler">Handler of string if used.</param>
         /// <returns></returns>
-        protected ILevel getRightOperand(string data, StringHandler handler = null)
+        protected ILevel GetRightOperand(string data, StringHandler handler = null)
         {
             if(string.IsNullOrWhiteSpace(data)) {
                 return new Level() { Type = LevelType.RightOperandEmpty };
@@ -602,18 +583,18 @@ namespace net.r_eg.SobaScript.SNode
             string ldata = (handler == null)? raw : handler.Recovery(raw);
 
             if(type == ":") {
-                return new Level() { Type = LevelType.RightOperandColon, Data = eval(EvalType.RightOperandColon, ldata) };
+                return new Level() { Type = LevelType.RightOperandColon, Data = Eval(EvalType.RightOperandColon, ldata) };
             }
-            return new Level() { Type = LevelType.RightOperandStd, Data = eval(EvalType.RightOperandStd, ldata) };
+            return new Level() { Type = LevelType.RightOperandStd, Data = Eval(EvalType.RightOperandStd, ldata) };
         }
 
-        protected string eval(EvalType type, string raw)
+        protected string Eval(EvalType type, string raw)
         {
-            if(type == EvalType.None || msbuild == null) {
+            if(type == EvalType.None || emsbuild == null) {
                 return raw;
             }
 
-            return ((teval & type) == type)? msbuild.Eval(raw) : raw;
+            return ((teval & type) == type)? emsbuild.Eval(raw) : raw;
         }
 
         /// <summary>
@@ -621,7 +602,7 @@ namespace net.r_eg.SobaScript.SNode
         /// </summary>
         /// <param name="level">Level for checking.</param>
         /// <returns>true value if selected is latest.</returns>
-        protected bool isLastLevel(ILevel level)
+        protected bool IsLastLevel(ILevel level)
         {
             switch(level.Type)
             {
@@ -636,12 +617,12 @@ namespace net.r_eg.SobaScript.SNode
 
         /// <param name="level">Start position of slicing.</param>
         /// <returns></returns>
-        protected List<ILevel> sliceLevels(int level)
+        protected IList<ILevel> SliceLevels(int level)
         {
-            if(level < 0 || level >= Levels.Count) {
-                throw new ArgumentException($"PM: The level '{level}' should be >= 0 && < Levels({Levels.Count})");
+            if(level < 0 || level >= levels.Count) {
+                throw new ArgumentException($"PM: The level '{level}' should be >= 0 && < Levels({levels.Count})");
             }
-            return new List<ILevel>(Levels.Skip(level));
+            return new List<ILevel>(levels.Skip(level));
         }
     }
 }

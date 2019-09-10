@@ -21,14 +21,13 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using net.r_eg.SobaScript;
+using net.r_eg.SobaScript.Mapper;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Events.CommandEvents;
 using net.r_eg.vsSBE.Extensions;
-using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.UI.WForms.Components;
 using net.r_eg.vsSBE.UI.WForms.Controls;
-using DomIcon = net.r_eg.vsSBE.SBEScripts.Dom.Icon;
 
 namespace net.r_eg.vsSBE.UI.WForms
 {
@@ -354,8 +353,8 @@ namespace net.r_eg.vsSBE.UI.WForms
                     continue;
                 }
 
-                object customIn  = Value.packArgument(row.Cells[dgvCEFiltersColumnCustomIn.Name].Value);
-                object customOut = Value.packArgument(row.Cells[dgvCEFiltersColumnCustomOut.Name].Value);
+                object customIn  = Value.PackArgument(row.Cells[dgvCEFiltersColumnCustomIn.Name].Value);
+                object customOut = Value.PackArgument(row.Cells[dgvCEFiltersColumnCustomOut.Name].Value);
                 object guid      = row.Cells[dgvCEFiltersColumnGuid.Name].Value;
 
                 list.Add(new Filter()
@@ -542,7 +541,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                 return;
             }
             foreach(IFilter f in evt.Filters) {
-                dgvCEFilters.Rows.Add(f.Guid, f.Id, Value.pack(f.CustomIn), Value.pack(f.CustomOut), f.Description, f.Cancel, f.Pre, f.Post);
+                dgvCEFilters.Rows.Add(f.Guid, f.Id, Value.Pack(f.CustomIn), Value.Pack(f.CustomOut), f.Description, f.Cancel, f.Pre, f.Post);
             }
         }
 
@@ -967,7 +966,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
 
             string tFormat = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern + " .fff";
-            dgvCESniffer.Rows.Add(DateTime.Now.ToString(tFormat), pre, guid, id, Value.pack(customIn), Value.pack(customOut), Util.enumViewBy(guid, id));
+            dgvCESniffer.Rows.Add(DateTime.Now.ToString(tFormat), pre, guid, id, Value.Pack(customIn), Value.Pack(customOut), Util.enumViewBy(guid, id));
         }
 
         protected void addFilterFromSniffer(DataGridView sniffer, DataGridView filter)
@@ -1445,20 +1444,20 @@ namespace net.r_eg.vsSBE.UI.WForms
             {
                 Bitmap bmap = DomIcon.definition;
                 switch(info.Type) {
-                    case InfoType.Property: {
+                    case NodeType.Property: {
                         bmap = DomIcon.property;
                         break;
                     }
-                    case InfoType.Method: {
+                    case NodeType.Method: {
                         bmap = DomIcon.function;
                         break;
                     }
-                    case InfoType.Definition: {
+                    case NodeType.Definition: {
                         bmap = DomIcon.definition;
                         break;
                     }
                 }
-                dgvComponentInfo.Rows.Add(bmap, info.Displaying, (info.Signature == null)? "" : info.Signature.Replace("\n", "  \n"), info.Description);
+                dgvComponentInfo.Rows.Add(bmap, info.Overname, (info.Signature == null)? "" : info.Signature.Replace("\n", "  \n"), info.Description);
             }
         }
 

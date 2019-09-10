@@ -26,7 +26,7 @@
 namespace net.r_eg.SobaScript.SNode
 {
     /// <summary>
-    /// Specifies of possible types for arguments.
+    /// Specifies possible types for arguments.
     /// </summary>
     public enum ArgumentType
     {

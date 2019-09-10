@@ -23,12 +23,12 @@ using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.SobaScript;
-using net.r_eg.SobaScript.Components;
+using net.r_eg.SobaScript.Z.VS;
+using net.r_eg.SobaScript.Z.VS.Owp;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.Logger;
-using net.r_eg.vsSBE.SBEScripts.Components;
 using Task = System.Threading.Tasks.Task;
 
 namespace net.r_eg.vsSBE.Actions
@@ -54,7 +54,7 @@ namespace net.r_eg.vsSBE.Actions
 
         protected ISobaCLoader cLoader;
 
-        private readonly object _lock = new object();
+        private readonly object sync = new object();
         private readonly object _plock = new object();
 
         /// <summary>
@@ -270,7 +270,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="item">Name of item pane</param>
         public void bindBuildRaw(string data, string guid, string item = null)
         {
-            OWPItems._.getEW(new OWPIdent() { guid = guid, item = (item)?? Settings._.DefaultOWPItem }).updateRaw(data); //TODO:
+            OWPItems._.getEW(new OWPIdent() { guid = guid, item = item ?? Settings._.DefaultOWPItem }).updateRaw(data); //TODO:
             if(!IsAllowActions)
             {
                 if(!isDisabledAll(SlnEvents.Transmitter)) {
@@ -374,7 +374,7 @@ namespace net.r_eg.vsSBE.Actions
         public Binder(ICommand cmd, ISobaCLoader loader)
         {
             Cmd     = cmd ?? throw new ArgumentNullException(nameof(cmd));
-            cLoader = cLoader ?? throw new ArgumentNullException(nameof(loader));
+            cLoader = loader ?? throw new ArgumentNullException(nameof(loader));
 
             projects = new Dictionary<string, EOProject>();
             attachLoggingEvent();
@@ -794,7 +794,7 @@ namespace net.r_eg.vsSBE.Actions
 
         protected void attachLoggingEvent()
         {
-            lock(_lock) {
+            lock(sync) {
                 detachLoggingEvent();
                 Log._.Received += onLogging;
             }
@@ -835,12 +835,10 @@ namespace net.r_eg.vsSBE.Actions
                     Thread.CurrentThread.Name = LoggingEvent.IDENT_TH;
                 }
 
-                lock(_lock)
+                lock(sync)
                 {
-                    IComponent component = cLoader.GetComponent(typeof(OWPComponent));
-                    if(component != null) {
-                        ((ILogData)component).updateLogData(e.Message, e.Level);
-                    }
+                    var ld = cLoader.GetComponent(typeof(OwpComponent)) as ILogInfo;
+                    ld?.UpdateLogInfo(e.Message, e.Level);
 
                     foreach(LoggingEvent evt in SlnEvents.Logging)
                     {
@@ -849,7 +847,8 @@ namespace net.r_eg.vsSBE.Actions
                             continue;
                         }
 
-                        try {
+                        try
+                        {
                             if(Cmd.exec(evt, SolutionEventType.Logging)) {
                                 Log.Trace("[Logging]: " + evt.Caption);
                             }

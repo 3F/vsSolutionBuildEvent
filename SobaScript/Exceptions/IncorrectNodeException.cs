@@ -40,7 +40,7 @@ namespace net.r_eg.SobaScript.Exceptions
         public IncorrectNodeException(IPM pm, int level = 0)
             : this()
         {
-            pm?.fail
+            pm?.Fail
             (
                 level, 
                 new StackTrace().GetFrame(1).GetMethod().Name

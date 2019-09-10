@@ -174,5 +174,12 @@ Uses the following third-party components:
 
 * [E-MSBuild](https://github.com/3F/E-MSBuild)
 * [Varhead](https://github.com/3F/Varhead)
-* [Json.NET](https://github.com/JamesNK/Newtonsoft.Json) - Actually, only for this line: `((JArray)data).ToObject(typeof(object[]))`. This dependency is still being considered.
 * [LSender](https://github.com/3F/LSender)
+
+## ;
+
+![](https://3F.github.io/web.vsSBE/doc/Resources/Screenshots/Automatic_Version_Numbering.png)
+
+![](https://3F.github.io/web.vsSBE/doc/Resources/Screenshots/msbuild_prop_code_completion.png)
+
+![](https://3F.github.io/web.vsSBE/doc/Resources/Screenshots/main_v0.12.png)

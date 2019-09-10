@@ -21,21 +21,19 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using net.r_eg.SobaScript;
 using net.r_eg.SobaScript.Components;
+using net.r_eg.SobaScript.Mapper;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Configuration;
 using net.r_eg.vsSBE.Configuration.User;
 using net.r_eg.vsSBE.Events;
-using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.Extensions;
-using net.r_eg.vsSBE.SBEScripts.Dom;
+using net.r_eg.vsSBE.UI.WForms.Controls;
 
 namespace net.r_eg.vsSBE.UI.WForms.Logic
 {
     using CEAfterEventHandler = EnvDTE._dispCommandEvents_AfterExecuteEventHandler;
     using CEBeforeEventHandler = EnvDTE._dispCommandEvents_BeforeExecuteEventHandler;
-    using DomIcon = Icon;
 
     internal class Events
     {
@@ -474,7 +472,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             foreach(IComponent c in Loader.Soba.Registered)
             {
                 Type type = c.GetType();
-                if(!Inspector.isComponent(type)) {
+                if(!Inspector.IsComponent(type)) {
                     continue;
                 }
 
@@ -1000,7 +998,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                     continue;
                 }
 
-                foreach(INodeInfo info in inspector.getBy(c.GetType())) {
+                foreach(INodeInfo info in inspector.GetBy(c.GetType())) {
                     ret.Add(info);
                     ret.AddRange(domElemsBy(info.Link));
                 }
@@ -1014,7 +1012,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
 
         protected IEnumerable<INodeInfo> domElemsBy(NodeIdent ident)
         {
-            foreach(INodeInfo info in inspector.getBy(ident))
+            foreach(INodeInfo info in inspector.GetBy(ident))
             {
                 if(!String.IsNullOrEmpty(info.Name)) {
                     yield return info;

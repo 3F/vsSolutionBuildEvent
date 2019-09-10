@@ -324,7 +324,7 @@ namespace net.r_eg.EvMSBuild
                 return Regex.Replace
                 (
                     _data,
-                    (qtype == '"') ? RPattern.DoubleQuotesContent : RPattern.SingleQuotesContent,
+                    (qtype == '"') ? Pattern.DoubleQuotesContent : Pattern.SingleQuotesContent,
                     (Match m) => 
                     {
                         string content = m.Groups[1].Value;
@@ -416,7 +416,7 @@ namespace net.r_eg.EvMSBuild
         /// <exception cref="IncorrectSyntaxException"></exception>
         protected Analysis Prepare(string raw)
         {
-            Match m = RPattern.PItem.Match(raw.Trim());
+            Match m = Pattern.PItem.Match(raw.Trim());
             if(!m.Success) {
                 throw new IncorrectSyntaxException($"prepare: failed: {raw}");
             }
@@ -547,7 +547,7 @@ namespace net.r_eg.EvMSBuild
         /// <returns></returns>
         private protected string ContainerIn(string data, StringHandler sh, uint limit)
         {
-            Regex con   = RPattern.ContainerInCompiled;
+            Regex con   = Pattern.ContainerInCompiled;
             int maxRep  = 1; // rule of depth, e.g.: $(p1 = $(Platform))$(p2 = $(p1))$(p2)
                              //TODO: it's slowest but fully compatible with classic rules with minimal programming.. so, improve performance
 
@@ -617,7 +617,7 @@ namespace net.r_eg.EvMSBuild
             }
 
             var left        = UVars.GetValue(prepared.variable.name, prepared.variable.scope) ?? "0";
-            bool isNumber   = RPattern.IsNumber.IsMatch(left);
+            bool isNumber   = Pattern.IsNumber.IsMatch(left);
 
             LSender.Send(this, $"vSignOperation: '{prepared.variable.vSign}'; `{left}` (isNumber: {isNumber})", MsgLevel.Trace);
 
@@ -783,7 +783,7 @@ namespace net.r_eg.EvMSBuild
                 }
             }
 
-            data = RPattern.ContainerInNamedCompiled.Replace(data, (Match m) =>
+            data = Pattern.ContainerInNamedCompiled.Replace(data, (Match m) =>
             {
                 string found = m.Groups["name"].Value;
 

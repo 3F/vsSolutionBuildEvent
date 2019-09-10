@@ -42,6 +42,8 @@ namespace net.r_eg.SobaScript
 
         public static implicit operator string(SData data) => data?.content;
 
+        public override string ToString() => content;
+
         public SData()
         {
 

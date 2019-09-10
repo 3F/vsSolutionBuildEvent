@@ -15,7 +15,7 @@ namespace SobaScriptTest
             Assert.Equal(pm.FirstLevel.Data, pm.Levels[0].Data);
             Assert.Equal(pm.FirstLevel.Type, pm.Levels[0].Type);
 
-            pm.pinTo(2);
+            pm.PinTo(2);
             Assert.Equal(pm.FirstLevel.Data, pm.Levels[0].Data);
             Assert.Equal(pm.FirstLevel.Type, pm.Levels[0].Type);
         }
@@ -34,13 +34,7 @@ namespace SobaScriptTest
             IPM pm = new PM("left.solution.right");
 
             Assert.Equal("left", pm.Levels[0].Data);
-
-            string newData = "Test";
-            pm.Levels[0] = new Level() {
-                Data = newData
-            };
-
-            Assert.Equal(newData, pm.Levels[0].Data);
+            Assert.Equal("left", pm.FirstLevel.Data);
         }
 
         [Fact]
@@ -49,7 +43,7 @@ namespace SobaScriptTest
             IPM pm = new PM(new List<ILevel>());
             Assert.Empty(pm.Levels);
 
-            Assert.Throws<ArgumentException>(() => pm.FirstLevel = new Level() { });
+            Assert.Throws<ArgumentException>(() => pm.FirstLevel = new Level());
         }
     }
 }

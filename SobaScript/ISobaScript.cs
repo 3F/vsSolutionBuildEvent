@@ -27,23 +27,31 @@ using net.r_eg.Varhead;
 
 namespace net.r_eg.SobaScript
 {
+    /// <summary>
+    /// [ #SobaScript ]
+    /// 
+    /// Extensible Modular Scripting Programming Language.
+    /// https://github.com/3F/SobaScript
+    /// 
+    /// Please note: initially it was part of https://github.com/3F/vsSolutionBuildEvent
+    /// </summary>
     public interface ISobaScript: ISobaCLoader, IEvaluator
     {
         /// <summary>
-        /// Handler of mixed data SBE-Scripts
+        /// Prepare, parse, and evaluate mixed data through SobaScript supported syntax.
         /// </summary>
-        /// <param name="data">mixed data</param>
-        /// <returns>prepared and evaluated data</returns>
-        string parse(string data);
+        /// <param name="data">Mixed input data.</param>
+        /// <returns>Evaluated end value.</returns>
+        string Eval(string data);
 
         /// <summary>
-        /// Handler of mixed data SBE-Scripts
+        /// Prepare, parse, and evaluate mixed data through SobaScript supported syntax.
         /// </summary>
-        /// <param name="data">mixed data</param>
-        /// <param name="allowMSBuild">Allows post-processing with MSBuild or not. 
-        /// Some components can require immediate processing with evaluation, before passing control to next level.
+        /// <param name="data">Mixed input data.</param>
+        /// <param name="allowEvM">Allows post-processing with E-MSBuild.
+        /// Some components may require immediate processing with evaluation before passing control to the next level.
         /// </param>
-        /// <returns>prepared and evaluated data</returns>
-        string parse(string data, bool allowMSBuild);
+        /// <returns>Evaluated end value.</returns>
+        string Eval(string data, bool allowEvM);
     }
 }

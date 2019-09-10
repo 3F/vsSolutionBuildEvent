@@ -19,11 +19,11 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using net.r_eg.SobaScript;
+using net.r_eg.MvsSln.Extensions;
 using net.r_eg.SobaScript.Exceptions;
+using net.r_eg.SobaScript.Mapper;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Extensions;
-using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.UI.WForms.Controls;
 using net.r_eg.vsSBE.UI.WForms.Wizards.Version;
 
@@ -71,7 +71,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards
 
             ftbInputNum.Dialog.InitialDirectory = ftbOutputFile.Dialog.InitialDirectory
                                                 = ftbReplFile.Dialog.InitialDirectory
-                                                = spath.PathFormat();
+                                                = spath.DirectoryPathFormat();
         }
 
         private void render(StepsType type)

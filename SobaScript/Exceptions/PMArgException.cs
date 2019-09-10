@@ -24,7 +24,7 @@
 */
 
 using System;
-using System.Linq;
+using System.Collections.ObjectModel;
 using net.r_eg.SobaScript.SNode;
 
 namespace net.r_eg.SobaScript.Exceptions
@@ -38,7 +38,7 @@ namespace net.r_eg.SobaScript.Exceptions
 
         }
 
-        public PMArgException(Argument[] args, string expected)
+        public PMArgException(RArgs args, string expected)
             : base(GetMessage(args, expected), args)
         {
 
@@ -47,7 +47,7 @@ namespace net.r_eg.SobaScript.Exceptions
         protected static string GetMessage(Argument arg, string expected)
             => $"Incorrect argument: ({arg.type.ToString()}){arg.data.ToString()}. Expected `{expected}`";
 
-        protected static string GetMessage(Argument[] args, string expected)
+        protected static string GetMessage(RArgs args, string expected)
         {
             string pNull, pSize;
 
@@ -59,7 +59,7 @@ namespace net.r_eg.SobaScript.Exceptions
             else
             {
                 pNull = "not null";
-                pSize = " with size " + args.Length;
+                pSize = " with size " + args.Count;
             }
 
             return $"Incorrect arguments: {pNull} value{pSize}. Expected `{expected}`";

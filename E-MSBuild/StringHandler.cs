@@ -34,12 +34,12 @@ namespace net.r_eg.EvMSBuild
         /// <summary>
         /// Specific format of double quotes with content
         /// </summary>
-        public override string DoubleQuotesContentFull => RPattern.DoubleQuotesContentFull;
+        public override string DoubleQuotesContentFull => Pattern.DoubleQuotesContentFull;
 
         /// <summary>
         /// Specific format of single quotes with content
         /// </summary>
-        public override string SingleQuotesContentFull => RPattern.SingleQuotesContentFull;
+        public override string SingleQuotesContentFull => Pattern.SingleQuotesContentFull;
 
         /// <summary>
         /// Protects escaped MSBuild data.
@@ -53,7 +53,7 @@ namespace net.r_eg.EvMSBuild
                 return Regex.Replace
                 (
                     data, 
-                    RPattern.ContainerEscOuter, 
+                    Pattern.ContainerEscOuter, 
                     (Match m) =>
                     {
                         uint ident      = IdentNext;

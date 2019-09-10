@@ -18,8 +18,8 @@
 using System;
 using System.IO;
 using System.Reflection;
+using net.r_eg.MvsSln.Extensions;
 using net.r_eg.vsSBE.Configuration;
-using net.r_eg.vsSBE.Extensions;
 using IUserData = net.r_eg.vsSBE.Configuration.User.IData;
 
 namespace net.r_eg.vsSBE
@@ -46,6 +46,11 @@ namespace net.r_eg.vsSBE
         /// Useful for clients, for example with IEntryPointClient.
         /// </summary>
         public event EventHandler<DataArgs<bool>> DebugModeUpdated = delegate(object sender, DataArgs<bool> e) { };
+
+        /// <summary>
+        /// When IAppSettings.WorkPath was updated.
+        /// </summary>
+        public event EventHandler<DataArgs<string>> WorkPathUpdated = delegate (object sender, DataArgs<string> e) { };
 
         /// <summary>
         /// Debug mode for application.
@@ -95,7 +100,7 @@ namespace net.r_eg.vsSBE
                 }
 
                 string vsdir    = System.Environment.GetEnvironmentVariable("VisualStudioDir");
-                string path     = Path.Combine((vsdir)?? Path.GetTempPath(), APP_NAME).PathFormat();
+                string path     = Path.Combine((vsdir)?? Path.GetTempPath(), APP_NAME).DirectoryPathFormat();
 
                 if(!Directory.Exists(path)) {
                     Directory.CreateDirectory(path);
@@ -114,7 +119,7 @@ namespace net.r_eg.vsSBE
             get
             {
                 if(String.IsNullOrWhiteSpace(libPath)) {
-                    libPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location).PathFormat();
+                    libPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location).DirectoryPathFormat();
                 }
                 return libPath;
             }
@@ -129,7 +134,7 @@ namespace net.r_eg.vsSBE
             get
             {
                 if(String.IsNullOrWhiteSpace(workPath)) {
-                    workPath = "".PathFormat();
+                    workPath = "".DirectoryPathFormat();
                     Log.Trace("WorkPath is empty or null, use `{0}` by default.", workPath);
                     //throw new SBEException("WorkPath is empty or null");
                 }
@@ -141,12 +146,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// OWP item name by default.
         /// </summary>
-        public string DefaultOWPItem
-        {
-            get { return defaultOWPItem; }
-            set { defaultOWPItem = value; }
-        }
-        private string defaultOWPItem = "Build";
+        public string DefaultOWPItem => "Build";
 
         /// <summary>
         /// Manager of configurations.
@@ -260,7 +260,8 @@ namespace net.r_eg.vsSBE
         /// <param name="path">New path.</param>
         public void setWorkPath(string path)
         {
-            workPath = path.PathFormat();
+            workPath = path.DirectoryPathFormat();
+            WorkPathUpdated(this, new DataArgs<string>() { Data = workPath });
         }
 
         /// <summary>

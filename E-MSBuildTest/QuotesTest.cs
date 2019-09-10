@@ -10,7 +10,7 @@ namespace EvMSBuildTest
         [Fact]
         public void QuotesTest1()
         {
-            var target = new EvMSBuilderStub();
+            var target = new EvMSBuilderAcs();
 
             Assert.Equal(string.Empty, target.Eval("$(name = \" $([System.Math]::Pow(2, 16)) \")"));
             Assert.Equal(" 65536 ", target.UVars.GetValue("name", null));
@@ -22,7 +22,7 @@ namespace EvMSBuildTest
         [Fact]
         public void QuotesTest2()
         {
-            var target = new EvMSBuilderStub();
+            var target = new EvMSBuilderAcs();
             Assert.Equal(" left '123' right ", target.Eval("$([System.String]::Format(\" left '{0}' right \", \"123\"))"));
             Assert.Equal(" left '123' ) right ", target.Eval("$([System.String]::Format(\" left '{0}' ) right \", \"123\"))"));
 
@@ -33,7 +33,7 @@ namespace EvMSBuildTest
         [Fact]
         public void QuotesTest3()
         {
-            var target = new EvMSBuilderStub();
+            var target = new EvMSBuilderAcs();
 
             Assert.Equal(string.Empty, target.Eval("$(tpl = \"My version - '%Ver%'\")"));
             Assert.Equal("My version - '%Ver%'", target.UVars.GetValue("tpl", null));
@@ -51,7 +51,7 @@ namespace EvMSBuildTest
         [Fact]
         public void QuotesTest4()
         {
-            var target = new EvMSBuilderStub();
+            var target = new EvMSBuilderAcs();
 
             target.UVars.SetVariable("name", "project", "test123");
             target.UVars.Evaluate("name", "project", new EvaluatorBlank(), true);
@@ -63,7 +63,7 @@ namespace EvMSBuildTest
         [Fact]
         public void QuotesTest5()
         {
-            var target = new EvMSBuilderStub();
+            var target = new EvMSBuilderAcs();
 
             target.UVars.SetVariable("name", null, "test123");
             target.UVars.Evaluate("name", null, new EvaluatorBlank(), true);
@@ -75,7 +75,7 @@ namespace EvMSBuildTest
         [Fact]
         public void QuotesTest6()
         {
-            var target = new EvMSBuilderStub();
+            var target = new EvMSBuilderAcs();
 
             Assert.Equal(string.Empty, target.Eval("$(version = \"1.2.3\")"));
             Assert.Equal(string.Empty, target.Eval("$(tpl = \"My version - $(version), \\\"$(version)\\\", '$(version)' end.\")"));
@@ -130,7 +130,7 @@ namespace EvMSBuildTest
         [Fact]
         public void QuotesTest10()
         {
-            var target = new EvMSBuilderStub();
+            var target = new EvMSBuilderAcs();
 
             target.UVars.SetVariable("name", null, "test123");
             target.UVars.Evaluate("name", null, new EvaluatorBlank(), true);
@@ -151,7 +151,7 @@ namespace EvMSBuildTest
         [Fact]
         public void QuotesTest11()
         {
-            var target = new EvMSBuilderStub();
+            var target = new EvMSBuilderAcs();
             Assert.Equal("simply \"text\" data", target.Eval("simply \"text\" data"));
             Assert.Equal("simply \\\"text\\\" data", target.Eval("simply \\\"text\\\" data"));
             Assert.Equal("simply \\\\\"text\\\\\" data", target.Eval("simply \\\\\"text\\\\\" data"));

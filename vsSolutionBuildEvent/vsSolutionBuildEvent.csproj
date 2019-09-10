@@ -300,7 +300,6 @@
     <Compile Include="Actions\ActionInterpreter.cs" />
     <Compile Include="Actions\Binder.cs" />
     <Compile Include="Actions\DTEOperation.cs" />
-    <Compile Include="Actions\HProcess.cs" />
     <Compile Include="Actions\IAction.cs" />
     <Compile Include="Actions\ICommand.cs" />
     <Compile Include="API\Commands\IFireCoreCommand.cs" />
@@ -308,6 +307,8 @@
     <Compile Include="API\IEventLevel.cs" />
     <Compile Include="API\Settings.cs" />
     <Compile Include="API\Version.cs" />
+    <Compile Include="OwpEnv.cs" />
+    <Compile Include="DteEnv.cs" />
     <Compile Include="Clients\SEvent2.cs" />
     <Compile Include="Clients\SEvent2Empty.cs" />
     <Compile Include="Clients\SBuildEmpty.cs" />
@@ -319,8 +320,12 @@
     <Compile Include="Extensions\IVsHierarchyExtension.cs" />
     <Compile Include="EnvAbstract.cs" />
     <Compile Include="Bootloader.cs" />
+    <Compile Include="EncDetector.cs" />
+    <Compile Include="BuildEnv.cs" />
+    <Compile Include="SzArchiver.cs" />
     <Compile Include="MSBuild.cs" />
     <Compile Include="IPkg.cs" />
+    <Compile Include="UI\WForms\Controls\CompletionData.cs" />
     <Compile Include="StatusToolCommand.cs" />
     <Compile Include="MainToolCommand.cs" />
     <Compile Include="Configuration\ContextType.cs" />
@@ -351,15 +356,6 @@
     <Compile Include="Receiver\Output\IItems.cs" />
     <Compile Include="Receiver\Output\Items.cs" />
     <Compile Include="Receiver\Output\ItemType.cs" />
-    <Compile Include="SBEScripts\Components\Build\ProjectsMap.cs" />
-    <Compile Include="SBEScripts\Components\Condition\Expression.cs" />
-    <Compile Include="SBEScripts\Components\BoxComponent.cs" />
-    <Compile Include="SBEScripts\Components\TryComponent.cs" />
-    <Compile Include="SBEScripts\Components\MSBuildComponent.cs" />
-    <Compile Include="SBEScripts\Components\NuGetComponent.cs" />
-    <Compile Include="SBEScripts\Components\NuGet\GetNuTool\Core.cs" />
-    <Compile Include="SBEScripts\Components\NuGet\GetNuTool\GNT.cs" />
-    <Compile Include="SBEScripts\Components\SevenZipComponent.cs" />
     <Compile Include="UI\WForms\Controls\FileTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -457,42 +453,21 @@
     <Compile Include="Extensions\ArrayExtension.cs" />
     <Compile Include="Extensions\ObjectExtension.cs" />
     <Compile Include="IEnvironmentExt.cs" />
-    <Compile Include="ILogData.cs" />
     <Compile Include="IOW.cs" />
     <Compile Include="IsolatedEnv.cs" />
     <Compile Include="JsonSerializationBinder.cs" />
     <Compile Include="OW.cs" />
-    <Compile Include="SBEScripts\Dom\CompletionData.cs" />
-    <Compile Include="SBEScripts\Dom\ComponentAttribute.cs" />
-    <Compile Include="SBEScripts\Dom\IAttrDomLevelA.cs" />
-    <Compile Include="SBEScripts\Dom\DefinitionAttribute.cs" />
-    <Compile Include="SBEScripts\Dom\IAttrDomLevelB.cs" />
-    <Compile Include="SBEScripts\Dom\Icon.Designer.cs">
+    <Compile Include="UI\WForms\Controls\DomIcon.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Icon.resx</DependentUpon>
+      <DependentUpon>DomIcon.resx</DependentUpon>
     </Compile>
-    <Compile Include="SBEScripts\Dom\IInspector.cs" />
-    <Compile Include="SBEScripts\Dom\InfoType.cs" />
-    <Compile Include="SBEScripts\Dom\INodeInfo.cs" />
-    <Compile Include="SBEScripts\Dom\Inspector.cs" />
-    <Compile Include="SBEScripts\Dom\NodeIdent.cs" />
-    <Compile Include="SBEScripts\Dom\NodeInfo.cs" />
-    <Compile Include="SBEScripts\Dom\DomParser.cs" />
     <Compile Include="IMatchWords.cs" />
     <Compile Include="Events\IModeFile.cs" />
     <Compile Include="Events\IModeInterpreter.cs" />
     <Compile Include="Events\IModeOperation.cs" />
     <Compile Include="Receiver\Output\IItem.cs" />
-    <Compile Include="SBEScripts\Components\CommentComponent.cs" />
-    <Compile Include="SBEScripts\Components\ConditionComponent.cs" />
-    <Compile Include="SBEScripts\Components\FileComponent.cs" />
-    <Compile Include="SBEScripts\Components\FunctionComponent.cs" />
-    <Compile Include="SBEScripts\Components\OWPComponent.cs" />
-    <Compile Include="SBEScripts\Components\DTEComponent.cs" />
-    <Compile Include="SBEScripts\Components\BuildComponent.cs" />
-    <Compile Include="SBEScripts\Components\UserVariableComponent.cs" />
-    <Compile Include="SBEScripts\Components\InternalComponent.cs" />
+    <Compile Include="SobaScript\Components\InternalComponent.cs" />
     <Compile Include="Actions\IStatus.cs" />
     <Compile Include="Actions\Status.cs" />
     <Compile Include="MatchWords.cs" />
@@ -510,8 +485,6 @@
     <Compile Include="Events\ISolutionEventEW.cs" />
     <Compile Include="Events\SBEEventEW.cs" />
     <Compile Include="Events\SBETransmitter.cs" />
-    <Compile Include="SBEScripts\Dom\PropertyAttribute.cs" />
-    <Compile Include="SBEScripts\Dom\MethodAttribute.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
     <Compile Include="UI\Plain\State.cs" />
@@ -617,9 +590,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SBEScripts\Dom\Icon.resx">
+    <EmbeddedResource Include="UI\WForms\Controls\DomIcon.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Icon.Designer.cs</LastGenOutput>
+      <LastGenOutput>DomIcon.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Resource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -780,6 +753,30 @@
     <ProjectReference Include="..\MvsSln\MvsSln\MvsSln.csproj">
       <Project>{f905dfb2-2e67-4ff7-9001-924f6f2d645d}</Project>
       <Name>MvsSln</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SobaScript.Mapper\SobaScript.Mapper.csproj">
+      <Project>{e1a4575e-a65b-45c6-ae6c-ae7c4af0d247}</Project>
+      <Name>SobaScript.Mapper</Name>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' != 'true' ">TargetFramework=net40</AdditionalProperties>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' == 'true' ">TargetFramework=netstandard2.0</AdditionalProperties>
+    </ProjectReference>
+    <ProjectReference Include="..\SobaScript.Z.Core\SobaScript.Z.Core.csproj">
+      <Project>{33e70075-e98a-4737-8012-99ec75ebdac7}</Project>
+      <Name>SobaScript.Z.Core</Name>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' != 'true' ">TargetFramework=net40</AdditionalProperties>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' == 'true' ">TargetFramework=netstandard2.0</AdditionalProperties>
+    </ProjectReference>
+    <ProjectReference Include="..\SobaScript.Z.Ext\SobaScript.Z.Ext.csproj">
+      <Project>{1d40097e-6dcd-443f-a55f-a059a5b3bcbe}</Project>
+      <Name>SobaScript.Z.Ext</Name>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' != 'true' ">TargetFramework=net40</AdditionalProperties>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' == 'true' ">TargetFramework=netstandard2.0</AdditionalProperties>
+    </ProjectReference>
+    <ProjectReference Include="..\SobaScript.Z.VS\SobaScript.Z.VS.csproj">
+      <Project>{797b42c7-8efc-487e-8e97-63e011ed19f9}</Project>
+      <Name>SobaScript.Z.VS</Name>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' != 'true' ">TargetFramework=net40</AdditionalProperties>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' == 'true' ">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\SobaScript\SobaScript.csproj">
       <Project>{ba838edb-52e0-440d-866a-b9c48f3efb1d}</Project>

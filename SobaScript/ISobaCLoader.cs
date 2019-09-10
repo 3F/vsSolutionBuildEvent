@@ -56,9 +56,16 @@ namespace net.r_eg.SobaScript
         /// <summary>
         /// Get component for specified type.
         /// </summary>
+        /// <typeparam name="T">The type of registered component.</typeparam>
+        /// <returns>Found instance or null value if this type is not registered.</returns>
+        object GetComponent<T>();
+
+        /// <summary>
+        /// Get component for specified type.
+        /// </summary>
         /// <param name="type">The type of registered component.</param>
         /// <returns>Found instance or null value if this type is not registered.</returns>
-        IComponent GetComponent(Type type);
+        object GetComponent(Type type);
 
         /// <summary>
         /// To register new component.

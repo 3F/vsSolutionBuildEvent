@@ -34,68 +34,45 @@ namespace net.r_eg.SobaScript
         /// Specific format of double quotes with content
         /// </summary>
         public override string DoubleQuotesContentFull
-            => RPattern.DoubleQuotesContentFull;
+            => Pattern.DoubleQuotesContentFull;
 
         /// <summary>
         /// Specific format of single quotes with content
         /// </summary>
         public override string SingleQuotesContentFull
-            => RPattern.SingleQuotesContentFull;
+            => Pattern.SingleQuotesContentFull;
 
         /// <summary>
         /// Protects the MSBuild/SBE-Scripts containers.
         /// </summary>
         /// <param name="data"></param>
         /// <returns>protected string</returns>
-        public string protectCores(string data) => Regex.Replace
+        public string ProtectCores(string data) => Regex.Replace
         (
             data, 
             string.Format
             (
                 @"({0}|{1})",                                   // #1 - mixed
-                @"\#{1,2}" + RPattern.SquareBracketsContent,    // #2 -  #[..]
-                @"\${1,2}" + RPattern.RoundBracketsContent      // #3 -  $(..)
+                @"\#{1,2}" + Pattern.SquareBracketsContent,     // #2 -  #[..]
+                @"\${1,2}" + Pattern.RoundBracketsContent       // #3 -  $(..)
             ), 
             ReplacerIn,
             RegexOptions.IgnorePatternWhitespace
         );
 
         /// <summary>
-        /// Protects ArrayContent data.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns>protected string</returns>
-        public string protectArray(string data)
-        {
-            return ProtectByPattern(data, $"({RPattern.ObjectContent})");
-        }
-
-        /// <summary>
-        /// Protects argument list.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns>protected string</returns>
-        public string protectArguments(string data)
-        {
-            return protectArray(ProtectMixedQuotes(data));
-        }
-
-        /// <summary>
-        /// Protects data inside &lt;#data&gt; ... &lt;/#data&gt;
+        /// Normalize data for strings.
+        /// eg. to unescape double quotes etc.
+        /// TODO: obsolete
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public string protectDataSection(string data) // <#data> ... </#data>
-            => Regex.Replace(data, @"<#data>(.*?)<\/#data>", ReplacerIn, RegexOptions.Singleline);
-
-        /// <summary>
-        /// Protection methods by default.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public string protect(string data)
+        public static string Normalize(string data)
         {
-            return ProtectMixedQuotes(protectDataSection(data));
+            if(string.IsNullOrEmpty(data)) {
+                return string.Empty;
+            }
+            return UnescapeQuotes('"', data);
         }
 
         /// <summary>
@@ -103,14 +80,47 @@ namespace net.r_eg.SobaScript
         /// </summary>
         /// <param name="data">mixed string</param>
         /// <returns>data with escaped quotes</returns>
-        public static string escapeQuotes(string data)
+        public static string EscapeQuotes(string data)
         {
             if(string.IsNullOrEmpty(data)) {
                 return string.Empty;
             }
+
             // (?<!\\)"
             return Regex.Replace(data, "(?<!\\\\)\"", "\\\"");
         }
+
+        /// <summary>
+        /// Protects ArrayContent data.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>protected string</returns>
+        internal string ProtectArray(string data)
+            => ProtectByPattern(data, $"({Pattern.ObjectContent})");
+
+        /// <summary>
+        /// Protects argument list.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>protected string</returns>
+        internal string ProtectArguments(string data)
+            => ProtectArray(ProtectMixedQuotes(data));
+
+        /// <summary>
+        /// Protects data inside &lt;#data&gt; ... &lt;/#data&gt;
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        internal string ProtectDataSection(string data) // <#data> ... </#data>
+            => Regex.Replace(data, @"<#data>(.*?)<\/#data>", ReplacerIn, RegexOptions.Singleline);
+
+        /// <summary>
+        /// Protection methods by default.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        internal string Protect(string data)
+            => ProtectMixedQuotes(ProtectDataSection(data));
 
         /// <summary>
         /// Unescape quote symbols from string.
@@ -119,24 +129,7 @@ namespace net.r_eg.SobaScript
         /// <param name="type">Quote symbol.</param>
         /// <param name="data"></param>
         /// <returns>String with unescaped quote symbols.</returns>
-        public static string unescapeQuotes(char type, string data)
-        {
-            return Tokens.UnescapeQuotes(type, data);
-        }
-
-        /// <summary>
-        /// Normalize data for strings.
-        /// e.g.: unescape double quotes etc.
-        /// TODO: obsolete
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public static string normalize(string data)
-        {
-            if(string.IsNullOrEmpty(data)) {
-                return string.Empty;
-            }
-            return unescapeQuotes('"', data);
-        }
+        internal static string UnescapeQuotes(char type, string data)
+            => Tokens.UnescapeQuotes(type, data);
     }
 }

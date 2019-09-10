@@ -28,31 +28,30 @@ namespace net.r_eg.SobaScript.Components
     public interface IComponent
     {
         /// <summary>
-        /// Ability to work with data for component
-        /// </summary>
-        string Condition { get; }
-
-        /// <summary>
-        /// Using regex engine for property - condition
-        /// </summary>
-        bool CRegex { get; }
-
-        /// <summary>
-        /// Activation status
+        /// An activation status of this component.
         /// </summary>
         bool Enabled { get; set; }
 
         /// <summary>
-        /// Flag of post-processing with MSBuild core.
-        /// In general, some components can require immediate processing with evaluation before passing control to next level.
-        /// This flag allows processing if needed.
+        /// Expression when to start processing.
+        /// </summary>
+        string Activator { get; }
+
+        /// <summary>
+        /// Using regex engine in {Activator}.
+        /// </summary>
+        bool ARegex { get; }
+
+        /// <summary>
+        /// Allows post-processing with MSBuild core.
+        /// Some components may require immediate processing with evaluation before passing control to the next level.
         /// </summary>
         bool PostProcessingMSBuild { get; set; }
 
         /// <summary>
-        /// Should be located before deepening or not
+        /// Will be located before deepening if true.
         /// </summary>
-        bool BeforeDeepen { get; }
+        bool BeforeDeepening { get; }
 
         /// <summary>
         /// To force post-analysis.
@@ -60,10 +59,10 @@ namespace net.r_eg.SobaScript.Components
         bool PostParse { get; }
 
         /// <summary>
-        /// Handler for current data
+        /// Prepare, parse, and evaluate mixed data through SobaScript supported syntax.
         /// </summary>
-        /// <param name="data">mixed data</param>
-        /// <returns>prepared and evaluated data</returns>
-        string parse(string data);
+        /// <param name="data">Mixed input data.</param>
+        /// <returns>Evaluated end value.</returns>
+        string Eval(string data);
     }
 }

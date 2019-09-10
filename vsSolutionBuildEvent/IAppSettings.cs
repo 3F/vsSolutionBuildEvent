@@ -32,6 +32,11 @@ namespace net.r_eg.vsSBE
         event EventHandler<DataArgs<bool>> DebugModeUpdated;
 
         /// <summary>
+        /// When IAppSettings.WorkPath was updated.
+        /// </summary>
+        event EventHandler<DataArgs<string>> WorkPathUpdated;
+
+        /// <summary>
         /// Debug mode for application.
         /// </summary>
         bool DebugMode { get; set; }
@@ -85,7 +90,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// OWP item name by default.
         /// </summary>
-        string DefaultOWPItem { get; set; }
+        string DefaultOWPItem { get; }
 
         /// <summary>
         /// Updates working path for library.

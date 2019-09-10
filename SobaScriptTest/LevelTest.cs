@@ -9,21 +9,20 @@ namespace SobaScriptTest
         [Fact]
         public void IsTest1()
         {
-            ILevel level = new Level()
+            ILevel level = new Level
+            (
+                new Argument() {
+                    data = "abcd123",
+                    type = ArgumentType.StringDouble
+                },
+                new Argument() {
+                    data = "true",
+                    type = ArgumentType.Boolean
+                }
+            )
             {
                 Data = "hash",
-                Type = LevelType.Method,
-                Args = new Argument[2]
-                {
-                    new Argument() {
-                        data = "abcd123",
-                        type = ArgumentType.StringDouble
-                    },
-                    new Argument() {
-                        data = "true",
-                        type = ArgumentType.Boolean
-                    }
-                }
+                Type = LevelType.Method
             };
 
             Assert.True(level.Is(ArgumentType.StringDouble, ArgumentType.Boolean));
@@ -36,21 +35,20 @@ namespace SobaScriptTest
         [Fact]
         public void IsTest2()
         {
-            ILevel level = new Level()
+            ILevel level = new Level
+            (
+                new Argument() {
+                    data = "abcd123",
+                    type = ArgumentType.StringDouble
+                },
+                new Argument() {
+                    data = "true",
+                    type = ArgumentType.Boolean
+                }
+            )
             {
                 Data = "hash",
-                Type = LevelType.Method,
-                Args = new Argument[2]
-                {
-                    new Argument() {
-                        data = "abcd123",
-                        type = ArgumentType.StringDouble
-                    },
-                    new Argument() {
-                        data = "true",
-                        type = ArgumentType.Boolean
-                    }
-                }
+                Type = LevelType.Method
             };
 
             Assert.True(level.Is(null, ArgumentType.StringDouble, ArgumentType.Boolean));
@@ -63,21 +61,20 @@ namespace SobaScriptTest
         [Fact]
         public void IsTest3()
         {
-            ILevel level = new Level()
+            ILevel level = new Level
+            (
+                new Argument() {
+                    data = "abcd123",
+                    type = ArgumentType.StringDouble
+                },
+                new Argument() {
+                    data = "true",
+                    type = ArgumentType.Boolean
+                }
+            )
             {
                 Data = "hash",
-                Type = LevelType.Method,
-                Args = new Argument[2]
-                {
-                    new Argument() {
-                        data = "abcd123",
-                        type = ArgumentType.StringDouble
-                    },
-                    new Argument() {
-                        data = "true",
-                        type = ArgumentType.Boolean
-                    }
-                }
+                Type = LevelType.Method
             };
 
             Assert.True(level.Is("hash", ArgumentType.StringDouble, ArgumentType.Boolean)); //should be without exception

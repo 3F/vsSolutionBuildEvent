@@ -44,12 +44,12 @@ namespace net.r_eg.SobaScript.SNode
         /// <summary>
         /// Arguments of level.
         /// </summary>
-        Argument[] Args { get; }
+        RArgs Args { get; }
 
         /// <summary>
         /// Type of data.
         /// </summary>
-        CValueType DataType { get; set; }
+        CValType DataType { get; set; }
 
         /// <summary>
         /// Checks the argument types.
