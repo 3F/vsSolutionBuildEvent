@@ -8,6 +8,7 @@
          <Visible>false</Visible>
          <Link>%(Filename)%(Extension)</Link>
          <IncludeInVSIX>true</IncludeInVSIX>
+         <VSIXSubPath>x64\</VSIXSubPath>
        </Content>
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -22,8 +23,13 @@
         <VsixLib Include="$(SolutionDir)\tools\gnt.bat" />
         <VsixLib Include="$(SolutionDir)\tools\hMSBuild.bat" />
 
-        <!-- 7z.dll x86 -->
-        <VsixLib Include="$(SolutionDir)packages\7z.Libs.*\bin\x86\7z.dll" /><!-- packages\7z.Libs.*\bin\x86\7z.dll -->
+        <VsixLib Include="$(SolutionDir)packages\7z.Libs.*\bin\x86\7z.dll" />
+
+    </ItemGroup>
+
+    <ItemGroup Label="x64">
+        
+        <VsixLibX64 Include="$(SolutionDir)packages\7z.Libs.*\bin\x64\7z.dll" />
 
     </ItemGroup>
   

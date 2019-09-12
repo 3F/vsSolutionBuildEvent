@@ -45,10 +45,7 @@ namespace net.r_eg.vsSBE.Logger
                                                             Action      = FilterResult.Ignore,
                                                         };
 
-        /// <summary>
-        /// object synch.
-        /// </summary>
-        private Object _lock = new Object();
+        private readonly object sync = new object();
 
         /// <summary>
         /// Configure logger by default.
@@ -75,7 +72,7 @@ namespace net.r_eg.vsSBE.Logger
         {
             this.target = target;
 
-            lock(_lock)
+            lock(sync)
             {
                 LogManager.ConfigurationChanged -= onCfgLoggerChanged;
                 LogManager.ConfigurationChanged += onCfgLoggerChanged;
@@ -84,6 +81,9 @@ namespace net.r_eg.vsSBE.Logger
 
                 LSender.SReceived -= onSReceived;
                 LSender.SReceived += onSReceived;
+
+                Components.LSender.Sent -= onLSenderSent;
+                Components.LSender.Sent += onLSenderSent;
             }
             
             Log.Trace($"Log('{target.ClassName}') is configured for: '{GuidList.PACKAGE_LOGGER}'");
@@ -167,6 +167,18 @@ namespace net.r_eg.vsSBE.Logger
                     (int)(e.type == Message.Level.Info ? Message.Level.Debug : e.type)
                 ), 
                 $"{nameof(MvsSln)}: {e.content}"
+            );
+        }
+
+        private void onLSenderSent(object sender, Components.Message e)
+        {
+            Log._.NLog.Log
+            (
+                LogLevel.FromOrdinal
+                (
+                    (int)(e.level == Components.MsgLevel.Info ? Components.MsgLevel.Debug : e.level)
+                ),
+                $"{sender.GetType().Name}: {e.content}"
             );
         }
     }

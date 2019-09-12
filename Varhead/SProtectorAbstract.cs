@@ -155,7 +155,7 @@ namespace net.r_eg.Varhead
 
             if(recoveryLevel >= RECOVERY_LIMIT) {
                 recoveryLevel = 0;
-                throw new LimitException($"StringProtector->recovery: Nesting level of '{RECOVERY_LIMIT}' reached. Aborted.", RECOVERY_LIMIT);
+                throw new LimitException($"Nesting level of '{RECOVERY_LIMIT}' reached. Aborted.", RECOVERY_LIMIT);
             }
 
             string format = ReplacementOut();
@@ -166,7 +166,7 @@ namespace net.r_eg.Varhead
                     uint index = UnpackId(m.Groups[1].Value);
                     strings.TryRemove(index, out string removed); // deallocate protected string
 #if DEBUG
-                    LSender.Send(this, $"StringProtector: recovery string '{removed}' :: '{index}' /level: {recoveryLevel}", MsgLevel.Trace);
+                    LSender.Send(this, $"recovery string '{removed}' :: '{index}' /level: {recoveryLevel}", MsgLevel.Trace);
 #endif
                     return removed;
                 });
@@ -174,7 +174,7 @@ namespace net.r_eg.Varhead
                 if(Regex.IsMatch(ret, format))
                 {
 #if DEBUG
-                    LSender.Send(this, $"StringProtector->recovery: found the new protected data - '{ret}'", MsgLevel.Trace);
+                    LSender.Send(this, $"found the new protected data - '{ret}'", MsgLevel.Trace);
 #endif
                     ++recoveryLevel;
                     ret = Recovery(ret);
@@ -249,7 +249,7 @@ namespace net.r_eg.Varhead
                 uint ident = IdentNext;
                 strings[ident] = m.Groups[1].Value;
 #if DEBUG
-                LSender.Send(this, $"StringProtector: protect `{strings[ident]}` :: '{ident}'", MsgLevel.Trace);
+                LSender.Send(this, $"protect `{strings[ident]}` :: '{ident}'", MsgLevel.Trace);
 #endif
                 return ReplacementIn(ident);
             }

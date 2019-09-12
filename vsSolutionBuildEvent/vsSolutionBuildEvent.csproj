@@ -824,6 +824,13 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="@(VsixLibX64)">
+      <VSIXSubPath>x64\</VSIXSubPath>
+      <Visible>false</Visible>
+      <Link>%(Filename)%(Extension)</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="$(OutputPath)\$(AssemblyName).xml" Condition="Exists('$(OutputPath)\$(AssemblyName).xml')">
       <Visible>false</Visible>
       <Link>%(Filename)%(Extension)</Link>

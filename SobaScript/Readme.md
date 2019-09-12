@@ -166,20 +166,26 @@ That's all. Now you can calculate hash value from user scripts with allowed synt
 
 It can be a more flexible, just use other available way: SNode.IPM
 
-## third-party components
+## third-party projects
 
 SobaScript - https://github.com/3F/SobaScript
 
-Uses the following third-party components:
+Uses the following third-party projects:
 
 * [E-MSBuild](https://github.com/3F/E-MSBuild)
 * [Varhead](https://github.com/3F/Varhead)
 * [LSender](https://github.com/3F/LSender)
 
-## ;
+## *
 
 ![](https://3F.github.io/web.vsSBE/doc/Resources/Screenshots/Automatic_Version_Numbering.png)
 
 ![](https://3F.github.io/web.vsSBE/doc/Resources/Screenshots/msbuild_prop_code_completion.png)
 
 ![](https://3F.github.io/web.vsSBE/doc/Resources/Screenshots/main_v0.12.png)
+
+----
+
+#SobaScript 『 蕎麦, enjoy your meal 』
+
+`, *aka SBE-Scripts aka vssbe scripts*

@@ -98,7 +98,7 @@ namespace net.r_eg.SobaScript.Mapper
             this.cLoader = cLoader;
             foreach(IComponent c in cLoader.Registered) {
 #if DEBUG
-                LSender.Send(this, $"Inspector: extracting from '{c.GetType().Name}'", MsgLevel.Trace);
+                LSender.Send(this, $"extracting from '{c.GetType().Name}'", MsgLevel.Trace);
 #endif
                 Extract(c, data);
             }

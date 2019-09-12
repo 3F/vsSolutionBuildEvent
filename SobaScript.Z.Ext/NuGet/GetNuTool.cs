@@ -23,23 +23,31 @@
  * THE SOFTWARE.
 */
 
+using System;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using net.r_eg.SobaScript.Z.Ext.Extensions;
 using net.r_eg.SobaScript.Z.Ext.IO;
 
-namespace net.r_eg.SobaScript.Z.Ext.NuGet.GetNuTool
+namespace net.r_eg.SobaScript.Z.Ext.NuGet
 {
     internal sealed class GetNuTool
     {
+        const string GNT = "gnt.bat";
+
         private IExer exer;
         private string _basePath;
+
+        private readonly Type gtype = typeof(GetNuTool);
 
         public string BasePath
         {
             get => _basePath;
             set => _basePath = value.FormatDirPath();
         }
+
+        private string GntBat => Path.Combine("".GetExecDir(), GNT);
 
         /// <summary>
         /// Raw command as for original GetNuTool
@@ -48,23 +56,43 @@ namespace net.r_eg.SobaScript.Z.Ext.NuGet.GetNuTool
         /// <param name="data"></param>
         public void Raw(string data)
         {
+            bool success = false;
+
             data = Regex.Replace
             (
                 data, 
-                @"\/p(roperty)?\s*?:\s*?wpath\s*?=\s*?""?([^""\s]+)", 
-                (Match m) =>
-                {
-                    var path = m.Groups[1].Value;
+                @"(?'left'
+                   \/p(?:roperty)?
+                    \s*?:\s*?
+                    wpath\s*?=\s*?
+                  )
+                  (?:
+                    ""(?'str'[^""]+)
+                    |
+                    (?'val'[^\s\/]+)
+                )", 
 
-                    if(Path.IsPathRooted(path)) {
-                        return m.Groups[0].Value;
+                (Match m) => 
+                {
+                    success = true;
+
+                    string ret = m.Groups["left"].Value;
+
+                    if(m.Groups["str"].Success) {
+                        return ret + "\"" + Locate(m.Groups["str"].Value);
                     }
-                    return $"/p:wpath=\"{Locate(path)}\"";
-                }, 
-                RegexOptions.IgnoreCase
+
+                    return ret + Locate(m.Groups["val"].Value);
+                },
+
+                RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace
             );
 
-            exer.UseShell($"{Path.Combine("".GetExecDir(), "gnt.bat")} {data}", true, true);
+            if(!success) {
+                data += $" /p:wpath=\"{Locate()}\" ";
+            }
+
+            exer.UseShell($"{UseGnt(GntBat)} {data}", true, true);
         }
 
         public GetNuTool(string basePath)
@@ -73,9 +101,34 @@ namespace net.r_eg.SobaScript.Z.Ext.NuGet.GetNuTool
             exer        = new Exer(basePath);
         }
 
-        private string Locate(string item)
+        private string UseGnt(string src)
         {
-            return Path.Combine(BasePath, item ?? string.Empty);
+            if(File.Exists(src)) {
+                return src;
+            }
+
+            using(var ws = new StreamWriter(src, false, new UTF8Encoding(false)))
+            using(var rs = gtype.Assembly.GetManifestResourceStream(gtype.Namespace + "." + GNT)) {
+                rs.CopyTo(ws.BaseStream);
+            }
+
+            return src;
         }
+
+        private string Locate(string item = null)
+        {
+            if(item == null) {
+                return ChkPath(BasePath);
+            }
+
+            return ChkPath
+            (
+                Path.IsPathRooted(item) ? item 
+                    : Path.Combine(BasePath, item)
+            );
+        }
+
+        private string ChkPath(string path)
+            => path.TrimEnd(new[] { '\\', '/' }) + @"\\"; // we only care about the last slashes \" -> \\"
     }
 }

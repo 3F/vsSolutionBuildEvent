@@ -124,7 +124,7 @@ namespace net.r_eg.SobaScript.Z.Ext.IO
                 }
 
                 string sdata = ReEncodeString(e.Data);
-                LSender.Send(this, $"The command was executed with error; stderr({sdata.Length}): {sdata}", MsgLevel.Warn);
+                LSender.Send(this, $"stderr({sdata.Length}): {sdata}", MsgLevel.Warn);
 
                 GetStreamContainer(uid).stderr += sdata;
             };
@@ -136,7 +136,7 @@ namespace net.r_eg.SobaScript.Z.Ext.IO
                 }
 
                 string sdata = ReEncodeString(e.Data);
-                LSender.Send(this, $"Received result of the executed command; stdout({sdata.Length}): {sdata}", MsgLevel.Info);
+                LSender.Send(this, $"stdout({sdata.Length}): {sdata}", MsgLevel.Info);
 
                 GetStreamContainer(uid).stdout += sdata;
             };
@@ -294,7 +294,7 @@ namespace net.r_eg.SobaScript.Z.Ext.IO
                 return;
             }
 
-            LSender.Send(this, $"HProcess: time limit is '{timeout}'sec", MsgLevel.Trace);
+            LSender.Send(this, $"time limit is '{timeout}'sec", MsgLevel.Trace);
             if(timeout == 0)
             {
                 p.WaitForExit();

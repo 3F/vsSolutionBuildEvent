@@ -28,7 +28,7 @@ using net.r_eg.SobaScript.Components;
 using net.r_eg.SobaScript.Exceptions;
 using net.r_eg.SobaScript.Mapper;
 using net.r_eg.SobaScript.SNode;
-using net.r_eg.SobaScript.Z.Ext.NuGet.GetNuTool;
+using net.r_eg.SobaScript.Z.Ext.NuGet;
 
 namespace net.r_eg.SobaScript.Z.Ext
 {

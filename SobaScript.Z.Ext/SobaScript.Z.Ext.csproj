@@ -49,7 +49,7 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
-    <Content Include="NuGet\gnt.bat">
+    <!-- <Content Include="NuGet\gnt.bat">
       <Pack>True</Pack>
       <PackagePath>lib\net40\</PackagePath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -58,7 +58,8 @@
       <Pack>True</Pack>
       <PackagePath>lib\netstandard2.0\</PackagePath>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </Content> -->
+    <EmbeddedResource Include="NuGet\gnt.bat" />
   </ItemGroup>
 
   <ItemGroup>
