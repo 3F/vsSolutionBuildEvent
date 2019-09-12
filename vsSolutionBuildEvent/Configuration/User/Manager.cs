@@ -16,14 +16,13 @@
 */
 
 using System;
-using net.r_eg.vsSBE.Exceptions;
 
 namespace net.r_eg.vsSBE.Configuration.User
 {
     /// <summary>
     /// Manager of accessing to remote value.
     /// </summary>
-    public class Manager: IManager
+    internal class Manager: IManager
     {
         /// <summary>
         /// Unspecified raw value.
@@ -34,14 +33,13 @@ namespace net.r_eg.vsSBE.Configuration.User
             {
                 checkOnNull();
 
-                if(value.Type == LinkType.CacheHeader)
-                {
+                //if(value.Type == LinkType.CacheHeader)
+                //{
                     if(!data.Cache.ContainsKey(value.Guid)) {
                         data.Cache[value.Guid] = new Cache();
                     }
                     return data.Cache[value.Guid];
-                }
-                throw new ArgumentException("Configuration Manager: not supported type '{value.Type}'");
+                //}
             }
         }
 

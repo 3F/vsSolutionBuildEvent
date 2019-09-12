@@ -74,25 +74,13 @@
     <ProjectReference Include="..\Varhead\Varhead.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <!-- <PackageReference Include="Microsoft.Build">
-      <Version>16.0.461</Version>
-    </PackageReference>  
-    <PackageReference Include="Microsoft.Build.Framework">
-      <Version>16.0.461</Version>
-    </PackageReference> -->
-    <Reference Include="Microsoft.Build, Version=15.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\Microsoft.Build.16.0.461\lib\netcoreapp2.1\Microsoft.Build.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Build.Framework, Version=15.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\Microsoft.Build.Framework.16.0.461\lib\netstandard2.0\Microsoft.Build.Framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-  </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
     <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.Build.Framework" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <PackageReference Include="Microsoft.Build" Version="15.9.20" /> <!-- 16.0.461: net472, netcore2.1 -->
+    <PackageReference Include="Microsoft.Build.Framework" Version="16.0.461" />
   </ItemGroup>
 
 </Project>

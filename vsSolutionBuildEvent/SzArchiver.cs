@@ -98,7 +98,7 @@ namespace net.r_eg.vsSBE
             catch(Exception ex)
             {
                 Log.Warn( $"Found problem with library {LIB_7Z} ({zPath}): `{ex.Message}`");
-                throw ex;
+                throw;
             }
         }
 

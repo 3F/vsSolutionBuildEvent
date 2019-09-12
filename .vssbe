@@ -91,7 +91,7 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "$(revDeltaBase  = \"2016/11/05\")\n$(revDeltaMin   = $([System.Math]::Pow(10, 3)))\n$$(revDeltaMax   = $([System.Math]::Pow(10, 5)))\n$(revDeltaMax   = 65534) #[\" limit of AssemblyVersion (2^16 - 2) - i.e. 65534 max allowed \"]\n\n#[\" \n    To restore packages via GetNuTool\n    https://github.com/NuGet/Home/issues/1521\n\"]\n#[NuGet gnt.raw(\"/p:ngconfig=\\\".gnt/packages.config\\\"\")]",
+        "Command": "$(revDeltaBase  = \"2016/11/05\")\n$(revDeltaMin   = $([System.Math]::Pow(10, 3)))\n$$(revDeltaMax   = $([System.Math]::Pow(10, 5)))\n$(revDeltaMax   = 65534) #[\" limit of AssemblyVersion (2^16 - 2) - i.e. 65534 max allowed \"]\n\n#[\" \n    To restore packages via GetNuTool\n    https://github.com/NuGet/Home/issues/1521\n\"]\n##[NuGet gnt.raw(\"/p:ngconfig=\\\".gnt/packages.config\\\"\")]",
         "Command__": [
           "$(revDeltaBase  = \"2016/11/05\")",
           "$(revDeltaMin   = $([System.Math]::Pow(10, 3)))",
@@ -102,7 +102,7 @@
           "    To restore packages via GetNuTool",
           "    https://github.com/NuGet/Home/issues/1521",
           "\"]",
-          "#[NuGet gnt.raw(\"/p:ngconfig=\\\".gnt/packages.config\\\"\")]"
+          "##[NuGet gnt.raw(\"/p:ngconfig=\\\".gnt/packages.config\\\"\")]"
         ]
       }
     },
@@ -192,16 +192,17 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "\r\n#[File call(\"submodules.bat\", \"$(pMvsSln)/MvsSln.sln\", 2000)]\r\n\r\n#[\" Packages \"]\r\n\r\n#[( !(#[IO exists.directory(\"packages\")]) || !(#[IO exists.directory(\"$(pMvsSln)/packages\")]) )\r\n{\r\n    #[File call(\"packages.cmd\", \"\", 2000)]\r\n}]",
+        "Command": "\n#[File call(\"submodules.bat\", \"$(pMvsSln)/MvsSln.sln\", 2000)]\n\n#[\" Packages \"]\n\n#[( !(#[IO exists.file(\"packages/__checked\")]) || !(#[IO exists.directory(\"$(pMvsSln)/packages\")]) )\n{\n    #[File call(\"tools\\hmsbuild.bat\", \"-t:restore /v:q /nologo /p:Configuration=$(Configuration) /p:Platform=\\\"Any CPU\\\"\", 1000)]\n    #[File call(\"packages.cmd\", \"\", 1000)]\n}]",
         "Command__": [
           "",
           "#[File call(\"submodules.bat\", \"$(pMvsSln)/MvsSln.sln\", 2000)]",
           "",
           "#[\" Packages \"]",
           "",
-          "#[( !(#[IO exists.directory(\"packages\")]) || !(#[IO exists.directory(\"$(pMvsSln)/packages\")]) )",
+          "#[( !(#[IO exists.file(\"packages/__checked\")]) || !(#[IO exists.directory(\"$(pMvsSln)/packages\")]) )",
           "{",
-          "    #[File call(\"packages.cmd\", \"\", 2000)]",
+          "    #[File call(\"tools\\hmsbuild.bat\", \"-t:restore /v:q /nologo /p:Configuration=$(Configuration) /p:Platform=\\\"Any CPU\\\"\", 1000)]",
+          "    #[File call(\"packages.cmd\", \"\", 1000)]",
           "}]"
         ]
       }

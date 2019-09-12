@@ -56,10 +56,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// Where to look cache.
         /// </summary>
-        protected string BasePathToCache
-        {
-            get { return Settings.WPath; }
-        }
+        protected string BasePathToCache => Settings.WPath;
 
         /// <summary>
         /// Generate a temporary AssemblyInfo.
@@ -88,12 +85,6 @@ namespace net.r_eg.vsSBE.Actions
                 catch { /* we work in temp directory with unique name, so it's not important */ }
             }
         }
-
-        /// <summary>
-        /// object synch.
-        /// </summary>
-        private Object _lock = new Object();
-
 
         /// <summary>
         /// Process for specified event.

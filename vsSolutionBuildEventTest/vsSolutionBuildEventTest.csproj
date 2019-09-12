@@ -37,6 +37,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'REL_SDK15|AnyCPU' ">
+    <IsVSSDK15>true</IsVSSDK15>
     <OutputPath>bin\Release\</OutputPath>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -45,6 +46,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DBG_SDK15|AnyCPU' ">
+    <IsVSSDK15>true</IsVSSDK15>
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -76,7 +78,6 @@
       <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\net45\EnvDTE80.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Build" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Moq, Version=4.12.0.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <HintPath>..\packages\Moq.4.12.0\lib\net45\Moq.dll</HintPath>
@@ -96,6 +97,25 @@
     </Reference>
     <Reference Include="System.XML" />
   </ItemGroup>
+  <Choose>
+    <!-- SDK15+ -->
+    <When Condition=" '$(IsVSSDK15)' == 'true' ">
+      <ItemGroup>
+        <Reference Include="Microsoft.Build, Version=15.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <HintPath>..\packages\Microsoft.Build.16.0.461\lib\net472\Microsoft.Build.Framework.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <!-- /SDK15+ -->
+    <!-- SDK10 -->
+    <When Condition=" '$(IsVSSDK15)' != 'true' ">
+      <ItemGroup>
+        <Reference Include="Microsoft.Build" />
+      </ItemGroup>
+    </When>
+    <!-- /SDK10 -->
+  </Choose>
   <ItemGroup>
     <ProjectReference Include="..\Bridge\Bridge.csproj">
       <Project>{73919171-44b6-4536-b892-f1fca653887c}</Project>

@@ -99,7 +99,6 @@ namespace net.r_eg.vsSBE
         /// </summary>
         /// <param name="name">Specified project name. null value will use the name from startup-project.</param>
         /// <returns>Found relevant Microsoft.Build.Evaluation.Project.</returns>
-        [Obsolete]
         public virtual EProject getProject(string name = null)
         {
             // NOTE: Do not use ProjectCollection.GlobalProjectCollection from EnvDTE Environment because it can be empty.

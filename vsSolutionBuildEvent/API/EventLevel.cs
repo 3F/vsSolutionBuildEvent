@@ -565,7 +565,6 @@ namespace net.r_eg.vsSBE.API
         /// <summary>
         /// To initialize properties by default for project.
         /// </summary>
-        /// <param name="project">Uses GlobalProjectCollection if null.</param>
         protected virtual void initPropByDefault(IEvMSBuild msbuild)
         {
             IAppSettings app = AppSettings._;

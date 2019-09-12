@@ -32,6 +32,9 @@ if "%reltype%"=="" (
 
 set __p_call=1
 
+:: package restore for SDK-based projects
+:: call %_msbuild% -t:restore /p:Configuration=%reltype%_SDK15 /p:Platform="Any CPU"
+
 :: Activate vsSBE
 
 call %_gnt% /p:ngpath="%cd%/packages" /p:ngconfig="%cd%/.gnt/packages.config" || goto err
