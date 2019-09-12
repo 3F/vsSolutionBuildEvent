@@ -104,6 +104,10 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             log         = new Log(Verbosity);
             initializer = new Initializer(Parameters, log);
 
+            if(!log.IsDiagnostic) {
+                log.info($"set {Log.DIAG_KEY}= true to enable diagnostic mode.");
+            }
+
             // load with properties by default
             library = initializer.load();
             setPropertiesByDefault();

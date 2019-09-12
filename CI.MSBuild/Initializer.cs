@@ -207,7 +207,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
             log.info(new String('=', 37));
             log.info("Version: v{0}", System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
             log.info($"Copyright (c) 2013-{Math.Max(2019, DateTime.Now.Year)}  Denis Kuzmin < entry.reg@gmail.com > GitHub/3F");
-            log.info(new String('_', 70));
+            log.info(new String('_', 70) + Environment.NewLine);
         }
 
         /// <summary>

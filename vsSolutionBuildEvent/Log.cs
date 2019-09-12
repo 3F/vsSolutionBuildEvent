@@ -251,11 +251,11 @@ namespace net.r_eg.vsSBE
         {
             LogLevel oLevel = LogLevel.FromString(level);
 
-#if !DEBUG
+//#if !DEBUG
             if(oLevel < LogLevel.Info && !Settings._.DebugMode) {
                 return;
             }
-#endif
+//#endif
 
             var log = _lazy.Value;
             log.write(log.format(level, message, stamp), level);

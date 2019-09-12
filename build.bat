@@ -41,7 +41,7 @@ call %_gnt% /p:ngpath="%cd%/packages" /p:ngconfig="%cd%/.gnt/packages.config" ||
 
 :: Build
 
-set bnode=%_msbuild% %sln% /m:4 /l:"%cimdll%" /p:Platform=%platform% /v:%level%
+set bnode=%_msbuild% %sln% /m:4 /l:"%cimdll%" /p:Platform=%platform% /v:%level% /nologo
 
 call %bnode% /p:Configuration=%reltype%_SDK10 /t:Rebuild || goto err
 call %bnode% /p:Configuration=%reltype%_SDK15 /t:Build || goto err

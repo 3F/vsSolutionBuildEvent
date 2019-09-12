@@ -30,12 +30,21 @@ namespace net.r_eg.vsSBE.CI.MSBuild
     //TODO: Either use from MvsSln or NLog from main plugin
     internal class Log: ILog
     {
+        internal const string DIAG_KEY = "__vssbe_diag";
+
         /// <summary>
         /// Flag of Diagnostic mode
         /// </summary>
         public bool IsDiagnostic
         {
-            get => level == LoggerVerbosity.Diagnostic;
+            //level == LoggerVerbosity.Diagnostic;
+            get => string.Equals
+            (
+                //TODO: 
+                Environment.GetEnvironmentVariable(DIAG_KEY, EnvironmentVariableTarget.Process)?.Trim(), 
+                "true", 
+                StringComparison.InvariantCultureIgnoreCase
+            );
         }
 
         /// <summary>
