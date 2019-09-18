@@ -33,5 +33,4 @@ echo. failed. 1>&2
 exit /B 1
 
 :exit
-echo . > %cd%\%_pkgdir%\__checked
 exit /B 0

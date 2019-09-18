@@ -43,8 +43,8 @@ call %_gnt% /p:ngpath="%cd%/packages" /p:ngconfig="%cd%/.gnt/packages.config" ||
 
 set bnode=%_msbuild% %sln% /m:4 /l:"%cimdll%" /p:Platform=%platform% /v:%level% /nologo
 
-call %bnode% /p:Configuration=%reltype%_SDK10 /t:Rebuild || goto err
-call %bnode% /p:Configuration=%reltype%_SDK15 /t:Build || goto err
+call %bnode% /p:Configuration=%reltype%_SDK15 /t:Rebuild || goto err
+call %bnode% /p:Configuration=%reltype%_SDK10 /t:Build || goto err
 
 goto ok
 

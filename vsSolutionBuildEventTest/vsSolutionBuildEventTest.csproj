@@ -121,25 +121,21 @@
       <Project>{73919171-44b6-4536-b892-f1fca653887c}</Project>
       <Name>Bridge</Name>
     </ProjectReference>
-    <ProjectReference Include="..\E-MSBuild\E-MSBuild.csproj">
-      <Project>{8cd35630-2352-4945-a721-5391056409fd}</Project>
+    <ProjectReference Include="..\E-MSBuild\E-MSBuild\E-MSBuild.csproj">
+      <Project>{e51d1ea3-f4a7-4f27-a941-e16d2b88d08a}</Project>
       <Name>E-MSBuild</Name>
     </ProjectReference>
     <ProjectReference Include="..\MvsSln\MvsSln\MvsSln.csproj">
       <Project>{F905DFB2-2E67-4FF7-9001-924F6F2D645D}</Project>
       <Name>MvsSln</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SobaScript.Mapper\SobaScript.Mapper.csproj">
-      <Project>{e1a4575e-a65b-45c6-ae6c-ae7c4af0d247}</Project>
-      <Name>SobaScript.Mapper</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SobaScript\SobaScript.csproj">
-      <Project>{ba838edb-52e0-440d-866a-b9c48f3efb1d}</Project>
-      <Name>SobaScript</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Varhead\Varhead.csproj">
-      <Project>{05265510-62d5-42a8-9975-acc02823f0c8}</Project>
+    <ProjectReference Include="..\SobaScript\E-MSBuild\Varhead\Varhead\Varhead.csproj">
+      <Project>{d6f8b3ae-22fa-4c09-9eba-a254defa968f}</Project>
       <Name>Varhead</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SobaScript\SobaScript\SobaScript.csproj">
+      <Project>{3a80b650-b457-4de4-b2d3-64191a20c6b7}</Project>
+      <Name>SobaScript</Name>
     </ProjectReference>
     <ProjectReference Include="..\vsSolutionBuildEvent\vsSolutionBuildEvent.csproj">
       <Project>{32E44995-F621-4E77-B46A-8F65D64E7FEA}</Project>
