@@ -20,6 +20,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using net.r_eg.EvMSBuild;
 
 namespace net.r_eg.vsSBE.UI.WForms
 {
@@ -33,7 +34,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// <summary>
         /// Work with properties
         /// </summary>
-        private MSBuild.Parser _msbuild;
+        private IEvMSBuild _msbuild;
 
         /// <summary>
         /// 
@@ -43,7 +44,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// <summary>
         /// Caching of retrieved properties
         /// </summary>
-        private ConcurrentDictionary<string, List<MSBuild.PropertyItem>> _cacheProperties;
+        private ConcurrentDictionary<string, IEnumerable<PropertyItem>> _cacheProperties;
 
         public PropertiesFrm(IEnvironment env, ITransfer pin)
         {
@@ -51,9 +52,9 @@ namespace net.r_eg.vsSBE.UI.WForms
             Icon = Resource.Package_32;
 
             _env                = env;
-            _msbuild            = new MSBuild.Parser(_env);
+            _msbuild            = MSBuild.MakeEvaluator(_env);
             _pin                = pin;
-            _cacheProperties    = new ConcurrentDictionary<string, List<MSBuild.PropertyItem>>();
+            _cacheProperties    = new ConcurrentDictionary<string, IEnumerable<PropertyItem>>();
         }
 
         protected void fillProjects()
@@ -76,7 +77,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             dataGridViewVariables.Rows.Clear();
             try
             {
-                foreach(MSBuild.PropertyItem prop in _getProperties(project))
+                foreach(PropertyItem prop in _getProperties(project))
                 {
                     if(!String.IsNullOrEmpty(filterName) && !cmp(prop.name, filterName, mFilterRegexp.Checked)) {
                         continue;
@@ -148,8 +149,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
-        /// <exception cref="MSBuild.Exceptions.MSBProjectNotFoundException">if not found the specific project</exception>
-        private List<MSBuild.PropertyItem> _getProperties(string project)
+        private IEnumerable<PropertyItem> _getProperties(string project)
         {
             string key = project;
             if(String.IsNullOrEmpty(key)) {
@@ -158,7 +158,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
             if(!_cacheProperties.ContainsKey(key))
             {
-                _cacheProperties[key] = _msbuild.listProperties(project);
+                _cacheProperties[key] = _msbuild.ListProperties(project);
                 Log.Debug("Properties has been saved in the cache. ['{0}']", key);
             }
             return _cacheProperties[key];

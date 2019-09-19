@@ -19,17 +19,17 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using net.r_eg.MvsSln.Extensions;
+using net.r_eg.SobaScript.Exceptions;
+using net.r_eg.SobaScript.Mapper;
 using net.r_eg.vsSBE.Events;
-using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.Extensions;
-using net.r_eg.vsSBE.SBEScripts;
-using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.UI.WForms.Controls;
 using net.r_eg.vsSBE.UI.WForms.Wizards.Version;
 
 namespace net.r_eg.vsSBE.UI.WForms.Wizards
 {
-    public partial class VersionFrm: Form
+    internal partial class VersionFrm: Form
     {
         /// <summary>
         /// Manager of steps.
@@ -41,11 +41,11 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards
         /// </summary>
         private ITransfer _pin;
 
-        /// <param name="bootloader"></param>
+        /// <param name="loader"></param>
         /// <param name="pin"></param>
-        public VersionFrm(IBootloader bootloader, ITransfer pin)
+        public VersionFrm(Bootloader loader, ITransfer pin)
         {
-            manager = new Manager(bootloader.Env);
+            manager = new Manager(loader.Env);
             _pin    = pin;
 
             InitializeComponent();
@@ -57,7 +57,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards
             editorStepGen.setBackgroundFromString("#F4F4F4");
 
             editorFinalScript.colorize(TextEditor.ColorSchema.SBEScripts);
-            editorFinalScript.codeCompletionInit(new Inspector(bootloader), new MSBuild.Parser(bootloader.Env, bootloader.UVariable));
+            editorFinalScript.codeCompletionInit(new Inspector(loader.Soba), loader.Soba.EvMSBuild);
             editorFinalScript.CodeCompletionEnabled = true;
             editorFinalScript._.WordWrap            = false;
 
@@ -67,11 +67,11 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards
             tcReplType.SizeMode     = TabSizeMode.Fixed;
             btnPrevStep.Visible     = false;
 
-            string spath = bootloader.Env.SolutionPath ?? Settings.WPath;
+            string spath = loader.Env.SolutionPath ?? Settings.WPath;
 
             ftbInputNum.Dialog.InitialDirectory = ftbOutputFile.Dialog.InitialDirectory
                                                 = ftbReplFile.Dialog.InitialDirectory
-                                                = spath.PathFormat();
+                                                = spath.DirectoryPathFormat();
         }
 
         private void render(StepsType type)
@@ -394,7 +394,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards
             if(page == tabPageFinal) {
                 return StepsType.Final;
             }
-            throw new NotFoundException("getStepTypeBy: the page - `{0}` is not found.", page.Name);
+            throw new NotFoundException(page.Name);
         }
 
         private void nextStep()

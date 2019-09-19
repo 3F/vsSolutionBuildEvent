@@ -21,22 +21,16 @@ using System.CodeDom.Compiler;
 namespace net.r_eg.vsSBE.Exceptions
 {
     [Serializable]
-    public class CompilerException: SBEException
+    public class CompilerException: UnspecSBEException
     {
+        public CompilerException(CompilerError error)
+            : base(error.ToString(), error)
+        {
+
+        }
+
         public CompilerException(string message)
             : base(message)
-        {
-
-        }
-
-        public CompilerException(CompilerError error)
-            : base(error.ToString())
-        {
-
-        }
-
-        public CompilerException(string message, params object[] args)
-            : base(message, args)
         {
 
         }

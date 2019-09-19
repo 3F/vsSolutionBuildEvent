@@ -5,6 +5,7 @@
 
 set _gnt=tools/gnt
 set _gntArgs=%*
+set _pkgdir=packages
 
 
 :found
@@ -22,7 +23,7 @@ call %_gnt% %_gntArgs% /p:wpath="%cd%/MvsSln" /p:ngconfig="packages.config;MvsSl
 :: -
 echo.
 echo vsSolutionBuildEvent ...
-call %_gnt% %_gntArgs% /p:ngpath="%cd%/packages" /p:ngconfig="%cd%/.gnt/packages.config;%cd%/vsSolutionBuildEvent/packages.config;%cd%/vsSolutionBuildEventTest/packages.config" /nologo /v:m || goto err
+call %_gnt% %_gntArgs% /p:wpath="%cd%" /p:ngpath="%_pkgdir%" /p:ngconfig=".gnt/packages.config;vsSolutionBuildEvent/packages.config;vsSolutionBuildEventTest/packages.config" /nologo /v:m || goto err
 
 goto exit
 

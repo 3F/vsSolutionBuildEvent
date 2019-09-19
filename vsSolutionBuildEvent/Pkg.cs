@@ -348,7 +348,7 @@ namespace net.r_eg.vsSBE
         {
             Trace.WriteLine($"Entering InitializeAsync() of: { ToString() }");
 
-            await base.InitializeAsync(cancellationToken, progress);
+            //await base.InitializeAsync(cancellationToken, progress);
 
             // When initialized asynchronously, the current thread may be a background thread at this point.
             // Do any initialization that requires the UI thread after switching to the UI thread.
@@ -458,7 +458,15 @@ namespace net.r_eg.vsSBE
             usrCfg.load(usrCfg.getLink(Settings._.CommonPath, Config.Entity.NAME, null));
 
             Event = new API.EventLevel();
-            ((IEntryPointCore)Event).load(Dte2, usrCfg.Data.Global.DebugMode);
+            ((IEntryPointCore)Event).load
+            (
+                Dte2,
+#if DEBUG
+                true
+#else
+                usrCfg.Data.Global.DebugMode
+#endif
+            );
 
             // Receiver
 

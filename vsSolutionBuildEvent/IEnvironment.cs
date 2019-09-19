@@ -17,6 +17,7 @@
 
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using net.r_eg.EvMSBuild;
 using net.r_eg.vsSBE.API.Commands;
 using net.r_eg.vsSBE.Bridge;
 using DProject = EnvDTE.Project;
@@ -25,7 +26,7 @@ using EProject = Microsoft.Build.Evaluation.Project;
 namespace net.r_eg.vsSBE
 {
     [Guid("27F04A53-A0B9-431B-83FE-827AC09FB127")]
-    public interface IEnvironment
+    public interface IEnvironment: IEvEnv
     {
         /// <summary>
         /// List of EnvDTE projects.

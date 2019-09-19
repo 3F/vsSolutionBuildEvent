@@ -16,7 +16,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.IO;
@@ -32,9 +31,9 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Search;
+using net.r_eg.EvMSBuild;
+using net.r_eg.SobaScript.Mapper;
 using net.r_eg.vsSBE.Configuration.User;
-using net.r_eg.vsSBE.MSBuild;
-using net.r_eg.vsSBE.SBEScripts.Dom;
 using net.r_eg.vsSBE.UI.WForms.Controls.TextEditorElements;
 using AvalonEditorWPF = ICSharpCode.AvalonEdit.TextEditor;
 using InputModifierKeys = System.Windows.Input.ModifierKeys;
@@ -108,7 +107,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
         /// <summary>
         /// Analyzer of all registered IComponent
         /// </summary>
-        protected DomParser dom;
+        protected ISbMapper dom;
 
         /// <summary>
         /// Original value of the FontSize.
@@ -156,9 +155,9 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
         /// </summary>
         /// <param name="inspector"></param>
         /// <param name="msbuild"></param>
-        public void codeCompletionInit(IInspector inspector, IMSBuild msbuild = null)
+        public void codeCompletionInit(IInspector inspector, IEvMSBuild msbuild = null)
         {
-            dom = new DomParser(inspector, msbuild);
+            dom = new SbMapper(inspector, msbuild);
             Log.Trace("Code completion has been initialized for '{0}'", Name);
         }
 
@@ -300,7 +299,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
             foldingManager.Clear();
         }
 
-        protected void showCodeCompletion(DomParser.KeysCommand cmd)
+        protected void showCodeCompletion(KDataCommand cmd)
         {
             if(completionWindow != null) {
                 return;
@@ -310,7 +309,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
                 return;
             }
 
-            IEnumerable<ICompletionData> data = dom.find(_.TextArea.Document.Text, _.TextArea.Caret.Offset, cmd);
+            var data = dom.Find(_.TextArea.Document.Text, _.TextArea.Caret.Offset, cmd);
             if(data == null) {
                 return;
             }
@@ -320,8 +319,8 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
                 completionWindow = null;
             };
 
-            foreach(ICompletionData item in data) {
-                completionWindow.CompletionList.CompletionData.Add(item);
+            foreach(INodeInfo item in data) {
+                completionWindow.CompletionList.CompletionData.Add(new CompletionData(item));
             }
             completionWindow.Show();
         }
@@ -403,7 +402,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
         {
             if(InputModifierKeys.Control == (Keyboard.Modifiers & InputModifierKeys.Control) && e.Key == Key.Space) {
                 e.Handled = true;
-                showCodeCompletion(DomParser.KeysCommand.CtrlSpace);
+                showCodeCompletion(KDataCommand.CtrlSpace);
             }
         }
 
@@ -421,21 +420,21 @@ namespace net.r_eg.vsSBE.UI.WForms.Controls
 
         private void editorTextArea_TextEntered(object sender, TextCompositionEventArgs e)
         {
-            DomParser.KeysCommand cmd = DomParser.KeysCommand.Default;
+            var cmd = KDataCommand.Default;
             if(e.Text == "[" && _.TextArea.Document.Text[Math.Max(0, _.TextArea.Caret.Offset - 2)] == '#') {
-                cmd = DomParser.KeysCommand.Container;
+                cmd = KDataCommand.Container;
             }
             else if(e.Text == ".") {
-                cmd = DomParser.KeysCommand.LevelByDot;
+                cmd = KDataCommand.LevelByDot;
             }
             else if(e.Text == " ") {
-                cmd = DomParser.KeysCommand.Space;
+                cmd = KDataCommand.Space;
             }
             else if(e.Text == "(" && _.TextArea.Document.Text[Math.Max(0, _.TextArea.Caret.Offset - 2)] == '$') {
-                cmd = DomParser.KeysCommand.MSBuildContainer;
+                cmd = KDataCommand.MSBuildContainer;
             }
 
-            if(cmd != DomParser.KeysCommand.Default) {
+            if(cmd != KDataCommand.Default) {
                 showCodeCompletion(cmd);
             }
         }

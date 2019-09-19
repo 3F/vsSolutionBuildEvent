@@ -163,19 +163,6 @@ namespace net.r_eg.vsSBE.Extensions
         }
 
         /// <summary>
-        /// Convert complex object to system.
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public static object ToSystemObject(this object data)
-        {
-            if(data is Newtonsoft.Json.Linq.JArray) {
-                return (object)((Newtonsoft.Json.Linq.JArray)data).ToObject(typeof(object[]));
-            }
-            return data;
-        }
-
-        /// <summary>
         /// Calculate MD5 hash from object.
         /// </summary>
         /// <typeparam name="T">Base type of object.</typeparam>

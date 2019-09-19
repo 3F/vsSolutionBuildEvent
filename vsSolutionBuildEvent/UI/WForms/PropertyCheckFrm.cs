@@ -18,6 +18,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using net.r_eg.EvMSBuild;
 
 namespace net.r_eg.vsSBE.UI.WForms
 {
@@ -26,7 +27,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// <summary>
         /// Work with MSBuild
         /// </summary>
-        private MSBuild.Parser _parser;
+        private IEvMSBuild _parser;
 
         /// <summary>
         /// Flag of sample
@@ -35,7 +36,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         public PropertyCheckFrm(IEnvironment env)
         {
-            _parser = new MSBuild.Parser(env);
+            _parser = MSBuild.MakeEvaluator(env);
 
             InitializeComponent();
             Icon = Resource.Package_32;
@@ -46,7 +47,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             string evaluated;
             try {
                 // for a specific project use like this: $($(var):project)
-                evaluated = _parser.parse(textBoxUnevaluated.Text.Trim());
+                evaluated = _parser.Eval(textBoxUnevaluated.Text.Trim());
             }
             catch(Exception ex) {
                 evaluated = String.Format("Fail: {0}", ex.Message);

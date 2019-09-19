@@ -20,8 +20,8 @@ using System.IO;
 using System.Linq;
 using net.r_eg.MvsSln;
 using net.r_eg.MvsSln.Core;
+using net.r_eg.MvsSln.Exceptions;
 using net.r_eg.vsSBE.API.Commands;
-using net.r_eg.vsSBE.Exceptions;
 using BuildType = net.r_eg.vsSBE.Bridge.BuildType;
 using EProject = Microsoft.Build.Evaluation.Project;
 using ProjectItem = net.r_eg.MvsSln.Core.ProjectItem;
@@ -83,6 +83,16 @@ namespace net.r_eg.vsSBE
             set => _slnEnv = value;
 
         } protected IXProjectEnv _slnEnv;
+
+        /// <summary>
+        /// Get Project instance for work with data inside specified scope.
+        /// </summary>
+        /// <param name="ident">Abstract identifier of the specified scope. It can be a GUID, or FullPath, or project name, etc.</param>
+        /// <returns>Expected the instance that is associated with the identifier or any default instance if not found any related to pushed ident.</returns>
+        public EProject GetProject(object ident)
+        {
+            return getProject(ident?.ToString());
+        }
 
         /// <summary>
         /// Get instance of the Build.Evaluation.Project for accessing to properties etc.

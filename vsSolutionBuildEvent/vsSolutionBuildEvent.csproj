@@ -112,12 +112,14 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <IsVSSDK15 Condition="$(DefineConstants.Contains('VSSDK_15_AND_NEW'))">true</IsVSSDK15>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.AvalonEdit, Version=5.0.3.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
       <HintPath>..\packages\AvalonEdit.5.0.4\lib\Net40\ICSharpCode.AvalonEdit.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Build" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="SevenZipSharp, Version=0.64.3890.29348, Culture=neutral, PublicKeyToken=20de82c62b055c88, processorArchitecture=MSIL">
@@ -143,7 +145,7 @@
   </ItemGroup>
   <Choose>
     <!-- SDK15+ -->
-    <When Condition="$(DefineConstants.Contains('VSSDK_15_AND_NEW'))">
+    <When Condition=" '$(IsVSSDK15)' == 'true' ">
       <ItemGroup>
         <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
           <HintPath>..\packages\EnvDTE.8.0.2\lib\net10\EnvDTE.dll</HintPath>
@@ -158,6 +160,10 @@
         <Reference Include="stdole, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
           <HintPath>..\packages\stdole.7.0.3303\lib\net10\stdole.dll</HintPath>
           <EmbedInteropTypes>True</EmbedInteropTypes>
+        </Reference>
+        <Reference Include="Microsoft.Build, Version=15.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <HintPath>..\packages\Microsoft.Build.16.0.461\lib\net472\Microsoft.Build.Framework.dll</HintPath>
+          <Private>True</Private>
         </Reference>
         <Reference Include="Microsoft.Build.Framework, Version=15.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
           <HintPath>..\packages\Microsoft.Build.Framework.16.0.461\lib\netstandard2.0\Microsoft.Build.Framework.dll</HintPath>
@@ -229,7 +235,7 @@
     </When>
     <!-- /SDK15+ -->
     <!-- SDK10 -->
-    <When Condition="$(DefineConstants.Contains('VSSDK_15_AND_NEW'))==false">
+    <When Condition=" '$(IsVSSDK15)' != 'true' ">
       <ItemGroup>
         <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
           <EmbedInteropTypes>False</EmbedInteropTypes>
@@ -245,6 +251,7 @@
           <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\net40\stdole.dll</HintPath>
           <EmbedInteropTypes>True</EmbedInteropTypes>
         </Reference>
+        <Reference Include="Microsoft.Build" />
         <Reference Include="Microsoft.Build.Framework" />
         <Reference Include="Microsoft.VisualStudio.OLE.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
           <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\net40\Microsoft.VisualStudio.OLE.Interop.dll</HintPath>
@@ -295,9 +302,8 @@
     <Compile Include="Actions\ActionTargets.cs" />
     <Compile Include="Actions\ActionScript.cs" />
     <Compile Include="Actions\ActionInterpreter.cs" />
-    <Compile Include="Actions\Connection.cs" />
+    <Compile Include="Actions\Binder.cs" />
     <Compile Include="Actions\DTEOperation.cs" />
-    <Compile Include="Actions\HProcess.cs" />
     <Compile Include="Actions\IAction.cs" />
     <Compile Include="Actions\ICommand.cs" />
     <Compile Include="API\Commands\IFireCoreCommand.cs" />
@@ -305,6 +311,8 @@
     <Compile Include="API\IEventLevel.cs" />
     <Compile Include="API\Settings.cs" />
     <Compile Include="API\Version.cs" />
+    <Compile Include="OwpEnv.cs" />
+    <Compile Include="DteEnv.cs" />
     <Compile Include="Clients\SEvent2.cs" />
     <Compile Include="Clients\SEvent2Empty.cs" />
     <Compile Include="Clients\SBuildEmpty.cs" />
@@ -315,7 +323,13 @@
     <Compile Include="Extensions\ProjectExtension.cs" />
     <Compile Include="Extensions\IVsHierarchyExtension.cs" />
     <Compile Include="EnvAbstract.cs" />
+    <Compile Include="Bootloader.cs" />
+    <Compile Include="EncDetector.cs" />
+    <Compile Include="BuildEnv.cs" />
+    <Compile Include="SzArchiver.cs" />
+    <Compile Include="MSBuild.cs" />
     <Compile Include="IPkg.cs" />
+    <Compile Include="UI\WForms\Controls\CompletionData.cs" />
     <Compile Include="StatusToolCommand.cs" />
     <Compile Include="MainToolCommand.cs" />
     <Compile Include="Configuration\ContextType.cs" />
@@ -340,32 +354,12 @@
     <Compile Include="ISolutionEvents.cs" />
     <Compile Include="IAppSettings.cs" />
     <Compile Include="DataArgs.cs" />
-    <Compile Include="MSBuild\Exceptions\PossibleLoopException.cs" />
     <Compile Include="Receiver\Output\EWType.cs" />
     <Compile Include="Receiver\Output\Ident.cs" />
     <Compile Include="Receiver\Output\IItemEW.cs" />
     <Compile Include="Receiver\Output\IItems.cs" />
     <Compile Include="Receiver\Output\Items.cs" />
     <Compile Include="Receiver\Output\ItemType.cs" />
-    <Compile Include="SBEScripts\Components\Build\ProjectsMap.cs" />
-    <Compile Include="SBEScripts\Components\Condition\Expression.cs" />
-    <Compile Include="SBEScripts\Components\BoxComponent.cs" />
-    <Compile Include="SBEScripts\Components\TryComponent.cs" />
-    <Compile Include="SBEScripts\Components\MSBuildComponent.cs" />
-    <Compile Include="SBEScripts\Components\NuGetComponent.cs" />
-    <Compile Include="SBEScripts\Components\NuGet\GetNuTool\Core.cs" />
-    <Compile Include="SBEScripts\Components\NuGet\GetNuTool\GNT.cs" />
-    <Compile Include="SBEScripts\Components\SevenZipComponent.cs" />
-    <Compile Include="SBEScripts\Exceptions\IncorrectNodeException.cs" />
-    <Compile Include="SBEScripts\Exceptions\ArgumentPMException.cs" />
-    <Compile Include="SBEScripts\SNode\EvalType.cs" />
-    <Compile Include="SBEScripts\SNode\ArgumentType.cs" />
-    <Compile Include="SBEScripts\SNode\IPM.cs" />
-    <Compile Include="SBEScripts\SNode\Argument.cs" />
-    <Compile Include="SBEScripts\SNode\Level.cs" />
-    <Compile Include="SBEScripts\SNode\LevelType.cs" />
-    <Compile Include="SBEScripts\SNode\ILevel.cs" />
-    <Compile Include="SBEScripts\SNode\PM.cs" />
     <Compile Include="UI\WForms\Controls\FileTextBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -460,81 +454,32 @@
     <Compile Include="Events\EventProcess.cs" />
     <Compile Include="Events\IEventProcess.cs" />
     <Compile Include="Events\IExecutionOrder.cs" />
-    <Compile Include="Exceptions\IncorrectSyntaxException.cs" />
-    <Compile Include="Exceptions\MismatchException.cs" />
-    <Compile Include="Exceptions\InvalidArgumentException.cs" />
-    <Compile Include="Exceptions\LimitException.cs" />
-    <Compile Include="Exceptions\NotFoundException.cs" />
-    <Compile Include="Exceptions\ComponentException.cs" />
     <Compile Include="Extensions\ArrayExtension.cs" />
     <Compile Include="Extensions\ObjectExtension.cs" />
     <Compile Include="IEnvironmentExt.cs" />
-    <Compile Include="ILogData.cs" />
     <Compile Include="IOW.cs" />
     <Compile Include="IsolatedEnv.cs" />
     <Compile Include="JsonSerializationBinder.cs" />
-    <Compile Include="MSBuild\Exceptions\MSBProjectNotFoundException.cs" />
-    <Compile Include="MSBuild\Exceptions\MSBPropertyNotFoundException.cs" />
-    <Compile Include="MSBuild\PropertyItem.cs" />
-    <Compile Include="MSBuild\RPattern.cs" />
-    <Compile Include="MSBuild\StringHandler.cs" />
     <Compile Include="OW.cs" />
-    <Compile Include="SBEScripts\Bootloader.cs" />
-    <Compile Include="SBEScripts\Components\Component.cs" />
-    <Compile Include="SBEScripts\Dom\CompletionData.cs" />
-    <Compile Include="SBEScripts\Dom\ComponentAttribute.cs" />
-    <Compile Include="SBEScripts\Dom\IAttrDomLevelA.cs" />
-    <Compile Include="SBEScripts\Dom\DefinitionAttribute.cs" />
-    <Compile Include="SBEScripts\CValueType.cs" />
-    <Compile Include="SBEScripts\Dom\IAttrDomLevelB.cs" />
-    <Compile Include="SBEScripts\Dom\Icon.Designer.cs">
+    <Compile Include="UI\WForms\Controls\DomIcon.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Icon.resx</DependentUpon>
+      <DependentUpon>DomIcon.resx</DependentUpon>
     </Compile>
-    <Compile Include="SBEScripts\Dom\IInspector.cs" />
-    <Compile Include="SBEScripts\Dom\InfoType.cs" />
-    <Compile Include="SBEScripts\Dom\INodeInfo.cs" />
-    <Compile Include="SBEScripts\Dom\Inspector.cs" />
-    <Compile Include="SBEScripts\Dom\NodeIdent.cs" />
-    <Compile Include="SBEScripts\Dom\NodeInfo.cs" />
-    <Compile Include="SBEScripts\Dom\DomParser.cs" />
-    <Compile Include="SBEScripts\Exceptions\ScriptException.cs" />
-    <Compile Include="SBEScripts\Exceptions\SelectorMismatchException.cs" />
-    <Compile Include="SBEScripts\Exceptions\SyntaxIncorrectException.cs" />
-    <Compile Include="SBEScripts\Exceptions\SubtypeNotFoundException.cs" />
-    <Compile Include="SBEScripts\Exceptions\OperandNotFoundException.cs" />
-    <Compile Include="SBEScripts\Exceptions\OperationNotFoundException.cs" />
-    <Compile Include="SBEScripts\IBootloader.cs" />
-    <Compile Include="Scripts\EvaluatorBlank.cs" />
-    <Compile Include="Scripts\IEvaluator.cs" />
-    <Compile Include="SBEScripts\Exceptions\NotSupportedOperationException.cs" />
     <Compile Include="IMatchWords.cs" />
     <Compile Include="Events\IModeFile.cs" />
     <Compile Include="Events\IModeInterpreter.cs" />
     <Compile Include="Events\IModeOperation.cs" />
     <Compile Include="Receiver\Output\IItem.cs" />
-    <Compile Include="SBEScripts\Components\CommentComponent.cs" />
-    <Compile Include="SBEScripts\Components\ConditionComponent.cs" />
-    <Compile Include="SBEScripts\Components\FileComponent.cs" />
-    <Compile Include="SBEScripts\Components\FunctionComponent.cs" />
-    <Compile Include="SBEScripts\Components\OWPComponent.cs" />
-    <Compile Include="SBEScripts\Components\DTEComponent.cs" />
-    <Compile Include="SBEScripts\Components\BuildComponent.cs" />
-    <Compile Include="SBEScripts\Components\UserVariableComponent.cs" />
-    <Compile Include="SBEScripts\Components\IComponent.cs" />
-    <Compile Include="SBEScripts\Components\InternalComponent.cs" />
+    <Compile Include="SobaScript\Components\InternalComponent.cs" />
     <Compile Include="Actions\IStatus.cs" />
     <Compile Include="Actions\Status.cs" />
-    <Compile Include="Scripts\IUserVariableDebug.cs" />
-    <Compile Include="Scripts\IUserVariable.cs" />
-    <Compile Include="SBEScripts\ISBEScript.cs" />
     <Compile Include="MatchWords.cs" />
     <Compile Include="Events\ModeFile.cs" />
     <Compile Include="Events\ModeInterpreter.cs" />
     <Compile Include="Events\ModeOperation.cs" />
     <Compile Include="Events\SolutionEventType.cs" />
-    <Compile Include="Exceptions\SBEException.cs" />
+    <Compile Include="Exceptions\UnspecSBEException.cs" />
     <Compile Include="IEnvironment.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Receiver\Output\Matcher.cs" />
@@ -544,18 +489,7 @@
     <Compile Include="Events\ISolutionEventEW.cs" />
     <Compile Include="Events\SBEEventEW.cs" />
     <Compile Include="Events\SBETransmitter.cs" />
-    <Compile Include="SBEScripts\Dom\PropertyAttribute.cs" />
-    <Compile Include="SBEScripts\RPattern.cs" />
-    <Compile Include="SBEScripts\Script.cs" />
-    <Compile Include="SBEScripts\Dom\MethodAttribute.cs" />
-    <Compile Include="SBEScripts\StringHandler.cs" />
-    <Compile Include="Scripts\TUserVariable.cs" />
-    <Compile Include="Scripts\UserVariable.cs" />
-    <Compile Include="SBEScripts\Value.cs" />
-    <Compile Include="Scripts\StringProtector.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Scripts\Tokens.cs" />
-    <Compile Include="MSBuild\PreparedData.cs" />
     <Compile Include="UI\DefCommandsDTE.cs" />
     <Compile Include="UI\Plain\State.cs" />
     <Compile Include="UI\Resource.Designer.cs">
@@ -604,11 +538,8 @@
     <Compile Include="UI\WForms\PropertiesFrm.Designer.cs">
       <DependentUpon>PropertiesFrm.cs</DependentUpon>
     </Compile>
-    <Compile Include="MSBuild\IMSBuild.cs" />
     <Compile Include="Receiver\Output\OWP.cs" />
     <Compile Include="Receiver\Output\ItemEW.cs" />
-    <Compile Include="MSBuild\Parser.cs" />
-    <Compile Include="MSBuild\Exceptions\MSBPropertyParseException.cs" />
     <Compile Include="Actions\Command.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="UI\WForms\EventsFrm.cs">
@@ -663,9 +594,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SBEScripts\Dom\Icon.resx">
+    <EmbeddedResource Include="UI\WForms\Controls\DomIcon.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Icon.Designer.cs</LastGenOutput>
+      <LastGenOutput>DomIcon.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="UI\Resource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -811,9 +742,57 @@
       <Project>{73919171-44B6-4536-B892-F1FCA653887C}</Project>
       <Name>Bridge</Name>
     </ProjectReference>
+    <ProjectReference Include="..\E-MSBuild\E-MSBuild\E-MSBuild.csproj">
+      <Project>{e51d1ea3-f4a7-4f27-a941-e16d2b88d08a}</Project>
+      <Name>E-MSBuild</Name>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' != 'true' ">TargetFramework=net40</AdditionalProperties>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' == 'true' ">TargetFramework=netstandard2.0</AdditionalProperties>
+    </ProjectReference>
+    <ProjectReference Include="..\E-MSBuild\Varhead\LSender\LSender\LSender.csproj">
+      <Project>{287d8f67-dd08-423f-aa60-c48d84140612}</Project>
+      <Name>LSender</Name>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' != 'true' ">TargetFramework=net40</AdditionalProperties>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' == 'true' ">TargetFramework=netstandard2.0</AdditionalProperties>
+    </ProjectReference>
     <ProjectReference Include="..\MvsSln\MvsSln\MvsSln.csproj">
       <Project>{f905dfb2-2e67-4ff7-9001-924f6f2d645d}</Project>
       <Name>MvsSln</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SobaScript.Z.Core\SobaScript.Mapper\SobaScript.Mapper\SobaScript.Mapper.csproj">
+      <Project>{3eabd66d-1f4b-46e5-88ff-3e680708309f}</Project>
+      <Name>SobaScript.Mapper</Name>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' != 'true' ">TargetFramework=net40</AdditionalProperties>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' == 'true' ">TargetFramework=netstandard2.0</AdditionalProperties>
+    </ProjectReference>
+    <ProjectReference Include="..\SobaScript.Z.Core\SobaScript.Z.Core\SobaScript.Z.Core.csproj">
+      <Project>{d5c9a407-1173-43bf-a15a-5d8ab100ac4a}</Project>
+      <Name>SobaScript.Z.Core</Name>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' != 'true' ">TargetFramework=net40</AdditionalProperties>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' == 'true' ">TargetFramework=netstandard2.0</AdditionalProperties>
+    </ProjectReference>
+    <ProjectReference Include="..\SobaScript.Z.Ext\SobaScript.Z.Ext\SobaScript.Z.Ext.csproj">
+      <Project>{0fb9bd48-d455-40dc-a6bf-411b595a2999}</Project>
+      <Name>SobaScript.Z.Ext</Name>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' != 'true' ">TargetFramework=net40</AdditionalProperties>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' == 'true' ">TargetFramework=netstandard2.0</AdditionalProperties>
+    </ProjectReference>
+    <ProjectReference Include="..\SobaScript.Z.VS\SobaScript.Z.VS\SobaScript.Z.VS.csproj">
+      <Project>{cd42837f-ecb4-48d5-89d5-eff831001f89}</Project>
+      <Name>SobaScript.Z.VS</Name>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' != 'true' ">TargetFramework=net40</AdditionalProperties>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' == 'true' ">TargetFramework=netstandard2.0</AdditionalProperties>
+    </ProjectReference>
+    <ProjectReference Include="..\SobaScript\SobaScript\SobaScript.csproj">
+      <Project>{3a80b650-b457-4de4-b2d3-64191a20c6b7}</Project>
+      <Name>SobaScript</Name>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' != 'true' ">TargetFramework=net40</AdditionalProperties>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' == 'true' ">TargetFramework=netstandard2.0</AdditionalProperties>
+    </ProjectReference>
+    <ProjectReference Include="..\E-MSBuild\Varhead\Varhead\Varhead.csproj">
+      <Project>{4670b9b4-1ba9-4cb2-bbfc-ec4ebeb40a42}</Project>
+      <Name>Varhead</Name>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' != 'true' ">TargetFramework=net40</AdditionalProperties>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' == 'true' ">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
@@ -845,6 +824,13 @@
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="@(VsixLibX64)">
+      <VSIXSubPath>x64\</VSIXSubPath>
+      <Visible>false</Visible>
+      <Link>%(Filename)%(Extension)</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="$(OutputPath)\$(AssemblyName).xml" Condition="Exists('$(OutputPath)\$(AssemblyName).xml')">
       <Visible>false</Visible>
       <Link>%(Filename)%(Extension)</Link>
@@ -853,7 +839,7 @@
   </ItemGroup>
   <!-- SDK15+ -->
   <Choose>
-    <When Condition="$(DefineConstants.Contains('VSSDK_15_AND_NEW'))">
+    <When Condition=" '$(IsVSSDK15)' == 'true' ">
       <PropertyGroup>
         <NoWarn>$(NoWarn);IDE1003</NoWarn>
         <!-- TODO: IDE1003. Analyzer assembly ... depends on netstandard 2 -->

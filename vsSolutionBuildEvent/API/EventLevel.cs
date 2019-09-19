@@ -24,9 +24,9 @@ using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Bridge.CoreCommand;
 using net.r_eg.vsSBE.Clients;
 using net.r_eg.vsSBE.Configuration;
-using net.r_eg.vsSBE.Exceptions;
-using net.r_eg.vsSBE.SBEScripts;
-using net.r_eg.vsSBE.Scripts;
+using net.r_eg.EvMSBuild;
+using net.r_eg.SobaScript.Components;
+using System.Linq;
 
 #if VSSDK_15_AND_NEW
 using Microsoft.VisualStudio.Shell;
@@ -57,11 +57,6 @@ namespace net.r_eg.vsSBE.API
         public event EventHandler ClosedSolution = delegate(object sender, EventArgs e) { };
 
         /// <summary>
-        /// Container of user-variables
-        /// </summary>
-        protected IUserVariable uvariable = new UserVariable();
-
-        /// <summary>
         /// Provides command events for automation clients
         /// </summary>
         protected EnvDTE.CommandEvents cmdEvents;
@@ -76,24 +71,17 @@ namespace net.r_eg.vsSBE.API
         /// </summary>
         protected IClientLibrary clientLib = new ClientLibrary();
 
+        private Bootloader loader;
+
         /// <summary>
         /// object synch.
         /// </summary>
-        private Object _lock = new Object();
-
-        /// <summary>
-        /// Main loader
-        /// </summary>
-        public IBootloader Bootloader
-        {
-            get;
-            protected set;
-        }
+        private readonly object sync = new object();
 
         /// <summary>
         /// Binder of action
         /// </summary>
-        public Actions.Connection Action
+        public Actions.Binder Action
         {
             get;
             protected set;
@@ -223,7 +211,7 @@ namespace net.r_eg.vsSBE.API
             {
                 int ret = Action.bindPost(fSucceeded, fModified, fCancelCommand);
                 if(Action.reset()) {
-                    uvariable.unsetAll();
+                    loader.UVars.UnsetAll();
                 }
 
                 clientLib.Event.onPost(fSucceeded, fModified, fCancelCommand);
@@ -407,7 +395,7 @@ namespace net.r_eg.vsSBE.API
             var userConfig  = ConfigManager.UserConfig;
 
             if(config == null || userConfig == null) {
-                throw new NotFoundException("Config is not ready for loading. User: {0} / Main: {1}", (userConfig != null), (config != null));
+                throw new ArgumentException($"Config is not ready for loading. User: {userConfig != null} / Main: {config != null}");
             }
 
             bool isNew = !config.load(Environment.SolutionPath, Environment.SolutionFileName);
@@ -418,7 +406,7 @@ namespace net.r_eg.vsSBE.API
 
             UI.Plain.State.Print(config.Data);
 
-            Action.Cmd.MSBuild.initPropByDefault(); //LC: #815, #814
+            initPropByDefault(Action.Cmd.MSBuild); //LC: #815, #814
             OpenedSolution(this, EventArgs.Empty);
 
             if(slnEvents == null) {
@@ -433,7 +421,7 @@ namespace net.r_eg.vsSBE.API
             }
             finally {
                 // Late Sln-Opened (delay calling) ~ When all projects are opened in IDE
-                lock(_lock) {
+                lock(sync) {
                     slnEvents.Opened -= slnOpenedLowPriority;
                     slnEvents.Opened += slnOpenedLowPriority;
                 }
@@ -501,6 +489,8 @@ namespace net.r_eg.vsSBE.API
             //}
 #endif
 
+            loader = Bootloader.Init(Environment);
+
             if(Environment.Events != null) {
                 slnEvents = Environment.Events.SolutionEvents;
             }
@@ -514,13 +504,15 @@ namespace net.r_eg.vsSBE.API
             //TODO: extract all below into new methods. It's valuable for CoreCommand etc.
             //+ do not forget about ClientLibrary, Provider, etc.
 
-            this.Bootloader = new Bootloader(Environment, uvariable);
-            this.Bootloader.register();
-
-            Action = new Actions.Connection(
-                            new Actions.Command(Environment,
-                                         new Script(Bootloader),
-                                         new MSBuild.Parser(Environment, uvariable))
+            Action = new Actions.Binder
+            (
+                new Actions.Command
+                (
+                    Environment,
+                    loader.Soba,
+                    loader.Soba.EvMSBuild
+                ),
+                loader.Soba
             );
         }
 
@@ -543,10 +535,45 @@ namespace net.r_eg.vsSBE.API
 
         protected void refreshComponents()
         {
-            if(this.Bootloader == null || AppSettings.CfgManager.Config == null) {
+            if(loader == null || AppSettings.CfgManager.Config == null) {
+                Log.Debug("Changing of activation has been ignored.");
                 return;
             }
-            this.Bootloader.updateActivation(AppSettings.CfgManager.Config.Data);
+
+            var data = AppSettings.CfgManager.Config.Data;
+
+            foreach(IComponent c in loader.Soba.Registered) {
+                if(data.Components == null || data.Components.Length < 1) {
+                    //c.Enabled = true;
+                    continue;
+                }
+
+                var found = data.Components.Where(p => p.ClassName == c.GetType().Name).FirstOrDefault();
+                if(found == null) {
+                    continue;
+                }
+
+#if DEBUG
+                if(c.Enabled != found.Enabled) {
+                    Log.Trace($"Bootloader - Component '{found.ClassName}': Changing of activation status '{c.Enabled}' -> '{found.Enabled}'");
+                }
+#endif
+                c.Enabled = found.Enabled;
+            }
+        }
+
+        /// <summary>
+        /// To initialize properties by default for project.
+        /// </summary>
+        protected virtual void initPropByDefault(IEvMSBuild msbuild)
+        {
+            IAppSettings app = AppSettings._;
+            const string _PFX = AppSettings.APP_NAME_SHORT;
+
+            msbuild.SetGlobalProperty(AppSettings.APP_NAME, vsSBE.Version.numberWithRevString);
+            msbuild.SetGlobalProperty($"{_PFX}_CommonPath", app.CommonPath);
+            msbuild.SetGlobalProperty($"{_PFX}_LibPath", app.LibPath);
+            msbuild.SetGlobalProperty($"{_PFX}_WorkPath", app.WorkPath);
         }
 
         protected void attachCommandEvents()
@@ -557,7 +584,7 @@ namespace net.r_eg.vsSBE.API
             }
 
             cmdEvents = Environment.Events.CommandEvents; // protection from garbage collector
-            lock(_lock) {
+            lock(sync) {
                 detachCommandEvents();
                 cmdEvents.BeforeExecute += _cmdBeforeExecute;
                 cmdEvents.AfterExecute  += _cmdAfterExecute;
@@ -570,7 +597,7 @@ namespace net.r_eg.vsSBE.API
                 return;
             }
 
-            lock(_lock) {
+            lock(sync) {
                 cmdEvents.BeforeExecute -= _cmdBeforeExecute;
                 cmdEvents.AfterExecute  -= _cmdAfterExecute;
             }
@@ -582,7 +609,7 @@ namespace net.r_eg.vsSBE.API
         /// </summary>
         private void slnOpenedLowPriority()
         {
-            lock(_lock)
+            lock(sync)
             {
                 if(slnEvents != null) {
                     slnEvents.Opened -= slnOpenedLowPriority;

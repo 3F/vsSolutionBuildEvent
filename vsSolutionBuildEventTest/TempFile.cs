@@ -3,7 +3,7 @@ using System.IO;
 
 namespace net.r_eg.vsSBE.Test
 {
-    public sealed class TempFile: IDisposable
+    internal sealed class TempFile: IDisposable
     {
         public string dir
         {

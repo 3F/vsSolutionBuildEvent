@@ -53,16 +53,6 @@ namespace net.r_eg.vsSBE.Extensions
         }
 
         /// <summary>
-        /// Formatting of the path to directory.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public static string PathFormat(this string path)
-        {
-            return path.DirectoryPathFormat();
-        }
-
-        /// <summary>
         /// BSTR. Directory where visual studio executable was installed.
         /// http://technet.microsoft.com/en-us/microsoft.visualstudio.shell.interop.__vsspropid%28v=vs.71%29.aspx
         /// </summary>

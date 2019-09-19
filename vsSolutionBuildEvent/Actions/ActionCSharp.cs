@@ -23,6 +23,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Microsoft.CSharp;
+using net.r_eg.SobaScript.Exceptions;
+using net.r_eg.SobaScript.Z.Ext.Extensions;
 using net.r_eg.vsSBE.Configuration.User;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Exceptions;
@@ -54,10 +56,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// Where to look cache.
         /// </summary>
-        protected string BasePathToCache
-        {
-            get { return Settings.WPath; }
-        }
+        protected string BasePathToCache => Settings.WPath;
 
         /// <summary>
         /// Generate a temporary AssemblyInfo.
@@ -86,12 +85,6 @@ namespace net.r_eg.vsSBE.Actions
                 catch { /* we work in temp directory with unique name, so it's not important */ }
             }
         }
-
-        /// <summary>
-        /// object synch.
-        /// </summary>
-        private Object _lock = new Object();
-
 
         /// <summary>
         /// Process for specified event.
@@ -248,7 +241,7 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             if(!File.Exists(file)) {
-                throw new MismatchException("oops., something went wrong... while we thought, cache '{0}' disappeared. Try again.", file);
+                throw new MismatchException($"oops., something went wrong... while we thought, cache '{file}' disappeared. Try again.");
             }
 
             // into memory without blocking - it's important for CSharpCodeProvider with GenerateInMemory = false
@@ -302,7 +295,7 @@ namespace net.r_eg.vsSBE.Actions
             string command  = cfg.Command;
 
             if(String.IsNullOrWhiteSpace(command)) {
-                throw new InvalidArgumentException("[Compiler] code is not found. abort;");
+                throw new ArgumentException("[Compiler] code is not found. abort;");
             }
             command = parse(evt, command);
 
@@ -367,12 +360,20 @@ namespace net.r_eg.vsSBE.Actions
             }
 
             Log.Trace("[Compiler] use as list of files with source code.");
-            if(String.IsNullOrEmpty(hash)) {
-                return provider.CompileAssemblyFromFile(parameters, filesFromCommand(source).ExtractFiles());
+            if(string.IsNullOrEmpty(hash))
+            {
+                return provider.CompileAssemblyFromFile(
+                    parameters, 
+                    filesFromCommand(source).ExtractFiles(Settings.WPath)
+                );
             }
 
-            using(TempAssemblyInfo f = new TempAssemblyInfo(hash)) {
-                return provider.CompileAssemblyFromFile(parameters, filesFromCommand(String.Format("{0}\n{1}", source, f.FullPath)).ExtractFiles());
+            using(TempAssemblyInfo f = new TempAssemblyInfo(hash))
+            {
+                return provider.CompileAssemblyFromFile(
+                    parameters, 
+                    filesFromCommand($"{source}\n{f.FullPath}").ExtractFiles(Settings.WPath)
+                );
             }
         }
 
@@ -389,7 +390,7 @@ namespace net.r_eg.vsSBE.Actions
             {
                 return cfg.References
                             .Where(r => !String.IsNullOrEmpty(r))
-                            .Select(r => (msbuild)? cmd.MSBuild.parse(r) : r)
+                            .Select(r => (msbuild)? cmd.MSBuild.Eval(r) : r)
                             .ToArray();
             }
             
@@ -398,7 +399,7 @@ namespace net.r_eg.vsSBE.Actions
                         .Where(r => !String.IsNullOrEmpty(r))
                         .Select(r =>
                                     gac.getPathToAssembly(
-                                            (msbuild)? cmd.MSBuild.parse(r) : r,
+                                            (msbuild)? cmd.MSBuild.Eval(r) : r,
                                             true
                                     )
                                 )
@@ -463,7 +464,7 @@ namespace net.r_eg.vsSBE.Actions
 
             string path = (cfg.OutputPath)?? String.Empty;
             if(evt.SupportMSBuild) {
-                path = cmd.MSBuild.parse(path);
+                path = cmd.MSBuild.Eval(path);
             }
 
             return Path.Combine(BasePathToCache, path, fileName(evt));

@@ -15,7 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using net.r_eg.SobaScript.Z.Ext;
+using net.r_eg.SobaScript.Z.Ext.IO;
 using net.r_eg.vsSBE.Events;
 
 namespace net.r_eg.vsSBE.Actions
@@ -26,6 +27,8 @@ namespace net.r_eg.vsSBE.Actions
         /// Command container
         /// </summary>
         protected ICommand cmd;
+
+        protected IExer exer;
 
         /// <summary>
         /// Process for specified event.
@@ -41,10 +44,15 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="cmd">Formatted command to shell.</param>
         public virtual void shell(ISolutionEvent evt, string cmd)
         {
-            Log.Info("Prepared command: '{0}'", cmd);
-
-            HProcess p = new HProcess(Settings.WPath);
-            p.useShell(cmd, evt.Id, evt.Process.Waiting, evt.Process.Hidden, evt.Process.TimeLimit);
+            Log.Info($"Prepared command: '{cmd}'");
+            exer.UseShell
+            (
+                cmd, 
+                evt.Id, 
+                evt.Process.Waiting, 
+                evt.Process.Hidden, 
+                evt.Process.TimeLimit
+            );
         }
 
         /// <summary>
@@ -56,26 +64,37 @@ namespace net.r_eg.vsSBE.Actions
         public virtual string parse(ISolutionEvent evt, string data)
         {
             if(evt.SupportSBEScripts) {
-                data = cmd.SBEScript.parse(data, evt.SupportMSBuild);
+                data = cmd.SBEScript.Eval(data, evt.SupportMSBuild);
             }
 
             if(evt.SupportMSBuild) {
-                data = cmd.MSBuild.parse(data);
+                data = cmd.MSBuild.Eval(data);
             }
 
             return data;
         }
 
         /// <param name="cmd"></param>
-        public Action(ICommand cmd)
+        protected Action(ICommand cmd)
         {
             this.cmd = cmd;
+
+            if(Bootloader._?.Soba.GetComponent(typeof(FileComponent)) is FileComponent fc) {
+                exer = fc.Exer;
+                return;
+            }
+
+            Log.Trace("Use new Exer instead of FileComponent");
+            exer = new Exer(Settings.WPath, new EncDetector());
+
+            Settings._.WorkPathUpdated +=
+                (object sender, DataArgs<string> e) => exer.BasePath = e.Data;
         }
 
         protected string treatNewlineAs(string str, string data)
         {
-            if(String.IsNullOrEmpty(data)) {
-                return String.Empty;
+            if(string.IsNullOrEmpty(data)) {
+                return string.Empty;
             }
             return data.Trim(new char[]{ '\r', '\n' }).Replace("\r", "").Replace("\n", str);
         }

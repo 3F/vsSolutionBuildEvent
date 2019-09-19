@@ -1,3 +1,18 @@
 [submodule "MvsSln"]
 	path = MvsSln
 	url = https://github.com/3F/MvsSln.git
+[submodule "E-MSBuild"]
+	path = E-MSBuild
+	url = https://github.com/3F/E-MSBuild.git
+[submodule "SobaScript"]
+	path = SobaScript
+	url = https://github.com/3F/SobaScript.git
+[submodule "SobaScript.Z.Core"]
+	path = SobaScript.Z.Core
+	url = https://github.com/3F/SobaScript.Z.Core.git
+[submodule "SobaScript.Z.Ext"]
+	path = SobaScript.Z.Ext
+	url = https://github.com/3F/SobaScript.Z.Ext.git
+[submodule "SobaScript.Z.VS"]
+	path = SobaScript.Z.VS
+	url = https://github.com/3F/SobaScript.Z.VS.git

@@ -21,23 +21,21 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using net.r_eg.SobaScript.Components;
+using net.r_eg.SobaScript.Mapper;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Configuration;
 using net.r_eg.vsSBE.Configuration.User;
 using net.r_eg.vsSBE.Events;
-using net.r_eg.vsSBE.Exceptions;
 using net.r_eg.vsSBE.Extensions;
-using net.r_eg.vsSBE.SBEScripts;
-using net.r_eg.vsSBE.SBEScripts.Components;
-using net.r_eg.vsSBE.SBEScripts.Dom;
+using net.r_eg.vsSBE.UI.WForms.Controls;
 
 namespace net.r_eg.vsSBE.UI.WForms.Logic
 {
-    using CEAfterEventHandler   = EnvDTE._dispCommandEvents_AfterExecuteEventHandler;
-    using CEBeforeEventHandler  = EnvDTE._dispCommandEvents_BeforeExecuteEventHandler;
-    using DomIcon               = Icon;
+    using CEAfterEventHandler = EnvDTE._dispCommandEvents_AfterExecuteEventHandler;
+    using CEBeforeEventHandler = EnvDTE._dispCommandEvents_BeforeExecuteEventHandler;
 
-    public class Events
+    internal class Events
     {
         /// <summary>
         /// Prefix for new action by default.
@@ -106,7 +104,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         /// <summary>
         /// Used loader
         /// </summary>
-        public IBootloader Bootloader
+        public Bootloader Loader
         {
             get;
             protected set;
@@ -471,10 +469,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         public void fillComponents(DataGridView grid)
         {
             grid.Rows.Clear();
-            foreach(IComponent c in Bootloader.Registered)
+            foreach(IComponent c in Loader.Soba.Registered)
             {
                 Type type = c.GetType();
-                if(!Inspector.isComponent(type)) {
+                if(!Inspector.IsComponent(type)) {
                     continue;
                 }
 
@@ -528,7 +526,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         public void updateComponents(Configuration.Component[] components)
         {
             SlnEvents.Components = components;
-            foreach(IComponent c in Bootloader.Registered) {
+            foreach(IComponent c in Loader.Soba.Registered) {
                 Configuration.Component found = components.Where(p => p.ClassName == c.GetType().Name).FirstOrDefault();
                 if(found != null) {
                     c.Enabled = found.Enabled;
@@ -626,7 +624,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                     break;
                 }
                 default: {
-                    throw new InvalidArgumentException("Unsupported SolutionEventType: '{0}'", SBE.type);
+                    throw new ArgumentException($"Unsupported SolutionEventType: '{SBE.type}'");
                 }
             }
             SBE.update();
@@ -864,9 +862,12 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                 Log.Info("No actions to execution. Add new, then try again.");
                 return;
             }
-            Actions.ICommand cmd = new Actions.Command(Bootloader.Env,
-                                                        new Script(Bootloader),
-                                                        new MSBuild.Parser(Bootloader.Env, Bootloader.UVariable));
+            Actions.ICommand cmd = new Actions.Command
+            (
+                Loader.Env,
+                Loader.Soba,
+                Loader.Soba.EvMSBuild
+            );
 
             ISolutionEvent evt      = SBEItem;
             SolutionEventType type  = SBE.type;
@@ -882,11 +883,12 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             }
         }
 
-        public Events(IBootloader bootloader, IInspector inspector = null)
+        public Events(Bootloader loader, IInspector inspector = null)
         {
-            this.Bootloader = bootloader;
+            Loader          = loader;
             this.inspector  = inspector;
-            Env             = bootloader.Env;
+            Env             = loader.Env;
+
             backupUpdate();
         }
 
@@ -990,13 +992,13 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
             }
 
             List<INodeInfo> ret = new List<INodeInfo>();
-            foreach(IComponent c in Bootloader.Registered)
+            foreach(IComponent c in Loader.Soba.Registered)
             {
                 if(c.GetType().Name != className) {
                     continue;
                 }
 
-                foreach(INodeInfo info in inspector.getBy(c.GetType())) {
+                foreach(INodeInfo info in inspector.GetBy(c.GetType())) {
                     ret.Add(info);
                     ret.AddRange(domElemsBy(info.Link));
                 }
@@ -1010,7 +1012,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
 
         protected IEnumerable<INodeInfo> domElemsBy(NodeIdent ident)
         {
-            foreach(INodeInfo info in inspector.getBy(ident))
+            foreach(INodeInfo info in inspector.GetBy(ident))
             {
                 if(!String.IsNullOrEmpty(info.Name)) {
                     yield return info;

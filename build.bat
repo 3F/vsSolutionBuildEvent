@@ -32,15 +32,16 @@ if "%reltype%"=="" (
 
 set __p_call=1
 
-:: Packages
+:: package restore for SDK-based projects
+:: call %_msbuild% -t:restore /p:Configuration=%reltype%_SDK15 /p:Platform="Any CPU"
 
-call .\packages.cmd || goto err
+:: Activate vsSBE
 
-:: call %_msbuild% ".gnt/gnt.core" /p:ngpath="%cd%/packages" /p:ngconfig="%cd%/.gnt/packages.config;%cd%/vsSolutionBuildEvent/packages.config;%cd%/vsSolutionBuildEventTest/packages.config" /nologo /v:m
+call %_gnt% /p:ngpath="%cd%/packages" /p:ngconfig="%cd%/.gnt/packages.config" || goto err
 
 :: Build
 
-set bnode=%_msbuild% %sln% /m:4 /l:"%cimdll%" /p:Platform=%platform% /v:%level%
+set bnode=%_msbuild% %sln% /m:4 /l:"%cimdll%" /p:Platform=%platform% /v:%level% /nologo
 
 call %bnode% /p:Configuration=%reltype%_SDK10 /t:Rebuild || goto err
 call %bnode% /p:Configuration=%reltype%_SDK15 /t:Build || goto err
