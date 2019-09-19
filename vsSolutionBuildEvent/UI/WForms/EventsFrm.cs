@@ -182,8 +182,6 @@ namespace net.r_eg.vsSBE.UI.WForms
 
 #if DEBUG
             this.Text                       = String.Format("{0} [Debug version]", Settings.APP_NAME);
-            toolStripMenuDebugMode.Checked  = true;
-            toolStripMenuDebugMode.Enabled  = false;
             toolStripMenuVersion.Text       = String.Format("based on {0}", Version.branchSha1);
 #else
             //if(Version.branchName.ToLower() != "releases") {
@@ -1341,10 +1339,8 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void toolStripMenuDebugMode_Click(object sender, EventArgs e)
         {
-#if !DEBUG
             App.UserConfig.Global.DebugMode = App.DebugMode = toolStripMenuDebugMode.Checked = !toolStripMenuDebugMode.Checked;
             logic.updateUserCfg();
-#endif
         }
 
         private void menuCfgSuppressDualCmd_Click(object sender, EventArgs e)
@@ -1858,9 +1854,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void toolStripMenuBug_DropDownOpening(object sender, EventArgs e)
         {
 
-#if !DEBUG
             toolStripMenuDebugMode.Checked = App.DebugMode;
-#endif
             
             Func<string, bool> IsIgnoreLevel = (string level) =>
             {

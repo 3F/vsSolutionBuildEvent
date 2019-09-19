@@ -458,7 +458,15 @@ namespace net.r_eg.vsSBE
             usrCfg.load(usrCfg.getLink(Settings._.CommonPath, Config.Entity.NAME, null));
 
             Event = new API.EventLevel();
-            ((IEntryPointCore)Event).load(Dte2, usrCfg.Data.Global.DebugMode);
+            ((IEntryPointCore)Event).load
+            (
+                Dte2,
+#if DEBUG
+                true
+#else
+                usrCfg.Data.Global.DebugMode
+#endif
+            );
 
             // Receiver
 
