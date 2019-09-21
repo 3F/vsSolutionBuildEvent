@@ -36,9 +36,9 @@ using System.Runtime.InteropServices;
 // Current format: {Major}.{Minor}.0.{Build} -> 
 //     Where 0 it's the reserved number for patches from external assemblies
 //     For changes use the .version file only as {Major}.{Minor}
-[assembly: AssemblyVersion(Version.numberString)]
-[assembly: AssemblyFileVersion(Version.numberString)]
-[assembly: AssemblyInformationalVersion(Version.informational)]
+[assembly: AssemblyVersion(Version.S_NUM)]
+[assembly: AssemblyFileVersion(Version.S_NUM)]
+[assembly: AssemblyInformationalVersion(Version.S_INFO)]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
