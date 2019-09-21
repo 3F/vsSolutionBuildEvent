@@ -258,12 +258,13 @@ namespace net.r_eg.vsSBE
             SolutionFile    = solutionFile ?? throw new ArgumentNullException(nameof(solutionFile));
             _properties     = properties ?? throw new ArgumentNullException(nameof(properties));
 
+            // better to use it before accessing to {Sln} property due to possible custom env updating 
             foreach(var p in properties) {
                 ProjectCollection.GlobalProjectCollection.SetGlobalProperty(p.Key, p.Value);
             }
 
             SolutionPath        = Sln.SolutionDir;
-            slnProperties       = Sln.Properties;
+            slnProperties       = Sln.Properties.ExtractDictionary.AddOrUpdate(properties);
             SolutionFileName    = slnProperties.GetOrDefault(PropertyNames.SLN_NAME, PropertyNames.UNDEFINED);
             IsOpenedSolution    = true;
         }
