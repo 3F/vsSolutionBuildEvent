@@ -229,7 +229,7 @@
           <Private>True</Private>
         </Reference>
         <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-          <HintPath>..\packages\NLog.4.6.6\lib\netstandard2.0\NLog.dll</HintPath>
+          <HintPath>..\packages\NLog.4.6.7\lib\netstandard2.0\NLog.dll</HintPath>
         </Reference>
       </ItemGroup>
     </When>
@@ -288,7 +288,7 @@
           <Private>True</Private>
         </Reference>
         <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-          <HintPath>..\packages\NLog.4.6.6\lib\net40-client\NLog.dll</HintPath>
+          <HintPath>..\packages\NLog.4.6.7\lib\net40-client\NLog.dll</HintPath>
         </Reference>
       </ItemGroup>
     </When>
