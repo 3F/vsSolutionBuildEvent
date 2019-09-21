@@ -5,13 +5,21 @@ vsSolutionBuildEvent  [ github.com/3F/vsSolutionBuildEvent ]
 
 ## The vsSolutionBuildEvent includes:
 
+    * SobaScript (github.com/3F/SobaScript)
+        * Core Components (github.com/3F/SobaScript.Z.Core)
+        * Ext Components (github.com/3F/SobaScript.Z.Ext)
+        * VS Components (github.com/3F/SobaScript.Z.VS)
+        
+    * E-MSBuild (github.com/3F/E-MSBuild)
+        * Varhead (github.com/3F/Varhead)
+        
     * AvalonEdit (avalonedit.net)
     * Json.NET (json.codeplex.com)
     * NLog (nlog-project.org)
     * Ude (code.google.com/p/ude/)
     * SevenZipSharp (sevenzipsharp.codeplex.com)
     * 7-Zip (www.7-zip.org)
-    * GetNuTool core (github.com/3F/GetNuTool)
+    * GetNuTool (github.com/3F/GetNuTool)
     
 ## Maintaining of this project also includes the following tools:
 
@@ -19,6 +27,7 @@ vsSolutionBuildEvent  [ github.com/3F/vsSolutionBuildEvent ]
     * VsixCompress (nuget.org/packages/VsixCompress)
     * GetNuTool (github.com/3F/GetNuTool)
     * vsSolutionBuildEvent CI.MSBuild (vssbe.r-eg.net)
+    * hMSBuild (github.com/3F/hMSBuild)
 
 
 ## Additional packages

@@ -196,17 +196,17 @@ namespace net.r_eg.vsSBE.UI.WForms
             string vAPIString   = (new API.Version()).Bridge.Number.ToString(2);
 
 #if !DEBUG
-            labelVersionVal.Text = String.Format("v{0} [ {1} ] API: v{2}", Version.numberWithRevString, Version.branchSha1, vAPIString);
-            if(Version.branchName.ToLower() != "releases") {
-                labelVersionVal.Text += String.Format(" /\"{0}\":{1}", Version.branchName, Version.branchRevCount);
+            labelVersionVal.Text = $"v{Version.S_NUM_REV}+{Version.B_SHA1} API: v{vAPIString}";
+            if(Version.B_NAME.ToLower() != "releases") {
+                labelVersionVal.Text += String.Format(" /\"{0}\":{1}", Version.B_NAME, Version.B_REVC);
             }
 #else
             labelVersionVal.Text = String.Format("v{0} Debug [ {1} ] API: v{2} /\"{3}\":{4}",
-                                                    Version.numberWithRevString,
-                                                    Version.branchSha1,
+                                                    Version.S_NUM_REV,
+                                                    Version.B_SHA1,
                                                     vAPIString,
-                                                    Version.branchName,
-                                                    Version.branchRevCount);
+                                                    Version.B_NAME,
+                                                    Version.B_REVC);
 #endif
         }
 

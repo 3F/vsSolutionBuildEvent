@@ -4,13 +4,18 @@ namespace net.r_eg.vsSBE%namespace%
 {
     internal struct Version
     {
-        public static readonly System.Version number    = new System.Version(%Version%);
-        public const string numberWithRevString         = "%VersionRevString%";
-        public const string numberString                = "%VersionString%";
-        public const string branchName                  = "%branchName%";
-        public const string branchSha1                  = "%branchSha1%";
-        public const string branchRevCount              = "%branchRevCount%";
-        public const string informational               = "%VersionRevString% [ %branchSha1% ]";
-        public const string informationalFull           = "%VersionRevString% [ %branchSha1% ] /'%branchName%':%branchRevCount%";
+        public static readonly System.Version number = new System.Version(S_NUM_REV);
+
+        public const string S_NUM = "%VersionString%";
+        public const string S_REV = "%VersionRev%";
+
+        public const string S_NUM_REV = S_NUM + "." + S_REV;
+
+        public const string B_SHA1 = "%bName%";
+        public const string B_NAME = "%bSha1%";
+        public const string B_REVC = "%bRevCount%";
+
+        internal const string S_INFO      = S_NUM_REV + "+" + B_SHA1;
+        internal const string S_INFO_FULL = S_INFO + ":" + B_NAME + "-" + B_REVC;
     }
 }

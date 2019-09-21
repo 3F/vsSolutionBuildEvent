@@ -40,5 +40,5 @@ using net.r_eg.vsSBE;
 
 // Current format: {Major}.{Minor}.{Patch}.{Build} ->
 //     For changes use the .version file only as {Major}.{Minor}.{Patch}
-[assembly: AssemblyVersion(Version.numberString)]
-[assembly: AssemblyFileVersion(Version.numberString)]
+[assembly: AssemblyVersion(Version.S_NUM)]
+[assembly: AssemblyFileVersion(Version.S_NUM)]

@@ -570,7 +570,7 @@ namespace net.r_eg.vsSBE.API
             IAppSettings app = AppSettings._;
             const string _PFX = AppSettings.APP_NAME_SHORT;
 
-            msbuild.SetGlobalProperty(AppSettings.APP_NAME, vsSBE.Version.numberWithRevString);
+            msbuild.SetGlobalProperty(AppSettings.APP_NAME, vsSBE.Version.S_NUM_REV);
             msbuild.SetGlobalProperty($"{_PFX}_CommonPath", app.CommonPath);
             msbuild.SetGlobalProperty($"{_PFX}_LibPath", app.LibPath);
             msbuild.SetGlobalProperty($"{_PFX}_WorkPath", app.WorkPath);

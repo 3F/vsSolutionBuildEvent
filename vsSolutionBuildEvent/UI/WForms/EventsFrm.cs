@@ -181,13 +181,13 @@ namespace net.r_eg.vsSBE.UI.WForms
             toolTip.SetToolTip(pictureBoxWarnWait, Resource.StringWarnForWaiting);
 
 #if DEBUG
-            this.Text                       = String.Format("{0} [Debug version]", Settings.APP_NAME);
-            toolStripMenuVersion.Text       = String.Format("based on {0}", Version.branchSha1);
+            this.Text                       = $"{Settings.APP_NAME} [Debug version]";
+            toolStripMenuVersion.Text       = $"based on {Version.B_SHA1}";
 #else
             //if(Version.branchName.ToLower() != "releases") {
             //    this.Text = String.Format("{0}  [Unofficial release]", Settings.APP_NAME);
             //}
-            toolStripMenuVersion.Text = String.Format("v{0} [ {1} ]", Version.numberString, Version.branchSha1);
+            toolStripMenuVersion.Text = $"v{Version.S_NUM}+{Version.B_SHA1}";
 #endif
             menuCfgSuppressDualCmd.Checked = Settings.CfgUser.Global.SuppressDualCommand;
 

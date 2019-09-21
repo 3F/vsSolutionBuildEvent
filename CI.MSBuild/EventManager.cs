@@ -407,7 +407,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         protected void setPropertiesByDefault()
         {
             setProperty("vsSolutionBuildEvent", library.Version.Number.ToString()); //optional
-            setProperty("vssbeCIM", Version.numberWithRevString);
+            setProperty("vssbeCIM", Version.S_NUM_REV);
         }
 
         /// <summary>

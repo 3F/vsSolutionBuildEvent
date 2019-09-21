@@ -19,7 +19,7 @@ namespace net.r_eg.vsSBE.UI {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resource {
@@ -142,9 +142,9 @@ namespace net.r_eg.vsSBE.UI {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This option is means a wait for completion action with main thread! therefore:
-        ///* [Performance] - For repeated events such as EW, OWP, Logging etc. probably need a more time for services of your all defined actions. Remember this!
-        ///* [Compatibility] - However, some your actions can require a lock of the main thread for waiting to the next steps, otherwise some actions can lose a some technical data for processes of your script on next step..
+        ///   Looks up a localized string similar to Waiting for an complete action in main thread means the following:
+        ///* [Performance] - For events such as EW, OWP, Logging, etc: it may take longer to service all activated actions.
+        ///* [Compatibility] - Some actions may require locking the main thread to wait for the next step..
         /// </summary>
         internal static string StringWarnForWaiting {
             get {

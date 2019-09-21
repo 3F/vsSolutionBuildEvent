@@ -51,7 +51,7 @@ namespace net.r_eg.vsSBE
 #endif
 
     // Information for Visual Studio Help/About dialog.
-    [InstalledProductRegistration("#110", "#112", Version.numberWithRevString, IconResourceID = 400)]
+    [InstalledProductRegistration("#110", "#112", Version.S_NUM, IconResourceID = 400)]
 
     // This attribute is needed to let the shell know that this package exposes some menus.
     [ProvideMenuResource("Menus.ctmenu", 1)]

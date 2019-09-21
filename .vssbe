@@ -91,11 +91,10 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "$(revDeltaBase  = \"2016/11/05\")\n$(revDeltaMin   = $([System.Math]::Pow(10, 3)))\n$$(revDeltaMax   = $([System.Math]::Pow(10, 5)))\n$(revDeltaMax   = 65534) #[\" limit of AssemblyVersion (2^16 - 2) - i.e. 65534 max allowed \"]\n\n#[\" \n    To restore packages via GetNuTool\n    https://github.com/NuGet/Home/issues/1521\n\"]\n##[NuGet gnt.raw(\"/p:ngconfig=\\\".gnt/packages.config\\\"\")]",
+        "Command": "$(revDeltaBase  = \"2016/11/05\")\n$(revDeltaMin   = $([System.Math]::Pow(10, 3)))\n$(revDeltaMax   = 65534) #[\" limit of AssemblyVersion (2^16 - 2) - i.e. 65534 max allowed \"]\n\n#[\" \n    To restore packages via GetNuTool\n    https://github.com/NuGet/Home/issues/1521\n\"]\n##[NuGet gnt.raw(\"/p:ngconfig=\\\".gnt/packages.config\\\"\")]",
         "Command__": [
           "$(revDeltaBase  = \"2016/11/05\")",
           "$(revDeltaMin   = $([System.Math]::Pow(10, 3)))",
-          "$$(revDeltaMax   = $([System.Math]::Pow(10, 5)))",
           "$(revDeltaMax   = 65534) #[\" limit of AssemblyVersion (2^16 - 2) - i.e. 65534 max allowed \"]",
           "",
           "#[\" ",
@@ -129,7 +128,7 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[\"\n    Prepares data - version, revBuild & information from git\n\"]\n\n#[var tBase     = $([System.DateTime]::Parse('$(revDeltaBase)').ToBinary())]\n#[var tNow      = $([System.DateTime]::UtcNow.Ticks)]\n#[var revBuild  = $([System.TimeSpan]::FromTicks('$([MSBuild]::Subtract($(tNow), $(tBase)))').TotalMinutes.ToString('0'))]\n#[var revBuild  = $([MSBuild]::Add($(revDeltaMin), $([MSBuild]::Modulo($(revBuild), $([MSBuild]::Subtract($(revDeltaMax), $(revDeltaMin)))))))]\n\n#[var tplVersion = #[File get(\"Version.tpl\")]]\n\n#[var pDir          = vsSolutionBuildEvent/]\n#[var pDirBridge    = Bridge/]\n#[var pDirCIM       = CI.MSBuild/]\n#[var pDirDevenv    = Devenv\\]\n#[var pDirProvider  = Provider/]\n#[var pMvsSln       = MvsSln/]\n\n#[var numSBE        = #[File get(\".version\")]]\n#[var numBridge     = #[File get(\"#[var pDirBridge].version\")]]\n#[var numCIM        = #[File get(\"#[var pDirCIM].version\")]]\n#[var numDevenv     = #[File get(\"#[var pDirDevenv].version\")]]\n#[var numProvider   = #[File get(\"#[var pDirProvider].version\")]]\n\n#[\" the 0 number is reserved for patches from external assemblies /see AssemblyInfo \"]\n\n#[var num0Bridge     = #[var numBridge].0]\n#[var num0CIM        = #[var numCIM].0]\n#[var num0Devenv     = #[var numDevenv].0]\n#[var num0Provider   = #[var numProvider].0]\n\n#[var libCore       = #[var numSBE]]\n#[var libCoreInt    = $([System.Convert]::ToInt32(\"$(libCore.Replace('.', '0'))\"))]#[\" v0.12.5 -> 1205 \"]\n\n#[var cfgSDK = #[( $(Configuration) =^ \"_SDK15\" ) {15} else {10} ]]",
+        "Command": "#[\"\n    Prepares data - version, revBuild & information from git\n\"]\n\n#[var tBase     = $([System.DateTime]::Parse('$(revDeltaBase)').ToBinary())]\n#[var tNow      = $([System.DateTime]::UtcNow.Ticks)]\n#[var revBuild  = $([System.TimeSpan]::FromTicks('$([MSBuild]::Subtract($(tNow), $(tBase)))').TotalMinutes.ToString('0'))]\n#[var revBuild  = $([MSBuild]::Add($(revDeltaMin), $([MSBuild]::Modulo($(revBuild), $([MSBuild]::Subtract($(revDeltaMax), $(revDeltaMin)))))))]\n\n#[var tplVersion = #[File get(\"Version.tpl\")]]\n\n#[var pDir          = vsSolutionBuildEvent/]\n#[var pDirBridge    = Bridge/]\n#[var pDirCIM       = CI.MSBuild/]\n#[var pDirDevenv    = Devenv\\]\n#[var pDirProvider  = Provider/]\n#[var pMvsSln       = MvsSln/]\n\n#[var numSBE        = #[File get(\".version\")]]\n#[var numBridge     = #[File get(\"#[var pDirBridge].version\")]]\n#[var numCIM        = #[File get(\"#[var pDirCIM].version\")]]\n#[var numDevenv     = #[File get(\"#[var pDirDevenv].version\")]]\n#[var numProvider   = #[File get(\"#[var pDirProvider].version\")]]\n\n#[\" the 0 number is reserved for patches from external assemblies /see AssemblyInfo \"]\n\n#[var num0Bridge     = #[var numBridge].0]\n#[var num0CIM        = #[var numCIM]]\n#[var num0Devenv     = #[var numDevenv].0]\n#[var num0Provider   = #[var numProvider].0]\n\n#[var libCore       = #[var numSBE]]\n#[var libCoreInt    = $([System.Convert]::ToInt32(\"$(libCore.Replace('.', '0'))\"))]#[\" v0.12.5 -> 1205 \"]\n\n#[var cfgSDK = #[( $(Configuration) =^ \"_SDK15\" ) {15} else {10} ]]",
         "Command__": [
           "#[\"",
           "    Prepares data - version, revBuild & information from git",
@@ -158,7 +157,7 @@
           "#[\" the 0 number is reserved for patches from external assemblies /see AssemblyInfo \"]",
           "",
           "#[var num0Bridge     = #[var numBridge].0]",
-          "#[var num0CIM        = #[var numCIM].0]",
+          "#[var num0CIM        = #[var numCIM]]",
           "#[var num0Devenv     = #[var numDevenv].0]",
           "#[var num0Provider   = #[var numProvider].0]",
           "",
@@ -251,7 +250,7 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[\" \n    Checking of the git to define sha1, branch name, etc.\n\"]\n#[var isGit = #[IO cmd(\"git rev-parse 2>&1\")]]\n#[( $(isGit) == \"\" )\n{\n    #[var branchSha1        = #[File sout(\"git\", \"rev-parse --short HEAD\")]]\n    #[var branchName        = #[File sout(\"git\", \"rev-parse --abbrev-ref HEAD\")]]\n    #[var branchRevCount    = #[File sout(\"git\", \"rev-list HEAD --count\")]]\n    \n    #[var csVersion = $(tplVersion.Replace(%branchName%, \"$(branchName)\").Replace(%branchSha1%, \"$(branchSha1)\").Replace(%branchRevCount%, \"$(branchRevCount)\"))]\n    \n    #[($(branchName) == \"HEAD\") {\n        #[var branchName = $(APPVEYOR_REPO_BRANCH)]\n    }]\n}\nelse {\n    #[var branchSha1 =-] #[var branchName =-] #[var branchRevCount =-]\n    #[var csVersion = $(tplVersion.Replace(%branchName%, \"-\").Replace(%branchSha1%, \"-\").Replace(%branchRevCount%, \"-\"))]\n}]\n\n\n#[\"\n    'vsSolutionBuildEvent' project\n\"]\n\n#[var cs = $(csVersion.Replace(\"%Version%\", \"$(numSBE.Replace('.', ', ')), $(revBuild)\").Replace(\"%namespace%\", \"\"))]\n#[var cs = $(cs.Replace(\"%VersionRevString%\", \"$(numSBE).$(revBuild)\").Replace(\"%VersionString%\", \"$(numSBE)\"))]\n#[File write(\"#[var pDir]Version.cs\"):#[var cs]]\n\n\n#[\"\n    .vsixmanifest\n\"]\n\n#[( $(Configuration) ^= \"RCI_\" ) {\n    #[var numSBE = #[var numSBE].#[var revBuild]]\n}]\n#[File replace.Regexp(\"#[var pDir]/sdk10.vsixmanifest\", \"<Version>[0-9.]+</Version>\", \"<Version>#[var numSBE]</Version>\")]\n\n#[File replace.Regexp(\"#[var pDir]/sdk15.vsixmanifest\", \"(<Identity.*?) Version=\\\"[0-9.]+\\\"\", \"$1 Version=\\\"#[var numSBE]\\\"\")]\n",
+        "Command": "#[\" \n    Checking of the git to define sha1, branch name, etc.\n\"]\n#[var isGit = #[IO cmd(\"git rev-parse 2>&1\")]]\n#[( $(isGit) == \"\" )\n{\n    #[var bSha1        = #[File sout(\"git\", \"rev-parse --short HEAD\")]]\n    #[var bName        = #[File sout(\"git\", \"rev-parse --abbrev-ref HEAD\")]]\n    #[var bRevCount    = #[File sout(\"git\", \"rev-list HEAD --count\")]]\n    \n    #[var csVersion = $(tplVersion.Replace(%bName%, \"$(bName)\").Replace(%bSha1%, \"$(bSha1)\").Replace(%bRevCount%, \"$(bRevCount)\"))]\n    \n    #[($(bName) == \"HEAD\") {\n        #[var bName = $(APPVEYOR_REPO_BRANCH)]\n    }]\n}\nelse {\n    #[var bSha1 =-] #[var bName =-] #[var bRevCount =-]\n    #[var csVersion = $(tplVersion.Replace(%bName%, \"-\").Replace(%bSha1%, \"-\").Replace(%bRevCount%, \"-\"))]\n}]\n\n\n#[\"\n    'vsSolutionBuildEvent' project\n\"]\n\n#[var cs = $(csVersion.Replace(\"%Version%\", \"$(numSBE.Replace('.', ', ')), $(revBuild)\").Replace(\"%namespace%\", \"\"))]\n#[var cs = $(cs.Replace(\"%VersionRev%\", \"$(revBuild)\").Replace(\"%VersionString%\", \"$(numSBE)\"))]\n#[File write(\"#[var pDir]Version.cs\"):#[var cs]]\n\n\n#[\"\n    .vsixmanifest\n\"]\n\n#[var vsixvnum = #[var numSBE]]\n\n#[( $(Configuration) ^= \"RCI_\" ) {\n    #[var numSBE = #[var numSBE].#[var revBuild]]\n}]\n\n#[File replace.Regexp(\"#[var pDir]/sdk10.vsixmanifest\", \"<Version>[0-9.]+</Version>\", \"<Version>#[var vsixvnum]</Version>\")]\n\n#[File replace.Regexp(\"#[var pDir]/sdk15.vsixmanifest\", \"(<Identity.*?) Version=\\\"[0-9.]+\\\"\", \"$1 Version=\\\"#[var vsixvnum]\\\"\")]\n",
         "Command__": [
           "#[\" ",
           "    Checking of the git to define sha1, branch name, etc.",
@@ -259,19 +258,19 @@
           "#[var isGit = #[IO cmd(\"git rev-parse 2>&1\")]]",
           "#[( $(isGit) == \"\" )",
           "{",
-          "    #[var branchSha1        = #[File sout(\"git\", \"rev-parse --short HEAD\")]]",
-          "    #[var branchName        = #[File sout(\"git\", \"rev-parse --abbrev-ref HEAD\")]]",
-          "    #[var branchRevCount    = #[File sout(\"git\", \"rev-list HEAD --count\")]]",
+          "    #[var bSha1        = #[File sout(\"git\", \"rev-parse --short HEAD\")]]",
+          "    #[var bName        = #[File sout(\"git\", \"rev-parse --abbrev-ref HEAD\")]]",
+          "    #[var bRevCount    = #[File sout(\"git\", \"rev-list HEAD --count\")]]",
           "    ",
-          "    #[var csVersion = $(tplVersion.Replace(%branchName%, \"$(branchName)\").Replace(%branchSha1%, \"$(branchSha1)\").Replace(%branchRevCount%, \"$(branchRevCount)\"))]",
+          "    #[var csVersion = $(tplVersion.Replace(%bName%, \"$(bName)\").Replace(%bSha1%, \"$(bSha1)\").Replace(%bRevCount%, \"$(bRevCount)\"))]",
           "    ",
-          "    #[($(branchName) == \"HEAD\") {",
-          "        #[var branchName = $(APPVEYOR_REPO_BRANCH)]",
+          "    #[($(bName) == \"HEAD\") {",
+          "        #[var bName = $(APPVEYOR_REPO_BRANCH)]",
           "    }]",
           "}",
           "else {",
-          "    #[var branchSha1 =-] #[var branchName =-] #[var branchRevCount =-]",
-          "    #[var csVersion = $(tplVersion.Replace(%branchName%, \"-\").Replace(%branchSha1%, \"-\").Replace(%branchRevCount%, \"-\"))]",
+          "    #[var bSha1 =-] #[var bName =-] #[var bRevCount =-]",
+          "    #[var csVersion = $(tplVersion.Replace(%bName%, \"-\").Replace(%bSha1%, \"-\").Replace(%bRevCount%, \"-\"))]",
           "}]",
           "",
           "",
@@ -280,7 +279,7 @@
           "\"]",
           "",
           "#[var cs = $(csVersion.Replace(\"%Version%\", \"$(numSBE.Replace('.', ', ')), $(revBuild)\").Replace(\"%namespace%\", \"\"))]",
-          "#[var cs = $(cs.Replace(\"%VersionRevString%\", \"$(numSBE).$(revBuild)\").Replace(\"%VersionString%\", \"$(numSBE)\"))]",
+          "#[var cs = $(cs.Replace(\"%VersionRev%\", \"$(revBuild)\").Replace(\"%VersionString%\", \"$(numSBE)\"))]",
           "#[File write(\"#[var pDir]Version.cs\"):#[var cs]]",
           "",
           "",
@@ -288,12 +287,15 @@
           "    .vsixmanifest",
           "\"]",
           "",
+          "#[var vsixvnum = #[var numSBE]]",
+          "",
           "#[( $(Configuration) ^= \"RCI_\" ) {",
           "    #[var numSBE = #[var numSBE].#[var revBuild]]",
           "}]",
-          "#[File replace.Regexp(\"#[var pDir]/sdk10.vsixmanifest\", \"<Version>[0-9.]+</Version>\", \"<Version>#[var numSBE]</Version>\")]",
           "",
-          "#[File replace.Regexp(\"#[var pDir]/sdk15.vsixmanifest\", \"(<Identity.*?) Version=\\\"[0-9.]+\\\"\", \"$1 Version=\\\"#[var numSBE]\\\"\")]",
+          "#[File replace.Regexp(\"#[var pDir]/sdk10.vsixmanifest\", \"<Version>[0-9.]+</Version>\", \"<Version>#[var vsixvnum]</Version>\")]",
+          "",
+          "#[File replace.Regexp(\"#[var pDir]/sdk15.vsixmanifest\", \"(<Identity.*?) Version=\\\"[0-9.]+\\\"\", \"$1 Version=\\\"#[var vsixvnum]\\\"\")]",
           ""
         ]
       }
@@ -351,14 +353,14 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[\"\n    for 'Bridge'\n\"]\n\n#[var cs    = $(csVersion.Replace(\"%Version%\", \"$(num0Bridge.Replace('.', ', ')), $(revBuild)\").Replace(\"%namespace%\", \".Bridge\"))]\n#[var cs    = $(cs.Replace(\"%VersionRevString%\", \"$(num0Bridge).$(revBuild)\").Replace(\"%VersionString%\", \"$(num0Bridge)\"))]\n#[File write(\"#[var pDirBridge]Version.cs\"):#[var cs]]\n\n#[\"\n    for 'CI.MSBuild'\n\"]\n\n#[var cs    = $(csVersion.Replace(\"%Version%\", \"$(num0CIM.Replace('.', ', ')), $(revBuild)\").Replace(\"%namespace%\", \".CI.MSBuild\"))]\n#[var cs    = $(cs.Replace(\"%VersionRevString%\", \"$(num0CIM).$(revBuild)\").Replace(\"%VersionString%\", \"$(num0CIM)\"))]\n#[File write(\"#[var pDirCIM]Version.cs\"):#[var cs]]\n\n#[\"\n    for 'Devenv'\n\"]\n\n#[var cs    = $(csVersion.Replace(\"%Version%\", \"$(num0Devenv.Replace('.', ', ')), $(revBuild)\").Replace(\"%namespace%\", \".Devenv\"))]\n#[var cs    = $(cs.Replace(\"%VersionRevString%\", \"$(num0Devenv).$(revBuild)\").Replace(\"%VersionString%\", \"$(num0Devenv)\"))]\n#[File write(\"#[var pDirDevenv]Version.cs\"):#[var cs]]\n\n#[\"\n    for 'Provider'\n\"]\n\n#[var cs    = $(csVersion.Replace(\"%Version%\", \"$(num0Provider.Replace('.', ', ')), $(revBuild)\").Replace(\"%namespace%\", \".Provider\"))]\n#[var cs    = $(cs.Replace(\"%VersionRevString%\", \"$(num0Provider).$(revBuild)\").Replace(\"%VersionString%\", \"$(num0Provider)\"))]\n#[File write(\"#[var pDirProvider]Version.cs\"):#[var cs]]",
+        "Command": "#[\"\n    for 'Bridge'\n\"]\n\n#[var cs    = $(csVersion.Replace(\"%Version%\", \"$(num0Bridge.Replace('.', ', ')), $(revBuild)\").Replace(\"%namespace%\", \".Bridge\"))]\n#[var cs    = $(cs.Replace(\"%VersionRev%\", \"$(revBuild)\").Replace(\"%VersionString%\", \"$(num0Bridge)\"))]\n#[File write(\"#[var pDirBridge]Version.cs\"):#[var cs]]\n\n#[\"\n    for 'CI.MSBuild'\n\"]\n\n#[var cs    = $(csVersion.Replace(\"%Version%\", \"$(num0CIM.Replace('.', ', ')), $(revBuild)\").Replace(\"%namespace%\", \".CI.MSBuild\"))]\n#[var cs    = $(cs.Replace(\"%VersionRev%\", \"$(revBuild)\").Replace(\"%VersionString%\", \"$(num0CIM)\"))]\n#[File write(\"#[var pDirCIM]Version.cs\"):#[var cs]]\n\n#[\"\n    for 'Devenv'\n\"]\n\n#[var cs    = $(csVersion.Replace(\"%Version%\", \"$(num0Devenv.Replace('.', ', ')), $(revBuild)\").Replace(\"%namespace%\", \".Devenv\"))]\n#[var cs    = $(cs.Replace(\"%VersionRev%\", \"$(revBuild)\").Replace(\"%VersionString%\", \"$(num0Devenv)\"))]\n#[File write(\"#[var pDirDevenv]Version.cs\"):#[var cs]]\n\n#[\"\n    for 'Provider'\n\"]\n\n#[var cs    = $(csVersion.Replace(\"%Version%\", \"$(num0Provider.Replace('.', ', ')), $(revBuild)\").Replace(\"%namespace%\", \".Provider\"))]\n#[var cs    = $(cs.Replace(\"%VersionRev%\", \"$(revBuild)\").Replace(\"%VersionString%\", \"$(num0Provider)\"))]\n#[File write(\"#[var pDirProvider]Version.cs\"):#[var cs]]",
         "Command__": [
           "#[\"",
           "    for 'Bridge'",
           "\"]",
           "",
           "#[var cs    = $(csVersion.Replace(\"%Version%\", \"$(num0Bridge.Replace('.', ', ')), $(revBuild)\").Replace(\"%namespace%\", \".Bridge\"))]",
-          "#[var cs    = $(cs.Replace(\"%VersionRevString%\", \"$(num0Bridge).$(revBuild)\").Replace(\"%VersionString%\", \"$(num0Bridge)\"))]",
+          "#[var cs    = $(cs.Replace(\"%VersionRev%\", \"$(revBuild)\").Replace(\"%VersionString%\", \"$(num0Bridge)\"))]",
           "#[File write(\"#[var pDirBridge]Version.cs\"):#[var cs]]",
           "",
           "#[\"",
@@ -366,7 +368,7 @@
           "\"]",
           "",
           "#[var cs    = $(csVersion.Replace(\"%Version%\", \"$(num0CIM.Replace('.', ', ')), $(revBuild)\").Replace(\"%namespace%\", \".CI.MSBuild\"))]",
-          "#[var cs    = $(cs.Replace(\"%VersionRevString%\", \"$(num0CIM).$(revBuild)\").Replace(\"%VersionString%\", \"$(num0CIM)\"))]",
+          "#[var cs    = $(cs.Replace(\"%VersionRev%\", \"$(revBuild)\").Replace(\"%VersionString%\", \"$(num0CIM)\"))]",
           "#[File write(\"#[var pDirCIM]Version.cs\"):#[var cs]]",
           "",
           "#[\"",
@@ -374,7 +376,7 @@
           "\"]",
           "",
           "#[var cs    = $(csVersion.Replace(\"%Version%\", \"$(num0Devenv.Replace('.', ', ')), $(revBuild)\").Replace(\"%namespace%\", \".Devenv\"))]",
-          "#[var cs    = $(cs.Replace(\"%VersionRevString%\", \"$(num0Devenv).$(revBuild)\").Replace(\"%VersionString%\", \"$(num0Devenv)\"))]",
+          "#[var cs    = $(cs.Replace(\"%VersionRev%\", \"$(revBuild)\").Replace(\"%VersionString%\", \"$(num0Devenv)\"))]",
           "#[File write(\"#[var pDirDevenv]Version.cs\"):#[var cs]]",
           "",
           "#[\"",
@@ -382,7 +384,7 @@
           "\"]",
           "",
           "#[var cs    = $(csVersion.Replace(\"%Version%\", \"$(num0Provider.Replace('.', ', ')), $(revBuild)\").Replace(\"%namespace%\", \".Provider\"))]",
-          "#[var cs    = $(cs.Replace(\"%VersionRevString%\", \"$(num0Provider).$(revBuild)\").Replace(\"%VersionString%\", \"$(num0Provider)\"))]",
+          "#[var cs    = $(cs.Replace(\"%VersionRev%\", \"$(revBuild)\").Replace(\"%VersionString%\", \"$(num0Provider)\"))]",
           "#[File write(\"#[var pDirProvider]Version.cs\"):#[var cs]]"
         ]
       }
@@ -450,15 +452,13 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[var odir      = $(SolutionDir)bin/Releases/$(Configuration)/]\n#[var cfg       = #[( $(Configuration) ^= \"REL_\" || $(Configuration) ^= \"RCI_\" ){Release}else{Debug}]]\n#[var cfgFull   = $(Configuration)]\n#[var CIMLib    = $(SolutionDir)CIMLib\\bin\\]\n\n#[\" #[var netStamp      = net$(TargetFrameworkVersion.Replace(\".\", \"\").Replace(\"v\", \"\"))] \"]\n#[var netStamp      = $(NetTargetVName:vsSolutionBuildEvent)]\n#[var netVerString  = $(TargetFrameworkVersion:vsSolutionBuildEvent)]\n#[var msbuildver    = v$(MSBuildToolsVersion)]\n\n#[var tplNuspec = #[File get(\"tools/vsSBE.CI.MSBuild.nuspec\")]]\n\n#[IO delete.directory(\"$(odir)\", true)]\n#[IO copy.directory(\"\", \"$(odir)\", true)]",
+        "Command": "#[var odir      = $(SolutionDir)bin/Releases/$(Configuration)/]\n#[var cfg       = #[( $(Configuration) ^= \"REL_\" || $(Configuration) ^= \"RCI_\" ){Release}else{Debug}]]\n#[var cfgFull   = $(Configuration)]\n#[var CIMLib    = $(SolutionDir)CIMLib\\bin\\]\n\n#[var netVerString  = $(TargetFrameworkVersion:vsSolutionBuildEvent)]\n#[var msbuildver    = v$(MSBuildToolsVersion)]\n\n#[var tplNuspec = #[File get(\"tools/vsSBE.CI.MSBuild.nuspec\")]]\n\n#[IO delete.directory(\"$(odir)\", true)]\n#[IO copy.directory(\"\", \"$(odir)\", true)]",
         "Command__": [
           "#[var odir      = $(SolutionDir)bin/Releases/$(Configuration)/]",
           "#[var cfg       = #[( $(Configuration) ^= \"REL_\" || $(Configuration) ^= \"RCI_\" ){Release}else{Debug}]]",
           "#[var cfgFull   = $(Configuration)]",
           "#[var CIMLib    = $(SolutionDir)CIMLib\\bin\\]",
           "",
-          "#[\" #[var netStamp      = net$(TargetFrameworkVersion.Replace(\".\", \"\").Replace(\"v\", \"\"))] \"]",
-          "#[var netStamp      = $(NetTargetVName:vsSolutionBuildEvent)]",
           "#[var netVerString  = $(TargetFrameworkVersion:vsSolutionBuildEvent)]",
           "#[var msbuildver    = v$(MSBuildToolsVersion)]",
           "",
@@ -492,7 +492,7 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[var buildInfo =\n\n* Configuration:   '#[var cfgFull]' ( #[var cfg] );\n* SDK base:         #[var cfgSDK];\n* .NET version:     #[var netVerString];\n* Platform:         #[$(Platform)];\n* MSBuild Tools:    #[var msbuildver];\n* Build number:     #[var revBuild];\n* Branch Sha1:      #[var branchSha1];\n* Branch Name:      #[var branchName];\n* Branch revCount:  #[var branchRevCount];\n* revDeltaBase:     #[$(revDeltaBase)];    \n* revDeltaMin:      #[$(revDeltaMin)];    \n* revDeltaMax:      #[$(revDeltaMax)];\n------------------------------------------\n\nVersions:\n\n* The 'Bridge':                 v#[var numBridge];\n* The 'CI.MSBuild':             v#[var numCIM];\n#[( $(cfgSDK) == 10 ) { \n* The 'Devenv':                 v#[var numDevenv];\n}\nelse {\n* The 'Devenv':                 Unavailable for SDK#[$(cfgSDK)];\n}]\n* The 'Provider':               v#[var numProvider];\n* The 'vsSolutionBuildEvent':   v#[var numSBE];\n\nPackages:\n\n* NuGet 'vsSBE.CI.MSBuild': v#[var numCIM].#[var libCoreInt];\n\nDemo:\n\n* ClientDemo - [#[var branchSha1]][#[var netStamp]] (#[var revBuild]);\n\n------------------------------------------\n    :: generated by a vsSolutionBuildEvent v#[$(vsSolutionBuildEvent)]  \n------------------------------------------  \nhttps://github.com/3F/vsSolutionBuildEvent\n]\n\n#[File writeLine(\"$(odir)\\Release-notes.$(branchSha1).SDK$(cfgSDK).txt\"):#[var buildInfo]]\n\n#[var tplNuspec = $(tplNuspec.Replace(\"{build_info}\", \"$(buildInfo)\"))]",
+        "Command": "#[var buildInfo =\n\n* Configuration:   '#[var cfgFull]' ( #[var cfg] );\n* SDK base:         #[var cfgSDK];\n* .NET version:     #[var netVerString];\n* Platform:         #[$(Platform)];\n* MSBuild Tools:    #[var msbuildver];\n* Build number:     #[var revBuild];\n* Branch Sha1:      #[var bSha1];\n* Branch Name:      #[var bName];\n* Branch revCount:  #[var bRevCount];\n* revDeltaBase:     #[$(revDeltaBase)];    \n* revDeltaMin:      #[$(revDeltaMin)];    \n* revDeltaMax:      #[$(revDeltaMax)];\n------------------------------------------\n\nVersions:\n\n* The 'Bridge':                 v#[var numBridge];\n* The 'CI.MSBuild':             v#[var numCIM];\n#[( $(cfgSDK) == 10 ) { \n* The 'Devenv':                 v#[var numDevenv];\n}\nelse {\n* The 'Devenv':                 Unavailable for SDK#[$(cfgSDK)];\n}]\n* The 'Provider':               v#[var numProvider];\n* The 'vsSolutionBuildEvent':   v#[var numSBE];\n\nPackages:\n\n* NuGet 'vsSBE.CI.MSBuild': v#[var numCIM].#[var libCoreInt];\n\nDemo:\n\n* ClientDemo - [#[var bSha1]][#[var cfgSDK]] (#[var revBuild]);\n\n------------------------------------------\n    :: generated by a vsSolutionBuildEvent v#[$(vsSolutionBuildEvent)]  \n------------------------------------------  \nhttps://github.com/3F/vsSolutionBuildEvent\n]\n\n#[File writeLine(\"$(odir)\\Release-notes.$(bSha1).SDK$(cfgSDK).txt\"):#[var buildInfo]]\n\n#[var tplNuspec = $(tplNuspec.Replace(\"{build_info}\", \"$(buildInfo)\"))]",
         "Command__": [
           "#[var buildInfo =",
           "",
@@ -502,9 +502,9 @@
           "* Platform:         #[$(Platform)];",
           "* MSBuild Tools:    #[var msbuildver];",
           "* Build number:     #[var revBuild];",
-          "* Branch Sha1:      #[var branchSha1];",
-          "* Branch Name:      #[var branchName];",
-          "* Branch revCount:  #[var branchRevCount];",
+          "* Branch Sha1:      #[var bSha1];",
+          "* Branch Name:      #[var bName];",
+          "* Branch revCount:  #[var bRevCount];",
           "* revDeltaBase:     #[$(revDeltaBase)];    ",
           "* revDeltaMin:      #[$(revDeltaMin)];    ",
           "* revDeltaMax:      #[$(revDeltaMax)];",
@@ -529,7 +529,7 @@
           "",
           "Demo:",
           "",
-          "* ClientDemo - [#[var branchSha1]][#[var netStamp]] (#[var revBuild]);",
+          "* ClientDemo - [#[var bSha1]][#[var cfgSDK]] (#[var revBuild]);",
           "",
           "------------------------------------------",
           "    :: generated by a vsSolutionBuildEvent v#[$(vsSolutionBuildEvent)]  ",
@@ -537,7 +537,7 @@
           "https://github.com/3F/vsSolutionBuildEvent",
           "]",
           "",
-          "#[File writeLine(\"$(odir)\\Release-notes.$(branchSha1).SDK$(cfgSDK).txt\"):#[var buildInfo]]",
+          "#[File writeLine(\"$(odir)\\Release-notes.$(bSha1).SDK$(cfgSDK).txt\"):#[var buildInfo]]",
           "",
           "#[var tplNuspec = $(tplNuspec.Replace(\"{build_info}\", \"$(buildInfo)\"))]"
         ]
@@ -566,9 +566,9 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[IO copy.file(\"$(odir)\\Release-notes.$(branchSha1).SDK$(cfgSDK).txt\", \"$(pDirBridge)bin\\$(cfg)\\\\\", true)]\n#[7z pack.files(\n{ \n            \"$(pDirBridge)bin\\$(cfg)\\Bridge.dll\", \n            \"$(pDirBridge)bin\\$(cfg)\\Bridge.pdb\",\n            \n        #[( $(cfg) == \"Release\" ) { \n            \"$(pDirBridge)bin\\$(cfg)\\Bridge.xml\",\n        }]\n            \"$(pDirBridge)bin\\$(cfg)\\Release-notes.$(branchSha1).SDK$(cfgSDK).txt\" \n},\n\"$(odir)Bridge.$(numBridge)+$(branchSha1).SDK$(cfgSDK).zip\")]",
+        "Command": "#[IO copy.file(\"$(odir)\\Release-notes.$(bSha1).SDK$(cfgSDK).txt\", \"$(pDirBridge)bin\\$(cfg)\\\\\", true)]\n#[7z pack.files(\n{ \n            \"$(pDirBridge)bin\\$(cfg)\\Bridge.dll\", \n            \"$(pDirBridge)bin\\$(cfg)\\Bridge.pdb\",\n            \n        #[( $(cfg) == \"Release\" ) { \n            \"$(pDirBridge)bin\\$(cfg)\\Bridge.xml\",\n        }]\n            \"$(pDirBridge)bin\\$(cfg)\\Release-notes.$(bSha1).SDK$(cfgSDK).txt\" \n},\n\"$(odir)Bridge.$(numBridge)+$(bSha1).SDK$(cfgSDK).zip\")]",
         "Command__": [
-          "#[IO copy.file(\"$(odir)\\Release-notes.$(branchSha1).SDK$(cfgSDK).txt\", \"$(pDirBridge)bin\\$(cfg)\\\\\", true)]",
+          "#[IO copy.file(\"$(odir)\\Release-notes.$(bSha1).SDK$(cfgSDK).txt\", \"$(pDirBridge)bin\\$(cfg)\\\\\", true)]",
           "#[7z pack.files(",
           "{ ",
           "            \"$(pDirBridge)bin\\$(cfg)\\Bridge.dll\", ",
@@ -577,9 +577,9 @@
           "        #[( $(cfg) == \"Release\" ) { ",
           "            \"$(pDirBridge)bin\\$(cfg)\\Bridge.xml\",",
           "        }]",
-          "            \"$(pDirBridge)bin\\$(cfg)\\Release-notes.$(branchSha1).SDK$(cfgSDK).txt\" ",
+          "            \"$(pDirBridge)bin\\$(cfg)\\Release-notes.$(bSha1).SDK$(cfgSDK).txt\" ",
           "},",
-          "\"$(odir)Bridge.$(numBridge)+$(branchSha1).SDK$(cfgSDK).zip\")]"
+          "\"$(odir)Bridge.$(numBridge)+$(bSha1).SDK$(cfgSDK).zip\")]"
         ]
       }
     },
@@ -606,9 +606,9 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[IO copy.file(\"$(odir)\\Release-notes.$(branchSha1).SDK$(cfgSDK).txt\", \"$(pDirProvider)bin\\$(cfg)\\\\\", true)]\n#[7z pack.files(\n{\n            \"$(pDirProvider)bin\\$(cfg)\\Bridge.dll\", \n            \"$(pDirProvider)bin\\$(cfg)\\Bridge.pdb\",\n            \n        #[( $(cfg) == \"Release\" ) { \n            \"$(pDirProvider)bin\\$(cfg)\\Bridge.xml\",\n            \"$(pDirProvider)bin\\$(cfg)\\Provider.xml\",\n        }]\n            \n            \"$(pDirProvider)bin\\$(cfg)\\Provider.dll\",\n            \"$(pDirProvider)bin\\$(cfg)\\Provider.pdb\",\n            \"$(pDirProvider)bin\\$(cfg)\\Release-notes.$(branchSha1).SDK$(cfgSDK).txt\" \n            \n}, \n\"$(odir)Provider.$(numProvider)+$(branchSha1).SDK$(cfgSDK).zip\")]",
+        "Command": "#[IO copy.file(\"$(odir)\\Release-notes.$(bSha1).SDK$(cfgSDK).txt\", \"$(pDirProvider)bin\\$(cfg)\\\\\", true)]\n#[7z pack.files(\n{\n            \"$(pDirProvider)bin\\$(cfg)\\Bridge.dll\", \n            \"$(pDirProvider)bin\\$(cfg)\\Bridge.pdb\",\n            \n        #[( $(cfg) == \"Release\" ) { \n            \"$(pDirProvider)bin\\$(cfg)\\Bridge.xml\",\n            \"$(pDirProvider)bin\\$(cfg)\\Provider.xml\",\n        }]\n            \n            \"$(pDirProvider)bin\\$(cfg)\\Provider.dll\",\n            \"$(pDirProvider)bin\\$(cfg)\\Provider.pdb\",\n            \"$(pDirProvider)bin\\$(cfg)\\Release-notes.$(bSha1).SDK$(cfgSDK).txt\" \n            \n}, \n\"$(odir)Provider.$(numProvider)+$(bSha1).SDK$(cfgSDK).zip\")]",
         "Command__": [
-          "#[IO copy.file(\"$(odir)\\Release-notes.$(branchSha1).SDK$(cfgSDK).txt\", \"$(pDirProvider)bin\\$(cfg)\\\\\", true)]",
+          "#[IO copy.file(\"$(odir)\\Release-notes.$(bSha1).SDK$(cfgSDK).txt\", \"$(pDirProvider)bin\\$(cfg)\\\\\", true)]",
           "#[7z pack.files(",
           "{",
           "            \"$(pDirProvider)bin\\$(cfg)\\Bridge.dll\", ",
@@ -621,10 +621,10 @@
           "            ",
           "            \"$(pDirProvider)bin\\$(cfg)\\Provider.dll\",",
           "            \"$(pDirProvider)bin\\$(cfg)\\Provider.pdb\",",
-          "            \"$(pDirProvider)bin\\$(cfg)\\Release-notes.$(branchSha1).SDK$(cfgSDK).txt\" ",
+          "            \"$(pDirProvider)bin\\$(cfg)\\Release-notes.$(bSha1).SDK$(cfgSDK).txt\" ",
           "            ",
           "}, ",
-          "\"$(odir)Provider.$(numProvider)+$(branchSha1).SDK$(cfgSDK).zip\")]"
+          "\"$(odir)Provider.$(numProvider)+$(bSha1).SDK$(cfgSDK).zip\")]"
         ]
       }
     },
@@ -651,9 +651,9 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[IO copy.file(\"$(odir)\\Release-notes.$(branchSha1).SDK$(cfgSDK).txt\", \"$(pDirCIM)bin\\$(cfg)\\\\\", true)]\n#[7z pack.files(\n{\n            \"$(pDirCIM)bin\\$(cfg)\\Bridge.dll\", \n            \"$(pDirCIM)bin\\$(cfg)\\Bridge.pdb\",\n            \"$(pDirCIM)bin\\$(cfg)\\Provider.dll\",\n            \"$(pDirCIM)bin\\$(cfg)\\Provider.pdb\",\n            \n        #[( $(cfg) == \"Release\" ) { \n            \"$(pDirCIM)bin\\$(cfg)\\Bridge.xml\",\n            \"$(pDirCIM)bin\\$(cfg)\\Provider.xml\",\n            \"$(pDirCIM)bin\\$(cfg)\\CI.MSBuild.xml\",\n        }]\n            \n            \"$(pDirCIM)bin\\$(cfg)\\CI.MSBuild.dll\",\n            \"$(pDirCIM)bin\\$(cfg)\\CI.MSBuild.pdb\",\n            \"$(pDirCIM)bin\\$(cfg)\\Release-notes.$(branchSha1).SDK$(cfgSDK).txt\"\n},\n\"$(odir)CI.MSBuild.$(numCIM)+$(branchSha1).SDK$(cfgSDK).zip\")]",
+        "Command": "#[IO copy.file(\"$(odir)\\Release-notes.$(bSha1).SDK$(cfgSDK).txt\", \"$(pDirCIM)bin\\$(cfg)\\\\\", true)]\n#[7z pack.files(\n{\n            \"$(pDirCIM)bin\\$(cfg)\\Bridge.dll\", \n            \"$(pDirCIM)bin\\$(cfg)\\Bridge.pdb\",\n            \"$(pDirCIM)bin\\$(cfg)\\Provider.dll\",\n            \"$(pDirCIM)bin\\$(cfg)\\Provider.pdb\",\n            \n        #[( $(cfg) == \"Release\" ) { \n            \"$(pDirCIM)bin\\$(cfg)\\Bridge.xml\",\n            \"$(pDirCIM)bin\\$(cfg)\\Provider.xml\",\n            \"$(pDirCIM)bin\\$(cfg)\\CI.MSBuild.xml\",\n        }]\n            \n            \"$(pDirCIM)bin\\$(cfg)\\CI.MSBuild.dll\",\n            \"$(pDirCIM)bin\\$(cfg)\\CI.MSBuild.pdb\",\n            \"$(pDirCIM)bin\\$(cfg)\\Release-notes.$(bSha1).SDK$(cfgSDK).txt\"\n},\n\"$(odir)CI.MSBuild.$(numCIM)+$(bSha1).SDK$(cfgSDK).zip\")]",
         "Command__": [
-          "#[IO copy.file(\"$(odir)\\Release-notes.$(branchSha1).SDK$(cfgSDK).txt\", \"$(pDirCIM)bin\\$(cfg)\\\\\", true)]",
+          "#[IO copy.file(\"$(odir)\\Release-notes.$(bSha1).SDK$(cfgSDK).txt\", \"$(pDirCIM)bin\\$(cfg)\\\\\", true)]",
           "#[7z pack.files(",
           "{",
           "            \"$(pDirCIM)bin\\$(cfg)\\Bridge.dll\", ",
@@ -669,9 +669,9 @@
           "            ",
           "            \"$(pDirCIM)bin\\$(cfg)\\CI.MSBuild.dll\",",
           "            \"$(pDirCIM)bin\\$(cfg)\\CI.MSBuild.pdb\",",
-          "            \"$(pDirCIM)bin\\$(cfg)\\Release-notes.$(branchSha1).SDK$(cfgSDK).txt\"",
+          "            \"$(pDirCIM)bin\\$(cfg)\\Release-notes.$(bSha1).SDK$(cfgSDK).txt\"",
           "},",
-          "\"$(odir)CI.MSBuild.$(numCIM)+$(branchSha1).SDK$(cfgSDK).zip\")]"
+          "\"$(odir)CI.MSBuild.$(numCIM)+$(bSha1).SDK$(cfgSDK).zip\")]"
         ]
       }
     },
@@ -698,7 +698,7 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[( $(cfgSDK) == 10 )\n{ \n    #[var _DP = $(SolutionDir)$(pDirDevenv)bin\\#[var cfg]\\]\n    \n    #[IO delete.directory(\"$(_DP)Devenv\", true)]\n    #[IO copy.directory(\"\", \"$(_DP)Devenv\", true)]\n    \n    #[IO copy.file({\n                    \"$(_DP)Bridge.*\",\n                    \"$(_DP)Provider.*\",\n                    \"$(_DP)Devenv.*\"\n                   },\n                   \"$(_DP)Devenv\\\\\", true, {\"Devenv.AddIn\"})]\n    \n    #[( #[IO exists.file(\"$(_DP)Extensibility.dll\")] ) {\n        #[IO copy.file(\"$(_DP)Extensibility.dll\", \"$(_DP)\\Devenv\\\\\", true)]\n    }]\n    \n    #[IO copy.file(\"$(odir)\\Release-notes.$(branchSha1).SDK$(cfgSDK).txt\", \"$(_DP)Devenv\\\\\", true)]\n    #[7z pack.files({\"$(_DP)Devenv.AddIn\", \"$(_DP)Devenv\\*.*\"}, \"$(odir)Devenv.$(numDevenv)+$(branchSha1).SDK$(cfgSDK).zip\")]\n    \n}]",
+        "Command": "#[( $(cfgSDK) == 10 )\n{ \n    #[var _DP = $(SolutionDir)$(pDirDevenv)bin\\#[var cfg]\\]\n    \n    #[IO delete.directory(\"$(_DP)Devenv\", true)]\n    #[IO copy.directory(\"\", \"$(_DP)Devenv\", true)]\n    \n    #[IO copy.file({\n                    \"$(_DP)Bridge.*\",\n                    \"$(_DP)Provider.*\",\n                    \"$(_DP)Devenv.*\"\n                   },\n                   \"$(_DP)Devenv\\\\\", true, {\"Devenv.AddIn\"})]\n    \n    #[( #[IO exists.file(\"$(_DP)Extensibility.dll\")] ) {\n        #[IO copy.file(\"$(_DP)Extensibility.dll\", \"$(_DP)\\Devenv\\\\\", true)]\n    }]\n    \n    #[IO copy.file(\"$(odir)\\Release-notes.$(bSha1).SDK$(cfgSDK).txt\", \"$(_DP)Devenv\\\\\", true)]\n    #[7z pack.files({\"$(_DP)Devenv.AddIn\", \"$(_DP)Devenv\\*.*\"}, \"$(odir)Devenv.$(numDevenv)+$(bSha1).SDK$(cfgSDK).zip\")]\n    \n}]",
         "Command__": [
           "#[( $(cfgSDK) == 10 )",
           "{ ",
@@ -718,8 +718,8 @@
           "        #[IO copy.file(\"$(_DP)Extensibility.dll\", \"$(_DP)\\Devenv\\\\\", true)]",
           "    }]",
           "    ",
-          "    #[IO copy.file(\"$(odir)\\Release-notes.$(branchSha1).SDK$(cfgSDK).txt\", \"$(_DP)Devenv\\\\\", true)]",
-          "    #[7z pack.files({\"$(_DP)Devenv.AddIn\", \"$(_DP)Devenv\\*.*\"}, \"$(odir)Devenv.$(numDevenv)+$(branchSha1).SDK$(cfgSDK).zip\")]",
+          "    #[IO copy.file(\"$(odir)\\Release-notes.$(bSha1).SDK$(cfgSDK).txt\", \"$(_DP)Devenv\\\\\", true)]",
+          "    #[7z pack.files({\"$(_DP)Devenv.AddIn\", \"$(_DP)Devenv\\*.*\"}, \"$(odir)Devenv.$(numDevenv)+$(bSha1).SDK$(cfgSDK).zip\")]",
           "    ",
           "}]"
         ]
@@ -748,11 +748,11 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[IO copy.file(\n            \"$(pDir)bin\\$(cfg)\\vsSolutionBuildEvent.vsix\", \n            \"$(odir)vsSolutionBuildEvent.$(numSBE)+$(branchSha1).SDK$(cfgSDK).vsix\", \n            true)]",
+        "Command": "#[IO copy.file(\n            \"$(pDir)bin\\$(cfg)\\vsSolutionBuildEvent.vsix\", \n            \"$(odir)vsSolutionBuildEvent.$(vsixvnum)+$(bSha1).SDK$(cfgSDK).vsix\", \n            true)]",
         "Command__": [
           "#[IO copy.file(",
           "            \"$(pDir)bin\\$(cfg)\\vsSolutionBuildEvent.vsix\", ",
-          "            \"$(odir)vsSolutionBuildEvent.$(numSBE)+$(branchSha1).SDK$(cfgSDK).vsix\", ",
+          "            \"$(odir)vsSolutionBuildEvent.$(vsixvnum)+$(bSha1).SDK$(cfgSDK).vsix\", ",
           "            true)]"
         ]
       }
@@ -817,7 +817,7 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[var nupCIMdir = $(odir)NuGet-CI.MSBuild-package]\n\n#[IO delete.directory(\"$(nupCIMdir)\", true)]\n#[IO copy.directory(\"\", \"$(nupCIMdir)\", true)]\n\n#[var nuspec = $(tplNuspec.Replace(\"%CIM%\", \"$(numCIM)\").Replace(\"%Lib%\", \"$(libCoreInt)\").Replace(\"%vsSBE%\", \"$(numSBE)\"))]\n#[File write(\"$(nupCIMdir)\\vsSBE.CI.MSBuild.nuspec\"):#[var nuspec]]\n\n#[\" files for package \"]\n\n#[IO copy.file(\"$(CIMLib)\\*.dll\", \"$(nupCIMdir)\\bin\\\\\", true)]#[\" CIMLib custom \"]\n\n#[\" vsix dir \"]\n#[IO copy.file({\n                 \"$(pDir)bin/$(cfg)\\*.dll\",\n                 \"$(pDirCIM)bin/$(cfg)\\*.dll\",\n                 \"$(odir)\\Release-notes.$(branchSha1).SDK$(cfgSDK).txt\",\n                 \"3rd-party\",\n                 \"changelog.txt\",\n                 \"LICENSE\",\n                 \"$(pDirCIM)bin/$(cfg)\\*.bat\" \n               },\n               \"$(nupCIMdir)\\bin\\\\\", true)]\n               \n#[IO copy.file({\n                 \"README.md\"\n               },\n               \"$(nupCIMdir)\", true)]\n\n\n#[\" xml doc \"]\n#[( $(cfg) == \"Release\" )\n{\n    #[IO copy.file({\n                     \"$(pDirCIM)bin/$(cfg)\\Bridge.xml\",\n                     \"$(pDirCIM)bin/$(cfg)\\Provider.xml\",\n                     \"$(pDirCIM)bin/$(cfg)\\CI.MSBuild.xml\",\n                     \"$(pDir)bin/$(cfg)\\vsSolutionBuildEvent.xml\"\n                   }, \n                   \"$(nupCIMdir)\\bin\\\\\", true)]\n}]\n\n#[NuGet gnt.raw(\"gnt.core /t:pack /p:ngin=\\\"$(nupCIMdir)\\\" /p:ngout=\\\"$(odir)\\\"\")]\n#[IO delete.directory(\"$(nupCIMdir)\", true)]\n\n#[IO copy.file(\"$(odir)\\vsSBE.CI.MSBuild.$(numCIM).$(libCoreInt).nupkg\", \"$(odir)\\vsSBE.CI.MSBuild.$(numCIM).$(libCoreInt)+$(branchSha1).SDK$(cfgSDK).nupkg\", true)]\n#[IO delete.files({\"$(odir)\\vsSBE.CI.MSBuild.$(numCIM).$(libCoreInt).nupkg\"})]",
+        "Command": "#[var nupCIMdir = $(odir)NuGet-CI.MSBuild-package]\n\n#[IO delete.directory(\"$(nupCIMdir)\", true)]\n#[IO copy.directory(\"\", \"$(nupCIMdir)\", true)]\n\n#[var nuspec = $(tplNuspec.Replace(\"%CIM%\", \"$(numCIM)\").Replace(\"%Lib%\", \"$(libCoreInt)\").Replace(\"%vsSBE%\", \"$(numSBE)\"))]\n#[File write(\"$(nupCIMdir)\\vsSBE.CI.MSBuild.nuspec\"):#[var nuspec]]\n\n#[\" files for package \"]\n\n#[IO copy.file(\"$(CIMLib)\\*.dll\", \"$(nupCIMdir)\\bin\\\\\", true)]#[\" CIMLib custom \"]\n\n#[\" vsix dir \"]\n#[IO copy.file({\n                 \"$(pDir)bin/$(cfg)\\*.dll\",\n                 \"$(pDirCIM)bin/$(cfg)\\*.dll\",\n                 \"$(odir)\\Release-notes.$(bSha1).SDK$(cfgSDK).txt\",\n                 \"3rd-party\",\n                 \"changelog.txt\",\n                 \"LICENSE\",\n                 \"$(pDirCIM)bin/$(cfg)\\*.bat\" \n               },\n               \"$(nupCIMdir)\\bin\\\\\", true)]\n               \n#[IO copy.file({\n                 \"README.md\"\n               },\n               \"$(nupCIMdir)\", true)]\n\n\n#[\" xml doc \"]\n#[( $(cfg) == \"Release\" )\n{\n    #[IO copy.file({\n                     \"$(pDirCIM)bin/$(cfg)\\Bridge.xml\",\n                     \"$(pDirCIM)bin/$(cfg)\\Provider.xml\",\n                     \"$(pDirCIM)bin/$(cfg)\\CI.MSBuild.xml\",\n                     \"$(pDir)bin/$(cfg)\\vsSolutionBuildEvent.xml\"\n                   }, \n                   \"$(nupCIMdir)\\bin\\\\\", true)]\n}]\n\n#[NuGet gnt.raw(\"gnt.core /t:pack /p:ngin=\\\"$(nupCIMdir)\\\" /p:ngout=\\\"$(odir)\\\"\")]\n#[IO delete.directory(\"$(nupCIMdir)\", true)]\n\n#[IO copy.file(\"$(odir)\\vsSBE.CI.MSBuild.$(numCIM).nupkg\", \"$(odir)\\vsSBE.CI.MSBuild.$(numCIM)+$(bSha1).SDK$(cfgSDK).nupkg\", true)]\n#[IO delete.files({\"$(odir)\\vsSBE.CI.MSBuild.$(numCIM).nupkg\"})]",
         "Command__": [
           "#[var nupCIMdir = $(odir)NuGet-CI.MSBuild-package]",
           "",
@@ -835,7 +835,7 @@
           "#[IO copy.file({",
           "                 \"$(pDir)bin/$(cfg)\\*.dll\",",
           "                 \"$(pDirCIM)bin/$(cfg)\\*.dll\",",
-          "                 \"$(odir)\\Release-notes.$(branchSha1).SDK$(cfgSDK).txt\",",
+          "                 \"$(odir)\\Release-notes.$(bSha1).SDK$(cfgSDK).txt\",",
           "                 \"3rd-party\",",
           "                 \"changelog.txt\",",
           "                 \"LICENSE\",",
@@ -864,8 +864,8 @@
           "#[NuGet gnt.raw(\"gnt.core /t:pack /p:ngin=\\\"$(nupCIMdir)\\\" /p:ngout=\\\"$(odir)\\\"\")]",
           "#[IO delete.directory(\"$(nupCIMdir)\", true)]",
           "",
-          "#[IO copy.file(\"$(odir)\\vsSBE.CI.MSBuild.$(numCIM).$(libCoreInt).nupkg\", \"$(odir)\\vsSBE.CI.MSBuild.$(numCIM).$(libCoreInt)+$(branchSha1).SDK$(cfgSDK).nupkg\", true)]",
-          "#[IO delete.files({\"$(odir)\\vsSBE.CI.MSBuild.$(numCIM).$(libCoreInt).nupkg\"})]"
+          "#[IO copy.file(\"$(odir)\\vsSBE.CI.MSBuild.$(numCIM).nupkg\", \"$(odir)\\vsSBE.CI.MSBuild.$(numCIM)+$(bSha1).SDK$(cfgSDK).nupkg\", true)]",
+          "#[IO delete.files({\"$(odir)\\vsSBE.CI.MSBuild.$(numCIM).nupkg\"})]"
         ]
       }
     },
@@ -892,14 +892,14 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[var clientDemoDir = ClientDemo\\bin\\#[var cfg]\\]\n#[7z pack.files({\n            \"$(clientDemoDir)Bridge.dll\", \n            \"$(clientDemoDir)Bridge.pdb\",\n            \"$(clientDemoDir)client.vssbe.dll\",\n            \"$(clientDemoDir)client.vssbe.pdb\"}, \"$(odir)ClientDemo.$(branchSha1).SDK$(cfgSDK).zip\")]",
+        "Command": "#[var clientDemoDir = ClientDemo\\bin\\#[var cfg]\\]\n#[7z pack.files({\n            \"$(clientDemoDir)Bridge.dll\", \n            \"$(clientDemoDir)Bridge.pdb\",\n            \"$(clientDemoDir)client.vssbe.dll\",\n            \"$(clientDemoDir)client.vssbe.pdb\"}, \"$(odir)ClientDemo.$(bSha1).SDK$(cfgSDK).zip\")]",
         "Command__": [
           "#[var clientDemoDir = ClientDemo\\bin\\#[var cfg]\\]",
           "#[7z pack.files({",
           "            \"$(clientDemoDir)Bridge.dll\", ",
           "            \"$(clientDemoDir)Bridge.pdb\",",
           "            \"$(clientDemoDir)client.vssbe.dll\",",
-          "            \"$(clientDemoDir)client.vssbe.pdb\"}, \"$(odir)ClientDemo.$(branchSha1).SDK$(cfgSDK).zip\")]"
+          "            \"$(clientDemoDir)client.vssbe.pdb\"}, \"$(odir)ClientDemo.$(bSha1).SDK$(cfgSDK).zip\")]"
         ]
       }
     },
@@ -926,12 +926,12 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[$(getcimName = 'get.CIM.$(numCIM).$(libCoreInt).bat')]\n#[IO copy.file(\"$(SolutionDir)\\tools\\gnt.bat\", \"$(odir)\\$(getcimName)\", true)]\n\n#[File replace(\"$(odir)\\$(getcimName)\", \"/nologo\", \"/nologo /p:ngpackages=\\\"vsSBE.CI.MSBuild/$(numCIM).$(libCoreInt)\\\"\")]",
+        "Command": "#[$(getcimName = 'get.CIM.$(numCIM).bat')]\n#[IO copy.file(\"$(SolutionDir)\\tools\\gnt.bat\", \"$(odir)\\$(getcimName)\", true)]\n\n#[File replace(\"$(odir)\\$(getcimName)\", \"/nologo\", \"/nologo /p:ngpackages=\\\"vsSBE.CI.MSBuild/$(numCIM)\\\"\")]",
         "Command__": [
-          "#[$(getcimName = 'get.CIM.$(numCIM).$(libCoreInt).bat')]",
+          "#[$(getcimName = 'get.CIM.$(numCIM).bat')]",
           "#[IO copy.file(\"$(SolutionDir)\\tools\\gnt.bat\", \"$(odir)\\$(getcimName)\", true)]",
           "",
-          "#[File replace(\"$(odir)\\$(getcimName)\", \"/nologo\", \"/nologo /p:ngpackages=\\\"vsSBE.CI.MSBuild/$(numCIM).$(libCoreInt)\\\"\")]"
+          "#[File replace(\"$(odir)\\$(getcimName)\", \"/nologo\", \"/nologo /p:ngpackages=\\\"vsSBE.CI.MSBuild/$(numCIM)\\\"\")]"
         ]
       }
     }

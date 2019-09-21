@@ -509,7 +509,7 @@
             // 
             this.menuSBEScript.Name = "menuSBEScript";
             this.menuSBEScript.Size = new System.Drawing.Size(215, 22);
-            this.menuSBEScript.Text = "SBE-Scripts Testing tool";
+            this.menuSBEScript.Text = "Testing tool";
             this.menuSBEScript.Click += new System.EventHandler(this.menuSBEScript_Click);
             // 
             // toolStripSeparator9
@@ -1227,7 +1227,7 @@
             this.checkBoxSBEScriptSupport.Name = "checkBoxSBEScriptSupport";
             this.checkBoxSBEScriptSupport.Size = new System.Drawing.Size(120, 17);
             this.checkBoxSBEScriptSupport.TabIndex = 21;
-            this.checkBoxSBEScriptSupport.Text = "SBE-Scripts support";
+            this.checkBoxSBEScriptSupport.Text = "SobaScript support";
             this.checkBoxSBEScriptSupport.UseVisualStyleBackColor = true;
             this.checkBoxSBEScriptSupport.CheckedChanged += new System.EventHandler(this.checkBoxSBEScriptSupport_CheckedChanged);
             // 

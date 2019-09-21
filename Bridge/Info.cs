@@ -44,7 +44,7 @@ namespace net.r_eg.vsSBE.Bridge
         /// </summary>
         public string BranchName
         {
-            get { return LibVersion.branchName; }
+            get { return LibVersion.B_NAME; }
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace net.r_eg.vsSBE.Bridge
         /// </summary>
         public string BranchSha1
         {
-            get { return LibVersion.branchSha1; }
+            get { return LibVersion.B_SHA1; }
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace net.r_eg.vsSBE.Bridge
         /// </summary>
         public string BranchRevCount
         {
-            get { return LibVersion.branchRevCount; }
+            get { return LibVersion.B_REVC; }
         }
 
         /// <summary>

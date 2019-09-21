@@ -234,7 +234,7 @@
             this.checkBoxMSBuildSupport.Name = "checkBoxMSBuildSupport";
             this.checkBoxMSBuildSupport.Size = new System.Drawing.Size(89, 17);
             this.checkBoxMSBuildSupport.TabIndex = 9;
-            this.checkBoxMSBuildSupport.Text = "MSBuild core";
+            this.checkBoxMSBuildSupport.Text = "E-MSBuild engine";
             this.checkBoxMSBuildSupport.UseVisualStyleBackColor = true;
             // 
             // btnExecute
@@ -411,7 +411,7 @@
             this.MinimumSize = new System.Drawing.Size(400, 210);
             this.Name = "ScriptCheckFrm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Testing Tool:  SBE-Scripts";
+            this.Text = "Testing Tool: SobaScript, E-MSBuild, Varhead, ...";
             this.contextMenuUVariables.ResumeLayout(false);
             this.splitContainerMVertical.Panel1.ResumeLayout(false);
             this.splitContainerMVertical.Panel2.ResumeLayout(false);
