@@ -11,8 +11,8 @@ namespace net.r_eg.vsSBE%namespace%
 
         public const string S_NUM_REV = S_NUM + "." + S_REV;
 
-        public const string B_SHA1 = "%bName%";
-        public const string B_NAME = "%bSha1%";
+        public const string B_SHA1 = "%bSha1%";
+        public const string B_NAME = "%bName%";
         public const string B_REVC = "%bRevCount%";
 
         internal const string S_INFO      = S_NUM_REV + "+" + B_SHA1;

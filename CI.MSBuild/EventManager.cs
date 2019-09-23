@@ -137,8 +137,10 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         {
             termination(); // This is first place where we can use it
 
-            if(e.ProjectFile.EndsWith(".metaproj", StringComparison.OrdinalIgnoreCase)) {
-                debug(".metaproj has been ignored for '{0}'", e.ProjectFile);
+            if(e.ProjectFile.EndsWith(".metaproj", StringComparison.InvariantCultureIgnoreCase)
+                || e.ProjectFile.EndsWith(".user", StringComparison.InvariantCultureIgnoreCase))
+            {
+                debug($"ignored '{e.ProjectFile}'");
                 return;
             }
 
