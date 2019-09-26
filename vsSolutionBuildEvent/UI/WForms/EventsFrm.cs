@@ -180,13 +180,12 @@ namespace net.r_eg.vsSBE.UI.WForms
             Icon = Resource.Package_32;
             toolTip.SetToolTip(pictureBoxWarnWait, Resource.StringWarnForWaiting);
 
+            Text = $"{loader.Env.SolutionFileName} - {Settings.APP_NAME}";
+
 #if DEBUG
-            this.Text                       = $"{Settings.APP_NAME} [Debug version]";
-            toolStripMenuVersion.Text       = $"based on {Version.B_SHA1}";
+            Text += " [Debug version]";
+            toolStripMenuVersion.Text = $"based on {Version.B_SHA1}";
 #else
-            //if(Version.branchName.ToLower() != "releases") {
-            //    this.Text = String.Format("{0}  [Unofficial release]", Settings.APP_NAME);
-            //}
             toolStripMenuVersion.Text = $"v{Version.S_NUM}+{Version.B_SHA1}";
 #endif
             menuCfgSuppressDualCmd.Checked = Settings.CfgUser.Global.SuppressDualCommand;

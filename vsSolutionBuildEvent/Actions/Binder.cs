@@ -143,7 +143,7 @@ namespace net.r_eg.vsSBE.Actions
 
                 try {
                     if(Cmd.exec(item, SolutionEventType.Post)) {
-                        Log.Info("[Post] finished SBE: {0}", item.Caption);
+                        Log.Info($"[Post] finished '{item.Name}': {item.Caption}");
                     }
                     Status._.add(SolutionEventType.Post, StatusType.Success);
                 }
@@ -223,7 +223,7 @@ namespace net.r_eg.vsSBE.Actions
 
                 try {
                     if(Cmd.exec(item, SolutionEventType.Cancel)) {
-                        Log.Info("[Cancel] finished SBE: {0}", item.Caption);
+                        Log.Info($"[Cancel] finished '{item.Name}': {item.Caption}");
                     }
                     Status._.add(SolutionEventType.Cancel, StatusType.Success);
                 }
@@ -399,7 +399,7 @@ namespace net.r_eg.vsSBE.Actions
 
             try {
                 if(Cmd.exec(evt, (type == Receiver.Output.EWType.Warnings)? SolutionEventType.Warnings : SolutionEventType.Errors)) {
-                    Log.Info("[{0}] finished SBE: {1}", type, evt.Caption);
+                    Log.Info($"[{type}] finished '{evt.Name}': {evt.Caption}");
                 }
                 return Codes.Success;
             }
@@ -429,7 +429,7 @@ namespace net.r_eg.vsSBE.Actions
 
             try {
                 if(Cmd.exec(evt, SolutionEventType.OWP)) {
-                    Log.Info("[Output] finished SBE: {0}", evt.Caption);
+                    Log.Info($"[Output] finished '{evt.Name}': {evt.Caption}");
                 }
                 return Codes.Success;
             }
@@ -536,7 +536,7 @@ namespace net.r_eg.vsSBE.Actions
             {
                 try {
                     if(Cmd.exec(item, type)) {
-                        Log.Info("[{0}] finished SBE: `{1}`", typeString, item.Caption);
+                        Log.Info($"[{typeString}] finished '{item.Name}': {item.Caption}");
                     }
                     Status._.add(type, StatusType.Success);
                 }
@@ -556,7 +556,7 @@ namespace net.r_eg.vsSBE.Actions
         {
             try {
                 if(Cmd.exec(evt, SolutionEventType.Pre)) {
-                    Log.Info("[Pre] finished SBE: {0}", evt.Caption);
+                    Log.Info($"[Pre] finished '{evt.Name}': {evt.Caption}");
                 }
                 return Codes.Success;
             }

@@ -113,7 +113,7 @@ namespace net.r_eg.vsSBE.Actions
                 return false;
             }
 
-            Log.Info("Launching action '{0}' :: Configuration - '{1}'", evt.Caption, cfg);
+            Log.Info($"Launching action '{evt.Name}' for '{cfg}': {evt.Caption}");
             return actionBy(evt);
         }
 

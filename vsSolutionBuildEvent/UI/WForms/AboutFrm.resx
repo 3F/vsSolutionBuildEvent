@@ -118,13 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="textBoxIncludes.Text" xml:space="preserve">
-    <value>* AvalonEdit (avalonedit.net)
+    <value>* E-MSBuild (github.com/3F/E-MSBuild)
+* Varhead (github.com/3F/Varhead)
+* SobaScript (github.com/3F/SobaScript)
+    * Core Components (github.com/3F/SobaScript.Z.Core)
+    * Ext Components (github.com/3F/SobaScript.Z.Ext)
+    * VS Components (github.com/3F/SobaScript.Z.VS)
+* AvalonEdit (avalonedit.net)
 * Json.NET (json.codeplex.com)
 * NLog (nlog-project.org)
 * Ude (code.google.com/p/ude/)
 * SevenZipSharp (sevenzipsharp.codeplex.com)
 * 7-Zip (www.7-zip.org)
-* GetNuTool logic (github.com/3F/GetNuTool)
+* GetNuTool (github.com/3F/GetNuTool)
 
 All about graphical resources see /Resources/License
 Read all details in /3rd-party</value>

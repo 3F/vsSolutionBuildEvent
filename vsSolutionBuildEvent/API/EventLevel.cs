@@ -246,7 +246,8 @@ namespace net.r_eg.vsSBE.API
                 return ret;
             }
             catch(Exception ex) {
-                Log.Error("Failed Project.Pre-binding: '{0}'", ex.Message);
+                Log.Error($"Failed Project.Pre-binding: '{ex.Message}'");
+                Log.Debug(ex.StackTrace); // to an unclear issue #43
             }
             return Codes.Failed;
         }
@@ -266,7 +267,8 @@ namespace net.r_eg.vsSBE.API
                 return ret;
             }
             catch(Exception ex) {
-                Log.Error("Failed Project.Pre-binding/simple: '{0}'", ex.Message);
+                Log.Error($"Failed Project.Pre-binding/simple: '{ex.Message}'");
+                Log.Debug(ex.StackTrace); // to an unclear issue #43
             }
             return Codes.Failed;
         }
@@ -295,7 +297,8 @@ namespace net.r_eg.vsSBE.API
                 return ret;
             }
             catch(Exception ex) {
-                Log.Error("Failed Project.Post-binding: '{0}'", ex.Message);
+                Log.Error($"Failed Project.Post-binding: '{ex.Message}'");
+                Log.Debug(ex.StackTrace); // to an unclear issue #43
             }
             return Codes.Failed;
         }
@@ -316,7 +319,8 @@ namespace net.r_eg.vsSBE.API
                 return ret;
             }
             catch(Exception ex) {
-                Log.Error("Failed Project.Post-binding/simple: '{0}'", ex.Message);
+                Log.Error($"Failed Project.Post-binding/simple: '{ex.Message}'");
+                Log.Debug(ex.StackTrace); // to an unclear issue #43
             }
             return Codes.Failed;
         }

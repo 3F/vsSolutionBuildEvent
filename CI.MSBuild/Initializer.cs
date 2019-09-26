@@ -149,7 +149,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
                     prop.LibraryPath
                 );
 
-                log.info("Library: loaded from '{0}' :: v{1} [{2}] API: v{3} /'{4}':{5}", 
+                log.info("Core Library: v{1}+{2} API: v{3} /'{4}':{5}; '{0}'", 
                                     library.Dllpath, 
                                     library.Version.Number.ToString(), 
                                     library.Version.BranchSha1,
