@@ -1,6 +1,24 @@
 vsSolutionBuildEvent CI.MSBuild
 _______________________________
 
+[1.7] 2019.09.26
+
+    * NEW: Integration with MvsSln project. v2.4 PR #53.
+           Replaces processing from IsolatedEnv/MSBuild/+ and fully removes our old parser.
+           Finally it fixes lot of bugs (such as: #42, #41, #40,..) and also improves performance.
+           https://github.com/3F/MvsSln
+           
+    * FIXED: Possible "An equivalent project is already present in the project collection."
+             Issue #42.
+             
+    * FIXED: Possible incorrect projects for MSBuild Properties 
+                ~ $(TargetFrameworkVersion:Metadata) Issue #41.
+                
+    * FIXED: Possible "Can not load 7-zip library or internal COM error" 
+             When using x64 instance. Issue #38.
+                
+    * CHANGED: Updated 7z.Libs 19.0.1.
+
 [v1.6] 2016.02.04
 
     * FIXED: bug for Pre/Post-project event type ~ `"PreBuildEvent" skipped, due to false condition; ('$(PreBuildEvent)'!='')`.

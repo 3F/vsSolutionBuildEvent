@@ -1,6 +1,102 @@
 vsSolutionBuildEvent - https://github.com/3F/vsSolutionBuildEvent
 _ _ _ _ _ _ _ _ _ _ 
 
+[1.14] 2019.09.26
+
+    * NEW: Integration with MvsSln project. v2.4 PR #53.
+           Replaces processing from IsolatedEnv/MSBuild/+ and fully removes our old parser.
+           Finally it fixes lot of bugs (such as: #42, #41, #40,..) and also improves performance.
+           https://github.com/3F/MvsSln
+           
+    * NEW: Open Source independent script engines under the MIT License. Issue #55.
+           
+    * NEW: Integration with E-MSBuild project. v1.14. Part of PR #56.
+           Advanced Evaluator of MSBuild scripts with user-variables support through Varhead and more.
+           https://github.com/3F/E-MSBuild
+           
+    * NEW: Integration with SobaScript -- an Extensible Modular Scripting Programming Language.
+           Part of PR #56.
+           https://github.com/3F/SobaScript
+           
+    * NEW: Included SobaScript Components:
+           Z.Core: https://github.com/3F/SobaScript.Z.Core
+            * ConditionComponent
+            * EvMSBuildComponent
+            * UserVariableComponent
+            * TryComponent
+            * CommentComponent
+            * BoxComponent
+            
+           Z.Ext: https://github.com/3F/SobaScript.Z.Ext
+            * SevenZipComponent
+            * NuGetComponent
+            * FileComponent
+            * FunctionComponent
+            
+           Z.VS: https://github.com/3F/SobaScript.Z.VS
+            * DTEComponent
+            * OwpComponent
+            * BuildComponent
+           
+    * FIXED: Possible "Can not load 7-zip library or internal COM error" 
+             When using x64 instance. Issue #38.
+             
+    * FIXED: Possible "An equivalent project is already present in the project collection."
+             Issue #42.
+             
+    * FIXED: Possible incorrect projects for MSBuild Properties 
+                ~ $(TargetFrameworkVersion:Metadata) Issue #41.
+                
+    * FIXED: Failed getting project from EnvDTE. Issue #40.
+    
+    * CHANGED: Increased performance when evaluating data and scripts.
+             
+    * CHANGED: Updated 7z.Libs 19.0.1.
+    
+    * CHANGED: Updated AvalonEdit 5.0.4
+    
+    * CHANGED: Updated Microsoft.VisualStudio.Shell.15.0 15.9.28307
+    
+    * CHANGED: SDK15 packages only: 
+               Updated Microsoft.Build & Microsoft.Build.Framework 16.0.461
+    
+    * CHANGED: Updated EnvDTE 8.0.2
+    
+    * CHANGED: Updated EnvDTE80 8.0.3
+    
+    * CHANGED: Updated Newtonsoft.Json 12.0.2
+    
+    * CHANGED: Updated Microsoft.VisualStudio.SDK.EmbedInteropTypes 15.0.27
+    
+    * CHANGED: StreamJsonRpc 2.0.208
+    
+    * CHANGED: System.ValueTuple 4.5.0
+    
+    * CHANGED: NuGet package `vsSBE.CI.MSBuild` is obsolete. Please use new:
+               https://www.nuget.org/packages/vsSolutionBuildEvent
+               Also new 'tools\' folder instead of 'bin\'.
+    
+    * KNOWN: Possible Failed Project.Pre/Post-binding: 'Object reference not set to an instance of an object.'
+             Issue #43.
+             Please enable debug mode, we're waiting for your reports.
+             
+    * KNOWN: Known problem for VS2019. Build can be started before activation of our plugin. 
+             This is a feature of the modern VS platform with lazy loading of all plugins.
+             Solution: 
+             Just attach once our [status panel] and this will always activate our plugin before start.
+             
+    * KNOWN: Known problem when deactivated [Status Panel] from `View` - `Other Windows`.
+             Incorrect identifier in previous version produces wrong tool.
+             Solution: 
+             Just close this panel. Then, open it again from `View` - `Other Windows`.
+            
+    * NOTE: Please note. New releases has been migrated from SourceForge to GitHub Release Page: 
+            https://github.com/3F/vsSolutionBuildEvent/releases
+            https://vssbe.r-eg.net/Downloads/
+            
+    * NOTE: Here is about SDK10 / SDK15 packages:
+            https://vssbe.r-eg.net/doc/Usage/#sdk10--sdk15-versions
+            
 
 [v0.12.11] 2019.06.30
 
