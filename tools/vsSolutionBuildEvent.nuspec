@@ -5,7 +5,7 @@
     <title>vsSolutionBuildEvent</title>
     <version>%CIM%</version>
     <authors>github.com/3F/vsSolutionBuildEvent</authors>
-    <license type="file">bin\LICENSE</license>
+    <license type="file">License.txt</license>
     <owners>reg</owners>
     <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
     <projectUrl>https://github.com/3F/vsSolutionBuildEvent</projectUrl>

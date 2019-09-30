@@ -5,8 +5,8 @@
 **Control everything: Visual Studio, MSBuild Tools, CI, and more …**
 
 [![Build status - master](https://ci.appveyor.com/api/projects/status/l38xn0j2c5an28e1/branch/master?svg=true)](https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/branch/master)
-[![VSPackage](https://vssbe.r-eg.net/etc/badges/VSPackage.svg)](https://vssbe.r-eg.net/Changelist/#vsix)
-[![nuget vsSBE.CI.MSBuild](https://img.shields.io/nuget/v/vsSBE.CI.MSBuild.svg)](https://www.nuget.org/packages/vsSBE.CI.MSBuild/)
+[![VSIX](https://vssbe.r-eg.net/etc/badges/VSPackage.svg)](https://vssbe.r-eg.net/Changelist/#vsix)
+[![nuget package](https://img.shields.io/nuget/v/vsSolutionBuildEvent.svg)](https://www.nuget.org/packages/vsSolutionBuildEvent/)
 [![LGPLv3](https://vssbe.r-eg.net/etc/badges/License.svg)](https://vssbe.r-eg.net/License/)
 [![GetNuTool](https://img.shields.io/badge/🧩-GetNuTool-93C10B.svg)](https://github.com/3F/GetNuTool)
 [![SobaScript](https://img.shields.io/badge/🧩-SobaScript-8E5733.svg)](https://github.com/3F/SobaScript)

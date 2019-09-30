@@ -1,29 +1,18 @@
 @echo off
 
-REM # Version of used CI.MSBuild
-set cimdll=packages\vsSBE.CI.MSBuild\bin\CI.MSBuild.dll
+REM https://github.com/3F/vsSolutionBuildEvent/pull/45#issuecomment-506754001
+set hMSBuild=-notamd64
 
-REM # MSBuild tools
-set _msbuild=tools\hMSBuild -notamd64
-
-REM # Solution file by defualt
-set sln=vsSolutionBuildEvent.sln
-
-REM # Platform by default
-set platform="Any CPU"
-
-REM # Verbosity level by default: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic].
-set level=minimal
-
+set cim=packages\vsSolutionBuildEvent\cim.cmd
 set _gnt=tools\gnt
 
-:::: --------
+REM # Verbosity level: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic].
+set level=m
 
 REM # Configuration name without postfix _SDK...
 :: DBG == Debug; REL == Release; DCI == CI Debug; RCI == CI Release;
 
 set reltype=%~1
-
 if "%reltype%"=="" (
     set "reltype=DCI"
 )
@@ -32,20 +21,17 @@ if "%reltype%"=="" (
 
 set __p_call=1
 
-:: package restore for SDK-based projects
-:: call %_msbuild% -t:restore /p:Configuration=%reltype%_SDK15 /p:Platform="Any CPU"
-
 :: Activate vsSBE
 
 call %_gnt% /p:ngpath="%cd%/packages" /p:ngconfig="%cd%/.gnt/packages.config" || goto err
 
 :: Build
 
-set bnode=%_msbuild% %sln% /m:4 /l:"%cimdll%" /p:Platform=%platform% /v:%level% /nologo
+set bnode=%cim% %hMSBuild% vsSolutionBuildEvent.sln /m:6 /p:Platform="Any CPU" /v:%level%
 
 rem call git clean -x -e \.vs -e \.user -d
-call %bnode% /p:Configuration=%reltype%_SDK10 /t:Build || goto err
-call %bnode% /p:Configuration=%reltype%_SDK15 /t:Build || goto err
+call %bnode% /p:Configuration=%reltype%_SDK10 || goto err
+call %bnode% /p:Configuration=%reltype%_SDK15 || goto err
 
 goto ok
 
