@@ -8,7 +8,7 @@
     <ProjectGuid>{4F8BB8CD-1116-4F07-9B8F-06D69FB8589B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\com.github.3F.snk</AssemblyOriginatorKeyFile>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>net.r_eg.vsSBE.Provider</RootNamespace>
     <AssemblyName>Provider</AssemblyName>
@@ -81,7 +81,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".version" />
-    <None Include="key.snk" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.852
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CIMLib", "CIMLib\CIMLib.csproj", "{A7BF1F9C-F18D-423E-9354-859DC3CFAFD4}"
 EndProject
@@ -40,12 +40,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{7ADBBB81-2
 		Version.tpl = Version.tpl
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".gnt", ".gnt", "{65FF5D56-E814-4956-89BD-7C53EC557BFE}"
-	ProjectSection(SolutionItems) = preProject
-		.gnt\gnt.core = .gnt\gnt.core
-		.gnt\packages.config = .gnt\packages.config
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{849DD790-F856-493C-A19E-2560A21F6AF1}"
 	ProjectSection(SolutionItems) = preProject
 		tools\gnt.bat = tools\gnt.bat
@@ -58,9 +52,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VsixLib", "VsixLib", "{A6FD
 		VsixLib.targets = VsixLib.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvsSln", "MvsSln\MvsSln\MvsSln.csproj", "{F905DFB2-2E67-4FF7-9001-924F6F2D645D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvsSln", "MvsSln\MvsSln\MvsSln.csproj", "{F905DFB2-2E67-4FF7-9001-924F6F2D645D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvsSlnTest", "MvsSln\MvsSlnTest\MvsSlnTest.csproj", "{EC0CA220-39EC-41E5-B9D6-88D8F860F979}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvsSlnTest", "MvsSln\MvsSlnTest\MvsSlnTest.csproj", "{EC0CA220-39EC-41E5-B9D6-88D8F860F979}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F905DFB2-2E67-4FF7-9001-924F6F2D645D} = {F905DFB2-2E67-4FF7-9001-924F6F2D645D}
 	EndProjectSection

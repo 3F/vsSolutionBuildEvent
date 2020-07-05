@@ -6,21 +6,17 @@ using net.r_eg.vsSBE;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("vsSolutionBuildEvent [ github.com/3F/vsSolutionBuildEvent ]")]
+[assembly: AssemblyTitle("vsSolutionBuildEvent")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("vsSolutionBuildEvent")]
-[assembly: AssemblyCopyright("Denis Kuzmin - GitHub/3F")]
+[assembly: AssemblyCopyright("github.com/3F/vsSolutionBuildEvent")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // friendly assemblies
-[assembly: InternalsVisibleTo("vsSolutionBuildEventTest, PublicKey=0024000004800000940000000602000000240000525341310004000001000100c54bb53319f73c"
-                                + "b0368378ff4e5f2bfc3a4747c58e858493f0df593aefe0ea51ee6e1da2c50a1594b6bb0378ff85"
-                                + "8a87a82ed2487b206a718f17c24c2533b6657aaa5f52d42bcfd02333e0db3e35165a9f09fac099"
-                                + "9f4e781777e9be0a7cd6bfe67de2a4c5d2d4b094faa0f2879b25d678e0a1cd1fc36fa448a8f4c6"
-                                + "65e875d6")]
+[assembly: InternalsVisibleTo("vsSolutionBuildEventTest, PublicKey=002400000480000094000000060200000024000052534131000400000100010081bf72d485a2a107153efd0724ea8240336c7f11843c450ae576fbff8baa869ead9cdcc67bb47bce971888f7f0c79dcd5a24c8f5bdea4cc60d038a006ab909d09f173e6f12977a3cfa68a59f59549b6982c75d48eb8a8c0a34272938454826a3d724b18f9c123012a435e3a1c92ff3ff61e2b7f99e00cc5425005ee6ae1b25ad")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 

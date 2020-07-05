@@ -23,7 +23,7 @@
       "Enabled": true
     },
     {
-      "ClassName": "OWPComponent",
+      "ClassName": "OwpComponent",
       "Enabled": true
     },
     {
@@ -39,7 +39,7 @@
       "Enabled": true
     },
     {
-      "ClassName": "DTEComponent",
+      "ClassName": "DteComponent",
       "Enabled": true
     },
     {
@@ -59,7 +59,7 @@
       "Enabled": true
     },
     {
-      "ClassName": "MSBuildComponent",
+      "ClassName": "EvMSBuildComponent",
       "Enabled": true
     },
     {
@@ -191,7 +191,7 @@
       "Mode": {
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
-        "Command": "#[( !(#[IO exists.file(\"$(pMvsSln)/MvsSln.sln\")]) )\n{\n    #[File call(\"git\", \"submodule update --init --recursive MvsSln\", 1000)]\n}]\n\n#[( !(#[IO exists.file(\"SobaScript/SobaScript.sln\")]) )\n{\n    #[File call(\"git\", \"submodule update --init --recursive SobaScript\", 1000)]\n    #[File call(\"git\", \"submodule update --init --recursive E-MSBuild\", 1000)]\n}]\n\n#[( !(#[IO exists.file(\"SobaScript.Z.Core/SobaScript.Z.Core.sln\")]) )\n{\n    #[File call(\"git\", \"submodule update --init --recursive SobaScript.Z.Core\", 1000)]\n    #[File call(\"git\", \"submodule update --init --recursive SobaScript.Z.Ext\", 1000)]\n    #[File call(\"git\", \"submodule update --init --recursive SobaScript.Z.VS\", 1000)]\n}]\n\n\n\n#[\" Packages \"]\n\n#[( !(#[IO exists.file(\"packages/__checked\")]) || !(#[IO exists.directory(\"$(pMvsSln)/packages\")]) )\n{\n    #[File call(\"tools\\hmsbuild.bat\", \"-t:restore /v:q /nologo /p:Configuration=$(Configuration) /p:Platform=\\\"Any CPU\\\"\", 1000)]\n    \n    #[File call(\"packages.cmd\", \"\", 1000)]\n    \n    #[IO copy.directory(\"\", \"packages/\", true)]\n    #[File write(\"packages/__checked\"): ]\n}]",
+        "Command": "#[( !(#[IO exists.file(\"$(pMvsSln)/MvsSln.sln\")]) )\n{\n    #[File call(\"git\", \"submodule update --init --recursive MvsSln\", 1000)]\n}]\n\n#[( !(#[IO exists.file(\"SobaScript/SobaScript.sln\")]) )\n{\n    #[File call(\"git\", \"submodule update --init --recursive SobaScript\", 1000)]\n    #[File call(\"git\", \"submodule update --init --recursive E-MSBuild\", 1000)]\n}]\n\n#[( !(#[IO exists.file(\"SobaScript.Z.Core/SobaScript.Z.Core.sln\")]) )\n{\n    #[File call(\"git\", \"submodule update --init --recursive SobaScript.Z.Core\", 1000)]\n    #[File call(\"git\", \"submodule update --init --recursive SobaScript.Z.Ext\", 1000)]\n    #[File call(\"git\", \"submodule update --init --recursive SobaScript.Z.VS\", 1000)]\n}]\n\n\n\n#[\" Packages \"]\n\n#[( !(#[IO exists.file(\"packages/__checked\")]) )\n{\n    #[IO writeLine(STDOUT): Restoring packages. Please wait ...]\n\n    #[File call(\"tools\\hmsbuild.bat\", \"-t:restore /v:q /nologo /p:Configuration=$(Configuration) /p:Platform=\\\"Any CPU\\\"\", 1000)]\n\n    #[NuGet gnt.raw(\"/p:ngconfig=\\\".gnt/packages.config;vsSolutionBuildEvent/packages.config;vsSolutionBuildEventTest/packages.config\\\" /nologo /v:m /m:6\")]\n    \n    \n    #[IO copy.directory(\"\", \"packages/\", true)]\n    #[File write(\"packages/__checked\"): ]\n}]",
         "Command__": [
           "#[( !(#[IO exists.file(\"$(pMvsSln)/MvsSln.sln\")]) )",
           "{",
@@ -215,11 +215,14 @@
           "",
           "#[\" Packages \"]",
           "",
-          "#[( !(#[IO exists.file(\"packages/__checked\")]) || !(#[IO exists.directory(\"$(pMvsSln)/packages\")]) )",
+          "#[( !(#[IO exists.file(\"packages/__checked\")]) )",
           "{",
+          "    #[IO writeLine(STDOUT): Restoring packages. Please wait ...]",
+          "",
           "    #[File call(\"tools\\hmsbuild.bat\", \"-t:restore /v:q /nologo /p:Configuration=$(Configuration) /p:Platform=\\\"Any CPU\\\"\", 1000)]",
+          "",
+          "    #[NuGet gnt.raw(\"/p:ngconfig=\\\".gnt/packages.config;vsSolutionBuildEvent/packages.config;vsSolutionBuildEventTest/packages.config\\\" /nologo /v:m /m:6\")]",
           "    ",
-          "    #[File call(\"packages.cmd\", \"\", 1000)]",
           "    ",
           "    #[IO copy.directory(\"\", \"packages/\", true)]",
           "    #[File write(\"packages/__checked\"): ]",

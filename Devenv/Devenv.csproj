@@ -10,7 +10,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>net.r_eg.vsSBE.Devenv</RootNamespace>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\com.github.3F.snk</AssemblyOriginatorKeyFile>
     <NoStandardLibraries>false</NoStandardLibraries>
     <AssemblyName>Devenv</AssemblyName>
     <DeploymentDirectory>.\bin\</DeploymentDirectory>
@@ -135,7 +135,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".version" />
-    <None Include="key.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
