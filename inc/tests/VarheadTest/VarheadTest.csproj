@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\common.props" />
+
+  <ItemGroup>
+    <ProjectReference Include="$(IncModulesDir)Varhead\Varhead.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="$(RepoDirRoot)Varhead\VarheadTest\**\*.cs" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\common.props" />
+
+  <ItemGroup>
+    <ProjectReference Include="$(IncModulesDir)SobaScript.Mapper\SobaScript.Mapper.csproj" />
+    <ProjectReference Include="$(IncModulesDir)SobaScript\SobaScript.csproj" />
+    <ProjectReference Include="$(IncModulesDir)E-MSBuild\E-MSBuild.csproj" />
+    <ProjectReference Include="$(IncModulesDir)Varhead\Varhead.csproj" />
+    <ProjectReference Include="$(IncModulesDir)LSender\LSender.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="$(RepoDirRoot)SobaScript.Mapper\SobaScript.MapperTest\**\*.cs" />
+  </ItemGroup>
+
+</Project>

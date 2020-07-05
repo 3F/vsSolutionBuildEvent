@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project=".props.user" Condition="Exists('.props.user')" />
+  <Import Project="..\common.props" />
+
+  <PropertyGroup>
+    <RootNamespace>net.r_eg.SobaScript.Z.Core</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(RepoDirRoot)SobaScript.Z.Core\SobaScript.Z.Core\**\*.cs"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SobaScript.Mapper\SobaScript.Mapper.csproj" />
+    <ProjectReference Include="..\SobaScript\SobaScript.csproj" />
+    <ProjectReference Include="..\E-MSBuild\E-MSBuild.csproj" />
+    <ProjectReference Include="..\Varhead\Varhead.csproj" />
+    <ProjectReference Include="..\LSender\LSender.csproj" />
+  </ItemGroup>
+
+</Project>

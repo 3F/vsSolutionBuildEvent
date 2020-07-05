@@ -3,10 +3,7 @@
 REM https://github.com/3F/vsSolutionBuildEvent/pull/45#issuecomment-506754001
 set hMSBuild=-notamd64
 
-:: allow ignored .version files
-set nowarn=NU5119
-
-set cim=packages\vsSolutionBuildEvent\cim.cmd  -vsw-priority Microsoft.NetCore.Component.SDK
+set cim=packages\vsSolutionBuildEvent\cim.cmd -vsw-priority Microsoft.NetCore.Component.SDK
 set _gnt=tools\gnt
 
 REM # Verbosity level: q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic].
@@ -30,7 +27,7 @@ call %_gnt% /p:ngpath="%cd%/packages" /p:ngconfig="%cd%/.gnt/packages.config" ||
 
 :: Build
 
-set bnode=%cim% %hMSBuild% vsSolutionBuildEvent.sln /m:7 /p:Platform="Any CPU" /v:%level% /p:nowarn=%nowarn%
+set bnode=%cim% %hMSBuild% vsSolutionBuildEvent.sln /m:7 /p:Platform="Any CPU" /v:%level%
 
 rem call git clean -x -e \.vs -e \.user -d
 call %bnode% /p:Configuration=%reltype%_SDK10 || goto err

@@ -16,3 +16,12 @@
 [submodule "SobaScript.Z.VS"]
 	path = SobaScript.Z.VS
 	url = https://github.com/3F/SobaScript.Z.VS.git
+[submodule "Varhead"]
+	path = Varhead
+	url = https://github.com/3F/Varhead.git
+[submodule "LSender"]
+	path = LSender
+	url = https://github.com/3F/LSender.git
+[submodule "SobaScript.Mapper"]
+	path = SobaScript.Mapper
+	url = https://github.com/3F/SobaScript.Mapper.git

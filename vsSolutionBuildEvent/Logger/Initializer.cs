@@ -171,8 +171,12 @@ namespace net.r_eg.vsSBE.Logger
             );
         }
 
-        private void onLSenderSent(object sender, Components.Message e)
+        private void onLSenderSent(object sender, Components.MsgArgs e)
         {
+            if(!e.At(Settings.APP_NAME)) {
+                return;
+            }
+
             Log._.NLog.Log
             (
                 LogLevel.FromOrdinal

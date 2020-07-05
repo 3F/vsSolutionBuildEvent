@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project=".props.user" Condition="Exists('.props.user')" />
+  <Import Project="..\common.props" />
+
+  <PropertyGroup>
+    <RootNamespace>net.r_eg.LSender</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(RepoDirRoot)LSender\LSender\**\*.cs" />
+  </ItemGroup>
+
+</Project>

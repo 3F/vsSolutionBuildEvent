@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project=".props.user" Condition="Exists('.props.user')" />
+  <Import Project="..\common.props" />
+
+  <PropertyGroup>
+    <RootNamespace>net.r_eg.EvMSBuild</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="$(RepoDirRoot)E-MSBuild\E-MSBuild\**\*.cs"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Varhead\Varhead.csproj" />
+    <ProjectReference Include="..\LSender\LSender.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
+    <Reference Include="Microsoft.Build" />
+    <Reference Include="Microsoft.Build.Framework" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <PackageReference Include="Microsoft.Build" Version="15.9.20" /> <!-- 16.0.461: net472, netcore2.1 -->
+    <PackageReference Include="Microsoft.Build.Framework" Version="16.0.461" />
+  </ItemGroup>
+
+</Project>
