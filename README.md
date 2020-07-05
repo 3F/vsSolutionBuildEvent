@@ -1,6 +1,6 @@
 # [vsSolutionBuildEvent](https://github.com/3F/vsSolutionBuildEvent)
 
-**Event**-Catcher with variety of advanced **Actions** to service projects, libraries, the build processes and processes at runtime from Visual Studio and MSBuild Tools.
+🎚🎛 **Event**-Catcher with variety of advanced **Actions** to service projects, libraries, build processes, runtime environment of the Visual Studio, MSBuild Tools, and … 
 
 **Control everything: Visual Studio, MSBuild Tools, CI, and more …**
 
@@ -8,9 +8,9 @@
 [![VSIX](https://vssbe.r-eg.net/etc/badges/VSPackage.svg)](https://vssbe.r-eg.net/Changelist/#vsix)
 [![nuget package](https://img.shields.io/nuget/v/vsSolutionBuildEvent.svg)](https://www.nuget.org/packages/vsSolutionBuildEvent/)
 [![LGPLv3](https://vssbe.r-eg.net/etc/badges/License.svg)](https://vssbe.r-eg.net/License/)
-[![GetNuTool](https://img.shields.io/badge/🧩-GetNuTool-93C10B.svg)](https://github.com/3F/GetNuTool)
-[![SobaScript](https://img.shields.io/badge/🧩-SobaScript-8E5733.svg)](https://github.com/3F/SobaScript)
-[![E-MSBuild](https://img.shields.io/badge/🧩-E--MSBuild-C8597A.svg)](https://github.com/3F/E-MSBuild)
+[![GetNuTool](https://img.shields.io/badge/🧩-GetNuTool-93C10B)](https://github.com/3F/GetNuTool)
+[![SobaScript](https://img.shields.io/badge/🧩-SobaScript-8E5733)](https://github.com/3F/SobaScript)
+[![E-MSBuild](https://img.shields.io/badge/🧩-E--MSBuild-C8597A)](https://github.com/3F/E-MSBuild)
 
 [![Build history](https://buildstats.info/appveyor/chart/3Fs/vssolutionbuildevent?buildCount=20&showStats=true)](https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/history)
 [![Event model](https://vssbe.r-eg.net/doc/Resources/events_model_small.png)]()
@@ -31,11 +31,14 @@
 Licensed under the [LGPLv3](https://github.com/3F/vsSolutionBuildEvent/blob/master/LICENSE)
 
 ```
-Copyright (c) 2013-2016,2019  Denis Kuzmin < entry.reg@gmail.com > GitHub/3F
+Copyright (c) 2013-2016,2019-2020  Denis Kuzmin < x-3F@outlook.com > GitHub/3F
 ```
 
 [ [ ☕ Donate ](https://3F.github.com/Donation/) ]
 
+vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent/graphs/contributors
+
+We're waiting for your awesome contributions!
 
 ## Why vsSolutionBuildEvent ?
 
@@ -49,7 +52,7 @@ Various modes for everything:
 
 * Files Mode, Operation Mode, Interpreter Mode, [Script Mode](https://vssbe.r-eg.net/doc/Modes/Script/), [Targets Mode](https://vssbe.r-eg.net/doc/Modes/Targets/), [C# Mode](https://vssbe.r-eg.net/doc/Modes/CSharp/)
 
-Supports [additional MSBuild](https://vssbe.r-eg.net/doc/Scripts/MSBuild/) features & [SBE-Scripts engine](https://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/) for your awesome ideas.
+Supports [Advanced MSBuild](https://vssbe.r-eg.net/doc/Scripts/MSBuild/) & [SBE-Scripts engine](https://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/) for your awesome ideas.
 
 Possible work even **without** Visual Studio. 
 
@@ -67,7 +70,6 @@ Provides also support of the CI-Build Servers (TeamCity, AppVeyor, Azure DevOps,
 
 * [Install & Build](https://vssbe.r-eg.net/doc/Dev/How-to-build/) ([Developer Zone](https://vssbe.r-eg.net/doc/Dev/))
 * [Wiki](https://vssbe.r-eg.net/)
-* [Public Issue Tracker](https://github.com/3F/vsSolutionBuildEvent/issues) 
 
 
 ## Advanced MSBuild 

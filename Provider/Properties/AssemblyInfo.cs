@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("vsSolutionBuildEvent Provider")]
-[assembly: AssemblyCopyright("Denis Kuzmin - entry.reg@gmail.com")]
+[assembly: AssemblyCopyright("github.com/3F/vsSolutionBuildEvent")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright (c) 2013-2016,2019  Denis Kuzmin < entry.reg@gmail.com > GitHub/3F
+ * Copyright (c) 2013-2016,2019-2020  Denis Kuzmin < x-3F@outlook.com > GitHub/3F
+ * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,9 +24,7 @@ namespace net.r_eg.vsSBE.Configuration
         {
             " This requires vsSolutionBuildEvent engine.", 
             " Free plugin for Visual Studio or MSBuild Tools:",
-            "  * https://github.com/3F/vsSolutionBuildEvent",
-            "  * https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/",
-            " Feedback: github.com/3F  or entry.reg@gmail.com"
+            "  * https://github.com/3F/vsSolutionBuildEvent"
         };
 
         /// <summary>

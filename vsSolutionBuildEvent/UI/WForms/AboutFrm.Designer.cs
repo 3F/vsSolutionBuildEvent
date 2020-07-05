@@ -29,11 +29,8 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AboutFrm));
             this.pictureBoxSpace = new System.Windows.Forms.PictureBox();
-            this.labelCopyright = new System.Windows.Forms.Label();
             this.labelContact = new System.Windows.Forms.Label();
-            this.linkEmail = new System.Windows.Forms.LinkLabel();
             this.groupBoxCopyright = new System.Windows.Forms.GroupBox();
-            this.labelSlash = new System.Windows.Forms.Label();
             this.linkPage = new System.Windows.Forms.LinkLabel();
             this.groupBoxIncludes = new System.Windows.Forms.GroupBox();
             this.textBoxIncludes = new System.Windows.Forms.TextBox();
@@ -46,15 +43,15 @@
             this.buttonOk = new System.Windows.Forms.Button();
             this.groupBoxThanks = new System.Windows.Forms.GroupBox();
             this.textBoxThanks = new System.Windows.Forms.TextBox();
-            this.pictureBoxDonation = new System.Windows.Forms.PictureBox();
             this.labelDonation = new System.Windows.Forms.Label();
             this.linkLabelDonationHelp = new System.Windows.Forms.LinkLabel();
+            this.txtCopyright = new System.Windows.Forms.TextBox();
+            this.btnDonate = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSpace)).BeginInit();
             this.groupBoxCopyright.SuspendLayout();
             this.groupBoxIncludes.SuspendLayout();
             this.groupBoxMixed.SuspendLayout();
             this.groupBoxThanks.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDonation)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBoxSpace
@@ -72,70 +69,38 @@
             this.pictureBoxSpace.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBoxSpace_MouseDown);
             this.pictureBoxSpace.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBoxSpace_MouseUp);
             // 
-            // labelCopyright
-            // 
-            this.labelCopyright.AutoSize = true;
-            this.labelCopyright.Location = new System.Drawing.Point(6, 12);
-            this.labelCopyright.Margin = new System.Windows.Forms.Padding(3);
-            this.labelCopyright.Name = "labelCopyright";
-            this.labelCopyright.Size = new System.Drawing.Size(51, 13);
-            this.labelCopyright.TabIndex = 1;
-            this.labelCopyright.Text = "Copyright";
-            // 
             // labelContact
             // 
             this.labelContact.AutoSize = true;
             this.labelContact.Location = new System.Drawing.Point(6, 31);
             this.labelContact.Margin = new System.Windows.Forms.Padding(3);
             this.labelContact.Name = "labelContact";
-            this.labelContact.Size = new System.Drawing.Size(47, 13);
+            this.labelContact.Size = new System.Drawing.Size(44, 13);
             this.labelContact.TabIndex = 2;
-            this.labelContact.Text = "Contact:";
-            // 
-            // linkEmail
-            // 
-            this.linkEmail.AutoSize = true;
-            this.linkEmail.Location = new System.Drawing.Point(50, 31);
-            this.linkEmail.Name = "linkEmail";
-            this.linkEmail.Size = new System.Drawing.Size(106, 13);
-            this.linkEmail.TabIndex = 3;
-            this.linkEmail.TabStop = true;
-            this.linkEmail.Text = "entry.reg@gmail.com";
-            this.linkEmail.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkEmail_LinkClicked);
+            this.labelContact.Text = "Contact";
             // 
             // groupBoxCopyright
             // 
             this.groupBoxCopyright.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxCopyright.Controls.Add(this.labelSlash);
+            this.groupBoxCopyright.Controls.Add(this.txtCopyright);
             this.groupBoxCopyright.Controls.Add(this.linkPage);
             this.groupBoxCopyright.Controls.Add(this.labelContact);
-            this.groupBoxCopyright.Controls.Add(this.linkEmail);
-            this.groupBoxCopyright.Controls.Add(this.labelCopyright);
             this.groupBoxCopyright.Location = new System.Drawing.Point(193, -4);
             this.groupBoxCopyright.Name = "groupBoxCopyright";
             this.groupBoxCopyright.Size = new System.Drawing.Size(405, 52);
             this.groupBoxCopyright.TabIndex = 4;
             this.groupBoxCopyright.TabStop = false;
             // 
-            // labelSlash
-            // 
-            this.labelSlash.AutoSize = true;
-            this.labelSlash.Location = new System.Drawing.Point(156, 31);
-            this.labelSlash.Name = "labelSlash";
-            this.labelSlash.Size = new System.Drawing.Size(12, 13);
-            this.labelSlash.TabIndex = 5;
-            this.labelSlash.Text = "/";
-            // 
             // linkPage
             // 
             this.linkPage.AutoSize = true;
-            this.linkPage.Location = new System.Drawing.Point(167, 31);
+            this.linkPage.Location = new System.Drawing.Point(52, 31);
             this.linkPage.Name = "linkPage";
-            this.linkPage.Size = new System.Drawing.Size(76, 13);
+            this.linkPage.Size = new System.Drawing.Size(112, 13);
             this.linkPage.TabIndex = 4;
             this.linkPage.TabStop = true;
-            this.linkPage.Text = "github.com/3F";
+            this.linkPage.Text = "https://github.com/3F";
             this.linkPage.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkPage_LinkClicked);
             // 
             // groupBoxIncludes
@@ -272,34 +237,20 @@
             this.textBoxThanks.Text = "* Rafael Cossovan (navossoc@gmail.com) - QA & testing (2014-2015)";
             this.textBoxThanks.WordWrap = false;
             // 
-            // pictureBoxDonation
-            // 
-            this.pictureBoxDonation.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBoxDonation.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxDonation.Image")));
-            this.pictureBoxDonation.Location = new System.Drawing.Point(372, 298);
-            this.pictureBoxDonation.Name = "pictureBoxDonation";
-            this.pictureBoxDonation.Size = new System.Drawing.Size(74, 21);
-            this.pictureBoxDonation.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxDonation.TabIndex = 9;
-            this.pictureBoxDonation.TabStop = false;
-            this.pictureBoxDonation.Click += new System.EventHandler(this.pictureBoxDonation_Click);
-            this.pictureBoxDonation.MouseLeave += new System.EventHandler(this.pictureBoxDonation_MouseLeave);
-            this.pictureBoxDonation.MouseHover += new System.EventHandler(this.pictureBoxDonation_MouseHover);
-            // 
             // labelDonation
             // 
             this.labelDonation.AutoSize = true;
             this.labelDonation.Location = new System.Drawing.Point(202, 301);
             this.labelDonation.Name = "labelDonation";
-            this.labelDonation.Size = new System.Drawing.Size(53, 13);
+            this.labelDonation.Size = new System.Drawing.Size(42, 13);
             this.labelDonation.TabIndex = 10;
-            this.labelDonation.Text = "Donation:";
+            this.labelDonation.Text = "Donate";
             // 
             // linkLabelDonationHelp
             // 
             this.linkLabelDonationHelp.AutoSize = true;
             this.linkLabelDonationHelp.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabelDonationHelp.Location = new System.Drawing.Point(252, 301);
+            this.linkLabelDonationHelp.Location = new System.Drawing.Point(244, 301);
             this.linkLabelDonationHelp.Name = "linkLabelDonationHelp";
             this.linkLabelDonationHelp.Size = new System.Drawing.Size(114, 13);
             this.linkLabelDonationHelp.TabIndex = 11;
@@ -307,14 +258,41 @@
             this.linkLabelDonationHelp.Text = "[ Ko-fi / Patreaon / ... ]";
             this.linkLabelDonationHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDonationHelp_LinkClicked);
             // 
+            // txtCopyright
+            // 
+            this.txtCopyright.BackColor = System.Drawing.SystemColors.Control;
+            this.txtCopyright.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtCopyright.Location = new System.Drawing.Point(6, 11);
+            this.txtCopyright.Name = "txtCopyright";
+            this.txtCopyright.ReadOnly = true;
+            this.txtCopyright.Size = new System.Drawing.Size(394, 13);
+            this.txtCopyright.TabIndex = 6;
+            this.txtCopyright.Text = "(c) 2013-2016,2019-2020  Denis Kuzmin < x-3F@outlook.com > GitHub/3F";
+            // 
+            // btnDonate
+            // 
+            this.btnDonate.BackColor = System.Drawing.Color.FloralWhite;
+            this.btnDonate.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnDonate.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnDonate.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDonate.ForeColor = System.Drawing.Color.Goldenrod;
+            this.btnDonate.Location = new System.Drawing.Point(364, 292);
+            this.btnDonate.Name = "btnDonate";
+            this.btnDonate.Size = new System.Drawing.Size(47, 32);
+            this.btnDonate.TabIndex = 12;
+            this.btnDonate.Text = "☕";
+            this.btnDonate.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.btnDonate.UseVisualStyleBackColor = false;
+            this.btnDonate.Click += new System.EventHandler(this.btnDonate_Click);
+            // 
             // AboutFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(600, 324);
+            this.Controls.Add(this.btnDonate);
             this.Controls.Add(this.linkLabelDonationHelp);
             this.Controls.Add(this.labelDonation);
-            this.Controls.Add(this.pictureBoxDonation);
             this.Controls.Add(this.groupBoxThanks);
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.groupBoxCopyright);
@@ -337,7 +315,6 @@
             this.groupBoxMixed.PerformLayout();
             this.groupBoxThanks.ResumeLayout(false);
             this.groupBoxThanks.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDonation)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -346,9 +323,7 @@
         #endregion
 
         private System.Windows.Forms.PictureBox pictureBoxSpace;
-        private System.Windows.Forms.Label labelCopyright;
         private System.Windows.Forms.Label labelContact;
-        private System.Windows.Forms.LinkLabel linkEmail;
         private System.Windows.Forms.GroupBox groupBoxCopyright;
         private System.Windows.Forms.GroupBox groupBoxIncludes;
         private System.Windows.Forms.TextBox textBoxIncludes;
@@ -358,13 +333,13 @@
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Button buttonOk;
         private System.Windows.Forms.LinkLabel linkLicense;
-        private System.Windows.Forms.Label labelSlash;
         private System.Windows.Forms.LinkLabel linkPage;
         private System.Windows.Forms.TextBox labelVersionVal;
         private System.Windows.Forms.GroupBox groupBoxThanks;
         private System.Windows.Forms.TextBox textBoxThanks;
-        private System.Windows.Forms.PictureBox pictureBoxDonation;
         private System.Windows.Forms.Label labelDonation;
         private System.Windows.Forms.LinkLabel linkLabelDonationHelp;
+        private System.Windows.Forms.TextBox txtCopyright;
+        private System.Windows.Forms.Button btnDonate;
     }
 }

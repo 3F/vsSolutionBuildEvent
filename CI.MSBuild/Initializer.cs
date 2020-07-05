@@ -1,7 +1,8 @@
 ﻿/*
  * The MIT License (MIT)
  * 
- * Copyright (c) 2013-2016,2019  Denis Kuzmin < entry.reg@gmail.com > GitHub/3F
+ * Copyright (c) 2013-2016,2019-2020  Denis Kuzmin < x-3F@outlook.com > GitHub/3F
+ * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -202,12 +203,11 @@ namespace net.r_eg.vsSBE.CI.MSBuild
 
         protected void header()
         {
-            log.info(new String('=', 37));
-            log.info("[[ vsSolutionBuildEvent CI.MSBuild ]]");
-            log.info(new String('=', 37));
-            log.info("Version: v{0}", System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
-            log.info($"Copyright (c) 2013-{Math.Max(2019, DateTime.Now.Year)}  Denis Kuzmin < entry.reg@gmail.com > GitHub/3F");
-            log.info(new String('_', 70) + Environment.NewLine);
+            log.info("vsSolutionBuildEvent");
+            log.info( "  Copyright (c) 2013-2016,2019-2020  Denis Kuzmin < x-3F@outlook.com > GitHub/3F");
+            log.info($"  CI.MSBuild: {System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion}");
+            log.info($"  https://github.com/3F/vsSolutionBuildEvent");
+            log.info( "  - - - - - - - - - - - - - - - - - - - - - -" + Environment.NewLine);
         }
 
         /// <summary>

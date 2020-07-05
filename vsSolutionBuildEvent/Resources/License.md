@@ -110,7 +110,7 @@ Initial image:
 
 Modified by:
 
-* Denis Kuzmin (reg) <entry.reg@gmail.com> / r-eg.net
+* Denis Kuzmin < x-3F@outlook.com > GitHub/3F
 
 # ./lightning.png
 

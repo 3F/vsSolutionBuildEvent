@@ -1,5 +1,6 @@
 ﻿/*
- * Copyright (c) 2013-2016,2019  Denis Kuzmin < entry.reg@gmail.com > GitHub/3F
+ * Copyright (c) 2013-2016,2019-2020  Denis Kuzmin < x-3F@outlook.com > GitHub/3F
+ * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -192,8 +193,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
             space = new DeepSpace(pictureBoxSpace.CreateGraphics(), pictureBoxSpace.Width, pictureBoxSpace.Height);
 
-            labelCopyright.Text = String.Format("Copyright (c) 2013-{0}  Denis Kuzmin <entry.reg@gmail.com> GitHub/3F", Math.Max(2019, DateTime.Now.Year));
-            string vAPIString   = (new API.Version()).Bridge.Number.ToString(2);
+            string vAPIString = (new API.Version()).Bridge.Number.ToString(2);
 
 #if !DEBUG
             labelVersionVal.Text = $"v{Version.S_NUM_REV}+{Version.B_SHA1} API: v{vAPIString}";
@@ -232,7 +232,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void linkEmail_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Util.openUrl("mailto:entry.reg@gmail.com");
+            Util.openUrl("mailto:x-3F@outlook.com");
         }
 
         private void buttonOk_Click(object sender, EventArgs e)
@@ -255,21 +255,9 @@ namespace net.r_eg.vsSBE.UI.WForms
             Util.openUrl("https://3F.github.com/Donation/");
         }
 
-        private void pictureBoxDonation_Click(object sender, EventArgs e)
+        private void btnDonate_Click(object sender, EventArgs e)
         {
-            Util.openUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=entry%2ereg%40gmail%2ecom&lc=US&item_name=Open%20Source%20%5b%20GitHub%2F3F&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted");
-        }
-
-        private void pictureBoxDonation_MouseHover(object sender, EventArgs e)
-        {
-            pictureBoxDonation.Padding = new Padding(1);
-            pictureBoxDonation.Refresh();
-        }
-
-        private void pictureBoxDonation_MouseLeave(object sender, EventArgs e)
-        {
-            pictureBoxDonation.Padding = new Padding(0);
-            pictureBoxDonation.Refresh();
+            Util.openUrl("https://3F.github.com/Donation/");
         }
     }
 }
