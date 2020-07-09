@@ -32,7 +32,8 @@
     <NetTargetVName>net45</NetTargetVName>
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants></DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <Optimize>true</Optimize>
     <WarningLevel>3</WarningLevel>
     <DebugType>pdbonly</DebugType>

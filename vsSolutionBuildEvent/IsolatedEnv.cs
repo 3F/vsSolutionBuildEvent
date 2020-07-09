@@ -39,6 +39,8 @@ namespace net.r_eg.vsSBE
     {
         protected IDictionary<string, string> slnProperties = new Dictionary<string, string>();
 
+        protected readonly IConfPlatform defaultCfg = new ConfigSln("Debug", "Any CPU");
+
         private string _startupProjectString;
 
         private readonly IDictionary<string, string> _properties;
@@ -257,15 +259,15 @@ namespace net.r_eg.vsSBE
         public IsolatedEnv(string solutionFile, IDictionary<string, string> properties)
         {
             SolutionFile    = solutionFile ?? throw new ArgumentNullException(nameof(solutionFile));
-            _properties     = properties ?? throw new ArgumentNullException(nameof(properties));
+            _properties     = ConfigureAsNew(properties ?? throw new ArgumentNullException(nameof(properties)));
 
             // better to use it before accessing to {Sln} property due to possible custom env updating 
-            foreach(var p in properties) {
+            foreach(var p in _properties.Where(p => p.Value != null)) {
                 ProjectCollection.GlobalProjectCollection.SetGlobalProperty(p.Key, p.Value);
             }
 
             SolutionPath        = Sln.SolutionDir;
-            slnProperties       = Sln.Properties.ExtractDictionary.AddOrUpdate(properties);
+            slnProperties       = Sln.Properties.ExtractDictionary.AddOrUpdate(_properties);
             SolutionFileName    = slnProperties.GetOrDefault(PropertyNames.SLN_NAME, PropertyNames.UNDEFINED);
             IsOpenedSolution    = true;
         }
@@ -276,13 +278,36 @@ namespace net.r_eg.vsSBE
         /// <param name="properties">Solution properties.</param>
         public IsolatedEnv(IDictionary<string, string> properties)
         {
-            slnProperties = properties;
+            slnProperties = ConfigureAsNew(properties);
         }
 
         protected override void UpdateSlnEnv(ISlnResult sln)
         {
             SlnEnv = new XProjectEnv(sln, _properties);
             SlnEnv.Assign();
+        }
+
+        protected IDictionary<string, string> ConfigureAsNew(IDictionary<string, string> properties)
+            => Configure(properties?.ToDictionary(k => k.Key, v => v.Value));
+
+        protected IDictionary<string, string> Configure(IDictionary<string, string> properties)
+        {
+            if(properties == null)
+            {
+                return null;
+            }
+
+            void _SetIfNull(string key, string value)
+            {
+                if(!properties.ContainsKey(key) || properties[key] == null)
+                {
+                    properties[key] = value;
+                }
+            }
+
+            _SetIfNull(nameof(defaultCfg.Configuration), defaultCfg.Configuration);
+            _SetIfNull(nameof(defaultCfg.Platform), defaultCfg.Platform);
+            return properties;
         }
 
         protected string formatCfg(IDictionary<string, string> properties)
@@ -300,7 +325,7 @@ namespace net.r_eg.vsSBE
             Log.Debug($"Accessing to '{name}' is disabled in Isolated environment.");
         }
 
-        private T __disabled<T>(string name, T val = default(T))
+        private T __disabled<T>(string name, T val = default)
         {
             __disabled(name);
             return val;
