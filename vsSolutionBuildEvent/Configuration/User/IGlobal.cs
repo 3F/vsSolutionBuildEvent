@@ -31,14 +31,6 @@ namespace net.r_eg.vsSBE.Configuration.User
         bool DebugMode { get; set; }
 
         /// <summary>
-        /// Suppress the 'Command__' property for main configuration if true.
-        /// 
-        /// This property is temporary and used for compatibility with format v0.9 of conf. file.
-        /// However, this can be inconvenient and while we can't upgrade format, we should also provide a some option to turn off one field at least.
-        /// </summary>
-        bool SuppressDualCommand { get; set; }
-
-        /// <summary>
         /// List of levels for disabling from logger.
         /// </summary>
         Dictionary<string, bool> LogIgnoreLevels { get; set; }

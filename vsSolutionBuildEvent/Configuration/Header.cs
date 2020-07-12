@@ -20,25 +20,12 @@ namespace net.r_eg.vsSBE.Configuration
 {
     public class Header
     {
-        public string[] _ = new string[]
+        public string[] _ => new string[]
         {
-            " This requires vsSolutionBuildEvent engine.", 
-            " Free plugin for Visual Studio or MSBuild Tools:",
-            "  * https://github.com/3F/vsSolutionBuildEvent"
+            " This file for vsSolutionBuildEvent ",
+            " https://github.com/3F/vsSolutionBuildEvent "
         };
 
-        /// <summary>
-        /// Compatibility of configurations.
-        /// </summary>
-        public string Compatibility
-        {
-            get { return compatibility; }
-            set { compatibility = value; }
-        }
-        /// <summary>
-        /// The version below used by default if current attr is not found.
-        /// </summary>
-        private string compatibility = "0.1";
-
+        public string Compatibility { get; set; } = "0.1";
     }
 }

@@ -480,12 +480,9 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                 bool enabled        = c.Enabled;
                 string className    = c.GetType().Name;
 
-                Configuration.Component[] cfg = SlnEvents.Components;
-                if(cfg != null && cfg.Length > 0) {
-                    Configuration.Component v = cfg.Where(p => p.ClassName == className).FirstOrDefault();
-                    if(v != null) {
-                        enabled = v.Enabled;
-                    }
+                Component v = SlnEvents.Components?.FirstOrDefault(p => p.ClassName == className);
+                if(v != null) {
+                    enabled = v.Enabled;
                 }
 
                 cInfo[className] = new List<INodeInfo>();
@@ -526,9 +523,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
 
         public void updateComponents(Configuration.Component[] components)
         {
-            SlnEvents.Components = components;
+            SlnEvents.Components = components.Where(c => !c.Enabled).ToArray(); // L-585
+
             foreach(IComponent c in Loader.Soba.Registered) {
-                Configuration.Component found = components.Where(p => p.ClassName == c.GetType().Name).FirstOrDefault();
+                Component found = components.FirstOrDefault(p => p.ClassName == c.GetType().Name);
                 if(found != null) {
                     c.Enabled = found.Enabled;
                 }

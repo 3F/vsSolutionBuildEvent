@@ -189,7 +189,6 @@ namespace net.r_eg.vsSBE.UI.WForms
 #else
             toolStripMenuVersion.Text = $"v{Version.S_NUM}+{Version.B_SHA1}";
 #endif
-            menuCfgSuppressDualCmd.Checked = Settings.CfgUser.Global.SuppressDualCommand;
 
             //TODO: it was before with original dataGridView... need to check with DataGridViewExt and move it inside if still needed
             foreach(Control ctrl in Util.getControls(this, c => c.GetType() == typeof(DataGridViewExt))) {
@@ -1341,11 +1340,6 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             App.UserConfig.Global.DebugMode = App.DebugMode = toolStripMenuDebugMode.Checked = !toolStripMenuDebugMode.Checked;
             logic.updateUserCfg();
-        }
-
-        private void menuCfgSuppressDualCmd_Click(object sender, EventArgs e)
-        {
-            Settings.CfgUser.Global.SuppressDualCommand = menuCfgSuppressDualCmd.Checked = !menuCfgSuppressDualCmd.Checked;
         }
 
         private void toolStripMenuSBEPanel_Click(object sender, EventArgs e)

@@ -26,15 +26,8 @@ namespace net.r_eg.vsSBE.Events
     /// </summary>
     public class CommandEvent: SBEEvent, ISolutionEvent, ICommandEvent
     {
-        /// <summary>
-        /// Conditions of work Commands
-        /// </summary>
+        /// <inheritdoc cref="ICommandEvent.Filters"/>
         [JsonProperty(TypeNameHandling = TypeNameHandling.All)]
-        public IFilter[] Filters
-        {
-            get { return filters; }
-            set { filters = value; }
-        }
-        private IFilter[] filters;
+        public IFilter[] Filters { get; set; }
     }
 }

@@ -24,27 +24,11 @@ namespace net.r_eg.vsSBE.Events
     /// Support of the Errors + Warnings Event type
     /// </summary>
     public class SBEEventEW: SBEEvent, ISolutionEvent, ISolutionEventEW
-    {        
-        /// <summary>
-        /// List of monitored codes
-        /// Format: [any text] {error | warning} code####: localizable string
-        /// http://msdn.microsoft.com/en-us/library/yxkt8b26%28v=vs.120%29.aspx
-        /// </summary>
-        public List<string> Codes
-        {
-            get { return codes; }
-            set { codes = value; }
-        }
-        private List<string> codes = new List<string>();
+    {
+        /// <inheritdoc cref="ISolutionEventEW.Codes"/>
+        public List<string> Codes { get; set; } = new List<string>();
 
-        /// <summary>
-        /// Whitelist or Blacklist for current codes
-        /// </summary>
-        public bool IsWhitelist
-        {
-            get { return isWhitelist; }
-            set { isWhitelist = value; }
-        }
-        private bool isWhitelist = true;
+        /// <inheritdoc cref="ISolutionEventEW.IsWhitelist"/>
+        public bool IsWhitelist { get; set; } = true;
     }
 }

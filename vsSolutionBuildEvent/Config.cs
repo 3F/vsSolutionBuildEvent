@@ -22,6 +22,7 @@ using System.Text;
 using net.r_eg.MvsSln.Extensions;
 using net.r_eg.vsSBE.Configuration;
 using net.r_eg.vsSBE.Exceptions;
+using SysVersion = System.Version;
 
 namespace net.r_eg.vsSBE
 {
@@ -41,7 +42,7 @@ namespace net.r_eg.vsSBE
             /// Config version.
             /// Version of app managed by Package!
             /// </summary>
-            public static readonly System.Version Version = new System.Version(0, 9);
+            public static readonly SysVersion Version = new SysVersion(0, 12, 4);
 
             /// <summary>
             /// To file system
@@ -144,84 +145,70 @@ namespace net.r_eg.vsSBE
         protected virtual bool loadByLink(string link)
         {
             InRAM = false;
-            Log.Debug("Configuration: trying to load - '{0}'", link);
+            var newCfg = new SolutionEvents();
+
             try
             {
-                using(StreamReader stream = new StreamReader(link, Encoding.UTF8, true))
-                {
-                    Data = deserialize(stream);
-                    if(Data == null) {
-                        throw new UnspecSBEException("file is empty");
-                    }
-                    compatibility(stream);
-                }
-                Log.Info("Loaded settings (v{0}): '{1}'", Data.Header.Compatibility, Settings.WPath);
+                Data = loadJsonConfig(link);
+                warnAboutJsonConfig(SysVersion.Parse(Data.Header.Compatibility));
             }
             catch(FileNotFoundException)
             {
-                Data    = new SolutionEvents();
+                Data    = newCfg;
                 InRAM   = true;
                 Log.Info("Initialized with new settings.");
             }
             catch(Newtonsoft.Json.JsonException ex)
             {
-                Data = _xmlTryUpgrade(link, ex);
+                warnAboutXmlConfig();
+                Log.Error($"Incorrect configuration data: {ex.Message}");
+                Data = newCfg; //xml -> json 0.8-0.9
             }
             catch(Exception ex)
             {
-                Log.Error("Configuration file is corrupt - '{0}'", ex.Message);
-                Data    = new SolutionEvents(); //TODO: actions in UI, e.g.: restore, new..
+                Log.Error($"Configuration file `{link}` is corrupted: {ex.Message}");
+                Data    = newCfg; //TODO: actions in UI, e.g.: restore, new..
                 InRAM   = true;
             }
 
-            // Now we work with latest version
+            // Now we'll work with latest version
             Data.Header.Compatibility = Entity.Version.ToString();
             Updated(this, new DataArgs<ISolutionEvents>() { Data = Data });
 
             return !InRAM;
         }
 
-        /// <summary>
-        /// Checks version and reorganizes structure if needed..
-        /// </summary>
-        /// <param name="stream"></param>
-        private void compatibility(StreamReader stream)
+        private SolutionEvents loadJsonConfig(string link)
         {
-            System.Version cfg = System.Version.Parse(Data.Header.Compatibility);
-
-            if(cfg.Major > Entity.Version.Major || (cfg.Major == Entity.Version.Major && cfg.Minor > Entity.Version.Minor)) {
-                Log.Warn(
-                    "Version {0} of configuration file is higher supported version {1}. Please update application. Several settings may be not correctly loaded.",
-                    cfg.ToString(2), Entity.Version.ToString(2)
-                );
-            }
-
-            if(cfg.Major == 0 && cfg.Minor < 4)
+            using(StreamReader stream = new StreamReader(link, Encoding.UTF8, true))
             {
-                Log._.show();
-                Log.Info("Upgrading configuration for <= v0.3.x");
-                //Upgrade.Migration03_04.migrate(stream);
-                Log.Warn("[Obsolete] Not supported. Use of any v0.4.x - v0.8.x for upgrading <= v0.3.x");
+                var ret = deserialize(stream);
+                if(ret == null) {
+                    throw new UnspecSBEException("file is empty");
+                }
+
+                Log.Info($"Loaded settings (v{ ret.Header.Compatibility}): '{Settings.WPath}'");
+                return ret;
             }
         }
 
-        /// <summary>
-        /// Upgrades from xml.
-        /// </summary>
-        /// <param name="file">Configuration file</param>
-        /// <param name="inner"></param>
-        /// <returns></returns>
-        private ISolutionEvents _xmlTryUpgrade(string file, Newtonsoft.Json.JsonException inner)
+        private void warnAboutJsonConfig(SysVersion cfgVer)
         {
-            try {
-                ISolutionEvents ret = Upgrade.v08.Migration08_09.migrate(file);
-                Log.Info("Successfully upgraded settings. *Save manually! :: -> {0}", Entity.NAME);
-                return ret;
+            if(cfgVer > Entity.Version)
+            {
+                Log.Warn(
+                    $"Configuration file v{cfgVer} is higher than supported v{Entity.Version}. Update app for best known behavior."
+                );
+                return;
             }
-            catch(Exception ex) {
-                Log.Error("Incorrect configuration data: '{0}' -> '{1}'. Initialize new.", inner.Message, ex.Message);
-            }
-            return new SolutionEvents();
+        }
+
+        private void warnAboutXmlConfig()
+        {
+            const string _MSG = "Please use any version from `{0}` for auto-upgrading configuration `{1}`.";
+
+            Log.Warn(_MSG, "0.4.x - 0.8.x", "<= v0.3");
+            Log.Warn(_MSG, "0.9.x - 1.14.0", "<= v0.8");
         }
     }
 }
