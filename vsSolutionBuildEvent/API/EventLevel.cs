@@ -547,14 +547,13 @@ namespace net.r_eg.vsSBE.API
 
             var data = AppSettings.CfgManager.Config.Data;
 
-            foreach(IComponent c in loader.Soba.Registered) {
-                if(data.Components == null || data.Components.Length < 1) {
-                    //c.Enabled = true;
-                    continue;
-                }
-
-                var found = data.Components.Where(p => p.ClassName == c.GetType().Name).FirstOrDefault();
-                if(found == null) {
+            foreach(IComponent c in loader.Soba.Registered)
+            {
+                var found = data.Components?.FirstOrDefault(p => p.ClassName == c.GetType().Name);
+                if(found == null)
+                {
+                    // Each component provides its default state for IComponent.Enabled
+                    // We'll just continue 'as is' if this component is not presented in config.
                     continue;
                 }
 
