@@ -36,6 +36,6 @@ using System.Runtime.InteropServices;
 // Current format: {Major}.{Minor}.0.{Build} -> 
 //     Where 0 it's the reserved number for patches from external assemblies
 //     For changes use the .version file only as {Major}.{Minor}
-[assembly: AssemblyVersion(Version.S_NUM_REV)]
+[assembly: AssemblyVersion(Version.S_NUM)]
 [assembly: AssemblyFileVersion(Version.S_NUM_REV)]
 [assembly: AssemblyInformationalVersion(Version.S_INFO)]

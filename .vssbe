@@ -594,7 +594,7 @@
       }
     },
     {
-      "Enabled": true,
+      "Enabled": false,
       "Name": "PackBridge",
       "Caption": "Pack 'Bridge'",
       "SupportMSBuild": true,
@@ -634,7 +634,7 @@
       }
     },
     {
-      "Enabled": true,
+      "Enabled": false,
       "Name": "PackProvider",
       "Caption": "Pack 'Provider'",
       "SupportMSBuild": true,
@@ -680,6 +680,52 @@
     },
     {
       "Enabled": true,
+      "Name": "PackAPI",
+      "Caption": "",
+      "SupportMSBuild": true,
+      "SupportSBEScripts": true,
+      "IgnoreIfBuildFailed": true,
+      "BuildType": "Common",
+      "Confirmation": false,
+      "ToConfiguration": [],
+      "ExecutionOrder": {
+        "$type": "net.r_eg.vsSBE.Events.ExecutionOrder[], vsSolutionBuildEvent",
+        "$values": []
+      },
+      "Process": {
+        "$type": "net.r_eg.vsSBE.Events.EventProcess, vsSolutionBuildEvent",
+        "Waiting": true,
+        "Hidden": true,
+        "TimeLimit": 30
+      },
+      "Mode": {
+        "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
+        "Type": "Script",
+        "Command": "#[IO copy.file(\"$(odir)\\build.SDK$(cfgSDK).txt\", \"$(pDirProvider)bin\\$(cfg)\\\\\", true)]\n\n#[7z pack.files(\n{\n            \"$(pDirProvider)bin\\$(cfg)\\Bridge.dll\", \n            \"$(pDirProvider)bin\\$(cfg)\\Bridge.pdb\",\n            \n        #[( $(cfg) == \"Release\" ) { \n            \"$(pDirProvider)bin\\$(cfg)\\Bridge.xml\",\n            \"$(pDirProvider)bin\\$(cfg)\\Provider.xml\",\n        }]\n            \n            \"$(pDirProvider)bin\\$(cfg)\\Provider.dll\",\n            \"$(pDirProvider)bin\\$(cfg)\\Provider.pdb\",\n            \"$(pDirProvider)bin\\$(cfg)\\build.SDK$(cfgSDK).txt\" \n            \n}, \n\"$(odir)vsSBE.API.$(numBridge)+$(bSha1).SDK$(cfgSDK).zip\")]",
+        "Command__": [
+          "#[IO copy.file(\"$(odir)\\build.SDK$(cfgSDK).txt\", \"$(pDirProvider)bin\\$(cfg)\\\\\", true)]",
+          "",
+          "#[7z pack.files(",
+          "{",
+          "            \"$(pDirProvider)bin\\$(cfg)\\Bridge.dll\", ",
+          "            \"$(pDirProvider)bin\\$(cfg)\\Bridge.pdb\",",
+          "            ",
+          "        #[( $(cfg) == \"Release\" ) { ",
+          "            \"$(pDirProvider)bin\\$(cfg)\\Bridge.xml\",",
+          "            \"$(pDirProvider)bin\\$(cfg)\\Provider.xml\",",
+          "        }]",
+          "            ",
+          "            \"$(pDirProvider)bin\\$(cfg)\\Provider.dll\",",
+          "            \"$(pDirProvider)bin\\$(cfg)\\Provider.pdb\",",
+          "            \"$(pDirProvider)bin\\$(cfg)\\build.SDK$(cfgSDK).txt\" ",
+          "            ",
+          "}, ",
+          "\"$(odir)vsSBE.API.$(numBridge)+$(bSha1).SDK$(cfgSDK).zip\")]"
+        ]
+      }
+    },
+    {
+      "Enabled": false,
       "Name": "PackCIMSBuild",
       "Caption": "Pack 'CI.MSBuild'",
       "SupportMSBuild": true,

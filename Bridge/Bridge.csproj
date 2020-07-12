@@ -35,7 +35,7 @@
     <DocumentationFile>bin\Release\Bridge.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'REL_SDK15|AnyCPU' ">
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <NetTargetVName>net45</NetTargetVName>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants></DefineConstants>
@@ -47,7 +47,7 @@
     <DocumentationFile>bin\Release\Bridge.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DBG_SDK15|AnyCPU' ">
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <NetTargetVName>net45</NetTargetVName>
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\Debug\</OutputPath>

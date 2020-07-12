@@ -203,11 +203,10 @@ namespace net.r_eg.vsSBE.CI.MSBuild
 
         protected void header()
         {
-            log.info("vsSolutionBuildEvent");
+            log.info($"{Environment.NewLine}  vsSolutionBuildEvent");
             log.info( "  Copyright (c) 2013-2016,2019-2020  Denis Kuzmin < x-3F@outlook.com > GitHub/3F");
             log.info($"  CI.MSBuild: {System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion}");
-            log.info($"  https://github.com/3F/vsSolutionBuildEvent");
-            log.info( "  - - - - - - - - - - - - - - - - - - - - - -" + Environment.NewLine);
+            log.info($"  https://github.com/3F/vsSolutionBuildEvent {Environment.NewLine}");
         }
 
         /// <summary>

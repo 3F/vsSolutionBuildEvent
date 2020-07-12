@@ -7,6 +7,7 @@
 [![Build status - master](https://ci.appveyor.com/api/projects/status/l38xn0j2c5an28e1/branch/master?svg=true)](https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/branch/master)
 [![VSIX](https://vssbe.r-eg.net/etc/badges/VSPackage.svg)](https://vssbe.r-eg.net/Changelist/#vsix)
 [![nuget package](https://img.shields.io/nuget/v/vsSolutionBuildEvent.svg)](https://www.nuget.org/packages/vsSolutionBuildEvent/)
+[![API](https://vssbe.r-eg.net/etc/badges/API.svg)](https://vssbe.r-eg.net/Changelist/#api)
 [![LGPLv3](https://vssbe.r-eg.net/etc/badges/License.svg)](https://vssbe.r-eg.net/License/)
 [![GetNuTool](https://img.shields.io/badge/🧩-GetNuTool-93C10B)](https://github.com/3F/GetNuTool)
 [![SobaScript](https://img.shields.io/badge/🧩-SobaScript-8E5733)](https://github.com/3F/SobaScript)
@@ -15,12 +16,6 @@
 [![Build history](https://buildstats.info/appveyor/chart/3Fs/vssolutionbuildevent?buildCount=20&showStats=true)](https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/history)
 [![Event model](https://vssbe.r-eg.net/doc/Resources/events_model_small.png)]()
 [![Short Overview](https://vssbe.r-eg.net/doc/Resources/examples/overview-youtube.png)](https://youtu.be/FX5GiMX0ulI) 
-
-[![CI.MSBuild](https://vssbe.r-eg.net/etc/badges/CI.MSBuild.svg)](https://vssbe.r-eg.net/Changelist/#cim)
-[![Devenv](https://vssbe.r-eg.net/etc/badges/Devenv.svg)](https://vssbe.r-eg.net/Changelist/#devenv)
-[![Provider](https://vssbe.r-eg.net/etc/badges/Provider.svg)](https://vssbe.r-eg.net/Changelist/#provider)
-[![API](https://vssbe.r-eg.net/etc/badges/API.svg)](https://vssbe.r-eg.net/Changelist/#api)
-[![Tests](https://img.shields.io/appveyor/tests/3Fs/vssolutionbuildevent/master.svg)](https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/build/tests)
 
 **[Download](https://vssbe.r-eg.net/Downloads/)** (Binaries, Snapshots, Nightly builds, Libraries, ...) / [![D2](https://img.shields.io/sourceforge/dt/vssbe.svg)](https://sourceforge.net/projects/vssbe/) (old releases via sf)
 
@@ -54,9 +49,7 @@ Various modes for everything:
 
 Supports [Advanced MSBuild](https://vssbe.r-eg.net/doc/Scripts/MSBuild/) & [SBE-Scripts engine](https://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/) for your awesome ideas.
 
-Possible work even **without** Visual Studio. 
-
-Provides also support of the CI-Build Servers (TeamCity, AppVeyor, Azure DevOps, ...), Command-Line mode and lot of other features for the convenience of your work with the build, tests, versioning, IO operations, and so on. See the documentation.
+Provides CI support (TeamCity, AppVeyor, Azure DevOps, ...), Command-Line mode and lot of other features for convenient work with the builds, tests, versioning, IO operations, and so on. See the documentation.
 
 * [SBE-Scripts](https://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/)
 * [MSBuild](https://vssbe.r-eg.net/doc/Scripts/MSBuild/)
@@ -247,7 +240,7 @@ See our [**Wizard** for automatic code generation **or** use any **custom script
 
 ![](https://3F.github.io/web.vsSBE/doc/Resources/examples/VersionClass.gif)
 
-## Different environments
+## Various environments
 
 You can easily use this with TeamCity, Azure DevOps, AppVeyor, and any other automated environments:
 
