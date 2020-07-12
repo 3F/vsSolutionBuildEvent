@@ -224,6 +224,7 @@ namespace net.r_eg.vsSBE
                 mainToolCmd.closeConfigForm();
 
                 sToolCmd?.detachEvents();
+                resetErrors();
                 //Log._.paneDetach((IVsOutputWindow)GetGlobalService(typeof(SVsOutputWindow)));
                 return VSConstants.S_OK;
             }
@@ -239,10 +240,10 @@ namespace net.r_eg.vsSBE
 
         public int UpdateSolution_Begin(ref int pfCancelUpdate)
         {
-            try {
+            try
+            {
                 UI.Plain.State.BuildBegin();
-                sToolCmd?.ToolContent.resetCounter();
-                errorList.clear();
+                resetErrors();
             }
             catch(Exception ex) {
                 Log.Debug("Failed reset of warnings counter: '{0}'", ex.Message);
@@ -479,6 +480,12 @@ namespace net.r_eg.vsSBE
                     Event.onBuildRaw(e.Raw);
                 }
             };
+        }
+
+        private void resetErrors()
+        {
+            sToolCmd?.ToolContent.resetCounter();
+            errorList.clear();
         }
 
         private void _showCriticalVsMsg(IVsUIShell uiShell, Exception ex)

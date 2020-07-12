@@ -38,12 +38,12 @@ namespace net.r_eg.vsSBE.Events.Mapping.Json
         ///       And, how about all as a ICommandArray ? this used with ModeOperation for example.
         /// </summary>
         [Browsable(false)]
+        [JsonIgnore] // "Command" removed after 1.14.0. Minimal 0.12.4
         public string Command
         {
-            get {
-                return command; 
-            }
-            set {
+            get => command;
+            set
+            {
                 if(value != null) {
                     _command = value.Replace("\r\n", "\n").Split('\n');
                 }
@@ -59,14 +59,9 @@ namespace net.r_eg.vsSBE.Events.Mapping.Json
         [JsonProperty(PropertyName = "Command__")]
         protected string[] _Command
         {
-            get
+            get => _command;
+            set
             {
-                if(Settings.CfgUser != null && Settings.CfgUser.Global.SuppressDualCommand) {
-                    return null;
-                }
-                return _command;
-            }
-            set {
                 if(value != null) {
                     command = String.Join("\n", value);
                 }

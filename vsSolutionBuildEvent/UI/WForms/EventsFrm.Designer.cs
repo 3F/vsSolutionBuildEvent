@@ -86,8 +86,6 @@
             this.toolStripMenuPlugin = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuCopyPath = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuPluginDir = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
-            this.menuCfgSuppressDualCmd = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuSBEPanel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuHelp = new System.Windows.Forms.ToolStripSplitButton();
             this.tsMenuItemExamples = new System.Windows.Forms.ToolStripMenuItem();
@@ -311,62 +309,62 @@
             this.toolStripSeparator8,
             this.menuActionsReset});
             this.contextMenuActions.Name = "contextMenuManager";
-            this.contextMenuActions.Size = new System.Drawing.Size(143, 154);
+            this.contextMenuActions.Size = new System.Drawing.Size(142, 154);
             // 
             // menuActionsTogglePanel
             // 
             this.menuActionsTogglePanel.Name = "menuActionsTogglePanel";
-            this.menuActionsTogglePanel.Size = new System.Drawing.Size(142, 22);
+            this.menuActionsTogglePanel.Size = new System.Drawing.Size(141, 22);
             this.menuActionsTogglePanel.Text = "Toggle Panel";
             this.menuActionsTogglePanel.Click += new System.EventHandler(this.menuActionsTogglePanel_Click);
             // 
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(139, 6);
+            this.toolStripSeparator7.Size = new System.Drawing.Size(138, 6);
             // 
             // menuActionsAdd
             // 
             this.menuActionsAdd.Name = "menuActionsAdd";
-            this.menuActionsAdd.Size = new System.Drawing.Size(142, 22);
+            this.menuActionsAdd.Size = new System.Drawing.Size(141, 22);
             this.menuActionsAdd.Text = "Add";
             this.menuActionsAdd.Click += new System.EventHandler(this.menuActionsAdd_Click);
             // 
             // menuActionsClone
             // 
             this.menuActionsClone.Name = "menuActionsClone";
-            this.menuActionsClone.Size = new System.Drawing.Size(142, 22);
+            this.menuActionsClone.Size = new System.Drawing.Size(141, 22);
             this.menuActionsClone.Text = "Clone";
             this.menuActionsClone.Click += new System.EventHandler(this.menuActionsClone_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(139, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(138, 6);
             // 
             // menuActionsEdit
             // 
             this.menuActionsEdit.Name = "menuActionsEdit";
-            this.menuActionsEdit.Size = new System.Drawing.Size(142, 22);
+            this.menuActionsEdit.Size = new System.Drawing.Size(141, 22);
             this.menuActionsEdit.Text = "Edit Name";
             this.menuActionsEdit.Click += new System.EventHandler(this.menuActionsEdit_Click);
             // 
             // menuActionsRemove
             // 
             this.menuActionsRemove.Name = "menuActionsRemove";
-            this.menuActionsRemove.Size = new System.Drawing.Size(142, 22);
+            this.menuActionsRemove.Size = new System.Drawing.Size(141, 22);
             this.menuActionsRemove.Text = "Remove";
             this.menuActionsRemove.Click += new System.EventHandler(this.menuActionsRemove_Click);
             // 
             // toolStripSeparator8
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(139, 6);
+            this.toolStripSeparator8.Size = new System.Drawing.Size(138, 6);
             // 
             // menuActionsReset
             // 
             this.menuActionsReset.Name = "menuActionsReset";
-            this.menuActionsReset.Size = new System.Drawing.Size(142, 22);
+            this.menuActionsReset.Size = new System.Drawing.Size(141, 22);
             this.menuActionsReset.Text = "Reset";
             this.menuActionsReset.Click += new System.EventHandler(this.menuActionsReset_Click);
             // 
@@ -465,7 +463,7 @@
             // 
             this.toolStripMenuApply.Name = "toolStripMenuApply";
             this.toolStripMenuApply.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.toolStripMenuApply.Size = new System.Drawing.Size(154, 22);
+            this.toolStripMenuApply.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuApply.Text = "Apply";
             this.toolStripMenuApply.Click += new System.EventHandler(this.toolStripMenuApply_Click);
             // 
@@ -473,7 +471,7 @@
             // 
             this.menuActionExec.Name = "menuActionExec";
             this.menuActionExec.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
-            this.menuActionExec.Size = new System.Drawing.Size(154, 22);
+            this.menuActionExec.Size = new System.Drawing.Size(180, 22);
             this.menuActionExec.Text = "Execute";
             this.menuActionExec.ToolTipText = "Try current action (Common Context)";
             this.menuActionExec.Click += new System.EventHandler(this.menuActionExec_Click);
@@ -482,14 +480,14 @@
             // 
             this.toolStripMenuReset.Name = "toolStripMenuReset";
             this.toolStripMenuReset.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.toolStripMenuReset.Size = new System.Drawing.Size(154, 22);
+            this.toolStripMenuReset.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuReset.Text = "Reset";
             this.toolStripMenuReset.Click += new System.EventHandler(this.toolStripMenuReset_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(151, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(177, 6);
             // 
             // toolStripMenuTools
             // 
@@ -502,53 +500,53 @@
             this.toolStripMenuDTECmdExec,
             this.menuItemSniffer});
             this.toolStripMenuTools.Name = "toolStripMenuTools";
-            this.toolStripMenuTools.Size = new System.Drawing.Size(154, 22);
+            this.toolStripMenuTools.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuTools.Text = "Tools";
             // 
             // menuSBEScript
             // 
             this.menuSBEScript.Name = "menuSBEScript";
-            this.menuSBEScript.Size = new System.Drawing.Size(215, 22);
+            this.menuSBEScript.Size = new System.Drawing.Size(178, 22);
             this.menuSBEScript.Text = "Testing tool";
             this.menuSBEScript.Click += new System.EventHandler(this.menuSBEScript_Click);
             // 
             // toolStripSeparator9
             // 
             this.toolStripSeparator9.Name = "toolStripSeparator9";
-            this.toolStripSeparator9.Size = new System.Drawing.Size(212, 6);
+            this.toolStripSeparator9.Size = new System.Drawing.Size(175, 6);
             // 
             // toolStripMenuMSBuildProp
             // 
             this.toolStripMenuMSBuildProp.Name = "toolStripMenuMSBuildProp";
-            this.toolStripMenuMSBuildProp.Size = new System.Drawing.Size(215, 22);
+            this.toolStripMenuMSBuildProp.Size = new System.Drawing.Size(178, 22);
             this.toolStripMenuMSBuildProp.Text = "MSBuild Properties";
             this.toolStripMenuMSBuildProp.Click += new System.EventHandler(this.toolStripMenuMSBuildProp_Click);
             // 
             // toolStripMenuEvaluatingProperty
             // 
             this.toolStripMenuEvaluatingProperty.Name = "toolStripMenuEvaluatingProperty";
-            this.toolStripMenuEvaluatingProperty.Size = new System.Drawing.Size(215, 22);
+            this.toolStripMenuEvaluatingProperty.Size = new System.Drawing.Size(178, 22);
             this.toolStripMenuEvaluatingProperty.Text = "Evaluate Property";
             this.toolStripMenuEvaluatingProperty.Click += new System.EventHandler(this.toolStripMenuEvaluatingProperty_Click);
             // 
             // toolStripMenuDTECmd
             // 
             this.toolStripMenuDTECmd.Name = "toolStripMenuDTECmd";
-            this.toolStripMenuDTECmd.Size = new System.Drawing.Size(215, 22);
+            this.toolStripMenuDTECmd.Size = new System.Drawing.Size(178, 22);
             this.toolStripMenuDTECmd.Text = "DTE-Commands";
             this.toolStripMenuDTECmd.Click += new System.EventHandler(this.toolStripMenuDTECmd_Click);
             // 
             // toolStripMenuDTECmdExec
             // 
             this.toolStripMenuDTECmdExec.Name = "toolStripMenuDTECmdExec";
-            this.toolStripMenuDTECmdExec.Size = new System.Drawing.Size(215, 22);
+            this.toolStripMenuDTECmdExec.Size = new System.Drawing.Size(178, 22);
             this.toolStripMenuDTECmdExec.Text = "Execute commands";
             this.toolStripMenuDTECmdExec.Click += new System.EventHandler(this.toolStripMenuDTECmdExec_Click);
             // 
             // menuItemSniffer
             // 
             this.menuItemSniffer.Name = "menuItemSniffer";
-            this.menuItemSniffer.Size = new System.Drawing.Size(215, 22);
+            this.menuItemSniffer.Size = new System.Drawing.Size(178, 22);
             this.menuItemSniffer.Text = "EnvDTE Sniffer";
             this.menuItemSniffer.Click += new System.EventHandler(this.menuItemSniffer_Click);
             // 
@@ -557,7 +555,7 @@
             this.menuWizards.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuWizardVersion});
             this.menuWizards.Name = "menuWizards";
-            this.menuWizards.Size = new System.Drawing.Size(154, 22);
+            this.menuWizards.Size = new System.Drawing.Size(180, 22);
             this.menuWizards.Text = "Wizards";
             // 
             // menuWizardVersion
@@ -573,7 +571,7 @@
             this.menuTplTargets,
             this.menuTplCSharp});
             this.toolStripMenuTpl.Name = "toolStripMenuTpl";
-            this.toolStripMenuTpl.Size = new System.Drawing.Size(154, 22);
+            this.toolStripMenuTpl.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuTpl.Text = "Templates";
             // 
             // menuTplTargets
@@ -581,7 +579,7 @@
             this.menuTplTargets.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuTplTargetsDefault});
             this.menuTplTargets.Name = "menuTplTargets";
-            this.menuTplTargets.Size = new System.Drawing.Size(146, 22);
+            this.menuTplTargets.Size = new System.Drawing.Size(145, 22);
             this.menuTplTargets.Text = "Targets Mode";
             // 
             // menuTplTargetsDefault
@@ -596,7 +594,7 @@
             this.menuTplCSharp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.menuTplCSharpDefault});
             this.menuTplCSharp.Name = "menuTplCSharp";
-            this.menuTplCSharp.Size = new System.Drawing.Size(146, 22);
+            this.menuTplCSharp.Size = new System.Drawing.Size(145, 22);
             this.menuTplCSharp.Text = "C# Mode";
             // 
             // menuTplCSharpDefault
@@ -609,7 +607,7 @@
             // toolStripSeparator10
             // 
             this.toolStripSeparator10.Name = "toolStripSeparator10";
-            this.toolStripSeparator10.Size = new System.Drawing.Size(151, 6);
+            this.toolStripSeparator10.Size = new System.Drawing.Size(177, 6);
             // 
             // toolStripMenuCI
             // 
@@ -617,7 +615,7 @@
             this.toolStripMenuCIMSBuild,
             this.toolStripMenuDevenv});
             this.toolStripMenuCI.Name = "toolStripMenuCI";
-            this.toolStripMenuCI.Size = new System.Drawing.Size(154, 22);
+            this.toolStripMenuCI.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuCI.Text = "CI Utilities";
             // 
             // toolStripMenuCIMSBuild
@@ -637,58 +635,42 @@
             // toolStripMenuAPI
             // 
             this.toolStripMenuAPI.Name = "toolStripMenuAPI";
-            this.toolStripMenuAPI.Size = new System.Drawing.Size(154, 22);
+            this.toolStripMenuAPI.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuAPI.Text = "API";
             this.toolStripMenuAPI.Click += new System.EventHandler(this.toolStripMenuAPI_Click);
             // 
             // toolStripSeparator11
             // 
             this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(151, 6);
+            this.toolStripSeparator11.Size = new System.Drawing.Size(177, 6);
             // 
             // toolStripMenuPlugin
             // 
             this.toolStripMenuPlugin.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuCopyPath,
-            this.toolStripMenuPluginDir,
-            this.toolStripSeparator12,
-            this.menuCfgSuppressDualCmd});
+            this.toolStripMenuPluginDir});
             this.toolStripMenuPlugin.Name = "toolStripMenuPlugin";
-            this.toolStripMenuPlugin.Size = new System.Drawing.Size(154, 22);
+            this.toolStripMenuPlugin.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuPlugin.Text = "Plugin";
             // 
             // toolStripMenuCopyPath
             // 
             this.toolStripMenuCopyPath.Name = "toolStripMenuCopyPath";
-            this.toolStripMenuCopyPath.Size = new System.Drawing.Size(245, 22);
+            this.toolStripMenuCopyPath.Size = new System.Drawing.Size(216, 22);
             this.toolStripMenuCopyPath.Text = "Copy path to plugin";
             this.toolStripMenuCopyPath.Click += new System.EventHandler(this.toolStripMenuCopyPath_Click);
             // 
             // toolStripMenuPluginDir
             // 
             this.toolStripMenuPluginDir.Name = "toolStripMenuPluginDir";
-            this.toolStripMenuPluginDir.Size = new System.Drawing.Size(245, 22);
+            this.toolStripMenuPluginDir.Size = new System.Drawing.Size(216, 22);
             this.toolStripMenuPluginDir.Text = "Open directory with plugin";
             this.toolStripMenuPluginDir.Click += new System.EventHandler(this.toolStripMenuPluginDir_Click);
-            // 
-            // toolStripSeparator12
-            // 
-            this.toolStripSeparator12.Name = "toolStripSeparator12";
-            this.toolStripSeparator12.Size = new System.Drawing.Size(242, 6);
-            // 
-            // menuCfgSuppressDualCmd
-            // 
-            this.menuCfgSuppressDualCmd.Name = "menuCfgSuppressDualCmd";
-            this.menuCfgSuppressDualCmd.Size = new System.Drawing.Size(245, 22);
-            this.menuCfgSuppressDualCmd.Text = "Suppress \'Command__\' property";
-            this.menuCfgSuppressDualCmd.ToolTipText = "The \'Command__\' property in configuration file is temporary and used for compatib" +
-    "ility with format v0.9.\r\nHowever, you can disable this if needed.";
-            this.menuCfgSuppressDualCmd.Click += new System.EventHandler(this.menuCfgSuppressDualCmd_Click);
             // 
             // toolStripMenuSBEPanel
             // 
             this.toolStripMenuSBEPanel.Name = "toolStripMenuSBEPanel";
-            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(154, 22);
+            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuSBEPanel.Text = "Quick Panel";
             this.toolStripMenuSBEPanel.Click += new System.EventHandler(this.toolStripMenuSBEPanel_Click);
             // 
@@ -1225,7 +1207,7 @@
             this.checkBoxSBEScriptSupport.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxSBEScriptSupport.Location = new System.Drawing.Point(8, 105);
             this.checkBoxSBEScriptSupport.Name = "checkBoxSBEScriptSupport";
-            this.checkBoxSBEScriptSupport.Size = new System.Drawing.Size(120, 17);
+            this.checkBoxSBEScriptSupport.Size = new System.Drawing.Size(116, 17);
             this.checkBoxSBEScriptSupport.TabIndex = 21;
             this.checkBoxSBEScriptSupport.Text = "SobaScript support";
             this.checkBoxSBEScriptSupport.UseVisualStyleBackColor = true;
@@ -1644,7 +1626,7 @@
             this.owpRemove});
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -1786,7 +1768,7 @@
             this.dgvOrderType});
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -1992,7 +1974,7 @@
             this.dgvCESniffer.ContextMenuStrip = this.contextMenuSniffer;
             dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -2170,7 +2152,7 @@
             this.dgvCEFiltersColumnRemove});
             dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle9.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             dataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -2362,7 +2344,7 @@
             this.dgvComponents.ContextMenuStrip = this.contextMenuComponents;
             dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle10.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             dataGridViewCellStyle10.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -2480,7 +2462,7 @@
             this.dgvComponentInfo.ContextMenuStrip = this.contextMenuComponents;
             dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle11.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             dataGridViewCellStyle11.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -2865,8 +2847,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolStripMenuItem menuItemSniffer;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
-        private System.Windows.Forms.ToolStripMenuItem menuCfgSuppressDualCmd;
         private System.Windows.Forms.LinkLabel linkAddAction;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
         private System.Windows.Forms.ToolStripMenuItem menuLogMsg;

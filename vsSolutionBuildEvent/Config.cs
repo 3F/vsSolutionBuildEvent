@@ -42,7 +42,7 @@ namespace net.r_eg.vsSBE
             /// Config version.
             /// Version of app managed by Package!
             /// </summary>
-            public static readonly SysVersion Version = new SysVersion(0, 9);
+            public static readonly SysVersion Version = new SysVersion(0, 12, 4);
 
             /// <summary>
             /// To file system

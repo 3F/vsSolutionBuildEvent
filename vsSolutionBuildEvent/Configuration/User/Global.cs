@@ -22,36 +22,11 @@ namespace net.r_eg.vsSBE.Configuration.User
 {
     public class Global: IGlobal
     {
-        /// <summary>
-        /// Debug mode for application.
-        /// </summary>
-        public bool DebugMode
-        {
-            get;
-            set;
-        }
+        /// <inheritdoc cref="IGlobal.DebugMode"/>
+        public bool DebugMode { get; set; }
 
-        /// <summary>
-        /// Suppress the 'Command__' property for main configuration if true.
-        /// 
-        /// This property is temporary and used for compatibility with format v0.9 of conf. file.
-        /// However, this can be inconvenient and while we can't upgrade format, we should also provide a some option to turn off one field at least.
-        /// </summary>
-        public bool SuppressDualCommand
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// List of levels for disabling from logger.
-        /// </summary>
+        /// <inheritdoc cref="IGlobal.LogIgnoreLevels"/>
         //[JsonProperty(TypeNameHandling = TypeNameHandling.None, ItemTypeNameHandling = TypeNameHandling.All)]
-        public Dictionary<string, bool> LogIgnoreLevels
-        {
-            get { return logIgnoreLevels; }
-            set { logIgnoreLevels = value; }
-        }
-        private Dictionary<string, bool> logIgnoreLevels = new Dictionary<string, bool>();
+        public Dictionary<string, bool> LogIgnoreLevels { get; set; } = new Dictionary<string, bool>();
     }
 }
