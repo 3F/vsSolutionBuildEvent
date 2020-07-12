@@ -20,159 +20,52 @@ using System;
 using net.r_eg.SobaScript.Exceptions;
 using net.r_eg.vsSBE.Configuration;
 using net.r_eg.vsSBE.Events;
-using net.r_eg.vsSBE.Exceptions;
 
 namespace net.r_eg.vsSBE
 {
     [Serializable]
     public class SolutionEvents: ISolutionEvents
     {
-        /// <summary>
-        /// Header of information.
-        /// </summary>
-        public Header Header
-        {
-            get { return header; }
-            set { header = value; }
-        }
-        [NonSerialized]
-        private Header header = new Header();
+        /// <inheritdoc cref="ISolutionEvents.Header"/>
+        public Header Header { get; set; } = new Header();
 
-        /// <summary>
-        /// Configuration of components.
-        /// </summary>
-        public Component[] Components
-        {
-            get;
-            set;
-        }
+        /// <inheritdoc cref="ISolutionEvents.Components"/>
+        public Component[] Components { get; set; }
 
-        /// <summary>
-        /// Before assembling.
-        /// </summary>
-        public SBEEvent[] PreBuild
-        {
-            get { return preBuild; }
-            set { preBuild = value; }
-        }
-        [NonSerialized]
-        private SBEEvent[] preBuild = new SBEEvent[] { new SBEEvent() };
+        /// <inheritdoc cref="ISolutionEvents.PreBuild"/>
+        public SBEEvent[] PreBuild { get; set; } = new[] { new SBEEvent() };
 
-        /// <summary>
-        /// After assembling.
-        /// </summary>
-        public SBEEvent[] PostBuild
-        {
-            get { return postBuild; }
-            set { postBuild = value; }
-        }
-        [NonSerialized]
-        private SBEEvent[] postBuild = new SBEEvent[] { };
+        /// <inheritdoc cref="ISolutionEvents.PostBuild"/>
+        public SBEEvent[] PostBuild { get; set; } = new SBEEvent[] { };
 
-        /// <summary>
-        /// When build has been canceled by user or when occurs error.
-        /// </summary>
-        public SBEEvent[] CancelBuild
-        {
-            get { return cancelBuild; }
-            set { cancelBuild = value; }
-        }
-        [NonSerialized]
-        private SBEEvent[] cancelBuild = new SBEEvent[] { };
+        /// <inheritdoc cref="ISolutionEvents.CancelBuild"/>
+        public SBEEvent[] CancelBuild { get; set; } = new SBEEvent[] { };
 
-        /// <summary>
-        /// Warnings during assembly processing.
-        /// </summary>
-        public SBEEventEW[] WarningsBuild
-        {
-            get { return warningsBuild; }
-            set { warningsBuild = value; }
-        }
-        [NonSerialized]
-        private SBEEventEW[] warningsBuild = new SBEEventEW[] { };
+        /// <inheritdoc cref="ISolutionEvents.WarningsBuild"/>
+        public SBEEventEW[] WarningsBuild { get; set; } = new SBEEventEW[] { };
 
-        /// <summary>
-        /// Errors during assembly processing.
-        /// </summary>
-        public SBEEventEW[] ErrorsBuild
-        {
-            get { return errorsBuild; }
-            set { errorsBuild = value; }
-        }
-        [NonSerialized]
-        private SBEEventEW[] errorsBuild = new SBEEventEW[] { };
+        /// <inheritdoc cref="ISolutionEvents.ErrorsBuild"/>
+        public SBEEventEW[] ErrorsBuild { get; set; } = new SBEEventEW[] { };
 
-        /// <summary>
-        /// Customization from the Output.
-        /// </summary>
-        public SBEEventOWP[] OWPBuild
-        {
-            get { return owpBuild; }
-            set { owpBuild = value; }
-        }
-        [NonSerialized]
-        private SBEEventOWP[] owpBuild = new SBEEventOWP[] { };
+        /// <inheritdoc cref="ISolutionEvents.OWPBuild"/>
+        public SBEEventOWP[] OWPBuild { get; set; } = new SBEEventOWP[] { };
 
-        /// <summary>
-        /// Transmission of the build-data to outer handler.
-        /// </summary>
-        public SBETransmitter[] Transmitter
-        {
-            get { return transmitter; }
-            set { transmitter = value; }
-        }
-        [NonSerialized]
-        private SBETransmitter[] transmitter = new SBETransmitter[] { };
+        /// <inheritdoc cref="ISolutionEvents.Transmitter"/>
+        public SBETransmitter[] Transmitter { get; set; } = new SBETransmitter[] { };
 
-        /// <summary>
-        /// Provides command events from EnvDTE.
-        /// </summary>
-        public CommandEvent[] CommandEvent
-        {
-            get { return commandEvent; }
-            set { commandEvent = value; }
-        }
-        [NonSerialized]
-        private CommandEvent[] commandEvent = new CommandEvent[] { };
+        /// <inheritdoc cref="ISolutionEvents.CommandEvent"/>
+        public CommandEvent[] CommandEvent { get; set; } = new CommandEvent[] { };
 
-        /// <summary>
-        /// All processes with internal logging.
-        /// </summary>
-        public LoggingEvent[] Logging
-        {
-            get { return logging; }
-            set { logging = value; }
-        }
-        [NonSerialized]
-        private LoggingEvent[] logging = new LoggingEvent[] { };
+        /// <inheritdoc cref="ISolutionEvents.Logging"/>
+        public LoggingEvent[] Logging { get; set; } = new LoggingEvent[] { };
 
-        /// <summary>
-        /// Solution has been opened.
-        /// </summary>
-        public SBEEvent[] SlnOpened
-        {
-            get { return slnOpened; }
-            set { slnOpened = value; }
-        }
-        [NonSerialized]
-        private SBEEvent[] slnOpened = new SBEEvent[] { };
+        /// <inheritdoc cref="ISolutionEvents.SlnOpened"/>
+        public SBEEvent[] SlnOpened { get; set; } = new SBEEvent[] { };
 
-        /// <summary>
-        /// Solution has been closed.
-        /// </summary>
-        public SBEEvent[] SlnClosed
-        {
-            get { return slnClosed; }
-            set { slnClosed = value; }
-        }
-        [NonSerialized]
-        private SBEEvent[] slnClosed = new SBEEvent[] { };
+        /// <inheritdoc cref="ISolutionEvents.SlnClosed"/>
+        public SBEEvent[] SlnClosed { get; set; } = new SBEEvent[] { };
 
-
-        /// <summary>
-        /// The event by type.
-        /// </summary>
-        /// <param name="type">Available event.</param>
+        /// <inheritdoc cref="ISolutionEvents.getEvent"/>
         /// <exception cref="NotFoundException"></exception>
         public ISolutionEvent[] getEvent(SolutionEventType type)
         {
@@ -215,5 +108,18 @@ namespace net.r_eg.vsSBE
 
             throw new NotFoundException(type);
         }
+
+        public bool ShouldSerializeComponents() => Components?.Length > 0;
+        public bool ShouldSerializePreBuild() => PreBuild?.Length > 0;
+        public bool ShouldSerializePostBuild() => PostBuild?.Length > 0;
+        public bool ShouldSerializeCancelBuild() => CancelBuild?.Length > 0;
+        public bool ShouldSerializeWarningsBuild() => WarningsBuild?.Length > 0;
+        public bool ShouldSerializeErrorsBuild() => ErrorsBuild?.Length > 0;
+        public bool ShouldSerializeOWPBuild() => OWPBuild?.Length > 0;
+        public bool ShouldSerializeTransmitter() => Transmitter?.Length > 0;
+        public bool ShouldSerializeCommandEvent() => CommandEvent?.Length > 0;
+        public bool ShouldSerializeLogging() => Logging?.Length > 0;
+        public bool ShouldSerializeSlnOpened() => SlnOpened?.Length > 0;
+        public bool ShouldSerializeSlnClosed() => SlnClosed?.Length > 0;
     }
 }

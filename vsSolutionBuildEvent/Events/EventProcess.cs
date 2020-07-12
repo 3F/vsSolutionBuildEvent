@@ -16,38 +16,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using net.r_eg.MvsSln.Extensions;
+
 namespace net.r_eg.vsSBE.Events
 {
     public class EventProcess: IEventProcess
     {
-        /// <summary>
-        /// Waiting completion
-        /// </summary>
-        public bool Waiting
-        {
-            get { return waiting; }
-            set { waiting = value; }
-        }
-        private bool waiting = true;
+        /// <inheritdoc cref="IEventProcess.Waiting"/>
+        public bool Waiting { get; set; } = true;
 
-        /// <summary>
-        /// Hiding of processing or not
-        /// </summary>
-        public bool Hidden
-        {
-            get { return hidden; }
-            set { hidden = value; }
-        }
-        private bool hidden = true;
+        /// <inheritdoc cref="IEventProcess.Hidden"/>
+        public bool Hidden { get; set; } = true;
 
-        /// <summary>
-        /// How long to wait the execution, in seconds. 0 value - infinitely
-        /// </summary>
-        public int TimeLimit
+        /// <inheritdoc cref="IEventProcess.TimeLimit"/>
+        public int TimeLimit { get; set; } = 30;
+
+        public static bool operator ==(EventProcess a, EventProcess b) => a.Equals(b);
+
+        public static bool operator !=(EventProcess a, EventProcess b) => !(a == b);
+
+        public override bool Equals(object obj)
         {
-            get { return timeLimit; }
-            set { timeLimit = value; }
+            if(obj is null || !(obj is EventProcess)) {
+                return false;
+            }
+
+            var b = (EventProcess)obj;
+
+            return Waiting == b.Waiting
+                    && Hidden == b.Hidden
+                    && TimeLimit == b.TimeLimit;
         }
-        private int timeLimit = 30;
+
+        public override int GetHashCode()
+        {
+            return 0.CalculateHashCode
+            (
+                Waiting,
+                Hidden,
+                TimeLimit
+            );
+        }
     }
 }

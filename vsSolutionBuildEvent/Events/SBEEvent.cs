@@ -24,102 +24,36 @@ namespace net.r_eg.vsSBE.Events
 {
     public class SBEEvent: ISolutionEvent
     {
-        /// <summary>
-        /// Status of activation.
-        /// </summary>
-        public bool Enabled
-        {
-            get { return enabled; }
-            set { enabled = value; }
-        }
-        private bool enabled = false;
+        private Guid id = Guid.NewGuid();
 
-        /// <summary>
-        /// Unique name for identification.
-        /// </summary>
-        public string Name
-        {
-            get;
-            set;
-        }
+        /// <inheritdoc cref="ISolutionEvent.Enabled"/>
+        public bool Enabled { get; set; } = true;
 
-        /// <summary>
-        /// About event.
-        /// </summary>
-        public string Caption
-        {
-            get { return caption; }
-            set { caption = value; }
-        }
-        private string caption = String.Empty;
+        /// <inheritdoc cref="ISolutionEvent.Name"/>
+        public string Name { get; set; }
 
-        /// <summary>
-        /// Support of the MSBuild engine.
-        /// </summary>
-        public bool SupportMSBuild
-        {
-            get { return supportMSBuild; }
-            set { supportMSBuild = value; }
-        }
-        private bool supportMSBuild = true;
+        /// <inheritdoc cref="ISolutionEvent.Caption"/>
+        public string Caption { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Support of the SBE-Scripts engine.
-        /// </summary>
-        public bool SupportSBEScripts
-        {
-            get { return supportSBEScripts; }
-            set { supportSBEScripts = value; }
-        }
-        private bool supportSBEScripts = true;
+        /// <inheritdoc cref="ISolutionEvent.SupportMSBuild"/>
+        public bool SupportMSBuild { get; set; } = true;
 
-        /// <summary>
-        /// Ignore all actions if the build failed
-        /// </summary>
-        public bool IgnoreIfBuildFailed
-        {
-            get { return ignoreIfBuildFailed; }
-            set { ignoreIfBuildFailed = value; }
-        }
-        private bool ignoreIfBuildFailed = false;
+        /// <inheritdoc cref="ISolutionEvent.SupportSBEScripts"/>
+        public bool SupportSBEScripts { get; set; } = true;
 
-        /// <summary>
-        /// The context of action.
-        /// </summary>
-        public BuildType BuildType
-        {
-            get { return buildType; }
-            set { buildType = value; }
-        }
-        private BuildType buildType = BuildType.Common;
+        /// <inheritdoc cref="ISolutionEvent.IgnoreIfBuildFailed"/>
+        public bool IgnoreIfBuildFailed { get; set; } = false;
 
-        /// <summary>
-        /// User interaction.
-        /// Waiting until user presses yes/no etc,
-        /// </summary>
-        public bool Confirmation
-        {
-            get { return confirmation; }
-            set { confirmation = value; }
-        }
-        private bool confirmation = false;
+        /// <inheritdoc cref="ISolutionEvent.BuildType"/>
+        public BuildType BuildType { get; set; } = BuildType.Common;
 
-        /// <summary>
-        /// Run only for a specific configuration of solution
-        /// strings format as:
-        ///   'configname'|'platformname'
-        ///   Compatible with: http://msdn.microsoft.com/en-us/library/microsoft.visualstudio.shell.interop.ivscfg.get_displayname.aspx
-        /// </summary>
-        public string[] ToConfiguration
-        {
-            get { return toConfiguration; }
-            set { toConfiguration = value; }
-        }
-        private string[] toConfiguration = null;
-        
-        /// <summary>
-        /// Run for selected projects with the Execution-Order
-        /// </summary>
+        /// <inheritdoc cref="ISolutionEvent.Confirmation"/>
+        public bool Confirmation { get; set; } = false;
+
+        /// <inheritdoc cref="ISolutionEvent.ToConfiguration"/>
+        public string[] ToConfiguration { get; set; } = null;
+
+        /// <inheritdoc cref="ISolutionEvent.ExecutionOrder"/>
         [JsonProperty(TypeNameHandling = TypeNameHandling.All)]
         public IExecutionOrder[] ExecutionOrder
         {
@@ -128,9 +62,7 @@ namespace net.r_eg.vsSBE.Events
         }
         private ExecutionOrder[] executionOrder = null;
 
-        /// <summary>
-        /// Handling process
-        /// </summary>
+        /// <inheritdoc cref="ISolutionEvent.Process"/>
         [JsonProperty(TypeNameHandling = TypeNameHandling.All)]
         public IEventProcess Process
         {
@@ -139,27 +71,23 @@ namespace net.r_eg.vsSBE.Events
         }
         private EventProcess process = new EventProcess();
 
-        /// <summary>
-        /// Used mode.
-        /// </summary>
+        /// <inheritdoc cref="ISolutionEvent.Mode"/>
         [JsonProperty(TypeNameHandling = TypeNameHandling.All)]
-        public IMode Mode
-        {
-            get { return mode; }
-            set { mode = value; }
-        }
-        private IMode mode = new ModeFile();
+        public IMode Mode { get; set; } = new ModeFile();
 
-        /// <summary>
-        /// Unique identifier at runtime.
-        /// </summary>
+        /// <inheritdoc cref="ISolutionEvent.Id"/>
         [JsonIgnore]
-        public Guid Id
-        {
-            get {
-                return id;
-            }
-        }
-        private Guid id = Guid.NewGuid();
+        public Guid Id => id;
+
+        public bool ShouldSerializeEnabled() => !Enabled;
+        public bool ShouldSerializeCaption() => !string.IsNullOrEmpty(Caption);
+        public bool ShouldSerializeSupportMSBuild() => !SupportMSBuild;
+        public bool ShouldSerializeSupportSBEScripts() => !SupportSBEScripts;
+        public bool ShouldSerializeIgnoreIfBuildFailed() => IgnoreIfBuildFailed;
+        public bool ShouldSerializeBuildType() => BuildType != BuildType.Common;
+        public bool ShouldSerializeConfirmation() => Confirmation;
+        public bool ShouldSerializeToConfiguration() => ToConfiguration?.Length > 0;
+        public bool ShouldSerializeExecutionOrder() => ExecutionOrder?.Length > 0;
+        public bool ShouldSerializeProcess() => new EventProcess() != Process as EventProcess;
     }
 }
