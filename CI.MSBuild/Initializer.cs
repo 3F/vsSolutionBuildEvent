@@ -209,12 +209,13 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         {
             foreach(string arg in kargs.GetKeys(KArgType.Common))
             {
-                if(arg.EndsWith(".sln", StringComparison.OrdinalIgnoreCase)) {
+                if(arg.TrimEnd().EndsWith(".sln", StringComparison.OrdinalIgnoreCase)) {
                     log.debug($"{nameof(findSln)}: .sln '{arg}'");
                     return arg;
                 }
             }
-            return null;
+
+            return Directory.GetFiles(Environment.CurrentDirectory, "*.sln", SearchOption.TopDirectoryOnly).FirstOrDefault();
         }
 
         /// <summary>
