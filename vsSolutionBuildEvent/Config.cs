@@ -68,7 +68,7 @@ namespace net.r_eg.vsSBE
         public bool load(string path, string prefix)
         {
             Settings._.setWorkPath(path);
-            Link = getLink(path, Entity.NAME, prefix);
+            Link = getLink(Settings.WPath, Entity.NAME, prefix);
             return loadByLink(Link);
         }
 

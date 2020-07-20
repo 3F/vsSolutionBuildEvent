@@ -96,6 +96,8 @@ namespace net.r_eg.vsSBE
         /// </summary>
         private uint _pdwCookieSolutionBM;
 
+        private EnvDTE.DocumentEvents DocumentEvents;
+
         /// <summary>
         /// For work with ErrorList pane of Visual Studio.
         /// </summary>
@@ -194,6 +196,20 @@ namespace net.r_eg.vsSBE
                 Event.OpenedSolution -= onLateOpenedSolution;
                 Event.OpenedSolution += onLateOpenedSolution;
 
+                if(Event.Environment.SolutionFile == null)
+                {
+                    void _onDocOpened(EnvDTE.Document Document)
+                    {
+                        DocumentEvents.DocumentOpened -= _onDocOpened;
+
+                        Dte2.Globals[Environment.DTE_DOC_SLN] = Document;
+                        Event.solutionOpened(pUnkReserved, fNewSolution);
+                    };
+                    DocumentEvents.DocumentOpened += _onDocOpened;
+
+                    return VSConstants.S_OK;
+                }
+
                 return Event.solutionOpened(pUnkReserved, fNewSolution);
             }
             catch(Exception ex) {
@@ -222,6 +238,11 @@ namespace net.r_eg.vsSBE
             {
                 Event.solutionClosed(pUnkReserved);
                 mainToolCmd.closeConfigForm();
+
+                if(Dte2.Globals.VariableExists[Environment.DTE_DOC_SLN])
+                {
+                    Dte2.Globals[Environment.DTE_DOC_SLN] = null;
+                }
 
                 sToolCmd?.detachEvents();
                 resetErrors();
@@ -480,6 +501,8 @@ namespace net.r_eg.vsSBE
                     Event.onBuildRaw(e.Raw);
                 }
             };
+
+            DocumentEvents = Event.Environment.Events.DocumentEvents;
         }
 
         private void resetErrors()
