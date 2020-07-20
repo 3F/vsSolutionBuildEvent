@@ -380,7 +380,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         }
 
         /// <summary>
-        /// Extracts arguments by format: 
+        /// Extracts arguments using format:
         /// name1=value1;name2=value2;name3=value3
         /// http://msdn.microsoft.com/en-us/library/ms164311.aspx
         /// </summary>
@@ -388,14 +388,16 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         /// <returns></returns>
         protected IDictionary<string, string> extractArguments(string raw)
         {
-            if(String.IsNullOrEmpty(raw)) {
+            if(string.IsNullOrWhiteSpace(raw)) {
                 return new Dictionary<string, string>();
             }
 
             return raw.Split(';')
                         .Select(p => p.Split('='))
-                        .Select(p => new KeyValuePair<string, string>(p[0], (p.Length < 2)? null : p[1]))
-                        .ToDictionary(k => k.Key, v => v.Value);
+                        .GroupBy(p => p[0].Trim()) // ... /p:nowarn=1701 /p:nowarn=1702 
+                        .Select(p => p.Last())
+                        .Where(p => !string.IsNullOrWhiteSpace(p[0]))
+                       .ToDictionary(p => p[0].Trim(), p => (p.Length < 2) ? null : p[1]);
         }
     }
 }
