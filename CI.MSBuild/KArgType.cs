@@ -23,35 +23,18 @@
  * THE SOFTWARE.
 */
 
-using System.Collections.Generic;
-
 namespace net.r_eg.vsSBE.CI.MSBuild
 {
-    internal struct InitializerProperties
+    internal enum KArgType
     {
-        /// <summary>
-        /// Full path to solution file.
-        /// </summary>
-        public string SolutionFile;
+        Common,
 
-        /// <summary>
-        /// Specifies properties for solution.
-        /// </summary>
-        public IDictionary<string, string> Properties;
+        Targets,
 
-        /// <summary>
-        /// The targets for msbuild job.
-        /// </summary>
-        public string Targets;
+        Properties,
 
-        /// <summary>
-        /// Full path to library.
-        /// </summary>
-        public string LibraryPath;
+        Loggers,
 
-        /// <summary>
-        /// User-defined arguments to CIM manager.
-        /// </summary>
-        public KArgs Args;
+        CIM = Loggers,
     }
 }

@@ -68,6 +68,8 @@
   <ItemGroup>
     <Compile Include="AbortException.cs" />
     <Compile Include="EventManager.cs" />
+    <Compile Include="KArgType.cs" />
+    <Compile Include="KArgs.cs" />
     <Compile Include="InitializerProperties.cs" />
     <Compile Include="Initializer.cs" />
     <Compile Include="LibSettings.cs" />
