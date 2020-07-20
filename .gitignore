@@ -1,5 +1,6 @@
 ## Specific
 
+Appveyor.TestLogger.*
 /vsSolutionBuildEvent/source.extension.vsixmanifest
 
 /vsSolutionBuildEvent/Version.cs
