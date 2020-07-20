@@ -230,11 +230,8 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         }
 
         /// <summary>
-        /// Redefines an Configuration and Platform by user switches if exists.
+        /// Finalize properties using user switches if exists.
         /// </summary>
-        /// <param name="cmd">Property of command line</param>
-        /// <param name="init">Initial properties</param>
-        /// <returns></returns>
         protected IDictionary<string, string> finalizeProperties(IDictionary<string, string> properties, IDictionary<string, string> init)
         {
             string pValue(string key) {
