@@ -299,6 +299,7 @@
             this.Controls.Add(this.groupBoxMixed);
             this.Controls.Add(this.groupBoxIncludes);
             this.Controls.Add(this.pictureBoxSpace);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.Name = "AboutFrm";

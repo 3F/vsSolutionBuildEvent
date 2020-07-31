@@ -240,6 +240,7 @@
             this.Controls.Add(this.splitContainerFilters);
             this.Controls.Add(this.comboBoxProjects);
             this.Controls.Add(this.dataGridViewVariables);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(390, 170);
             this.Name = "PropertiesFrm";

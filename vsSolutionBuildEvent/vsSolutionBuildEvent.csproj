@@ -329,6 +329,7 @@
     <Compile Include="SzArchiver.cs" />
     <Compile Include="MSBuild.cs" />
     <Compile Include="IPkg.cs" />
+    <Compile Include="UI\MetricDefault.cs" />
     <Compile Include="UI\WForms\Controls\CompletionData.cs" />
     <Compile Include="StatusToolCommand.cs" />
     <Compile Include="MainToolCommand.cs" />

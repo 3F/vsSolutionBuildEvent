@@ -302,6 +302,7 @@
             this.ClientSize = new System.Drawing.Size(747, 295);
             this.Controls.Add(this.panelMain);
             this.Controls.Add(this.panelTop);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.MinimumSize = new System.Drawing.Size(437, 210);
             this.Name = "EnvDteSniffer";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

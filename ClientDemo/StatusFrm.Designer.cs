@@ -121,6 +121,7 @@
             this.ClientSize = new System.Drawing.Size(660, 165);
             this.Controls.Add(this.panelMain);
             this.Controls.Add(this.panelTop);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.MinimumSize = new System.Drawing.Size(450, 70);
             this.Name = "StatusFrm";
             this.ShowIcon = false;

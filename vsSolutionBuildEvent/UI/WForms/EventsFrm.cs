@@ -98,24 +98,9 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// </summary>
         private bool isNotified;
 
-        /// <summary>
-        /// Default sizes for controls
-        /// </summary>
-        private struct MetricDefault
-        {
-            public Size form;
-            public Size formCollapsed;
-            public int splitter;
-        }
         private MetricDefault metric;
 
-        /// <summary>
-        /// Application settings.
-        /// </summary>
-        internal IAppSettings App
-        {
-            get { return Settings._; }
-        }
+        internal IAppSettings App => Settings._;
 
         /// <summary>
         /// Implements transport for MSBuild property
@@ -164,10 +149,9 @@ namespace net.r_eg.vsSBE.UI.WForms
             refreshSettings();
             notice(true);
 
-            MessageBox.Show(String.Format("The new action `{0}`:\n`{1}` has been added.", evt.Name, evt.Caption), "New action");
+            MessageBox.Show($"The new action `{evt.Name}`:\n`{evt.Caption}` has been added.", "New action");
         }
 
-        /// <param name="loader"></param>
         public EventsFrm(Bootloader loader)
         {
             InitializeComponent();
@@ -199,7 +183,6 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// <summary>
         /// Retrieve data from UI
         /// </summary>
-        /// <param name="onlyInRAM"></param>
         protected void saveData(bool onlyInRAM = false)
         {
             if(logic.SBEItem == null)
@@ -243,7 +226,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         protected void saveData(ISolutionEvent evt)
         {
             evt.Enabled                 = checkBoxStatus.Checked;
-            evt.Name                    = (String.IsNullOrWhiteSpace(evt.Name))? logic.UniqueNameForAction : evt.Name;
+            evt.Name                    = string.IsNullOrWhiteSpace(evt.Name)? logic.UniqueNameForAction : evt.Name;
             evt.Caption                 = textBoxCaption.Text;
             evt.SupportMSBuild          = checkBoxMSBuildSupport.Checked;
             evt.SupportSBEScripts       = checkBoxSBEScriptSupport.Checked;
@@ -254,7 +237,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             evt.Confirmation            = chkConfirmation.Checked;
             evt.ToConfiguration         = checkedListBoxSpecCfg.CheckedItems.OfType<string>().ToArray();
             evt.ExecutionOrder          = getExecutionOrder();
-            evt.BuildType               = (chkBuildContext.Checked)? logic.getBuildTypeBy(comboBoxBuildContext.SelectedIndex) : BuildType.Common;
+            evt.BuildType               = chkBuildContext.Checked ? logic.getBuildTypeBy(comboBoxBuildContext.SelectedIndex) : BuildType.Common;
 
             if(evt.Mode.Type == ModeType.CSharp && !radioModeCSharp.Checked) {
                 logic.cacheToRemove(evt.Mode);
@@ -327,16 +310,17 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         protected void saveData(ISolutionEventOWP evt)
         {
-            List<MatchWords> list = new List<MatchWords>();
+            var list = new List<MatchWords>();
             foreach(DataGridViewRow row in dataGridViewOutput.Rows)
             {
                 if(row.Cells[owpTerm.Name].Value == null || row.Cells[owpType.Name].Value == null) {
                     continue;
                 }
-                MatchWords m  = new MatchWords();
-                m.Condition   = (row.Cells[owpTerm.Name].Value == null)? "" : row.Cells[owpTerm.Name].Value.ToString();
-                m.Type        = (ComparisonType)Enum.Parse(typeof(ComparisonType), row.Cells[owpType.Name].Value.ToString());
-                list.Add(m);
+                list.Add(new MatchWords
+                {
+                    Condition = (row.Cells[owpTerm.Name].Value == null) ? "" : row.Cells[owpTerm.Name].Value.ToString(),
+                    Type = (ComparisonType)Enum.Parse(typeof(ComparisonType), row.Cells[owpType.Name].Value.ToString())
+                });
             }
             evt.Match = list.ToArray();
         }
@@ -356,7 +340,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
                 list.Add(new Filter()
                 {
-                    Guid        = (guid == null)? String.Empty : ((string)guid).Trim(),
+                    Guid        = (guid == null)? string.Empty : ((string)guid).Trim(),
                     CustomIn    = customIn.IsNullOrEmptyString() ? null : customIn,
                     CustomOut   = customOut.IsNullOrEmptyString() ? null : customOut,
                     Description = (string)row.Cells[dgvCEFiltersColumnDescription.Name].Value,
@@ -389,7 +373,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             groupBoxCommandEvents.Enabled   = false;
 
             textEditor._.Select(0, 0);
-            toolTip.SetToolTip(checkBoxWaitForExit, String.Empty);
+            toolTip.SetToolTip(checkBoxWaitForExit, string.Empty);
             checkBoxWaitForExit.Cursor = Cursors.Default;
 
             switch(logic.SBE.type)
@@ -545,9 +529,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         protected void fillActionsList()
         {
             dgvActions.Rows.Clear();
-            foreach(ISolutionEvent item in logic.SBE.evt) {
-                dgvActions.Rows.Add(item.Enabled, item.Name, item.Caption);
-            }
+            foreach(ISolutionEvent item in logic.SBE.evt) addDgvAction(item.Enabled, item.Name, item.Caption);
         }
 
         protected void refreshSettings()
@@ -587,12 +569,6 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
-        protected int currentActionIndex()
-        {
-            //return (dgvActions.CurrentRow == null)? 0 : dgvActions.CurrentRow.Index;
-            return (dgvActions.SelectedRows.Count < 1) ? 0 : dgvActions.SelectedRows[0].Index;
-        }
-
         protected void refreshSettingsWithIndex(int index)
         {
             logic.setEventIndexes(comboBoxEvents.SelectedIndex, index);
@@ -603,7 +579,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             try {
                 ISolutionEvent evt = logic.addEventItem(copyFrom);
-                dgvActions.Rows.Add(evt.Enabled, evt.Name, evt.Caption);
+                addDgvAction(evt.Enabled, evt.Name, evt.Caption);
                 selectAction(dgvActions.Rows.Count - 1, true);
                 return evt;
             }
@@ -653,8 +629,8 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         protected void clearControls()
         {
-            textBoxEW.Text  = String.Empty;
-            textEditor.Text = String.Empty;
+            textBoxEW.Text  = string.Empty;
+            textEditor.Text = string.Empty;
             listBoxEW.Items.Clear();
             dataGridViewOutput.Rows.Clear();
             dgvCEFilters.Rows.Clear();
@@ -686,7 +662,6 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// <summary>
         /// UI Selector of modes
         /// </summary>
-        /// <param name="type"></param>
         protected void uiViewMode(ModeType type)
         {
             textEditor.config(logic.getCommonCfg(type));
@@ -771,11 +746,6 @@ namespace net.r_eg.vsSBE.UI.WForms
             numericTimeLimit.Enabled = false;
         }
 
-        protected void updateCodeCompletionStatus()
-        {
-            textEditor.CodeCompletionEnabled = checkBoxSBEScriptSupport.Checked;
-        }
-
         protected void operationsList(ListBox list)
         {
             if(list.Items.Count < 1) {
@@ -806,7 +776,6 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(isOperationCustom(list)) {
                 labelToCommandBox.Text  = "DTE execute (separated by enter key):";
                 textEditor.Enabled      = true;
-                //textEditor.Text         = String.Empty;
             }
             else {
                 labelToCommandBox.Text  = "~";
@@ -815,18 +784,16 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
-        protected bool isOperationCustom(ListBox list)
-        {
-            if(list.SelectedIndex == list.Items.Count - 1) {
-                return true;
-            }
-            return false;
-        }
+        protected int currentActionIndex() => (dgvActions.SelectedRows.Count < 1) ? 0 : dgvActions.SelectedRows[0].Index;
+
+        protected void updateCodeCompletionStatus() => textEditor.CodeCompletionEnabled = checkBoxSBEScriptSupport.Checked;
+
+        protected bool isOperationCustom(ListBox list) => list.SelectedIndex == list.Items.Count - 1;
 
         protected void onlyFor()
         {
             if(checkedListBoxSpecCfg.Items.Count < 1) {
-                foreach(EnvDTE80.SolutionConfiguration2 cfg in logic.Env.SolutionConfigurations) {
+                foreach(var cfg in logic.Env.SolutionConfigurations) {
                     checkedListBoxSpecCfg.Items.Add(logic.Env.SolutionCfgFormat(cfg), false);
                 }
             }
@@ -839,7 +806,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             for(int i = 0; i < checkedListBoxSpecCfg.Items.Count; ++i)
             {
                 string name = checkedListBoxSpecCfg.Items[i].ToString();
-                bool state  = (toConf == null)? false : toConf.Any(s => s == name);
+                bool state  = toConf != null && toConf.Any(s => s == name);
                 checkedListBoxSpecCfg.SetItemChecked(i, state);
             }
         }
@@ -865,7 +832,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                 if(v == null) {
                     continue;
                 }
-                row.Cells[dgvOrderEnabled.Name].Value = !String.IsNullOrEmpty(v.Project);
+                row.Cells[dgvOrderEnabled.Name].Value = !string.IsNullOrEmpty(v.Project);
                 row.Cells[dgvOrderType.Name].Value = v.Order.ToString();
             }
         }
@@ -940,16 +907,6 @@ namespace net.r_eg.vsSBE.UI.WForms
                 return;
             }
             logic.detachCommandEvents(commandEventBefore, commandEventAfter);
-        }
-
-        protected void commandEventBefore(string guid, int id, object customIn, object customOut, ref bool cancelDefault)
-        {
-            commandEvent(true, guid, id, customIn, customOut);
-        }
-
-        protected void commandEventAfter(string guid, int id, object customIn, object customOut)
-        {
-            commandEvent(false, guid, id, customIn, customOut);
         }
 
         protected void commandEvent(bool pre, string guid, int id, object customIn, object customOut)
@@ -1050,9 +1007,9 @@ namespace net.r_eg.vsSBE.UI.WForms
         protected void fillEvents(ComboBox combo)
         {
             //TODO: exclude saveData(true) for event:
-            comboBoxEvents.SelectedIndexChanged -= comboBoxEvents_SelectedIndexChanged;
-            logic.fillEvents(comboBoxEvents);
-            comboBoxEvents.SelectedIndexChanged += comboBoxEvents_SelectedIndexChanged;
+            combo.SelectedIndexChanged -= comboBoxEvents_SelectedIndexChanged;
+            logic.fillEvents(combo);
+            combo.SelectedIndexChanged += comboBoxEvents_SelectedIndexChanged;
 
             fillCfgForSelectedEvent();
         }
@@ -1062,6 +1019,14 @@ namespace net.r_eg.vsSBE.UI.WForms
             logic.setEventIndexes(comboBoxEvents.SelectedIndex, 0);
             refreshActions(false);
             refreshSettings();
+        }
+
+        protected int addDgvAction(bool enabled, string name, string caption)
+        {
+            int idx = dgvActions.Rows.Add(enabled, name);
+            dgvActions.Rows[idx].HeaderCell.ToolTipText = caption;
+            dgvActions.Rows[idx].Cells[dgvActionName.Name].ToolTipText = caption;
+            return idx;
         }
 
         protected override void WndProc(ref Message mes)
@@ -1087,18 +1052,18 @@ namespace net.r_eg.vsSBE.UI.WForms
                 return;
             }
 
-            EventHandler call = (csender, ce) => { notice(true); };
+            void _call(object csender, EventArgs ce) => notice(true);
 
-            Util.noticeAboutChanges(typeof(CheckBox), this, call, new string[] { checkBoxCESniffer.Name });
-            Util.noticeAboutChanges(typeof(RadioButton), this, call);
-            Util.noticeAboutChanges(typeof(TextBox), this, call);
-            Util.noticeAboutChanges(typeof(RichTextBox), this, call);
-            Util.noticeAboutChanges(typeof(ListBox), this, call, new string[] { listBoxEW.Name });
-            Util.noticeAboutChanges(typeof(ComboBox), this, call, new string[] { comboBoxEvents.Name });
-            Util.noticeAboutChanges(typeof(CheckedListBox), this, call);
-            Util.noticeAboutChanges(typeof(DataGridViewExt), this, call, new string[] { dgvCESniffer.Name });
-            Util.noticeAboutChanges(typeof(PropertyGrid), this, call);
-            textEditor._.TextChanged += call;
+            Util.noticeAboutChanges(typeof(CheckBox), this, _call, new string[] { checkBoxCESniffer.Name });
+            Util.noticeAboutChanges(typeof(RadioButton), this, _call);
+            Util.noticeAboutChanges(typeof(TextBox), this, _call);
+            Util.noticeAboutChanges(typeof(RichTextBox), this, _call);
+            Util.noticeAboutChanges(typeof(ListBox), this, _call, new string[] { listBoxEW.Name });
+            Util.noticeAboutChanges(typeof(ComboBox), this, _call, new string[] { comboBoxEvents.Name });
+            Util.noticeAboutChanges(typeof(CheckedListBox), this, _call);
+            Util.noticeAboutChanges(typeof(DataGridViewExt), this, _call, new string[] { dgvCESniffer.Name });
+            Util.noticeAboutChanges(typeof(PropertyGrid), this, _call);
+            textEditor._.TextChanged += _call;
 
             // Load data
             try {
@@ -1125,27 +1090,12 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
         }
 
-        private void listBoxOperation_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            operationsAction(listBoxOperation);
-        }
-
-        private void buttonEnvVariables_Click(object sender, EventArgs e)
-        {
-            envVariablesUIHelper();
-        }
-
         private void textBoxCommand_KeyDown(object sender, KeyEventArgs e)
         {
             if(e.Modifiers == Keys.Control && e.KeyCode == Keys.Space) {
                 e.SuppressKeyPress = true;
                 envVariablesUIHelper();
             }
-        }
-
-        private void checkBoxStatus_CheckedChanged(object sender, EventArgs e)
-        {
-            updateColors();
         }
 
         private void btnApply_Click(object sender, EventArgs e)
@@ -1233,26 +1183,6 @@ namespace net.r_eg.vsSBE.UI.WForms
             textEditor._.ShowLineNumbers = true;
         }
 
-        private void chkBuildContext_CheckedChanged(object sender, EventArgs e)
-        {
-            comboBoxBuildContext.Enabled = chkBuildContext.Checked;
-        }
-
-        private void checkBoxSBEScriptSupport_CheckedChanged(object sender, EventArgs e)
-        {
-            updateCodeCompletionStatus();
-        }
-
-        private void checkBoxWaitForExit_CheckedChanged(object sender, EventArgs e)
-        {
-            updateTimeLimitField();
-        }
-
-        private void dataGridViewOutput_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            removeRow(dataGridViewOutput, owpRemove, e);
-        }
-
         private void btnEWAdd_Click(object sender, EventArgs e)
         {
             string code = textBoxEW.Text.Trim();
@@ -1272,61 +1202,6 @@ namespace net.r_eg.vsSBE.UI.WForms
             listBoxEW.Items.RemoveAt(listBoxEW.SelectedIndex);
         }
 
-        private void toolStripMenuHelp_ButtonClick(object sender, EventArgs e)
-        {
-            toolStripMenuHelp.ShowDropDown();
-        }
-
-        private void toolStripMenuSettings_ButtonClick(object sender, EventArgs e)
-        {
-            toolStripMenuSettings.ShowDropDown();
-        }
-
-        private void toolStripMenuBug_ButtonClick(object sender, EventArgs e)
-        {
-            toolStripMenuBug.ShowDropDown();
-        }
-
-        private void toolStripMenuGalleryPage_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
-        }
-
-        private void toolStripMenuChangelog_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("http://vssbe.r-eg.net/Changelist/#vsix");
-        }
-
-        private void toolStripMenuWiki_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("http://vssbe.r-eg.net/");
-        }
-
-        private void tsMenuItemExamples_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("http://vssbe.r-eg.net/doc/Examples/");
-        }
-
-        private void toolStripMenuIssue_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("https://github.com/3F/vsSolutionBuildEvent/issues?q=is%3Aissue");
-        }
-
-        private void toolStripMenuSources_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("https://github.com/3F/vsSolutionBuildEvent");
-        }
-
-        private void toolStripMenuLicense_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("http://vssbe.r-eg.net/License/");
-        }
-
-        private void toolStripMenuAbout_Click(object sender, EventArgs e)
-        {
-            (new AboutFrm()).Show();
-        }
-
         private void toolStripMenuReport_Click(object sender, EventArgs e)
         {
             DialogResult ret = MessageBox.Show("Seen error or have a question - Click 'Yes'", Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -1342,56 +1217,10 @@ namespace net.r_eg.vsSBE.UI.WForms
             logic.updateUserCfg();
         }
 
-        private void toolStripMenuSBEPanel_Click(object sender, EventArgs e)
-        {
-            logic.Env.exec("View.vsSBE.Panel");
-        }
-
         private void toolStripMenuCopyPath_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(String.Format("\"{0}\"", Settings.LPath));
-            MessageBox.Show(String.Format("Has been copied to clipboard:\n\n{0}\n\nUse this with CI utilities etc.", Settings.LPath), 
-                            "Full path to vsSolutionBuildEvent");
-        }
-
-        private void toolStripMenuPluginDir_Click(object sender, EventArgs e)
-        {
-            Util.openUrl(String.Format("\"{0}\"", App.LibPath));
-        }
-
-        private void toolStripMenuCIMSBuild_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("http://vssbe.r-eg.net/doc/CI/CI.MSBuild/");
-        }
-
-        private void toolStripMenuDevenv_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("http://vssbe.r-eg.net/doc/CI/Devenv%20Command-Line/");
-        }
-
-        private void toolStripMenuAPI_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("http://vssbe.r-eg.net/doc/API/");
-        }
-
-        private void btnDownloadVSCE_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("https://visualstudiogallery.msdn.microsoft.com/ad9f19b2-04c0-46fe-9637-9a52ce4ca661/file/184640/");
-        }
-
-        private void btnInfoVSCE_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("http://vsce.r-eg.net/About/");
-        }
-
-        private void componentInfo(string name)
-        {
-            Util.openUrl(String.Format("http://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/Components/{0}/", name));
-        }
-
-        private void btnCompNew_Click(object sender, EventArgs e)
-        {
-            Util.openUrl("http://vssbe.r-eg.net/doc/Dev/New%20Component/");
+            Clipboard.SetText($"\"{Settings.LPath}\"");
+            MessageBox.Show($"Has been copied to clipboard:\n\n{Settings.LPath}\n\nUse this with CI utilities etc.", "Full path to vsSolutionBuildEvent");
         }
 
         private void dgvComponents_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -1459,11 +1288,6 @@ namespace net.r_eg.vsSBE.UI.WForms
             componentInfo(dgvComponents.SelectedRows[0].Cells[dgvComponentsClass.Name].Value.ToString());
         }
 
-        private void menuItemCompNew_Click(object sender, EventArgs e)
-        {
-            btnCompNew_Click(sender, e);
-        }
-
         private void btnDteCmd_Click(object sender, EventArgs e)
         {
             if(Util.focusForm(frmDTECommands)) {
@@ -1486,26 +1310,6 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             int max = dataGridViewOrder.Width + dataGridViewOrder.Location.X;
             Util.effectSmoothChangeWidth(checkedListBoxSpecCfg, max, 0.032f, 4);
-        }
-
-        private void checkedListBoxSpecCfg_MouseLeave(object sender, EventArgs e)
-        {
-            checkedListBoxSpecCfg.Width = checkedListBoxSpecCfg.MinimumSize.Width;
-        }
-
-        private void toolStripMenuApply_Click(object sender, EventArgs e)
-        {
-            btnApply_Click(sender, e);
-        }
-
-        private void toolStripMenuMSBuildProp_Click(object sender, EventArgs e)
-        {
-            envVariablesUIHelper();
-        }
-
-        private void toolStripMenuDTECmd_Click(object sender, EventArgs e)
-        {
-            btnDteCmd_Click(sender, e);
         }
 
         private void toolStripMenuEvaluatingProperty_Click(object sender, EventArgs e)
@@ -1557,21 +1361,6 @@ namespace net.r_eg.vsSBE.UI.WForms
             logic.restoreData();
         }
 
-        private void splitContainer_SplitterMoved(object sender, SplitterEventArgs e)
-        {
-            pictureBoxToggle.Visible = !(e.SplitX < metric.splitter);
-        }
-
-        private void menuActionsAdd_Click(object sender, EventArgs e)
-        {
-            addAction();
-        }
-
-        private void menuActionsClone_Click(object sender, EventArgs e)
-        {
-            addAction((dgvActions.Rows.Count < 1)? -1 : currentActionIndex());
-        }
-
         private void menuActionsEdit_Click(object sender, EventArgs e)
         {
             if(dgvActions.Rows.Count < 1) {
@@ -1579,16 +1368,6 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
             dgvActions.CurrentCell = dgvActions.Rows[currentActionIndex()].Cells[dgvActionName.Name];
             dgvActions.BeginEdit(true);
-        }
-
-        private void menuActionsTogglePanel_Click(object sender, EventArgs e)
-        {
-            expandActionsList(splitContainer.SplitterDistance < metric.splitter);
-        }
-
-        private void menuActionsReset_Click(object sender, EventArgs e)
-        {
-            toolStripMenuReset_Click(sender, e);
         }
 
         private void menuActionsRemove_Click(object sender, EventArgs e)
@@ -1603,11 +1382,6 @@ namespace net.r_eg.vsSBE.UI.WForms
             notice(true);
         }
 
-        private void pictureBoxToggle_Click(object sender, EventArgs e)
-        {
-            expandActionsList(false);
-        }
-
         private void dgvActions_Click(object sender, EventArgs e)
         {
             if(splitContainer.SplitterDistance < metric.splitter) {
@@ -1617,7 +1391,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void EventsFrm_ClientSizeChanged(object sender, EventArgs e)
         {
-            if(this.WindowState == FormWindowState.Maximized) {
+            if(WindowState == FormWindowState.Maximized) {
                 expandActionsList(true);
             }
         }
@@ -1709,7 +1483,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(e.RowIndex < 0) {
                 return;
             }
-            bool enabled = Boolean.Parse(dgvActions.Rows[e.RowIndex].Cells[dgvActionEnabled.Name].Value.ToString());
+            bool enabled = bool.Parse(dgvActions.Rows[e.RowIndex].Cells[dgvActionEnabled.Name].Value.ToString());
             object oname = dgvActions.Rows[e.RowIndex].Cells[dgvActionName.Name].Value;
 
             logic.updateInfo(e.RowIndex, (oname == null)? "" : oname.ToString(), enabled);
@@ -1717,56 +1491,11 @@ namespace net.r_eg.vsSBE.UI.WForms
             refreshSettings();
         }
 
-        private void dgvActions_DragDropSortedRow(object sender, DataGridViewExt.MovingRowArgs e)
-        {
-            logic.moveEventItem(e.Data.from, e.Data.to);
-        }
-
-        private void dgvActions_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
-        {
-            linkAddAction.Visible = false;
-        }
-
         private void dgvActions_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
         {
             if(dgvActions.Rows.Count < 1) {
                 linkAddAction.Visible = true;
             }
-        }
-
-        private void dgvCEFilters_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            removeRow(dgvCEFilters, dgvCEFiltersColumnRemove, e);
-        }
-
-        private void checkBoxCESniffer_CheckedChanged(object sender, EventArgs e)
-        {
-            snifferEnabled(checkBoxCESniffer.Checked);
-        }
-
-        private void menuSnifferAdd_Click(object sender, EventArgs e)
-        {
-            addFilterFromSniffer(dgvCESniffer, dgvCEFilters);
-        }
-
-        private void menuSnifferFlush_Click(object sender, EventArgs e)
-        {
-            dgvCESniffer.Rows.Clear();
-        }
-
-        private void menuSnifferActivateCE_Click(object sender, EventArgs e)
-        {
-            switchEvent(SolutionEventType.CommandEvent);
-        }
-
-        private void contextMenuSniffer_Opening(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            menuSnifferAdd.Enabled = dgvCEFilters.Enabled;
-        }
-
-        private void btnActivateCSharp_Click(object sender, EventArgs e)
-        {
-            radioModeCSharp.Checked = true;
         }
 
         private void menuTplTargetsDefault_Click(object sender, EventArgs e)
@@ -1779,21 +1508,6 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             radioModeCSharp.Checked = true;
             textEditor.Text = Resource.StringCSharpModeCodeByDefault;
-        }
-
-        private void btnActionExec_Click(object sender, EventArgs e)
-        {
-            menuActionExec_Click(sender, e);
-        }
-
-        private void menuActionExec_Click(object sender, EventArgs e)
-        {
-            logic.execAction();
-        }
-
-        private void toolStripMenuVersion_Click(object sender, EventArgs e)
-        {
-            toolStripMenuAbout_Click(sender, e);
         }
 
         private void toolStripMenuVersion_MouseHover(object sender, EventArgs e)
@@ -1846,22 +1560,77 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void toolStripMenuBug_DropDownOpening(object sender, EventArgs e)
         {
-
             toolStripMenuDebugMode.Checked = App.DebugMode;
-            
-            Func<string, bool> IsIgnoreLevel = (string level) =>
+
+            bool IsIgnoreLevel(string level)
             {
-                if(!App.UserConfig.Global.LogIgnoreLevels.ContainsKey(level)) {
-                    return false;
-                }
+                if(!App.UserConfig.Global.LogIgnoreLevels.ContainsKey(level)) return false;
                 return App.UserConfig.Global.LogIgnoreLevels[level];
-            };
-            
+            }
+
             menuLogIgnoreTrace.Checked  = IsIgnoreLevel("TRACE");
             menuLogIgnoreDebug.Checked  = IsIgnoreLevel("DEBUG");
             menuLogIgnoreInfo.Checked   = IsIgnoreLevel("INFO");
             menuLogIgnoreWarn.Checked   = IsIgnoreLevel("WARN");
             menuLogIgnoreError.Checked  = IsIgnoreLevel("ERROR");
         }
+
+        #region one-line binding
+        protected void commandEventBefore(string guid, int id, object customIn, object customOut, ref bool cancelDefault) => commandEvent(true, guid, id, customIn, customOut);
+        protected void commandEventAfter(string guid, int id, object customIn, object customOut) => commandEvent(false, guid, id, customIn, customOut);
+        private void listBoxOperation_SelectedIndexChanged(object sender, EventArgs e) => operationsAction(listBoxOperation);
+        private void buttonEnvVariables_Click(object sender, EventArgs e) => envVariablesUIHelper();
+        private void checkBoxStatus_CheckedChanged(object sender, EventArgs e) => updateColors();
+        private void chkBuildContext_CheckedChanged(object sender, EventArgs e) => comboBoxBuildContext.Enabled = chkBuildContext.Checked;
+        private void checkBoxSBEScriptSupport_CheckedChanged(object sender, EventArgs e) => updateCodeCompletionStatus();
+        private void checkBoxWaitForExit_CheckedChanged(object sender, EventArgs e) => updateTimeLimitField();
+        private void dataGridViewOutput_CellClick(object sender, DataGridViewCellEventArgs e) => removeRow(dataGridViewOutput, owpRemove, e);
+        private void toolStripMenuHelp_ButtonClick(object sender, EventArgs e) => toolStripMenuHelp.ShowDropDown();
+        private void toolStripMenuSettings_ButtonClick(object sender, EventArgs e) => toolStripMenuSettings.ShowDropDown();
+        private void toolStripMenuBug_ButtonClick(object sender, EventArgs e) => toolStripMenuBug.ShowDropDown();
+        private void toolStripMenuAbout_Click(object sender, EventArgs e) => new AboutFrm().Show();
+        private void toolStripMenuSBEPanel_Click(object sender, EventArgs e) => logic.Env.exec("View.vsSBE.Panel");
+        private void menuItemCompNew_Click(object sender, EventArgs e) => btnCompNew_Click(sender, e);
+        private void checkedListBoxSpecCfg_MouseLeave(object sender, EventArgs e) => checkedListBoxSpecCfg.Width = checkedListBoxSpecCfg.MinimumSize.Width;
+        private void toolStripMenuApply_Click(object sender, EventArgs e) => btnApply_Click(sender, e);
+        private void toolStripMenuMSBuildProp_Click(object sender, EventArgs e) => envVariablesUIHelper();
+        private void toolStripMenuDTECmd_Click(object sender, EventArgs e) => btnDteCmd_Click(sender, e);
+        private void splitContainer_SplitterMoved(object sender, SplitterEventArgs e) => pictureBoxToggle.Visible = !(e.SplitX < metric.splitter);
+        private void menuActionsAdd_Click(object sender, EventArgs e) => addAction();
+        private void menuActionsClone_Click(object sender, EventArgs e) => addAction((dgvActions.Rows.Count < 1) ? -1 : currentActionIndex());
+        private void menuActionsTogglePanel_Click(object sender, EventArgs e) => expandActionsList(splitContainer.SplitterDistance < metric.splitter);
+        private void menuActionsReset_Click(object sender, EventArgs e) => toolStripMenuReset_Click(sender, e);
+        private void pictureBoxToggle_Click(object sender, EventArgs e) => expandActionsList(false);
+        private void dgvActions_DragDropSortedRow(object sender, DataGridViewExt.MovingRowArgs e) => logic.moveEventItem(e.Data.from, e.Data.to);
+        private void dgvActions_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e) => linkAddAction.Visible = false;
+        private void dgvCEFilters_CellClick(object sender, DataGridViewCellEventArgs e) => removeRow(dgvCEFilters, dgvCEFiltersColumnRemove, e);
+        private void checkBoxCESniffer_CheckedChanged(object sender, EventArgs e) => snifferEnabled(checkBoxCESniffer.Checked);
+        private void menuSnifferAdd_Click(object sender, EventArgs e) => addFilterFromSniffer(dgvCESniffer, dgvCEFilters);
+        private void menuSnifferFlush_Click(object sender, EventArgs e) => dgvCESniffer.Rows.Clear();
+        private void menuSnifferActivateCE_Click(object sender, EventArgs e) => switchEvent(SolutionEventType.CommandEvent);
+        private void contextMenuSniffer_Opening(object sender, System.ComponentModel.CancelEventArgs e) => menuSnifferAdd.Enabled = dgvCEFilters.Enabled;
+        private void btnActivateCSharp_Click(object sender, EventArgs e) => radioModeCSharp.Checked = true;
+        private void btnActionExec_Click(object sender, EventArgs e) => menuActionExec_Click(sender, e);
+        private void menuActionExec_Click(object sender, EventArgs e) => logic.execAction();
+        private void toolStripMenuVersion_Click(object sender, EventArgs e) => toolStripMenuAbout_Click(sender, e);
+        #endregion
+
+        #region urls
+        private void toolStripMenuGalleryPage_Click(object sender, EventArgs e) => Util.openUrl("https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
+        private void toolStripMenuChangelog_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/Changelist/#vsix");
+        private void toolStripMenuWiki_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/");
+        private void tsMenuItemExamples_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/doc/Examples/");
+        private void toolStripMenuIssue_Click(object sender, EventArgs e) => Util.openUrl("https://github.com/3F/vsSolutionBuildEvent/issues?q=is%3Aissue");
+        private void toolStripMenuSources_Click(object sender, EventArgs e) => Util.openUrl("https://github.com/3F/vsSolutionBuildEvent");
+        private void toolStripMenuLicense_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/License/");
+        private void toolStripMenuPluginDir_Click(object sender, EventArgs e) => Util.openUrl($"\"{App.LibPath}\"");
+        private void toolStripMenuCIMSBuild_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/doc/CI/CI.MSBuild/");
+        private void toolStripMenuDevenv_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/doc/CI/Devenv%20Command-Line/");
+        private void toolStripMenuAPI_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/doc/API/");
+        private void btnDownloadVSCE_Click(object sender, EventArgs e) => Util.openUrl("https://visualstudiogallery.msdn.microsoft.com/ad9f19b2-04c0-46fe-9637-9a52ce4ca661/file/184640/");
+        private void btnInfoVSCE_Click(object sender, EventArgs e) => Util.openUrl("http://vsce.r-eg.net/About/");
+        private void componentInfo(string name) => Util.openUrl($"http://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/Components/{name}/");
+        private void btnCompNew_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/doc/Dev/New%20Component/");
+        #endregion
     }
 }

@@ -122,6 +122,7 @@
             this.Controls.Add(this.labelFiler);
             this.Controls.Add(this.textBoxFilter);
             this.Controls.Add(this.dataGridViewDTE);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(240, 110);

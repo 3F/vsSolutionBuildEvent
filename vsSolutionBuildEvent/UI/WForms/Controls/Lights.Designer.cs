@@ -63,6 +63,7 @@
             this.Controls.Add(this.pGreen);
             this.Controls.Add(this.pYellow);
             this.Controls.Add(this.pRed);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.Name = "Lights";
             this.Size = new System.Drawing.Size(41, 10);
             this.ResumeLayout(false);
