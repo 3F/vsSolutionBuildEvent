@@ -1,5 +1,11 @@
 vsSolutionBuildEvent CI.MSBuild
-_______________________________
+- - - - - - - - - - - - - - - -
+
+! Modern versions are considered now as part of the main project for CI support !
+
+  Find changelog for >1.7 here:
+  https://github.com/3F/vsSolutionBuildEvent/blob/master/changelog.txt
+
 
 [1.7] 2019.09.26
 

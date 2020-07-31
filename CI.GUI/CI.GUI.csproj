@@ -1,39 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">DBG_SDK10</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{97F0E2FF-42DB-4506-856D-8694DD99F827}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>net.r_eg.vsSBE.CI.MSBuild</RootNamespace>
-    <AssemblyName>CI.MSBuild</AssemblyName>
+    <ProjectGuid>{3CE895B6-2F7B-4A04-952A-839F235ED43E}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>net.r_eg.vsSBE.CI.GUI</RootNamespace>
+    <AssemblyName>GUI</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\com.github.3F.snk</AssemblyOriginatorKeyFile>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <NetTargetVName>net40</NetTargetVName>
     <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
     <NoWarn>CS1591;IDE1006</NoWarn>
+    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DBG_SDK10|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>NET_40;DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'REL_SDK10|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>NET_40</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
+    <DefineConstants>
+    </DefineConstants>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\CI.MSBuild.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\CI.GUI.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'REL_SDK15|AnyCPU' ">
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -43,10 +42,8 @@
     </DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\Release\CI.MSBuild.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\CI.GUI.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DBG_SDK15|AnyCPU' ">
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -55,64 +52,32 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Build.Framework" />
-    <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbortException.cs" />
-    <Compile Include="EventManager.cs" />
-    <Compile Include="KArgType.cs" />
-    <Compile Include="KArgs.cs" />
-    <Compile Include="InitializerProperties.cs" />
-    <Compile Include="Initializer.cs" />
-    <Compile Include="LibSettings.cs" />
-    <Compile Include="Log.cs" />
-    <Compile Include="ILog.cs" />
-    <Compile Include="Project.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Version.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Sln.cs" />
+    <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Bridge\Bridge.csproj">
       <Project>{73919171-44B6-4536-B892-F1FCA653887C}</Project>
       <Name>Bridge</Name>
     </ProjectReference>
-    <ProjectReference Include="..\MvsSln\MvsSln\MvsSln.csproj">
-      <Project>{F905DFB2-2E67-4FF7-9001-924F6F2D645D}</Project>
-      <Name>MvsSln</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Provider\Provider.csproj">
-      <Project>{4F8BB8CD-1116-4F07-9B8F-06D69FB8589B}</Project>
-      <Name>Provider</Name>
+    <ProjectReference Include="..\vsSolutionBuildEvent\vsSolutionBuildEvent.csproj">
+      <Project>{32e44995-f621-4e77-b46a-8f65d64e7fea}</Project>
+      <Name>vsSolutionBuildEvent</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(SolutionDir)\tools\gnt.bat">
+    <None Include="GUI.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="$(SolutionDir)\tools\hMSBuild.bat">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="cim.cmd">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="changelog.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

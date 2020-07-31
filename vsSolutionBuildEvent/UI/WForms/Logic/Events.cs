@@ -832,7 +832,11 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
 
         public void attachCommandEvents(CEBeforeEventHandler before, CEAfterEventHandler after)
         {
-            cmdEvents = Env.Events.CommandEvents;
+            cmdEvents = Env.Events?.CommandEvents;
+            if(cmdEvents == null) {
+                return;
+            }
+
             lock(_lock) {
                 cmdEvents.BeforeExecute -= before;
                 cmdEvents.BeforeExecute += before;

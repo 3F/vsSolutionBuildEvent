@@ -355,11 +355,6 @@ namespace net.r_eg.vsSBE
 
 #endif
 
-        public Pkg()
-        {
-            Trace.WriteLine($"Plugin is activated: { ToString() }");
-        }
-
 #if VSSDK_15_AND_NEW
 
         /// <summary>
@@ -369,10 +364,6 @@ namespace net.r_eg.vsSBE
         /// <param name="progress">A provider for progress updates.</param>
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
-            Trace.WriteLine($"Entering InitializeAsync() of: { ToString() }");
-
-            //await base.InitializeAsync(cancellationToken, progress);
-
             // When initialized asynchronously, the current thread may be a background thread at this point.
             // Do any initialization that requires the UI thread after switching to the UI thread.
             await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
@@ -383,24 +374,6 @@ namespace net.r_eg.vsSBE
 
                 mainToolCmd = await MainToolCommand.InitAsync(this, Event);
                 mainToolCmd.setVisibility(false);
-
-                // VS bug: https://github.com/microsoft/extendvs/issues/68
-                // MSVS Shell.15.0 15.7.27703
-                // MSVS Threading 15.8.209
-                _ = Task.Run(async () =>
-                {
-                    // this line fixes related bug in new MSVS Shell.15.0 15.9.28307
-                    // when tool is already attached when starting VS.
-                    // do not use true value in non-UI thread ........................v
-                    var tool = await getToolWindowAsync(StatusToolCommand.ToolType, false);
-
-                    await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-
-                    sToolCmd = await StatusToolCommand.InitAsync(this, Event, tool);
-
-                    // https://github.com/3F/vsSolutionBuildEvent/pull/45#discussion_r291835939
-                    if(Dte2.Solution.IsOpen) OnAfterOpenSolution(pUnkReserved, 0);
-                });
 
                 spSolution = await GetServiceAsync(typeof(SVsSolution)) as IVsSolution;
                 spSolution?.AdviseSolutionEvents(this, out _pdwCookieSolution);
@@ -413,6 +386,24 @@ namespace net.r_eg.vsSBE
                 IVsUIShell uiShell = await GetServiceAsync(typeof(SVsUIShell)) as IVsUIShell;
                 _showCriticalVsMsg(uiShell, ex);
             }
+
+            // Because of VS bug: https://github.com/microsoft/extendvs/issues/68
+            //  - MSVS Shell.15.0 15.7.27703
+            //  - MSVS Threading 15.8.209
+            _ = Task.Run(async () =>
+            {
+                // Helps to avoid related bug in MSVS Shell.15.0 15.9.28307
+                //      for the case when tool is already attached when starting VS IDE.
+                // Do not use true value in non-UI thread ........................v
+                var tool = await getToolWindowAsync(StatusToolCommand.ToolType, false);
+
+                await JoinableTaskFactory.SwitchToMainThreadAsync();
+
+                sToolCmd = await StatusToolCommand.InitAsync(this, Event, tool);
+
+                // https://github.com/3F/vsSolutionBuildEvent/pull/45#discussion_r291835939
+                if(Dte2.Solution.IsOpen) OnAfterOpenSolution(pUnkReserved, 0);
+            });
         }
 
 #else

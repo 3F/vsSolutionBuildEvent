@@ -486,13 +486,16 @@ namespace net.r_eg.vsSBE.API
         /// </summary>
         protected void init()
         {
-#if DEBUG
-            Log.Warn("Used [Debug version]");
+#if VSSDK_15_AND_NEW
+            Log.Info($"SDK15 & {vsSBE.Version.S_INFO}");
 #else
-            //if(vsSBE.Version.branchName.ToLower() != "releases") {
-            //    Log.Warn("Used [Unofficial release]");
-            //}
+            Log.Info($"SDK10 & {vsSBE.Version.S_INFO}");
 #endif
+
+#if DEBUG
+            Log.Warn($"Debug version");
+#endif
+            Log.Info($"Solution: {Environment.SolutionFile}");
 
             loader = Bootloader.Init(Environment);
 

@@ -1080,8 +1080,8 @@ namespace net.r_eg.vsSBE.UI.WForms
         {
             if(!App.IsCfgExists)
             {
-                Log.Fatal("Configuration data is corrupt. User: {0} / Main: {1}", (App.UserConfig != null), (App.Config != null));
-                MessageBox.Show("We can't continue. See details in log.", "Configuration data is corrupt");
+                Log.Fatal($"Corrupted configuration. User: {App.UserConfig != null} / Main: {App.Config != null}");
+                MessageBox.Show("We can't continue. See log for details with activated debug mode.", "Corrupted configuration", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 FormClosing -= EventsFrm_FormClosing;
                 Close();
                 return;
@@ -1469,8 +1469,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             if(Util.focusForm(frmDTECommands)) {
                 return;
             }
-            IEnumerable<EnvDTE.Command> commands = logic.Env.Commands.Cast<EnvDTE.Command>();
-            frmDTECommands = new DTECommandsFrm(commands, this);
+            frmDTECommands = new DTECommandsFrm(logic.Env.Commands?.Cast<EnvDTE.Command>(), this);
             frmDTECommands.Show();
         }
 

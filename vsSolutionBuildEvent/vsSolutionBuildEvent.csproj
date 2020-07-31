@@ -310,6 +310,7 @@
     <Compile Include="API\IEventLevel.cs" />
     <Compile Include="API\Settings.cs" />
     <Compile Include="API\Version.cs" />
+    <Compile Include="DteSlnCfg.cs" />
     <Compile Include="OwpEnv.cs" />
     <Compile Include="DteEnv.cs" />
     <Compile Include="Clients\SEvent2.cs" />

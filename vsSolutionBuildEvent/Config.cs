@@ -162,7 +162,8 @@ namespace net.r_eg.vsSBE
             {
                 warnAboutXmlConfig();
                 Log.Error($"Incorrect configuration data: {ex.Message}");
-                Data = newCfg; //xml -> json 0.8-0.9
+                Data    = newCfg; //xml -> json 0.8-0.9
+                InRAM   = true;
             }
             catch(Exception ex)
             {
@@ -187,7 +188,7 @@ namespace net.r_eg.vsSBE
                     throw new UnspecSBEException("file is empty");
                 }
 
-                Log.Info($"Loaded settings (v{ ret.Header.Compatibility}): '{Settings.WPath}'");
+                Log.Info($"Loaded settings v{ret.Header.Compatibility} '{Settings.WPath.MakeRelativePath(link)}'");
                 return ret;
             }
         }

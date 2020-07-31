@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace net.r_eg.vsSBE.UI.WForms
@@ -10,14 +11,14 @@ namespace net.r_eg.vsSBE.UI.WForms
         /// <summary>
         /// Transport support
         /// </summary>
-        private ITransfer _pin;
+        private readonly ITransfer _pin;
 
-        IEnumerable<EnvDTE.Command> _commands;
+        private readonly IEnumerable<EnvDTE.Command> _commands;
 
         public DTECommandsFrm(IEnumerable<EnvDTE.Command> commands, ITransfer pin)
         {
-            _commands = commands;
-            this._pin = pin;
+            _commands = commands ?? Enumerable.Empty<EnvDTE.Command>();
+            _pin = pin;
 
             InitializeComponent();
             Icon = Resource.Package_32;

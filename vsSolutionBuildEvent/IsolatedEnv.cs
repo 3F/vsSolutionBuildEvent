@@ -66,46 +66,32 @@ namespace net.r_eg.vsSBE
                     .Where(p => !string.IsNullOrWhiteSpace(p.GetProjectName()));
         }
 
-        /// <summary>
-        /// Simple list of names from EnvDTE projects
-        /// </summary>
+        /// <inheritdoc/>
         public List<string> ProjectsList
         {
-            get => SlnEnv?.ValidProjects
-                // TODO: possible duplicates because only ProjectsDTE provides an uniqiue list
-                .Select(p => p.GetProjectName())
-                .Where(name => !string.IsNullOrWhiteSpace(name))
+            get => (Sln?.ProjectItems ?? Enumerable.Empty<MvsSln.Core.ProjectItem>() )
+                .Where(p => !string.IsNullOrWhiteSpace(p.name))
+                .Select(p => p.name)
                 .ToList();
         }
 
         /// <summary>
         /// Active configuration for current solution
         /// </summary>
-        public EnvDTE80.SolutionConfiguration2 SolutionActiveCfg
-        {
-            //TODO:
-            get => __disabled<EnvDTE80.SolutionConfiguration2>(nameof(SolutionActiveCfg));
-        }
+        public EnvDTE80.SolutionConfiguration2 SolutionActiveCfg => new DteSlnCfg(extractCfg(slnProperties));
 
         /// <summary>
         /// Formatted string with an active configuration for current solution.
         /// </summary>
-        public string SolutionActiveCfgString
-        {
-            get => formatCfg(slnProperties);
-        }
+        public string SolutionActiveCfgString => formatCfg(slnProperties);
 
         /// <summary>
         /// All configurations for current solution
         /// </summary>
         public IEnumerable<EnvDTE80.SolutionConfiguration2> SolutionConfigurations
         {
-            get
-            {
-                //TODO: only list see in .sln -> SolutionConfigurationPlatforms
-                __disabled(nameof(SolutionConfigurations));
-                yield break;
-            }
+            get => (Sln?.SolutionConfigs ?? new[] { extractCfg(slnProperties) })
+                        .Select(c => new DteSlnCfg(c.Configuration, c.Platform));
         }
 
         /// <summary>
@@ -306,14 +292,20 @@ namespace net.r_eg.vsSBE
             return properties;
         }
 
-        protected string formatCfg(IDictionary<string, string> properties)
+        protected IConfPlatform extractCfg(IDictionary<string, string> properties)
         {
             IConfPlatform def = Sln?.DefaultConfig;
 
-            return formatCfg(
+            return new ConfigItem(
                 properties.GetOrDefault(PropertyNames.CONFIG, def?.Configuration),
                 properties.GetOrDefault(PropertyNames.PLATFORM, def?.Platform)
             );
+        }
+
+        protected string formatCfg(IDictionary<string, string> properties)
+        {
+            IConfPlatform def = extractCfg(properties);
+            return formatCfg(def.Configuration, def.Platform);
         }
 
         private void __disabled(string name)
