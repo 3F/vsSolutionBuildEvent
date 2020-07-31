@@ -42,14 +42,7 @@ namespace net.r_eg.vsSBE.API
     /// </remarks>
     public class EventLevel: IEventLevel, IEntryPointCore, IFireCoreCommand
     {
-        /// <inheritdoc/>
-        public event CoreCommandHandler CoreCommand = delegate(object sender, CoreCommandArgs e) { };
-
-        /// <inheritdoc/>
-        public event EventHandler OpenedSolution = delegate(object sender, EventArgs e) { };
-
-        /// <inheritdoc/>
-        public event EventHandler ClosedSolution = delegate(object sender, EventArgs e) { };
+        internal readonly CancelBuildState buildState = new CancelBuildState();
 
         /// <summary>
         /// Provides command events for automation clients
@@ -69,6 +62,15 @@ namespace net.r_eg.vsSBE.API
         private Bootloader loader;
 
         private readonly object sync = new object();
+
+        /// <inheritdoc/>
+        public event CoreCommandHandler CoreCommand = delegate (object sender, CoreCommandArgs e) { };
+
+        /// <inheritdoc/>
+        public event EventHandler OpenedSolution = delegate (object sender, EventArgs e) { };
+
+        /// <inheritdoc/>
+        public event EventHandler ClosedSolution = delegate (object sender, EventArgs e) { };
 
         /// <inheritdoc/>
         public Actions.Binder Action { get; protected set; }
@@ -116,6 +118,7 @@ namespace net.r_eg.vsSBE.API
         /// <inheritdoc/>
         public int onPre(ref int pfCancelUpdate)
         {
+            buildState.Reset();
             try
             {
                 return mixup
@@ -128,6 +131,10 @@ namespace net.r_eg.vsSBE.API
             {
                 Log.Error($"Failed Solution.Pre-binding: {ex.Message}");
                 Log.Debug(ex.StackTrace);
+            }
+            finally
+            {
+                buildState.UpdateFlagIfCanceled(ref pfCancelUpdate);
             }
             return Codes.Failed;
         }
@@ -190,6 +197,10 @@ namespace net.r_eg.vsSBE.API
             {
                 Log.Error($"Failed Project.Pre-binding: {ex.Message}");
                 Log.Debug(ex.StackTrace); // to an unclear issue #43
+            }
+            finally
+            {
+                buildState.UpdateFlagIfCanceled(ref pfCancel);
             }
             return Codes.Failed;
         }
@@ -329,6 +340,7 @@ namespace net.r_eg.vsSBE.API
             UI.Plain.State.Print(config.Data);
 
             initPropByDefault(Action.Cmd.MSBuild); //LC: #815, #814
+            buildState.Reset();
             OpenedSolution(this, EventArgs.Empty);
 
             if(slnEvents == null) {
@@ -393,6 +405,14 @@ namespace net.r_eg.vsSBE.API
         /// <inheritdoc/>
         public void fire(CoreCommandArgs c) => CoreCommand(this, c);
 
+        public EventLevel()
+        {
+            CoreCommand += (object sender, CoreCommandArgs e) =>
+            {
+                if(e.Type == CoreCommandType.BuildCancel) buildState.Cancel();
+            };
+        }
+
         /// <summary>
         /// Initialize level
         /// </summary>
@@ -432,7 +452,8 @@ namespace net.r_eg.vsSBE.API
                     loader.Soba,
                     loader.Soba.EvMSBuild
                 ),
-                loader.Soba
+                loader.Soba,
+                buildState
             );
         }
 

@@ -308,6 +308,7 @@
     <Compile Include="API\Commands\IFireCoreCommand.cs" />
     <Compile Include="API\EventLevel.cs" />
     <Compile Include="API\IEventLevel.cs" />
+    <Compile Include="API\CancelBuildState.cs" />
     <Compile Include="API\Settings.cs" />
     <Compile Include="API\Version.cs" />
     <Compile Include="DteSlnCfg.cs" />

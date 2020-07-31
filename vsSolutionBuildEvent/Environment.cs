@@ -352,9 +352,13 @@ namespace net.r_eg.vsSBE
             try {
                 ((EnvDTE.DTE)Dte2).ExecuteCommand(name, args ?? String.Empty);
             }
+            catch(Exception ex) when(name == DTEC.BuildCancel)
+            {
+                Log.Debug($"Used only {nameof(API.Commands.IFireCoreCommand)} because '{name}' is not available in DTE at this moment: {ex.Message}");
+            }
             catch(OutOfMemoryException) {
                 // this can be from Devenv
-                Log.Debug("exec: We can't work with DTE commands at this moment in used environment. Command - '{0}'", name);
+                Log.Debug($"We can't work with DTE commands at this moment in used environment. Command: {name} ({args})");
             }
         }
 

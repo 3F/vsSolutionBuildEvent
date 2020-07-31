@@ -26,6 +26,7 @@ using Microsoft.VisualStudio.Shell.Interop;
 using net.r_eg.SobaScript;
 using net.r_eg.SobaScript.Z.VS;
 using net.r_eg.SobaScript.Z.VS.Owp;
+using net.r_eg.vsSBE.API;
 using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Extensions;
@@ -42,6 +43,8 @@ namespace net.r_eg.vsSBE.Actions
     /// </summary>
     public class Binder
     {
+        internal readonly CancelBuildState buildState = new CancelBuildState();
+
         /// <summary>
         /// To support the 'execution order' features.
         /// Contains the current states of all projects.
@@ -104,8 +107,13 @@ namespace net.r_eg.vsSBE.Actions
 
             foreach(SBEEvent item in SlnEvents.PreBuild)
             {
+                if(item.IgnoreIfBuildFailed && buildState.Canceled) {
+                    Log.Info($"[{nameof(SolutionEventType.Pre)}] ignored '{item.Name}' due to canceled build and ignoring = true: {item.Caption}");
+                    continue;
+                }
+
                 if(hasExecutionOrder(item)) {
-                    Log.Info("[Pre] SBE has deferred action: '{0}' :: waiting... ", item.Caption);
+                    Log.Info($"[{nameof(SolutionEventType.Pre)}] An '{item.Name}' is a deferred action. Waiting... ");
                     Status._.add(SolutionEventType.Pre, StatusType.Deferred);
                 }
                 else {
@@ -132,13 +140,13 @@ namespace net.r_eg.vsSBE.Actions
 
             foreach(SBEEvent item in evt)
             {
-                if(fSucceeded != 1 && item.IgnoreIfBuildFailed) {
-                    Log.Info("[Post] ignored action '{0}' :: Build FAILED. See option 'Ignore if the build failed'", item.Caption);
+                if(item.IgnoreIfBuildFailed && (fSucceeded != 1 || buildState.Canceled) ) {
+                    Log.Info($"[{nameof(SolutionEventType.Post)}] ignored '{item.Name}' due to failed or canceled build. See option 'Ignore if the build failed': {item.Caption}");
                     continue;
                 }
 
                 if(!isReached(item)) {
-                    Log.Info("[Post] ignored action '{0}' ::  not reached selected projects in execution order", item.Caption);
+                    Log.Info($"[{nameof(SolutionEventType.Post)}] ignored '{item.Name}' due to not reached selected projects in execution order: {item.Caption}");
                     continue;
                 }
 
@@ -219,7 +227,7 @@ namespace net.r_eg.vsSBE.Actions
             foreach(SBEEvent item in evt)
             {
                 if(!isReached(item)) {
-                    Log.Info("[Cancel] ignored action '{0}' :: not reached selected projects in execution order", item.Caption);
+                    Log.Info($"[{nameof(SolutionEventType.Cancel)}] ignored '{item.Name}' due to not reached selected projects in execution order: {item.Caption}");
                     continue;
                 }
 
@@ -382,6 +390,12 @@ namespace net.r_eg.vsSBE.Actions
 
             projects = new Dictionary<string, EOProject>();
             attachLoggingEvent();
+        }
+
+        internal Binder(ICommand cmd, ISobaCLoader loader, CancelBuildState state)
+            : this(cmd, loader)
+        {
+            buildState = state ?? throw new ArgumentNullException(nameof(state));
         }
 
         /// <summary>
