@@ -73,7 +73,7 @@ namespace net.r_eg.vsSBE.Events
 
         /// <inheritdoc cref="ISolutionEvent.Mode"/>
         [JsonProperty(TypeNameHandling = TypeNameHandling.All)]
-        public IMode Mode { get; set; } = new ModeFile();
+        public IMode Mode { get; set; } = new ModeScript();
 
         /// <inheritdoc cref="ISolutionEvent.Id"/>
         [JsonIgnore]
