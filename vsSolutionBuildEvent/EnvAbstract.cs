@@ -136,6 +136,15 @@ namespace net.r_eg.vsSBE
             return ConfigItem.Format(name, platform ?? name);
         }
 
+        protected void AssignEnv(IXProjectEnv env)
+        {
+            if(env == null) {
+                throw new ArgumentNullException(nameof(env));
+            }
+            env.Assign();
+            SlnEnv = env;
+        }
+
         private ISlnResult UpdateSln()
         {
             var input = SolutionFile;

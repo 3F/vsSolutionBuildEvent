@@ -371,11 +371,7 @@ namespace net.r_eg.vsSBE
             }
         }
 
-        protected override void UpdateSlnEnv(ISlnResult sln)
-        {
-            SlnEnv = new MvsSln.Core.IsolatedEnv(sln);
-            SlnEnv.Assign();
-        }
+        protected override void UpdateSlnEnv(ISlnResult sln) => AssignEnv(new MvsSln.Core.IsolatedEnv(sln));
 
         protected virtual string getProjectNameFrom(DProject dteProject, bool force = false)
         {

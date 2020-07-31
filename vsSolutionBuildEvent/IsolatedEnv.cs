@@ -281,11 +281,7 @@ namespace net.r_eg.vsSBE
             slnProperties = ConfigureAsNew(properties);
         }
 
-        protected override void UpdateSlnEnv(ISlnResult sln)
-        {
-            SlnEnv = new XProjectEnv(sln, _properties);
-            SlnEnv.Assign();
-        }
+        protected override void UpdateSlnEnv(ISlnResult sln) => AssignEnv(new XProjectEnv(sln, _properties));
 
         protected IDictionary<string, string> ConfigureAsNew(IDictionary<string, string> properties)
             => Configure(properties?.ToDictionary(k => k.Key, v => v.Value));
