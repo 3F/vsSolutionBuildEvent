@@ -119,11 +119,12 @@ namespace net.r_eg.vsSBE
                 }
                 InRAM = false;
 
-                Log.Trace("Configuration: has been saved in '{0}'", Settings.WPath);
+                Log.Trace($"Configuration has been saved in '{Settings.WPath}'");
                 Updated(this, new DataArgs<ISolutionEvents>() { Data = Data });
             }
             catch(Exception ex) {
-                Log.Error("Cannot apply configuration '{0}'", ex.Message);
+                Log.Error($"Can't apply configuration: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
         }
 
@@ -168,6 +169,7 @@ namespace net.r_eg.vsSBE
             catch(Exception ex)
             {
                 Log.Error($"Configuration file `{link}` is corrupted: {ex.Message}");
+                Log.Debug(ex.StackTrace);
                 Data    = newCfg; //TODO: actions in UI, e.g.: restore, new..
                 InRAM   = true;
             }

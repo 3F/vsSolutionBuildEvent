@@ -42,7 +42,8 @@ namespace net.r_eg.vsSBE.Clients
                 link.onBuildRaw(data);
             }
             catch(Exception ex) {
-                Log.Error("[Client library] Failed build-raw: '{0}'", ex.Message);
+                Log.Error($"[Client library] Failed build-raw: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
         }
 
@@ -56,7 +57,8 @@ namespace net.r_eg.vsSBE.Clients
                 link.updateBuildType(type);
             }
             catch(Exception ex) {
-                Log.Error("[Client library] Failed updateBuildType: '{0}'", ex.Message);
+                Log.Error($"[Client library] Failed updateBuildType: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
         }
 

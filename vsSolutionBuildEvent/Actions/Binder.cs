@@ -144,12 +144,13 @@ namespace net.r_eg.vsSBE.Actions
 
                 try {
                     if(Cmd.exec(item, SolutionEventType.Post)) {
-                        Log.Info($"[Post] finished '{item.Name}': {item.Caption}");
+                        Log.Info($"[{SolutionEventType.Post}] finished '{item.Name}'");
                     }
                     Status._.add(SolutionEventType.Post, StatusType.Success);
                 }
                 catch(Exception ex) {
-                    Log.Error("Post-Build error: {0}", ex.Message);
+                    Log.Error($"[{SolutionEventType.Post}] error: {ex.Message}");
+                    Log.Debug(ex.StackTrace);
                     Status._.add(SolutionEventType.Post, StatusType.Fail);
                 }
             }
@@ -224,12 +225,13 @@ namespace net.r_eg.vsSBE.Actions
 
                 try {
                     if(Cmd.exec(item, SolutionEventType.Cancel)) {
-                        Log.Info($"[Cancel] finished '{item.Name}': {item.Caption}");
+                        Log.Info($"[{SolutionEventType.Cancel}] finished '{item.Name}'");
                     }
                     Status._.add(SolutionEventType.Cancel, StatusType.Success);
                 }
                 catch(Exception ex) {
-                    Log.Error("Cancel-Build error: {0}", ex.Message);
+                    Log.Error($"[{SolutionEventType.Cancel}] error: {ex.Message}");
+                    Log.Debug(ex.StackTrace);
                     Status._.add(SolutionEventType.Cancel, StatusType.Fail);
                 }
             }
@@ -303,7 +305,8 @@ namespace net.r_eg.vsSBE.Actions
                         }
                     }
                     catch(Exception ex) {
-                        Log.Error("Transmitter error: {0}", ex.Message);
+                        Log.Error($"[{SolutionEventType.Transmitter}] error: {ex.Message}");
+                        Log.Debug(ex.StackTrace);
                     }
                 }
             }
@@ -400,12 +403,13 @@ namespace net.r_eg.vsSBE.Actions
 
             try {
                 if(Cmd.exec(evt, (type == Receiver.Output.EWType.Warnings)? SolutionEventType.Warnings : SolutionEventType.Errors)) {
-                    Log.Info($"[{type}] finished '{evt.Name}': {evt.Caption}");
+                    Log.Info($"[{type}] finished '{evt.Name}'");
                 }
                 return Codes.Success;
             }
             catch(Exception ex) {
-                Log.Error("SBE '{0}' error: {1}", type, ex.Message);
+                Log.Error($"[{type}] error: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
             return Codes.Failed;
         }
@@ -430,12 +434,13 @@ namespace net.r_eg.vsSBE.Actions
 
             try {
                 if(Cmd.exec(evt, SolutionEventType.OWP)) {
-                    Log.Info($"[Output] finished '{evt.Name}': {evt.Caption}");
+                    Log.Info($"[{SolutionEventType.OWP}] finished '{evt.Name}'");
                 }
                 return Codes.Success;
             }
             catch(Exception ex) {
-                Log.Error("SBE 'Output' error: {0}", ex.Message);
+                Log.Error($"[{SolutionEventType.OWP}] error: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
             return Codes.Failed;
         }
@@ -517,7 +522,8 @@ namespace net.r_eg.vsSBE.Actions
                 Status._.add(SolutionEventType.CommandEvent, StatusType.Success);
             }
             catch(Exception ex) {
-                Log.Error("CommandEvent error: '{0}'", ex.Message);
+                Log.Error($"[{SolutionEventType.CommandEvent}] error: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
             Status._.add(SolutionEventType.CommandEvent, StatusType.Fail);
         }
@@ -537,12 +543,13 @@ namespace net.r_eg.vsSBE.Actions
             {
                 try {
                     if(Cmd.exec(item, type)) {
-                        Log.Info($"[{typeString}] finished '{item.Name}': {item.Caption}");
+                        Log.Info($"[{typeString}] finished '{item.Name}'");
                     }
                     Status._.add(type, StatusType.Success);
                 }
                 catch(Exception ex) {
-                    Log.Error("[{0}] error: `{1}`", typeString, ex.Message);
+                    Log.Error($"[{typeString}] error: {ex.Message}");
+                    Log.Debug(ex.StackTrace);
                     Status._.add(type, StatusType.Fail);
                 }
             }
@@ -557,12 +564,13 @@ namespace net.r_eg.vsSBE.Actions
         {
             try {
                 if(Cmd.exec(evt, SolutionEventType.Pre)) {
-                    Log.Info($"[Pre] finished '{evt.Name}': {evt.Caption}");
+                    Log.Info($"[{SolutionEventType.Pre}] finished '{evt.Name}'");
                 }
                 return Codes.Success;
             }
             catch(Exception ex) {
-                Log.Error("Pre-Build error: {0}", ex.Message);
+                Log.Error($"[{SolutionEventType.Pre}] error: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
             return Codes.Failed;
         }
@@ -855,7 +863,8 @@ namespace net.r_eg.vsSBE.Actions
                             }
                         }
                         catch(Exception ex) {
-                            Log.Error("LoggingEvent error: {0}", ex.Message);
+                            Log.Error($"[{SolutionEventType.Logging}] error: {ex.Message}");
+                            Log.Debug(ex.StackTrace);
                         }
                     }
                 }

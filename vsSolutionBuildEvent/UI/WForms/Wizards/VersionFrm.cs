@@ -275,7 +275,8 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards
                 editorFinalScript.Text = s.construct();
             }
             catch(Exception ex) {
-                Log.Error("Generation of user script '{0}' is failed: `{1}`", Text, ex.Message);
+                Log.Error($"Failed when generating the user script '{Text}': {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
         }
 

@@ -193,21 +193,18 @@ namespace net.r_eg.vsSBE.UI.WForms
 
             space = new DeepSpace(pictureBoxSpace.CreateGraphics(), pictureBoxSpace.Width, pictureBoxSpace.Height);
 
-            string vAPIString = (new API.Version()).Bridge.Number.ToString(2);
-
-#if !DEBUG
-            labelVersionVal.Text = $"v{Version.S_NUM_REV}+{Version.B_SHA1} API: v{vAPIString}";
-            if(Version.B_NAME.ToLower() != "releases") {
-                labelVersionVal.Text += String.Format(" /\"{0}\":{1}", Version.B_NAME, Version.B_REVC);
-            }
+#if VSSDK_15_AND_NEW
+            string lSdk = "SDK15";
 #else
-            labelVersionVal.Text = String.Format("v{0} Debug [ {1} ] API: v{2} /\"{3}\":{4}",
-                                                    Version.S_NUM_REV,
-                                                    Version.B_SHA1,
-                                                    vAPIString,
-                                                    Version.B_NAME,
-                                                    Version.B_REVC);
+            string lSdk = "SDK10";
 #endif
+#if DEBUG
+            string lDbg = "DBG";
+#else
+            string lDbg = "REL";
+#endif
+
+            labelVersionVal.Text = $"[{lSdk}/{lDbg}] {Version.S_INFO} API: {new API.Version().Bridge.Number.ToString(2)}";
         }
 
         private void AboutFrm_Load(object sender, EventArgs e)

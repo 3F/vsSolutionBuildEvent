@@ -67,7 +67,8 @@ namespace net.r_eg.vsSBE.UI.WForms
                 comboBoxProjects.Items.AddRange(_env.ProjectsList.ToArray());
             }
             catch(Exception ex) {
-                Log.Error("Error with getting projects: " + ex.Message);
+                Log.Error($"Error when getting projects: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
 
             comboBoxProjects.SelectedIndex = 0;
@@ -90,7 +91,8 @@ namespace net.r_eg.vsSBE.UI.WForms
                 }
             }
             catch(Exception ex) {
-                Log.Error("Error with getting properties for '{0}': {1}", project, ex.Message);
+                Log.Error($"Error when getting properties from '{project}' project: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
         }
 

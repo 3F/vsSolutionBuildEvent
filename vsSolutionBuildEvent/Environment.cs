@@ -83,6 +83,7 @@ namespace net.r_eg.vsSBE
                 }
                 catch(Exception ex) {
                     Log.Error($"Failed getting project from EnvDTE: {ex.Message}");
+                    Log.Debug(ex.StackTrace);
                 }
 
                 return new List<string>();

@@ -40,11 +40,11 @@ namespace net.r_eg.vsSBE.UI.Plain
             Func<ISolutionEvent[], string, string> about = delegate(ISolutionEvent[] evt, string caption)
             {
                 if(evt == null) {
-                    return String.Format("\n\t-- /--] {0} :: Not Initialized", caption);
+                    return String.Format("\n    -- /--] {0} :: Not Initialized", caption);
                 }
 
                 System.Text.StringBuilder info = new System.Text.StringBuilder();
-                info.Append(String.Format("\n\t{0,2} /{1,2}] {2} :: ", evt.Where(i => i.Enabled).Count(), evt.Length, caption));
+                info.Append(String.Format("\n    {0,2} /{1,2}] {2} :: ", evt.Where(i => i.Enabled).Count(), evt.Length, caption));
                 foreach(ISolutionEvent item in evt) {
                     info.Append(String.Format("[{0}]", (item.Enabled) ? "!" : "X"));
                 }

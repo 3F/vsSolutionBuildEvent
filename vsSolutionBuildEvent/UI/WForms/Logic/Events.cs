@@ -874,15 +874,16 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
 
             ISolutionEvent evt      = SBEItem;
             SolutionEventType type  = SBE.type;
-            Log.Info("Action: execute action '{0}':'{1}' manually :: emulate '{2}' event", evt.Name, evt.Caption, type);
+            Log.Info($"Execute an action '{evt.Name}' manually. Emulate '{type}' event. {evt.Caption}");
 
             cmd.Env.BuildType = BuildType.Common; //TODO: IBuild.updateBuildType
             try {
                 bool res = cmd.exec(evt, type);
-                Log.Info("Action: '{0}':'{1}' completed as - '{2}'", evt.Name, evt.Caption, res.ToString());
+                Log.Info($"Completed an action '{evt.Name}': {res}");
             }
             catch(Exception ex) {
-                Log.Error("Action: '{0}':'{1}' is failed. Error: '{2}'", evt.Name, evt.Caption, ex.Message);
+                Log.Error($"Failed an action '{evt.Name}': {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
         }
 

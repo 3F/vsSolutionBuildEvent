@@ -114,8 +114,11 @@ namespace net.r_eg.vsSBE.Actions
                 return false;
             }
 
-            Log.Info($"Launching action '{evt.Name}' for '{cfg}': {evt.Caption}");
-            return actionBy(evt);
+            Log.Info($"Launching '{evt.Name}' due to '{type}' for '{cfg}' using {evt.Mode.Type} mode.");
+            if(!string.IsNullOrWhiteSpace(evt.Caption)) {
+                Log.Info(evt.Caption);
+            }
+            return actionBy(evt.Mode.Type, evt);
         }
 
         /// <summary>
@@ -145,37 +148,14 @@ namespace net.r_eg.vsSBE.Actions
             actions[ModeType.CSharp]        = new ActionCSharp(this);
         }
 
-        protected bool actionBy(ISolutionEvent evt)
-        {
-            switch(evt.Mode.Type)
-            {
-                case ModeType.Operation: {
-                    Log.Info("Use Operation Mode");
-                    return actionBy(ModeType.Operation, evt);
-                }
-                case ModeType.Interpreter: {
-                    Log.Info("Use Interpreter Mode");
-                    return actionBy(ModeType.Interpreter, evt);
-                }
-                case ModeType.Script: {
-                    Log.Info("Use Script Mode");
-                    return actionBy(ModeType.Script, evt);
-                }
-                case ModeType.Targets: {
-                    Log.Info("Use Targets Mode");
-                    return actionBy(ModeType.Targets, evt);
-                }
-                case ModeType.CSharp: {
-                    Log.Info("Use C# Mode");
-                    return actionBy(ModeType.CSharp, evt);
-                }
-            }
-            Log.Info("Use Files Mode");
-            return actionBy(ModeType.File, evt);
-        }
-
         protected bool actionBy(ModeType type, ISolutionEvent evt)
         {
+            if(!actions.ContainsKey(type))
+            {
+                Log.Warn($"{type} is not found as a registered action type");
+                actions[type] = new ActionScript(this);
+            }
+
             if(evt.Process.Waiting) {
                 return actions[type].process(evt);
             }
@@ -191,12 +171,13 @@ namespace net.r_eg.vsSBE.Actions
                     Thread.CurrentThread.Name = marker;
                 }
 
-                Log.Trace($"Task ({type}) for another thread is started for '{evt.Name}'");
+                Log.Trace($"Task for '{evt.Name}' due to '{type}' ...");
                 try {
                     actions[type].process(evt);
                 }
                 catch(Exception ex) {
-                    Log.Error($"Task ({type}) for another thread is failed. '{evt.Name}' Error: `{ex.Message}`");
+                    Log.Error($"Failed task for '{evt.Name}': {ex.Message}");
+                    Log.Debug(ex.StackTrace);
                 }
 
             })).Start();

@@ -584,7 +584,8 @@ namespace net.r_eg.vsSBE.UI.WForms
                 return evt;
             }
             catch(Exception ex) {
-                Log.Error("Failed to add event-item: '{0}'", ex.Message);
+                Log.Error($"Failed to add event-item: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
             finally {
                 notice(true);
@@ -1073,7 +1074,8 @@ namespace net.r_eg.vsSBE.UI.WForms
                 fillEvents(comboBoxEvents);
             }
             catch(Exception ex) {
-                Log.Error("Failed to load form: {0}", ex.Message);
+                Log.Error($"Failed to load form: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
 
             notice(false);
@@ -1086,7 +1088,8 @@ namespace net.r_eg.vsSBE.UI.WForms
                 fillCfgForSelectedEvent();
             }
             catch(Exception ex) {
-                Log.Error("Failed to select event type: {0}", ex.Message);
+                Log.Error($"Failed to select event type: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
         }
 

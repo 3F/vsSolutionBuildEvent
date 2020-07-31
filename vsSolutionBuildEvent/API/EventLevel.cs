@@ -37,24 +37,18 @@ namespace net.r_eg.vsSBE.API
 {
     using AppSettings = vsSBE.Settings;
 
-    /// <summary>
+    /// <remarks>
     /// TODO: add events for client library instead of direct call
-    /// </summary>
+    /// </remarks>
     public class EventLevel: IEventLevel, IEntryPointCore, IFireCoreCommand
     {
-        /// <summary>
-        /// Event of core commands.
-        /// </summary>
+        /// <inheritdoc/>
         public event CoreCommandHandler CoreCommand = delegate(object sender, CoreCommandArgs e) { };
 
-        /// <summary>
-        /// When the solution has been opened
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler OpenedSolution = delegate(object sender, EventArgs e) { };
 
-        /// <summary>
-        /// When the solution has been closed
-        /// </summary>
+        /// <inheritdoc/>
         public event EventHandler ClosedSolution = delegate(object sender, EventArgs e) { };
 
         /// <summary>
@@ -74,138 +68,90 @@ namespace net.r_eg.vsSBE.API
 
         private Bootloader loader;
 
-        /// <summary>
-        /// object synch.
-        /// </summary>
         private readonly object sync = new object();
 
-        /// <summary>
-        /// Binder of action
-        /// </summary>
-        public Actions.Binder Action
-        {
-            get;
-            protected set;
-        }
+        /// <inheritdoc/>
+        public Actions.Binder Action { get; protected set; }
 
-        /// <summary>
-        /// Used Environment
-        /// </summary>
-        public IEnvironment Environment
-        {
-            get;
-            protected set;
-        }
+        /// <inheritdoc/>
+        public IEnvironment Environment { get; protected set; }
 
-        /// <summary>
-        /// Manager of configurations.
-        /// </summary>
-        public IManager ConfigManager
-        {
-            get {
-                return AppSettings.CfgManager;
-            }
-        }
+        /// <inheritdoc/>
+        public IManager ConfigManager => AppSettings.CfgManager;
 
-        /// <summary>
-        /// Load with DTE2 context
-        /// </summary>
-        /// <param name="dte2">Unspecified EnvDTE80.DTE2 from EnvDTE80.dll</param>
-        /// <param name="debug">Optional flag of debug mode</param>
+        /// <inheritdoc/>
         public void load(object dte2, bool debug = false)
         {
             load(dte2, new API.Settings() { DebugMode = debug });
         }
 
-        /// <summary>
-        /// Load with DTE2 context
-        /// </summary>
-        /// <param name="dte2">Unspecified EnvDTE80.DTE2 from EnvDTE80.dll</param>
-        /// <param name="cfg">Specific settings</param>
+        /// <inheritdoc/>
         public void load(object dte2, ISettings cfg)
         {
             configure(cfg);
             
-            this.Environment = new Environment((DTE2)dte2, this);
+            Environment = new Environment((DTE2)dte2, this);
             init();
 
             clientLib.tryLoad(this, dte2);
         }
 
-        /// <summary>
-        /// Load with isolated environment
-        /// </summary>
-        /// <param name="sln">Full path to solution file</param>
-        /// <param name="properties">Global properties for solution</param>
-        /// <param name="debug">Optional flag of debug mode</param>
+        /// <inheritdoc/>
         public void load(string sln, Dictionary<string, string> properties, bool debug = false)
         {
             load(sln, properties, new API.Settings() { DebugMode = debug });
         }
 
-        /// <summary>
-        /// Load with isolated environment
-        /// </summary>
-        /// <param name="sln">Full path to solution file</param>
-        /// <param name="properties">Global properties for solution</param>
-        /// <param name="cfg">Specific settings</param>
+        /// <inheritdoc/>
         public void load(string sln, Dictionary<string, string> properties, ISettings cfg)
         {
             configure(cfg);
 
-            this.Environment = new IsolatedEnv(sln, properties);
+            Environment = new IsolatedEnv(sln, properties);
             init();
 
             clientLib.tryLoad(this, sln, properties);
         }
 
-        /// <summary>
-        /// 'PRE' of the solution.
-        /// Called before any build actions have begun.
-        /// </summary>
-        /// <param name="pfCancelUpdate">Pointer to a flag indicating cancel update.</param>
-        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
+        /// <inheritdoc/>
         public int onPre(ref int pfCancelUpdate)
         {
-            try {
-                int ret = Action.bindPre(ref pfCancelUpdate);
-
-                clientLib.Event.onPre(ref pfCancelUpdate);
-                return ret;
+            try
+            {
+                return mixup
+                (
+                    Action.bindPre(ref pfCancelUpdate),
+                    clientLib.Event.onPre(ref pfCancelUpdate)
+                );
             }
-            catch(Exception ex) {
-                Log.Error("Failed Solution.Pre-binding: '{0}'", ex.Message);
+            catch(Exception ex)
+            {
+                Log.Error($"Failed Solution.Pre-binding: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
             return Codes.Failed;
         }
 
-        /// <summary>
-        /// 'Cancel/Abort' of the solution.
-        /// Called when a build is being cancelled.
-        /// </summary>
-        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
+        /// <inheritdoc/>
         public int onCancel()
         {
-            try {
-                int ret = Action.bindCancel();
-
-                clientLib.Event.onCancel();
-                return ret;
+            try
+            {
+                return mixup
+                (
+                    Action.bindCancel(),
+                    clientLib.Event.onCancel()
+                );
             }
-            catch(Exception ex) {
-                Log.Error("Failed Solution.Cancel-binding: '{0}'", ex.Message);
+            catch(Exception ex)
+            {
+                Log.Error($"Failed Solution.Cancel-binding: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
             return Codes.Failed;
         }
 
-        /// <summary>
-        /// 'POST' of the solution.
-        /// Called when a build is completed.
-        /// </summary>
-        /// <param name="fSucceeded">true if no update actions failed.</param>
-        /// <param name="fModified">true if any update action succeeded.</param>
-        /// <param name="fCancelCommand">true if update actions were canceled.</param>
-        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
+        /// <inheritdoc/>
         public int onPost(int fSucceeded, int fModified, int fCancelCommand)
         {
             try
@@ -215,185 +161,156 @@ namespace net.r_eg.vsSBE.API
                     loader.UVars.UnsetAll();
                 }
 
-                clientLib.Event.onPost(fSucceeded, fModified, fCancelCommand);
-                return ret;
+                return mixup(ret, clientLib.Event.onPost(fSucceeded, fModified, fCancelCommand));
             }
-            catch(Exception ex) {
-                Log.Error("Failed Solution.Post-binding: '{0}'", ex.Message);
+            catch(Exception ex)
+            {
+                Log.Error($"Failed Solution.Post-binding: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
             return Codes.Failed;
         }
 
-        /// <summary>
-        /// 'PRE' of Projects.
-        /// Called right before a project configuration begins to build.
-        /// </summary>
-        /// <param name="pHierProj">Pointer to a hierarchy project object.</param>
-        /// <param name="pCfgProj">Pointer to a configuration project object.</param>
-        /// <param name="pCfgSln">Pointer to a configuration solution object.</param>
-        /// <param name="dwAction">Double word containing the action.</param>
-        /// <param name="pfCancel">Pointer to a flag indicating cancel.</param>
-        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
+        /// <inheritdoc/>
         public int onProjectPre(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel)
         {
 #if VSSDK_15_AND_NEW
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
 #endif
 
-            try {
-                int ret = Action.bindProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel);
-
-                clientLib.Event.onProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel);
-                return ret;
+            try
+            {
+                return mixup
+                (
+                    Action.bindProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel),
+                    clientLib.Event.onProjectPre(pHierProj, pCfgProj, pCfgSln, dwAction, ref pfCancel)
+                );
             }
-            catch(Exception ex) {
-                Log.Error($"Failed Project.Pre-binding: '{ex.Message}'");
+            catch(Exception ex)
+            {
+                Log.Error($"Failed Project.Pre-binding: {ex.Message}");
                 Log.Debug(ex.StackTrace); // to an unclear issue #43
             }
             return Codes.Failed;
         }
 
-        /// <summary>
-        /// 'PRE' of Project.
-        /// Before a project configuration begins to build.
-        /// </summary>
-        /// <param name="project">Project name.</param>
-        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
+        /// <inheritdoc/>
         public int onProjectPre(string project)
         {
-            try {
-                int ret = Action.bindProjectPre(project);
-
-                clientLib.Event.onProjectPre(project);
-                return ret;
+            try
+            {
+                return mixup
+                (
+                    Action.bindProjectPre(project),
+                    clientLib.Event.onProjectPre(project)
+                );
             }
-            catch(Exception ex) {
-                Log.Error($"Failed Project.Pre-binding/simple: '{ex.Message}'");
+            catch(Exception ex)
+            {
+                Log.Error($"Failed Project.Pre-binding/simple: {ex.Message}");
                 Log.Debug(ex.StackTrace); // to an unclear issue #43
             }
             return Codes.Failed;
         }
 
-        /// <summary>
-        /// 'POST' of Projects.
-        /// Called right after a project configuration is finished building.
-        /// </summary>
-        /// <param name="pHierProj">Pointer to a hierarchy project object.</param>
-        /// <param name="pCfgProj">Pointer to a configuration project object.</param>
-        /// <param name="pCfgSln">Pointer to a configuration solution object.</param>
-        /// <param name="dwAction">Double word containing the action.</param>
-        /// <param name="fSuccess">Flag indicating success.</param>
-        /// <param name="fCancel">Flag indicating cancel.</param>
-        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
+        /// <inheritdoc/>
         public int onProjectPost(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
         {
 #if VSSDK_15_AND_NEW
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
 #endif
 
-            try {
-                int ret = Action.bindProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
-
-                clientLib.Event.onProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
-                return ret;
+            try
+            {
+                return mixup
+                (
+                    Action.bindProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel),
+                    clientLib.Event.onProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel)
+                );
             }
-            catch(Exception ex) {
-                Log.Error($"Failed Project.Post-binding: '{ex.Message}'");
+            catch(Exception ex)
+            {
+                Log.Error($"Failed Project.Post-binding: {ex.Message}");
                 Log.Debug(ex.StackTrace); // to an unclear issue #43
             }
             return Codes.Failed;
         }
 
-        /// <summary>
-        /// 'POST' of Project.
-        /// After a project configuration is finished building.
-        /// </summary>
-        /// <param name="project">Project name.</param>
-        /// <param name="fSuccess">Flag indicating success.</param>
-        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
+        /// <inheritdoc/>
         public int onProjectPost(string project, int fSuccess)
         {
-            try {
-                int ret = Action.bindProjectPost(project, fSuccess);
-
-                clientLib.Event.onProjectPost(project, fSuccess);
-                return ret;
+            try
+            {
+                return mixup
+                (
+                    Action.bindProjectPost(project, fSuccess),
+                    clientLib.Event.onProjectPost(project, fSuccess)
+                );
             }
-            catch(Exception ex) {
-                Log.Error($"Failed Project.Post-binding/simple: '{ex.Message}'");
+            catch(Exception ex)
+            {
+                Log.Error($"Failed Project.Post-binding/simple: {ex.Message}");
                 Log.Debug(ex.StackTrace); // to an unclear issue #43
             }
             return Codes.Failed;
         }
 
-        /// <summary>
-        /// Before executing Command ID for EnvDTE.
-        /// </summary>
-        /// <param name="guid">The GUID.</param>
-        /// <param name="id">The command ID.</param>
-        /// <param name="customIn">Custom input parameters.</param>
-        /// <param name="customOut">Custom output parameters.</param>
-        /// <param name="cancelDefault">Whether the command has been cancelled.</param>
-        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
+        /// <inheritdoc/>
         public int onCommandDtePre(string guid, int id, object customIn, object customOut, ref bool cancelDefault)
         {
-            try {
-                int ret = Action.bindCommandDtePre(guid, id, customIn, customOut, ref cancelDefault);
-
-                clientLib.Event.onCommandDtePre(guid, id, customIn, customOut, ref cancelDefault);
-                return ret;
+            try
+            {
+                return mixup
+                (
+                    Action.bindCommandDtePre(guid, id, customIn, customOut, ref cancelDefault),
+                    clientLib.Event.onCommandDtePre(guid, id, customIn, customOut, ref cancelDefault)
+                );
             }
-            catch(Exception ex) {
-                Log.Error("Failed EnvDTE.Command-binding/Before: '{0}'", ex.Message);
+            catch(Exception ex)
+            {
+                Log.Error($"Failed EnvDTE.Command-binding/Before: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
             return Codes.Failed;
         }
 
-        /// <summary>
-        /// After executed Command ID for EnvDTE.
-        /// </summary>
-        /// <param name="guid">The GUID.</param>
-        /// <param name="id">The command ID.</param>
-        /// <param name="customIn">Custom input parameters.</param>
-        /// <param name="customOut">Custom output parameters.</param>
-        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
+        /// <inheritdoc/>
         public int onCommandDtePost(string guid, int id, object customIn, object customOut)
         {
-            try {
-                int ret = Action.bindCommandDtePost(guid, id, customIn, customOut);
-
-                clientLib.Event.onCommandDtePost(guid, id, customIn, customOut);
-                return ret;
+            try
+            {
+                return mixup
+                (
+                    Action.bindCommandDtePost(guid, id, customIn, customOut),
+                    clientLib.Event.onCommandDtePost(guid, id, customIn, customOut)
+                );
             }
-            catch(Exception ex) {
-                Log.Error("Failed EnvDTE.Command-binding/After: '{0}'", ex.Message);
+            catch(Exception ex)
+            {
+                Log.Error($"Failed EnvDTE.Command-binding/After: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
             return Codes.Failed;
         }
 
-        /// <summary>
-        /// During assembly.
-        /// TODO: (string data, string guid, string item)
-        /// </summary>
-        /// <param name="data">Raw data of building process</param>
+        /// <inheritdoc/>
+        /// <remarks>TODO: (string data, string guid, string item)</remarks>
         public void onBuildRaw(string data)
         {
-            try {
+            try
+            {
                 Action.bindBuildRaw(data);
 
                 clientLib.Build.onBuildRaw(data);
             }
-            catch(Exception ex) {
-                Log.Error("Failed build-raw: '{0}'", ex.Message);
+            catch(Exception ex)
+            {
+                Log.Error($"Failed build-raw: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
         }
 
-        /// <summary>
-        /// Solution has been opened.
-        /// </summary>
-        /// <param name="pUnkReserved">Reserved for future use.</param>
-        /// <param name="fNewSolution">true if the solution is being created. false if the solution was created previously or is being loaded.</param>
-        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
+        /// <inheritdoc/>
         public int solutionOpened(object pUnkReserved, int fNewSolution)
         {
             var config      = ConfigManager.Config;
@@ -419,12 +336,14 @@ namespace net.r_eg.vsSBE.API
                 return slnOpened(pUnkReserved, fNewSolution);
             }
 
-            try {
+            try
+            {
                 // Early Sln-Opened ~ Before initializing projects
                 updateBuildType(BuildType.Before);
                 return slnOpened(pUnkReserved, fNewSolution);
             }
-            finally {
+            finally
+            {
                 // Late Sln-Opened (delay calling) ~ When all projects are opened in IDE
                 lock(sync) {
                     slnEvents.Opened -= slnOpenedLowPriority;
@@ -433,20 +352,22 @@ namespace net.r_eg.vsSBE.API
             }
         }
 
-        /// <summary>
-        /// Solution has been closed.
-        /// </summary>
-        /// <param name="pUnkReserved">Reserved for future use.</param>
-        /// <returns>If the method succeeds, it returns Codes.Success. If it fails, it returns an error code.</returns>
+        /// <inheritdoc/>
         public int solutionClosed(object pUnkReserved)
         {
             int ret;
-            try {
-                ret = Action.bindSlnClosed();
-                clientLib.Event.solutionClosed(pUnkReserved);
+            try
+            {
+                ret = mixup
+                (
+                    Action.bindSlnClosed(),
+                    clientLib.Event.solutionClosed(pUnkReserved)
+                );
             }
-            catch(Exception ex) {
-                Log.Error("Failed Solution.SlnClosed-binding: `{0}`", ex.Message);
+            catch(Exception ex)
+            {
+                Log.Error($"Failed Solution.SlnClosed-binding: {ex.Message}");
+                Log.Debug(ex.StackTrace);
                 ret = Codes.Failed;
             }
 
@@ -457,11 +378,8 @@ namespace net.r_eg.vsSBE.API
             return ret;
         }
 
-        /// <summary>
-        /// Sets current type of the build
-        /// </summary>
-        /// <param name="type"></param>
-        public void updateBuildType(Bridge.BuildType type)
+        /// <inheritdoc/>
+        public void updateBuildType(BuildType type)
         {
             if(Environment != null) {
                 Environment.BuildType = type;
@@ -472,14 +390,8 @@ namespace net.r_eg.vsSBE.API
             }
         }
 
-        /// <summary>
-        /// Send the core command for all clients.
-        /// </summary>
-        /// <param name="c"></param>
-        public void fire(CoreCommandArgs c)
-        {
-            CoreCommand(this, c);
-        }
+        /// <inheritdoc/>
+        public void fire(CoreCommandArgs c) => CoreCommand(this, c);
 
         /// <summary>
         /// Initialize level
@@ -523,6 +435,9 @@ namespace net.r_eg.vsSBE.API
                 loader.Soba
             );
         }
+
+        protected int mixup(int main, int client) 
+            => (main == Codes.Success && client == Codes.Success) ? Codes.Success : Codes.Failed;
 
         /// <summary>
         /// Defines configuration with ISettings
@@ -628,13 +543,18 @@ namespace net.r_eg.vsSBE.API
 
         private int slnOpened(object pUnkReserved, int fNewSolution)
         {
-            try {
-                int ret = Action.bindSlnOpened();
-                clientLib.Event.solutionOpened(pUnkReserved, fNewSolution);
-                return ret;
+            try
+            {
+                return mixup
+                (
+                    Action.bindSlnOpened(),
+                    clientLib.Event.solutionOpened(pUnkReserved, fNewSolution)
+                );
             }
-            catch(Exception ex) {
-                Log.Error("Failed Solution.SlnOpened-binding: `{0}`", ex.Message);
+            catch(Exception ex)
+            {
+                Log.Error($"Failed Solution.SlnOpened-binding: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
             return Codes.Failed;
         }
@@ -655,8 +575,10 @@ namespace net.r_eg.vsSBE.API
 
         private void onLogReceived(object sender, Logger.MessageArgs e)
         {
-            if(Log._.isError(e.Level)) {
-                CoreCommand(
+            if(Log._.isError(e.Level))
+            {
+                CoreCommand
+                (
                     sender, 
                     new CoreCommandArgs() {
                         Type = CoreCommandType.BuildCancel

@@ -127,7 +127,8 @@ namespace net.r_eg.vsSBE
                 configFrm.Show();
             }
             catch(Exception ex) {
-                Log.Error("Failed UI: `{0}`", ex.Message);
+                Log.Error($"Failed UI: {ex.Message}");
+                Log.Debug(ex.StackTrace);
             }
         }
 
