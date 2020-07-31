@@ -79,7 +79,8 @@ namespace net.r_eg.vsSBE.Events
         [JsonIgnore]
         public Guid Id => id;
 
-        public bool ShouldSerializeEnabled() => !Enabled;
+        //TODO: We are currently using compatibility with 0.12.4. True is configured for default values only in v1.14.1
+        //public bool ShouldSerializeEnabled() => !Enabled;
         public bool ShouldSerializeCaption() => !string.IsNullOrEmpty(Caption);
         public bool ShouldSerializeSupportMSBuild() => !SupportMSBuild;
         public bool ShouldSerializeSupportSBEScripts() => !SupportSBEScripts;
