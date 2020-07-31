@@ -1,5 +1,122 @@
 vsSolutionBuildEvent - https://github.com/3F/vsSolutionBuildEvent
-_ _ _ _ _ _ _ _ _ _ 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+[1.14.1] 2020.07.31
+
+    * FIXED: Fixed "escapedValue" cannot be null. Issue #61.
+    
+    * FIXED: Fixed `#[Build cancel = true]` and related DTE-Commands.
+    
+            In fact it will prevent `Command "Build.Cancel" is not available` for the any context of use.
+            This also now will ignore actions from Pre events if they used flag of the ignoring failed build
+            (cancel request essentially means the same failure)
+            
+    * FIXED: Fixed possible "[MSBuild]::GetDirectoryNameOfFileAbove('', sdkmanifest.xml)" cannot be evaluated.
+    
+    * FIXED: Fixed possible "Project configuration is not found <- sln [Debug|Win32]"
+    
+    * FIXED: CIM. Fixed support of the: /p:nowarn="1591;1701;1702" key.
+    
+    * FIXED: Fixed possible (.dmp etc) problem when loading solution: Value cannot be null.
+    
+    * FIXED: CIM. Fixed MSB4016: An item with the same key has already been added.
+    
+    * FIXED: Fixed possible stackoverflow in IsolatedEnv & Environment implementations.
+    
+    * FIXED: VS IDE. Fixed error counter and error list pane when loading incorrect .vssbe then closed solution 
+             and opened again.
+    
+    * FIXED: Fixed possible System.TypeInitializationException:
+            "The type initializer for 'Microsoft.Build.Evaluation.ToolsetConfigurationReader' threw an exception."
+            
+    * NEW: Implemented GUI for CIM versions.
+           First of all CIM now is part of the main project for CI support!
+           And the new CI.GUI module just provides convenient access to scripts and settings without VS IDE.
+           
+    * NEW: Implemented SolutionConfigurations and SolutionActiveCfg by using MvsSln in IsolatedEnv (API vsSBE part).
+    
+    * CHANGED: CIM (CI.MSBuild) now is part of the main project for CI support!
+    
+    * CHANGED: Added .sln search if no arg for CIM.
+               Helps to avoid MSB1029 "We can't detect .sln file in arguments" by default.
+    
+    * CHANGED: `Script` mode is now the default type for new actions.
+    
+    * CHANGED: Mixing codes from client libraries (API) to the end results for API EventLevel implementation.
+    
+    * CHANGED: SDK 15 will use .NET Framework: 4.7.2.
+    
+    * CHANGED: Improved argument processing for CIM. PR #67.
+               Both msbuild formats: `/property:` and `-property:`, ...
+               
+    * CHANGED: Removed logic for upgrading config. Migration 0.8 -> 0.9.
+               Please use any related releases before 1.14.1 if you need automatic update.
+               
+    * CHANGED: .vssbe Minimal version now is 0.12.4 due to removed the "Command" property from config.
+    
+    * CHANGED: Pack of changes for .vssbe: Component list; Command Property; Default properties;... PR #66.
+    
+    * CHANGED: API. IEnvironment.ProjectsList now implemented through ISlnResult.ProjectItems (MvsSln).
+    
+    * CHANGED: Updated the follwoing references:
+    
+                * MSBuild 16.6.0 for SDK15 only
+                  https://www.nuget.org/packages/Microsoft.Build/16.6.0
+                  
+                * MvsSln 2.5.3
+                  https://github.com/3F/MvsSln/releases/tag/2.5.3
+                  
+                * 7z.Libs 19.0.2
+                  https://github.com/3F/7z.Libs/releases/tag/19.0.2
+                  
+                * E-MSBuild 1.14.1
+                  https://github.com/3F/E-MSBuild/releases/tag/1.14.1
+                  
+                * GetNuTool 1.8
+                  https://github.com/3F/GetNuTool/releases/tag/1.8
+                  
+                * hMSBuild 2.3
+                  https://github.com/3F/hMSBuild/releases/tag/v2.3
+                  
+                * AvalonEdit 6.0.1
+                  https://github.com/icsharpcode/AvalonEdit/releases/tag/v6.0.1
+                  
+                * Microsoft.VisualStudio.SDK.EmbedInteropTypes 15.0.30
+                  https://aka.ms/VsExtensibility
+                  
+                * Newtonsoft.Json 12.0.3
+                  https://github.com/JamesNK/Newtonsoft.Json/releases/tag/12.0.3
+                  
+                * NLog 4.7.2
+                  https://github.com/NLog/NLog/releases/tag/v4.7.2
+                  
+                * Castle.Core 4.4.1
+                  https://github.com/castleproject/Core/releases/tag/v4.4.1
+                  
+                * Moq 4.14.5
+                  https://github.com/moq/moq4/releases/tag/v4.14.5
+                  
+                * System.Runtime.CompilerServices.Unsafe 4.7.1
+                  https://go.microsoft.com/fwlink/?LinkID=799421
+                  
+                * System.Threading.Tasks.Extensions 4.5.4
+                  https://go.microsoft.com/fwlink/?LinkID=799421
+                  
+                * LSender 1.15
+                https://github.com/3F/LSender/releases/tag/1.15
+                
+                
+    * NOTE: NuGet Packages now provides GUI wrapper to use it completely without VS IDE.
+    
+            https://www.nuget.org/packages/vsSolutionBuildEvent
+            Access it through GUI.bat helper inside root pkg dir.
+            
+    * NOTE: You can also receive easily our NuGet Packages through `get-vsSBE.1.14.1.bat` script:
+    
+            https://github.com/3F/vsSolutionBuildEvent/releases
+            then access anything with us.
+            
+
 
 [1.14] 2019.09.26
 
