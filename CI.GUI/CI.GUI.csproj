@@ -1,83 +1,29 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\common.props" />
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">DBG_SDK10</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3CE895B6-2F7B-4A04-952A-839F235ED43E}</ProjectGuid>
+    <Version>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)\..\.version'))</Version>
     <OutputType>Exe</OutputType>
-    <RootNamespace>net.r_eg.vsSBE.CI.GUI</RootNamespace>
-    <AssemblyName>GUI</AssemblyName>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\com.github.3F.snk</AssemblyOriginatorKeyFile>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <NetTargetVName>net40</NetTargetVName>
-    <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <NoWarn>CS1591;IDE1006</NoWarn>
-    <ErrorReport>prompt</ErrorReport>
+    <AssemblyName>GUI</AssemblyName>
+    <DocumentationFile>$(OutputPath)\$(AssemblyName).xml</DocumentationFile>
+    <RootNamespace>net.r_eg.vsSBE.CI.GUI</RootNamespace>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DBG_SDK10|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'REL_SDK10|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\CI.GUI.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'REL_SDK15|AnyCPU' ">
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <NetTargetVName>net45</NetTargetVName>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\Release\CI.GUI.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DBG_SDK15|AnyCPU' ">
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <NetTargetVName>net45</NetTargetVName>
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Sln.cs" />
-    <Compile Include="Program.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Bridge\Bridge.csproj">
-      <Project>{73919171-44B6-4536-B892-F1FCA653887C}</Project>
-      <Name>Bridge</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\vsSolutionBuildEvent\vsSolutionBuildEvent.csproj">
-      <Project>{32e44995-f621-4e77-b46a-8f65d64e7fea}</Project>
-      <Name>vsSolutionBuildEvent</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\Bridge\Bridge.csproj" />
+    <ProjectReference Include="..\vsSolutionBuildEvent\vsSolutionBuildEvent.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GUI.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>

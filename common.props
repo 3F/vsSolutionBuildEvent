@@ -1,0 +1,96 @@
+﻿<Project>
+  <Import Project="versions.props" />
+
+  <PropertyGroup>
+    <RootOutDir>bin\prj\</RootOutDir>
+    <RootObjDir>bin\obj\</RootObjDir>
+
+    <VsSbeTfmSdk10>net40</VsSbeTfmSdk10>
+    <VsSbeTfmSdk15>net472</VsSbeTfmSdk15>
+
+    <!-- For a non-SDK-stlye projects using TargetFrameworkVersion property -->
+    <VsSbeTfmVersionSdk10>v4.0</VsSbeTfmVersionSdk10>
+    <VsSbeTfmVersionSdk15>v4.7.2</VsSbeTfmVersionSdk15>
+
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutPrjDir>$(RootOutDir)$(MSBuildProjectName)\$(Configuration)\</OutPrjDir>
+    <IntermediateOutputPath>..\$(RootObjDir)$(MSBuildProjectName)\$(Configuration)\</IntermediateOutputPath>
+
+    <OutputPath>..\$(OutPrjDir)\</OutputPath>
+    <OutDir>$([MSBuild]::Escape($([System.IO.Path]::GetFullPath(`$([System.IO.Path]::Combine(`$(SolutionDir)`, `$(OutPrjDir)`))`))))</OutDir>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Configurations>DBG_SDK10;DBG_SDK15;REL_SDK10;REL_SDK15</Configurations>
+    <Configuration Condition="'$(Configuration)'==''">DBG_SDK10</Configuration>
+    <Platform Condition="'$(Platform)'==''">AnyCPU</Platform>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\com.github.3F.snk</AssemblyOriginatorKeyFile>
+    <NoWarn>1701;1702;CS1591;IDE1006</NoWarn>
+    <LangVersion>latest</LangVersion>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <MinimumVisualStudioVersion>$(VisualStudioVersion)</MinimumVisualStudioVersion>
+    <RuntimeIdentifiers>win</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Configuration.Contains('SDK10'))">
+    <TargetFrameworks Condition="'$(UsingMicrosoftNETSdk)'=='true'">$(VsSbeTfmSdk10)</TargetFrameworks>
+    <TargetFrameworkVersion Condition="'$(UsingMicrosoftNETSdk)'!='true'">$(VsSbeTfmVersionSdk10)</TargetFrameworkVersion>
+    <DefineConstants>NET_40;$(DefineConstants)</DefineConstants>
+    <NetTargetVName>net40</NetTargetVName>
+    <VsSbeSdkBase>10</VsSbeSdkBase>
+    <IsVSSDK15>false</IsVSSDK15>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Configuration.Contains('SDK15'))">
+    <TargetFrameworks Condition="'$(UsingMicrosoftNETSdk)'=='true'">$(VsSbeTfmSdk15)</TargetFrameworks>
+    <TargetFrameworkVersion Condition="'$(UsingMicrosoftNETSdk)'!='true'">$(VsSbeTfmVersionSdk15)</TargetFrameworkVersion>
+    <NetTargetVName>net45</NetTargetVName>
+    <VsSbeSdkBase>15</VsSbeSdkBase>
+    <IsVSSDK15>true</IsVSSDK15>
+    <DefineConstants>$(DefineConstants);VSSDK_15_AND_NEW;CODE_ANALYSIS</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug' Or $(Configuration.Contains('DBG_'))">
+    <DefineConstants>DEBUG;TRACE;$(DefineConstants)</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release' Or '$(Configuration)' == 'PublicRelease' Or $(Configuration.Contains('REL_'))">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Copyright>Copyright (c) 2013-2021  Denis Kuzmin &lt;x-3F@outlook.com&gt; github/3F</Copyright>
+    <PackageOwners>reg</PackageOwners>
+    <PackageProjectUrl>https://github.com/3F/vsSolutionBuildEvent</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/3F/vsSolutionBuildEvent</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Authors>github.com/3F/vsSolutionBuildEvent</Authors>
+    <DocumentationFile>$(OutputPath)\$(AssemblyName).xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Appveyor.TestLogger.2.0.0\**" />
+    <EmbeddedResource Remove="Appveyor.TestLogger.2.0.0\**" />
+    <None Remove="Appveyor.TestLogger.2.0.0\**" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UsingMicrosoftNETSdk)'=='true'">
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="$(MicrosoftCodeAnalysisNetAnalyzersVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

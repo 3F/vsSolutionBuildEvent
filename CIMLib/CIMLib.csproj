@@ -1,86 +1,32 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\common.props" />
+  <ItemGroup>
+    <Reference Include="PresentationCore" Private="true" />
+    <Reference Include="PresentationFramework" Private="true" />
+    <Reference Include="System.Design" Private="true" />
+    <Reference Include="System.Drawing" Private="true" />
+    <Reference Include="System.Drawing.Design" Private="true" />
+    <Reference Include="System.Windows.Forms" Private="true" />
+    <Reference Include="System.Xaml" Private="true" />
+    <Reference Include="System.Xml" Private="true" />
+    <Reference Include="System.Xml.Linq" Private="true" />
+    <Reference Include="WindowsBase" Private="true" />
+  </ItemGroup>
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">REL_SDK10</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectName>CIMLib</ProjectName>
-    <ProjectGuid>{A7BF1F9C-F18D-423E-9354-859DC3CFAFD4}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>net.r_eg.vsSBE</RootNamespace>
     <AssemblyName>CIMLib</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <NetTargetVName>net40</NetTargetVName>
-    <FileAlignment>512</FileAlignment>
-    <NoWarn>CS1591;IDE1006</NoWarn>
+    <OutputType>Library</OutputType>
+    <NoWarn>CS2008</NoWarn>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
+    <OutPrjDir>$(RootOutDir)$(MSBuildProjectName)\</OutPrjDir>
+    <DocumentationFile />
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'REL_SDK10|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>NET_40</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>3</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'REL_SDK15|AnyCPU' ">
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <NetTargetVName>net45</NetTargetVName>
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
-    <Optimize>true</Optimize>
-    <WarningLevel>3</WarningLevel>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="PresentationCore">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="PresentationFramework">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Design">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Drawing">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Drawing.Design">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Windows.Forms">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Xaml">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Xml">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Xml.Linq">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="WindowsBase">
-      <Private>True</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'" />
   <ItemGroup>
     <Content Include="Readme.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="$(MicrosoftCommonPropsHasBeenImported) != true and Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" /> -->
   <Target Name="BeforeBuild">
     <RemoveDir Directories="bin" />
   </Target>

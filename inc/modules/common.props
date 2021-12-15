@@ -16,21 +16,21 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Copyright Condition="'$(Copyright)'==''">Copyright (c) 2013-2021  Denis Kuzmin &lt;x-3F@outlook.com&gt; github/3F</Copyright>
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
-    <Configurations>DBG_SDK10;DBG_SDK15;REL_SDK10;REL_SDK15;DCI_SDK10;DCI_SDK15;RCI_SDK10;RCI_SDK15</Configurations>
+    <Configurations>DBG_SDK10;DBG_SDK15;REL_SDK10;REL_SDK15</Configurations>
     <OverrideLSenderConfigurations>$(Configurations)</OverrideLSenderConfigurations>
     <NoWarn>1701;1702;CS1591</NoWarn>
     <LangVersion>latest</LangVersion>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug' Or $(Configuration.Contains('DBG_')) Or $(Configuration.Contains('DCI_'))">
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug' Or $(Configuration.Contains('DBG_'))">
     <DefineConstants>DEBUG;TRACE;$(DefineConstants)</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Release' Or '$(Configuration)' == 'PublicRelease' Or $(Configuration.Contains('REL_')) Or $(Configuration.Contains('RCI_'))">
+  <PropertyGroup Condition="'$(Configuration)' == 'Release' Or '$(Configuration)' == 'PublicRelease' Or $(Configuration.Contains('REL_'))">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
   </PropertyGroup>

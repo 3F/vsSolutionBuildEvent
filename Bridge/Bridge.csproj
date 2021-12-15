@@ -1,116 +1,29 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\common.props" />
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">DBG_SDK10</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{73919171-44B6-4536-B892-F1FCA653887C}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>net.r_eg.vsSBE.Bridge</RootNamespace>
+    <Version>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)\.version"))</Version>
     <AssemblyName>Bridge</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <NetTargetVName>net40</NetTargetVName>
-    <FileAlignment>512</FileAlignment>
-    <vsSBE_SDK>1.1.0</vsSBE_SDK>
-    <NoWarn>CS1591;IDE1006</NoWarn>
+    <RootNamespace>net.r_eg.vsSBE.Bridge</RootNamespace>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DBG_SDK10|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>NET_40;DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'REL_SDK10|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>NET_40</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\Bridge.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'REL_SDK15|AnyCPU' ">
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <NetTargetVName>net45</NetTargetVName>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants></DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>bin\Release\Bridge.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DBG_SDK15|AnyCPU' ">
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <NetTargetVName>net45</NetTargetVName>
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\com.github.3F.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <ItemGroup>
+
+  <ItemGroup Condition="'$(VsSbeSdkBase)'=='10'">
     <Reference Include="Microsoft.VisualStudio.Shell.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(NetTargetVName)\Microsoft.VisualStudio.Shell.Interop.dll</HintPath>
+      <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(Sdk10libTarget)\Microsoft.VisualStudio.Shell.Interop.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Core" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Codes.cs" />
-    <Compile Include="CoreCommand\CoreCommandRawArgs.cs" />
-    <Compile Include="CoreCommand\CoreCommandType.cs" />
-    <Compile Include="BuildType.cs" />
-    <Compile Include="CoreCommand\CoreCommandArgs.cs" />
-    <Compile Include="Exceptions\GeneralException.cs" />
-    <Compile Include="Exceptions\InitializeException.cs" />
-    <Compile Include="Exceptions\InvalidArgumentException.cs" />
-    <Compile Include="Exceptions\NotFoundException.cs" />
-    <Compile Include="CoreCommand\CoreCommandHandler.cs" />
-    <Compile Include="CoreCommand\ICoreCommandRaw.cs" />
-    <Compile Include="CoreCommand\ICoreCommand.cs" />
-    <Compile Include="ClientType.cs" />
-    <Compile Include="IEntryPointClient.cs" />
-    <Compile Include="IEntryPointCore.cs" />
-    <Compile Include="IEvent2.cs" />
-    <Compile Include="IEventLight2.cs" />
-    <Compile Include="IEventLight.cs" />
-    <Compile Include="ISettings.cs" />
-    <Compile Include="IBuild.cs" />
-    <Compile Include="IEvent.cs" />
-    <Compile Include="Info.cs" />
-    <Compile Include="IVersion.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Version.cs" />
+
+  <ItemGroup Condition="'$(VsSbeSdkBase)'=='15'">
+    <!-- <PackageReference Include="Microsoft.VisualStudio.Shell.Interop" Version="17.0.31902.203" /> -->
+    <Reference Include="Microsoft.VisualStudio.Shell.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(Sdk15libTarget)\Microsoft.VisualStudio.Shell.Interop.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include=".version" />
-    <None Include="packages.config" />
-  </ItemGroup>
+
   <ItemGroup>
     <Content Include="changelog.txt" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

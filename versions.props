@@ -1,0 +1,25 @@
+﻿<Project>
+
+  <PropertyGroup>
+    <MicrosoftCodeAnalysisNetAnalyzersVersion>6.0.0</MicrosoftCodeAnalysisNetAnalyzersVersion>
+    <MicrosoftUnitTestFrameworkExtensionsVersion>2.0.0</MicrosoftUnitTestFrameworkExtensionsVersion>
+    <MicrosoftNETTestSdkVersion>16.5.0</MicrosoftNETTestSdkVersion>
+    <xunitVersion>2.4.0</xunitVersion>
+    <xunitRunnerVisualstudioVersion>2.4.0</xunitRunnerVisualstudioVersion>
+    <coverletCollectorVersion>1.2.0</coverletCollectorVersion>
+    <AvalonEditVersion>6.1.2.30</AvalonEditVersion>
+    <SevenZipSharpVersion>0.64.0</SevenZipSharpVersion>
+    <UdeSignedVersion>0.1.1</UdeSignedVersion>
+    <EnvDteVersion>8.0.2</EnvDteVersion>
+    <EnvDte80Version>8.0.3</EnvDte80Version>
+    <stdoleVersion>7.0.3303</stdoleVersion>
+  </PropertyGroup>
+
+  <!-- packages\vsSBE.SDK.xxx -->
+  <PropertyGroup>
+    <vsSBE_SDK>1.1.0</vsSBE_SDK>
+    <Sdk10libTarget>net40</Sdk10libTarget>
+    <Sdk15libTarget>net45</Sdk15libTarget>
+  </PropertyGroup>
+
+</Project>
