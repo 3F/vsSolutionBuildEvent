@@ -63,11 +63,13 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
+    <ZipPackageCompressionLevel>NotCompressed</ZipPackageCompressionLevel>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release' Or '$(Configuration)' == 'PublicRelease' Or $(Configuration.Contains('REL_'))">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
+    <ZipPackageCompressionLevel>Normal</ZipPackageCompressionLevel> <!-- VSIX Packaging Tools 17.0.5233 supports only 'Normal' and 'NotCompressed' -->
   </PropertyGroup>
 
   <PropertyGroup>
