@@ -69,19 +69,18 @@ namespace net.r_eg.vsSBE.VSTools.OW
         public void OutputString(string text)
         {
 #if VSSDK_15_AND_NEW
-            ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
-#endif
-
+            ThreadHelper.ThrowIfNotOnUIThread();
+            pane.OutputStringThreadSafe(text);
+#else
             pane.OutputString(text);
+#endif
         }
 
         /// <param name="ow"></param>
         /// <param name="name">Name of the pane</param>
         public PaneCOM(IVsOutputWindow ow, string name)
         {
-            if(ow == null) {
-                throw new ArgumentNullException("ow", "cannot be null");
-            }
+            if(ow == null) throw new ArgumentNullException(nameof(ow));
 
 #if VSSDK_15_AND_NEW
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using Xunit;
 
@@ -43,7 +44,7 @@ namespace net.r_eg.vsSBE.Test
                 }
                 catch(Exception ex)
                 {
-                    Assert.True(false, $"Failed disposing: {ex.Message}");
+                    Debug.Assert(false, $"Failed disposing: {ex.Message}");
                 }
                 disposed = true;
             }

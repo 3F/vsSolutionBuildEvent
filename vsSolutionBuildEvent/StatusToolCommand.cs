@@ -176,7 +176,7 @@ namespace net.r_eg.vsSBE
         private void onAction(object sender, EventArgs e)
         {
 #if VSSDK_15_AND_NEW
-            ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
+            _ = ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(pkg.CancellationToken);
 #endif
@@ -196,18 +196,18 @@ namespace net.r_eg.vsSBE
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
-        void Dispose(bool disposing)
+        void Dispose(bool _)
         {
-            if(disposed) {
-                return;
+            if(!disposed)
+            {
+                toolPane?.Dispose();
+                disposed = true;
             }
-            disposed = true;
-
-            toolPane?.Dispose();
         }
 
-#endregion
+        #endregion
     }
 }

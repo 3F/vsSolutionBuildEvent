@@ -552,13 +552,14 @@ namespace net.r_eg.vsSBE
             }
         }
 
-#region IDisposable
+        #region IDisposable
 
         private bool disposed = false;
 
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected override void Dispose(bool disposing)
@@ -576,7 +577,7 @@ namespace net.r_eg.vsSBE
             }
 
 #if VSSDK_15_AND_NEW
-            ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
+            _ = ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(DisposalToken);
 #endif
@@ -596,7 +597,7 @@ namespace net.r_eg.vsSBE
             base.Dispose(disposing);
         }
 
-#endregion
+        #endregion
 
 #region unused API
 

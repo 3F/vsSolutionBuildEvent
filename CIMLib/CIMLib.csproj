@@ -16,7 +16,7 @@
   <PropertyGroup>
     <AssemblyName>CIMLib</AssemblyName>
     <OutputType>Library</OutputType>
-    <NoWarn>CS2008</NoWarn>
+    <NoWarn>$(NoWarn);CS2008</NoWarn>
     <DebugSymbols>false</DebugSymbols>
     <DebugType>none</DebugType>
     <OutPrjDir>$(RootOutDir)$(MSBuildProjectName)\</OutPrjDir>

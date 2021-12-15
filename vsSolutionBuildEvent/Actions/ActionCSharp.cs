@@ -73,18 +73,37 @@ namespace net.r_eg.vsSBE.Actions
             {
                 FullPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 
-                using(TextWriter stream = new StreamWriter(FullPath, false, Encoding.UTF8)) {
-                    stream.Write(data);
-                }
+                using TextWriter stream = new StreamWriter(FullPath, false, Encoding.UTF8);
+                stream.Write(data);
             }
+
+            #region IDisposable
+
+            private bool disposed;
 
             public void Dispose()
             {
-                try {
-                    File.Delete(FullPath);
-                }
-                catch { /* we work in temp directory with unique name, so it's not important */ }
+                Dispose(true);
+                GC.SuppressFinalize(this);
             }
+
+            private void Dispose(bool _)
+            {
+                if(!disposed)
+                {
+                    try
+                    {
+                        File.Delete(FullPath);
+                    }
+                    catch(Exception ex)
+                    {
+                        Debug.Assert(false, $"Failed disposing: {ex.Message}");
+                    }
+                    disposed = true;
+                }
+            }
+
+            #endregion
         }
 
         /// <summary>

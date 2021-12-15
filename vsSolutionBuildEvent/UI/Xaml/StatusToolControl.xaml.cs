@@ -67,7 +67,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
         public void warn()
         {
 #if VSSDK_15_AND_NEW
-            ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
+            _ = ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 #else
@@ -138,7 +138,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
             }
 
 #if VSSDK_15_AND_NEW
-            ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
+            _ = ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 #else

@@ -121,6 +121,9 @@ namespace net.r_eg.vsSBE
         /// <param name="dte2"></param>
         public void paneAttach(string name, EnvDTE80.DTE2 dte2)
         {
+#if VSSDK_15_AND_NEW
+            ThreadHelper.ThrowIfNotOnUIThread();
+#endif
             dte = (EnvDTE.DTE)dte2;
             if(upane != null) {
                 Log.Debug("paneAttach-DTE: pane is already attached.");
@@ -184,7 +187,11 @@ namespace net.r_eg.vsSBE
         {
             try
             {
-                if(dte != null) {
+#if VSSDK_15_AND_NEW
+                ThreadHelper.ThrowIfNotOnUIThread();
+#endif
+                if(dte != null)
+                {
                     dte.ExecuteCommand("View.Output"); //TODO:
                 }
 

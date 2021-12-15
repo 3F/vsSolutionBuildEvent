@@ -84,7 +84,7 @@ namespace net.r_eg.vsSBE.VSTools.ErrorList
             // prevents possible bug from `Process.ErrorDataReceived` because of NLog
 
 #if VSSDK_15_AND_NEW
-            ThreadHelper.JoinableTaskFactory.RunAsync(async () => 
+            _ = ThreadHelper.JoinableTaskFactory.RunAsync(async () => 
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 #else
@@ -110,30 +110,25 @@ namespace net.r_eg.vsSBE.VSTools.ErrorList
 #endif
         }
 
-#region IDisposable
+        #region IDisposable
 
-        // To detect redundant calls
         private bool disposed = false;
 
-        // To correctly implement the disposable pattern.
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if(disposed) {
-                return;
-            }
-            disposed = true;
-            //...
-
-            if(provider != null) {
-                provider.Dispose();
+            if(!disposed)
+            {
+                provider?.Dispose();
+                disposed = true;
             }
         }
 
-#endregion
+        #endregion
     }
 }

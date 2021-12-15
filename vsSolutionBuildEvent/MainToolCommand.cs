@@ -132,32 +132,29 @@ namespace net.r_eg.vsSBE
             }
         }
 
-        private void free()
-        {
-            if(configFrm != null && !configFrm.IsDisposed) {
-                configFrm.Close();
-            }
-        }
+        #region IDisposable
 
-#region IDisposable
-
-        private bool disposed = false;
+        private bool disposed;
 
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
-        private void Dispose(bool disposing)
+        void Dispose(bool _)
         {
-            if(disposed) {
-                return;
-            }
-            disposed = true;
+            if(!disposed)
+            {
+                if(configFrm != null && !configFrm.IsDisposed)
+                {
+                    configFrm.Close();
+                }
 
-            free();
+                disposed = true;
+            }
         }
 
-#endregion
+        #endregion
     }
 }
