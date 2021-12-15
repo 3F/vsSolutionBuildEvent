@@ -5,3 +5,8 @@
 *.bat text eol=crlf
 *.cmd text eol=crlf
 *.tpl text eol=crlf
+
+# https://github.com/3F/vsSolutionBuildEvent/releases/tag/1.14.1
+
+*.resx text eol=crlf
+*.vsixinfo text eol=crlf

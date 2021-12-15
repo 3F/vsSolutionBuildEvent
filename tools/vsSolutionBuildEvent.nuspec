@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
     <id>vsSolutionBuildEvent</id>
@@ -10,6 +10,7 @@
     <licenseUrl>https://aka.ms/deprecateLicenseUrl</licenseUrl>
     <projectUrl>https://github.com/3F/vsSolutionBuildEvent</projectUrl>
     <repository type="git" url="https://github.com/3F/vsSolutionBuildEvent" />
+    <icon>tools\Resources\Package.png</icon>
     <iconUrl>https://raw.githubusercontent.com/3F/vsSolutionBuildEvent/master/vsSolutionBuildEvent/Resources/Package.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>🎚🎛 Event-Catcher with variety of advanced Actions to service projects, libraries, build processes, runtime environment of the Visual Studio, MSBuild Tools, and … 
