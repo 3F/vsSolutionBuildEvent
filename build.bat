@@ -6,8 +6,7 @@ set hMSBuild=-notamd64
 set cim=packages\vsSolutionBuildEvent\cim.cmd -vsw-priority Microsoft.NetCore.Component.SDK
 set __p_call=1
 
-:: Activate vsSBE
-call tools\gnt /p:ngpath="%cd%/packages" /p:ngconfig="%cd%/.gnt/packages.config" || goto err
+call tools\gnt /p:ngconfig=".gnt/packages.config" || goto err
 
 :: Build
 set bnode=%cim% %hMSBuild% /m:7 /p:Platform="Any CPU" /v:m

@@ -44,7 +44,7 @@
     <TargetFrameworks Condition="'$(UsingMicrosoftNETSdk)'=='true'">$(VsSbeTfmSdk10)</TargetFrameworks>
     <TargetFrameworkVersion Condition="'$(UsingMicrosoftNETSdk)'!='true'">$(VsSbeTfmVersionSdk10)</TargetFrameworkVersion>
     <DefineConstants>NET_40;$(DefineConstants)</DefineConstants>
-    <NetTargetVName>net40</NetTargetVName>
+    <SdklibTarget>net40</SdklibTarget>
     <VsSbeSdkBase>10</VsSbeSdkBase>
     <IsVSSDK15>false</IsVSSDK15>
   </PropertyGroup>
@@ -52,7 +52,7 @@
   <PropertyGroup Condition="$(Configuration.Contains('SDK15'))">
     <TargetFrameworks Condition="'$(UsingMicrosoftNETSdk)'=='true'">$(VsSbeTfmSdk15)</TargetFrameworks>
     <TargetFrameworkVersion Condition="'$(UsingMicrosoftNETSdk)'!='true'">$(VsSbeTfmVersionSdk15)</TargetFrameworkVersion>
-    <NetTargetVName>net45</NetTargetVName>
+    <SdklibTarget>net45</SdklibTarget>
     <VsSbeSdkBase>15</VsSbeSdkBase>
     <IsVSSDK15>true</IsVSSDK15>
     <DefineConstants>$(DefineConstants);VSSDK_15_AND_NEW;CODE_ANALYSIS</DefineConstants>
@@ -88,7 +88,7 @@
     <None Remove="Appveyor.TestLogger.2.0.0\**" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(UsingMicrosoftNETSdk)'=='true'">
+  <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="$(MicrosoftCodeAnalysisNetAnalyzersVersion)">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

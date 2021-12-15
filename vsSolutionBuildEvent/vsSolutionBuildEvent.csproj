@@ -4,7 +4,6 @@
 -->
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <Import Project="..\common.props" />
-  <Import Project="..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.props')" />
   <PropertyGroup>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectName>vsSolutionBuildEvent</ProjectName>
@@ -31,10 +30,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DBG_SDK15|AnyCPU'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='REL_SDK15|AnyCPU'" />
   <ItemGroup>
-    <PackageReference Include="AvalonEdit" Version="$(AvalonEditVersion)" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <PackageReference Include="SevenZipSharp" Version="$(SevenZipSharpVersion)" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Design" />
@@ -45,97 +42,105 @@
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <PackageReference Include="Ude.Signed" Version="$(UdeSignedVersion)" />
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
+
+    <PackageReference Include="AvalonEdit" Version="$(AvalonEditVersion)" />
+    <PackageReference Include="Ude.Signed" Version="$(UdeSignedVersion)" />
+    <PackageReference Include="SevenZipSharp" Version="$(SevenZipSharpVersion)" />
+    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
+    <PackageReference Include="NLog" Version="$(NLogVersion)" />
   </ItemGroup>
   <Choose>
     <!-- SDK15+ -->
-    <When Condition=" '$(IsVSSDK15)' == 'true' ">
+    <When Condition="'$(IsVSSDK15)' == 'true'">
       <ItemGroup>
-        <PackageReference Include="envdte" Version="$(EnvDteVersion)" EmbedInteropTypes="false" />
-        <PackageReference Include="envdte80" Version="$(EnvDte80Version)" EmbedInteropTypes="false" />
-        <PackageReference Include="stdole" Version="$(stdoleVersion)" EmbedInteropTypes="true" />
-
-        <PackageReference Include="Microsoft.Build" Version="16.6.0" />
-        <PackageReference Include="Microsoft.Build.Framework" Version="16.6.0" />
-        <PackageReference Include="Microsoft.Build.Framework" Version="16.6.0" />
-        <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-        <PackageReference Include="Microsoft.VisualStudio.OLE.Interop" Version="7.10.6071" />
-        <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="15.9.28307" />
-        <PackageReference Include="Microsoft.VisualStudio.Shell.Framework" Version="15.9.28307" />
-        <PackageReference Include="Microsoft.VisualStudio.Shell.Interop" Version="7.10.6072" />
-        <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.10.0" Version="10.0.30320" EmbedInteropTypes="True" />
-        <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.11.0" Version="11.0.61031" EmbedInteropTypes="True" />
-        <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.14.0.DesignTime" Version="14.3.26929" EmbedInteropTypes="True" />
-        <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.15.3.DesignTime" Version="15.0.26929" EmbedInteropTypes="True" />
-        <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.15.6.DesignTime" Version="15.6.27413" EmbedInteropTypes="True" />
-        <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.8.0" Version="8.0.50728" />
-        <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.9.0" Version="9.0.30730" />
-        <PackageReference Include="Microsoft.VisualStudio.Threading" Version="15.8.209" />
-        <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="15.9.28307" />
-        <PackageReference Include="StreamJsonRpc" Version="2.0.208" />
-        <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-        <PackageReference Include="NLog" Version="4.7.2" />
+        <PackageReference Include="EnvDTE" Version="$(EnvDteVersion)" />
+        <PackageReference Include="EnvDTE80" Version="$(EnvDte80Version)" />
+        <PackageReference Include="stdole" Version="$(stdoleVersion)" />
+        <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
+        <PackageReference Include="Microsoft.Build.Framework" Version="$(MicrosoftBuildFrameworkVersion)" />
+        <PackageReference Include="System.ValueTuple" Version="$(SystemValueTupleVersion)" />
+        <PackageReference Include="Microsoft.VisualStudio.OLE.Interop" Version="$(MicrosoftVisualStudioOLEInteropVersion)" />
+        <PackageReference Include="Microsoft.VisualStudio.Shell.15.0" Version="$(MicrosoftVisualStudioShell15Version)" />
+        <PackageReference Include="Microsoft.VisualStudio.Shell.Framework" Version="$(MicrosoftVisualStudioShellFrameworkVersion)" />
+        <PackageReference Include="Microsoft.VisualStudio.Shell.Interop" Version="$(MicrosoftVisualStudioShellInteropVersion)" />
+        <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.10.0" Version="$(MicrosoftVisualStudioShellInterop10Version)" />
+        <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.11.0" Version="$(MicrosoftVisualStudioShellInterop11Version)" />
+        <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.14.0.DesignTime" Version="$(MicrosoftVisualStudioShellInterop14DesignTimeVersion)" />
+        <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.15.3.DesignTime" Version="$(MicrosoftVisualStudioShellInterop15dot3DesignTimeVersion)" />
+        <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.15.6.DesignTime" Version="$(MicrosoftVisualStudioShellInterop15dot6DesignTimeVersion)" />
+        <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.8.0" Version="$(MicrosoftVisualStudioShellInterop8Version)" />
+        <PackageReference Include="Microsoft.VisualStudio.Shell.Interop.9.0" Version="$(MicrosoftVisualStudioShellInterop9Version)" />
+        <PackageReference Include="Microsoft.VisualStudio.Threading" Version="$(MicrosoftVisualStudioThreadingVersion)" />
+        <PackageReference Include="Microsoft.VisualStudio.Utilities" Version="$(MicrosoftVisualStudioUtilitiesVersion)" />
+        <PackageReference Include="StreamJsonRpc" Version="$(StreamJsonRpcVersion)" />
+        <!-- `Microsoft.VisualStudio.SDK.EmbedInteropTypes` package provides .targets where solution for EmbedInteropTypes=true
+              described here https://docs.microsoft.com/en-us/nuget/create-packages/author-packages-with-com-interop-assemblies -->
+        <PackageReference Include="Microsoft.VisualStudio.SDK.EmbedInteropTypes" Version="$(MicrosoftVisualStudioSDKEmbedInteropTypesVersion)" />
+      </ItemGroup>
+      <ItemGroup>
+        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="$(MicrosoftVisualStudioThreadingAnalyzersVersion)">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.VisualStudio.SDK.Analyzers" Version="$(MicrosoftVisualStudioSDKAnalyzersVersion)">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
       </ItemGroup>
     </When>
     <!-- /SDK15+ -->
     <!-- SDK10 -->
-    <When Condition=" '$(IsVSSDK15)' != 'true' ">
+    <When Condition="'$(IsVSSDK15)' != 'true'">
       <ItemGroup>
         <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
           <EmbedInteropTypes>False</EmbedInteropTypes>
-          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\net40\EnvDTE.dll</HintPath>
+          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(Sdk10libTarget)\EnvDTE.dll</HintPath>
           <Private>True</Private>
         </Reference>
         <Reference Include="EnvDTE80, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
           <EmbedInteropTypes>False</EmbedInteropTypes>
-          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\net40\EnvDTE80.dll</HintPath>
+          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(Sdk10libTarget)\EnvDTE80.dll</HintPath>
           <Private>True</Private>
         </Reference>
         <Reference Include="stdole, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\net40\stdole.dll</HintPath>
+          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(Sdk10libTarget)\stdole.dll</HintPath>
           <EmbedInteropTypes>True</EmbedInteropTypes>
         </Reference>
-        <Reference Include="Microsoft.Build" />
-        <Reference Include="Microsoft.Build.Framework" />
         <Reference Include="Microsoft.VisualStudio.OLE.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\net40\Microsoft.VisualStudio.OLE.Interop.dll</HintPath>
+          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(Sdk10libTarget)\Microsoft.VisualStudio.OLE.Interop.dll</HintPath>
           <Private>True</Private>
         </Reference>
         <Reference Include="Microsoft.VisualStudio.Shell.10.0">
           <SpecificVersion>False</SpecificVersion>
-          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\net40\Microsoft.VisualStudio.Shell.10.0.dll</HintPath>
+          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(Sdk10libTarget)\Microsoft.VisualStudio.Shell.10.0.dll</HintPath>
           <Private>True</Private>
         </Reference>
         <Reference Include="Microsoft.VisualStudio.Shell.Immutable.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\net40\Microsoft.VisualStudio.Shell.Immutable.10.0.dll</HintPath>
+          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(Sdk10libTarget)\Microsoft.VisualStudio.Shell.Immutable.10.0.dll</HintPath>
           <Private>True</Private>
         </Reference>
         <Reference Include="Microsoft.VisualStudio.Shell.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\net40\Microsoft.VisualStudio.Shell.Interop.dll</HintPath>
+          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(Sdk10libTarget)\Microsoft.VisualStudio.Shell.Interop.dll</HintPath>
           <Private>True</Private>
         </Reference>
         <Reference Include="Microsoft.VisualStudio.Shell.Interop.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
           <EmbedInteropTypes>False</EmbedInteropTypes>
-          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\net40\Microsoft.VisualStudio.Shell.Interop.10.0.dll</HintPath>
+          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(Sdk10libTarget)\Microsoft.VisualStudio.Shell.Interop.10.0.dll</HintPath>
           <Private>True</Private>
         </Reference>
         <Reference Include="Microsoft.VisualStudio.Shell.Interop.8.0, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\net40\Microsoft.VisualStudio.Shell.Interop.8.0.dll</HintPath>
+          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(Sdk10libTarget)\Microsoft.VisualStudio.Shell.Interop.8.0.dll</HintPath>
           <Private>True</Private>
         </Reference>
         <Reference Include="Microsoft.VisualStudio.Shell.Interop.9.0, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\net40\Microsoft.VisualStudio.Shell.Interop.9.0.dll</HintPath>
+          <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(Sdk10libTarget)\Microsoft.VisualStudio.Shell.Interop.9.0.dll</HintPath>
           <Private>True</Private>
         </Reference>
-        <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-          <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
-          <Private>True</Private>
-        </Reference>
-        <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-          <HintPath>..\packages\NLog.4.7.2\lib\net40-client\NLog.dll</HintPath>
-        </Reference>
+
+        <Reference Include="Microsoft.Build" />
+        <Reference Include="Microsoft.Build.Framework" />
       </ItemGroup>
     </When>
     <!-- /SDK10 -->
@@ -520,7 +525,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <None Include="packages.config" />
     <None Include="Properties\vsix-compress.props" />
     <Content Include="Resources\License.md">
       <IncludeInVSIX>true</IncludeInVSIX>
@@ -669,35 +673,5 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.NetAnalyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.NetAnalyzers.dll" />
-  </ItemGroup>
-  <!-- SDK15+ -->
-  <Choose>
-    <When Condition=" '$(IsVSSDK15)' == 'true' ">
-      <PropertyGroup>
-        <NoWarn>$(NoWarn);IDE1003</NoWarn>
-        <!-- TODO: IDE1003. Analyzer assembly ... depends on netstandard 2 -->
-      </PropertyGroup>
-      <ItemGroup>
-        <Analyzer Include="..\packages\Microsoft.VisualStudio.SDK.Analyzers.16.3.2\analyzers\cs\Microsoft.VisualStudio.SDK.Analyzers.dll" />
-        <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.15.8.209\analyzers\cs\Microsoft.VisualStudio.Threading.Analyzers.CodeFixes.dll" />
-        <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.15.8.209\analyzers\cs\Microsoft.VisualStudio.Threading.Analyzers.dll" />
-      </ItemGroup>
-    </When>
-  </Choose>
-  <Import Project="..\packages\Microsoft.VisualStudio.SDK.EmbedInteropTypes.15.0.30\build\Microsoft.VisualStudio.SDK.EmbedInteropTypes.targets" Condition="Exists('..\packages\Microsoft.VisualStudio.SDK.EmbedInteropTypes.15.0.30\build\Microsoft.VisualStudio.SDK.EmbedInteropTypes.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.VisualStudio.SDK.EmbedInteropTypes.15.0.30\build\Microsoft.VisualStudio.SDK.EmbedInteropTypes.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.VisualStudio.SDK.EmbedInteropTypes.15.0.30\build\Microsoft.VisualStudio.SDK.EmbedInteropTypes.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.VisualStudio.Threading.Analyzers.15.8.209\build\Microsoft.VisualStudio.Threading.Analyzers.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.VisualStudio.Threading.Analyzers.15.8.209\build\Microsoft.VisualStudio.Threading.Analyzers.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.targets'))" />
-  </Target>
-  <Import Project="..\packages\Microsoft.VisualStudio.Threading.Analyzers.15.8.209\build\Microsoft.VisualStudio.Threading.Analyzers.targets" Condition="Exists('..\packages\Microsoft.VisualStudio.Threading.Analyzers.15.8.209\build\Microsoft.VisualStudio.Threading.Analyzers.targets')" />
-  <Import Project="..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.targets" Condition="Exists('..\packages\Microsoft.CodeAnalysis.NetAnalyzers.6.0.0\build\Microsoft.CodeAnalysis.NetAnalyzers.targets')" />
-  <!-- /SDK15+ -->
+
 </Project>

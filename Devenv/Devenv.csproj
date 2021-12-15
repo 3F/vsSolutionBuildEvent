@@ -45,10 +45,10 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(VsSbeSdkBase)'=='15'">
-    <PackageReference Include="envdte" Version="$(EnvDteVersion)" EmbedInteropTypes="false" />
-    <PackageReference Include="envdte80" Version="$(EnvDte80Version)" EmbedInteropTypes="false" />
-    <PackageReference Include="Microsoft.VisualStudio.OLE.Interop" Version="7.10.6071" />
-    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop" Version="7.10.6072" />
+    <PackageReference Include="envdte" Version="$(EnvDteVersion)" />
+    <PackageReference Include="envdte80" Version="$(EnvDte80Version)" />
+    <PackageReference Include="Microsoft.VisualStudio.OLE.Interop" Version="$(MicrosoftVisualStudioOLEInteropVersion)" />
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop" Version="$(MicrosoftVisualStudioShellInteropVersion)" />
     <Reference Include="Microsoft.VisualStudio.Shell.10.0">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(Sdk15libTarget)\Microsoft.VisualStudio.Shell.10.0.dll</HintPath>

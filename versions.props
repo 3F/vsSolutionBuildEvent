@@ -13,6 +13,32 @@
     <EnvDteVersion>8.0.2</EnvDteVersion>
     <EnvDte80Version>8.0.3</EnvDte80Version>
     <stdoleVersion>7.0.3303</stdoleVersion>
+    <MicrosoftBuildVersion>16.6.0</MicrosoftBuildVersion>
+    <MicrosoftBuildFrameworkVersion>16.6.0</MicrosoftBuildFrameworkVersion>
+    <SystemValueTupleVersion>4.5.0</SystemValueTupleVersion>
+    <MicrosoftVisualStudioOLEInteropVersion>7.10.6071</MicrosoftVisualStudioOLEInteropVersion>
+    <MicrosoftVisualStudioShell15Version>15.9.28307</MicrosoftVisualStudioShell15Version>
+    <MicrosoftVisualStudioShellFrameworkVersion>15.9.28307</MicrosoftVisualStudioShellFrameworkVersion>
+    <MicrosoftVisualStudioShellInteropVersion>7.10.6072</MicrosoftVisualStudioShellInteropVersion>
+    <MicrosoftVisualStudioShellInterop10Version>10.0.30320</MicrosoftVisualStudioShellInterop10Version>
+    <MicrosoftVisualStudioShellInterop11Version>11.0.61031</MicrosoftVisualStudioShellInterop11Version>
+    <MicrosoftVisualStudioShellInterop14DesignTimeVersion>14.3.26929</MicrosoftVisualStudioShellInterop14DesignTimeVersion>
+    <MicrosoftVisualStudioShellInterop15dot3DesignTimeVersion>15.0.26929</MicrosoftVisualStudioShellInterop15dot3DesignTimeVersion>
+    <MicrosoftVisualStudioShellInterop15dot6DesignTimeVersion>15.6.27413</MicrosoftVisualStudioShellInterop15dot6DesignTimeVersion>
+    <MicrosoftVisualStudioShellInterop8Version>8.0.50728</MicrosoftVisualStudioShellInterop8Version>
+    <MicrosoftVisualStudioShellInterop9Version>9.0.30730</MicrosoftVisualStudioShellInterop9Version>
+    <MicrosoftVisualStudioThreadingVersion>15.8.209</MicrosoftVisualStudioThreadingVersion>
+    <MicrosoftVisualStudioUtilitiesVersion>15.9.28307</MicrosoftVisualStudioUtilitiesVersion>
+    <StreamJsonRpcVersion>2.0.208</StreamJsonRpcVersion>
+    <NewtonsoftJsonVersion>12.0.3</NewtonsoftJsonVersion>
+    <NLogVersion>4.7.2</NLogVersion>
+    <SystemRuntimeCompilerServicesUnsafeVersion>4.7.1</SystemRuntimeCompilerServicesUnsafeVersion>
+    <SystemThreadingTasksExtensionsVersion>4.5.4</SystemThreadingTasksExtensionsVersion>
+    <MoqVersion>4.14.5</MoqVersion>
+    <CastleCoreVersion>4.4.1</CastleCoreVersion>
+    <MicrosoftVisualStudioSDKEmbedInteropTypesVersion>15.0.30</MicrosoftVisualStudioSDKEmbedInteropTypesVersion>
+    <MicrosoftVisualStudioThreadingAnalyzersVersion>17.0.64</MicrosoftVisualStudioThreadingAnalyzersVersion>
+    <MicrosoftVisualStudioSDKAnalyzersVersion>16.10.10</MicrosoftVisualStudioSDKAnalyzersVersion>
   </PropertyGroup>
 
   <!-- packages\vsSBE.SDK.xxx -->

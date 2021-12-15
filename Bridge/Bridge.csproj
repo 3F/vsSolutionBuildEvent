@@ -15,11 +15,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(VsSbeSdkBase)'=='15'">
-    <!-- <PackageReference Include="Microsoft.VisualStudio.Shell.Interop" Version="17.0.31902.203" /> -->
-    <Reference Include="Microsoft.VisualStudio.Shell.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(Sdk15libTarget)\Microsoft.VisualStudio.Shell.Interop.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop" Version="$(MicrosoftVisualStudioShellInteropVersion)" />
   </ItemGroup>
 
   <ItemGroup>

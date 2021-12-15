@@ -13,8 +13,8 @@
 -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   
-    <PropertyGroup Condition="'$(vsSBE_SDK)' != '' and '$(NetTargetVName)' != ''">
-        <_SDK_Lib>$(SolutionDir)packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(NetTargetVName)</_SDK_Lib>
+    <PropertyGroup Condition="'$(vsSBE_SDK)' != '' and '$(SdklibTarget)' != ''">
+        <_SDK_Lib>$(SolutionDir)packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(SdklibTarget)</_SDK_Lib>
     </PropertyGroup>
     
     <ItemGroup>
