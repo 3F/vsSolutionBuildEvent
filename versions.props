@@ -11,8 +11,8 @@
     <EnvDteVersion>8.0.2</EnvDteVersion>
     <EnvDte80Version>8.0.3</EnvDte80Version>
     <stdoleVersion>7.0.3303</stdoleVersion>
-    <MicrosoftBuildVersion>16.6.0</MicrosoftBuildVersion>
-    <MicrosoftBuildFrameworkVersion>16.6.0</MicrosoftBuildFrameworkVersion>
+    <MicrosoftBuildVersion>17.0.0</MicrosoftBuildVersion>
+    <MicrosoftBuildFrameworkVersion>17.0.0</MicrosoftBuildFrameworkVersion>
     <SystemValueTupleVersion>4.5.0</SystemValueTupleVersion>
     <MicrosoftVisualStudioOLEInteropVersion>7.10.6071</MicrosoftVisualStudioOLEInteropVersion>
     <MicrosoftVisualStudioShell15Version>15.9.28307</MicrosoftVisualStudioShell15Version>
@@ -28,11 +28,11 @@
     <MicrosoftVisualStudioThreadingVersion>15.8.209</MicrosoftVisualStudioThreadingVersion>
     <MicrosoftVisualStudioUtilitiesVersion>15.9.28307</MicrosoftVisualStudioUtilitiesVersion>
     <StreamJsonRpcVersion>2.0.208</StreamJsonRpcVersion>
-    <NewtonsoftJsonVersion>12.0.3</NewtonsoftJsonVersion>
-    <NLogVersion>4.7.2</NLogVersion>
-    <SystemRuntimeCompilerServicesUnsafeVersion>4.7.1</SystemRuntimeCompilerServicesUnsafeVersion>
+    <NewtonsoftJsonVersion>13.0.1</NewtonsoftJsonVersion>
+    <NLogVersion>4.7.13</NLogVersion>
+    <SystemRuntimeCompilerServicesUnsafeVersion>5.0.0</SystemRuntimeCompilerServicesUnsafeVersion>
     <SystemThreadingTasksExtensionsVersion>4.5.4</SystemThreadingTasksExtensionsVersion>
-    <MoqVersion>4.14.5</MoqVersion>
+    <MoqVersion>4.16.1</MoqVersion>
     <CastleCoreVersion>4.4.1</CastleCoreVersion>
     <MicrosoftVisualStudioSDKEmbedInteropTypesVersion>15.0.30</MicrosoftVisualStudioSDKEmbedInteropTypesVersion>
     <MicrosoftVisualStudioThreadingAnalyzersVersion>17.0.64</MicrosoftVisualStudioThreadingAnalyzersVersion>
