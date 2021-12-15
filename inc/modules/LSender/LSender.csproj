@@ -5,10 +5,15 @@
 
   <PropertyGroup>
     <RootNamespace>net.r_eg.LSender</RootNamespace>
+    <DefineConstants>LSR_FEATURE_S_VECTOR;$(DefineConstants)</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="$(RepoDirRoot)LSender\LSender\**\*.cs" />
+    <Compile Include="$(RepoDirRoot)LSender\src\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
   </ItemGroup>
 
 </Project>

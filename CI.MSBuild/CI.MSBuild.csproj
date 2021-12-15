@@ -36,6 +36,7 @@
     <DocumentationFile>bin\Release\CI.MSBuild.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'REL_SDK15|AnyCPU' ">
+    <IsVSSDK15>true</IsVSSDK15>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <NetTargetVName>net45</NetTargetVName>
     <OutputPath>bin\Release\</OutputPath>
@@ -49,6 +50,7 @@
     <DocumentationFile>bin\Release\CI.MSBuild.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DBG_SDK15|AnyCPU' ">
+    <IsVSSDK15>true</IsVSSDK15>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <NetTargetVName>net45</NetTargetVName>
     <DebugSymbols>true</DebugSymbols>
@@ -87,6 +89,8 @@
     <ProjectReference Include="..\MvsSln\MvsSln\MvsSln.csproj">
       <Project>{F905DFB2-2E67-4FF7-9001-924F6F2D645D}</Project>
       <Name>MvsSln</Name>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' != 'true' ">TargetFramework=net40</AdditionalProperties>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' == 'true' ">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\Provider\Provider.csproj">
       <Project>{4F8BB8CD-1116-4F07-9B8F-06D69FB8589B}</Project>

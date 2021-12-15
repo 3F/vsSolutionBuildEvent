@@ -11,12 +11,13 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(RepoDirRoot)com.github.3F.test.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Configurations>DBG_SDK10;DBG_SDK15;REL_SDK10;REL_SDK15;DCI_SDK10;DCI_SDK15;RCI_SDK10;RCI_SDK15</Configurations>
+    <OverrideLSenderConfigurations>$(Configurations)</OverrideLSenderConfigurations>
     <NoWarn>1701;1702;CS1591</NoWarn>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>

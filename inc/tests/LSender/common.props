@@ -1,0 +1,10 @@
+<Project>
+  <Import Project="..\common.props" />
+
+  <PropertyGroup>
+    <RepoDirRoot>..\$(RepoDirRoot)</RepoDirRoot>
+    <IncModulesDir>..\$(IncModulesDir)</IncModulesDir>
+    <AssemblyOriginatorKeyFile>..\$(AssemblyOriginatorKeyFile)</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+</Project>

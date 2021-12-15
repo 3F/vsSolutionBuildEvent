@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\common.props" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\DepB\DepB.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="$(RepoDirRoot)LSender\tests\DepA\**\*.cs" />
+  </ItemGroup>
+
+</Project>

@@ -748,6 +748,8 @@
     <ProjectReference Include="..\MvsSln\MvsSln\MvsSln.csproj">
       <Project>{f905dfb2-2e67-4ff7-9001-924f6f2d645d}</Project>
       <Name>MvsSln</Name>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' != 'true' ">TargetFramework=net40</AdditionalProperties>
+      <AdditionalProperties Condition=" '$(IsVSSDK15)' == 'true' ">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\inc\modules\SobaScript.Mapper\SobaScript.Mapper.csproj">
       <Project>{3eabd66d-1f4b-46e5-88ff-3e680708309f}</Project>
