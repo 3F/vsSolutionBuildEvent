@@ -1,14 +1,13 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+﻿using Moq;
 using net.r_eg.EvMSBuild;
 using net.r_eg.MvsSln;
+using Xunit;
 
 namespace net.r_eg.vsSBE.Test.MSBuild
 {
-    [TestClass]
     public class ParserTest
     {
-        [TestMethod]
+        [Fact]
         public void getPropertyTest()
         {
             var mockDte2                    = new Mock<EnvDTE80.DTE2>();
@@ -24,8 +23,8 @@ namespace net.r_eg.vsSBE.Test.MSBuild
             mockDte2.SetupGet(p => p.Solution).Returns(mockSolution.Object);
 
             var target = new EvMSBuilder(new Environment(mockDte2.Object));
-            Assert.IsNotNull(target.GetPropValue(PropertyNames.CONFIG));
-            Assert.IsNotNull(target.GetPropValue(PropertyNames.PLATFORM));
+            Assert.NotNull(target.GetPropValue(PropertyNames.CONFIG));
+            Assert.NotNull(target.GetPropValue(PropertyNames.PLATFORM));
         }
     }
 }

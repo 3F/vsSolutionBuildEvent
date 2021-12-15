@@ -1,37 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using net.r_eg.vsSBE.Receiver.Output;
+﻿using net.r_eg.vsSBE.Receiver.Output;
+using Xunit;
 
 namespace net.r_eg.vsSBE.Test.Receiver.Output
 {
-    /// <summary>
-    ///This is a test class for MatcherTest and is intended
-    ///to contain all MatcherTest Unit Tests
-    ///</summary>
-    [TestClass()]
     public class MatcherTest
     {
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
-
-        /// <summary>
-        ///A test for mWildcards
-        ///</summary>
-        [TestMethod()]
+        [Fact]
         public void mWildcardsTest()
         {
             MatcherAccessor.ToWildcards target = new MatcherAccessor.ToWildcards();
@@ -40,33 +14,30 @@ namespace net.r_eg.vsSBE.Test.Receiver.Output
             string rawExpected  = raw;
             
             bool actual = target.mWildcards("pro*system", ref raw);
-            Assert.AreEqual(rawExpected, raw);
-            Assert.AreEqual(true, actual);
+            Assert.Equal(rawExpected, raw);
+            Assert.True(actual);
         }
 
-        /// <summary>
-        ///A test for mWildcards
-        ///</summary>
-        [TestMethod()]
+        [Fact]
         public void mWildcardsTest1()
         {
             MatcherAccessor.ToWildcards target = new MatcherAccessor.ToWildcards();
 
             string raw = "new tes;ted project-12, and 75_protection of various systems";
             
-            Assert.AreEqual(true, target.mWildcards("new*7*systems", ref raw));
-            Assert.AreEqual(true, target.mWildcards("", ref raw));
-            Assert.AreEqual(true, target.mWildcards("*", ref raw));
-            Assert.AreEqual(false, target.mWildcards("new*express", ref raw));
-            Assert.AreEqual(false, target.mWildcards("tes*ting*project", ref raw));
+            Assert.True(target.mWildcards("new*7*systems", ref raw));
+            Assert.True(target.mWildcards("", ref raw));
+            Assert.True(target.mWildcards("*", ref raw));
+            Assert.False(target.mWildcards("new*express", ref raw));
+            Assert.False(target.mWildcards("tes*ting*project", ref raw));
 
-            Assert.AreEqual(true, target.mWildcards("?", ref raw));
-            Assert.AreEqual(true, target.mWildcards("project?12", ref raw));
-            Assert.AreEqual(false, target.mWildcards("pro?tect", ref raw));
+            Assert.True(target.mWildcards("?", ref raw));
+            Assert.True(target.mWildcards("project?12", ref raw));
+            Assert.False(target.mWildcards("pro?tect", ref raw));
 
-            Assert.AreEqual(true, target.mWildcards("+", ref raw));
-            Assert.AreEqual(true, target.mWildcards("new+systems", ref raw));
-            Assert.AreEqual(false, target.mWildcards("systems+", ref raw));
+            Assert.True(target.mWildcards("+", ref raw));
+            Assert.True(target.mWildcards("new+systems", ref raw));
+            Assert.False(target.mWildcards("systems+", ref raw));
         }
 
         private class MatcherAccessor

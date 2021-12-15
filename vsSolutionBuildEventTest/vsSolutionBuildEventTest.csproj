@@ -19,9 +19,15 @@
     <PackageReference Include="Moq" Version="$(MoqVersion)" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="$(SystemRuntimeCompilerServicesUnsafeVersion)" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="$(SystemThreadingTasksExtensionsVersion)" />
-    <PackageReference Include="Microsoft.UnitTestFramework.Extensions" Version="$(MicrosoftUnitTestFrameworkExtensionsVersion)" />
     <PackageReference Include="SevenZipSharp" Version="$(SevenZipSharpVersion)" />
     <PackageReference Include="Castle.Core" Version="$(CastleCoreVersion)" />
+
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(MicrosoftNETTestSdkVersion)" />
+    <PackageReference Include="xunit" Version="$(xunitVersion)" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="$(xunitRunnerVisualstudioVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
   <Choose>
     <!-- SDK15+ -->

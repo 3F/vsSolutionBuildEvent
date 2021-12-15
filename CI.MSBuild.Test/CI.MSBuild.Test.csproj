@@ -10,8 +10,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="$(MicrosoftNETTestSdkVersion)" />
     <PackageReference Include="xunit" Version="$(xunitVersion)" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="$(xunitRunnerVisualstudioVersion)" />
-    <PackageReference Include="coverlet.collector" Version="$(coverletCollectorVersion)" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="$(xunitRunnerVisualstudioVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>

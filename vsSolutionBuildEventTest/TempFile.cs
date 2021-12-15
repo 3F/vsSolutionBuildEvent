@@ -1,21 +1,14 @@
 ﻿using System;
 using System.IO;
+using Xunit;
 
 namespace net.r_eg.vsSBE.Test
 {
     internal sealed class TempFile: IDisposable
     {
-        public string dir
-        {
-            get;
-            private set;
-        }
+        public string Dir { get; private set; }
 
-        public string file
-        {
-            get;
-            private set;
-        }
+        public string FullPath { get; private set; }
 
         public TempFile(bool insideDir = false, string ext = null)
         {
@@ -26,23 +19,42 @@ namespace net.r_eg.vsSBE.Test
                 name += ext;
             }
 
-            file = Path.Combine(path, name);
-            if(insideDir) {
-                dir = Directory.CreateDirectory(file).FullName;
-                file = Path.Combine(dir, name);
+            FullPath = Path.Combine(path, name);
+            if(insideDir)
+            {
+                Dir         = Directory.CreateDirectory(FullPath).FullName;
+                FullPath    = Path.Combine(Dir, name);
             }
-            using(var f = File.Create(file)) { }
+            using FileStream f = File.Create(FullPath);
+        }
+
+        #region IDisposable
+
+        private bool disposed;
+
+        private void Dispose(bool _)
+        {
+            if(!disposed)
+            {
+                try
+                {
+                    File.Delete(FullPath);
+                    if(Dir != null) Directory.Delete(Dir);
+                }
+                catch(Exception ex)
+                {
+                    Assert.True(false, $"Failed disposing: {ex.Message}");
+                }
+                disposed = true;
+            }
         }
 
         public void Dispose()
         {
-            try {
-                File.Delete(file);
-                if(dir != null) {
-                    Directory.Delete(dir);
-                }
-            }
-            catch { /* we work in temp directory with unique name, so it's not important */ }
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
+
+        #endregion
     }
 }

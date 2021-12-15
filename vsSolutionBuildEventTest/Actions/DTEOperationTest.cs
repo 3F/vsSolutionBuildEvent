@@ -1,61 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.EvMSBuild.Exceptions;
 using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events;
+using Xunit;
 
 namespace net.r_eg.vsSBE.Test.Actions
 {
-    [TestClass]
     public class DTEOperationTest
     {
-        [TestMethod]
+        [Fact]
         public void dtePreparedTest()
         {
-            DTEOperation target = new DTEOperation((IEnvironment)null, SolutionEventType.General);
+            DTEOperation target = new(null, SolutionEventType.General);
 
             string line = "File.OpenProject(\"c:\\path\\app.sln\")";
             DTEOperation.DTEPrepared actual = target.parse(line);
 
-            Assert.AreEqual("File.OpenProject", actual.name);
-            Assert.AreEqual("\"c:\\path\\app.sln\"", actual.args);
+            Assert.Equal("File.OpenProject", actual.name);
+            Assert.Equal("\"c:\\path\\app.sln\"", actual.args);
         }
 
-        [TestMethod]
+        [Fact]
         public void dtePreparedTest2()
         {
-            DTEOperation target = new DTEOperation((IEnvironment)null, SolutionEventType.General);
+            DTEOperation target = new(null, SolutionEventType.General);
 
             string line = "Debug.StartWithoutDebugging";
             DTEOperation.DTEPrepared actual = target.parse(line);
 
-            Assert.AreEqual("Debug.StartWithoutDebugging", actual.name);
-            Assert.AreEqual("", actual.args);
+            Assert.Equal("Debug.StartWithoutDebugging", actual.name);
+            Assert.Equal(string.Empty, actual.args);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(IncorrectSyntaxException))]
-        public void dtePreparedTest3()
+        [Theory]
+        [InlineData("Debug StartWithoutDebugging")]
+        [InlineData("")]
+        public void dtePreparedTheory1(string line)
         {
-            DTEOperation target = new DTEOperation((IEnvironment)null, SolutionEventType.General);
+            DTEOperation target = new(null, SolutionEventType.General);
 
-            string line = "Debug StartWithoutDebugging";
-            DTEOperation.DTEPrepared actual = target.parse(line);
+            Assert.Throws<IncorrectSyntaxException>(() => target.parse(line));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(IncorrectSyntaxException))]
-        public void dtePreparedTest4()
-        {
-            DTEOperation target = new DTEOperation((IEnvironment)null, SolutionEventType.General);
-
-            string line = "";
-            DTEOperation.DTEPrepared actual = target.parse(line);
-        }
-
-        [TestMethod]
+        [Fact]
         public void dtePreparedTest5()
         {
             DTEOperation target = new DTEOperation((IEnvironment)null, SolutionEventType.General);
@@ -63,16 +52,16 @@ namespace net.r_eg.vsSBE.Test.Actions
             string line = "  OpenProject(arg)  ";
             DTEOperation.DTEPrepared actual = target.parse(line);
 
-            Assert.AreEqual("OpenProject", actual.name);
-            Assert.AreEqual("arg", actual.args);
+            Assert.Equal("OpenProject", actual.name);
+            Assert.Equal("arg", actual.args);
         }
 
-        [TestMethod]
+        [Fact]
         public void execTest()
         {
-            DTEOperationAccessor.ToExec target = new DTEOperationAccessor.ToExec(-1);
+            DTEOperationAccessor.ToExec target = new(-1);
 
-            Queue<DTEOperation.DTEPrepared> commands = new Queue<DTEOperation.DTEPrepared>();
+            Queue<DTEOperation.DTEPrepared> commands = new();
             commands.Enqueue(new DTEOperation.DTEPrepared("Build.Cancel", ""));
             commands.Enqueue(new DTEOperation.DTEPrepared("File.OpenProject", "app.sln"));
             commands.Enqueue(new DTEOperation.DTEPrepared("Debug.Start", ""));
@@ -83,14 +72,14 @@ namespace net.r_eg.vsSBE.Test.Actions
             target.exec(commands, false);
 
             Queue<DTEOperation.DTEPrepared> actual = target.getExecuted();
-            Assert.IsTrue(actual.Count == expected.Length);
+            Assert.True(actual.Count == expected.Length);
 
             foreach(DTEOperation.DTEPrepared obj in expected) {
-                Assert.AreEqual(actual.Dequeue(), obj);
+                Assert.Equal(actual.Dequeue(), obj);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void execTest2()
         {
             DTEOperationAccessor.ToExec target = new DTEOperationAccessor.ToExec(1);
@@ -111,14 +100,14 @@ namespace net.r_eg.vsSBE.Test.Actions
             }
 
             Queue<DTEOperation.DTEPrepared> actual = target.getExecuted();
-            Assert.IsTrue(actual.Count == expected.Length);
+            Assert.True(actual.Count == expected.Length);
 
             foreach(DTEOperation.DTEPrepared obj in expected) {
-                Assert.AreEqual(actual.Dequeue(), obj);
+                Assert.Equal(actual.Dequeue(), obj);
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void execTest3()
         {
             DTEOperationAccessor.ToExec target = new DTEOperationAccessor.ToExec(2);
@@ -140,12 +129,12 @@ namespace net.r_eg.vsSBE.Test.Actions
             }
 
             Queue<DTEOperation.DTEPrepared> actual = target.getExecuted();
-            Assert.IsTrue(actual.Count != expected.Length);
-            Assert.IsTrue(actual.Count == 2);
+            Assert.True(actual.Count != expected.Length);
+            Assert.True(actual.Count == 2);
 
             int idx = 0;
             foreach(DTEOperation.DTEPrepared obj in actual) {
-                Assert.AreEqual(expected[idx++], obj);
+                Assert.Equal(expected[idx++], obj);
             }
         }
 

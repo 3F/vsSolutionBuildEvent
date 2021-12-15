@@ -2,11 +2,9 @@
 
   <PropertyGroup>
     <MicrosoftCodeAnalysisNetAnalyzersVersion>6.0.0</MicrosoftCodeAnalysisNetAnalyzersVersion>
-    <MicrosoftUnitTestFrameworkExtensionsVersion>2.0.0</MicrosoftUnitTestFrameworkExtensionsVersion>
-    <MicrosoftNETTestSdkVersion>16.5.0</MicrosoftNETTestSdkVersion>
-    <xunitVersion>2.4.0</xunitVersion>
-    <xunitRunnerVisualstudioVersion>2.4.0</xunitRunnerVisualstudioVersion>
-    <coverletCollectorVersion>1.2.0</coverletCollectorVersion>
+    <MicrosoftNETTestSdkVersion>17.0.0</MicrosoftNETTestSdkVersion>
+    <xunitVersion>2.4.1</xunitVersion>
+    <xunitRunnerVisualstudioVersion>2.4.3</xunitRunnerVisualstudioVersion>
     <AvalonEditVersion>6.1.2.30</AvalonEditVersion>
     <SevenZipSharpVersion>0.64.0</SevenZipSharpVersion>
     <UdeSignedVersion>0.1.1</UdeSignedVersion>

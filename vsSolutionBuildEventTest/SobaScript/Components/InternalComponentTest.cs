@@ -1,229 +1,166 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.SobaScript;
 using net.r_eg.SobaScript.Exceptions;
 using net.r_eg.Varhead;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.SobaScript.Components;
+using Xunit;
 
 namespace net.r_eg.vsSBE.Test.SobaScript.Components
 {
-    [TestClass]
     public class InternalComponentTest
     {
-        private IEnvironment env = new StubEnv();
-        private IUVars uvariable = new UVars();
+        private readonly IUVars uvariable = new UVars();
 
-        [TestMethod]
-        public void eventsItemRunTest1()
+        [Theory]
+        [InlineData("[Core events.Pre.item(1).run() = true]")]
+        [InlineData("[Core events.Pre.item(1).run(): true]")]
+        [InlineData("[Core events.Pre.item(1).run().m]")]
+        public void evalNotSupportedOperationTheory(string data)
         {
-            var target = new InternalComponentAccessor();
-
-            try {
-                target.Eval("[Core events.Pre.item(1).run]");
-                Assert.Fail("1");
-            }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(IncorrectNodeException), ex.GetType().ToString()); }
-
-            try {
-                target.Eval("[Core events.Pre.item(1).run() = true]");
-                Assert.Fail("2");
-            }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
-
-            try {
-                target.Eval("[Core events.Pre.item(1).run(): true]");
-                Assert.Fail("3");
-            }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
-
-            try {
-                target.Eval("[Core events.Pre.item(1).run().m]");
-                Assert.Fail("4");
-            }
-            catch(Exception ex) { Assert.IsTrue(ex.GetType() == typeof(NotSupportedOperationException), ex.GetType().ToString()); }
+            InternalComponentAccessor target = new();
+            Assert.Throws<NotSupportedOperationException>(() => target.Eval(data));
         }
 
-        [TestMethod]
+        [Theory]
+        [InlineData("[Core events.Pre.item(1).run]")]
+        [InlineData("[vsSBE events.Pre.item(1).Status.Has Errors]")]
+        [InlineData("[vsSBE events.Pre.item(1).Status.NotExistProp]")]
+        [InlineData("[Core events.Pre.item(1).stdout = true]")]
+        [InlineData("[Core events.Pre.item(1).stderr = true]")]
+        public void evalIncorrectNodeTheory(string data)
+        {
+            InternalComponentAccessor target = new();
+            Assert.Throws<IncorrectNodeException>(() => target.Eval(data));
+        }
+
+        [Theory]
+        [InlineData("[vsSBE events.Type.item(name)]")]
+        [InlineData("[vsSBE events.Type.item(1).test]")]
+        public void evalOperandNotFoundTheory(string data)
+        {
+            InternalComponent target = new(new Soba(uvariable), new StubEnv());
+            Assert.Throws<OperandNotFoundException>(() => target.Eval(data));
+        }
+
+        [Theory]
+        [InlineData("#[vsSBE events.Type.item(1)]")]
+        [InlineData("vsSBE events.Type.item(1)")]
+        [InlineData("[vsSBE events.Pre.item(1).Enabled = 1true]")]
+        public void parseIncorrectSyntaxTheory(string data)
+        {
+            InternalComponentAccessor target = new(new Soba(uvariable), new StubEnv());
+            Assert.Throws<IncorrectSyntaxException>(() => target.Eval(data));
+        }
+
+        [Theory]
+        [InlineData("[vsSBE NoExist.Type]")]
+        public void evalSubtypeNotFoundTheory(string data)
+        {
+            InternalComponent target = new(new Soba(uvariable), new StubEnv());
+            Assert.Throws<SubtypeNotFoundException>(() => target.Eval(data));
+        }
+
+        [Fact]
+        public void pStatusParseTest2()
+        {
+            InternalComponentAccessor target = new();
+            Assert.Equal("false", target.Eval("[vsSBE events.Pre.item(1).Status.HasErrors]"));
+        }
+
+        [Theory]
+        [InlineData("[Core StartUpProject: test]")]
+        public void evalIncorrectNodeUVarTheory(string data)
+        {
+            InternalComponent target = new(new Soba(uvariable), new StubEnv());
+            Assert.Throws<IncorrectNodeException>(() => target.Eval(data));
+        }
+
+        [Fact]
         public void eventsItemRunTest2()
         {
             var target = new InternalComponentAccessor();
-            Assert.AreEqual(Value.From(true), target.Eval("[Core events.Pre.item(1).run()]"));
-            Assert.AreEqual(Value.From(true), target.Eval("[Core events.Pre.item(1).run(Common)]"));
-            Assert.AreEqual(Value.From(false), target.Eval("[Core events.Pre.item(2).run()]"));
-            Assert.AreEqual(Value.From(false), target.Eval("[Core events.Pre.item(3).run()]"));
-            Assert.AreEqual(Value.From(false), target.Eval("[Core events.Pre.item(3).run(Common)]"));
-            Assert.AreEqual(Value.From(true), target.Eval("[Core events.Pre.item(3).run(Rebuild)]"));
+            Assert.Equal(Value.From(true), target.Eval("[Core events.Pre.item(1).run()]"));
+            Assert.Equal(Value.From(true), target.Eval("[Core events.Pre.item(1).run(Common)]"));
+            Assert.Equal(Value.From(false), target.Eval("[Core events.Pre.item(2).run()]"));
+            Assert.Equal(Value.From(false), target.Eval("[Core events.Pre.item(3).run()]"));
+            Assert.Equal(Value.From(false), target.Eval("[Core events.Pre.item(3).run(Common)]"));
+            Assert.Equal(Value.From(true), target.Eval("[Core events.Pre.item(3).run(Rebuild)]"));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(IncorrectSyntaxException))]
-        public void parseTest()
-        {
-            InternalComponent target = new InternalComponent(new Soba(uvariable), new StubEnv());
-            target.Eval("#[vsSBE events.Type.item(1)]");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(IncorrectSyntaxException))]
-        public void parseTest2()
-        {
-            InternalComponent target = new InternalComponent(new Soba(uvariable), new StubEnv());
-            target.Eval("vsSBE events.Type.item(1)");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(SubtypeNotFoundException))]
-        public void parseTest3()
-        {
-            InternalComponent target = new InternalComponent(new Soba(uvariable), new StubEnv());
-            target.Eval("[vsSBE NoExist.Type]");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(OperandNotFoundException))]
-        public void stEventsParseTest1()
-        {
-            InternalComponent target = new InternalComponent(new Soba(uvariable), new StubEnv());
-            target.Eval("[vsSBE events.Type.item(name)]");
-        }
-
-        [TestMethod()]
-        [ExpectedException(typeof(OperandNotFoundException))]
-        public void stEventsParseTest2()
-        {
-            InternalComponent target = new InternalComponent(new Soba(uvariable), new StubEnv());
-            target.Eval("[vsSBE events.Type.item(1).test]");
-        }
-
-        [TestMethod()]
+        [Fact]
         public void pEnabledParseTest1()
         {
-            InternalComponentAccessor target = new InternalComponentAccessor();
-            Assert.AreEqual(Value.From(true), target.Eval("[vsSBE events.Pre.item(1).Enabled]"));
-            Assert.AreEqual(Value.From(true), target.Eval("[vsSBE events.Pre.item(\"Name1\").Enabled]"));
-            Assert.AreEqual(Value.From(false), target.Eval("[vsSBE events.Pre.item(2).Enabled]"));
-            Assert.AreEqual(Value.From(false), target.Eval("[vsSBE events.Pre.item(\"Name2\").Enabled]"));
+            InternalComponentAccessor target = new();
+            Assert.Equal(Value.From(true), target.Eval("[vsSBE events.Pre.item(1).Enabled]"));
+            Assert.Equal(Value.From(true), target.Eval("[vsSBE events.Pre.item(\"Name1\").Enabled]"));
+            Assert.Equal(Value.From(false), target.Eval("[vsSBE events.Pre.item(2).Enabled]"));
+            Assert.Equal(Value.From(false), target.Eval("[vsSBE events.Pre.item(\"Name2\").Enabled]"));
         }
 
-        [TestMethod()]
-        [ExpectedException(typeof(IncorrectSyntaxException))]
-        public void pEnabledParseTest2()
-        {
-            InternalComponentAccessor target = new InternalComponentAccessor();
-            target.Eval("[vsSBE events.Pre.item(1).Enabled = 1true]");
-        }
-
-        [TestMethod()]
+        [Fact]
         public void pEnabledParseTest3()
         {
-            InternalComponentAccessor target = new InternalComponentAccessor();
-            Assert.AreEqual(Value.From(true), target.Eval("[vsSBE events.Pre.item(1).Enabled]"));
-            Assert.AreEqual(Value.Empty, target.Eval("[vsSBE events.Pre.item(1).Enabled = false]"));
-            Assert.AreEqual(Value.From(false), target.Eval("[vsSBE events.Pre.item(1).Enabled]"));
+            InternalComponentAccessor target = new();
+            Assert.Equal(Value.From(true), target.Eval("[vsSBE events.Pre.item(1).Enabled]"));
+            Assert.Equal(Value.Empty, target.Eval("[vsSBE events.Pre.item(1).Enabled = false]"));
+            Assert.Equal(Value.From(false), target.Eval("[vsSBE events.Pre.item(1).Enabled]"));
 
-            Assert.AreEqual(Value.From(false), target.Eval("[vsSBE events.Pre.item(\"Name2\").Enabled]"));
-            Assert.AreEqual(Value.Empty, target.Eval("[vsSBE events.Pre.item(\"Name2\").Enabled = true]"));
-            Assert.AreEqual(Value.From(true), target.Eval("[vsSBE events.Pre.item(\"Name2\").Enabled]"));
+            Assert.Equal(Value.From(false), target.Eval("[vsSBE events.Pre.item(\"Name2\").Enabled]"));
+            Assert.Equal(Value.Empty, target.Eval("[vsSBE events.Pre.item(\"Name2\").Enabled = true]"));
+            Assert.Equal(Value.From(true), target.Eval("[vsSBE events.Pre.item(\"Name2\").Enabled]"));
         }
 
-        [TestMethod()]
-        [ExpectedException(typeof(IncorrectNodeException))]
-        public void pStatusParseTest1()
-        {
-            InternalComponentAccessor target = new InternalComponentAccessor();
-            target.Eval("[vsSBE events.Pre.item(1).Status.Has Errors]");
-        }
-
-        [TestMethod()]
-        public void pStatusParseTest2()
-        {
-            InternalComponentAccessor target = new InternalComponentAccessor();
-            Assert.AreEqual("false", target.Eval("[vsSBE events.Pre.item(1).Status.HasErrors]"));
-        }
-
-        [TestMethod()]
-        [ExpectedException(typeof(IncorrectNodeException))]
-        public void pStatusParseTest3()
-        {
-            InternalComponentAccessor target = new InternalComponentAccessor();
-            target.Eval("[vsSBE events.Pre.item(1).Status.NotExistProp]");
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(IncorrectNodeException))]
-        public void startUpProjectTest1()
-        {
-            var target = new InternalComponent(new Soba(uvariable), new StubEnv());
-            target.Eval("[Core StartUpProject: test]");
-        }
-
-        [TestMethod]
+        [Fact]
         public void startUpProjectTest2()
         {
             IEnvironment env    = new StubEnv();
             var target          = new InternalComponent(new Soba(), env);
             string defProject   = env.StartupProjectString;
 
-            Assert.AreEqual(env.StartupProjectString, target.Eval("[Core StartUpProject]"));
+            Assert.Equal(env.StartupProjectString, target.Eval("[Core StartUpProject]"));
 
-            Assert.AreEqual(String.Empty, target.Eval("[Core StartUpProject = project1]"));
-            Assert.AreEqual("project1", env.StartupProjectString);
-            Assert.AreEqual(env.StartupProjectString, target.Eval("[Core StartUpProject]"));
+            Assert.Equal(String.Empty, target.Eval("[Core StartUpProject = project1]"));
+            Assert.Equal("project1", env.StartupProjectString);
+            Assert.Equal(env.StartupProjectString, target.Eval("[Core StartUpProject]"));
 
-            Assert.AreEqual(String.Empty, target.Eval("[Core StartUpProject = \"project2\"]"));
-            Assert.AreEqual("project2", env.StartupProjectString);
-            Assert.AreEqual(env.StartupProjectString, target.Eval("[Core StartUpProject]"));
+            Assert.Equal(String.Empty, target.Eval("[Core StartUpProject = \"project2\"]"));
+            Assert.Equal("project2", env.StartupProjectString);
+            Assert.Equal(env.StartupProjectString, target.Eval("[Core StartUpProject]"));
 
-            Assert.AreEqual(String.Empty, target.Eval("[Core StartUpProject = \"\"]"));
-            Assert.AreEqual(defProject, env.StartupProjectString);
-            Assert.AreEqual(env.StartupProjectString, target.Eval("[Core StartUpProject]"));
+            Assert.Equal(String.Empty, target.Eval("[Core StartUpProject = \"\"]"));
+            Assert.Equal(defProject, env.StartupProjectString);
+            Assert.Equal(env.StartupProjectString, target.Eval("[Core StartUpProject]"));
         }
 
-        [TestMethod]
+        [Fact]
         public void startUpProjectTest3()
         {
             IEnvironment env    = new StubEnv();
             var target          = new InternalComponent(new Soba(), env);
             string defProject   = env.StartupProjectString;
 
-            Assert.AreEqual(String.Empty, target.Eval("[Core StartUpProject = project1]"));
-            Assert.AreEqual("project1", env.StartupProjectString);
-            Assert.AreEqual(env.StartupProjectString, target.Eval("[Core StartUpProject]"));
+            Assert.Equal(String.Empty, target.Eval("[Core StartUpProject = project1]"));
+            Assert.Equal("project1", env.StartupProjectString);
+            Assert.Equal(env.StartupProjectString, target.Eval("[Core StartUpProject]"));
 
-            Assert.AreEqual(String.Empty, target.Eval("[Core StartUpProject =]"));
-            Assert.AreEqual(defProject, env.StartupProjectString);
-            Assert.AreEqual(env.StartupProjectString, target.Eval("[Core StartUpProject]"));
+            Assert.Equal(String.Empty, target.Eval("[Core StartUpProject =]"));
+            Assert.Equal(defProject, env.StartupProjectString);
+            Assert.Equal(env.StartupProjectString, target.Eval("[Core StartUpProject]"));
         }
 
-        [TestMethod()]
-        [ExpectedException(typeof(IncorrectNodeException))]
-        public void pStdoutTest1()
-        {
-            var target = new InternalComponentAccessor();
-            target.Eval("[Core events.Pre.item(1).stdout = true]");
-        }
-
-        [TestMethod()]
+        [Fact]
         public void pStdoutTest2()
         {
             var target = new InternalComponentAccessor();
-            Assert.AreNotEqual(null, target.Eval("[Core events.Pre.item(1).stdout]"));
+            Assert.NotNull(target.Eval("[Core events.Pre.item(1).stdout]"));
         }
 
-        [TestMethod()]
-        [ExpectedException(typeof(IncorrectNodeException))]
-        public void pStderrTest1()
-        {
-            var target = new InternalComponentAccessor();
-            target.Eval("[Core events.Pre.item(1).stderr = true]");
-        }
-
-        [TestMethod()]
+        [Fact]
         public void pStderrTest2()
         {
             var target = new InternalComponentAccessor();
-            Assert.AreNotEqual(null, target.Eval("[Core events.Pre.item(1).stderr]"));
+            Assert.NotNull(target.Eval("[Core events.Pre.item(1).stderr]"));
         }
 
         private class InternalComponentAccessor: InternalComponent
@@ -236,26 +173,36 @@ namespace net.r_eg.vsSBE.Test.SobaScript.Components
 
             }
 
+            public InternalComponentAccessor(ISobaScript soba, IEnvironment env)
+                : base(soba, env)
+            {
+
+            }
+
             protected override ISolutionEvent[] getEvent(SolutionEventType type)
             {
                 if(evt != null) {
                     return evt;
                 }
 
-                evt = new SBEEvent[3]{ 
-                    new SBEEvent(){
+                evt = new SBEEvent[3]
+                { 
+                    new SBEEvent()
+                    {
                         Name = "Name1",
                         SupportMSBuild = false,
                         SupportSBEScripts = false,
                         Mode = new ModeFile() { Command = "" },
                         Enabled = true
                     },
-                    new SBEEvent(){
+                    new SBEEvent()
+                    {
                         Name = "Name2",
                         Mode = new ModeFile() { Command = "" },
                         Enabled = false
                     },
-                    new SBEEvent(){
+                    new SBEEvent()
+                    {
                         Name = "Name3",
                         SupportMSBuild = false,
                         SupportSBEScripts = false,

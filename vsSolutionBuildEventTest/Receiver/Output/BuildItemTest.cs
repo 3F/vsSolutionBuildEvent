@@ -1,39 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using net.r_eg.vsSBE.Receiver.Output;
+using Xunit;
 
 namespace net.r_eg.vsSBE.Test.Receiver.Output
 {
-    /// <summary>
-    ///This is a test class for BuildItemTest and is intended
-    ///to contain all BuildItemTest Unit Tests
-    ///</summary>
-    [TestClass()]
     public class BuildItemTest
     {
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
-
-        /// <summary>
-        ///A test for BuildItem Constructor
-        ///</summary>
-        [TestMethod()]
+        [Fact]
         public void BuildItemConstructorTest()
         {
             string rawdata          = "warning CS1762: A reference was created to embedded interop assembly";
@@ -41,58 +15,58 @@ namespace net.r_eg.vsSBE.Test.Receiver.Output
 
             BuildItemAccessor.ToRawData target = new BuildItemAccessor.ToRawData();
             target.updateRaw(rawdata);
-            Assert.AreEqual(rawdataExpected, rawdata);
+            Assert.Equal(rawdataExpected, rawdata);
         }
         
         /// <summary>
         ///A test for extract
         ///</summary>
-        [TestMethod()]
+        [Fact]
         public void extractTest()
         {
             string rawdata = String.Empty;
             BuildItemAccessor.ToExtract target = new BuildItemAccessor.ToExtract();
 
-            Assert.IsTrue(target.ErrorsCount < 1);
-            Assert.IsTrue(target.WarningsCount < 1);
+            Assert.True(target.ErrorsCount < 1);
+            Assert.True(target.WarningsCount < 1);
 
             target.rawdata = "2>  thread_clock.cpp";
             target.extract();
 
-            Assert.IsTrue(target.ErrorsCount < 1);
-            Assert.IsTrue(target.WarningsCount < 1);
+            Assert.True(target.ErrorsCount < 1);
+            Assert.True(target.WarningsCount < 1);
         }
         
         /// <summary>
         ///A test for extract
         ///</summary>
-        [TestMethod()]
+        [Fact]
         public void extractTest2()
         {
             string rawdata = @"9>C:\VC\atlmfc\include\atlhost.h(422): warning C4505: 'ATL::CAxHostWindow::AddRef' : unreferenced local function has been removed";
             ItemEW target = new ItemEW();
             target.updateRaw(rawdata);
-            Assert.IsTrue(target.ErrorsCount < 1);
-            Assert.IsTrue(target.WarningsCount == 1);
+            Assert.True(target.ErrorsCount < 1);
+            Assert.True(target.WarningsCount == 1);
         }
 
         /// <summary>
         ///A test for extract
         ///</summary>
-        [TestMethod()]
+        [Fact]
         public void extractTest3()
         {
             string rawdata = @"11>windows\Search.cpp(2246): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int";
             ItemEW target = new ItemEW();
             target.updateRaw(rawdata);
-            Assert.IsTrue(target.ErrorsCount == 1);
-            Assert.IsTrue(target.WarningsCount < 1);
+            Assert.True(target.ErrorsCount == 1);
+            Assert.True(target.WarningsCount < 1);
         }
         
         /// <summary>
         ///A test for checkRule
         ///</summary>
-        [TestMethod()]
+        [Fact]
         public void checkRuleTest()
         {
             string rawdata = String.Empty;
@@ -100,18 +74,18 @@ namespace net.r_eg.vsSBE.Test.Receiver.Output
             target.updateRaw(rawdata);
             
             target.warnings = new List<string>() { "C4505" };
-            Assert.AreEqual(true, target.checkRule(EWType.Warnings, true, new List<string>()));
+            Assert.True(target.checkRule(EWType.Warnings, true, new List<string>()));
             target.warnings.Clear();
 
             target.errors = new List<string>() { "C4430" };
-            Assert.AreEqual(true, target.checkRule(EWType.Errors, true, new List<string>()));
+            Assert.True(target.checkRule(EWType.Errors, true, new List<string>()));
             target.errors.Clear();
         }
 
         /// <summary>
         ///A test for checkRule
         ///</summary>
-        [TestMethod()]
+        [Fact]
         public void checkRuleTest2()
         {
             string rawdata = String.Empty;
@@ -119,18 +93,18 @@ namespace net.r_eg.vsSBE.Test.Receiver.Output
             target.updateRaw(rawdata);
 
             target.warnings = new List<string>() { "C4505", "C4507" };
-            Assert.AreEqual(false, target.checkRule(EWType.Warnings, true, new List<string>() { "C4506" }));
+            Assert.False(target.checkRule(EWType.Warnings, true, new List<string>() { "C4506" }));
             target.warnings.Clear();
 
             target.errors = new List<string>() { "C4430", "C4432" };
-            Assert.AreEqual(false, target.checkRule(EWType.Errors, true, new List<string>() { "C4431" }));
+            Assert.False(target.checkRule(EWType.Errors, true, new List<string>() { "C4431" }));
             target.errors.Clear();
         }
 
         /// <summary>
         ///A test for checkRule
         ///</summary>
-        [TestMethod()]
+        [Fact]
         public void checkRuleTest3()
         {
             string rawdata = String.Empty;
@@ -138,18 +112,18 @@ namespace net.r_eg.vsSBE.Test.Receiver.Output
             target.updateRaw(rawdata);
 
             target.warnings = new List<string>() { "C4505", "C4507" };
-            Assert.AreEqual(true, target.checkRule(EWType.Warnings, true, new List<string>() { "C4507" }));
+            Assert.True(target.checkRule(EWType.Warnings, true, new List<string>() { "C4507" }));
             target.warnings.Clear();
 
             target.errors = new List<string>() { "C4430", "C4432" };
-            Assert.AreEqual(true, target.checkRule(EWType.Errors, true, new List<string>() { "C4432" }));
+            Assert.True(target.checkRule(EWType.Errors, true, new List<string>() { "C4432" }));
             target.errors.Clear();
         }
 
         /// <summary>
         ///A test for checkRule
         ///</summary>
-        [TestMethod()]
+        [Fact]
         public void checkRuleTest4()
         {
             string rawdata = String.Empty;
@@ -157,20 +131,20 @@ namespace net.r_eg.vsSBE.Test.Receiver.Output
             target.updateRaw(rawdata);
 
             target.warnings = new List<string>() { "C4505", "C4507" };
-            Assert.AreEqual(false, target.checkRule(EWType.Warnings, false, new List<string>()));
+            Assert.False(target.checkRule(EWType.Warnings, false, new List<string>()));
             target.warnings.Clear();
-            Assert.AreEqual(false, target.checkRule(EWType.Warnings, false, new List<string>()));
+            Assert.False(target.checkRule(EWType.Warnings, false, new List<string>()));
 
             target.errors = new List<string>() { "C4430", "C4432" };
-            Assert.AreEqual(false, target.checkRule(EWType.Errors, false, new List<string>()));
+            Assert.False(target.checkRule(EWType.Errors, false, new List<string>()));
             target.errors.Clear();
-            Assert.AreEqual(false, target.checkRule(EWType.Errors, false, new List<string>()));
+            Assert.False(target.checkRule(EWType.Errors, false, new List<string>()));
         }
 
         /// <summary>
         ///A test for checkRule
         ///</summary>
-        [TestMethod()]
+        [Fact]
         public void checkRuleTest5()
         {
             string rawdata = String.Empty;
@@ -178,18 +152,18 @@ namespace net.r_eg.vsSBE.Test.Receiver.Output
             target.updateRaw(rawdata);
 
             target.warnings = new List<string>() { "C4505", "C4507" };
-            Assert.AreEqual(true, target.checkRule(EWType.Warnings, false, new List<string>() { "C4507" }));
+            Assert.True(target.checkRule(EWType.Warnings, false, new List<string>() { "C4507" }));
             target.warnings.Clear();
 
             target.errors = new List<string>() { "C4430", "C4432" };
-            Assert.AreEqual(true, target.checkRule(EWType.Errors, false, new List<string>() { "C4432" }));
+            Assert.True(target.checkRule(EWType.Errors, false, new List<string>() { "C4432" }));
             target.errors.Clear();
         }
 
         /// <summary>
         ///A test for checkRule
         ///</summary>
-        [TestMethod()]
+        [Fact]
         public void checkRuleTest6()
         {
             string rawdata = String.Empty;
@@ -197,11 +171,11 @@ namespace net.r_eg.vsSBE.Test.Receiver.Output
             target.updateRaw(rawdata);
 
             target.warnings = new List<string>() { "C4505" };
-            Assert.AreEqual(false, target.checkRule(EWType.Warnings, false, new List<string>() { "C4505" }));
+            Assert.False(target.checkRule(EWType.Warnings, false, new List<string>() { "C4505" }));
             target.warnings.Clear();
 
             target.errors = new List<string>() { "C4430" };
-            Assert.AreEqual(false, target.checkRule(EWType.Errors, false, new List<string>() { "C4430" }));
+            Assert.False(target.checkRule(EWType.Errors, false, new List<string>() { "C4430" }));
             target.errors.Clear();
         }
 
