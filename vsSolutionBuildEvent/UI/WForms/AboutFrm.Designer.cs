@@ -267,7 +267,7 @@
             this.txtCopyright.ReadOnly = true;
             this.txtCopyright.Size = new System.Drawing.Size(394, 13);
             this.txtCopyright.TabIndex = 6;
-            this.txtCopyright.Text = "(c) 2013-2016,2019-2020  Denis Kuzmin < x-3F@outlook.com > GitHub/3F";
+            this.txtCopyright.Text = "(c) 2013-2021  Denis Kuzmin <x-3F@outlook.com> github/3F";
             // 
             // btnDonate
             // 

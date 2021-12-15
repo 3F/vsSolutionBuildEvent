@@ -30,7 +30,7 @@
 {build_info}</description>
     <summary>Control everything: Visual Studio, MSBuild Tools, CI, and more …</summary>
     <releaseNotes>changelog: https://github.com/3F/vsSolutionBuildEvent/blob/master/changelog.txt</releaseNotes>
-    <copyright>Copyright (c) 2013-2016,2019-2020  Denis Kuzmin &lt; x-3F@outlook.com &gt; GitHub/3F</copyright>
+    <copyright>Copyright (c) 2013-2021  Denis Kuzmin &lt;x-3F@outlook.com&gt; github/3F</copyright>
     <tags>Build Tools automation Scripts DevOps Events CI DevTools SobaScript E-MSBuild Projects AppVeyor Azure TeamCity Continuous-Integration logger Build-automation Compiler AzureDevOps Version 7z 7zip post-build scripting Varhead EvMSBuild zip http Productivity sln Files ftp Commands NuGet MSBuild pre-build Versioning downloader archiver GetNuTool vsSBE vsSolutionBuildEvent</tags>
   </metadata>
 </package>

@@ -14,7 +14,7 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(RepoDirRoot)com.github.3F.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <Copyright Condition="'$(Copyright)'==''">Copyright (c) 2013-2020  Denis Kuzmin &lt; x-3F@outlook.com &gt; GitHub/3F</Copyright>
+    <Copyright Condition="'$(Copyright)'==''">Copyright (c) 2013-2021  Denis Kuzmin &lt;x-3F@outlook.com&gt; github/3F</Copyright>
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
     <Configurations>DBG_SDK10;DBG_SDK15;REL_SDK10;REL_SDK15;DCI_SDK10;DCI_SDK15;RCI_SDK10;RCI_SDK15</Configurations>
     <NoWarn>1701;1702;CS1591</NoWarn>

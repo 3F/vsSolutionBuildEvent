@@ -1,40 +1,36 @@
-# [vsSolutionBuildEvent](https://github.com/3F/vsSolutionBuildEvent)
-
-🎚🎛 **Event**-Catcher with variety of advanced **Actions** to service projects, libraries, build processes, runtime environment of the Visual Studio, MSBuild Tools, and … 
+[![](https://raw.githubusercontent.com/3F/vsSolutionBuildEvent/master/vsSolutionBuildEvent/Resources/Package.png)](https://github.com/3F/vsSolutionBuildEvent) [**vsSolutionBuildEvent**](https://github.com/3F/vsSolutionBuildEvent)
 
 **Control everything: Visual Studio, MSBuild Tools, CI, and more …**
+
+🎛 *Event*-Catcher with variety of advanced *Actions* 
+
+[![Event model](https://vssbe.r-eg.net/doc/Resources/events_model_small.png)](#)
+
+to service projects, libraries, build processes, runtime environment of the Visual Studio, MSBuild Tools, and … 
+
+```r
+Copyright (c) 2013-2021  Denis Kuzmin <x-3F@outlook.com> github/3F
+```
+
+[ 「 <sub>@</sub> ☕ 」 ](https://3F.github.io/Donation/) [![LGPLv3](https://img.shields.io/badge/license-LGPLv3-008033.svg)](LICENSE)
+
+**[Download](https://vssbe.r-eg.net/Downloads/)** 
+
+* **Archive** before *v1.14* via sf
+    * [![D2](https://img.shields.io/sourceforge/dt/vssbe.svg)](https://sourceforge.net/projects/vssbe/)
+* [VisualStudio Marketplace](https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334)
 
 [![Build status - master](https://ci.appveyor.com/api/projects/status/l38xn0j2c5an28e1/branch/master?svg=true)](https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/branch/master)
 [![VSIX](https://vssbe.r-eg.net/etc/badges/VSPackage.svg)](https://vssbe.r-eg.net/Changelist/#vsix)
 [![nuget package](https://img.shields.io/nuget/v/vsSolutionBuildEvent.svg)](https://www.nuget.org/packages/vsSolutionBuildEvent/)
 [![API](https://vssbe.r-eg.net/etc/badges/API.svg)](https://vssbe.r-eg.net/Changelist/#api)
-[![LGPLv3](https://vssbe.r-eg.net/etc/badges/License.svg)](https://vssbe.r-eg.net/License/)
+
+[![Build history](https://buildstats.info/appveyor/chart/3Fs/vssolutionbuildevent?buildCount=20&showStats=true)](https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/history)
+
 [![MvsSln](https://img.shields.io/badge/🧩-MvsSln-865FC5)](https://github.com/3F/MvsSln)
 [![GetNuTool](https://img.shields.io/badge/🧩-GetNuTool-93C10B)](https://github.com/3F/GetNuTool)
 [![SobaScript](https://img.shields.io/badge/🧩-SobaScript-8E5733)](https://github.com/3F/SobaScript)
 [![E-MSBuild](https://img.shields.io/badge/🧩-E--MSBuild-C8597A)](https://github.com/3F/E-MSBuild)
-
-[![Build history](https://buildstats.info/appveyor/chart/3Fs/vssolutionbuildevent?buildCount=20&showStats=true)](https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/history)
-[![Event model](https://vssbe.r-eg.net/doc/Resources/events_model_small.png)]()
-[![Short Overview](https://vssbe.r-eg.net/doc/Resources/examples/overview-youtube.png)](https://youtu.be/FX5GiMX0ulI) 
-
-**[Download](https://vssbe.r-eg.net/Downloads/)** (Binaries, Snapshots, Nightly builds, Libraries, ...) / [![D2](https://img.shields.io/sourceforge/dt/vssbe.svg)](https://sourceforge.net/projects/vssbe/) (old releases via sf)
-
-* [VisualStudio Marketplace](https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334)
-
-## License
-
-Licensed under the [LGPLv3](https://github.com/3F/vsSolutionBuildEvent/blob/master/LICENSE)
-
-```
-Copyright (c) 2013-2016,2019-2020  Denis Kuzmin < x-3F@outlook.com > GitHub/3F
-```
-
-[ [ ☕ Donate ](https://3F.github.com/Donation/) ]
-
-vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent/graphs/contributors
-
-We're waiting for your awesome contributions!
 
 ## Why vsSolutionBuildEvent ?
 
@@ -289,5 +285,7 @@ Welcome:
 ![](https://3F.github.io/web.vsSBE/doc/Resources/Screenshots/msbuild_prop_code_completion.png)
 
 ![](media/scr/Automatic_Version_Numbering.png)
+
+[![Overview.VS2013](https://vssbe.r-eg.net/doc/Resources/examples/overview-youtube.png)](https://youtu.be/FX5GiMX0ulI)
 
 [**[. . .](https://vssbe.r-eg.net/Screenshots/)**]
