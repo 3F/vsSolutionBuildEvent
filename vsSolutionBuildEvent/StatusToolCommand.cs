@@ -25,7 +25,7 @@ using net.r_eg.vsSBE.Bridge.Exceptions;
 using net.r_eg.vsSBE.Configuration;
 using net.r_eg.vsSBE.UI.Xaml;
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Threading;
 #endif
@@ -59,7 +59,7 @@ namespace net.r_eg.vsSBE
 
         private IConfig<ISolutionEvents> Config => Settings.CfgManager.Config;
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
 
         /// <param name="pkg">Owner package.</param>
         /// <param name="evt">Supported public events, not null.</param>
@@ -120,7 +120,7 @@ namespace net.r_eg.vsSBE
                             .detachEvents(Config)
                             .detachEvents(apievt);
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
 
         /// <summary>
         /// NOTE: Be careful with FindToolWindowAsync and ShowToolWindowAsync.
@@ -175,7 +175,7 @@ namespace net.r_eg.vsSBE
 
         private void onAction(object sender, EventArgs e)
         {
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             _ = ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(pkg.CancellationToken);
@@ -184,7 +184,7 @@ namespace net.r_eg.vsSBE
                 IVsWindowFrame windowFrame = (IVsWindowFrame)toolPane.Frame;
                 Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             });
 #endif
         }

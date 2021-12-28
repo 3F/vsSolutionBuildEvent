@@ -19,8 +19,8 @@
     <ProjectReference Include="..\MvsSln\MvsSln\MvsSln.csproj">
       <Project>{F905DFB2-2E67-4FF7-9001-924F6F2D645D}</Project>
       <Name>MvsSln</Name>
-      <AdditionalProperties Condition="'$(IsVSSDK15)'!='true'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(IsVSSDK15)'=='true'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

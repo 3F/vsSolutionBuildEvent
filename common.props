@@ -7,10 +7,12 @@
 
     <VsSbeTfmSdk10>net40</VsSbeTfmSdk10>
     <VsSbeTfmSdk15>net472</VsSbeTfmSdk15>
+    <VsSbeTfmSdk17>$(VsSbeTfmSdk15)</VsSbeTfmSdk17>
 
     <!-- For a non-SDK-stlye projects using TargetFrameworkVersion property -->
     <VsSbeTfmVersionSdk10>v4.0</VsSbeTfmVersionSdk10>
     <VsSbeTfmVersionSdk15>v4.7.2</VsSbeTfmVersionSdk15>
+    <VsSbeTfmVersionSdk17>$(VsSbeTfmVersionSdk15)</VsSbeTfmVersionSdk17>
 
   </PropertyGroup>
 
@@ -23,7 +25,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Configurations>DBG_SDK10;DBG_SDK15;REL_SDK10;REL_SDK15</Configurations>
+    <Configurations>DBG_SDK10;REL_SDK10;DBG_SDK15;REL_SDK15;DBG_SDK17;REL_SDK17</Configurations>
     <Configuration Condition="'$(Configuration)'==''">DBG_SDK10</Configuration>
     <Platform Condition="'$(Platform)'==''">AnyCPU</Platform>
   </PropertyGroup>
@@ -44,10 +46,9 @@
   <PropertyGroup Condition="$(Configuration.Contains('SDK10'))">
     <TargetFrameworks Condition="'$(UsingMicrosoftNETSdk)'=='true'">$(VsSbeTfmSdk10)</TargetFrameworks>
     <TargetFrameworkVersion Condition="'$(UsingMicrosoftNETSdk)'!='true'">$(VsSbeTfmVersionSdk10)</TargetFrameworkVersion>
-    <DefineConstants>NET_40;$(DefineConstants)</DefineConstants>
+    <DefineConstants>$(DefineConstants);NET_40;SDK10</DefineConstants>
     <SdklibTarget>net40</SdklibTarget>
     <VsSbeSdkBase>10</VsSbeSdkBase>
-    <IsVSSDK15>false</IsVSSDK15>
   </PropertyGroup>
 
   <PropertyGroup Condition="$(Configuration.Contains('SDK15'))">
@@ -55,8 +56,15 @@
     <TargetFrameworkVersion Condition="'$(UsingMicrosoftNETSdk)'!='true'">$(VsSbeTfmVersionSdk15)</TargetFrameworkVersion>
     <SdklibTarget>net45</SdklibTarget>
     <VsSbeSdkBase>15</VsSbeSdkBase>
-    <IsVSSDK15>true</IsVSSDK15>
-    <DefineConstants>$(DefineConstants);VSSDK_15_AND_NEW;CODE_ANALYSIS</DefineConstants>
+    <DefineConstants>$(DefineConstants);SDK15_OR_HIGH;SDK15;CODE_ANALYSIS</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Configuration.Contains('SDK17'))">
+    <TargetFrameworks Condition="'$(UsingMicrosoftNETSdk)'=='true'">$(VsSbeTfmSdk17)</TargetFrameworks>
+    <TargetFrameworkVersion Condition="'$(UsingMicrosoftNETSdk)'!='true'">$(VsSbeTfmVersionSdk17)</TargetFrameworkVersion>
+    <SdklibTarget>net45</SdklibTarget>
+    <VsSbeSdkBase>17</VsSbeSdkBase>
+    <DefineConstants>$(DefineConstants);SDK15_OR_HIGH;SDK17;CODE_ANALYSIS</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug' Or $(Configuration.Contains('DBG_'))">

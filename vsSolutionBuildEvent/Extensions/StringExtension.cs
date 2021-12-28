@@ -61,7 +61,7 @@ namespace net.r_eg.vsSBE.Extensions
         /// <returns></returns>
         public static string GetDevEnvDir(this string ptr)
         {
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
 #endif
 

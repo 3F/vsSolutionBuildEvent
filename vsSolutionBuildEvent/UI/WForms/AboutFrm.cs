@@ -193,7 +193,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
             space = new DeepSpace(pictureBoxSpace.CreateGraphics(), pictureBoxSpace.Width, pictureBoxSpace.Height);
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             string lSdk = "SDK15";
 #else
             string lSdk = "SDK10";

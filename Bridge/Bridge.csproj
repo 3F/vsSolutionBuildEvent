@@ -7,15 +7,19 @@
     <RootNamespace>net.r_eg.vsSBE.Bridge</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(VsSbeSdkBase)'=='10'">
+  <ItemGroup Condition="'$(VsSbeSdkBase)' == '17'">
+    <PackageReference Include="Microsoft.VisualStudio.Interop" Version="$(MicrosoftVisualStudioInteropVersion)" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(VsSbeSdkBase)' == '15'">
+    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop" Version="$(MicrosoftVisualStudioShellInteropVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(VsSbeSdkBase)' == '10'">
     <Reference Include="Microsoft.VisualStudio.Shell.Interop, Version=7.1.40304.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(Sdk10libTarget)\Microsoft.VisualStudio.Shell.Interop.dll</HintPath>
       <Private>True</Private>
     </Reference>
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(VsSbeSdkBase)'=='15'">
-    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop" Version="$(MicrosoftVisualStudioShellInteropVersion)" />
   </ItemGroup>
 
   <ItemGroup>

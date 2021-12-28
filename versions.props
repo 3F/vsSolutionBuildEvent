@@ -37,6 +37,9 @@
     <MicrosoftVisualStudioSDKEmbedInteropTypesVersion>15.0.30</MicrosoftVisualStudioSDKEmbedInteropTypesVersion>
     <MicrosoftVisualStudioThreadingAnalyzersVersion>17.0.64</MicrosoftVisualStudioThreadingAnalyzersVersion>
     <MicrosoftVisualStudioSDKAnalyzersVersion>16.10.10</MicrosoftVisualStudioSDKAnalyzersVersion>
+    <MicrosoftVisualStudioSDKVersion>17.0.31902.203</MicrosoftVisualStudioSDKVersion>
+    <MicrosoftVSSDKBuildToolsVersion>17.0.5233</MicrosoftVSSDKBuildToolsVersion>
+    <MicrosoftVisualStudioInteropVersion>17.0.31902.203</MicrosoftVisualStudioInteropVersion>
   </PropertyGroup>
 
   <!-- packages\vsSBE.SDK.xxx -->

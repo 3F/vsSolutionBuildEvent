@@ -29,7 +29,7 @@ using net.r_eg.EvMSBuild;
 using net.r_eg.SobaScript.Components;
 using System.Linq;
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
 using Microsoft.VisualStudio.Shell;
 #endif
 
@@ -181,7 +181,7 @@ namespace net.r_eg.vsSBE.API
         /// <inheritdoc/>
         public int onProjectPre(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel)
         {
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
 #endif
 
@@ -227,7 +227,7 @@ namespace net.r_eg.vsSBE.API
         /// <inheritdoc/>
         public int onProjectPost(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
         {
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
 #endif
 
@@ -418,7 +418,7 @@ namespace net.r_eg.vsSBE.API
         /// </summary>
         protected void init()
         {
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             Log.Info($"SDK15 & {vsSBE.Version.S_INFO}");
 #else
             Log.Info($"SDK10 & {vsSBE.Version.S_INFO}");

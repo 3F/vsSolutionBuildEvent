@@ -20,7 +20,7 @@ using System;
 using System.Threading;
 using Microsoft.VisualStudio.Shell;
 
-#if !VSSDK_15_AND_NEW
+#if !SDK15_OR_HIGH
 using System.Threading.Tasks;
 using Task = System.Threading.Tasks.Task;
 #endif
@@ -83,7 +83,7 @@ namespace net.r_eg.vsSBE.VSTools.ErrorList
         {
             // prevents possible bug from `Process.ErrorDataReceived` because of NLog
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             _ = ThreadHelper.JoinableTaskFactory.RunAsync(async () => 
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
@@ -100,7 +100,7 @@ namespace net.r_eg.vsSBE.VSTools.ErrorList
                     ErrorCategory = type,
                 });
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             });
 #else
             }, 

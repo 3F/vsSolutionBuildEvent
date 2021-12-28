@@ -43,7 +43,7 @@ namespace net.r_eg.vsSBE.VSTools.OW
         /// </summary>
         public void Activate()
         {
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
 #endif
 
@@ -55,7 +55,7 @@ namespace net.r_eg.vsSBE.VSTools.OW
         /// </summary>
         public void Clear()
         {
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
 #endif
 
@@ -68,7 +68,7 @@ namespace net.r_eg.vsSBE.VSTools.OW
         /// <param name="text"></param>
         public void OutputString(string text)
         {
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             ThreadHelper.ThrowIfNotOnUIThread();
             pane.OutputStringThreadSafe(text);
 #else
@@ -82,7 +82,7 @@ namespace net.r_eg.vsSBE.VSTools.OW
         {
             if(ow == null) throw new ArgumentNullException(nameof(ow));
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
 #endif
 

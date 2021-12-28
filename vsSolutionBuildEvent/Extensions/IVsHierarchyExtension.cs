@@ -32,7 +32,7 @@ namespace net.r_eg.vsSBE.Extensions
                 return Guid.Empty;
             }
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             ThreadHelper.ThrowIfNotOnUIThread();
 #endif
 
@@ -51,7 +51,7 @@ namespace net.r_eg.vsSBE.Extensions
                 return null;
             }
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             ThreadHelper.ThrowIfNotOnUIThread();
 #endif
 
@@ -70,7 +70,7 @@ namespace net.r_eg.vsSBE.Extensions
                 return null;
             }
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             ThreadHelper.ThrowIfNotOnUIThread();
 #endif
 
