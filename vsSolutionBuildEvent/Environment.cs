@@ -51,13 +51,12 @@ namespace net.r_eg.vsSBE
 
         private string startupProject;
 
+        private ConfigItem currentSlnConf;
+
         /// <summary>
         /// List of EnvDTE projects.
         /// </summary>
-        public IEnumerable<DProject> ProjectsDTE
-        {
-            get => _DTEProjects;
-        }
+        public IEnumerable<DProject> ProjectsDTE => _DTEProjects;
 
         /// <summary>
         /// List of Microsoft.Build.Evaluation projects.
@@ -280,6 +279,23 @@ namespace net.r_eg.vsSBE
                         yield return subproject;
                     }
                 }
+            }
+        }
+
+        protected override ConfigItem ActiveSlnConf
+        {
+            get
+            {
+                SolutionConfiguration2 cfg = SolutionActiveCfg;
+                if(cfg == null) return null;
+
+                if(currentSlnConf?.IsEqualByRule(cfg.Name, cfg.PlatformName) == true)
+                {
+                    return currentSlnConf;
+                }
+
+                currentSlnConf = new(cfg.Name, cfg.PlatformName);
+                return currentSlnConf;
             }
         }
 
