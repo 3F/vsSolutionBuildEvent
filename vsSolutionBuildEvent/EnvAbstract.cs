@@ -41,6 +41,8 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public abstract string SolutionFile { get; protected set; }
 
+        protected abstract ConfigItem ActiveSlnConf { get; }
+
         protected abstract void UpdateSlnEnv(ISlnResult sln);
 
         /// <summary>
@@ -108,16 +110,19 @@ namespace net.r_eg.vsSBE
 
             Log.Trace($"getProject: started with '{name}' /{StartupProjectString}");
 
-            if(String.IsNullOrEmpty(name)) {
-                name = StartupProjectString;
-            }
+            if(string.IsNullOrEmpty(name)) name = StartupProjectString;
 
             ProjectItem project = Sln.ProjectItems.FirstOrDefault(p => p.name == name);
             if(project.fullPath == null) {
                 throw new NotFoundException($"Project '{name}' was not found. ['{project.name}', '{project.pGuid}']");
             }
 
-            return SlnEnv?.GetOrLoadProject(project);
+            IConfPlatformPrj cfg = Sln.ProjectItemsConfigs
+                                        .FirstOrDefault(p => ActiveSlnConf?.Equals(p.solutionConfig) == true)
+                                        .projectConfig;
+
+            return (cfg == null) ? SlnEnv?.GetOrLoadProject(project) 
+                                 : SlnEnv?.GetOrLoadProject(project, cfg);
         }
 
         /// <summary>

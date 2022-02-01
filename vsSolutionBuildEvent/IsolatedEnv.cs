@@ -41,6 +41,8 @@ namespace net.r_eg.vsSBE
 
         protected readonly IConfPlatform defaultCfg = new ConfigSln("Debug", "Any CPU");
 
+        private ConfigItem currentSlnConf;
+
         private string _startupProjectString;
 
         private readonly IDictionary<string, string> _properties;
@@ -178,6 +180,8 @@ namespace net.r_eg.vsSBE
             get => __disabled<IOW>(nameof(OutputWindowPane));
         }
 
+        protected override ConfigItem ActiveSlnConf => extractCfg(slnProperties);
+
         /// <summary>
         /// An unified unscoped and out of Project instance the property value by its name.
         /// Remarks: Any property values cannot be null.
@@ -292,14 +296,20 @@ namespace net.r_eg.vsSBE
             return properties;
         }
 
-        protected IConfPlatform extractCfg(IDictionary<string, string> properties)
+        protected ConfigItem extractCfg(IDictionary<string, string> properties)
         {
             IConfPlatform def = Sln?.DefaultConfig;
 
-            return new ConfigItem(
-                properties.GetOrDefault(PropertyNames.CONFIG, def?.Configuration),
-                properties.GetOrDefault(PropertyNames.PLATFORM, def?.Platform)
-            );
+            string configuration = properties.GetOrDefault(PropertyNames.CONFIG, def?.Configuration);
+            string platform = properties.GetOrDefault(PropertyNames.PLATFORM, def?.Platform);
+
+            if(currentSlnConf?.IsEqualByRule(configuration, platform) == true)
+            {
+                return currentSlnConf;
+            }
+
+            currentSlnConf = new(configuration, platform);
+            return currentSlnConf;
         }
 
         protected string formatCfg(IDictionary<string, string> properties)
