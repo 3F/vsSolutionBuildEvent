@@ -8,7 +8,7 @@
     <AssemblyOriginatorKeyFile>$(RepoDirRoot)SobaScript.Z.VS\SobaScript.Z.VSTest\key.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Moq" Version="4.13.0" />
+    <PackageReference Include="Moq" Version="$(MoqVersion)" />
   </ItemGroup>
 
   <ItemGroup>

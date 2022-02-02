@@ -170,7 +170,7 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         public int bindProjectPre(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, ref int pfCancel)
         {
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
 #endif
 
@@ -192,7 +192,7 @@ namespace net.r_eg.vsSBE.Actions
         /// </summary>
         public int bindProjectPost(IVsHierarchy pHierProj, IVsCfg pCfgProj, IVsCfg pCfgSln, uint dwAction, int fSuccess, int fCancel)
         {
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
 #endif
 
@@ -608,7 +608,7 @@ namespace net.r_eg.vsSBE.Actions
                 return projectName;
             }
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
 #endif
 
@@ -684,7 +684,7 @@ namespace net.r_eg.vsSBE.Actions
 
         protected void onProject(IVsHierarchy pHierProj, ExecutionOrderType type, bool fSuccess = true)
         {
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             ThreadHelper.ThrowIfNotOnUIThread(); //TODO: upgrade to 15
 #endif
 

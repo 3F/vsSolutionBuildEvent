@@ -16,7 +16,7 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Copyright Condition="'$(Copyright)'==''">Copyright (c) 2013-2021  Denis Kuzmin &lt;x-3F@outlook.com&gt; github/3F</Copyright>
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
-    <Configurations>DBG_SDK10;DBG_SDK15;REL_SDK10;REL_SDK15</Configurations>
+    <Configurations>DBG_SDK10;REL_SDK10;DBG_SDK15;REL_SDK15;DBG_SDK17;REL_SDK17</Configurations>
     <OverrideLSenderConfigurations>$(Configurations)</OverrideLSenderConfigurations>
     <NoWarn>1701;1702;CS1591</NoWarn>
     <LangVersion>latest</LangVersion>

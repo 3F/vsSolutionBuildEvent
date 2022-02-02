@@ -8,12 +8,16 @@
     <NoStandardLibraries>false</NoStandardLibraries>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(VsSbeSdkBase)' >= '15'">
+    <EnableDefaultItems>false</EnableDefaultItems>
+  </PropertyGroup>
+
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(VsSbeSdkBase)'=='10'">
+  <ItemGroup Condition="'$(VsSbeSdkBase)' == '10'">
     <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
       <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(Sdk10libTarget)\EnvDTE.dll</HintPath>
@@ -44,24 +48,12 @@
     </Reference>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(VsSbeSdkBase)'=='15'">
-    <PackageReference Include="envdte" Version="$(EnvDteVersion)" />
-    <PackageReference Include="envdte80" Version="$(EnvDte80Version)" />
-    <PackageReference Include="Microsoft.VisualStudio.OLE.Interop" Version="$(MicrosoftVisualStudioOLEInteropVersion)" />
-    <PackageReference Include="Microsoft.VisualStudio.Shell.Interop" Version="$(MicrosoftVisualStudioShellInteropVersion)" />
-    <Reference Include="Microsoft.VisualStudio.Shell.10.0">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\vsSBE.SDK.$(vsSBE_SDK)\lib\$(Sdk15libTarget)\Microsoft.VisualStudio.Shell.10.0.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
+  <ItemGroup Condition="'$(VsSbeSdkBase)' == '10'">
     <ProjectReference Include="..\Bridge\Bridge.csproj" />
     <ProjectReference Include="..\Provider\Provider.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(VsSbeSdkBase)' == '10'">
     <Content Include="changelog.txt" />
     <Content Include="Devenv.AddIn">
       <SubType>Designer</SubType>

@@ -22,7 +22,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using net.r_eg.vsSBE.Events;
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
 using Microsoft.VisualStudio.Shell;
 #endif
 
@@ -66,7 +66,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
         /// </summary>
         public void warn()
         {
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             _ = ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -76,7 +76,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
 #endif
                 textInfo.Text = logic.addWarning().ToString();
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             });
 #else
             }));
@@ -137,7 +137,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
                 Log.Warn("StatusToolControl: Failed update for type - '{0}' :: '{1}'", type, ex.Message);
             }
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             _ = ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -148,7 +148,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
                 btn.Content     = caption(type, false);
                 btn.IsChecked   = !isDisabledAll(type);
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             });
 #else
             }));

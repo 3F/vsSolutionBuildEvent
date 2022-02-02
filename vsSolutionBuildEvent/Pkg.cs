@@ -28,7 +28,7 @@ using net.r_eg.vsSBE.Bridge;
 using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.UI.Xaml;
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
 using System.Threading.Tasks;
 using System.ComponentModel.Design;
 using Microsoft.VisualStudio.Threading;
@@ -37,7 +37,7 @@ using Task = System.Threading.Tasks.Task;
 
 namespace net.r_eg.vsSBE
 {
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
     // Managed Package Registration
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
 
@@ -64,7 +64,7 @@ namespace net.r_eg.vsSBE
     [Guid(GuidList.PACKAGE_STRING)]
     public sealed class Pkg:
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
          AsyncPackage,
 #else
          Package,
@@ -146,7 +146,7 @@ namespace net.r_eg.vsSBE
         {
             get
             {
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
                 return DisposalToken;
 #else
                 return CancellationToken.None;
@@ -154,7 +154,7 @@ namespace net.r_eg.vsSBE
             }
         }
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
 
         /// <summary>
         /// VSSDK003: Visual Studio 2017 Update 6 or later
@@ -305,7 +305,7 @@ namespace net.r_eg.vsSBE
             return Event.onProjectPost(pHierProj, pCfgProj, pCfgSln, dwAction, fSuccess, fCancel);
         }
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
 
         /// <summary>
         /// Finds or creates tool window.
@@ -355,7 +355,7 @@ namespace net.r_eg.vsSBE
 
 #endif
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
 
         /// <summary>
         /// Modern 15+ Initialization of the package; this method is called right after the package is sited.
@@ -443,7 +443,7 @@ namespace net.r_eg.vsSBE
 
 #endif
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
 
         protected override string GetToolWindowTitle(Type toolWindowType, int id)
         {
@@ -504,7 +504,7 @@ namespace net.r_eg.vsSBE
 
         private void _showCriticalVsMsg(IVsUIShell uiShell, Exception ex)
         {
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             ThreadHelper.ThrowIfNotOnUIThread();
 #endif
             string msg = String.Format
@@ -576,7 +576,7 @@ namespace net.r_eg.vsSBE
                 ((IDisposable)errorList).Dispose();
             }
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             _ = ThreadHelper.JoinableTaskFactory.RunAsync(async () =>
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(DisposalToken);
@@ -590,7 +590,7 @@ namespace net.r_eg.vsSBE
                     spSolution.UnadviseSolutionEvents(_pdwCookieSolution);
                 }
 
-#if VSSDK_15_AND_NEW
+#if SDK15_OR_HIGH
             });
 #endif
 

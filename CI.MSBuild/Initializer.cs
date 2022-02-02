@@ -197,7 +197,7 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         protected void header()
         {
             log.info($"{Environment.NewLine}  vsSolutionBuildEvent");
-            log.info( "  Copyright (c) 2013-2021  Denis Kuzmin <x-3F@outlook.com> github/3F");
+            log.info( "  Copyright (c) 2013-2022  Denis Kuzmin <x-3F@outlook.com> github/3F");
             log.info($"  CI.MSBuild: {System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion}");
             log.info($"  https://github.com/3F/vsSolutionBuildEvent {Environment.NewLine}");
         }

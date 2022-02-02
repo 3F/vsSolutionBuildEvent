@@ -205,7 +205,7 @@
             // chkStackTrace
             // 
             this.chkStackTrace.AutoSize = true;
-            this.chkStackTrace.Location = new System.Drawing.Point(189, 6);
+            this.chkStackTrace.Location = new System.Drawing.Point(180, 6);
             this.chkStackTrace.Name = "chkStackTrace";
             this.chkStackTrace.Size = new System.Drawing.Size(82, 17);
             this.chkStackTrace.TabIndex = 11;
@@ -232,9 +232,9 @@
             this.checkBoxMSBuildSupport.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxMSBuildSupport.Location = new System.Drawing.Point(94, 6);
             this.checkBoxMSBuildSupport.Name = "checkBoxMSBuildSupport";
-            this.checkBoxMSBuildSupport.Size = new System.Drawing.Size(89, 17);
+            this.checkBoxMSBuildSupport.Size = new System.Drawing.Size(75, 17);
             this.checkBoxMSBuildSupport.TabIndex = 9;
-            this.checkBoxMSBuildSupport.Text = "E-MSBuild engine";
+            this.checkBoxMSBuildSupport.Text = "E-MSBuild";
             this.checkBoxMSBuildSupport.UseVisualStyleBackColor = true;
             // 
             // btnExecute
@@ -408,7 +408,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(750, 360);
             this.Controls.Add(this.splitContainerMVertical);
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MinimumSize = new System.Drawing.Size(400, 210);
             this.Name = "ScriptCheckFrm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
