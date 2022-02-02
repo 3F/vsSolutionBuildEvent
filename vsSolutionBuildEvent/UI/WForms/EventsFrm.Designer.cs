@@ -374,7 +374,7 @@
             this.panelStatusBR.Controls.Add(this.btnApply);
             this.panelStatusBR.Controls.Add(this.panelLineBottom);
             this.panelStatusBR.Controls.Add(this.statusStrip);
-            this.panelStatusBR.Location = new System.Drawing.Point(680, 496);
+            this.panelStatusBR.Location = new System.Drawing.Point(680, 611);
             this.panelStatusBR.Margin = new System.Windows.Forms.Padding(0);
             this.panelStatusBR.Name = "panelStatusBR";
             this.panelStatusBR.Size = new System.Drawing.Size(310, 30);
@@ -932,7 +932,7 @@
             this.splitContainer.Panel2.Controls.Add(this.panelLineForSplit);
             this.splitContainer.Panel2.Controls.Add(this.tabControl);
             this.splitContainer.Panel2MinSize = 670;
-            this.splitContainer.Size = new System.Drawing.Size(990, 500);
+            this.splitContainer.Size = new System.Drawing.Size(990, 615);
             this.splitContainer.SplitterDistance = 202;
             this.splitContainer.TabIndex = 4;
             this.splitContainer.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer_SplitterMoved);
@@ -946,7 +946,7 @@
             this.panelManagerMain.Location = new System.Drawing.Point(0, 0);
             this.panelManagerMain.Margin = new System.Windows.Forms.Padding(0);
             this.panelManagerMain.Name = "panelManagerMain";
-            this.panelManagerMain.Size = new System.Drawing.Size(202, 500);
+            this.panelManagerMain.Size = new System.Drawing.Size(202, 615);
             this.panelManagerMain.TabIndex = 48;
             // 
             // pictureBoxToggle
@@ -978,7 +978,7 @@
             this.dgvActions.ContextMenuStrip = this.contextMenuActions;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -999,7 +999,7 @@
             this.dgvActions.RowTemplate.Height = 17;
             this.dgvActions.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvActions.ShowEditingIcon = false;
-            this.dgvActions.Size = new System.Drawing.Size(202, 500);
+            this.dgvActions.Size = new System.Drawing.Size(202, 615);
             this.dgvActions.TabIndex = 46;
             this.dgvActions.DragDropSortedRow += new System.EventHandler<net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt.MovingRowArgs>(this.dgvActions_DragDropSortedRow);
             this.dgvActions.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvActions_CellContentClick);
@@ -1043,7 +1043,7 @@
             this.panelLineForSplit.Location = new System.Drawing.Point(0, 0);
             this.panelLineForSplit.Margin = new System.Windows.Forms.Padding(0);
             this.panelLineForSplit.Name = "panelLineForSplit";
-            this.panelLineForSplit.Size = new System.Drawing.Size(1, 500);
+            this.panelLineForSplit.Size = new System.Drawing.Size(1, 615);
             this.panelLineForSplit.TabIndex = 1;
             // 
             // tabControl
@@ -1058,7 +1058,7 @@
             this.tabControl.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(784, 500);
+            this.tabControl.Size = new System.Drawing.Size(784, 615);
             this.tabControl.TabIndex = 0;
             // 
             // tabPageSettings
@@ -1068,7 +1068,7 @@
             this.tabPageSettings.Location = new System.Drawing.Point(4, 25);
             this.tabPageSettings.Margin = new System.Windows.Forms.Padding(0);
             this.tabPageSettings.Name = "tabPageSettings";
-            this.tabPageSettings.Size = new System.Drawing.Size(776, 471);
+            this.tabPageSettings.Size = new System.Drawing.Size(776, 586);
             this.tabPageSettings.TabIndex = 1;
             this.tabPageSettings.Text = "Settings";
             // 
@@ -1088,7 +1088,7 @@
             this.panelSettingsMain.Location = new System.Drawing.Point(0, 0);
             this.panelSettingsMain.Margin = new System.Windows.Forms.Padding(0);
             this.panelSettingsMain.Name = "panelSettingsMain";
-            this.panelSettingsMain.Size = new System.Drawing.Size(776, 471);
+            this.panelSettingsMain.Size = new System.Drawing.Size(776, 586);
             this.panelSettingsMain.TabIndex = 44;
             // 
             // panelTimeLimit
@@ -1388,7 +1388,7 @@
             this.panelCommand.Location = new System.Drawing.Point(6, 261);
             this.panelCommand.Name = "panelCommand";
             this.panelCommand.Padding = new System.Windows.Forms.Padding(5, 1, 1, 1);
-            this.panelCommand.Size = new System.Drawing.Size(767, 118);
+            this.panelCommand.Size = new System.Drawing.Size(767, 233);
             this.panelCommand.TabIndex = 62;
             // 
             // textEditor
@@ -1398,7 +1398,7 @@
             this.textEditor.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.textEditor.Location = new System.Drawing.Point(5, 1);
             this.textEditor.Name = "textEditor";
-            this.textEditor.Size = new System.Drawing.Size(761, 116);
+            this.textEditor.Size = new System.Drawing.Size(761, 231);
             this.textEditor.TabIndex = 0;
             // 
             // labelToCommandBox
@@ -1616,7 +1616,7 @@
             this.owpRemove});
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -1683,7 +1683,7 @@
             this.panelSettingsBottom.Controls.Add(this.labelOnlyFor);
             this.panelSettingsBottom.Controls.Add(this.labelOrder);
             this.panelSettingsBottom.Controls.Add(this.panelToolButtons);
-            this.panelSettingsBottom.Location = new System.Drawing.Point(6, 376);
+            this.panelSettingsBottom.Location = new System.Drawing.Point(6, 491);
             this.panelSettingsBottom.Margin = new System.Windows.Forms.Padding(0);
             this.panelSettingsBottom.Name = "panelSettingsBottom";
             this.panelSettingsBottom.Size = new System.Drawing.Size(770, 99);
@@ -1758,7 +1758,7 @@
             this.dgvOrderType});
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -1964,7 +1964,7 @@
             this.dgvCESniffer.ContextMenuStrip = this.contextMenuSniffer;
             dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -2142,7 +2142,7 @@
             this.dgvCEFiltersColumnRemove});
             dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle9.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             dataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -2334,7 +2334,7 @@
             this.dgvComponents.ContextMenuStrip = this.contextMenuComponents;
             dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle10.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             dataGridViewCellStyle10.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -2452,7 +2452,7 @@
             this.dgvComponentInfo.ContextMenuStrip = this.contextMenuComponents;
             dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle11.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             dataGridViewCellStyle11.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
@@ -2567,12 +2567,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(987, 526);
+            this.ClientSize = new System.Drawing.Size(987, 641);
             this.Controls.Add(this.linkAddAction);
             this.Controls.Add(this.panelStatusBR);
             this.Controls.Add(this.panelEventType);
             this.Controls.Add(this.splitContainer);
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MinimumSize = new System.Drawing.Size(815, 472);
             this.Name = "EventsFrm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

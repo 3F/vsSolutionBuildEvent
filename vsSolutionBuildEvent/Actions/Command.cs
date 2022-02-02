@@ -105,7 +105,7 @@ namespace net.r_eg.vsSBE.Actions
             if(evt.ToConfiguration != null 
                 && evt.ToConfiguration.Length > 0 && !evt.ToConfiguration.Any(s => cmpConfig(s, cfg)))
             {
-                Log.Info("Action '{0}' is ignored for current configuration - '{1}'", evt.Caption, cfg);
+                Log.Info($"Ignore action '{evt.Caption}' for current configuration '{cfg}'");
                 return false;
             }
 
@@ -114,7 +114,7 @@ namespace net.r_eg.vsSBE.Actions
                 return false;
             }
 
-            Log.Info($"Launching '{evt.Name}' due to '{type}' for '{cfg}' using {evt.Mode.Type} mode.");
+            Log.Info($"Run '{evt.Name}' due to '{type}' for '{cfg}' using {evt.Mode.Type} mode.");
             if(!string.IsNullOrWhiteSpace(evt.Caption)) {
                 Log.Info(evt.Caption);
             }
@@ -198,15 +198,16 @@ namespace net.r_eg.vsSBE.Actions
             }
             Log.Debug("Ask user about action [{0}]:{1} '{2}'", EventType, evt.Name, evt.Caption);
 
-            string msg = String.Format("Execute the next action ?\n  [{0}]:{1} '{2}'\n\n* Cancel - to disable current action",
-                                        EventType, evt.Name, evt.Caption);
+            System.Windows.Forms.DialogResult ret = System.Windows.Forms.MessageBox.Show
+            (
+                $"[{EventType}] '{evt.Name}'\n{evt.Caption}\n\n*Click [Cancel] to disable this action.",
+                "Confirm the action. Execute?", 
+                System.Windows.Forms.MessageBoxButtons.YesNoCancel, 
+                System.Windows.Forms.MessageBoxIcon.Question
+            );
 
-            System.Windows.Forms.DialogResult ret = System.Windows.Forms.MessageBox.Show(msg,
-                                                                                        "Confirm the action", 
-                                                                                        System.Windows.Forms.MessageBoxButtons.YesNoCancel, 
-                                                                                        System.Windows.Forms.MessageBoxIcon.Question);
-
-            switch(ret) {
+            switch(ret)
+            {
                 case System.Windows.Forms.DialogResult.Yes: {
                     return true;
                 }

@@ -418,7 +418,9 @@ namespace net.r_eg.vsSBE.API
         /// </summary>
         protected void init()
         {
-#if SDK15_OR_HIGH
+#if SDK17
+            Log.Info($"SDK17 & {vsSBE.Version.S_INFO}");
+#elif SDK15
             Log.Info($"SDK15 & {vsSBE.Version.S_INFO}");
 #else
             Log.Info($"SDK10 & {vsSBE.Version.S_INFO}");

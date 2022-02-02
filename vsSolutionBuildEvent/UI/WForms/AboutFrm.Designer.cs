@@ -267,7 +267,7 @@
             this.txtCopyright.ReadOnly = true;
             this.txtCopyright.Size = new System.Drawing.Size(394, 13);
             this.txtCopyright.TabIndex = 6;
-            this.txtCopyright.Text = "(c) 2013-2021  Denis Kuzmin <x-3F@outlook.com> github/3F";
+            this.txtCopyright.Text = "Copyright (c) 2013-2022  Denis Kuzmin <x-3F@outlook.com> github/3F";
             // 
             // btnDonate
             // 
@@ -299,7 +299,7 @@
             this.Controls.Add(this.groupBoxMixed);
             this.Controls.Add(this.groupBoxIncludes);
             this.Controls.Add(this.pictureBoxSpace);
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.Name = "AboutFrm";
