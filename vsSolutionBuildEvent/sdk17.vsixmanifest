@@ -14,13 +14,15 @@
         <Tags>build, automation, DevOps, events, MSBuild, CI, Scripts, DevTools, zip, http, Compiler, shell, Productivity, CSharp, solution, files, ftp, Commands, projects, DTE, EnvDTE, cmd, NuGet, build automation, post-build, Versioning, Continuous Integration, batch, scripting, TeamCity, Version, Usability, logger, pre-build, Warnings, Errors, Output, AppVeyor, replace in files, targets, Azure DevOps, downloader, GetNuTool, 7z, 7zip, archiver</Tags>
     </Metadata>
     <Installation>
-        <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[15.0,17.0)" />
-        <InstallationTarget Id="Microsoft.VisualStudio.Enterprise" Version="[15.0,17.0)" />
-        <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0,17.0)" />
-        <InstallationTarget Id="Microsoft.VisualStudio.IntegratedShell" Version="[15.0,17.0)" />
-        <InstallationTarget Id="Microsoft.VisualStudio.VSWinExpress" Version="[15.0,17.0)" />
-        <InstallationTarget Id="Microsoft.VisualStudio.VWDExpress" Version="[15.0,17.0)" />
-        <InstallationTarget Id="Microsoft.VisualStudio.VSWinDesktopExpress" Version="[15.0,17.0)" />
+        <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[17.0,)">
+            <ProductArchitecture>amd64</ProductArchitecture>
+        </InstallationTarget>
+        <InstallationTarget Id="Microsoft.VisualStudio.Enterprise" Version="[17.0,)">
+            <ProductArchitecture>amd64</ProductArchitecture>
+        </InstallationTarget>
+        <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[17.0,)">
+            <ProductArchitecture>amd64</ProductArchitecture>
+        </InstallationTarget>
     </Installation>
     <Dependencies>
     </Dependencies>

@@ -202,6 +202,8 @@
           "#[File replace.Regexp(\"#[var pDir]/sdk10.vsixmanifest\", \"<Version>[0-9.]+</Version>\", \"<Version>#[var vsixvnum]</Version>\")]",
           "",
           "#[File replace.Regexp(\"#[var pDir]/sdk15.vsixmanifest\", \"(<Identity.*?) Version=\\\"[0-9.]+\\\"\", \"$1 Version=\\\"#[var vsixvnum]\\\"\")]",
+          "",
+          "#[File replace.Regexp(\"#[var pDir]/sdk17.vsixmanifest\", \"(<Identity.*?) Version=\\\"[0-9.]+\\\"\", \"$1 Version=\\\"#[var vsixvnum]\\\"\")]",
           ""
         ]
       }
@@ -254,8 +256,7 @@
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
         "Command__": [
-          "#[( $(cfgSDK) > 15 ) { #[var vsixmSdk = 15] }else{ #[var vsixmSdk = $(cfgSDK)] }]",
-          "#[IO copy.file(\"$(pDir)/sdk$(vsixmSdk).vsixmanifest\", \"$(pDir)/source.extension.vsixmanifest\", true)]",
+          "#[IO copy.file(\"$(pDir)/sdk$(cfgSDK).vsixmanifest\", \"$(pDir)/source.extension.vsixmanifest\", true)]",
           ""
         ]
       }
