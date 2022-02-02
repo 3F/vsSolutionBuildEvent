@@ -31,7 +31,7 @@ namespace net.r_eg.vsSBE.CI.GUI
     internal static class Sln
     {
         private const string EXT = ".sln";
-        private const string DEF_NAME = EXT;
+        private const string DEF_NAME = "vssbe" + EXT;
 
         /// <param name="input">Path to directory or .sln or null to search using current dir.</param>
         /// <param name="generate">True to generate the new one instead of exception.</param>
@@ -71,7 +71,7 @@ namespace net.r_eg.vsSBE.CI.GUI
         private static string GenerateNewSln(string dir)
         {
             var _sln = Path.Combine(dir ?? throw new ArgumentNullException(nameof(dir)), DEF_NAME);
-            File.WriteAllText(_sln, "\r\nMicrosoft Visual Studio Solution File, Format Version 11.00");
+            File.WriteAllText(_sln, "\r\nMicrosoft Visual Studio Solution File, Format Version 11.00\r\n");
             return _sln;
         }
 
