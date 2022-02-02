@@ -5,7 +5,7 @@
     <MicrosoftNETTestSdkVersion>17.0.0</MicrosoftNETTestSdkVersion>
     <xunitVersion>2.4.1</xunitVersion>
     <xunitRunnerVisualstudioVersion>2.4.3</xunitRunnerVisualstudioVersion>
-    <AvalonEditVersion>6.1.2.30</AvalonEditVersion>
+    <AvalonEditVersion>6.1.3.50</AvalonEditVersion>
     <SevenZipSharpVersion>0.64.0</SevenZipSharpVersion>
     <UdeSignedVersion>0.1.1</UdeSignedVersion>
     <EnvDteVersion>8.0.2</EnvDteVersion>
@@ -37,9 +37,9 @@
     <MicrosoftVisualStudioSDKEmbedInteropTypesVersion>15.0.30</MicrosoftVisualStudioSDKEmbedInteropTypesVersion>
     <MicrosoftVisualStudioThreadingAnalyzersVersion>17.0.64</MicrosoftVisualStudioThreadingAnalyzersVersion>
     <MicrosoftVisualStudioSDKAnalyzersVersion>16.10.10</MicrosoftVisualStudioSDKAnalyzersVersion>
-    <MicrosoftVisualStudioSDKVersion>17.0.31902.203</MicrosoftVisualStudioSDKVersion>
-    <MicrosoftVSSDKBuildToolsVersion>17.0.5233</MicrosoftVSSDKBuildToolsVersion>
-    <MicrosoftVisualStudioInteropVersion>17.0.31902.203</MicrosoftVisualStudioInteropVersion>
+    <MicrosoftVisualStudioSDKVersion>17.0.32112.339</MicrosoftVisualStudioSDKVersion>
+    <MicrosoftVSSDKBuildToolsVersion>17.0.5234</MicrosoftVSSDKBuildToolsVersion>
+    <MicrosoftVisualStudioInteropVersion>17.0.32112.339</MicrosoftVisualStudioInteropVersion>
   </PropertyGroup>
 
   <!-- packages\vsSBE.SDK.xxx -->
