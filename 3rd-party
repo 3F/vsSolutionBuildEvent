@@ -3,7 +3,8 @@ vsSolutionBuildEvent - https://github.com/3F/vsSolutionBuildEvent
 
 # Third-party software components
 
-## The vsSolutionBuildEvent includes
+## vsSolutionBuildEvent and its various packages may* include or reference:
+    (*- specific target platforms or some complex archives)
 
     * SobaScript (github.com/3F/SobaScript)
         * Core Components (github.com/3F/SobaScript.Z.Core)
@@ -21,12 +22,13 @@ vsSolutionBuildEvent - https://github.com/3F/vsSolutionBuildEvent
     * 7-Zip (www.7-zip.org)
     * GetNuTool (github.com/3F/GetNuTool)
     
-## Maintaining of this project also includes the following tools
+## Dev Dependencies includes the following tools for src
 
     * Moq (www.moqthis.com)
     * GetNuTool (github.com/3F/GetNuTool)
-    * vsSolutionBuildEvent CI.MSBuild (vssbe.r-eg.net)
+    * vsSolutionBuildEvent (github.com/3F/vsSolutionBuildEvent)
     * hMSBuild (github.com/3F/hMSBuild)
+    * netfx4sdk (github.com/3F/netfx4sdk)
 
 
 ## Additional packages

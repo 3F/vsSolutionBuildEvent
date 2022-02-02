@@ -1,5 +1,65 @@
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 vsSolutionBuildEvent - https://github.com/3F/vsSolutionBuildEvent
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+[1.15] 2022.02.02
+
+    * NEW: Visual Studio 2022 support. SDK17. PR #75
+    
+    * FIXED: MSBuild Properties not changing according to solution configuration.
+             Issue #71
+             
+    * FIXED: Fixed unexpected plugin deactivation in Visual Studio 2010.
+    
+    * FIXED: Fixed incorrect format of new generated .sln for CIM.
+    
+    * CHANGED: Updated the follwoing references:
+    
+        * MSBuild 17.0.0 for SDK15 and SDK17 only
+          https://www.nuget.org/packages/Microsoft.Build/17.0.0
+          
+        * MvsSln 2.6.1
+          https://github.com/3F/MvsSln/releases/tag/2.6.1
+          
+        * 7z.Libs 21.6.0
+          https://github.com/3F/7z.Libs/releases/tag/21.6.0
+          
+        * Microsoft.VisualStudio.Interop 17.0.32112.339
+          https://www.nuget.org/packages/Microsoft.VisualStudio.Interop/17.0.32112.339
+          
+        * NLog 4.7.13
+          https://github.com/NLog/NLog/releases/tag/v4.7.13
+          
+        * AvalonEdit 6.1.3.50
+          https://github.com/icsharpcode/AvalonEdit/releases/tag/v6.1.3
+          
+        * System.Runtime.CompilerServices.Unsafe 5.0.0
+          https://go.microsoft.com/fwlink/?LinkID=799421
+          
+        * Newtonsoft.Json 13.0.1
+          https://github.com/JamesNK/Newtonsoft.Json/releases/tag/13.0.1
+          
+        * LSender 1.16
+          https://github.com/3F/LSender/releases/tag/1.16
+    
+    
+    * KNOWN: 7z: relative paths like ..\Dir for input files lead to wrong filename in zip file.
+             Please follow the temporary solution described here:
+             https://github.com/3F/vsSolutionBuildEvent/issues/70
+    
+    * NOTE: Choose the package that suits your needs:
+    
+            *.vsix  - Visual Studio
+            *.nupkg - MSBuild
+            *.zip   - API, samples, etc.
+            
+            GitHub: https://github.com/3F/vsSolutionBuildEvent/releases/tag/1.15
+            NuGet:  https://www.nuget.org/packages/vsSolutionBuildEvent/
+            
+            * SDK17: Visual Studio 2022+ 
+            * SDK15: Visual Studio 2019, 2017
+            * SDK10: Visual Studio 2017, 2015, 2013, 2012, 2010
+            
 
 [1.14.1] 2020.07.31
 
