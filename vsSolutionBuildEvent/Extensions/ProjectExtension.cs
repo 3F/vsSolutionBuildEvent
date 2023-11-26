@@ -18,20 +18,21 @@ namespace net.r_eg.vsSBE.Extensions
 {
     public static class ProjectExtension
     {
-        private static IRuleOfConfig cfgRule = new RuleOfConfig();
+        private static readonly IRuleOfConfig cfgRule = new RuleOfConfig();
 
         public static IXProject GetXProject(this DProject prj, IXProjectEnv env, bool tryLoad = true)
         {
-            if(prj == null || env == null) {
-                return null;
-            }
+            if(prj == null || env == null) return null;
+            if(!env.IsSupportedProject(prj.FullName)) return null;
 
-            var cfg = new ConfigItem(
+            ConfigItem cfg = new
+            (
                 prj.GetActiveConfig(),
                 prj.GetActivePlatform()
             );
 
-            if(!tryLoad) {
+            if(!tryLoad)
+            {
                 return env.XProjectByFile(prj.FullName, cfg, false);
             }
 
@@ -110,6 +111,20 @@ namespace net.r_eg.vsSBE.Extensions
         public static DProject GetEProject(this EProject prj, IEnvironment env)
         {
             return env?.ProjectsDTE?.FirstOrDefault(p => p.FullName == prj.FullPath);
+        }
+
+        private static bool IsSupportedProject(this IXProjectEnv env, string input)
+        {
+            ProjectItem prj = env.Sln.ProjectItems.First(p => p.fullPath == input);
+
+            // Issue #78, .vdproj - deprecated more than 10 years ago by MS
+            bool ignore = prj.pType.CompareGuids("{54435603-DBB4-11D2-8724-00A0C9A8B90C}");
+
+            if(ignore)
+            {
+                Log.Debug($"Unsupported project {prj.name} ({prj.pGuid}) is ignored; Type {prj.pType}");
+            }
+            return !ignore;
         }
     }
 }
