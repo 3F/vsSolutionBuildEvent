@@ -46,7 +46,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
-    <PackageReference Include="AvalonEdit" Version="$(AvalonEditVersion)" />
     <PackageReference Include="Ude.Signed" Version="$(UdeSignedVersion)" />
     <PackageReference Include="SevenZipSharp" Version="$(SevenZipSharpVersion)" />
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
@@ -86,16 +85,6 @@
         <!-- `Microsoft.VisualStudio.SDK.EmbedInteropTypes` package provides .targets where solution for EmbedInteropTypes=true
               described here https://docs.microsoft.com/en-us/nuget/create-packages/author-packages-with-com-interop-assemblies -->
         <PackageReference Include="Microsoft.VisualStudio.SDK.EmbedInteropTypes" Version="$(MicrosoftVisualStudioSDKEmbedInteropTypesVersion)" />
-      </ItemGroup>
-      <ItemGroup>
-        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="$(MicrosoftVisualStudioThreadingAnalyzersVersion)">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.VisualStudio.SDK.Analyzers" Version="$(MicrosoftVisualStudioSDKAnalyzersVersion)">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
       </ItemGroup>
     </When>
     <When Condition="'$(VsSbeSdkBase)' == '10'">
@@ -146,6 +135,26 @@
         </Reference>
         <Reference Include="Microsoft.Build" />
         <Reference Include="Microsoft.Build.Framework" />
+      </ItemGroup>
+      <ItemGroup>
+        <PackageReference Include="AvalonEdit" Version="$(AvalonEditVersionSDK10)" />
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Choose>
+    <When Condition="'$(VsSbeSdkBase)' == '17' or '$(VsSbeSdkBase)' == '15'">
+      <ItemGroup>
+        <PackageReference Include="AvalonEdit" Version="$(AvalonEditVersion)" />
+      </ItemGroup>
+      <ItemGroup>
+        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="$(MicrosoftVisualStudioThreadingAnalyzersVersion)">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.VisualStudio.SDK.Analyzers" Version="$(MicrosoftVisualStudioSDKAnalyzersVersion)">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
       </ItemGroup>
     </When>
   </Choose>
