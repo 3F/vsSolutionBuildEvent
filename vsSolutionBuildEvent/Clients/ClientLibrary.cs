@@ -11,7 +11,6 @@ using System.IO;
 using System.Reflection;
 using net.r_eg.MvsSln.Extensions;
 using net.r_eg.vsSBE.Bridge;
-using net.r_eg.vsSBE.Extensions;
 
 namespace net.r_eg.vsSBE.Clients
 {
@@ -22,33 +21,11 @@ namespace net.r_eg.vsSBE.Clients
         /// </summary>
         public const string NAME = "client.vssbe.dll";
 
-        /// <summary>
-        /// Name of client library with full path.
-        /// </summary>
-        public string FullName
-        {
-            get { return Dllpath + NAME; }
-        }
+        public string FullName { get; }
 
-        /// <summary>
-        /// Absolute path to client library.
-        /// </summary>
-        public string Dllpath
-        {
-            get {
-                return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location).DirectoryPathFormat();
-            }
-        }
+        public string Dllpath { get; }
 
-        /// <summary>
-        /// Checking existence of client library.
-        /// </summary>
-        public bool Exists
-        {
-            get {
-                return File.Exists(FullName);
-            }
-        }
+        public bool Exists => File.Exists(FullName);
 
         /// <summary>
         /// Access to IEvent2 in client library.
@@ -124,10 +101,21 @@ namespace net.r_eg.vsSBE.Clients
             return init(true);
         }
 
-        /// <summary>
-        /// Initialize library
-        /// </summary>
-        /// <returns></returns>
+        public ClientLibrary()
+        {
+            string sys = Path.Combine(Settings._.CommonPath, NAME);
+            if(File.Exists(sys))
+            {
+                Dllpath = Settings._.CommonPath;
+                FullName = sys;
+            }
+            else
+            {
+                Dllpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location).DirectoryPathFormat();
+                FullName = Path.Combine(Dllpath, NAME);
+            }
+        }
+
         protected bool init()
         {
             if(!Exists) {

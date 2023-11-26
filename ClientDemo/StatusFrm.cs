@@ -67,5 +67,15 @@ namespace ClientDemo
         {
             richTextBoxMain.Clear();
         }
+
+        private void chkPin_CheckedChanged(object sender, System.EventArgs e)
+        {
+            TopMost = chkPin.Checked;
+        }
+
+        private void StatusFrm_Load(object sender, System.EventArgs e)
+        {
+            chkPin_CheckedChanged(sender, e);
+        }
     }
 }

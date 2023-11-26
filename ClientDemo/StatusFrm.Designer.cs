@@ -32,6 +32,7 @@
             this.btnSrc = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.chkPin = new System.Windows.Forms.CheckBox();
             this.panelMain = new System.Windows.Forms.Panel();
             this.btnCopy = new System.Windows.Forms.Button();
             this.panelTop.SuspendLayout();
@@ -84,6 +85,7 @@
             // 
             // panelTop
             // 
+            this.panelTop.Controls.Add(this.chkPin);
             this.panelTop.Controls.Add(this.btnCopy);
             this.panelTop.Controls.Add(this.btnAPI);
             this.panelTop.Controls.Add(this.btnClear);
@@ -114,6 +116,21 @@
             this.btnCopy.UseVisualStyleBackColor = true;
             this.btnCopy.Click += new System.EventHandler(this.btnCopy_Click);
             // 
+            // chkPin
+            // 
+            this.chkPin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkPin.AutoSize = true;
+            this.chkPin.Checked = true;
+            this.chkPin.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkPin.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.chkPin.Location = new System.Drawing.Point(621, 3);
+            this.chkPin.Name = "chkPin";
+            this.chkPin.Size = new System.Drawing.Size(36, 17);
+            this.chkPin.TabIndex = 5;
+            this.chkPin.Text = "📌";
+            this.chkPin.UseVisualStyleBackColor = true;
+            this.chkPin.CheckedChanged += new System.EventHandler(this.chkPin_CheckedChanged);
+            // 
             // StatusFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -127,8 +144,9 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Demo client to vsSolutionBuildEvent";
-            this.TopMost = true;
+            this.Load += new System.EventHandler(this.StatusFrm_Load);
             this.panelTop.ResumeLayout(false);
+            this.panelTop.PerformLayout();
             this.panelMain.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -143,5 +161,6 @@
         private System.Windows.Forms.Panel panelTop;
         private System.Windows.Forms.Button btnCopy;
         private System.Windows.Forms.Panel panelMain;
+        private System.Windows.Forms.CheckBox chkPin;
     }
 }

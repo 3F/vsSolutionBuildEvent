@@ -1219,12 +1219,6 @@ namespace net.r_eg.vsSBE.UI.WForms
             App.Config.Sys.save();
         }
 
-        private void toolStripMenuCopyPath_Click(object sender, EventArgs e)
-        {
-            Clipboard.SetText($"\"{Settings.LPath}\"");
-            MessageBox.Show($"Has been copied to clipboard:\n\n{Settings.LPath}\n\nUse this with CI utilities etc.", "Full path to vsSolutionBuildEvent");
-        }
-
         private void dgvComponents_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if(e.ColumnIndex == dgvComponents.Columns.IndexOf(dgvComponentsEnabled) || e.RowIndex < 0) {
@@ -1635,6 +1629,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void toolStripMenuIssue_Click(object sender, EventArgs e) => Util.openUrl("https://github.com/3F/vsSolutionBuildEvent/issues?q=is%3Aissue");
         private void toolStripMenuSources_Click(object sender, EventArgs e) => Util.openUrl("https://github.com/3F/vsSolutionBuildEvent");
         private void toolStripMenuLicense_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/License/");
+        private void toolStripMenuSysDir_Click(object sender, EventArgs e) => Util.openUrl($"\"{App.CommonPath}\"");
         private void toolStripMenuPluginDir_Click(object sender, EventArgs e) => Util.openUrl($"\"{App.LibPath}\"");
         private void toolStripMenuCIMSBuild_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/doc/CI/CI.MSBuild/");
         private void toolStripMenuDevenv_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/doc/CI/Devenv%20Command-Line/");

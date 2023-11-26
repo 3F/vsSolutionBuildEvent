@@ -84,7 +84,7 @@
             this.toolStripMenuAPI = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuPlugin = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuCopyPath = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuSysDir = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuPluginDir = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuSBEPanel = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuHelp = new System.Windows.Forms.ToolStripSplitButton();
@@ -649,7 +649,7 @@
             // toolStripMenuPlugin
             // 
             this.toolStripMenuPlugin.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuCopyPath,
+            this.toolStripMenuSysDir,
             this.toolStripMenuPluginDir,
             this.toolStripSeparator4,
             this.toolStripMenuSuppressInitOwp});
@@ -657,18 +657,19 @@
             this.toolStripMenuPlugin.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuPlugin.Text = "Plugin";
             // 
-            // toolStripMenuCopyPath
+            // toolStripMenuSysDir
             // 
-            this.toolStripMenuCopyPath.Name = "toolStripMenuCopyPath";
-            this.toolStripMenuCopyPath.Size = new System.Drawing.Size(216, 22);
-            this.toolStripMenuCopyPath.Text = "Copy path to plugin";
-            this.toolStripMenuCopyPath.Click += new System.EventHandler(this.toolStripMenuCopyPath_Click);
+            this.toolStripMenuSysDir.Name = "toolStripMenuSysDir";
+            this.toolStripMenuSysDir.Size = new System.Drawing.Size(216, 22);
+            this.toolStripMenuSysDir.Text = "Open a common directory";
+            this.toolStripMenuSysDir.ToolTipText = "Directory for a common configuration, Client library (API), etc.";
+            this.toolStripMenuSysDir.Click += new System.EventHandler(this.toolStripMenuSysDir_Click);
             // 
             // toolStripMenuPluginDir
             // 
             this.toolStripMenuPluginDir.Name = "toolStripMenuPluginDir";
             this.toolStripMenuPluginDir.Size = new System.Drawing.Size(216, 22);
-            this.toolStripMenuPluginDir.Text = "Open directory with plugin";
+            this.toolStripMenuPluginDir.Text = "Open directory where plugin";
             this.toolStripMenuPluginDir.Click += new System.EventHandler(this.toolStripMenuPluginDir_Click);
             // 
             // toolStripMenuSBEPanel
@@ -2797,7 +2798,7 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuCIMSBuild;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuDevenv;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuPlugin;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuCopyPath;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuSysDir;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuPluginDir;
         private System.Windows.Forms.PictureBox pictureBoxWarnWait;
         private System.Windows.Forms.ToolTip toolTip;
