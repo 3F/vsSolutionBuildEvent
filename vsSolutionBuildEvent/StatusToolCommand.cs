@@ -46,7 +46,7 @@ namespace net.r_eg.vsSBE
 
         public IStatusToolEvents ToolEvents => (IStatusToolEvents)toolPane;
 
-        private IConfig<ISolutionEvents> Config => Settings.CfgManager.Config;
+        private IConfig<ISolutionEvents> Config => Settings._.Config.Sln;
 
 #if SDK15_OR_HIGH
 

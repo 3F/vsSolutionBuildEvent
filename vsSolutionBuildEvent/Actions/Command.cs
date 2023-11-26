@@ -202,7 +202,7 @@ namespace net.r_eg.vsSBE.Actions
                 }
                 case System.Windows.Forms.DialogResult.Cancel: {
                     evt.Enabled = false;
-                    Settings.CfgManager.Config.save();
+                    Settings._.Config.Sln.save();
                     throw new UnspecSBEException("Aborted by user");
                 }
             }

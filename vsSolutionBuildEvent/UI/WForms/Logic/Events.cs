@@ -45,7 +45,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         /// <summary>
         /// Registered used SBE-events
         /// </summary>
-        protected List<SBEWrap> events = new List<SBEWrap>();
+        protected List<SBEWrap> events = new();
 
         /// <summary>
         /// Selected event
@@ -60,55 +60,25 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         /// <summary>
         /// List of available types of the build
         /// </summary>
-        protected List<BuildType> buildType = new List<BuildType>();
+        protected List<BuildType> buildType = new();
 
-        /// <summary>
-        /// Backup of settings.
-        /// </summary>
-        protected RestoreData backup = new RestoreData();
+        protected BackupSettings backup = new();
 
         /// <summary>
         /// Information by existing components
         /// </summary>
-        protected Dictionary<string, List<INodeInfo>> cInfo = new Dictionary<string, List<INodeInfo>>();
+        protected Dictionary<string, List<INodeInfo>> cInfo = new();
 
         /// <summary>
         /// Provides command events for automation clients
         /// </summary>
         protected EnvDTE.CommandEvents cmdEvents;
 
-        /// <summary>
-        /// object synch.
-        /// </summary>
-        private Object _lock = new Object();
+        private readonly object _lock = new();
 
-        /// <summary>
-        /// Provides operations with environment
-        /// </summary>
-        public IEnvironment Env
-        {
-            get;
-            protected set;
-        }
+        public IEnvironment Env { get; protected set; }
 
-        /// <summary>
-        /// Used loader
-        /// </summary>
-        public Bootloader Loader
-        {
-            get;
-            protected set;
-        }
-
-        /// <summary>
-        /// Manager of configurations.
-        /// </summary>
-        public Configuration.IManager CfgManager
-        {
-            get {
-                return Settings.CfgManager;
-            }
-        }
+        public Bootloader Loader { get; protected set; }
 
         /// <summary>
         /// Current SBE-event
@@ -144,9 +114,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         /// Access to available events.
         /// </summary>
         public ISolutionEvents SlnEvents
-        {
-            get { return Settings.Cfg; }
-        }
+            => Settings._.Config.Sln.Data;
 
         /// <summary>
         /// Next unique name for action
@@ -287,35 +255,14 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
 
         public void saveData()
         {
-            CfgManager.UserConfig.save();
-            CfgManager.Config.save(); // all changes has been passed by reference
+            Settings._.Config.save();
             backupUpdate();
         }
 
         public void restoreData()
         {
-            if(Settings.CfgUser != null) {
-                Settings.CfgUser.avoidRemovingFromCache();
-            }
+            Settings._.Config.Usr.Data?.cancelCacheRemoving();
             backupRestore();
-        }
-
-        /// <summary>
-        /// Clone configuration from specific context into current.
-        /// </summary>
-        /// <param name="from">Clone from this context.</param>
-        public void cloneCfg(ContextType from)
-        {
-            CfgManager.Config.load(CfgManager.getConfigFor(from).Data.CloneBySerializationWithType<ISolutionEvents, SolutionEvents>());
-            CfgManager.UserConfig.load(CfgManager.getUserConfigFor(from).Data.CloneBySerializationWithType<IData, Data>());
-        }
-
-        /// <summary>
-        /// Update of backup copies of user config for actual context.
-        /// </summary>
-        public void updateUserCfg()
-        {
-            backup.update(CfgManager.UserConfig.Data.CloneBySerializationWithType<IData, Data>(), CfgManager.Context);
         }
 
         public void fillEvents(ComboBox combo)
@@ -755,7 +702,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
                     return;
                 }
 
-                Settings.CfgUser.toRemoveFromCache(cfg.CacheData);
+                Settings._.Config.Usr.Data?.unsetFromCache(cfg.CacheData);
                 cacheUnlink(mode);
             }
         }
@@ -792,7 +739,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         /// <returns></returns>
         public ICommon getCommonCfg(ModeType type)
         {
-            var data    = Settings.CfgUser.Common;
+            var data    = Settings._.Config.Usr.Data?.Common;
             Route route = new Route() { Event = SBE.type, Mode = type };
 
             if(!data.ContainsKey(route)) {
@@ -889,43 +836,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         /// Updating of deep copies from configuration data using all available contexts.
         /// </summary>
         protected void backupUpdate()
-        {
-            //backupUpdate(ContextType.Common);
-            //if(CfgManager.IsExistCfg(ContextType.Solution)) {
-            //    backupUpdate(ContextType.Solution);
-            //}
-            backupUpdate(ContextType.Static);
-        }
+            => backup.update(Settings._.Config.Usr, Settings._.Config.Sln);
 
-        /// <summary>
-        /// Updating of deep copies from configuration data using specific context.
-        /// </summary>
-        protected void backupUpdate(ContextType context)
-        {
-            backup.update(CfgManager.getConfigFor(context).Data.CloneBySerializationWithType<ISolutionEvents, SolutionEvents>(), context);
-            backup.update(CfgManager.getUserConfigFor(context).Data.CloneBySerializationWithType<IData, Data>(), context);
-        }
-
-        /// <summary>
-        /// Restore configuration data from backup using all available contexts.
-        /// </summary>
         protected void backupRestore()
-        {
-            backupUpdate(ContextType.Static);
-            //if(CfgManager.IsExistCfg(ContextType.Solution)) {
-            //    backupRestore(ContextType.Solution);
-            //}
-            //backupRestore(ContextType.Common);
-        }
-
-        /// <summary>
-        /// Restore configuration data from backup using specific context.
-        /// </summary>
-        protected void backupRestore(ContextType context)
-        {
-            CfgManager.getConfigFor(context).load(backup.getConfig(context).CloneBySerializationWithType<ISolutionEvents, SolutionEvents>());
-            CfgManager.getUserConfigFor(context).load(backup.getUserConfig(context).CloneBySerializationWithType<IData, Data>());
-        }
+            => backup.restore(Settings._.Config.Usr, Settings._.Config.Sln);
 
         /// <summary>
         /// Generating id for present scope

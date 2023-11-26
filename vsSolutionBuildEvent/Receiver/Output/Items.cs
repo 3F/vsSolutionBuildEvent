@@ -70,7 +70,7 @@ namespace net.r_eg.vsSBE.Receiver.Output
                         itemEW[ident] = new ItemEW();
                         return itemEW[ident];
                     }
-                    else if(item == null && ident.item == Settings._.DefaultOWPItem) { //TODO:
+                    else if(item == null && ident.item == Settings.OWP_ITEM_BUILD) { //TODO:
                         return new ItemEW();
                     }
                     else if(item == null) {

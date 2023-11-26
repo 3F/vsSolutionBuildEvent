@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using net.r_eg.MvsSln.Extensions;
 using net.r_eg.SobaScript;
 using net.r_eg.SobaScript.Mapper;
 using net.r_eg.vsSBE.Bridge;
@@ -18,14 +19,20 @@ using net.r_eg.vsSBE.Events.CommandEvents;
 using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.UI.WForms.Components;
 using net.r_eg.vsSBE.UI.WForms.Controls;
+using NLog;
 
 namespace net.r_eg.vsSBE.UI.WForms
 {
-    /// <summary>
-    /// Please note: this is very old version from ~v0.5 (as and all UI namespace),
-    /// ...when it's only started and when we had no any big plans before...
-    /// Thus, for all new, I strongly recommend MVVM or similar pattern to improve IoC and more.
-    /// </summary>
+    // I remind,
+    // The Forms here (almost entire UI namespace) have functional minimalist view/GUI logic;
+    // I really didn't want to complicate this by using MVVM or such (n. more components, more abstraction between, ...etc)
+    //   because the whole GUI didn't bother me at all initially;
+    //
+    // I mean, I pay more attention to the programming interface rather than the graphical one.
+    // The Forms (subscription model as a technology) are still very compact for fast drafting in my opinion (*yeah, deepest backend guy unwilling to spend much time on graphical parts or like).
+    //
+    // Some IoC improvements here are needed but this is not what I want to spend my time for creating just a more scalable GUI here.
+    // You can, however, try to change the rails below because here is still no logic of the model as noted.
     internal partial class EventsFrm: Form, ITransfer
     {
         public const int WM_SYSCOMMAND  = 0x0112;
@@ -1033,9 +1040,9 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void EventsFrm_Load(object sender, EventArgs e)
         {
-            if(!App.IsCfgExists)
+            if(!App.Config.IsLoadedConfigs)
             {
-                Log.Fatal($"Corrupted configuration. User: {App.UserConfig != null} / Main: {App.Config != null}");
+                Log.Fatal($"Corrupted configuration. {App.Config}");
                 MessageBox.Show("We can't continue. See log for details with activated debug mode.", "Corrupted configuration", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 FormClosing -= EventsFrm_FormClosing;
                 Close();
@@ -1066,6 +1073,9 @@ namespace net.r_eg.vsSBE.UI.WForms
                 Log.Error($"Failed to load form: {ex.Message}");
                 Log.Debug(ex.StackTrace);
             }
+
+            TopMost = toolStripMenuPin.Toggle(App.Config.Sys.Data.PinMainWindow);
+            toolStripMenuSuppressInitOwp.Toggle(App.Config.Sys.Data.SuppressInitOwp);
 
             notice(false);
         }
@@ -1205,8 +1215,8 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void toolStripMenuDebugMode_Click(object sender, EventArgs e)
         {
-            App.UserConfig.Global.DebugMode = App.DebugMode = toolStripMenuDebugMode.Checked = !toolStripMenuDebugMode.Checked;
-            logic.updateUserCfg();
+            App.Config.Sys.Data.DebugMode = App.DebugMode = toolStripMenuDebugMode.Toggle();
+            App.Config.Sys.save();
         }
 
         private void toolStripMenuCopyPath_Click(object sender, EventArgs e)
@@ -1522,49 +1532,59 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void menuLogIgnoreTrace_Click(object sender, EventArgs e)
         {
-            App.UserConfig.Global.LogIgnoreLevels["TRACE"] = menuLogIgnoreTrace.Checked = !menuLogIgnoreTrace.Checked;
-            logic.updateUserCfg();
+            App.Config.Sys.Data.LogIgnoreLevels[LogLevel.Trace.Name] = menuLogIgnoreTrace.Toggle();
+            App.Config.Sys.save();
         }
 
         private void menuLogIgnoreDebug_Click(object sender, EventArgs e)
         {
-            App.UserConfig.Global.LogIgnoreLevels["DEBUG"] = menuLogIgnoreDebug.Checked = !menuLogIgnoreDebug.Checked;
-            logic.updateUserCfg();
+            App.Config.Sys.Data.LogIgnoreLevels[LogLevel.Debug.Name] = menuLogIgnoreDebug.Toggle();
+            App.Config.Sys.save();
         }
 
         private void menuLogIgnoreInfo_Click(object sender, EventArgs e)
         {
-            App.UserConfig.Global.LogIgnoreLevels["INFO"] = menuLogIgnoreInfo.Checked = !menuLogIgnoreInfo.Checked;
-            logic.updateUserCfg();
+            App.Config.Sys.Data.LogIgnoreLevels[LogLevel.Info.Name] = menuLogIgnoreInfo.Toggle();
+            App.Config.Sys.save();
         }
 
         private void menuLogIgnoreWarn_Click(object sender, EventArgs e)
         {
-            App.UserConfig.Global.LogIgnoreLevels["WARN"] = menuLogIgnoreWarn.Checked = !menuLogIgnoreWarn.Checked;
-            logic.updateUserCfg();
+            App.Config.Sys.Data.LogIgnoreLevels[LogLevel.Warn.Name] = menuLogIgnoreWarn.Toggle();
+            App.Config.Sys.save();
         }
 
         private void menuLogIgnoreError_Click(object sender, EventArgs e)
         {
-            App.UserConfig.Global.LogIgnoreLevels["ERROR"] = menuLogIgnoreError.Checked = !menuLogIgnoreError.Checked;
-            logic.updateUserCfg();
+            App.Config.Sys.Data.LogIgnoreLevels[LogLevel.Error.Name] = menuLogIgnoreError.Toggle();
+            App.Config.Sys.save();
         }
 
         private void toolStripMenuBug_DropDownOpening(object sender, EventArgs e)
         {
             toolStripMenuDebugMode.Checked = App.DebugMode;
 
-            bool IsIgnoreLevel(string level)
-            {
-                if(!App.UserConfig.Global.LogIgnoreLevels.ContainsKey(level)) return false;
-                return App.UserConfig.Global.LogIgnoreLevels[level];
-            }
+            var ignore = App.Config.Sys.Data.LogIgnoreLevels;
+            menuLogIgnoreTrace.Checked  = ignore.GetOrDefault(LogLevel.Trace.Name);
+            menuLogIgnoreDebug.Checked  = ignore.GetOrDefault(LogLevel.Debug.Name);
+            menuLogIgnoreInfo.Checked   = ignore.GetOrDefault(LogLevel.Info.Name);
+            menuLogIgnoreWarn.Checked   = ignore.GetOrDefault(LogLevel.Warn.Name);
+            menuLogIgnoreError.Checked  = ignore.GetOrDefault(LogLevel.Error.Name);
+        }
 
-            menuLogIgnoreTrace.Checked  = IsIgnoreLevel("TRACE");
-            menuLogIgnoreDebug.Checked  = IsIgnoreLevel("DEBUG");
-            menuLogIgnoreInfo.Checked   = IsIgnoreLevel("INFO");
-            menuLogIgnoreWarn.Checked   = IsIgnoreLevel("WARN");
-            menuLogIgnoreError.Checked  = IsIgnoreLevel("ERROR");
+        private void toolStripMenuSuppressInitOwp_Click(object sender, EventArgs e)
+        {
+            App.Config.Sys.Data.SuppressInitOwp = toolStripMenuSuppressInitOwp.Toggle();
+            App.Config.Sys.save();
+        }
+
+        private void toolStripMenuPin_Click(object sender, EventArgs e)
+        {
+            App.Config.Sys.Data.PinMainWindow
+                = TopMost
+                = toolStripMenuPin.Toggle();
+
+            App.Config.Sys.save();
         }
 
         #region one-line binding

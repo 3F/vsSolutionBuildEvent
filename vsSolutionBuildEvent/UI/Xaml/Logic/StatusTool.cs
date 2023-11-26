@@ -141,7 +141,7 @@ namespace net.r_eg.vsSBE.UI.Xaml.Logic
 
         protected virtual ISolutionEvent[] getEvent(SolutionEventType type)
         {
-            return Settings.Cfg.getEvent(type);
+            return Settings._.Config.Sln.Data?.getEvent(type);
         }
     }
 }

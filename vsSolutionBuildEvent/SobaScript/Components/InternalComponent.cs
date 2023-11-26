@@ -340,7 +340,7 @@ namespace net.r_eg.vsSBE.SobaScript.Components
         protected virtual ISolutionEvent[] getEvent(SolutionEventType type)
         {
             try {
-                return Settings.Cfg.getEvent(type); //TODO:
+                return Settings._.Config.Sln.Data?.getEvent(type); //TODO:
             }
             catch(NotFoundException) {
                 throw new NotSupportedOperationException($"The event type '{type}' is not supported yet.");

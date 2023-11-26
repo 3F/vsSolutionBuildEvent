@@ -25,8 +25,18 @@ namespace net.r_eg.vsSBE.CI.GUI
 
             try
             {
-                var evl = new API.EventLevel();
-                evl.load(GetSln(args), new Dictionary<string, string>());
+                API.EventLevel evl = new();
+                evl.load
+                (
+                    GetSln(args),
+                    [],
+                    Settings._.Config.Sys.Data?.DebugMode ??
+#if DEBUG
+                    true
+#else
+                    false
+#endif
+                );
 
                 var pUnkReserved = new object();
                 evl.solutionOpened(pUnkReserved, 0);

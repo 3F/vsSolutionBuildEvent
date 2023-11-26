@@ -241,6 +241,9 @@
             this.pGridCompilerCfg = new System.Windows.Forms.PropertyGrid();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.linkAddAction = new System.Windows.Forms.LinkLabel();
+            this.toolStripMenuPin = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuSuppressInitOwp = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuActions.SuspendLayout();
             this.panelStatusBR.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -546,7 +549,7 @@
             // 
             this.menuItemSniffer.Name = "menuItemSniffer";
             this.menuItemSniffer.Size = new System.Drawing.Size(178, 22);
-            this.menuItemSniffer.Text = "EnvDTE Sniffer";
+            this.menuItemSniffer.Text = "Sniffer";
             this.menuItemSniffer.Click += new System.EventHandler(this.menuItemSniffer_Click);
             // 
             // menuWizards
@@ -647,9 +650,11 @@
             // 
             this.toolStripMenuPlugin.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuCopyPath,
-            this.toolStripMenuPluginDir});
+            this.toolStripMenuPluginDir,
+            this.toolStripSeparator4,
+            this.toolStripMenuSuppressInitOwp});
             this.toolStripMenuPlugin.Name = "toolStripMenuPlugin";
-            this.toolStripMenuPlugin.Size = new System.Drawing.Size(155, 22);
+            this.toolStripMenuPlugin.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuPlugin.Text = "Plugin";
             // 
             // toolStripMenuCopyPath
@@ -669,7 +674,7 @@
             // toolStripMenuSBEPanel
             // 
             this.toolStripMenuSBEPanel.Name = "toolStripMenuSBEPanel";
-            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(155, 22);
+            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuSBEPanel.Text = "Quick Panel";
             this.toolStripMenuSBEPanel.Click += new System.EventHandler(this.toolStripMenuSBEPanel_Click);
             // 
@@ -780,6 +785,7 @@
             this.toolStripMenuBug.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuReport,
             this.toolStripMenuDebugMode,
+            this.toolStripMenuPin,
             this.toolStripSeparator13,
             this.menuLogMsg});
             this.toolStripMenuBug.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuBug.Image")));
@@ -2563,6 +2569,26 @@
             this.linkAddAction.Text = "Add first action";
             this.linkAddAction.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkAddAction_LinkClicked);
             // 
+            // toolStripMenuPin
+            // 
+            this.toolStripMenuPin.Name = "toolStripMenuPin";
+            this.toolStripMenuPin.Size = new System.Drawing.Size(208, 22);
+            this.toolStripMenuPin.Text = "Pin 📌";
+            this.toolStripMenuPin.Click += new System.EventHandler(this.toolStripMenuPin_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(213, 6);
+            // 
+            // toolStripMenuSuppressInitOwp
+            // 
+            this.toolStripMenuSuppressInitOwp.Name = "toolStripMenuSuppressInitOwp";
+            this.toolStripMenuSuppressInitOwp.Size = new System.Drawing.Size(216, 22);
+            this.toolStripMenuSuppressInitOwp.Text = "Suppress forcing OWP";
+            this.toolStripMenuSuppressInitOwp.ToolTipText = "Do not force show output window panel when initializing solution";
+            this.toolStripMenuSuppressInitOwp.Click += new System.EventHandler(this.toolStripMenuSuppressInitOwp_Click);
+            // 
             // EventsFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2851,5 +2877,8 @@
         private System.Windows.Forms.ToolStripMenuItem menuWizardVersion;
         private System.Windows.Forms.DataGridViewCheckBoxColumn dgvActionEnabled;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvActionName;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuSuppressInitOwp;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuPin;
     }
 }

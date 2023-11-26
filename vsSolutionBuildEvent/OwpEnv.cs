@@ -20,7 +20,7 @@ namespace net.r_eg.vsSBE
     {
         private IEnvironment env;
 
-        public string DefaultItem => Settings._.DefaultOWPItem;
+        public string DefaultItem => Settings.OWP_ITEM_BUILD;
 
         public IEWData EWData
         {

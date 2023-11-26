@@ -34,8 +34,8 @@ namespace net.r_eg.vsSBE.API
         Actions.Binder Action { get; }
 
         /// <summary>
-        /// Manager of configurations.
+        /// Manager of available configurations.
         /// </summary>
-        IManager ConfigManager { get; }
+        ConfManager Config { get; }
     }
 }

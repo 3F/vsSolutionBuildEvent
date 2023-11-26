@@ -8,7 +8,6 @@
 using System;
 using System.Runtime.InteropServices;
 using net.r_eg.vsSBE.Configuration;
-using IUserData = net.r_eg.vsSBE.Configuration.User.IData;
 
 namespace net.r_eg.vsSBE
 {
@@ -16,13 +15,15 @@ namespace net.r_eg.vsSBE
     internal interface IAppSettings
     {
         /// <summary>
-        /// When DebugMode is updated.
-        /// Useful for clients, for example with IEntryPointClient.
+        /// When <see cref="DebugMode"/> is updated.
         /// </summary>
+        /// <remarks>
+        /// Useful for clients, for example, using <see cref="Bridge.IEntryPointClient"/>.
+        /// </remarks>
         event EventHandler<DataArgs<bool>> DebugModeUpdated;
 
         /// <summary>
-        /// When IAppSettings.WorkPath was updated.
+        /// When <see cref="IAppSettings.WorkPath"/> is updated.
         /// </summary>
         event EventHandler<DataArgs<string>> WorkPathUpdated;
 
@@ -33,59 +34,36 @@ namespace net.r_eg.vsSBE
 
         /// <summary>
         /// Ignores all actions if value set as true.
-        /// To support of cycle control, e.g.: PRE -> POST [recursive DTE: PRE -> POST] -> etc.
         /// </summary>
+        /// <remarks>
+        /// To have control like PRE -&gt; POST [recursive DTE: PRE -&gt; POST] -&gt; etc.
+        /// </remarks>
         bool IgnoreActions { get; set; }
 
         /// <summary>
-        /// Checks availability data for used configurations.
-        /// </summary>
-        bool IsCfgExists { get; }
-
-        /// <summary>
-        /// Common path of library.
+        /// Full path to the shared (between instances) directory.
         /// </summary>
         string CommonPath { get; }
 
         /// <summary>
-        /// Full path to library.
+        /// Full path to the library.
         /// </summary>
         string LibPath { get; }
 
         /// <summary>
-        /// Working path for library.
+        /// Full path to the current working directory.
         /// </summary>
         string WorkPath { get; }
 
         /// <summary>
-        /// Manager of configurations.
+        /// Active configuration.
         /// </summary>
-        IManager ConfigManager { get; }
+        ConfManager Config { get; }
 
         /// <summary>
-        /// Main configuration data.
-        /// </summary>
-        ISolutionEvents Config { get; }
-
-        /// <summary>
-        /// User configuration data.
-        /// </summary>
-        IUserData UserConfig { get; }
-
-        /// <summary>
-        /// Global configuration data.
-        /// </summary>
-        IUserData GlobalConfig { get; }
-
-        /// <summary>
-        /// OWP item name by default.
-        /// </summary>
-        string DefaultOWPItem { get; }
-
-        /// <summary>
-        /// Updates working path for library.
+        /// Updates <see cref="WorkPath"/>.
         /// </summary>
         /// <param name="path">New path.</param>
-        void setWorkPath(string path);
+        string setWorkPath(string path);
     }
 }

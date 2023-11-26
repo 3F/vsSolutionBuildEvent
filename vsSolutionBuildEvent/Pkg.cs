@@ -19,7 +19,6 @@ using net.r_eg.vsSBE.UI.Xaml;
 
 #if SDK15_OR_HIGH
 using System.Threading.Tasks;
-using System.ComponentModel.Design;
 using Microsoft.VisualStudio.Threading;
 using Task = System.Threading.Tasks.Task;
 #endif
@@ -178,7 +177,11 @@ namespace net.r_eg.vsSBE
                 //Log.paneAttach(GetOutputPane(GuidList.OWP_SBE, Settings.OWP_ITEM_VSSBE)); // also may be problem with toolWindow as in other COM variant -_-
                 Log._.paneAttach(Settings.OWP_ITEM_VSSBE, Dte2);
                 Log._.clear(false);
-                Log._.show();
+
+                if(Settings._.Config.Sys.Data?.SuppressInitOwp != true)
+                {
+                    Log._.show();
+                }
 
                 sToolCmd?.attachEvents();
 
@@ -457,17 +460,15 @@ namespace net.r_eg.vsSBE
             Log._.Received -= onLogReceived;
             Log._.Received += onLogReceived;
 
-            var usrCfg = new UserConfig();
-            usrCfg.load(usrCfg.getLink(Settings._.CommonPath, Config.Entity.NAME, null));
-
             Event = new API.EventLevel();
             ((IEntryPointCore)Event).load
             (
                 Dte2,
+                Settings._.Config.Sys.Data?.DebugMode ?? 
 #if DEBUG
                 true
 #else
-                usrCfg.Data.Global.DebugMode
+                false
 #endif
             );
 

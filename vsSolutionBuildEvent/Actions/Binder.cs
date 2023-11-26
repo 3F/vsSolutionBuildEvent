@@ -70,10 +70,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// Access to available events.
         /// </summary>
-        protected ISolutionEvents SlnEvents
-        {
-            get { return Settings.Cfg; }
-        }
+        protected ISolutionEvents SlnEvents => Settings._.Config.Sln.Data;
 
         protected sealed class EOProject: ExecutionOrder
         {
@@ -270,7 +267,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="item">Name of item pane</param>
         public void bindBuildRaw(string data, string guid, string item = null)
         {
-            OWPItems._.getEW(new OWPIdent() { guid = guid, item = item ?? Settings._.DefaultOWPItem }).updateRaw(data); //TODO:
+            OWPItems._.getEW(new OWPIdent() { guid = guid, item = item ?? Settings.OWP_ITEM_BUILD }).updateRaw(data); //TODO:
             if(!IsAllowActions)
             {
                 if(!isDisabledAll(SlnEvents.Transmitter)) {

@@ -34,8 +34,8 @@ namespace net.r_eg.vsSBE.UI.WForms.Logic
         /// </summary>
         public void update()
         {
-            if(Settings.Cfg.getEvent(type) != null) {
-                evt = new List<ISolutionEvent>(Settings.Cfg.getEvent(type));
+            if(Settings._.Config.Sln.Data?.getEvent(type) != null) {
+                evt = new List<ISolutionEvent>(Settings._.Config.Sln.Data.getEvent(type));
                 return;
             }
 

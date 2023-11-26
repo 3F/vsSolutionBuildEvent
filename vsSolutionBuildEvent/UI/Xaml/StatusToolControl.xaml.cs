@@ -163,7 +163,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
             else {
                 this.enabled(type, false);
             }
-            Settings.CfgManager.Config.save();
+            Settings._.Config.Sln.save();
         }
 
         protected bool toggleEnabled(SolutionEventType type, bool enabled)
@@ -177,7 +177,7 @@ namespace net.r_eg.vsSBE.UI.Xaml
                 this.enabled(type, false);
                 ret = false;
             }
-            Settings.CfgManager.Config.save();
+            Settings._.Config.Sln.save();
             return ret;
         }
 

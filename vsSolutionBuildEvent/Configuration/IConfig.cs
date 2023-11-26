@@ -35,12 +35,12 @@ namespace net.r_eg.vsSBE.Configuration
         bool InRAM { get; }
 
         /// <summary>
-        /// Load settings from file.
+        /// Load settings from path.
         /// </summary>
-        /// <param name="path">Path to configuration file.</param>
-        /// <param name="prefix">Special version of configuration file.</param>
+        /// <param name="path">Full path to directory where configuration file is located.</param>
+        /// <param name="prefix">Special version of configuration file if not null.</param>
         /// <returns>true value if loaded from existing file, otherwise loaded as new.</returns>
-        bool load(string path, string prefix);
+        bool loadPath(string path, string prefix = null);
 
         /// <summary>
         /// Load settings from other object.
@@ -49,17 +49,11 @@ namespace net.r_eg.vsSBE.Configuration
         void load(T data);
 
         /// <summary>
-        /// Use link from other configuration for loading new settings.
+        /// Load settings using direct link to the file.
         /// </summary>
-        /// <param name="link">Link from other configuration.</param>
+        /// <param name="link">Full path to.</param>
         /// <returns>true value if loaded from existing file, otherwise loaded as new.</returns>
         bool load(string link);
-
-        /// <summary>
-        /// Load settings from file with path by default.
-        /// </summary>
-        /// <returns>true value if loaded from existing file, otherwise loaded as new.</returns>
-        bool load();
 
         /// <summary>
         /// Save settings.
