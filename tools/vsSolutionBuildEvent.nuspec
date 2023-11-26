@@ -22,7 +22,7 @@
     https://github.com/3F/SobaScript
     https://github.com/3F/E-MSBuild
     
-    * Visual Studio VSIX: https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/
+    Page on VisualStudio Marketplace: https://marketplace.visualstudio.com/items?itemName=GitHub3F.vsSolutionBuildEvent-11615
             
     =======================================
     gnt /p:ngpackages="vsSolutionBuildEvent/%CIM%"

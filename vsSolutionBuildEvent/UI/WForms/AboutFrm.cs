@@ -240,7 +240,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void linkLabelDonationHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Util.openUrl("https://3F.github.io/Donation/");
+            btnDonate_Click(sender, e);
         }
 
         private void btnDonate_Click(object sender, EventArgs e)

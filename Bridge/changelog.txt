@@ -4,7 +4,7 @@ _ _ _ _ _ _ _ _ _ _ _ _
 [v1.4] 2016.09.12
 
     * NEW: Compatible changes - new types for BuildType to support of context for Sln-Opened event.
-           All details in the documentation: http://vssbe.r-eg.net/doc/Events/SlnOpened/
+           All details in the documentation: https://3F.github.io/web.vsSBE/doc/Events/SlnOpened/
 
 [v1.3] 2015.08.29
 

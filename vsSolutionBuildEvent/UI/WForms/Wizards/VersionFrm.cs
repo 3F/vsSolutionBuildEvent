@@ -633,7 +633,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards
 
         private void btnManually_Click(object sender, EventArgs e)
         {
-            Util.openUrl("http://vssbe.r-eg.net/doc/Examples/Version/Manually/");
+            Util.openUrl("https://3F.github.io/web.vsSBE/doc/Examples/Version/Manually/");
         }
 
         private void btnFinalCopy_Click(object sender, EventArgs e)

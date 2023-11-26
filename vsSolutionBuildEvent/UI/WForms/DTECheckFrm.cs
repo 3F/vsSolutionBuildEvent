@@ -81,7 +81,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void btnDoc_Click(object sender, EventArgs e)
         {
-            Util.openUrl("http://vssbe.r-eg.net/doc/Scripts/DTE-Commands/");
+            Util.openUrl("https://3F.github.io/web.vsSBE/doc/Scripts/DTE-Commands/");
         }
     }
 }

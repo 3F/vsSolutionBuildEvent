@@ -166,7 +166,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void btnVSCE_Click(object sender, EventArgs e)
         {
-            Util.openUrl("https://visualstudiogallery.msdn.microsoft.com/ad9f19b2-04c0-46fe-9637-9a52ce4ca661/");
+            Util.openUrl("https://marketplace.visualstudio.com/items?itemName=GitHub3F.vsCommandEvent");
         }
     }
 }

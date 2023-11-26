@@ -218,9 +218,7 @@ namespace net.r_eg.vsSBE.Devenv
                 log.info("* Or manually place the 'vsSolutionBuildEvent.dll' with dependencies into AddIn folder: '{0}\\'", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
                 log.info("");
 
-                log.info("See documentation for more details:");
-                log.info("- http://vssbe.r-eg.net");
-                log.info("- http://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
+                log.info("Find the documentation https://github.com/3F/vsSolutionBuildEvent");
                 log.info("");
 
                 log.info("Minimum requirements: vsSolutionBuildEvent.dll v{0}", loader.MinVersion.ToString());

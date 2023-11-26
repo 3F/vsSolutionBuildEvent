@@ -1622,22 +1622,16 @@ namespace net.r_eg.vsSBE.UI.WForms
         #endregion
 
         #region urls
-        private void toolStripMenuGalleryPage_Click(object sender, EventArgs e) => Util.openUrl("https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
-        private void toolStripMenuChangelog_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/Changelist/#vsix");
-        private void toolStripMenuWiki_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/");
-        private void tsMenuItemExamples_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/doc/Examples/");
-        private void toolStripMenuIssue_Click(object sender, EventArgs e) => Util.openUrl("https://github.com/3F/vsSolutionBuildEvent/issues?q=is%3Aissue");
+        private void toolStripMenuGalleryPage_Click(object sender, EventArgs e) => Util.openUrl("https://marketplace.visualstudio.com/items?itemName=GitHub3F.vsSolutionBuildEvent-11615");
+        private void toolStripMenuChangelog_Click(object sender, EventArgs e) => Util.openUrl("https://3F.github.io/web.vsSBE/Changelist/#vsix");
+        private void toolStripMenuWiki_Click(object sender, EventArgs e) => Util.openUrl("https://3F.github.io/web.vsSBE/");
         private void toolStripMenuSources_Click(object sender, EventArgs e) => Util.openUrl("https://github.com/3F/vsSolutionBuildEvent");
-        private void toolStripMenuLicense_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/License/");
         private void toolStripMenuSysDir_Click(object sender, EventArgs e) => Util.openUrl($"\"{App.CommonPath}\"");
         private void toolStripMenuPluginDir_Click(object sender, EventArgs e) => Util.openUrl($"\"{App.LibPath}\"");
-        private void toolStripMenuCIMSBuild_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/doc/CI/CI.MSBuild/");
-        private void toolStripMenuDevenv_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/doc/CI/Devenv%20Command-Line/");
-        private void toolStripMenuAPI_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/doc/API/");
-        private void btnDownloadVSCE_Click(object sender, EventArgs e) => Util.openUrl("https://visualstudiogallery.msdn.microsoft.com/ad9f19b2-04c0-46fe-9637-9a52ce4ca661/file/184640/");
-        private void btnInfoVSCE_Click(object sender, EventArgs e) => Util.openUrl("http://vsce.r-eg.net/About/");
-        private void componentInfo(string name) => Util.openUrl($"http://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/Components/{name}/");
-        private void btnCompNew_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/doc/Dev/New%20Component/");
+        private void toolStripMenuAPI_Click(object sender, EventArgs e) => Util.openUrl("https://3F.github.io/web.vsSBE/doc/API/");
+        private void btnDownloadVSCE_Click(object sender, EventArgs e) => Util.openUrl("https://marketplace.visualstudio.com/items?itemName=GitHub3F.vsCommandEvent");
+        private void componentInfo(string name) => Util.openUrl($"https://3F.github.io/web.vsSBE/doc/Scripts/SBE-Scripts/Components/{name}/");
+        private void btnCompNew_Click(object sender, EventArgs e) => Util.openUrl("https://3F.github.io/web.vsSBE/doc/Dev/New%20Component/");
         #endregion
     }
 }

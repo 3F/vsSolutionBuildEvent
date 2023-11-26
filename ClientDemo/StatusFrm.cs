@@ -48,7 +48,7 @@ namespace ClientDemo
 
         private void btnAPI_Click(object sender, System.EventArgs e)
         {
-            Process.Start("http://vssbe.r-eg.net/doc/API/");
+            Process.Start("https://3F.github.io/web.vsSBE/doc/API/");
         }
 
         private void btnSrc_Click(object sender, System.EventArgs e)

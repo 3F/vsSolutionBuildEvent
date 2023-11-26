@@ -78,31 +78,24 @@
             this.menuTplCSharp = new System.Windows.Forms.ToolStripMenuItem();
             this.menuTplCSharpDefault = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuCI = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuCIMSBuild = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuDevenv = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuAPI = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuPlugin = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuSysDir = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuPluginDir = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuSuppressInitOwp = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuSBEPanel = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuAPI = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuHelp = new System.Windows.Forms.ToolStripSplitButton();
             this.tsMenuItemExamples = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuDocItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuWiki = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuGalleryPage = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuChangelog = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuIssue = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuGalleryPage = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuSources = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuLicense = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuBug = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripMenuReport = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuDebugMode = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuPin = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
             this.menuLogMsg = new System.Windows.Forms.ToolStripMenuItem();
             this.menuLogIgnoreTrace = new System.Windows.Forms.ToolStripMenuItem();
@@ -190,7 +183,6 @@
             this.btnDteCmd = new System.Windows.Forms.Button();
             this.tabPageFilters = new System.Windows.Forms.TabPage();
             this.panelVSCE = new System.Windows.Forms.Panel();
-            this.btnInfoVSCE = new System.Windows.Forms.Button();
             this.btnDownloadVSCE = new System.Windows.Forms.Button();
             this.labelVSCE = new System.Windows.Forms.Label();
             this.splitContainerCE = new System.Windows.Forms.SplitContainer();
@@ -241,9 +233,6 @@
             this.pGridCompilerCfg = new System.Windows.Forms.PropertyGrid();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.linkAddAction = new System.Windows.Forms.LinkLabel();
-            this.toolStripMenuPin = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuSuppressInitOwp = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuActions.SuspendLayout();
             this.panelStatusBR.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -449,11 +438,8 @@
             this.menuWizards,
             this.toolStripMenuTpl,
             this.toolStripSeparator10,
-            this.toolStripMenuCI,
-            this.toolStripMenuAPI,
-            this.toolStripSeparator11,
             this.toolStripMenuPlugin,
-            this.toolStripMenuSBEPanel});
+            this.toolStripMenuAPI});
             this.toolStripMenuSettings.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuSettings.Image")));
             this.toolStripMenuSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripMenuSettings.Name = "toolStripMenuSettings";
@@ -611,28 +597,52 @@
             this.toolStripSeparator10.Name = "toolStripSeparator10";
             this.toolStripSeparator10.Size = new System.Drawing.Size(152, 6);
             // 
-            // toolStripMenuCI
+            // toolStripMenuPlugin
             // 
-            this.toolStripMenuCI.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuCIMSBuild,
-            this.toolStripMenuDevenv});
-            this.toolStripMenuCI.Name = "toolStripMenuCI";
-            this.toolStripMenuCI.Size = new System.Drawing.Size(155, 22);
-            this.toolStripMenuCI.Text = "CI Utilities";
+            this.toolStripMenuPlugin.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuSysDir,
+            this.toolStripMenuPluginDir,
+            this.toolStripSeparator4,
+            this.toolStripMenuSuppressInitOwp,
+            this.toolStripMenuSBEPanel});
+            this.toolStripMenuPlugin.Name = "toolStripMenuPlugin";
+            this.toolStripMenuPlugin.Size = new System.Drawing.Size(155, 22);
+            this.toolStripMenuPlugin.Text = "Plugin";
             // 
-            // toolStripMenuCIMSBuild
+            // toolStripMenuSysDir
             // 
-            this.toolStripMenuCIMSBuild.Name = "toolStripMenuCIMSBuild";
-            this.toolStripMenuCIMSBuild.Size = new System.Drawing.Size(200, 22);
-            this.toolStripMenuCIMSBuild.Text = "CI.MSBuild";
-            this.toolStripMenuCIMSBuild.Click += new System.EventHandler(this.toolStripMenuCIMSBuild_Click);
+            this.toolStripMenuSysDir.Name = "toolStripMenuSysDir";
+            this.toolStripMenuSysDir.Size = new System.Drawing.Size(225, 22);
+            this.toolStripMenuSysDir.Text = "Open a common directory";
+            this.toolStripMenuSysDir.ToolTipText = "Directory for a common configuration, Client library (API), etc.";
+            this.toolStripMenuSysDir.Click += new System.EventHandler(this.toolStripMenuSysDir_Click);
             // 
-            // toolStripMenuDevenv
+            // toolStripMenuPluginDir
             // 
-            this.toolStripMenuDevenv.Name = "toolStripMenuDevenv";
-            this.toolStripMenuDevenv.Size = new System.Drawing.Size(200, 22);
-            this.toolStripMenuDevenv.Text = "Devenv Command-Line";
-            this.toolStripMenuDevenv.Click += new System.EventHandler(this.toolStripMenuDevenv_Click);
+            this.toolStripMenuPluginDir.Name = "toolStripMenuPluginDir";
+            this.toolStripMenuPluginDir.Size = new System.Drawing.Size(225, 22);
+            this.toolStripMenuPluginDir.Text = "Open directory where plugin";
+            this.toolStripMenuPluginDir.Click += new System.EventHandler(this.toolStripMenuPluginDir_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(222, 6);
+            // 
+            // toolStripMenuSuppressInitOwp
+            // 
+            this.toolStripMenuSuppressInitOwp.Name = "toolStripMenuSuppressInitOwp";
+            this.toolStripMenuSuppressInitOwp.Size = new System.Drawing.Size(225, 22);
+            this.toolStripMenuSuppressInitOwp.Text = "Suppress forcing OWP";
+            this.toolStripMenuSuppressInitOwp.ToolTipText = "Do not force show output window panel (VS IDE) when initializing solution";
+            this.toolStripMenuSuppressInitOwp.Click += new System.EventHandler(this.toolStripMenuSuppressInitOwp_Click);
+            // 
+            // toolStripMenuSBEPanel
+            // 
+            this.toolStripMenuSBEPanel.Name = "toolStripMenuSBEPanel";
+            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(225, 22);
+            this.toolStripMenuSBEPanel.Text = "Attach quick panel (VS IDE)";
+            this.toolStripMenuSBEPanel.Click += new System.EventHandler(this.toolStripMenuSBEPanel_Click);
             // 
             // toolStripMenuAPI
             // 
@@ -641,57 +651,15 @@
             this.toolStripMenuAPI.Text = "API";
             this.toolStripMenuAPI.Click += new System.EventHandler(this.toolStripMenuAPI_Click);
             // 
-            // toolStripSeparator11
-            // 
-            this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(152, 6);
-            // 
-            // toolStripMenuPlugin
-            // 
-            this.toolStripMenuPlugin.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuSysDir,
-            this.toolStripMenuPluginDir,
-            this.toolStripSeparator4,
-            this.toolStripMenuSuppressInitOwp});
-            this.toolStripMenuPlugin.Name = "toolStripMenuPlugin";
-            this.toolStripMenuPlugin.Size = new System.Drawing.Size(180, 22);
-            this.toolStripMenuPlugin.Text = "Plugin";
-            // 
-            // toolStripMenuSysDir
-            // 
-            this.toolStripMenuSysDir.Name = "toolStripMenuSysDir";
-            this.toolStripMenuSysDir.Size = new System.Drawing.Size(216, 22);
-            this.toolStripMenuSysDir.Text = "Open a common directory";
-            this.toolStripMenuSysDir.ToolTipText = "Directory for a common configuration, Client library (API), etc.";
-            this.toolStripMenuSysDir.Click += new System.EventHandler(this.toolStripMenuSysDir_Click);
-            // 
-            // toolStripMenuPluginDir
-            // 
-            this.toolStripMenuPluginDir.Name = "toolStripMenuPluginDir";
-            this.toolStripMenuPluginDir.Size = new System.Drawing.Size(216, 22);
-            this.toolStripMenuPluginDir.Text = "Open directory where plugin";
-            this.toolStripMenuPluginDir.Click += new System.EventHandler(this.toolStripMenuPluginDir_Click);
-            // 
-            // toolStripMenuSBEPanel
-            // 
-            this.toolStripMenuSBEPanel.Name = "toolStripMenuSBEPanel";
-            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(180, 22);
-            this.toolStripMenuSBEPanel.Text = "Quick Panel";
-            this.toolStripMenuSBEPanel.Click += new System.EventHandler(this.toolStripMenuSBEPanel_Click);
-            // 
             // toolStripMenuHelp
             // 
             this.toolStripMenuHelp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripMenuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsMenuItemExamples,
-            this.toolStripSeparator14,
-            this.toolStripMenuDocItem,
             this.toolStripMenuChangelog,
-            this.toolStripSeparator3,
-            this.toolStripMenuIssue,
+            this.toolStripMenuGalleryPage,
             this.toolStripMenuSources,
             this.toolStripSeparator2,
-            this.toolStripMenuLicense,
             this.toolStripMenuAbout});
             this.toolStripMenuHelp.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuHelp.Image")));
             this.toolStripMenuHelp.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -703,80 +671,40 @@
             // tsMenuItemExamples
             // 
             this.tsMenuItemExamples.Name = "tsMenuItemExamples";
-            this.tsMenuItemExamples.Size = new System.Drawing.Size(188, 22);
-            this.tsMenuItemExamples.Text = "Examples";
-            this.tsMenuItemExamples.Click += new System.EventHandler(this.tsMenuItemExamples_Click);
-            // 
-            // toolStripSeparator14
-            // 
-            this.toolStripSeparator14.Name = "toolStripSeparator14";
-            this.toolStripSeparator14.Size = new System.Drawing.Size(185, 6);
-            // 
-            // toolStripMenuDocItem
-            // 
-            this.toolStripMenuDocItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuWiki,
-            this.toolStripMenuGalleryPage});
-            this.toolStripMenuDocItem.Name = "toolStripMenuDocItem";
-            this.toolStripMenuDocItem.Size = new System.Drawing.Size(188, 22);
-            this.toolStripMenuDocItem.Text = "Documentation";
-            // 
-            // toolStripMenuWiki
-            // 
-            this.toolStripMenuWiki.Name = "toolStripMenuWiki";
-            this.toolStripMenuWiki.Size = new System.Drawing.Size(181, 22);
-            this.toolStripMenuWiki.Text = "Wiki";
-            this.toolStripMenuWiki.Click += new System.EventHandler(this.toolStripMenuWiki_Click);
-            // 
-            // toolStripMenuGalleryPage
-            // 
-            this.toolStripMenuGalleryPage.Name = "toolStripMenuGalleryPage";
-            this.toolStripMenuGalleryPage.Size = new System.Drawing.Size(181, 22);
-            this.toolStripMenuGalleryPage.Text = "Visual Studio Gallery";
-            this.toolStripMenuGalleryPage.Click += new System.EventHandler(this.toolStripMenuGalleryPage_Click);
+            this.tsMenuItemExamples.Size = new System.Drawing.Size(259, 22);
+            this.tsMenuItemExamples.Text = "Wiki: Docs / Examples";
+            this.tsMenuItemExamples.Click += new System.EventHandler(this.toolStripMenuWiki_Click);
             // 
             // toolStripMenuChangelog
             // 
             this.toolStripMenuChangelog.Name = "toolStripMenuChangelog";
-            this.toolStripMenuChangelog.Size = new System.Drawing.Size(188, 22);
-            this.toolStripMenuChangelog.Text = "Changelist";
+            this.toolStripMenuChangelog.Size = new System.Drawing.Size(259, 22);
+            this.toolStripMenuChangelog.Text = "Changelog";
             this.toolStripMenuChangelog.Click += new System.EventHandler(this.toolStripMenuChangelog_Click);
             // 
-            // toolStripSeparator3
+            // toolStripMenuGalleryPage
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(185, 6);
-            // 
-            // toolStripMenuIssue
-            // 
-            this.toolStripMenuIssue.Name = "toolStripMenuIssue";
-            this.toolStripMenuIssue.Size = new System.Drawing.Size(188, 22);
-            this.toolStripMenuIssue.Text = "Public Bug Tracker";
-            this.toolStripMenuIssue.Click += new System.EventHandler(this.toolStripMenuIssue_Click);
+            this.toolStripMenuGalleryPage.Name = "toolStripMenuGalleryPage";
+            this.toolStripMenuGalleryPage.Size = new System.Drawing.Size(259, 22);
+            this.toolStripMenuGalleryPage.Text = "VisualStudio Gallery";
+            this.toolStripMenuGalleryPage.Click += new System.EventHandler(this.toolStripMenuGalleryPage_Click);
             // 
             // toolStripMenuSources
             // 
             this.toolStripMenuSources.Name = "toolStripMenuSources";
-            this.toolStripMenuSources.Size = new System.Drawing.Size(188, 22);
-            this.toolStripMenuSources.Text = "Source code [GitHub]";
+            this.toolStripMenuSources.Size = new System.Drawing.Size(259, 22);
+            this.toolStripMenuSources.Text = "GitHub: Bug tracker && Source code";
             this.toolStripMenuSources.Click += new System.EventHandler(this.toolStripMenuSources_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(185, 6);
-            // 
-            // toolStripMenuLicense
-            // 
-            this.toolStripMenuLicense.Name = "toolStripMenuLicense";
-            this.toolStripMenuLicense.Size = new System.Drawing.Size(188, 22);
-            this.toolStripMenuLicense.Text = "License";
-            this.toolStripMenuLicense.Click += new System.EventHandler(this.toolStripMenuLicense_Click);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(256, 6);
             // 
             // toolStripMenuAbout
             // 
             this.toolStripMenuAbout.Name = "toolStripMenuAbout";
-            this.toolStripMenuAbout.Size = new System.Drawing.Size(188, 22);
+            this.toolStripMenuAbout.Size = new System.Drawing.Size(259, 22);
             this.toolStripMenuAbout.Text = "About";
             this.toolStripMenuAbout.Click += new System.EventHandler(this.toolStripMenuAbout_Click);
             // 
@@ -811,6 +739,13 @@
             this.toolStripMenuDebugMode.Size = new System.Drawing.Size(208, 22);
             this.toolStripMenuDebugMode.Text = "Debug Mode";
             this.toolStripMenuDebugMode.Click += new System.EventHandler(this.toolStripMenuDebugMode_Click);
+            // 
+            // toolStripMenuPin
+            // 
+            this.toolStripMenuPin.Name = "toolStripMenuPin";
+            this.toolStripMenuPin.Size = new System.Drawing.Size(208, 22);
+            this.toolStripMenuPin.Text = "Pin 📌";
+            this.toolStripMenuPin.Click += new System.EventHandler(this.toolStripMenuPin_Click);
             // 
             // toolStripSeparator13
             // 
@@ -1870,7 +1805,7 @@
             this.tabPageFilters.Location = new System.Drawing.Point(4, 25);
             this.tabPageFilters.Name = "tabPageFilters";
             this.tabPageFilters.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageFilters.Size = new System.Drawing.Size(776, 471);
+            this.tabPageFilters.Size = new System.Drawing.Size(776, 586);
             this.tabPageFilters.TabIndex = 3;
             this.tabPageFilters.Text = "Filters";
             this.tabPageFilters.UseVisualStyleBackColor = true;
@@ -1878,7 +1813,6 @@
             // panelVSCE
             // 
             this.panelVSCE.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.panelVSCE.Controls.Add(this.btnInfoVSCE);
             this.panelVSCE.Controls.Add(this.btnDownloadVSCE);
             this.panelVSCE.Controls.Add(this.labelVSCE);
             this.panelVSCE.Location = new System.Drawing.Point(6, 442);
@@ -1886,16 +1820,6 @@
             this.panelVSCE.Name = "panelVSCE";
             this.panelVSCE.Size = new System.Drawing.Size(461, 29);
             this.panelVSCE.TabIndex = 64;
-            // 
-            // btnInfoVSCE
-            // 
-            this.btnInfoVSCE.Location = new System.Drawing.Point(186, 3);
-            this.btnInfoVSCE.Name = "btnInfoVSCE";
-            this.btnInfoVSCE.Size = new System.Drawing.Size(45, 23);
-            this.btnInfoVSCE.TabIndex = 2;
-            this.btnInfoVSCE.Text = "Info";
-            this.btnInfoVSCE.UseVisualStyleBackColor = true;
-            this.btnInfoVSCE.Click += new System.EventHandler(this.btnInfoVSCE_Click);
             // 
             // btnDownloadVSCE
             // 
@@ -2283,7 +2207,7 @@
             this.tabPageComponents.Location = new System.Drawing.Point(4, 25);
             this.tabPageComponents.Margin = new System.Windows.Forms.Padding(0);
             this.tabPageComponents.Name = "tabPageComponents";
-            this.tabPageComponents.Size = new System.Drawing.Size(776, 471);
+            this.tabPageComponents.Size = new System.Drawing.Size(776, 586);
             this.tabPageComponents.TabIndex = 2;
             this.tabPageComponents.Text = "Components";
             // 
@@ -2526,7 +2450,7 @@
             this.tabPageCSharp.Location = new System.Drawing.Point(4, 25);
             this.tabPageCSharp.Name = "tabPageCSharp";
             this.tabPageCSharp.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageCSharp.Size = new System.Drawing.Size(776, 471);
+            this.tabPageCSharp.Size = new System.Drawing.Size(776, 586);
             this.tabPageCSharp.TabIndex = 4;
             this.tabPageCSharp.Text = "Compiler";
             this.tabPageCSharp.UseVisualStyleBackColor = true;
@@ -2569,26 +2493,6 @@
             this.linkAddAction.TabStop = true;
             this.linkAddAction.Text = "Add first action";
             this.linkAddAction.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkAddAction_LinkClicked);
-            // 
-            // toolStripMenuPin
-            // 
-            this.toolStripMenuPin.Name = "toolStripMenuPin";
-            this.toolStripMenuPin.Size = new System.Drawing.Size(208, 22);
-            this.toolStripMenuPin.Text = "Pin 📌";
-            this.toolStripMenuPin.Click += new System.EventHandler(this.toolStripMenuPin_Click);
-            // 
-            // toolStripSeparator4
-            // 
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(213, 6);
-            // 
-            // toolStripMenuSuppressInitOwp
-            // 
-            this.toolStripMenuSuppressInitOwp.Name = "toolStripMenuSuppressInitOwp";
-            this.toolStripMenuSuppressInitOwp.Size = new System.Drawing.Size(216, 22);
-            this.toolStripMenuSuppressInitOwp.Text = "Suppress forcing OWP";
-            this.toolStripMenuSuppressInitOwp.ToolTipText = "Do not force show output window panel when initializing solution";
-            this.toolStripMenuSuppressInitOwp.Click += new System.EventHandler(this.toolStripMenuSuppressInitOwp_Click);
             // 
             // EventsFrm
             // 
@@ -2727,13 +2631,10 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuDTECmd;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuDTECmdExec;
         private System.Windows.Forms.ToolStripSplitButton toolStripMenuHelp;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuDocItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuChangelog;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuIssue;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuGalleryPage;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuSources;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuLicense;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuAbout;
         private System.Windows.Forms.ToolStripSplitButton toolStripMenuBug;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuReport;
@@ -2776,8 +2677,6 @@
         private System.Windows.Forms.CheckBox checkBoxSBEScriptSupport;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripMenuItem menuActionsReset;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuGalleryPage;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuWiki;
         private System.Windows.Forms.RadioButton radioModeScript;
         private System.Windows.Forms.ComboBox comboBoxBuildContext;
         private System.Windows.Forms.CheckBox chkBuildContext;
@@ -2792,11 +2691,7 @@
         private System.Windows.Forms.ToolStripMenuItem menuItemCompNew;
         private System.Windows.Forms.SplitContainer splitContainerComponents;
         private Components.DataGridViewExt dgvComponentInfo;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuCI;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuSBEPanel;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuCIMSBuild;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuDevenv;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuPlugin;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuSysDir;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuPluginDir;
@@ -2804,7 +2699,6 @@
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuAPI;
         private System.Windows.Forms.ToolStripMenuItem tsMenuItemExamples;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
         private System.Windows.Forms.Label labelTimeLimit;
         private System.Windows.Forms.NumericUpDown numericTimeLimit;
         private System.Windows.Forms.Panel panelTimeLimit;
@@ -2871,7 +2765,6 @@
         private System.Windows.Forms.ToolStripMenuItem menuLogIgnoreWarn;
         private System.Windows.Forms.ToolStripMenuItem menuLogIgnoreError;
         private System.Windows.Forms.Panel panelVSCE;
-        private System.Windows.Forms.Button btnInfoVSCE;
         private System.Windows.Forms.Button btnDownloadVSCE;
         private System.Windows.Forms.Label labelVSCE;
         private System.Windows.Forms.ToolStripMenuItem menuWizards;

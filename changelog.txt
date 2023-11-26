@@ -387,7 +387,7 @@ vsSolutionBuildEvent - https://github.com/3F/vsSolutionBuildEvent
             $(desc = "Hello ")
             $(desc += "world !")
             ```
-            The documentation here: http://vssbe.r-eg.net/doc/Scripts/MSBuild/#syntactic-sugar
+            The documentation here: https://3F.github.io/web.vsSBE/doc/Scripts/MSBuild/#syntactic-sugar
             
     * NEW: [SBE-Scripts] Implemented new BoxComponent - Container of data for operations like a template, repeating, etc.
             ```
@@ -398,11 +398,11 @@ vsSolutionBuildEvent - https://github.com/3F/vsSolutionBuildEvent
             `repeat(expression condition [; boolean silent])`
             `void data.pack(string name, boolean eval): In`
             ...
-            The documentation here: http://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/Components/BoxComponent/
+            The documentation here: https://3F.github.io/web.vsSBE/doc/Scripts/SBE-Scripts/Components/BoxComponent/
             
     * NEW: [InternalComponent] added StartUpProject property to get/set the project by default or 'StartUp Project.
     * NEW: Added Context for Sln-Opened event to support of Early / Late Sln-Opened.
-           All details in the documentation: http://vssbe.r-eg.net/doc/Events/SlnOpened/
+           All details in the documentation: https://3F.github.io/web.vsSBE/doc/Events/SlnOpened/
             
     * NEW: [SBE-Scripts] Added new TryComponent (try/catch) to handle errors:
            ```
@@ -417,7 +417,7 @@ vsSolutionBuildEvent - https://github.com/3F/vsSolutionBuildEvent
                 ...
             }]
            ```
-           The documentation here: http://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/Components/TryComponent/
+           The documentation here: https://3F.github.io/web.vsSBE/doc/Scripts/SBE-Scripts/Components/TryComponent/
            
     * NEW: Started support of Visual Studio 15 /tested on Enterprise Preview 4 (25618.00)
     * NEW: [FileComponent] copy.file - new extended signature of `copy.file`:
@@ -434,7 +434,7 @@ vsSolutionBuildEvent - https://github.com/3F/vsSolutionBuildEvent
                                 "*.pdb"
                            })]
             ```
-            The documentation: http://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/Components/FileComponent/#copy
+            The documentation: https://3F.github.io/web.vsSBE/doc/Scripts/SBE-Scripts/Components/FileComponent/#copy
             
     * NEW: Added additional tool-helpers: `get.CIM.bat`, CI.MSBuild.bat, gnt.bat, msbuild.bat    
     * NEW: Added new special MSBuild properties:
@@ -449,7 +449,7 @@ vsSolutionBuildEvent - https://github.com/3F/vsSolutionBuildEvent
     * CHANGED: MSBuild colorization of errors/warnings for CIM, Devenv, etc.
     * CHANGED: Abort of build after first script error (from our engines).
     * CHANGED: Other trivial bug fixes and improvements. See log of commits.
-    * NOTE: Available .NET 4.0 and .NET 4.5 assemblies. Look the Downlods page. http://vssbe.r-eg.net/Downloads/
+    * NOTE: Available .NET 4.0 and .NET 4.5 assemblies. Look the Downlods page. https://3F.github.io/web.vsSBE/Downloads/
     * NOTE: Public Issue Tracker will be soon moved on GitHub.
 
 [v0.12.7] 2016.02.04
@@ -547,7 +547,7 @@ vsSolutionBuildEvent - https://github.com/3F/vsSolutionBuildEvent
     * FIXED: UI: incorrect updating of variable list in Testing tool when the user script is failed.
     * FIXED: Evaluation with MSBuild engine when the all projects are not available at all - "Fail: not found project: ..."
     * NEW: Added the code generation Wizard 'Automatic Version Numbering'
-           http://vssbe.r-eg.net/doc/Examples/Version/
+           https://3F.github.io/web.vsSBE/doc/Examples/Version/
            
     * NEW: Support of complex objects for filters in CommandEvent, Sniffer tool, +DTEComponent
     * NEW: UI: added control of log messages by type - Trace, Debug, etc.
@@ -588,7 +588,7 @@ vsSolutionBuildEvent - https://github.com/3F/vsSolutionBuildEvent
     * NEW: Added raw CoreCommand - "DebugMode" (When DebugMode is updated) for client.vssbe.dll users & others with API level.
     * CHANGED: Targets Mode. New entry point for user code.
                Now it simply: constantly called target "Init" and provide additional properties like a BuildType, EventType, etc.
-               http://vssbe.r-eg.net/doc/Modes/Targets/
+               https://3F.github.io/web.vsSBE/doc/Modes/Targets/
 
     * CHANGED: Configuration. The LastTime property has been replaced on CacheData with value from .vssbe.user. Solves inconvenience with SCM.
     * CHANGED: Configuration. Optional `Command__` property for convenient using directly in file. See documentation.
