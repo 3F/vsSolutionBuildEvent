@@ -180,7 +180,6 @@
             this.dgvCESniffer.RowHeadersVisible = false;
             this.dgvCESniffer.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             this.dgvCESniffer.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.dgvCESniffer.RowTemplate.Height = 17;
             this.dgvCESniffer.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvCESniffer.Size = new System.Drawing.Size(747, 254);
             this.dgvCESniffer.TabIndex = 7;
@@ -191,12 +190,13 @@
             this.dgvCESnifferColumnStamp.MinimumWidth = 50;
             this.dgvCESnifferColumnStamp.Name = "dgvCESnifferColumnStamp";
             this.dgvCESnifferColumnStamp.ReadOnly = true;
-            this.dgvCESnifferColumnStamp.Width = 84;
+            this.dgvCESnifferColumnStamp.Width = 90;
             // 
             // dgvCESnifferColumnPre
             // 
+            this.dgvCESnifferColumnPre.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
             this.dgvCESnifferColumnPre.FalseValue = "False";
-            this.dgvCESnifferColumnPre.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.dgvCESnifferColumnPre.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.dgvCESnifferColumnPre.HeaderText = "Pre";
             this.dgvCESnifferColumnPre.IndeterminateValue = "False";
             this.dgvCESnifferColumnPre.MinimumWidth = 24;
@@ -206,16 +206,16 @@
             this.dgvCESnifferColumnPre.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.dgvCESnifferColumnPre.ToolTipText = "Before / After executing";
             this.dgvCESnifferColumnPre.TrueValue = "True";
-            this.dgvCESnifferColumnPre.Width = 28;
+            this.dgvCESnifferColumnPre.Width = 48;
             // 
             // dgvCESnifferColumnGuid
             // 
             this.dgvCESnifferColumnGuid.HeaderText = "Guid";
-            this.dgvCESnifferColumnGuid.MinimumWidth = 100;
+            this.dgvCESnifferColumnGuid.MinimumWidth = 90;
             this.dgvCESnifferColumnGuid.Name = "dgvCESnifferColumnGuid";
             this.dgvCESnifferColumnGuid.ReadOnly = true;
             this.dgvCESnifferColumnGuid.ToolTipText = "Scope by GUID";
-            this.dgvCESnifferColumnGuid.Width = 240;
+            this.dgvCESnifferColumnGuid.Width = 230;
             // 
             // dgvCESnifferColumnId
             // 
@@ -223,28 +223,28 @@
             dataGridViewCellStyle1.NullValue = "0";
             this.dgvCESnifferColumnId.DefaultCellStyle = dataGridViewCellStyle1;
             this.dgvCESnifferColumnId.HeaderText = "Id";
-            this.dgvCESnifferColumnId.MinimumWidth = 70;
+            this.dgvCESnifferColumnId.MinimumWidth = 30;
             this.dgvCESnifferColumnId.Name = "dgvCESnifferColumnId";
             this.dgvCESnifferColumnId.Negative = false;
             this.dgvCESnifferColumnId.ReadOnly = true;
             this.dgvCESnifferColumnId.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.dgvCESnifferColumnId.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.dgvCESnifferColumnId.ToolTipText = "Command ID";
-            this.dgvCESnifferColumnId.Width = 70;
+            this.dgvCESnifferColumnId.Width = 65;
             // 
             // dgvCESnifferColumnCustomIn
             // 
             this.dgvCESnifferColumnCustomIn.HeaderText = "CustomIn";
-            this.dgvCESnifferColumnCustomIn.MinimumWidth = 70;
+            this.dgvCESnifferColumnCustomIn.MinimumWidth = 50;
             this.dgvCESnifferColumnCustomIn.Name = "dgvCESnifferColumnCustomIn";
             this.dgvCESnifferColumnCustomIn.ReadOnly = true;
             this.dgvCESnifferColumnCustomIn.ToolTipText = "Filter by Custom input parameter";
-            this.dgvCESnifferColumnCustomIn.Width = 110;
+            this.dgvCESnifferColumnCustomIn.Width = 95;
             // 
             // dgvCESnifferColumnCustomOut
             // 
             this.dgvCESnifferColumnCustomOut.HeaderText = "CustomOut";
-            this.dgvCESnifferColumnCustomOut.MinimumWidth = 70;
+            this.dgvCESnifferColumnCustomOut.MinimumWidth = 50;
             this.dgvCESnifferColumnCustomOut.Name = "dgvCESnifferColumnCustomOut";
             this.dgvCESnifferColumnCustomOut.ReadOnly = true;
             this.dgvCESnifferColumnCustomOut.ToolTipText = "Filter by Custom output parameter";
@@ -254,7 +254,7 @@
             // 
             this.dgvCESnifferColumnEnum.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.dgvCESnifferColumnEnum.HeaderText = "Enum";
-            this.dgvCESnifferColumnEnum.MinimumWidth = 100;
+            this.dgvCESnifferColumnEnum.MinimumWidth = 90;
             this.dgvCESnifferColumnEnum.Name = "dgvCESnifferColumnEnum";
             this.dgvCESnifferColumnEnum.ReadOnly = true;
             this.dgvCESnifferColumnEnum.ToolTipText = "Equivalent with Enum";
@@ -297,9 +297,9 @@
             // 
             // EnvDteSniffer
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(747, 295);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(760, 295);
             this.Controls.Add(this.panelMain);
             this.Controls.Add(this.panelTop);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));

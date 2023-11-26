@@ -29,7 +29,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.dataGridViewVariables = new System.Windows.Forms.DataGridView();
+            this.dataGridViewVariables = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
             this.colName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenuMain = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -232,8 +232,8 @@
             // 
             // PropertiesFrm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(561, 256);
             this.ContextMenuStrip = this.contextMenuMain;
             this.Controls.Add(this.labelPropCount);

@@ -58,12 +58,12 @@
             // 
             // Lights
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.Controls.Add(this.pGreen);
             this.Controls.Add(this.pYellow);
             this.Controls.Add(this.pRed);
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "Lights";
             this.Size = new System.Drawing.Size(41, 10);
             this.ResumeLayout(false);

@@ -33,7 +33,7 @@
             // 
             // fdialog
             // 
-            this.fdialog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.fdialog.Dock = System.Windows.Forms.DockStyle.Right;
             this.fdialog.Location = new System.Drawing.Point(130, 0);
             this.fdialog.Name = "fdialog";
             this.fdialog.Size = new System.Drawing.Size(29, 20);
@@ -44,8 +44,7 @@
             // 
             // fname
             // 
-            this.fname.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.fname.Dock = System.Windows.Forms.DockStyle.Left;
             this.fname.Location = new System.Drawing.Point(0, 0);
             this.fname.Name = "fname";
             this.fname.Size = new System.Drawing.Size(131, 20);
@@ -53,11 +52,11 @@
             // 
             // FileTextBox
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.Controls.Add(this.fdialog);
             this.Controls.Add(this.fname);
-            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Name = "FileTextBox";
             this.Size = new System.Drawing.Size(159, 20);
             this.ResumeLayout(false);

@@ -14,7 +14,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 {
     public partial class AboutFrm: Form
     {
-        protected class DeepSpace
+        protected class DeepSpace: IDisposable
         {
             public bool speedup;
 
@@ -171,9 +171,22 @@ namespace net.r_eg.vsSBE.UI.WForms
                 Coord prev = (Coord)coord;
                 graphics.FillRectangle(Brushes.Black, prev.x, prev.y, prev.w, prev.h);
             }
-        }
-        protected DeepSpace space;
 
+            #region IDisposable
+            public void Dispose()
+            {
+                if(shades != null)
+                {
+                    foreach(var s in shades) s.Dispose();
+                    graphics.Dispose();
+                    shades = null;
+                }
+                GC.SuppressFinalize(this);
+            }
+            #endregion
+        }
+
+        private readonly DeepSpace space;
 
         public AboutFrm()
         {
@@ -206,6 +219,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void AboutFrm_FormClosing(object sender, FormClosingEventArgs e)
         {
             space.stop();
+            space.Dispose();
         }
 
         private void pictureBoxSpace_MouseDown(object sender, MouseEventArgs e)
@@ -238,7 +252,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             Util.openUrl("https://github.com/3F");
         }
 
-        private void linkLabelDonationHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void linkLabelDonation_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             btnDonate_Click(sender, e);
         }

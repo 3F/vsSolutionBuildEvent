@@ -33,7 +33,7 @@
             this.labelFiler = new System.Windows.Forms.Label();
             this.textBoxFilter = new System.Windows.Forms.TextBox();
             this.ColumnCommand = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dataGridViewDTE = new System.Windows.Forms.DataGridView();
+            this.dataGridViewDTE = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewDTE)).BeginInit();
             this.SuspendLayout();
             // 
@@ -115,8 +115,8 @@
             // 
             // DTECommandsFrm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(550, 249);
             this.Controls.Add(this.labelPropCount);
             this.Controls.Add(this.labelFiler);

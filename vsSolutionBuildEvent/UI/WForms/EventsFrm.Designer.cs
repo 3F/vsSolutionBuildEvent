@@ -894,8 +894,9 @@
             // pictureBoxToggle
             // 
             this.pictureBoxToggle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBoxToggle.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBoxToggle.BackgroundImage")));
+            this.pictureBoxToggle.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pictureBoxToggle.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBoxToggle.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxToggle.Image")));
             this.pictureBoxToggle.Location = new System.Drawing.Point(186, 0);
             this.pictureBoxToggle.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBoxToggle.Name = "pictureBoxToggle";
@@ -938,7 +939,6 @@
             this.dgvActions.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.dgvActions.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             this.dgvActions.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.dgvActions.RowTemplate.Height = 17;
             this.dgvActions.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvActions.ShowEditingIcon = false;
             this.dgvActions.Size = new System.Drawing.Size(202, 615);
@@ -957,10 +957,11 @@
             // 
             // dgvActionEnabled
             // 
+            this.dgvActionEnabled.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
             this.dgvActionEnabled.FillWeight = 21F;
             this.dgvActionEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.dgvActionEnabled.HeaderText = "";
-            this.dgvActionEnabled.MinimumWidth = 16;
+            this.dgvActionEnabled.MinimumWidth = 21;
             this.dgvActionEnabled.Name = "dgvActionEnabled";
             this.dgvActionEnabled.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvActionEnabled.ToolTipText = "Enabled";
@@ -1337,7 +1338,7 @@
             // 
             this.textEditor.CodeCompletionEnabled = false;
             this.textEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textEditor.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.textEditor.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textEditor.Location = new System.Drawing.Point(5, 1);
             this.textEditor.Name = "textEditor";
             this.textEditor.Size = new System.Drawing.Size(761, 231);
@@ -1574,7 +1575,6 @@
             this.dataGridViewOutput.RowHeadersVisible = false;
             this.dataGridViewOutput.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             this.dataGridViewOutput.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.dataGridViewOutput.RowTemplate.Height = 17;
             this.dataGridViewOutput.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dataGridViewOutput.Size = new System.Drawing.Size(293, 133);
             this.dataGridViewOutput.TabIndex = 7;
@@ -1715,7 +1715,6 @@
             this.dataGridViewOrder.RowHeadersVisible = false;
             this.dataGridViewOrder.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             this.dataGridViewOrder.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.dataGridViewOrder.RowTemplate.Height = 17;
             this.dataGridViewOrder.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dataGridViewOrder.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dataGridViewOrder.Size = new System.Drawing.Size(264, 77);
@@ -1723,10 +1722,11 @@
             // 
             // dgvOrderEnabled
             // 
+            this.dgvOrderEnabled.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
             this.dgvOrderEnabled.FillWeight = 21F;
             this.dgvOrderEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.dgvOrderEnabled.HeaderText = "";
-            this.dgvOrderEnabled.MinimumWidth = 16;
+            this.dgvOrderEnabled.MinimumWidth = 21;
             this.dgvOrderEnabled.Name = "dgvOrderEnabled";
             this.dgvOrderEnabled.Width = 21;
             // 
@@ -1790,7 +1790,7 @@
             // btnDteCmd
             // 
             this.btnDteCmd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnDteCmd.Location = new System.Drawing.Point(115, 7);
+            this.btnDteCmd.Location = new System.Drawing.Point(115, 6);
             this.btnDteCmd.Name = "btnDteCmd";
             this.btnDteCmd.Size = new System.Drawing.Size(102, 20);
             this.btnDteCmd.TabIndex = 25;
@@ -1815,10 +1815,10 @@
             this.panelVSCE.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.panelVSCE.Controls.Add(this.btnDownloadVSCE);
             this.panelVSCE.Controls.Add(this.labelVSCE);
-            this.panelVSCE.Location = new System.Drawing.Point(6, 442);
+            this.panelVSCE.Location = new System.Drawing.Point(6, 558);
             this.panelVSCE.Margin = new System.Windows.Forms.Padding(0);
             this.panelVSCE.Name = "panelVSCE";
-            this.panelVSCE.Size = new System.Drawing.Size(461, 29);
+            this.panelVSCE.Size = new System.Drawing.Size(259, 29);
             this.panelVSCE.TabIndex = 64;
             // 
             // btnDownloadVSCE
@@ -1859,8 +1859,8 @@
             // 
             this.splitContainerCE.Panel2.Controls.Add(this.groupBoxCommandEvents);
             this.splitContainerCE.Panel2MinSize = 200;
-            this.splitContainerCE.Size = new System.Drawing.Size(767, 435);
-            this.splitContainerCE.SplitterDistance = 215;
+            this.splitContainerCE.Size = new System.Drawing.Size(767, 552);
+            this.splitContainerCE.SplitterDistance = 240;
             this.splitContainerCE.TabIndex = 63;
             // 
             // groupBoxCESniffer
@@ -1872,7 +1872,7 @@
             this.groupBoxCESniffer.Margin = new System.Windows.Forms.Padding(0);
             this.groupBoxCESniffer.Name = "groupBoxCESniffer";
             this.groupBoxCESniffer.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBoxCESniffer.Size = new System.Drawing.Size(767, 215);
+            this.groupBoxCESniffer.Size = new System.Drawing.Size(767, 240);
             this.groupBoxCESniffer.TabIndex = 63;
             this.groupBoxCESniffer.TabStop = false;
             // 
@@ -1912,9 +1912,8 @@
             this.dgvCESniffer.RowHeadersVisible = false;
             this.dgvCESniffer.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             this.dgvCESniffer.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.dgvCESniffer.RowTemplate.Height = 17;
             this.dgvCESniffer.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvCESniffer.Size = new System.Drawing.Size(763, 198);
+            this.dgvCESniffer.Size = new System.Drawing.Size(763, 223);
             this.dgvCESniffer.TabIndex = 7;
             // 
             // dgvCESnifferColumnStamp
@@ -1927,8 +1926,9 @@
             // 
             // dgvCESnifferColumnPre
             // 
+            this.dgvCESnifferColumnPre.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
             this.dgvCESnifferColumnPre.FalseValue = "False";
-            this.dgvCESnifferColumnPre.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.dgvCESnifferColumnPre.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.dgvCESnifferColumnPre.HeaderText = "Pre";
             this.dgvCESnifferColumnPre.IndeterminateValue = "False";
             this.dgvCESnifferColumnPre.MinimumWidth = 24;
@@ -1938,16 +1938,16 @@
             this.dgvCESnifferColumnPre.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.dgvCESnifferColumnPre.ToolTipText = "Before / After executing";
             this.dgvCESnifferColumnPre.TrueValue = "True";
-            this.dgvCESnifferColumnPre.Width = 28;
+            this.dgvCESnifferColumnPre.Width = 48;
             // 
             // dgvCESnifferColumnGuid
             // 
             this.dgvCESnifferColumnGuid.HeaderText = "Guid";
-            this.dgvCESnifferColumnGuid.MinimumWidth = 100;
+            this.dgvCESnifferColumnGuid.MinimumWidth = 90;
             this.dgvCESnifferColumnGuid.Name = "dgvCESnifferColumnGuid";
             this.dgvCESnifferColumnGuid.ReadOnly = true;
             this.dgvCESnifferColumnGuid.ToolTipText = "Scope by GUID";
-            this.dgvCESnifferColumnGuid.Width = 240;
+            this.dgvCESnifferColumnGuid.Width = 230;
             // 
             // dgvCESnifferColumnId
             // 
@@ -1955,38 +1955,38 @@
             dataGridViewCellStyle5.NullValue = "0";
             this.dgvCESnifferColumnId.DefaultCellStyle = dataGridViewCellStyle5;
             this.dgvCESnifferColumnId.HeaderText = "Id";
-            this.dgvCESnifferColumnId.MinimumWidth = 70;
+            this.dgvCESnifferColumnId.MinimumWidth = 30;
             this.dgvCESnifferColumnId.Name = "dgvCESnifferColumnId";
             this.dgvCESnifferColumnId.Negative = false;
             this.dgvCESnifferColumnId.ReadOnly = true;
             this.dgvCESnifferColumnId.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.dgvCESnifferColumnId.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.dgvCESnifferColumnId.ToolTipText = "Command ID";
-            this.dgvCESnifferColumnId.Width = 70;
+            this.dgvCESnifferColumnId.Width = 50;
             // 
             // dgvCESnifferColumnCustomIn
             // 
             this.dgvCESnifferColumnCustomIn.HeaderText = "CustomIn";
-            this.dgvCESnifferColumnCustomIn.MinimumWidth = 70;
+            this.dgvCESnifferColumnCustomIn.MinimumWidth = 50;
             this.dgvCESnifferColumnCustomIn.Name = "dgvCESnifferColumnCustomIn";
             this.dgvCESnifferColumnCustomIn.ReadOnly = true;
             this.dgvCESnifferColumnCustomIn.ToolTipText = "Filter by Custom input parameter";
-            this.dgvCESnifferColumnCustomIn.Width = 110;
+            this.dgvCESnifferColumnCustomIn.Width = 90;
             // 
             // dgvCESnifferColumnCustomOut
             // 
             this.dgvCESnifferColumnCustomOut.HeaderText = "CustomOut";
-            this.dgvCESnifferColumnCustomOut.MinimumWidth = 70;
+            this.dgvCESnifferColumnCustomOut.MinimumWidth = 50;
             this.dgvCESnifferColumnCustomOut.Name = "dgvCESnifferColumnCustomOut";
             this.dgvCESnifferColumnCustomOut.ReadOnly = true;
             this.dgvCESnifferColumnCustomOut.ToolTipText = "Filter by Custom output parameter";
-            this.dgvCESnifferColumnCustomOut.Width = 110;
+            this.dgvCESnifferColumnCustomOut.Width = 90;
             // 
             // dgvCESnifferColumnEnum
             // 
             this.dgvCESnifferColumnEnum.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.dgvCESnifferColumnEnum.HeaderText = "Enum";
-            this.dgvCESnifferColumnEnum.MinimumWidth = 100;
+            this.dgvCESnifferColumnEnum.MinimumWidth = 90;
             this.dgvCESnifferColumnEnum.Name = "dgvCESnifferColumnEnum";
             this.dgvCESnifferColumnEnum.ReadOnly = true;
             this.dgvCESnifferColumnEnum.ToolTipText = "Equivalent with Enum";
@@ -2033,10 +2033,11 @@
             this.checkBoxCESniffer.AutoSize = true;
             this.checkBoxCESniffer.Location = new System.Drawing.Point(5, -1);
             this.checkBoxCESniffer.Name = "checkBoxCESniffer";
-            this.checkBoxCESniffer.Size = new System.Drawing.Size(56, 17);
+            this.checkBoxCESniffer.Size = new System.Drawing.Size(58, 17);
             this.checkBoxCESniffer.TabIndex = 8;
-            this.checkBoxCESniffer.Text = "Sniffer";
-            this.toolTip.SetToolTip(this.checkBoxCESniffer, "To listen the all commands from EnvDTE");
+            this.checkBoxCESniffer.Text = "Detect";
+            this.toolTip.SetToolTip(this.checkBoxCESniffer, "Basic listening. Or use Tools - Sniffer; Or vsCommandEvent plugin for more contro" +
+        "l and features");
             this.checkBoxCESniffer.UseVisualStyleBackColor = true;
             this.checkBoxCESniffer.CheckedChanged += new System.EventHandler(this.checkBoxCESniffer_CheckedChanged);
             // 
@@ -2048,7 +2049,7 @@
             this.groupBoxCommandEvents.Margin = new System.Windows.Forms.Padding(0);
             this.groupBoxCommandEvents.Name = "groupBoxCommandEvents";
             this.groupBoxCommandEvents.Padding = new System.Windows.Forms.Padding(2, 0, 2, 2);
-            this.groupBoxCommandEvents.Size = new System.Drawing.Size(767, 216);
+            this.groupBoxCommandEvents.Size = new System.Drawing.Size(767, 308);
             this.groupBoxCommandEvents.TabIndex = 62;
             this.groupBoxCommandEvents.TabStop = false;
             this.groupBoxCommandEvents.Text = "Command Events";
@@ -2089,9 +2090,8 @@
             this.dgvCEFilters.RowHeadersVisible = false;
             this.dgvCEFilters.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             this.dgvCEFilters.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.dgvCEFilters.RowTemplate.Height = 17;
             this.dgvCEFilters.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dgvCEFilters.Size = new System.Drawing.Size(763, 201);
+            this.dgvCEFilters.Size = new System.Drawing.Size(763, 293);
             this.dgvCEFilters.TabIndex = 7;
             this.dgvCEFilters.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCEFilters_CellClick);
             // 
@@ -2143,8 +2143,9 @@
             // 
             // dgvCEFiltersColumnCancel
             // 
+            this.dgvCEFiltersColumnCancel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader;
             this.dgvCEFiltersColumnCancel.FalseValue = "False";
-            this.dgvCEFiltersColumnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.dgvCEFiltersColumnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.dgvCEFiltersColumnCancel.HeaderText = "Cancel";
             this.dgvCEFiltersColumnCancel.IndeterminateValue = "False";
             this.dgvCEFiltersColumnCancel.MinimumWidth = 48;
@@ -2157,8 +2158,9 @@
             // 
             // dgvCEFiltersColumnPre
             // 
+            this.dgvCEFiltersColumnPre.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader;
             this.dgvCEFiltersColumnPre.FalseValue = "False";
-            this.dgvCEFiltersColumnPre.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.dgvCEFiltersColumnPre.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.dgvCEFiltersColumnPre.HeaderText = "Pre";
             this.dgvCEFiltersColumnPre.IndeterminateValue = "False";
             this.dgvCEFiltersColumnPre.MinimumWidth = 28;
@@ -2167,12 +2169,13 @@
             this.dgvCEFiltersColumnPre.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.dgvCEFiltersColumnPre.ToolTipText = "Use Before executing command";
             this.dgvCEFiltersColumnPre.TrueValue = "True";
-            this.dgvCEFiltersColumnPre.Width = 30;
+            this.dgvCEFiltersColumnPre.Width = 28;
             // 
             // dgvCEFiltersColumnPost
             // 
+            this.dgvCEFiltersColumnPost.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader;
             this.dgvCEFiltersColumnPost.FalseValue = "False";
-            this.dgvCEFiltersColumnPost.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.dgvCEFiltersColumnPost.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.dgvCEFiltersColumnPost.HeaderText = "Post";
             this.dgvCEFiltersColumnPost.IndeterminateValue = "False";
             this.dgvCEFiltersColumnPost.MinimumWidth = 30;
@@ -2181,10 +2184,11 @@
             this.dgvCEFiltersColumnPost.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.dgvCEFiltersColumnPost.ToolTipText = "Use After executed command";
             this.dgvCEFiltersColumnPost.TrueValue = "True";
-            this.dgvCEFiltersColumnPost.Width = 34;
+            this.dgvCEFiltersColumnPost.Width = 30;
             // 
             // dgvCEFiltersColumnRemove
             // 
+            this.dgvCEFiltersColumnRemove.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader;
             dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle8.ForeColor = System.Drawing.Color.Maroon;
@@ -2199,7 +2203,7 @@
             this.dgvCEFiltersColumnRemove.Text = "x";
             this.dgvCEFiltersColumnRemove.ToolTipText = "Remove this filter";
             this.dgvCEFiltersColumnRemove.UseColumnTextForButtonValue = true;
-            this.dgvCEFiltersColumnRemove.Width = 16;
+            this.dgvCEFiltersColumnRemove.Width = 21;
             // 
             // tabPageComponents
             // 
@@ -2228,7 +2232,7 @@
             // splitContainerComponents.Panel2
             // 
             this.splitContainerComponents.Panel2.Controls.Add(this.groupBoxComponentsMembers);
-            this.splitContainerComponents.Size = new System.Drawing.Size(773, 438);
+            this.splitContainerComponents.Size = new System.Drawing.Size(773, 553);
             this.splitContainerComponents.SplitterDistance = 226;
             this.splitContainerComponents.TabIndex = 87;
             // 
@@ -2242,7 +2246,7 @@
             this.groupBoxComponentsList.Margin = new System.Windows.Forms.Padding(0);
             this.groupBoxComponentsList.Name = "groupBoxComponentsList";
             this.groupBoxComponentsList.Padding = new System.Windows.Forms.Padding(0, 1, 0, 0);
-            this.groupBoxComponentsList.Size = new System.Drawing.Size(692, 226);
+            this.groupBoxComponentsList.Size = new System.Drawing.Size(716, 226);
             this.groupBoxComponentsList.TabIndex = 87;
             this.groupBoxComponentsList.TabStop = false;
             this.groupBoxComponentsList.Text = "Available components:";
@@ -2282,10 +2286,9 @@
             this.dgvComponents.RowHeadersVisible = false;
             this.dgvComponents.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             this.dgvComponents.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.dgvComponents.RowTemplate.Height = 17;
             this.dgvComponents.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dgvComponents.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvComponents.Size = new System.Drawing.Size(692, 212);
+            this.dgvComponents.Size = new System.Drawing.Size(716, 212);
             this.dgvComponents.TabIndex = 84;
             this.dgvComponents.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvComponents_CellContentClick);
             this.dgvComponents.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvComponents_CellDoubleClick);
@@ -2304,6 +2307,7 @@
             // 
             // dgvComponentsEnabled
             // 
+            this.dgvComponentsEnabled.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
             this.dgvComponentsEnabled.FalseValue = "False";
             this.dgvComponentsEnabled.FillWeight = 60F;
             this.dgvComponentsEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -2314,7 +2318,7 @@
             this.dgvComponentsEnabled.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvComponentsEnabled.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.dgvComponentsEnabled.TrueValue = "True";
-            this.dgvComponentsEnabled.Width = 52;
+            this.dgvComponentsEnabled.Width = 71;
             // 
             // dgvComponentsName
             // 
@@ -2345,11 +2349,11 @@
             // btnCompNew
             // 
             this.btnCompNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCompNew.Location = new System.Drawing.Point(695, 0);
+            this.btnCompNew.Location = new System.Drawing.Point(719, 0);
             this.btnCompNew.Name = "btnCompNew";
-            this.btnCompNew.Size = new System.Drawing.Size(75, 23);
+            this.btnCompNew.Size = new System.Drawing.Size(51, 23);
             this.btnCompNew.TabIndex = 86;
-            this.btnCompNew.Text = "Create new";
+            this.btnCompNew.Text = "New";
             this.btnCompNew.UseVisualStyleBackColor = true;
             this.btnCompNew.Click += new System.EventHandler(this.btnCompNew_Click);
             // 
@@ -2361,7 +2365,7 @@
             this.groupBoxComponentsMembers.Margin = new System.Windows.Forms.Padding(0);
             this.groupBoxComponentsMembers.Name = "groupBoxComponentsMembers";
             this.groupBoxComponentsMembers.Padding = new System.Windows.Forms.Padding(0, 1, 0, 0);
-            this.groupBoxComponentsMembers.Size = new System.Drawing.Size(773, 208);
+            this.groupBoxComponentsMembers.Size = new System.Drawing.Size(773, 323);
             this.groupBoxComponentsMembers.TabIndex = 86;
             this.groupBoxComponentsMembers.TabStop = false;
             this.groupBoxComponentsMembers.Text = "Members of components:";
@@ -2401,10 +2405,9 @@
             this.dgvComponentInfo.RowHeadersVisible = false;
             this.dgvComponentInfo.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             this.dgvComponentInfo.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.dgvComponentInfo.RowTemplate.Height = 17;
             this.dgvComponentInfo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dgvComponentInfo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvComponentInfo.Size = new System.Drawing.Size(773, 194);
+            this.dgvComponentInfo.Size = new System.Drawing.Size(773, 309);
             this.dgvComponentInfo.TabIndex = 85;
             // 
             // dgvCompInfoType
@@ -2474,7 +2477,7 @@
             this.pGridCompilerCfg.CategoryForeColor = System.Drawing.SystemColors.InactiveCaptionText;
             this.pGridCompilerCfg.Location = new System.Drawing.Point(6, 6);
             this.pGridCompilerCfg.Name = "pGridCompilerCfg";
-            this.pGridCompilerCfg.Size = new System.Drawing.Size(767, 435);
+            this.pGridCompilerCfg.Size = new System.Drawing.Size(767, 550);
             this.pGridCompilerCfg.TabIndex = 0;
             // 
             // toolTip
@@ -2496,8 +2499,8 @@
             // 
             // EventsFrm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(987, 641);
             this.Controls.Add(this.linkAddAction);
             this.Controls.Add(this.panelStatusBR);

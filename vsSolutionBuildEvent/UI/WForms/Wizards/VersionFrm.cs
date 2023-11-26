@@ -21,15 +21,9 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards
 {
     internal partial class VersionFrm: Form
     {
-        /// <summary>
-        /// Manager of steps.
-        /// </summary>
-        private Manager manager;
+        private readonly Manager manager;
 
-        /// <summary>
-        /// Transport support
-        /// </summary>
-        private ITransfer _pin;
+        private readonly ITransfer _pin;
 
         /// <param name="loader"></param>
         /// <param name="pin"></param>
@@ -51,8 +45,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards
             editorFinalScript.CodeCompletionEnabled = true;
             editorFinalScript._.WordWrap            = false;
 
-            tabControlMain.Top      = -22;
-            tabControlMain.Height   += 22;
+            int hidepx = this.GetValueUsingDpi(22);
+            tabControlMain.Top      = -hidepx;
+            tabControlMain.Height   += hidepx;
+
             tcRevNumber.SizeMode    = TabSizeMode.Fixed;
             tcReplType.SizeMode     = TabSizeMode.Fixed;
             btnPrevStep.Visible     = false;

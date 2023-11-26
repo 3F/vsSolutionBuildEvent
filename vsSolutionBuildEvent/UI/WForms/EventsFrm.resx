@@ -165,13 +165,14 @@
   <metadata name="contextMenuComponents.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>290, 17</value>
   </metadata>
-  <data name="pictureBoxToggle.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <data name="pictureBoxToggle.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAANlJREFUOE+l
-        j0sKwjAURbs/V+I6nLoAF6HgzKngSAdW3ESb/v8tLeXJfZBHJUX7CZwmr+QebiwiWoW1P9xoKSK422o2
-        huB4fs/iS4DlOA6jlCLP8ygIAgrDkKIoYuI4FjCPCh7Pl4R1KEkSStPUwBC4rsvh0+UqYVzMsozyPGeK
-        opCzIUB13/e59ma74zB2hMqypKqqBMyGYFgdtREGuFzXNTVNI2D+KdBhoMNt2wqYRwWor9+Od6KuDndd
-        R33f8475rwBvHwoQxsI+STCrwVJYgM8aRn9Oh6wP7/VZ2HrQlowAAAAASUVORK5CYII=
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAADZSURBVDhPpY9LCsIwFEW7P1fiOpy6ABeh4Myp4EgHVtxEm/7/LS3lyX2QRyVF+wmcJq/kHm4s
+        IlqFtT/caCkiuNtqNobgeH7P4kuA5TgOo5Qiz/MoCAIKw5CiKGLiOBYwjwoez5eEdShJEkrT1MAQuK7L
+        4dPlKmFczLKM8jxniqKQsyFAdd/3ufZmu+MwdoTKsqSqqgTMhmBYHbURBrhc1zU1TSNg/inQYaDDbdsK
+        mEcFqK/fjneirg53XUd93/OO+a8Abx8KEMbCPkkwq8FSWIDPGkZ/ToesD+/1Wdh60JaMAAAAAElFTkSu
+        QmCC
 </value>
   </data>
   <metadata name="dgvActionEnabled.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -222,7 +223,7 @@
   <data name="btnActionExec.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
-        DgAACw4BQL7hQQAAAPFJREFUWEftkzsKwkAURVOJNnZaiRuwcSliZyG4AkllGzcQ8iEGrFLa2ovYayPu
+        DAAACwwBP0AiyAAAAPFJREFUWEftkzsKwkAURVOJNnZaiRuwcSliZyG4AkllGzcQ8iEGrFLa2ovYayPu
         w05sBPW88AjBwspJEObAg9ybkDMzJI7FYrH8JUEQDOM4fn1OGIZnfcQsURSFCD2NOeQ1vavRHJ7nNZBd
         2W1fK8f3/RbdPU3TrlbmQDRCvtOYw86n9FuNZhERM9GYwwIOdMW3QF7qrd8iR4zglmVZU6sCpB1O5mJM
         LvByl1lpLKhELshvVjrqo3SVycsg3zDzWuTI2sgfSZIMKpcLyGeIT7XIBcR7FmHuV/sG0h4LeNYiF9j5
