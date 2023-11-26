@@ -107,8 +107,8 @@ namespace net.r_eg.vsSBE
             }
 
             IConfPlatformPrj cfg = Sln.ProjectItemsConfigs
-                                        .FirstOrDefault(p => ActiveSlnConf?.Equals(p.solutionConfig) == true)
-                                        .projectConfig;
+                .FirstOrDefault(p => p.project.name == name && ActiveSlnConf?.Equals(p.solutionConfig) == true)
+                .projectConfig;
 
             return (cfg == null) ? SlnEnv?.GetOrLoadProject(project) 
                                  : SlnEnv?.GetOrLoadProject(project, cfg);
