@@ -591,55 +591,55 @@
       <Project>{e51d1ea3-f4a7-4f27-a941-e16d2b88d08a}</Project>
       <Name>E-MSBuild</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\inc\modules\LSender\LSender.csproj">
       <Project>{287d8f67-dd08-423f-aa60-c48d84140612}</Project>
       <Name>LSender</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\MvsSln\MvsSln\MvsSln.csproj">
       <Project>{f905dfb2-2e67-4ff7-9001-924f6f2d645d}</Project>
       <Name>MvsSln</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\inc\modules\SobaScript.Mapper\SobaScript.Mapper.csproj">
       <Project>{3eabd66d-1f4b-46e5-88ff-3e680708309f}</Project>
       <Name>SobaScript.Mapper</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\inc\modules\SobaScript.Z.Core\SobaScript.Z.Core.csproj">
       <Project>{d5c9a407-1173-43bf-a15a-5d8ab100ac4a}</Project>
       <Name>SobaScript.Z.Core</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\inc\modules\SobaScript.Z.Ext\SobaScript.Z.Ext.csproj">
       <Project>{0fb9bd48-d455-40dc-a6bf-411b595a2999}</Project>
       <Name>SobaScript.Z.Ext</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\inc\modules\SobaScript.Z.VS\SobaScript.Z.VS.csproj">
       <Project>{cd42837f-ecb4-48d5-89d5-eff831001f89}</Project>
       <Name>SobaScript.Z.VS</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\inc\modules\SobaScript\SobaScript.csproj">
       <Project>{3a80b650-b457-4de4-b2d3-64191a20c6b7}</Project>
       <Name>SobaScript</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\inc\modules\Varhead\Varhead.csproj">
       <Project>{4670b9b4-1ba9-4cb2-bbfc-ec4ebeb40a42}</Project>
       <Name>Varhead</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

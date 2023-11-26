@@ -1,23 +1,28 @@
-@echo off
-echo Usage: %~nx0 [RCI flag] [configuration name or nothing to build all]
-echo DBG == Debug; REL == Release; + _SDK10/15/17
-if "%~1"=="RCI" ( set "IsRCI=1" & set "cfg=%~2" ) else ( set "IsRCI=" & set "cfg=%~1" )
+@echo off & echo Usage: %~nx0 [ DBG or REL or RCI [ SDKs numbers ] ]
 
-::::::::::::::::::::
+::::: Default :::::
+set SDKs=10,15,17
+set "cfg=%~1" & if not defined cfg set "cfg=REL"
+:::::
+
 set __p_call=1
 call tools\gnt /p:ngconfig="tools/packages.config" || goto err
 
-set bnode=packages\vsSolutionBuildEvent\cim.cmd -vsw-priority Microsoft.NetCore.Component.SDK /m:7 /v:m /p:Platform="Any CPU"
-if not defined cfg (
+if "%cfg%"=="RCI" ( set "IsRCI=1" & set "cfg=REL" ) else set "IsRCI="
 
-    call %bnode% /p:Configuration=REL_SDK10 || goto err
-    call %bnode% /p:Configuration=REL_SDK15 || goto err
-    call %bnode% /p:Configuration=REL_SDK17 || goto err
+set "SDK=%~2" & if not defined SDK (
+    call :act %cfg% %SDKs% & goto ok
+)
 
-) else call %bnode% /p:Configuration=%cfg% || goto err
+:act
+set "SDK=%~2" & if not defined SDK goto ok
 
-exit /B 0
+call packages\vsSolutionBuildEvent\cim.cmd -vsw-priority Microsoft.NetCore.Component.SDK /m:7 /v:m /noautorsp /p:Configuration=%cfg%_SDK%~2 || goto err
+shift & goto act
 
 :err
 echo. Build failed. 1>&2
 exit /B 1
+
+:ok
+exit /B 0

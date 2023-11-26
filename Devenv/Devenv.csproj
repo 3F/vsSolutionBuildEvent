@@ -8,7 +8,7 @@
     <NoStandardLibraries>false</NoStandardLibraries>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(VsSbeSdkBase)' >= '15'">
+  <PropertyGroup Condition="'$(VsSbeSdkBase)' != '10'">
     <EnableDefaultItems>false</EnableDefaultItems>
   </PropertyGroup>
 
