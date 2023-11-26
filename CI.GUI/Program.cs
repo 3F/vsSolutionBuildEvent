@@ -29,7 +29,7 @@ namespace net.r_eg.vsSBE.CI.GUI
                 evl.load
                 (
                     GetSln(args),
-                    [],
+                    new Dictionary<string, string>(),
                     Settings._.Config.Sys.Data?.DebugMode ??
 #if DEBUG
                     true
