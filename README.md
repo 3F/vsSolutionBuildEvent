@@ -9,10 +9,10 @@
 to service projects, libraries, build processes, runtime environment of the Visual Studio, MSBuild Tools, and … 
 
 ```r
-Copyright (c) 2013-2022  Denis Kuzmin <x-3F@outlook.com> github/3F
+Copyright (c) 2013-2023  Denis Kuzmin <x-3F@outlook.com> github/3F
 ```
 
-[ 「 <sub>@</sub> ☕ 」 ](https://3F.github.io/Donation/) [![LGPLv3](https://img.shields.io/badge/license-LGPLv3-008033.svg)](LICENSE)
+[ 「 <sub>@</sub> ☕ 」 ](https://3F.github.io/Donation/) [![LGPLv3](https://img.shields.io/badge/LGPLv3-008033.svg)](LICENSE)
 
 **[Download](https://vssbe.r-eg.net/Downloads/)** 
 

@@ -1,4 +1,9 @@
-﻿using System.Diagnostics;
+﻿/*! ClientDemo project
+ *  Public domain.
+ *  Example of using the API https://github.com/3F/vsSolutionBuildEvent
+*/
+
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace ClientDemo
