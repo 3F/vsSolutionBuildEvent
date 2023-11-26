@@ -3,6 +3,7 @@
  *  Example of using the API https://github.com/3F/vsSolutionBuildEvent
 */
 
+using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -10,21 +11,20 @@ namespace ClientDemo
 {
     public partial class StatusFrm: Form, IStatus
     {
-        /// <summary>
-        /// Report about status
-        /// </summary>
-        /// <param name="message"></param>
-        public void report(string message)
-        {
-            push(richTextBoxMain, message);
-        }
+        private bool stop, anchor;
 
-        /// <summary>
-        /// Show form
-        /// </summary>
-        public void show()
+        public void Report(string message)
         {
-            ShowDialog();
+            if(stop) return;
+
+            if(rtbMain.InvokeRequired)
+            {
+                rtbMain.Invoke(() => Append(message));
+            }
+            else
+            {
+                Append(message);
+            }
         }
 
         public StatusFrm()
@@ -32,50 +32,46 @@ namespace ClientDemo
             InitializeComponent();
         }
 
-        protected void push(RichTextBox box, string message)
+        protected void Append(string message, bool newLine = false)
         {
-            // box.InvokeRequired may does not check properly
-            try {
-                box.Text += message;
-            }
-            catch
+            rtbMain.AppendText(message);
+            if(newLine) rtbMain.AppendText(Environment.NewLine);
+
+            if(anchor)
             {
-                box.Invoke((MethodInvoker)delegate {
-                    box.Text += message;
-                });
+                rtbMain.Select(rtbMain.TextLength, 0);
+                rtbMain.ScrollToCaret();
             }
         }
 
-        private void btnAPI_Click(object sender, System.EventArgs e)
+        private void btnAPI_Click(object sender, EventArgs e)
+            => Process.Start("https://3F.github.io/web.vsSBE/doc/API/");
+
+        private void btnSrc_Click(object sender, EventArgs e)
+            => Process.Start("https://github.com/3F/vsSolutionBuildEvent/tree/master/ClientDemo");
+
+        private void btnCopy_Click(object sender, EventArgs e)
         {
-            Process.Start("https://3F.github.io/web.vsSBE/doc/API/");
+            rtbMain.SelectAll();
+            rtbMain.Copy();
+            rtbMain.Focus();
         }
 
-        private void btnSrc_Click(object sender, System.EventArgs e)
+        private void btnClear_Click(object sender, EventArgs e) => rtbMain.Clear();
+
+        private void chkPin_CheckedChanged(object sender, EventArgs e) => TopMost = chkPin.Checked;
+
+        private void StatusFrm_Load(object sender, EventArgs e) => chkPin_CheckedChanged(sender, e);
+
+        private void StatusFrm_FormClosing(object sender, FormClosingEventArgs e) => stop = true;
+
+        private void btnPause_Click(object sender, EventArgs e)
         {
-            Process.Start("https://github.com/3F/vsSolutionBuildEvent/tree/master/ClientDemo");
+            stop = !stop;
+            Append($"{btnPause.Text} clicked", newLine: true);
+            btnPause.Text = stop ? "Resume" : "Pause";
         }
 
-        private void btnCopy_Click(object sender, System.EventArgs e)
-        {
-            richTextBoxMain.SelectAll();
-            richTextBoxMain.Copy();
-            richTextBoxMain.Focus();
-        }
-
-        private void btnClear_Click(object sender, System.EventArgs e)
-        {
-            richTextBoxMain.Clear();
-        }
-
-        private void chkPin_CheckedChanged(object sender, System.EventArgs e)
-        {
-            TopMost = chkPin.Checked;
-        }
-
-        private void StatusFrm_Load(object sender, System.EventArgs e)
-        {
-            chkPin_CheckedChanged(sender, e);
-        }
+        private void chkAnchor_CheckedChanged(object sender, EventArgs e) => anchor = chkAnchor.Checked;
     }
 }

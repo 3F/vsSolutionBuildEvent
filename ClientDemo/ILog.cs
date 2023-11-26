@@ -5,25 +5,8 @@
 
 namespace ClientDemo
 {
-    internal interface ILog
+    public interface ILog
     {
-        /// <summary>
-        /// Message for information level.
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="args"></param>
-        void info(string message, params object[] args);
-
-        /// <summary>
-        /// Show messages if it's possible
-        /// </summary>
-        void show();
-
-        /// <summary>
-        /// Initialize with IStatus
-        /// </summary>
-        /// <param name="status"></param>
-        /// <returns>self reference</returns>
-        ILog init(IStatus status);
+        void Info(string message, params object[] args);
     }
 }

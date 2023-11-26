@@ -156,14 +156,10 @@ namespace net.r_eg.vsSBE.UI
                 int step = (int)(max * distance);
                 while(control.Width < max)
                 {
-                    control.BeginInvoke((MethodInvoker)delegate {
-                        control.Width += step;
-                    });
+                    control.Invoke(() => control.Width += step);
                     System.Threading.Thread.Sleep(delay);
                 }
-                control.BeginInvoke((MethodInvoker)delegate {
-                    control.Width = max;
-                });
+                control.Invoke(() => control.Width = max);
             })).Start();
         }
 

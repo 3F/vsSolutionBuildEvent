@@ -106,7 +106,8 @@ namespace net.r_eg.vsSBE.UI.WForms
                     return;
                 }
 
-                lightsTraffic.BeginInvoke((MethodInvoker)delegate {
+                lightsTraffic.Invoke(() =>
+                {
                     if(chkActivate.Checked) {
                         lightsTraffic.switchOn(type);
                     }

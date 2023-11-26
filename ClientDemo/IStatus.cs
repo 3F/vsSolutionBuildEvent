@@ -7,15 +7,8 @@ namespace ClientDemo
 {
     internal interface IStatus
     {
-        /// <summary>
-        /// Report about status
-        /// </summary>
-        /// <param name="message"></param>
-        void report(string message);
-
-        /// <summary>
-        /// Show form
-        /// </summary>
-        void show();
+        void Report(string message);
+        
+        void Show();
     }
 }

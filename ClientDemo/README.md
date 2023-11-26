@@ -1,8 +1,8 @@
-This shows how to work with **client.vssbe.dll** features. For external work with events **from** our core library.
+### Demonstration of a basic implementation of using the API
 
-How to use, see **[here](https://3F.github.io/web.vsSBE/doc/API/#create-client-vssbe-dll)**
+through a **[client.vssbe.dll](https://3F.github.io/web.vsSBE/doc/API/#clientvssbedll)** and the [core library](https://github.com/3F/vsSolutionBuildEvent).
 
-Binaries **[here](https://3F.github.io/web.vsSBE/Downloads/)**
+Play with **binaries [here](https://3F.github.io/web.vsSBE/Downloads/)** or build it yourself;
 
 ![](https://3F.github.io/web.vsSBE/doc/Resources/Demo/DemoClient.png)
 
@@ -11,5 +11,5 @@ Binaries **[here](https://3F.github.io/web.vsSBE/Downloads/)**
 
 ## References
 
-* [vsSolutionBuildEvent](http://vssbe.r-eg.net)
+* [vsSolutionBuildEvent](https://marketplace.visualstudio.com/items?itemName=GitHub3F.vsSolutionBuildEvent-11615)
 * [Examples & Features](https://3F.github.io/web.vsSBE/doc/Examples/)

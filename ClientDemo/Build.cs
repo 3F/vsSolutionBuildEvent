@@ -10,22 +10,21 @@ namespace ClientDemo
 {
     public class Build: IBuild
     {
-        /// <summary>
-        /// During assembly.
-        /// </summary>
-        /// <param name="data">Raw data of building process</param>
+        protected readonly ILog log;
+
         public void onBuildRaw(string data)
         {
-            Log._.info($"Entering onBuildRaw(string data): '{data?.Substring(0, Math.Min(40, data.Length))}' ...");
+            log.Info($"Entering onBuildRaw(string data): '{data?.Substring(0, Math.Min(40, data.Length))}' ...");
         }
 
-        /// <summary>
-        /// Sets current type of the build.
-        /// </summary>
-        /// <param name="type"></param>
         public void updateBuildType(BuildType type)
         {
-            Log._.info("Entering updateBuildType(BuildType type)");
+            log.Info("Entering updateBuildType(BuildType type)");
+        }
+
+        public Build(ILog log)
+        {
+            this.log = log;
         }
     }
 }

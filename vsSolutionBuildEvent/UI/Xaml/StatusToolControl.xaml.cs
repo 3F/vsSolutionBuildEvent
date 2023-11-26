@@ -60,16 +60,12 @@ namespace net.r_eg.vsSBE.UI.Xaml
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 #else
-            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
 #endif
                 textInfo.Text = logic.addWarning().ToString();
 
-#if SDK15_OR_HIGH
             });
-#else
-            }));
-#endif
         }
 
         /// <summary>
@@ -131,17 +127,13 @@ namespace net.r_eg.vsSBE.UI.Xaml
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 #else
-            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            Application.Current.Dispatcher.Invoke(() =>
             {
 #endif
                 btn.Content     = caption(type, false);
                 btn.IsChecked   = !isDisabledAll(type);
 
-#if SDK15_OR_HIGH
             });
-#else
-            }));
-#endif
         }
 
         protected bool isDisabledAll(SolutionEventType type)
