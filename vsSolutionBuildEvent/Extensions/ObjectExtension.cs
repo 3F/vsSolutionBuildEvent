@@ -116,27 +116,28 @@ namespace net.r_eg.vsSBE.Extensions
         /// </summary>
         /// <param name="left">The first object to compare.</param>
         /// <param name="right">The second object to compare.</param>
+        /// <param name="nullAndEmptyStr">Compare null or empty strings as equal if true.</param>
         /// <returns>true value if the objects are considered equal.</returns>
-        public static bool EqualsMixedObjects(this object left, object right)
+        public static bool EqualsMixedObjects(this object left, object right, bool nullAndEmptyStr = false)
         {
-            if(left == null && right == null) {
-                return true;
+            if(left == null && right == null) return true;
+            if(left == null || right == null)
+            {
+                return nullAndEmptyStr 
+                        && 
+                        (
+                            (left == null && right is string rstr && rstr == string.Empty)
+                            || (right == null && left is string lstr && lstr == string.Empty)
+                        );
             }
-
-            if(left == null || right == null) {
-                return false;
-            }
-
-            if(Object.ReferenceEquals(left, right)) {
-                return true;
-            }
+            if(ReferenceEquals(left, right)) return true;
 
             if(left.GetType().IsArray && right.GetType().IsArray) {
                 return Enumerable.SequenceEqual((object[])left, (object[])right);
             }
 
             if(!left.GetType().IsArray && !right.GetType().IsArray) {
-                return Object.Equals(left, right);
+                return left.Equals(right);
             }
 
             return false;
@@ -149,7 +150,7 @@ namespace net.r_eg.vsSBE.Extensions
         /// <returns>true if null or empty string, otherwise false.</returns>
         public static bool IsNullOrEmptyString(this object obj)
         {
-            return (obj == null || obj is string && (string)obj == String.Empty);
+            return (obj == null || obj is string str && str == string.Empty);
         }
 
         /// <summary>

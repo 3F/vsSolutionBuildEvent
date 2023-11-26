@@ -14,7 +14,7 @@ using net.r_eg.vsSBE.UI.WForms.Components;
 
 namespace net.r_eg.vsSBE.UI
 {
-    public class Util
+    public static class Util
     {
         /// <summary>
         /// Fixes bug with height on first row of DataGridView
@@ -190,56 +190,47 @@ namespace net.r_eg.vsSBE.UI
         }
 
         /// <summary>
-        /// Find the enum definition by Guid string / Id
+        /// Find the definition by Guid / Id
         /// </summary>
-        /// <param name="guid"></param>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public static string enumViewBy(string guid, int id)
+        public static string enumViewBy(string sguid, int id)
         {
-            return enumViewBy(new Guid(guid), id);
-        }
+            Guid guid = new(sguid);
+            IEnumerable<Type> _GetEnum(IEnumerable<Type> input)
+                => input.Where(t => t?.IsEnum == true && t.GUID == guid);
 
-        /// <summary>
-        /// Find the enum definition by Guid / Id
-        /// </summary>
-        /// <param name="guid"></param>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public static string enumViewBy(Guid guid, int id)
-        {
-            Assembly[] asm = AppDomain.CurrentDomain.GetAssemblies();
-            foreach(Type type in asm.SelectMany(a => 
-                                                {
-                                                    try {
-                                                        return a.GetTypes();
-                                                    }
-                                                    catch(ReflectionTypeLoadException ex) {
-                                                        Log.Trace("Enum parser: types cannot be loaded.. so we don't know what is it - '{0}':{1} ", guid, id);
-                                                        return ex.Types.Where(t => t != null);
-                                                    }
-                                                })
-                                                .Where(t => t.IsEnum))
+            foreach(Type type in AppDomain
+                                .CurrentDomain
+                                .GetAssemblies()
+                                .Where(a => a.FullName.StartsWith("Microsoft.VisualStudio") || a.FullName.StartsWith("Microsoft.Internal.VisualStudio"))
+                                .SelectMany(a => 
+                                {
+                                    try
+                                    {
+                                        return _GetEnum(a.GetTypes());
+                                    }
+                                    catch(ReflectionTypeLoadException ex)
+                                    {
+                                        return _GetEnum(ex.Types);
+                                    }
+                                }))
             {
-                if(guid != type.GUID) {
-                    continue;
-                }
+                string prefix = type.ToString();
+                string value = id.ToString();
 
-                string prefix   = type.ToString();
-                string value    = id.ToString();
-
-                try {
+                try
+                {
                     value = Enum.Parse(type, value).ToString();
                 }
-                catch(Exception ex) {
-                    Log.Debug("Enum parser failed: guid({0}), id({1}) -> '{2}' /error: '{3}'", guid, id, prefix, ex.Message);
+                catch(Exception ex)
+                {
+                    Log.Debug($"Failed enum parser: '{guid}' ({id}) -> '{prefix}': {ex.Message}");
                 }
-                return String.Format("{0}.{1}", prefix, value);
+                return $"{prefix}.{value}";
             }
             return null;
         }
 
-        protected static void defaultBrowserOpen(string url)
+        private static void defaultBrowserOpen(string url)
         {
             System.Diagnostics.Process.Start(url);
         }

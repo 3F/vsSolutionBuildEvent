@@ -194,7 +194,7 @@
             this.dgvCESnifferColumnId = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt.NumericColumn();
             this.dgvCESnifferColumnCustomIn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvCESnifferColumnCustomOut = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvCESnifferColumnEnum = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvCESnifferColumnSrc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenuSniffer = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuSnifferAdd = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
@@ -1891,7 +1891,7 @@
             this.dgvCESnifferColumnId,
             this.dgvCESnifferColumnCustomIn,
             this.dgvCESnifferColumnCustomOut,
-            this.dgvCESnifferColumnEnum});
+            this.dgvCESnifferColumnSrc});
             this.dgvCESniffer.ContextMenuStrip = this.contextMenuSniffer;
             dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
@@ -1982,14 +1982,13 @@
             this.dgvCESnifferColumnCustomOut.ToolTipText = "Filter by Custom output parameter";
             this.dgvCESnifferColumnCustomOut.Width = 90;
             // 
-            // dgvCESnifferColumnEnum
+            // dgvCESnifferColumnSrc
             // 
-            this.dgvCESnifferColumnEnum.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dgvCESnifferColumnEnum.HeaderText = "Enum";
-            this.dgvCESnifferColumnEnum.MinimumWidth = 90;
-            this.dgvCESnifferColumnEnum.Name = "dgvCESnifferColumnEnum";
-            this.dgvCESnifferColumnEnum.ReadOnly = true;
-            this.dgvCESnifferColumnEnum.ToolTipText = "Equivalent with Enum";
+            this.dgvCESnifferColumnSrc.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dgvCESnifferColumnSrc.HeaderText = "Source";
+            this.dgvCESnifferColumnSrc.MinimumWidth = 90;
+            this.dgvCESnifferColumnSrc.Name = "dgvCESnifferColumnSrc";
+            this.dgvCESnifferColumnSrc.ReadOnly = true;
             // 
             // contextMenuSniffer
             // 
@@ -2733,7 +2732,7 @@
         private Components.DataGridViewExt.NumericColumn dgvCESnifferColumnId;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvCESnifferColumnCustomIn;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvCESnifferColumnCustomOut;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dgvCESnifferColumnEnum;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvCESnifferColumnSrc;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvCEFiltersColumnGuid;
         private Components.DataGridViewExt.NumericColumn dgvCEFiltersColumnId;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvCEFiltersColumnCustomIn;

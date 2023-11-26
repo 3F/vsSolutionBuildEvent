@@ -21,9 +21,6 @@ using Microsoft.VisualStudio.Threading;
 
 namespace net.r_eg.vsSBE
 {
-    /// <summary>
-    /// View / Other Windows / { Status Panel }
-    /// </summary>
     internal sealed class StatusToolCommand: IDisposable
     {
         private readonly MenuCommand mcmd;
@@ -34,19 +31,19 @@ namespace net.r_eg.vsSBE
 
         private ToolWindowPane toolPane;
 
+        private static volatile StatusToolCommand _instance;
+
+        private static readonly object sync = new();
+
         public static Type ToolType => typeof(StatusToolWindow);
 
-        public static StatusToolCommand Instance
-        {
-            get;
-            private set;
-        }
+        public static StatusToolCommand Instance => _instance;
 
         public IStatusTool ToolContent => (IStatusTool)toolPane.Content;
 
         public IStatusToolEvents ToolEvents => (IStatusToolEvents)toolPane;
 
-        private IConfig<ISolutionEvents> Config => Settings._.Config.Sln;
+        private static IConfig<ISolutionEvents> Config => Settings._.Config.Sln;
 
 #if SDK15_OR_HIGH
 
@@ -55,23 +52,19 @@ namespace net.r_eg.vsSBE
         /// <param name="tool">Tool pane instance to use this instead of new when null is passed.</param>
         public static async Task<StatusToolCommand> InitAsync(IPkg pkg, IEventLevel evt, ToolWindowPane tool = null)
         {
-            if(Instance != null) {
-                return Instance;
-            }
+            if(Instance != null) return Instance;
 
             // Switch to the main thread - the call to AddCommand in StatusToolCommand's constructor requires
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(pkg.CancellationToken);
 
-            Instance = new StatusToolCommand
-            (
-                pkg, 
-                await pkg.getSvcAsync(typeof(IMenuCommandService)) as OleMenuCommandService,
-                evt
-            );
+            OleMenuCommandService svc = await pkg.getSvcAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
+            lock(sync)
+            {
+                if(Instance == null) _instance = new StatusToolCommand(pkg, svc, evt);
+            }
 
             Instance.toolPane = await Instance.initToolPaneAsync(tool as StatusToolWindow);
-
             return Instance;
         }
 
@@ -81,20 +74,16 @@ namespace net.r_eg.vsSBE
         /// <param name="evt">Supported public events, not null.</param>
         public static StatusToolCommand Init(IPkg pkg, IEventLevel evt)
         {
-            if(Instance != null) {
+            if(Instance != null) return Instance;
+
+            OleMenuCommandService svc = pkg.getSvc(typeof(IMenuCommandService)) as OleMenuCommandService;
+            lock(sync)
+            {
+                if(Instance == null) _instance = new StatusToolCommand(pkg, svc, evt);
+
+                Instance.toolPane = Instance.initToolPane();
                 return Instance;
             }
-
-            Instance = new StatusToolCommand
-            (
-                pkg, 
-                pkg.getSvc(typeof(IMenuCommandService)) as OleMenuCommandService,
-                evt
-            );
-
-            Instance.toolPane = Instance.initToolPane();
-
-            return Instance;
         }
 
 #endif
@@ -169,9 +158,10 @@ namespace net.r_eg.vsSBE
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(pkg.CancellationToken);
 #endif
-
-                IVsWindowFrame windowFrame = (IVsWindowFrame)toolPane.Frame;
-                Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
+                if(toolPane?.Frame is IVsWindowFrame windowFrame)
+                {
+                    Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
+                }
 
 #if SDK15_OR_HIGH
             });

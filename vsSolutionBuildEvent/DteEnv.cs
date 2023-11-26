@@ -13,12 +13,14 @@ namespace net.r_eg.vsSBE
 {
     internal sealed class DteEnv: IDteEnv
     {
-        private IEnvironment env;
-        private Lazy<DTEOperation> dteo;
+        private readonly IEnvironment env;
+        private readonly Lazy<DTEOperation> dteo;
 
         private EnvDTE.CommandEvents cmdEvents;
 
-        private readonly object sync = new object();
+        private readonly _DteCommand _dtec = new();
+
+        private readonly object sync = new();
 
         /// <summary>
         /// Ability of work with DTE Commands.
@@ -28,11 +30,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// The last received command from EnvDTE.
         /// </summary>
-        public IDteCommand LastCmd
-        {
-            get;
-            private set;
-        } = new _DteCommand();
+        public IDteCommand LastCmd => _dtec;
 
         /// <summary>
         /// Execute command through EnvDTE.
@@ -90,14 +88,11 @@ namespace net.r_eg.vsSBE
 
         private void CommandEvent(bool pre, string guid, int id, object customIn, object customOut)
         {
-            LastCmd = new _DteCommand()
-            {
-                Guid        = guid,
-                Id          = id,
-                CustomIn    = customIn,
-                CustomOut   = customOut,
-                Pre         = pre
-            };
+            _dtec.Guid      = guid;
+            _dtec.Id        = id;
+            _dtec.CustomIn  = customIn;
+            _dtec.CustomOut = customOut;
+            _dtec.Pre       = pre;
         }
 
         private sealed class _DteCommand: IDteCommand

@@ -434,7 +434,7 @@ namespace net.r_eg.vsSBE.Actions
 
             try {
                 if(Cmd.exec(evt, SolutionEventType.OWP)) {
-                    Log.Info($"[{SolutionEventType.OWP}] finished '{evt.Name}'");
+                    Log.Debug($"[{SolutionEventType.OWP}] {evt.Name} completed successfully.");
                 }
                 return Codes.Success;
             }
@@ -495,9 +495,7 @@ namespace net.r_eg.vsSBE.Actions
                                 )
                             )).Select(f => f.Cancel);
 
-                if(Is.Count() < 1) {
-                    continue;
-                }
+                if(!Is.Any()) continue;
 
                 Log.Trace("[CommandEvent] catched: '{0}', '{1}', '{2}', '{3}', '{4}' /'{5}'",
                                                         guid, id, customIn, customOut, cancelDefault, pre);
@@ -506,7 +504,7 @@ namespace net.r_eg.vsSBE.Actions
 
                 if(pre && Is.Any(f => f)) {
                     cancelDefault = true;
-                    Log.Info("[CommandEvent] original command has been canceled for action: '{0}'", item.Caption);
+                    Log.Info($"[CommandEvent] command has been canceled by {item.Name} action.");
                 }
             }
             return Status._.contains(SolutionEventType.CommandEvent, StatusType.Fail)? Codes.Failed : Codes.Success;
@@ -517,7 +515,7 @@ namespace net.r_eg.vsSBE.Actions
             try
             {
                 if(Cmd.exec(item, SolutionEventType.CommandEvent)) {
-                    Log.Info("[CommandEvent] finished: '{0}'", item.Caption);
+                    Log.Debug($"[CommandEvent] {item.Name} action completed successfully.");
                 }
                 Status._.add(SolutionEventType.CommandEvent, StatusType.Success);
             }

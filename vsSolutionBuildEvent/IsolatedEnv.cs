@@ -216,7 +216,7 @@ namespace net.r_eg.vsSBE
                 return;
             }
 
-            Log.Warn("Disabled for this Environment. Command: '{0}', args: '{1}'", name, args);
+            __disabled($"{name}({args})");
         }
 
         /// <summary>
