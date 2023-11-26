@@ -3,6 +3,7 @@
  *  Example of using the API https://github.com/3F/vsSolutionBuildEvent
 */
 
+using System;
 using net.r_eg.vsSBE.Bridge;
 
 namespace ClientDemo
@@ -15,7 +16,7 @@ namespace ClientDemo
         /// <param name="data">Raw data of building process</param>
         public void onBuildRaw(string data)
         {
-            Log._.info("Entering onBuildRaw(string data): '{0}'", (data.Length > 40)? data.Substring(0, 40) + "..." : data);
+            Log._.info($"Entering onBuildRaw(string data): '{data?.Substring(0, Math.Min(40, data.Length))}' ...");
         }
 
         /// <summary>

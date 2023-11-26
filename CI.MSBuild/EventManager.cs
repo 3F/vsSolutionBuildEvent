@@ -246,9 +246,10 @@ namespace net.r_eg.vsSBE.CI.MSBuild
         /// </summary>
         protected void onAnyEventRaised(object sender, BuildEventArgs e)
         {
-            if(library != null) {
-                library.Build.onBuildRaw(e.Message);
-            }
+            library?.Build.onBuildRaw
+            (
+                e.Message ?? $" #@ {e.ThreadId}:{e.BuildEventContext?.BuildRequestId} , {e.BuildEventContext}"
+            );
         }
 
         /// <summary>

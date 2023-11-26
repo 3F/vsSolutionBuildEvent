@@ -19,7 +19,7 @@ namespace net.r_eg.vsSBE.Clients
         /// <summary>
         /// Link to IBuild instance of the client library
         /// </summary>
-        private IBuild link;
+        private readonly IBuild link;
 
         /// <summary>
         /// During assembly.
@@ -27,6 +27,8 @@ namespace net.r_eg.vsSBE.Clients
         /// <param name="data">Raw data of building process</param>
         public void onBuildRaw(string data)
         {
+            if(data == null) return;
+
             try {
                 link.onBuildRaw(data);
             }
@@ -54,10 +56,7 @@ namespace net.r_eg.vsSBE.Clients
         /// <param name="o">IBuild instance</param>
         public SBuild(IBuild o)
         {
-            link = o;
-            if(link == null) {
-                link = new SBuildEmpty();
-            }
+            link = o ?? new SBuildEmpty();
         }
     }
 }

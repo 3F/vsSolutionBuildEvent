@@ -1,7 +1,7 @@
 ﻿<Project>
 
   <PropertyGroup>
-    <MicrosoftCodeAnalysisNetAnalyzersVersion>6.0.0</MicrosoftCodeAnalysisNetAnalyzersVersion>
+    <MicrosoftCodeAnalysisNetAnalyzersVersion>8.0.0</MicrosoftCodeAnalysisNetAnalyzersVersion>
     <MicrosoftNETTestSdkVersion>17.0.0</MicrosoftNETTestSdkVersion>
     <xunitVersion>2.4.1</xunitVersion>
     <xunitRunnerVisualstudioVersion>2.4.3</xunitRunnerVisualstudioVersion>

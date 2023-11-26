@@ -293,10 +293,11 @@ namespace net.r_eg.vsSBE.API
             return Codes.Failed;
         }
 
-        /// <inheritdoc/>
-        /// <remarks>TODO: (string data, string guid, string item)</remarks>
+        //TODO: (string data, string guid, string item)
         public void onBuildRaw(string data)
         {
+            if(data == null) return; // L-704
+
             try
             {
                 Action.bindBuildRaw(data);
