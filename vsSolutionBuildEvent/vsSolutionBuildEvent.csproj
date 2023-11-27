@@ -46,8 +46,6 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
-
-    <PackageReference Include="AvalonEdit" Version="$(AvalonEditVersion)" />
     <PackageReference Include="Ude.Signed" Version="$(UdeSignedVersion)" />
     <PackageReference Include="SevenZipSharp" Version="$(SevenZipSharpVersion)" />
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonsoftJsonVersion)" />
@@ -87,16 +85,6 @@
         <!-- `Microsoft.VisualStudio.SDK.EmbedInteropTypes` package provides .targets where solution for EmbedInteropTypes=true
               described here https://docs.microsoft.com/en-us/nuget/create-packages/author-packages-with-com-interop-assemblies -->
         <PackageReference Include="Microsoft.VisualStudio.SDK.EmbedInteropTypes" Version="$(MicrosoftVisualStudioSDKEmbedInteropTypesVersion)" />
-      </ItemGroup>
-      <ItemGroup>
-        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="$(MicrosoftVisualStudioThreadingAnalyzersVersion)">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.VisualStudio.SDK.Analyzers" Version="$(MicrosoftVisualStudioSDKAnalyzersVersion)">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
       </ItemGroup>
     </When>
     <When Condition="'$(VsSbeSdkBase)' == '10'">
@@ -148,6 +136,26 @@
         <Reference Include="Microsoft.Build" />
         <Reference Include="Microsoft.Build.Framework" />
       </ItemGroup>
+      <ItemGroup>
+        <PackageReference Include="AvalonEdit" Version="$(AvalonEditVersionSDK10)" />
+      </ItemGroup>
+    </When>
+  </Choose>
+  <Choose>
+    <When Condition="'$(VsSbeSdkBase)' == '17' or '$(VsSbeSdkBase)' == '15'">
+      <ItemGroup>
+        <PackageReference Include="AvalonEdit" Version="$(AvalonEditVersion)" />
+      </ItemGroup>
+      <ItemGroup>
+        <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="$(MicrosoftVisualStudioThreadingAnalyzersVersion)">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.VisualStudio.SDK.Analyzers" Version="$(MicrosoftVisualStudioSDKAnalyzersVersion)">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+      </ItemGroup>
     </When>
   </Choose>
   <ItemGroup>
@@ -187,14 +195,14 @@
     <Compile Include="SzArchiver.cs" />
     <Compile Include="MSBuild.cs" />
     <Compile Include="IPkg.cs" />
+    <Compile Include="UI\ComponentExtension.cs" />
     <Compile Include="UI\MetricDefault.cs" />
+    <Compile Include="UI\EnumDecor.cs" />
     <Compile Include="UI\WForms\Controls\CompletionData.cs" />
     <Compile Include="StatusToolCommand.cs" />
     <Compile Include="MainToolCommand.cs" />
-    <Compile Include="Configuration\ContextType.cs" />
     <Compile Include="Configuration\IConfig.cs" />
-    <Compile Include="Configuration\IManager.cs" />
-    <Compile Include="Configuration\Manager.cs" />
+    <Compile Include="Configuration\ConfManager.cs" />
     <Compile Include="Configuration\PackerAbstract.cs" />
     <Compile Include="Configuration\User\IDataSvc.cs" />
     <Compile Include="Configuration\User\LinkType.cs" />
@@ -225,7 +233,7 @@
     <Compile Include="UI\WForms\Controls\FileTextBox.Designer.cs">
       <DependentUpon>FileTextBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\WForms\Logic\RestoreData.cs" />
+    <Compile Include="UI\WForms\Logic\BackupSettings.cs" />
     <Compile Include="UI\WForms\Logic\SBEWrap.cs" />
     <Compile Include="UI\WForms\Wizards\VersionFrm.cs">
       <SubType>Form</SubType>
@@ -253,18 +261,18 @@
     <Compile Include="UI\WForms\Wizards\Version\StepsType.cs" />
     <Compile Include="UI\WForms\Wizards\Version\StepStruct.cs" />
     <Compile Include="UI\WForms\Wizards\Version\GenType.cs" />
-    <Compile Include="UserConfig.cs" />
+    <Compile Include="Configuration\SysConfig.cs" />
+    <Compile Include="Configuration\UserConfig.cs" />
     <Compile Include="Configuration\Component.cs" />
     <Compile Include="Configuration\User\HashType.cs" />
     <Compile Include="Configuration\User\Cache.cs" />
     <Compile Include="Configuration\User\Common.cs" />
     <Compile Include="Configuration\User\ICacheHeader.cs" />
     <Compile Include="Configuration\User\Data.cs" />
-    <Compile Include="Configuration\User\Global.cs" />
+    <Compile Include="Configuration\Sys\Data.cs" />
     <Compile Include="Configuration\User\Route.cs" />
     <Compile Include="Configuration\User\IRoute.cs" />
     <Compile Include="Configuration\User\ICommon.cs" />
-    <Compile Include="Configuration\User\IGlobal.cs" />
     <Compile Include="Configuration\User\UserValue.cs" />
     <Compile Include="Configuration\User\IUserValue.cs" />
     <Compile Include="Environment.cs" />
@@ -400,7 +408,7 @@
     <Compile Include="Receiver\Output\OWP.cs" />
     <Compile Include="Receiver\Output\ItemEW.cs" />
     <Compile Include="Actions\Command.cs" />
-    <Compile Include="Config.cs" />
+    <Compile Include="Configuration\SlnConfig.cs" />
     <Compile Include="UI\WForms\EventsFrm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -591,55 +599,55 @@
       <Project>{e51d1ea3-f4a7-4f27-a941-e16d2b88d08a}</Project>
       <Name>E-MSBuild</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\inc\modules\LSender\LSender.csproj">
       <Project>{287d8f67-dd08-423f-aa60-c48d84140612}</Project>
       <Name>LSender</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\MvsSln\MvsSln\MvsSln.csproj">
       <Project>{f905dfb2-2e67-4ff7-9001-924f6f2d645d}</Project>
       <Name>MvsSln</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\inc\modules\SobaScript.Mapper\SobaScript.Mapper.csproj">
       <Project>{3eabd66d-1f4b-46e5-88ff-3e680708309f}</Project>
       <Name>SobaScript.Mapper</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\inc\modules\SobaScript.Z.Core\SobaScript.Z.Core.csproj">
       <Project>{d5c9a407-1173-43bf-a15a-5d8ab100ac4a}</Project>
       <Name>SobaScript.Z.Core</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\inc\modules\SobaScript.Z.Ext\SobaScript.Z.Ext.csproj">
       <Project>{0fb9bd48-d455-40dc-a6bf-411b595a2999}</Project>
       <Name>SobaScript.Z.Ext</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\inc\modules\SobaScript.Z.VS\SobaScript.Z.VS.csproj">
       <Project>{cd42837f-ecb4-48d5-89d5-eff831001f89}</Project>
       <Name>SobaScript.Z.VS</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\inc\modules\SobaScript\SobaScript.csproj">
       <Project>{3a80b650-b457-4de4-b2d3-64191a20c6b7}</Project>
       <Name>SobaScript</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\inc\modules\Varhead\Varhead.csproj">
       <Project>{4670b9b4-1ba9-4cb2-bbfc-ec4ebeb40a42}</Project>
       <Name>Varhead</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
@@ -678,5 +686,4 @@
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>
-
 </Project>

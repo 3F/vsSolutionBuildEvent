@@ -1,19 +1,8 @@
-﻿/*
- * Copyright (c) 2013-2021  Denis Kuzmin <x-3F@outlook.com> github/3F
- * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿/*!
+ * Copyright (c) 2013  Denis Kuzmin <x-3F@outlook.com> github/3F
+ * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent/graphs/contributors
+ * Licensed under the LGPLv3.
+ * See accompanying LICENSE file or visit https://github.com/3F/vsSolutionBuildEvent
 */
 
 using System;
@@ -25,7 +14,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 {
     public partial class AboutFrm: Form
     {
-        protected class DeepSpace
+        protected class DeepSpace: IDisposable
         {
             public bool speedup;
 
@@ -182,9 +171,22 @@ namespace net.r_eg.vsSBE.UI.WForms
                 Coord prev = (Coord)coord;
                 graphics.FillRectangle(Brushes.Black, prev.x, prev.y, prev.w, prev.h);
             }
-        }
-        protected DeepSpace space;
 
+            #region IDisposable
+            public void Dispose()
+            {
+                if(shades != null)
+                {
+                    foreach(var s in shades) s.Dispose();
+                    graphics.Dispose();
+                    shades = null;
+                }
+                GC.SuppressFinalize(this);
+            }
+            #endregion
+        }
+
+        private readonly DeepSpace space;
 
         public AboutFrm()
         {
@@ -217,6 +219,7 @@ namespace net.r_eg.vsSBE.UI.WForms
         private void AboutFrm_FormClosing(object sender, FormClosingEventArgs e)
         {
             space.stop();
+            space.Dispose();
         }
 
         private void pictureBoxSpace_MouseDown(object sender, MouseEventArgs e)
@@ -249,9 +252,9 @@ namespace net.r_eg.vsSBE.UI.WForms
             Util.openUrl("https://github.com/3F");
         }
 
-        private void linkLabelDonationHelp_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void linkLabelDonation_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Util.openUrl("https://3F.github.io/Donation/");
+            btnDonate_Click(sender, e);
         }
 
         private void btnDonate_Click(object sender, EventArgs e)

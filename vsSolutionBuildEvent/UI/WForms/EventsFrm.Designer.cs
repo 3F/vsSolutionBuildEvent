@@ -78,31 +78,24 @@
             this.menuTplCSharp = new System.Windows.Forms.ToolStripMenuItem();
             this.menuTplCSharpDefault = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuCI = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuCIMSBuild = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuDevenv = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuAPI = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuPlugin = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuCopyPath = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuSysDir = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuPluginDir = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuSuppressInitOwp = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuSBEPanel = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuAPI = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuHelp = new System.Windows.Forms.ToolStripSplitButton();
             this.tsMenuItemExamples = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuDocItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuWiki = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuGalleryPage = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuChangelog = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuIssue = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuGalleryPage = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuSources = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuLicense = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuBug = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripMenuReport = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuDebugMode = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuPin = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
             this.menuLogMsg = new System.Windows.Forms.ToolStripMenuItem();
             this.menuLogIgnoreTrace = new System.Windows.Forms.ToolStripMenuItem();
@@ -190,7 +183,6 @@
             this.btnDteCmd = new System.Windows.Forms.Button();
             this.tabPageFilters = new System.Windows.Forms.TabPage();
             this.panelVSCE = new System.Windows.Forms.Panel();
-            this.btnInfoVSCE = new System.Windows.Forms.Button();
             this.btnDownloadVSCE = new System.Windows.Forms.Button();
             this.labelVSCE = new System.Windows.Forms.Label();
             this.splitContainerCE = new System.Windows.Forms.SplitContainer();
@@ -202,7 +194,7 @@
             this.dgvCESnifferColumnId = new net.r_eg.vsSBE.UI.WForms.Components.DataGridViewExt.NumericColumn();
             this.dgvCESnifferColumnCustomIn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dgvCESnifferColumnCustomOut = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dgvCESnifferColumnEnum = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dgvCESnifferColumnSrc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.contextMenuSniffer = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuSnifferAdd = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
@@ -446,11 +438,8 @@
             this.menuWizards,
             this.toolStripMenuTpl,
             this.toolStripSeparator10,
-            this.toolStripMenuCI,
-            this.toolStripMenuAPI,
-            this.toolStripSeparator11,
             this.toolStripMenuPlugin,
-            this.toolStripMenuSBEPanel});
+            this.toolStripMenuAPI});
             this.toolStripMenuSettings.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuSettings.Image")));
             this.toolStripMenuSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripMenuSettings.Name = "toolStripMenuSettings";
@@ -546,7 +535,7 @@
             // 
             this.menuItemSniffer.Name = "menuItemSniffer";
             this.menuItemSniffer.Size = new System.Drawing.Size(178, 22);
-            this.menuItemSniffer.Text = "EnvDTE Sniffer";
+            this.menuItemSniffer.Text = "Sniffer";
             this.menuItemSniffer.Click += new System.EventHandler(this.menuItemSniffer_Click);
             // 
             // menuWizards
@@ -608,28 +597,52 @@
             this.toolStripSeparator10.Name = "toolStripSeparator10";
             this.toolStripSeparator10.Size = new System.Drawing.Size(152, 6);
             // 
-            // toolStripMenuCI
+            // toolStripMenuPlugin
             // 
-            this.toolStripMenuCI.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuCIMSBuild,
-            this.toolStripMenuDevenv});
-            this.toolStripMenuCI.Name = "toolStripMenuCI";
-            this.toolStripMenuCI.Size = new System.Drawing.Size(155, 22);
-            this.toolStripMenuCI.Text = "CI Utilities";
+            this.toolStripMenuPlugin.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuSysDir,
+            this.toolStripMenuPluginDir,
+            this.toolStripSeparator4,
+            this.toolStripMenuSuppressInitOwp,
+            this.toolStripMenuSBEPanel});
+            this.toolStripMenuPlugin.Name = "toolStripMenuPlugin";
+            this.toolStripMenuPlugin.Size = new System.Drawing.Size(155, 22);
+            this.toolStripMenuPlugin.Text = "Plugin";
             // 
-            // toolStripMenuCIMSBuild
+            // toolStripMenuSysDir
             // 
-            this.toolStripMenuCIMSBuild.Name = "toolStripMenuCIMSBuild";
-            this.toolStripMenuCIMSBuild.Size = new System.Drawing.Size(200, 22);
-            this.toolStripMenuCIMSBuild.Text = "CI.MSBuild";
-            this.toolStripMenuCIMSBuild.Click += new System.EventHandler(this.toolStripMenuCIMSBuild_Click);
+            this.toolStripMenuSysDir.Name = "toolStripMenuSysDir";
+            this.toolStripMenuSysDir.Size = new System.Drawing.Size(225, 22);
+            this.toolStripMenuSysDir.Text = "Open a common directory";
+            this.toolStripMenuSysDir.ToolTipText = "Directory for a common configuration, Client library (API), etc.";
+            this.toolStripMenuSysDir.Click += new System.EventHandler(this.toolStripMenuSysDir_Click);
             // 
-            // toolStripMenuDevenv
+            // toolStripMenuPluginDir
             // 
-            this.toolStripMenuDevenv.Name = "toolStripMenuDevenv";
-            this.toolStripMenuDevenv.Size = new System.Drawing.Size(200, 22);
-            this.toolStripMenuDevenv.Text = "Devenv Command-Line";
-            this.toolStripMenuDevenv.Click += new System.EventHandler(this.toolStripMenuDevenv_Click);
+            this.toolStripMenuPluginDir.Name = "toolStripMenuPluginDir";
+            this.toolStripMenuPluginDir.Size = new System.Drawing.Size(225, 22);
+            this.toolStripMenuPluginDir.Text = "Open directory where plugin";
+            this.toolStripMenuPluginDir.Click += new System.EventHandler(this.toolStripMenuPluginDir_Click);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(222, 6);
+            // 
+            // toolStripMenuSuppressInitOwp
+            // 
+            this.toolStripMenuSuppressInitOwp.Name = "toolStripMenuSuppressInitOwp";
+            this.toolStripMenuSuppressInitOwp.Size = new System.Drawing.Size(225, 22);
+            this.toolStripMenuSuppressInitOwp.Text = "Suppress forcing OWP";
+            this.toolStripMenuSuppressInitOwp.ToolTipText = "Do not force show output window panel (VS IDE) when initializing solution";
+            this.toolStripMenuSuppressInitOwp.Click += new System.EventHandler(this.toolStripMenuSuppressInitOwp_Click);
+            // 
+            // toolStripMenuSBEPanel
+            // 
+            this.toolStripMenuSBEPanel.Name = "toolStripMenuSBEPanel";
+            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(225, 22);
+            this.toolStripMenuSBEPanel.Text = "Attach quick panel (VS IDE)";
+            this.toolStripMenuSBEPanel.Click += new System.EventHandler(this.toolStripMenuSBEPanel_Click);
             // 
             // toolStripMenuAPI
             // 
@@ -638,54 +651,15 @@
             this.toolStripMenuAPI.Text = "API";
             this.toolStripMenuAPI.Click += new System.EventHandler(this.toolStripMenuAPI_Click);
             // 
-            // toolStripSeparator11
-            // 
-            this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(152, 6);
-            // 
-            // toolStripMenuPlugin
-            // 
-            this.toolStripMenuPlugin.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuCopyPath,
-            this.toolStripMenuPluginDir});
-            this.toolStripMenuPlugin.Name = "toolStripMenuPlugin";
-            this.toolStripMenuPlugin.Size = new System.Drawing.Size(155, 22);
-            this.toolStripMenuPlugin.Text = "Plugin";
-            // 
-            // toolStripMenuCopyPath
-            // 
-            this.toolStripMenuCopyPath.Name = "toolStripMenuCopyPath";
-            this.toolStripMenuCopyPath.Size = new System.Drawing.Size(216, 22);
-            this.toolStripMenuCopyPath.Text = "Copy path to plugin";
-            this.toolStripMenuCopyPath.Click += new System.EventHandler(this.toolStripMenuCopyPath_Click);
-            // 
-            // toolStripMenuPluginDir
-            // 
-            this.toolStripMenuPluginDir.Name = "toolStripMenuPluginDir";
-            this.toolStripMenuPluginDir.Size = new System.Drawing.Size(216, 22);
-            this.toolStripMenuPluginDir.Text = "Open directory with plugin";
-            this.toolStripMenuPluginDir.Click += new System.EventHandler(this.toolStripMenuPluginDir_Click);
-            // 
-            // toolStripMenuSBEPanel
-            // 
-            this.toolStripMenuSBEPanel.Name = "toolStripMenuSBEPanel";
-            this.toolStripMenuSBEPanel.Size = new System.Drawing.Size(155, 22);
-            this.toolStripMenuSBEPanel.Text = "Quick Panel";
-            this.toolStripMenuSBEPanel.Click += new System.EventHandler(this.toolStripMenuSBEPanel_Click);
-            // 
             // toolStripMenuHelp
             // 
             this.toolStripMenuHelp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripMenuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsMenuItemExamples,
-            this.toolStripSeparator14,
-            this.toolStripMenuDocItem,
             this.toolStripMenuChangelog,
-            this.toolStripSeparator3,
-            this.toolStripMenuIssue,
+            this.toolStripMenuGalleryPage,
             this.toolStripMenuSources,
             this.toolStripSeparator2,
-            this.toolStripMenuLicense,
             this.toolStripMenuAbout});
             this.toolStripMenuHelp.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuHelp.Image")));
             this.toolStripMenuHelp.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -697,80 +671,40 @@
             // tsMenuItemExamples
             // 
             this.tsMenuItemExamples.Name = "tsMenuItemExamples";
-            this.tsMenuItemExamples.Size = new System.Drawing.Size(188, 22);
-            this.tsMenuItemExamples.Text = "Examples";
-            this.tsMenuItemExamples.Click += new System.EventHandler(this.tsMenuItemExamples_Click);
-            // 
-            // toolStripSeparator14
-            // 
-            this.toolStripSeparator14.Name = "toolStripSeparator14";
-            this.toolStripSeparator14.Size = new System.Drawing.Size(185, 6);
-            // 
-            // toolStripMenuDocItem
-            // 
-            this.toolStripMenuDocItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuWiki,
-            this.toolStripMenuGalleryPage});
-            this.toolStripMenuDocItem.Name = "toolStripMenuDocItem";
-            this.toolStripMenuDocItem.Size = new System.Drawing.Size(188, 22);
-            this.toolStripMenuDocItem.Text = "Documentation";
-            // 
-            // toolStripMenuWiki
-            // 
-            this.toolStripMenuWiki.Name = "toolStripMenuWiki";
-            this.toolStripMenuWiki.Size = new System.Drawing.Size(181, 22);
-            this.toolStripMenuWiki.Text = "Wiki";
-            this.toolStripMenuWiki.Click += new System.EventHandler(this.toolStripMenuWiki_Click);
-            // 
-            // toolStripMenuGalleryPage
-            // 
-            this.toolStripMenuGalleryPage.Name = "toolStripMenuGalleryPage";
-            this.toolStripMenuGalleryPage.Size = new System.Drawing.Size(181, 22);
-            this.toolStripMenuGalleryPage.Text = "Visual Studio Gallery";
-            this.toolStripMenuGalleryPage.Click += new System.EventHandler(this.toolStripMenuGalleryPage_Click);
+            this.tsMenuItemExamples.Size = new System.Drawing.Size(259, 22);
+            this.tsMenuItemExamples.Text = "Wiki: Docs / Examples";
+            this.tsMenuItemExamples.Click += new System.EventHandler(this.toolStripMenuWiki_Click);
             // 
             // toolStripMenuChangelog
             // 
             this.toolStripMenuChangelog.Name = "toolStripMenuChangelog";
-            this.toolStripMenuChangelog.Size = new System.Drawing.Size(188, 22);
-            this.toolStripMenuChangelog.Text = "Changelist";
+            this.toolStripMenuChangelog.Size = new System.Drawing.Size(259, 22);
+            this.toolStripMenuChangelog.Text = "Changelog";
             this.toolStripMenuChangelog.Click += new System.EventHandler(this.toolStripMenuChangelog_Click);
             // 
-            // toolStripSeparator3
+            // toolStripMenuGalleryPage
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(185, 6);
-            // 
-            // toolStripMenuIssue
-            // 
-            this.toolStripMenuIssue.Name = "toolStripMenuIssue";
-            this.toolStripMenuIssue.Size = new System.Drawing.Size(188, 22);
-            this.toolStripMenuIssue.Text = "Public Bug Tracker";
-            this.toolStripMenuIssue.Click += new System.EventHandler(this.toolStripMenuIssue_Click);
+            this.toolStripMenuGalleryPage.Name = "toolStripMenuGalleryPage";
+            this.toolStripMenuGalleryPage.Size = new System.Drawing.Size(259, 22);
+            this.toolStripMenuGalleryPage.Text = "VisualStudio Gallery";
+            this.toolStripMenuGalleryPage.Click += new System.EventHandler(this.toolStripMenuGalleryPage_Click);
             // 
             // toolStripMenuSources
             // 
             this.toolStripMenuSources.Name = "toolStripMenuSources";
-            this.toolStripMenuSources.Size = new System.Drawing.Size(188, 22);
-            this.toolStripMenuSources.Text = "Source code [GitHub]";
+            this.toolStripMenuSources.Size = new System.Drawing.Size(259, 22);
+            this.toolStripMenuSources.Text = "GitHub: Bug tracker && Source code";
             this.toolStripMenuSources.Click += new System.EventHandler(this.toolStripMenuSources_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(185, 6);
-            // 
-            // toolStripMenuLicense
-            // 
-            this.toolStripMenuLicense.Name = "toolStripMenuLicense";
-            this.toolStripMenuLicense.Size = new System.Drawing.Size(188, 22);
-            this.toolStripMenuLicense.Text = "License";
-            this.toolStripMenuLicense.Click += new System.EventHandler(this.toolStripMenuLicense_Click);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(256, 6);
             // 
             // toolStripMenuAbout
             // 
             this.toolStripMenuAbout.Name = "toolStripMenuAbout";
-            this.toolStripMenuAbout.Size = new System.Drawing.Size(188, 22);
+            this.toolStripMenuAbout.Size = new System.Drawing.Size(259, 22);
             this.toolStripMenuAbout.Text = "About";
             this.toolStripMenuAbout.Click += new System.EventHandler(this.toolStripMenuAbout_Click);
             // 
@@ -780,6 +714,7 @@
             this.toolStripMenuBug.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuReport,
             this.toolStripMenuDebugMode,
+            this.toolStripMenuPin,
             this.toolStripSeparator13,
             this.menuLogMsg});
             this.toolStripMenuBug.Image = ((System.Drawing.Image)(resources.GetObject("toolStripMenuBug.Image")));
@@ -804,6 +739,13 @@
             this.toolStripMenuDebugMode.Size = new System.Drawing.Size(208, 22);
             this.toolStripMenuDebugMode.Text = "Debug Mode";
             this.toolStripMenuDebugMode.Click += new System.EventHandler(this.toolStripMenuDebugMode_Click);
+            // 
+            // toolStripMenuPin
+            // 
+            this.toolStripMenuPin.Name = "toolStripMenuPin";
+            this.toolStripMenuPin.Size = new System.Drawing.Size(208, 22);
+            this.toolStripMenuPin.Text = "Pin 📌";
+            this.toolStripMenuPin.Click += new System.EventHandler(this.toolStripMenuPin_Click);
             // 
             // toolStripSeparator13
             // 
@@ -952,8 +894,9 @@
             // pictureBoxToggle
             // 
             this.pictureBoxToggle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBoxToggle.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBoxToggle.BackgroundImage")));
+            this.pictureBoxToggle.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pictureBoxToggle.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBoxToggle.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxToggle.Image")));
             this.pictureBoxToggle.Location = new System.Drawing.Point(186, 0);
             this.pictureBoxToggle.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBoxToggle.Name = "pictureBoxToggle";
@@ -996,7 +939,6 @@
             this.dgvActions.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.dgvActions.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             this.dgvActions.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.dgvActions.RowTemplate.Height = 17;
             this.dgvActions.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvActions.ShowEditingIcon = false;
             this.dgvActions.Size = new System.Drawing.Size(202, 615);
@@ -1015,10 +957,11 @@
             // 
             // dgvActionEnabled
             // 
+            this.dgvActionEnabled.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
             this.dgvActionEnabled.FillWeight = 21F;
             this.dgvActionEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.dgvActionEnabled.HeaderText = "";
-            this.dgvActionEnabled.MinimumWidth = 16;
+            this.dgvActionEnabled.MinimumWidth = 21;
             this.dgvActionEnabled.Name = "dgvActionEnabled";
             this.dgvActionEnabled.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvActionEnabled.ToolTipText = "Enabled";
@@ -1395,7 +1338,7 @@
             // 
             this.textEditor.CodeCompletionEnabled = false;
             this.textEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textEditor.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.textEditor.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textEditor.Location = new System.Drawing.Point(5, 1);
             this.textEditor.Name = "textEditor";
             this.textEditor.Size = new System.Drawing.Size(761, 231);
@@ -1632,7 +1575,6 @@
             this.dataGridViewOutput.RowHeadersVisible = false;
             this.dataGridViewOutput.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             this.dataGridViewOutput.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.dataGridViewOutput.RowTemplate.Height = 17;
             this.dataGridViewOutput.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dataGridViewOutput.Size = new System.Drawing.Size(293, 133);
             this.dataGridViewOutput.TabIndex = 7;
@@ -1773,7 +1715,6 @@
             this.dataGridViewOrder.RowHeadersVisible = false;
             this.dataGridViewOrder.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             this.dataGridViewOrder.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.dataGridViewOrder.RowTemplate.Height = 17;
             this.dataGridViewOrder.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dataGridViewOrder.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dataGridViewOrder.Size = new System.Drawing.Size(264, 77);
@@ -1781,10 +1722,11 @@
             // 
             // dgvOrderEnabled
             // 
+            this.dgvOrderEnabled.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
             this.dgvOrderEnabled.FillWeight = 21F;
             this.dgvOrderEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.dgvOrderEnabled.HeaderText = "";
-            this.dgvOrderEnabled.MinimumWidth = 16;
+            this.dgvOrderEnabled.MinimumWidth = 21;
             this.dgvOrderEnabled.Name = "dgvOrderEnabled";
             this.dgvOrderEnabled.Width = 21;
             // 
@@ -1848,7 +1790,7 @@
             // btnDteCmd
             // 
             this.btnDteCmd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnDteCmd.Location = new System.Drawing.Point(115, 7);
+            this.btnDteCmd.Location = new System.Drawing.Point(115, 6);
             this.btnDteCmd.Name = "btnDteCmd";
             this.btnDteCmd.Size = new System.Drawing.Size(102, 20);
             this.btnDteCmd.TabIndex = 25;
@@ -1863,7 +1805,7 @@
             this.tabPageFilters.Location = new System.Drawing.Point(4, 25);
             this.tabPageFilters.Name = "tabPageFilters";
             this.tabPageFilters.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageFilters.Size = new System.Drawing.Size(776, 471);
+            this.tabPageFilters.Size = new System.Drawing.Size(776, 586);
             this.tabPageFilters.TabIndex = 3;
             this.tabPageFilters.Text = "Filters";
             this.tabPageFilters.UseVisualStyleBackColor = true;
@@ -1871,24 +1813,13 @@
             // panelVSCE
             // 
             this.panelVSCE.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.panelVSCE.Controls.Add(this.btnInfoVSCE);
             this.panelVSCE.Controls.Add(this.btnDownloadVSCE);
             this.panelVSCE.Controls.Add(this.labelVSCE);
-            this.panelVSCE.Location = new System.Drawing.Point(6, 442);
+            this.panelVSCE.Location = new System.Drawing.Point(6, 558);
             this.panelVSCE.Margin = new System.Windows.Forms.Padding(0);
             this.panelVSCE.Name = "panelVSCE";
-            this.panelVSCE.Size = new System.Drawing.Size(461, 29);
+            this.panelVSCE.Size = new System.Drawing.Size(259, 29);
             this.panelVSCE.TabIndex = 64;
-            // 
-            // btnInfoVSCE
-            // 
-            this.btnInfoVSCE.Location = new System.Drawing.Point(186, 3);
-            this.btnInfoVSCE.Name = "btnInfoVSCE";
-            this.btnInfoVSCE.Size = new System.Drawing.Size(45, 23);
-            this.btnInfoVSCE.TabIndex = 2;
-            this.btnInfoVSCE.Text = "Info";
-            this.btnInfoVSCE.UseVisualStyleBackColor = true;
-            this.btnInfoVSCE.Click += new System.EventHandler(this.btnInfoVSCE_Click);
             // 
             // btnDownloadVSCE
             // 
@@ -1928,8 +1859,8 @@
             // 
             this.splitContainerCE.Panel2.Controls.Add(this.groupBoxCommandEvents);
             this.splitContainerCE.Panel2MinSize = 200;
-            this.splitContainerCE.Size = new System.Drawing.Size(767, 435);
-            this.splitContainerCE.SplitterDistance = 215;
+            this.splitContainerCE.Size = new System.Drawing.Size(767, 552);
+            this.splitContainerCE.SplitterDistance = 240;
             this.splitContainerCE.TabIndex = 63;
             // 
             // groupBoxCESniffer
@@ -1941,7 +1872,7 @@
             this.groupBoxCESniffer.Margin = new System.Windows.Forms.Padding(0);
             this.groupBoxCESniffer.Name = "groupBoxCESniffer";
             this.groupBoxCESniffer.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBoxCESniffer.Size = new System.Drawing.Size(767, 215);
+            this.groupBoxCESniffer.Size = new System.Drawing.Size(767, 240);
             this.groupBoxCESniffer.TabIndex = 63;
             this.groupBoxCESniffer.TabStop = false;
             // 
@@ -1960,7 +1891,7 @@
             this.dgvCESnifferColumnId,
             this.dgvCESnifferColumnCustomIn,
             this.dgvCESnifferColumnCustomOut,
-            this.dgvCESnifferColumnEnum});
+            this.dgvCESnifferColumnSrc});
             this.dgvCESniffer.ContextMenuStrip = this.contextMenuSniffer;
             dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
@@ -1981,9 +1912,8 @@
             this.dgvCESniffer.RowHeadersVisible = false;
             this.dgvCESniffer.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             this.dgvCESniffer.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.dgvCESniffer.RowTemplate.Height = 17;
             this.dgvCESniffer.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvCESniffer.Size = new System.Drawing.Size(763, 198);
+            this.dgvCESniffer.Size = new System.Drawing.Size(763, 223);
             this.dgvCESniffer.TabIndex = 7;
             // 
             // dgvCESnifferColumnStamp
@@ -1996,8 +1926,9 @@
             // 
             // dgvCESnifferColumnPre
             // 
+            this.dgvCESnifferColumnPre.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
             this.dgvCESnifferColumnPre.FalseValue = "False";
-            this.dgvCESnifferColumnPre.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.dgvCESnifferColumnPre.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.dgvCESnifferColumnPre.HeaderText = "Pre";
             this.dgvCESnifferColumnPre.IndeterminateValue = "False";
             this.dgvCESnifferColumnPre.MinimumWidth = 24;
@@ -2007,16 +1938,16 @@
             this.dgvCESnifferColumnPre.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.dgvCESnifferColumnPre.ToolTipText = "Before / After executing";
             this.dgvCESnifferColumnPre.TrueValue = "True";
-            this.dgvCESnifferColumnPre.Width = 28;
+            this.dgvCESnifferColumnPre.Width = 48;
             // 
             // dgvCESnifferColumnGuid
             // 
             this.dgvCESnifferColumnGuid.HeaderText = "Guid";
-            this.dgvCESnifferColumnGuid.MinimumWidth = 100;
+            this.dgvCESnifferColumnGuid.MinimumWidth = 90;
             this.dgvCESnifferColumnGuid.Name = "dgvCESnifferColumnGuid";
             this.dgvCESnifferColumnGuid.ReadOnly = true;
             this.dgvCESnifferColumnGuid.ToolTipText = "Scope by GUID";
-            this.dgvCESnifferColumnGuid.Width = 240;
+            this.dgvCESnifferColumnGuid.Width = 230;
             // 
             // dgvCESnifferColumnId
             // 
@@ -2024,41 +1955,40 @@
             dataGridViewCellStyle5.NullValue = "0";
             this.dgvCESnifferColumnId.DefaultCellStyle = dataGridViewCellStyle5;
             this.dgvCESnifferColumnId.HeaderText = "Id";
-            this.dgvCESnifferColumnId.MinimumWidth = 70;
+            this.dgvCESnifferColumnId.MinimumWidth = 30;
             this.dgvCESnifferColumnId.Name = "dgvCESnifferColumnId";
             this.dgvCESnifferColumnId.Negative = false;
             this.dgvCESnifferColumnId.ReadOnly = true;
             this.dgvCESnifferColumnId.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.dgvCESnifferColumnId.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.dgvCESnifferColumnId.ToolTipText = "Command ID";
-            this.dgvCESnifferColumnId.Width = 70;
+            this.dgvCESnifferColumnId.Width = 50;
             // 
             // dgvCESnifferColumnCustomIn
             // 
             this.dgvCESnifferColumnCustomIn.HeaderText = "CustomIn";
-            this.dgvCESnifferColumnCustomIn.MinimumWidth = 70;
+            this.dgvCESnifferColumnCustomIn.MinimumWidth = 50;
             this.dgvCESnifferColumnCustomIn.Name = "dgvCESnifferColumnCustomIn";
             this.dgvCESnifferColumnCustomIn.ReadOnly = true;
             this.dgvCESnifferColumnCustomIn.ToolTipText = "Filter by Custom input parameter";
-            this.dgvCESnifferColumnCustomIn.Width = 110;
+            this.dgvCESnifferColumnCustomIn.Width = 90;
             // 
             // dgvCESnifferColumnCustomOut
             // 
             this.dgvCESnifferColumnCustomOut.HeaderText = "CustomOut";
-            this.dgvCESnifferColumnCustomOut.MinimumWidth = 70;
+            this.dgvCESnifferColumnCustomOut.MinimumWidth = 50;
             this.dgvCESnifferColumnCustomOut.Name = "dgvCESnifferColumnCustomOut";
             this.dgvCESnifferColumnCustomOut.ReadOnly = true;
             this.dgvCESnifferColumnCustomOut.ToolTipText = "Filter by Custom output parameter";
-            this.dgvCESnifferColumnCustomOut.Width = 110;
+            this.dgvCESnifferColumnCustomOut.Width = 90;
             // 
-            // dgvCESnifferColumnEnum
+            // dgvCESnifferColumnSrc
             // 
-            this.dgvCESnifferColumnEnum.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.dgvCESnifferColumnEnum.HeaderText = "Enum";
-            this.dgvCESnifferColumnEnum.MinimumWidth = 100;
-            this.dgvCESnifferColumnEnum.Name = "dgvCESnifferColumnEnum";
-            this.dgvCESnifferColumnEnum.ReadOnly = true;
-            this.dgvCESnifferColumnEnum.ToolTipText = "Equivalent with Enum";
+            this.dgvCESnifferColumnSrc.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.dgvCESnifferColumnSrc.HeaderText = "Source";
+            this.dgvCESnifferColumnSrc.MinimumWidth = 90;
+            this.dgvCESnifferColumnSrc.Name = "dgvCESnifferColumnSrc";
+            this.dgvCESnifferColumnSrc.ReadOnly = true;
             // 
             // contextMenuSniffer
             // 
@@ -2102,10 +2032,11 @@
             this.checkBoxCESniffer.AutoSize = true;
             this.checkBoxCESniffer.Location = new System.Drawing.Point(5, -1);
             this.checkBoxCESniffer.Name = "checkBoxCESniffer";
-            this.checkBoxCESniffer.Size = new System.Drawing.Size(56, 17);
+            this.checkBoxCESniffer.Size = new System.Drawing.Size(58, 17);
             this.checkBoxCESniffer.TabIndex = 8;
-            this.checkBoxCESniffer.Text = "Sniffer";
-            this.toolTip.SetToolTip(this.checkBoxCESniffer, "To listen the all commands from EnvDTE");
+            this.checkBoxCESniffer.Text = "Detect";
+            this.toolTip.SetToolTip(this.checkBoxCESniffer, "Basic listening. Or use Tools - Sniffer; Or vsCommandEvent plugin for more contro" +
+        "l and features");
             this.checkBoxCESniffer.UseVisualStyleBackColor = true;
             this.checkBoxCESniffer.CheckedChanged += new System.EventHandler(this.checkBoxCESniffer_CheckedChanged);
             // 
@@ -2117,7 +2048,7 @@
             this.groupBoxCommandEvents.Margin = new System.Windows.Forms.Padding(0);
             this.groupBoxCommandEvents.Name = "groupBoxCommandEvents";
             this.groupBoxCommandEvents.Padding = new System.Windows.Forms.Padding(2, 0, 2, 2);
-            this.groupBoxCommandEvents.Size = new System.Drawing.Size(767, 216);
+            this.groupBoxCommandEvents.Size = new System.Drawing.Size(767, 308);
             this.groupBoxCommandEvents.TabIndex = 62;
             this.groupBoxCommandEvents.TabStop = false;
             this.groupBoxCommandEvents.Text = "Command Events";
@@ -2158,9 +2089,8 @@
             this.dgvCEFilters.RowHeadersVisible = false;
             this.dgvCEFilters.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             this.dgvCEFilters.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.dgvCEFilters.RowTemplate.Height = 17;
             this.dgvCEFilters.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dgvCEFilters.Size = new System.Drawing.Size(763, 201);
+            this.dgvCEFilters.Size = new System.Drawing.Size(763, 293);
             this.dgvCEFilters.TabIndex = 7;
             this.dgvCEFilters.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCEFilters_CellClick);
             // 
@@ -2212,8 +2142,9 @@
             // 
             // dgvCEFiltersColumnCancel
             // 
+            this.dgvCEFiltersColumnCancel.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader;
             this.dgvCEFiltersColumnCancel.FalseValue = "False";
-            this.dgvCEFiltersColumnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.dgvCEFiltersColumnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.dgvCEFiltersColumnCancel.HeaderText = "Cancel";
             this.dgvCEFiltersColumnCancel.IndeterminateValue = "False";
             this.dgvCEFiltersColumnCancel.MinimumWidth = 48;
@@ -2226,8 +2157,9 @@
             // 
             // dgvCEFiltersColumnPre
             // 
+            this.dgvCEFiltersColumnPre.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader;
             this.dgvCEFiltersColumnPre.FalseValue = "False";
-            this.dgvCEFiltersColumnPre.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.dgvCEFiltersColumnPre.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.dgvCEFiltersColumnPre.HeaderText = "Pre";
             this.dgvCEFiltersColumnPre.IndeterminateValue = "False";
             this.dgvCEFiltersColumnPre.MinimumWidth = 28;
@@ -2236,12 +2168,13 @@
             this.dgvCEFiltersColumnPre.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.dgvCEFiltersColumnPre.ToolTipText = "Use Before executing command";
             this.dgvCEFiltersColumnPre.TrueValue = "True";
-            this.dgvCEFiltersColumnPre.Width = 30;
+            this.dgvCEFiltersColumnPre.Width = 28;
             // 
             // dgvCEFiltersColumnPost
             // 
+            this.dgvCEFiltersColumnPost.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader;
             this.dgvCEFiltersColumnPost.FalseValue = "False";
-            this.dgvCEFiltersColumnPost.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.dgvCEFiltersColumnPost.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.dgvCEFiltersColumnPost.HeaderText = "Post";
             this.dgvCEFiltersColumnPost.IndeterminateValue = "False";
             this.dgvCEFiltersColumnPost.MinimumWidth = 30;
@@ -2250,10 +2183,11 @@
             this.dgvCEFiltersColumnPost.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.dgvCEFiltersColumnPost.ToolTipText = "Use After executed command";
             this.dgvCEFiltersColumnPost.TrueValue = "True";
-            this.dgvCEFiltersColumnPost.Width = 34;
+            this.dgvCEFiltersColumnPost.Width = 30;
             // 
             // dgvCEFiltersColumnRemove
             // 
+            this.dgvCEFiltersColumnRemove.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader;
             dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle8.ForeColor = System.Drawing.Color.Maroon;
@@ -2268,7 +2202,7 @@
             this.dgvCEFiltersColumnRemove.Text = "x";
             this.dgvCEFiltersColumnRemove.ToolTipText = "Remove this filter";
             this.dgvCEFiltersColumnRemove.UseColumnTextForButtonValue = true;
-            this.dgvCEFiltersColumnRemove.Width = 16;
+            this.dgvCEFiltersColumnRemove.Width = 21;
             // 
             // tabPageComponents
             // 
@@ -2276,7 +2210,7 @@
             this.tabPageComponents.Location = new System.Drawing.Point(4, 25);
             this.tabPageComponents.Margin = new System.Windows.Forms.Padding(0);
             this.tabPageComponents.Name = "tabPageComponents";
-            this.tabPageComponents.Size = new System.Drawing.Size(776, 471);
+            this.tabPageComponents.Size = new System.Drawing.Size(776, 586);
             this.tabPageComponents.TabIndex = 2;
             this.tabPageComponents.Text = "Components";
             // 
@@ -2297,7 +2231,7 @@
             // splitContainerComponents.Panel2
             // 
             this.splitContainerComponents.Panel2.Controls.Add(this.groupBoxComponentsMembers);
-            this.splitContainerComponents.Size = new System.Drawing.Size(773, 438);
+            this.splitContainerComponents.Size = new System.Drawing.Size(773, 553);
             this.splitContainerComponents.SplitterDistance = 226;
             this.splitContainerComponents.TabIndex = 87;
             // 
@@ -2311,7 +2245,7 @@
             this.groupBoxComponentsList.Margin = new System.Windows.Forms.Padding(0);
             this.groupBoxComponentsList.Name = "groupBoxComponentsList";
             this.groupBoxComponentsList.Padding = new System.Windows.Forms.Padding(0, 1, 0, 0);
-            this.groupBoxComponentsList.Size = new System.Drawing.Size(692, 226);
+            this.groupBoxComponentsList.Size = new System.Drawing.Size(716, 226);
             this.groupBoxComponentsList.TabIndex = 87;
             this.groupBoxComponentsList.TabStop = false;
             this.groupBoxComponentsList.Text = "Available components:";
@@ -2351,10 +2285,9 @@
             this.dgvComponents.RowHeadersVisible = false;
             this.dgvComponents.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             this.dgvComponents.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.dgvComponents.RowTemplate.Height = 17;
             this.dgvComponents.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dgvComponents.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvComponents.Size = new System.Drawing.Size(692, 212);
+            this.dgvComponents.Size = new System.Drawing.Size(716, 212);
             this.dgvComponents.TabIndex = 84;
             this.dgvComponents.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvComponents_CellContentClick);
             this.dgvComponents.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvComponents_CellDoubleClick);
@@ -2373,6 +2306,7 @@
             // 
             // dgvComponentsEnabled
             // 
+            this.dgvComponentsEnabled.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
             this.dgvComponentsEnabled.FalseValue = "False";
             this.dgvComponentsEnabled.FillWeight = 60F;
             this.dgvComponentsEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -2383,7 +2317,7 @@
             this.dgvComponentsEnabled.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.dgvComponentsEnabled.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.dgvComponentsEnabled.TrueValue = "True";
-            this.dgvComponentsEnabled.Width = 52;
+            this.dgvComponentsEnabled.Width = 71;
             // 
             // dgvComponentsName
             // 
@@ -2414,11 +2348,11 @@
             // btnCompNew
             // 
             this.btnCompNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCompNew.Location = new System.Drawing.Point(695, 0);
+            this.btnCompNew.Location = new System.Drawing.Point(719, 0);
             this.btnCompNew.Name = "btnCompNew";
-            this.btnCompNew.Size = new System.Drawing.Size(75, 23);
+            this.btnCompNew.Size = new System.Drawing.Size(51, 23);
             this.btnCompNew.TabIndex = 86;
-            this.btnCompNew.Text = "Create new";
+            this.btnCompNew.Text = "New";
             this.btnCompNew.UseVisualStyleBackColor = true;
             this.btnCompNew.Click += new System.EventHandler(this.btnCompNew_Click);
             // 
@@ -2430,7 +2364,7 @@
             this.groupBoxComponentsMembers.Margin = new System.Windows.Forms.Padding(0);
             this.groupBoxComponentsMembers.Name = "groupBoxComponentsMembers";
             this.groupBoxComponentsMembers.Padding = new System.Windows.Forms.Padding(0, 1, 0, 0);
-            this.groupBoxComponentsMembers.Size = new System.Drawing.Size(773, 208);
+            this.groupBoxComponentsMembers.Size = new System.Drawing.Size(773, 323);
             this.groupBoxComponentsMembers.TabIndex = 86;
             this.groupBoxComponentsMembers.TabStop = false;
             this.groupBoxComponentsMembers.Text = "Members of components:";
@@ -2470,10 +2404,9 @@
             this.dgvComponentInfo.RowHeadersVisible = false;
             this.dgvComponentInfo.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             this.dgvComponentInfo.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.dgvComponentInfo.RowTemplate.Height = 17;
             this.dgvComponentInfo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.dgvComponentInfo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvComponentInfo.Size = new System.Drawing.Size(773, 194);
+            this.dgvComponentInfo.Size = new System.Drawing.Size(773, 309);
             this.dgvComponentInfo.TabIndex = 85;
             // 
             // dgvCompInfoType
@@ -2519,7 +2452,7 @@
             this.tabPageCSharp.Location = new System.Drawing.Point(4, 25);
             this.tabPageCSharp.Name = "tabPageCSharp";
             this.tabPageCSharp.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageCSharp.Size = new System.Drawing.Size(776, 471);
+            this.tabPageCSharp.Size = new System.Drawing.Size(776, 586);
             this.tabPageCSharp.TabIndex = 4;
             this.tabPageCSharp.Text = "Compiler";
             this.tabPageCSharp.UseVisualStyleBackColor = true;
@@ -2543,7 +2476,7 @@
             this.pGridCompilerCfg.CategoryForeColor = System.Drawing.SystemColors.InactiveCaptionText;
             this.pGridCompilerCfg.Location = new System.Drawing.Point(6, 6);
             this.pGridCompilerCfg.Name = "pGridCompilerCfg";
-            this.pGridCompilerCfg.Size = new System.Drawing.Size(767, 435);
+            this.pGridCompilerCfg.Size = new System.Drawing.Size(767, 550);
             this.pGridCompilerCfg.TabIndex = 0;
             // 
             // toolTip
@@ -2565,8 +2498,8 @@
             // 
             // EventsFrm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(987, 641);
             this.Controls.Add(this.linkAddAction);
             this.Controls.Add(this.panelStatusBR);
@@ -2700,13 +2633,10 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuDTECmd;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuDTECmdExec;
         private System.Windows.Forms.ToolStripSplitButton toolStripMenuHelp;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuDocItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuChangelog;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuIssue;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuGalleryPage;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuSources;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuLicense;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuAbout;
         private System.Windows.Forms.ToolStripSplitButton toolStripMenuBug;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuReport;
@@ -2749,8 +2679,6 @@
         private System.Windows.Forms.CheckBox checkBoxSBEScriptSupport;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripMenuItem menuActionsReset;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuGalleryPage;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuWiki;
         private System.Windows.Forms.RadioButton radioModeScript;
         private System.Windows.Forms.ComboBox comboBoxBuildContext;
         private System.Windows.Forms.CheckBox chkBuildContext;
@@ -2765,19 +2693,14 @@
         private System.Windows.Forms.ToolStripMenuItem menuItemCompNew;
         private System.Windows.Forms.SplitContainer splitContainerComponents;
         private Components.DataGridViewExt dgvComponentInfo;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuCI;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuSBEPanel;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuCIMSBuild;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuDevenv;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuPlugin;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuCopyPath;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuSysDir;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuPluginDir;
         private System.Windows.Forms.PictureBox pictureBoxWarnWait;
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuAPI;
         private System.Windows.Forms.ToolStripMenuItem tsMenuItemExamples;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
         private System.Windows.Forms.Label labelTimeLimit;
         private System.Windows.Forms.NumericUpDown numericTimeLimit;
         private System.Windows.Forms.Panel panelTimeLimit;
@@ -2809,7 +2732,7 @@
         private Components.DataGridViewExt.NumericColumn dgvCESnifferColumnId;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvCESnifferColumnCustomIn;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvCESnifferColumnCustomOut;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dgvCESnifferColumnEnum;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dgvCESnifferColumnSrc;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvCEFiltersColumnGuid;
         private Components.DataGridViewExt.NumericColumn dgvCEFiltersColumnId;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvCEFiltersColumnCustomIn;
@@ -2844,12 +2767,14 @@
         private System.Windows.Forms.ToolStripMenuItem menuLogIgnoreWarn;
         private System.Windows.Forms.ToolStripMenuItem menuLogIgnoreError;
         private System.Windows.Forms.Panel panelVSCE;
-        private System.Windows.Forms.Button btnInfoVSCE;
         private System.Windows.Forms.Button btnDownloadVSCE;
         private System.Windows.Forms.Label labelVSCE;
         private System.Windows.Forms.ToolStripMenuItem menuWizards;
         private System.Windows.Forms.ToolStripMenuItem menuWizardVersion;
         private System.Windows.Forms.DataGridViewCheckBoxColumn dgvActionEnabled;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvActionName;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuSuppressInitOwp;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuPin;
     }
 }

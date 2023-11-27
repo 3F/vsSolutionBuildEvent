@@ -1,19 +1,8 @@
-﻿/*
- * Copyright (c) 2013-2021  Denis Kuzmin <x-3F@outlook.com> github/3F
- * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿/*!
+ * Copyright (c) 2013  Denis Kuzmin <x-3F@outlook.com> github/3F
+ * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent/graphs/contributors
+ * Licensed under the LGPLv3.
+ * See accompanying LICENSE file or visit https://github.com/3F/vsSolutionBuildEvent
 */
 
 using System;
@@ -21,6 +10,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using net.r_eg.MvsSln.Extensions;
 using net.r_eg.SobaScript;
 using net.r_eg.SobaScript.Mapper;
 using net.r_eg.vsSBE.Bridge;
@@ -29,14 +19,20 @@ using net.r_eg.vsSBE.Events.CommandEvents;
 using net.r_eg.vsSBE.Extensions;
 using net.r_eg.vsSBE.UI.WForms.Components;
 using net.r_eg.vsSBE.UI.WForms.Controls;
+using NLog;
 
 namespace net.r_eg.vsSBE.UI.WForms
 {
-    /// <summary>
-    /// Please note: this is very old version from ~v0.5 (as and all UI namespace),
-    /// ...when it's only started and when we had no any big plans before...
-    /// Thus, for all new, I strongly recommend MVVM or similar pattern to improve IoC and more.
-    /// </summary>
+    // I remind,
+    // The Forms here (almost entire UI namespace) have functional minimalist view/GUI logic;
+    // I really didn't want to complicate this by using MVVM or such (n. more components, more abstraction between, ...etc)
+    //   because the whole GUI didn't bother me at all initially;
+    //
+    // I mean, I pay more attention to the programming interface rather than the graphical one.
+    // The Forms (subscription model as a technology) are still very compact for fast drafting in my opinion (*yeah, deepest backend guy unwilling to spend much time on graphical parts or like).
+    //
+    // Some IoC improvements here are needed but this is not what I want to spend my time for creating just a more scalable GUI here.
+    // You can, however, try to change the rails below because here is still no logic of the model as noted.
     internal partial class EventsFrm: Form, ITransfer
     {
         public const int WM_SYSCOMMAND  = 0x0112;
@@ -921,7 +917,16 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
 
             string tFormat = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern + " .fff";
-            dgvCESniffer.Rows.Add(DateTime.Now.ToString(tFormat), pre, guid, id, Value.Pack(customIn), Value.Pack(customOut), Util.enumViewBy(guid, id));
+            dgvCESniffer.Rows.Add
+            (
+                DateTime.Now.ToString(tFormat),
+                pre,
+                guid,
+                id,
+                Value.Pack(customIn),
+                Value.Pack(customOut),
+                EnumDecor.Shorten(Util.enumViewBy(guid, id))
+            );
         }
 
         protected void addFilterFromSniffer(DataGridView sniffer, DataGridView filter)
@@ -934,7 +939,7 @@ namespace net.r_eg.vsSBE.UI.WForms
                             rc.Cells[dgvCESnifferColumnId.Name].Value, 
                             rc.Cells[dgvCESnifferColumnCustomIn.Name].Value,
                             rc.Cells[dgvCESnifferColumnCustomOut.Name].Value,
-                            rc.Cells[dgvCESnifferColumnEnum.Name].Value);
+                            rc.Cells[dgvCESnifferColumnSrc.Name].Value);
         }
 
         protected void envVariablesUIHelper()
@@ -1044,9 +1049,9 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void EventsFrm_Load(object sender, EventArgs e)
         {
-            if(!App.IsCfgExists)
+            if(!App.Config.IsLoadedConfigs)
             {
-                Log.Fatal($"Corrupted configuration. User: {App.UserConfig != null} / Main: {App.Config != null}");
+                Log.Fatal($"Corrupted configuration. {App.Config}");
                 MessageBox.Show("We can't continue. See log for details with activated debug mode.", "Corrupted configuration", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 FormClosing -= EventsFrm_FormClosing;
                 Close();
@@ -1077,6 +1082,9 @@ namespace net.r_eg.vsSBE.UI.WForms
                 Log.Error($"Failed to load form: {ex.Message}");
                 Log.Debug(ex.StackTrace);
             }
+
+            TopMost = toolStripMenuPin.Toggle(App.Config.Sys.Data.PinMainWindow);
+            toolStripMenuSuppressInitOwp.Toggle(App.Config.Sys.Data.SuppressInitOwp);
 
             notice(false);
         }
@@ -1216,14 +1224,8 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void toolStripMenuDebugMode_Click(object sender, EventArgs e)
         {
-            App.UserConfig.Global.DebugMode = App.DebugMode = toolStripMenuDebugMode.Checked = !toolStripMenuDebugMode.Checked;
-            logic.updateUserCfg();
-        }
-
-        private void toolStripMenuCopyPath_Click(object sender, EventArgs e)
-        {
-            Clipboard.SetText($"\"{Settings.LPath}\"");
-            MessageBox.Show($"Has been copied to clipboard:\n\n{Settings.LPath}\n\nUse this with CI utilities etc.", "Full path to vsSolutionBuildEvent");
+            App.Config.Sys.Data.DebugMode = App.DebugMode = toolStripMenuDebugMode.Toggle();
+            App.Config.Sys.save();
         }
 
         private void dgvComponents_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -1533,49 +1535,59 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void menuLogIgnoreTrace_Click(object sender, EventArgs e)
         {
-            App.UserConfig.Global.LogIgnoreLevels["TRACE"] = menuLogIgnoreTrace.Checked = !menuLogIgnoreTrace.Checked;
-            logic.updateUserCfg();
+            App.Config.Sys.Data.LogIgnoreLevels[LogLevel.Trace.Name] = menuLogIgnoreTrace.Toggle();
+            App.Config.Sys.save();
         }
 
         private void menuLogIgnoreDebug_Click(object sender, EventArgs e)
         {
-            App.UserConfig.Global.LogIgnoreLevels["DEBUG"] = menuLogIgnoreDebug.Checked = !menuLogIgnoreDebug.Checked;
-            logic.updateUserCfg();
+            App.Config.Sys.Data.LogIgnoreLevels[LogLevel.Debug.Name] = menuLogIgnoreDebug.Toggle();
+            App.Config.Sys.save();
         }
 
         private void menuLogIgnoreInfo_Click(object sender, EventArgs e)
         {
-            App.UserConfig.Global.LogIgnoreLevels["INFO"] = menuLogIgnoreInfo.Checked = !menuLogIgnoreInfo.Checked;
-            logic.updateUserCfg();
+            App.Config.Sys.Data.LogIgnoreLevels[LogLevel.Info.Name] = menuLogIgnoreInfo.Toggle();
+            App.Config.Sys.save();
         }
 
         private void menuLogIgnoreWarn_Click(object sender, EventArgs e)
         {
-            App.UserConfig.Global.LogIgnoreLevels["WARN"] = menuLogIgnoreWarn.Checked = !menuLogIgnoreWarn.Checked;
-            logic.updateUserCfg();
+            App.Config.Sys.Data.LogIgnoreLevels[LogLevel.Warn.Name] = menuLogIgnoreWarn.Toggle();
+            App.Config.Sys.save();
         }
 
         private void menuLogIgnoreError_Click(object sender, EventArgs e)
         {
-            App.UserConfig.Global.LogIgnoreLevels["ERROR"] = menuLogIgnoreError.Checked = !menuLogIgnoreError.Checked;
-            logic.updateUserCfg();
+            App.Config.Sys.Data.LogIgnoreLevels[LogLevel.Error.Name] = menuLogIgnoreError.Toggle();
+            App.Config.Sys.save();
         }
 
         private void toolStripMenuBug_DropDownOpening(object sender, EventArgs e)
         {
             toolStripMenuDebugMode.Checked = App.DebugMode;
 
-            bool IsIgnoreLevel(string level)
-            {
-                if(!App.UserConfig.Global.LogIgnoreLevels.ContainsKey(level)) return false;
-                return App.UserConfig.Global.LogIgnoreLevels[level];
-            }
+            var ignore = App.Config.Sys.Data.LogIgnoreLevels;
+            menuLogIgnoreTrace.Checked  = ignore.GetOrDefault(LogLevel.Trace.Name);
+            menuLogIgnoreDebug.Checked  = ignore.GetOrDefault(LogLevel.Debug.Name);
+            menuLogIgnoreInfo.Checked   = ignore.GetOrDefault(LogLevel.Info.Name);
+            menuLogIgnoreWarn.Checked   = ignore.GetOrDefault(LogLevel.Warn.Name);
+            menuLogIgnoreError.Checked  = ignore.GetOrDefault(LogLevel.Error.Name);
+        }
 
-            menuLogIgnoreTrace.Checked  = IsIgnoreLevel("TRACE");
-            menuLogIgnoreDebug.Checked  = IsIgnoreLevel("DEBUG");
-            menuLogIgnoreInfo.Checked   = IsIgnoreLevel("INFO");
-            menuLogIgnoreWarn.Checked   = IsIgnoreLevel("WARN");
-            menuLogIgnoreError.Checked  = IsIgnoreLevel("ERROR");
+        private void toolStripMenuSuppressInitOwp_Click(object sender, EventArgs e)
+        {
+            App.Config.Sys.Data.SuppressInitOwp = toolStripMenuSuppressInitOwp.Toggle();
+            App.Config.Sys.save();
+        }
+
+        private void toolStripMenuPin_Click(object sender, EventArgs e)
+        {
+            App.Config.Sys.Data.PinMainWindow
+                = TopMost
+                = toolStripMenuPin.Toggle();
+
+            App.Config.Sys.save();
         }
 
         #region one-line binding
@@ -1619,21 +1631,16 @@ namespace net.r_eg.vsSBE.UI.WForms
         #endregion
 
         #region urls
-        private void toolStripMenuGalleryPage_Click(object sender, EventArgs e) => Util.openUrl("https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/");
-        private void toolStripMenuChangelog_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/Changelist/#vsix");
-        private void toolStripMenuWiki_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/");
-        private void tsMenuItemExamples_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/doc/Examples/");
-        private void toolStripMenuIssue_Click(object sender, EventArgs e) => Util.openUrl("https://github.com/3F/vsSolutionBuildEvent/issues?q=is%3Aissue");
+        private void toolStripMenuGalleryPage_Click(object sender, EventArgs e) => Util.openUrl("https://marketplace.visualstudio.com/items?itemName=GitHub3F.vsSolutionBuildEvent-11615");
+        private void toolStripMenuChangelog_Click(object sender, EventArgs e) => Util.openUrl("https://3F.github.io/web.vsSBE/Changelist/#vsix");
+        private void toolStripMenuWiki_Click(object sender, EventArgs e) => Util.openUrl("https://3F.github.io/web.vsSBE/");
         private void toolStripMenuSources_Click(object sender, EventArgs e) => Util.openUrl("https://github.com/3F/vsSolutionBuildEvent");
-        private void toolStripMenuLicense_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/License/");
+        private void toolStripMenuSysDir_Click(object sender, EventArgs e) => Util.openUrl($"\"{App.CommonPath}\"");
         private void toolStripMenuPluginDir_Click(object sender, EventArgs e) => Util.openUrl($"\"{App.LibPath}\"");
-        private void toolStripMenuCIMSBuild_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/doc/CI/CI.MSBuild/");
-        private void toolStripMenuDevenv_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/doc/CI/Devenv%20Command-Line/");
-        private void toolStripMenuAPI_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/doc/API/");
-        private void btnDownloadVSCE_Click(object sender, EventArgs e) => Util.openUrl("https://visualstudiogallery.msdn.microsoft.com/ad9f19b2-04c0-46fe-9637-9a52ce4ca661/file/184640/");
-        private void btnInfoVSCE_Click(object sender, EventArgs e) => Util.openUrl("http://vsce.r-eg.net/About/");
-        private void componentInfo(string name) => Util.openUrl($"http://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/Components/{name}/");
-        private void btnCompNew_Click(object sender, EventArgs e) => Util.openUrl("http://vssbe.r-eg.net/doc/Dev/New%20Component/");
+        private void toolStripMenuAPI_Click(object sender, EventArgs e) => Util.openUrl("https://3F.github.io/web.vsSBE/doc/API/");
+        private void btnDownloadVSCE_Click(object sender, EventArgs e) => Util.openUrl("https://marketplace.visualstudio.com/items?itemName=GitHub3F.vsCommandEvent");
+        private void componentInfo(string name) => Util.openUrl($"https://3F.github.io/web.vsSBE/doc/Scripts/SBE-Scripts/Components/{name}/");
+        private void btnCompNew_Click(object sender, EventArgs e) => Util.openUrl("https://3F.github.io/web.vsSBE/doc/Dev/New%20Component/");
         #endregion
     }
 }

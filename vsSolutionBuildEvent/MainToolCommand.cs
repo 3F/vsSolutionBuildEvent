@@ -1,19 +1,8 @@
-﻿/*
- * Copyright (c) 2013-2021  Denis Kuzmin <x-3F@outlook.com> github/3F
- * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿/*!
+ * Copyright (c) 2013  Denis Kuzmin <x-3F@outlook.com> github/3F
+ * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent/graphs/contributors
+ * Licensed under the LGPLv3.
+ * See accompanying LICENSE file or visit https://github.com/3F/vsSolutionBuildEvent
 */
 
 using System;
@@ -27,73 +16,52 @@ using System.Threading.Tasks;
 
 namespace net.r_eg.vsSBE
 {
-    /// <summary>
-    /// Build / { Main App }
-    /// </summary>
     internal sealed class MainToolCommand: IDisposable
     {
         private readonly MenuCommand mcmd;
 
-        private readonly IEventLevel apievt;
-
-        private readonly IPkg pkg;
-
         private UI.WForms.EventsFrm configFrm;
 
-        public static MainToolCommand Instance
-        {
-            get;
-            private set;
-        }
+        private static volatile MainToolCommand _instance;
 
-        public void setVisibility(bool val)
-        {
-            mcmd.Visible = val;
-        }
+        private static readonly object sync = new();
 
-        public void closeConfigForm()
-        {
-            UI.Util.closeTool(configFrm);
-        }
+        public static MainToolCommand Instance => _instance;
+
+        public void setVisibility(bool value) => mcmd.Visible = value;
+
+        public void closeConfigForm() => UI.Util.closeTool(configFrm);
 
 #if SDK15_OR_HIGH
 
         public static async Task<MainToolCommand> InitAsync(IPkg pkg, IEventLevel evt)
         {
-            if(Instance != null) {
-                return Instance;
-            }
+            if(Instance != null) return Instance;
 
             // Switch to the main thread - the call to AddCommand in MainToolCommand's constructor requires
             // the UI thread.
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(pkg.CancellationToken);
 
-            Instance = new MainToolCommand
-            (
-                pkg,
-                await pkg.getSvcAsync(typeof(IMenuCommandService)) as OleMenuCommandService,
-                evt
-            );
-
-            return Instance;
+            OleMenuCommandService svc = await pkg.getSvcAsync(typeof(IMenuCommandService)) as OleMenuCommandService;
+            lock(sync)
+            {
+                if(Instance == null) _instance = new MainToolCommand(pkg, svc, evt);
+                return Instance;
+            }
         }
 
 #else
 
         public static MainToolCommand Init(IPkg pkg, IEventLevel evt)
         {
-            if(Instance != null) {
+            if(Instance != null) return Instance;
+
+            OleMenuCommandService svc = pkg.getSvc(typeof(IMenuCommandService)) as OleMenuCommandService;
+            lock(sync)
+            {
+                if(Instance == null) _instance = new MainToolCommand(pkg, svc, evt);
                 return Instance;
             }
-
-            Instance = new MainToolCommand
-            (
-                pkg,
-                pkg.getSvc(typeof(IMenuCommandService)) as OleMenuCommandService, 
-                evt
-            );
-
-            return Instance;
         }
 
 #endif
@@ -103,9 +71,9 @@ namespace net.r_eg.vsSBE
         /// <param name="evt">Supported public events, not null.</param>
         private MainToolCommand(IPkg pkg, OleMenuCommandService svc, IEventLevel evt)
         {
-            this.pkg    = pkg ?? throw new ArgumentNullException(nameof(pkg));
-            svc         = svc ?? throw new ArgumentNullException(nameof(svc));
-            apievt      = evt ?? throw new ArgumentNullException(nameof(evt));
+            if(pkg == null) throw new ArgumentNullException(nameof(pkg));
+            if(svc == null) throw new ArgumentNullException(nameof(svc));
+            if(evt == null) throw new ArgumentNullException(nameof(evt));
 
             mcmd = new MenuCommand
             (
@@ -120,13 +88,13 @@ namespace net.r_eg.vsSBE
         {
             try
             {
-                if(UI.Util.focusForm(configFrm)) {
-                    return;
-                }
+                if(UI.Util.focusForm(configFrm)) return;
+
                 configFrm = new UI.WForms.EventsFrm(Bootloader._);
                 configFrm.Show();
             }
-            catch(Exception ex) {
+            catch(Exception ex)
+            {
                 Log.Error($"Failed UI: {ex.Message}");
                 Log.Debug(ex.StackTrace);
             }

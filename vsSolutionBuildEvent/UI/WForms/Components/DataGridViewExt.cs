@@ -1,24 +1,14 @@
-﻿/*
- * Copyright (c) 2013-2021  Denis Kuzmin <x-3F@outlook.com> github/3F
- * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿/*!
+ * Copyright (c) 2013  Denis Kuzmin <x-3F@outlook.com> github/3F
+ * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent/graphs/contributors
+ * Licensed under the LGPLv3.
+ * See accompanying LICENSE file or visit https://github.com/3F/vsSolutionBuildEvent
 */
 
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using net.r_eg.vsSBE.Extensions;
 
 namespace net.r_eg.vsSBE.UI.WForms.Components
 {
@@ -39,8 +29,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Components
         /// </summary>
         public struct MovingRow
         {
-            public int from;
-            public int to;
+            public int from, to;
         }
 
         /// <summary>
@@ -61,20 +50,16 @@ namespace net.r_eg.vsSBE.UI.WForms.Components
         /// <summary>
         /// Shows total count of rows and current position for each row
         /// </summary>
-        public bool NumberingForRowsHeader
-        {
-            get { return numberingForRowsHeader; }
-            set { numberingForRowsHeader = value; }
-        }
-        protected bool numberingForRowsHeader = false;
+        public bool NumberingForRowsHeader { get; set; }
 
         /// <summary>
         /// Allows sorting with Drag 'n' Drop
         /// </summary>
         public bool DragDropSortable
         {
-            get { return dragDropSortable; }
-            set { 
+            get => dragDropSortable;
+            set
+            {
                 dragDropSortable = value;
                 setupSortable(value);
             }
@@ -84,12 +69,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Components
         /// <summary>
         /// Always one row selected
         /// </summary>
-        public bool AlwaysSelected
-        {
-            get { return alwaysSelected; }
-            set { alwaysSelected = value; }
-        }
-        protected bool alwaysSelected = false;
+        public bool AlwaysSelected { get; set; }
 
         /// <summary>
         /// Support AlwaysSelected
@@ -99,31 +79,31 @@ namespace net.r_eg.vsSBE.UI.WForms.Components
         /// <summary>
         /// Support drag 'n' drop for sortable rows
         /// </summary>
-        protected MovingRow ddSort = new MovingRow();
+        protected MovingRow ddSort = new();
 
-        /// <summary>
-        /// object synch.
-        /// </summary>
-        private Object _eLock = new Object();
+        protected readonly SolidBrush sbBlack = new(Color.Black);
 
+        private readonly object _eLock = new();
+        private bool disposed;
 
         public DataGridViewExt()
+            : this(rowHeight: 17)
         {
-            this.CellPainting       += onNumberingCellPainting;
-            this.SelectionChanged   += onAlwaysSelected;
-            EditingControlShowing   += (object sender, DataGridViewEditingControlShowingEventArgs e) =>
-                                        {
-                                            if(e.Control == null) {
-                                                return;
-                                            }
-                                            lock(_eLock) {
-                                                e.Control.KeyPress -= onControlKeyPress;
-                                                e.Control.KeyPress += onControlKeyPress;
-                                                e.Control.PreviewKeyDown -= onControlPreviewKeyDown;
-                                                e.Control.PreviewKeyDown += onControlPreviewKeyDown;
-                                                
-                                            }
-                                        };
+
+        }
+
+        public DataGridViewExt(int rowHeight) // optional arguments in .ctor are not supported in generator due to incorrect activator use
+        {
+            RowTemplate.Height = this.GetValueUsingDpi(rowHeight);
+
+            CellPainting += onNumberingCellPainting;
+            SelectionChanged += onAlwaysSelected;
+            EditingControlShowing += (sender, e) =>
+            {
+                if(e.Control == null) return;
+                e.Control.KeyPress += onControlKeyPress;
+                e.Control.PreviewKeyDown += onControlPreviewKeyDown;
+            };
         }
 
         protected void onControlKeyPress(object sender, KeyPressEventArgs e)
@@ -216,20 +196,16 @@ namespace net.r_eg.vsSBE.UI.WForms.Components
 
         protected virtual void numberingRowsHeader(DataGridViewCellPaintingEventArgs e)
         {
-            if(e.ColumnIndex != -1) {
-                return;
-            }
-
-            string str;
-            if(e.RowIndex >= 0) {
-                str = String.Format(" {0}", e.RowIndex + 1);
-            }
-            else {
-                str = String.Format("({0})", this.Rows.Count);
-            }
+            if(e.ColumnIndex != -1) return;
 
             e.PaintBackground(e.CellBounds, true);
-            e.Graphics.DrawString(str, e.CellStyle.Font, new SolidBrush(Color.Black), e.CellBounds);
+            e.Graphics.DrawString
+            (
+                $"{(e.RowIndex >= 0 ? e.RowIndex + 1 : Rows.Count)}",
+                e.CellStyle.Font,
+                sbBlack,
+                e.CellBounds
+            );
             e.Handled = true;
         }
 
@@ -240,6 +216,16 @@ namespace net.r_eg.vsSBE.UI.WForms.Components
                 return true;
             }
             return base.ProcessDialogKey(keyData);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if(!disposed)
+            {
+                sbBlack.Dispose();
+                disposed = true;
+            }
+            base.Dispose(disposing);
         }
 
         private void onNumberingCellPainting(object sender, DataGridViewCellPaintingEventArgs e)

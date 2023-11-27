@@ -1,19 +1,8 @@
-﻿/*
- * Copyright (c) 2013-2021  Denis Kuzmin <x-3F@outlook.com> github/3F
- * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿/*!
+ * Copyright (c) 2013  Denis Kuzmin <x-3F@outlook.com> github/3F
+ * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent/graphs/contributors
+ * Licensed under the LGPLv3.
+ * See accompanying LICENSE file or visit https://github.com/3F/vsSolutionBuildEvent
 */
 
 using System;
@@ -30,7 +19,6 @@ using net.r_eg.vsSBE.UI.Xaml;
 
 #if SDK15_OR_HIGH
 using System.Threading.Tasks;
-using System.ComponentModel.Design;
 using Microsoft.VisualStudio.Threading;
 using Task = System.Threading.Tasks.Task;
 #endif
@@ -189,7 +177,11 @@ namespace net.r_eg.vsSBE
                 //Log.paneAttach(GetOutputPane(GuidList.OWP_SBE, Settings.OWP_ITEM_VSSBE)); // also may be problem with toolWindow as in other COM variant -_-
                 Log._.paneAttach(Settings.OWP_ITEM_VSSBE, Dte2);
                 Log._.clear(false);
-                Log._.show();
+
+                if(Settings._.Config.Sys.Data?.SuppressInitOwp != true)
+                {
+                    Log._.show();
+                }
 
                 sToolCmd?.attachEvents();
 
@@ -468,17 +460,15 @@ namespace net.r_eg.vsSBE
             Log._.Received -= onLogReceived;
             Log._.Received += onLogReceived;
 
-            var usrCfg = new UserConfig();
-            usrCfg.load(usrCfg.getLink(Settings._.CommonPath, Config.Entity.NAME, null));
-
             Event = new API.EventLevel();
             ((IEntryPointCore)Event).load
             (
                 Dte2,
+                Settings._.Config.Sys.Data?.DebugMode ?? 
 #if DEBUG
                 true
 #else
-                usrCfg.Data.Global.DebugMode
+                false
 #endif
             );
 

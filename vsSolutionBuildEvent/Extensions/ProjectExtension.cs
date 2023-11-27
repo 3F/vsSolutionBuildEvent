@@ -1,19 +1,8 @@
-﻿/*
- * Copyright (c) 2013-2021  Denis Kuzmin <x-3F@outlook.com> github/3F
- * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿/*!
+ * Copyright (c) 2013  Denis Kuzmin <x-3F@outlook.com> github/3F
+ * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent/graphs/contributors
+ * Licensed under the LGPLv3.
+ * See accompanying LICENSE file or visit https://github.com/3F/vsSolutionBuildEvent
 */
 
 using System.Collections.Generic;
@@ -29,20 +18,21 @@ namespace net.r_eg.vsSBE.Extensions
 {
     public static class ProjectExtension
     {
-        private static IRuleOfConfig cfgRule = new RuleOfConfig();
+        private static readonly IRuleOfConfig cfgRule = new RuleOfConfig();
 
         public static IXProject GetXProject(this DProject prj, IXProjectEnv env, bool tryLoad = true)
         {
-            if(prj == null || env == null) {
-                return null;
-            }
+            if(prj == null || env == null) return null;
+            if(!env.IsSupportedProject(prj.FullName)) return null;
 
-            var cfg = new ConfigItem(
+            ConfigItem cfg = new
+            (
                 prj.GetActiveConfig(),
                 prj.GetActivePlatform()
             );
 
-            if(!tryLoad) {
+            if(!tryLoad)
+            {
                 return env.XProjectByFile(prj.FullName, cfg, false);
             }
 
@@ -121,6 +111,20 @@ namespace net.r_eg.vsSBE.Extensions
         public static DProject GetEProject(this EProject prj, IEnvironment env)
         {
             return env?.ProjectsDTE?.FirstOrDefault(p => p.FullName == prj.FullPath);
+        }
+
+        private static bool IsSupportedProject(this IXProjectEnv env, string input)
+        {
+            ProjectItem prj = env.Sln.ProjectItems.First(p => p.fullPath == input);
+
+            // Issue #78, .vdproj - deprecated more than 10 years ago by MS
+            bool ignore = prj.pType.CompareGuids("{54435603-DBB4-11D2-8724-00A0C9A8B90C}");
+
+            if(ignore)
+            {
+                Log.Debug($"Unsupported project {prj.name} ({prj.pGuid}) is ignored; Type {prj.pType}");
+            }
+            return !ignore;
         }
     }
 }

@@ -1,19 +1,8 @@
-﻿/*
- * Copyright (c) 2013-2021  Denis Kuzmin <x-3F@outlook.com> github/3F
- * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿/*!
+ * Copyright (c) 2013  Denis Kuzmin <x-3F@outlook.com> github/3F
+ * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent/graphs/contributors
+ * Licensed under the LGPLv3.
+ * See accompanying LICENSE file or visit https://github.com/3F/vsSolutionBuildEvent
 */
 
 using System;
@@ -257,93 +246,95 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public static void nprint(string level, string message, string stamp)
         {
-            LogLevel oLevel = LogLevel.FromString(level);
-
-//#if !DEBUG
-            if(oLevel < LogLevel.Info && !Settings._.DebugMode) {
+            if(!Settings._.DebugMode
+                && LogLevel.FromString(level) < LogLevel.Info)
+            {
                 return;
             }
-//#endif
 
-            var log = _lazy.Value;
+            Log log = _lazy.Value;
             log.write(log.format(level, message, stamp), level);
         }
 
         /// <summary>
-        /// Writes message at the Trace level.
+        /// Writes message at the Trace level with <see cref="Fallback"/> if needed.
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="args"></param>
         public static void Trace(string message, params object[] args)
-        {
-            _.NLog.Trace(message, args);
-        }
+            => Msg(LogLevel.Trace, message, args);
 
         /// <summary>
-        /// Writes message at the Debug level.
+        /// Writes message at the Debug level with <see cref="Fallback"/> if needed.
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="args"></param>
         public static void Debug(string message, params object[] args)
-        {
-            _.NLog.Debug(message, args);
-        }
+            => Msg(LogLevel.Debug, message, args);
 
         /// <summary>
-        /// Writes message at the Warn level.
+        /// Writes message at the Warn level with <see cref="Fallback"/> if needed.
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="args"></param>
         public static void Warn(string message, params object[] args)
-        {
-            _.NLog.Warn(message, args);
-        }
+            => Msg(LogLevel.Warn, message, args);
 
         /// <summary>
-        /// Writes message at the Info level.
+        /// Writes message at the Info level with <see cref="Fallback"/> if needed.
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="args"></param>
         public static void Info(string message, params object[] args)
-        {
-            _.NLog.Info(message, args);
-        }
+            => Msg(LogLevel.Info, message, args);
 
         /// <summary>
-        /// Writes message at the Error level.
+        /// Writes message at the Error level with <see cref="Fallback"/> if needed.
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="args"></param>
         public static void Error(string message, params object[] args)
-        {
-            _.NLog.Error(message, args);
-        }
+            => Msg(LogLevel.Error, message, args);
 
         /// <summary>
-        /// Writes message at the Fatal level.
+        /// Writes message at the Fatal level with <see cref="Fallback"/> if needed.
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="args"></param>
         public static void Fatal(string message, params object[] args)
-        {
-            _.NLog.Fatal(message, args);
-        }
+            => Msg(LogLevel.Fatal, message, args);
 
         /// <summary>
-        /// Used format for messages.
+        /// Writes message at the specified level with <see cref="Fallback"/> if needed.
         /// </summary>
-        /// <param name="level"></param>
-        /// <param name="message"></param>
-        /// <param name="stamp"></param>
-        /// <returns>formatted</returns>
-        protected virtual string format(string level, string message, string stamp)
+        internal static void Msg(LogLevel level, string message, params object[] args)
         {
-            DateTime dt = new DateTime(long.Parse(stamp));
-            return String.Format("{0} [{1}]: {2}{3}",
-                                dt.ToString(CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern + ".ffff"),
-                                level,
-                                message,
-                                System.Environment.NewLine);
+            if(!Fallback(level, message))
+                _.NLog.Log(level, message, args);
+        }
+
+        /// <remarks>
+        /// Some thing, like <see cref="Configuration.SysConfig"/>, can be initialized too early, for example, <see cref="Pkg"/> and its accessing to <see cref="Settings.DebugMode"/> flag) before <see cref="Initializer"/>;
+        /// <br/>
+        /// If so, only <see cref="raw(string)"/> methods can help to deliver messages after complete <see cref="Initializer"/> (delayed messages).
+        /// </remarks>
+        /// <returns>true if fallback is applied</returns>
+        protected static bool Fallback(LogLevel flevel, string message)
+        {
+            if(LogManager.Configuration != null)
+            {
+                return false;
+            }
+            // NLog configuring is not completed yet
+
+            Log log = _lazy.Value;
+            log.write
+            (
+                log.format(flevel.ToString(), message),
+                level: null //TODO: ignoreLevel() inside may cause circular dependency
+            );
+            return true;
+        }
+
+        protected virtual string format(string level, string message, string stamp = null)
+        {
+            DateTime dt = (stamp == null) ? DateTime.Now : new(long.Parse(stamp));
+            return string.Format
+            (
+                "{0} [{1}]: {2}{3}",
+                dt.ToString(CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern + ".ffff"),
+                level,
+                message,
+                System.Environment.NewLine
+            );
         }
 
         /// <summary>
@@ -357,12 +348,12 @@ namespace net.r_eg.vsSBE
                 return false;
             }
 
-            var cfg = Settings.CfgManager.UserConfig;
+            var cfg = Settings._.Config.Sys?.Data;
 
-            if(cfg == null || cfg.Data == null || !cfg.Data.Global.LogIgnoreLevels.ContainsKey(level)) {
-                return false;
+            if(cfg?.LogIgnoreLevels?.ContainsKey(level) == true) {
+                return cfg.LogIgnoreLevels[level];
             }
-            return cfg.Data.Global.LogIgnoreLevels[level];
+            return false;
         }
 
         /// <summary>
@@ -372,7 +363,7 @@ namespace net.r_eg.vsSBE
         /// <param name="level"></param>
         protected virtual void write(string message, string level = null)
         {
-            if(ignoreLevel(level)) {
+            if(ignoreLevel(level)) { //TODO: extract ignoreLevel() from here due to Fallback use etc.
                 return;
             }
 
@@ -380,10 +371,9 @@ namespace net.r_eg.vsSBE
                 Received(this, new MessageArgs() { Message =  message,  Level = (level)?? String.Empty });
             }
 
-            try {
-                if(deliver(message)) {
-                    return;
-                }
+            try
+            {
+                if(deliver(message)) return;
             }
             catch(COMException ex) {
                 message = String.Format("Log - COMException '{0}' :: Message - '{1}'", ex.Message, message);

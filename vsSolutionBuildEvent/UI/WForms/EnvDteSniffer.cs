@@ -1,19 +1,8 @@
-﻿/*
- * Copyright (c) 2013-2021  Denis Kuzmin <x-3F@outlook.com> github/3F
- * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿/*!
+ * Copyright (c) 2013  Denis Kuzmin <x-3F@outlook.com> github/3F
+ * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent/graphs/contributors
+ * Licensed under the LGPLv3.
+ * See accompanying LICENSE file or visit https://github.com/3F/vsSolutionBuildEvent
 */
 
 using System;
@@ -105,7 +94,16 @@ namespace net.r_eg.vsSBE.UI.WForms
             }
 
             string tFormat = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.LongTimePattern + " .fff";
-            dgvCESniffer.Rows.Add(DateTime.Now.ToString(tFormat), pre, guid, id, Value.Pack(customIn), Value.Pack(customOut), Util.enumViewBy(guid, id));
+            dgvCESniffer.Rows.Add
+            (
+                DateTime.Now.ToString(tFormat),
+                pre,
+                guid,
+                id,
+                Value.Pack(customIn),
+                Value.Pack(customOut),
+                EnumDecor.Shorten(Util.enumViewBy(guid, id))
+            );
         }
 
         protected void flash(Lights.FlashType type, int delay = 250)
@@ -117,7 +115,8 @@ namespace net.r_eg.vsSBE.UI.WForms
                     return;
                 }
 
-                lightsTraffic.BeginInvoke((MethodInvoker)delegate {
+                lightsTraffic.Invoke(() =>
+                {
                     if(chkActivate.Checked) {
                         lightsTraffic.switchOn(type);
                     }
@@ -177,7 +176,7 @@ namespace net.r_eg.vsSBE.UI.WForms
 
         private void btnVSCE_Click(object sender, EventArgs e)
         {
-            Util.openUrl("https://visualstudiogallery.msdn.microsoft.com/ad9f19b2-04c0-46fe-9637-9a52ce4ca661/");
+            Util.openUrl("https://marketplace.visualstudio.com/items?itemName=GitHub3F.vsCommandEvent");
         }
     }
 }

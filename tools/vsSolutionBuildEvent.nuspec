@@ -22,7 +22,7 @@
     https://github.com/3F/SobaScript
     https://github.com/3F/E-MSBuild
     
-    * Visual Studio VSIX: https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334/
+    Page on VisualStudio Marketplace: https://marketplace.visualstudio.com/items?itemName=GitHub3F.vsSolutionBuildEvent-11615
             
     =======================================
     gnt /p:ngpackages="vsSolutionBuildEvent/%CIM%"
@@ -31,7 +31,7 @@
 {build_info}</description>
     <summary>Control everything: Visual Studio, MSBuild Tools, CI, and more …</summary>
     <releaseNotes>changelog: https://github.com/3F/vsSolutionBuildEvent/blob/master/changelog.txt</releaseNotes>
-    <copyright>Copyright (c) 2013-2022  Denis Kuzmin &lt;x-3F@outlook.com&gt; github/3F</copyright>
+    <copyright>Copyright (c) 2013-2023  Denis Kuzmin &lt;x-3F@outlook.com&gt; github/3F</copyright>
     <tags>Build Tools automation Scripts DevOps Events CI DevTools SobaScript E-MSBuild Projects AppVeyor Azure TeamCity Continuous-Integration logger Build-automation Compiler AzureDevOps Version 7z 7zip post-build scripting Varhead EvMSBuild zip http Productivity sln Files ftp Commands NuGet MSBuild pre-build Versioning downloader archiver GetNuTool vsSBE vsSolutionBuildEvent</tags>
   </metadata>
 </package>

@@ -4,26 +4,25 @@
 
 🎛 *Event*-Catcher with variety of advanced *Actions* 
 
-[![Event model](https://vssbe.r-eg.net/doc/Resources/events_model_small.png)](#)
+[![Event model](https://3F.github.io/web.vsSBE/doc/Resources/events_model_small.png)](#)
 
 to service projects, libraries, build processes, runtime environment of the Visual Studio, MSBuild Tools, and … 
 
 ```r
-Copyright (c) 2013-2022  Denis Kuzmin <x-3F@outlook.com> github/3F
+Copyright (c) 2013-2023  Denis Kuzmin <x-3F@outlook.com> github/3F
 ```
 
-[ 「 <sub>@</sub> ☕ 」 ](https://3F.github.io/Donation/) [![LGPLv3](https://img.shields.io/badge/license-LGPLv3-008033.svg)](LICENSE)
+[ 「 <sub>@</sub> ☕ 」 ](https://3F.github.io/Donation/) [![LGPLv3](https://img.shields.io/badge/LGPLv3-008033.svg)](LICENSE)
 
-**[Download](https://vssbe.r-eg.net/Downloads/)** 
+[**Download** *latest*](https://github.com/3F/vsSolutionBuildEvent/releases/latest)
 
-* **Archive** before *v1.14* via sf
-    * [![D2](https://img.shields.io/sourceforge/dt/vssbe.svg)](https://sourceforge.net/projects/vssbe/)
-* [VisualStudio Marketplace](https://visualstudiogallery.msdn.microsoft.com/0d1dbfd7-ed8a-40af-ae39-281bfeca2334)
+* *Archive*: All binaries before *v1.14* via sf [![D2](https://img.shields.io/sourceforge/dt/vssbe.svg)](https://sourceforge.net/projects/vssbe/)
+* Page on [VisualStudio Marketplace](https://marketplace.visualstudio.com/items?itemName=GitHub3F.vsSolutionBuildEvent-11615)
 
 [![Build status - master](https://ci.appveyor.com/api/projects/status/l38xn0j2c5an28e1/branch/master?svg=true)](https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/branch/master)
-[![VSIX](https://vssbe.r-eg.net/etc/badges/VSPackage.svg)](https://vssbe.r-eg.net/Changelist/#vsix)
-[![nuget package](https://img.shields.io/nuget/v/vsSolutionBuildEvent.svg)](https://www.nuget.org/packages/vsSolutionBuildEvent/)
-[![API](https://vssbe.r-eg.net/etc/badges/API.svg)](https://vssbe.r-eg.net/Changelist/#api)
+[![vsix](https://img.shields.io/badge/dynamic/xml?color=6C2C7C&label=vsix&query=//text()&url=https://raw.githubusercontent.com/3F/vsSolutionBuildEvent/master/.version)](https://marketplace.visualstudio.com/items?itemName=GitHub3F.vsSolutionBuildEvent-11615)
+[![nuget](https://img.shields.io/nuget/v/vsSolutionBuildEvent.svg)](https://www.nuget.org/packages/vsSolutionBuildEvent/)
+[![API](https://img.shields.io/badge/dynamic/xml?color=A9C6B7&label=API&query=//text()&url=https://raw.githubusercontent.com/3F/vsSolutionBuildEvent/master/Bridge/.version)](https://3F.github.io/web.vsSBE/Changelist/#api)
 
 [![Build history](https://buildstats.info/appveyor/chart/3Fs/vssolutionbuildevent?buildCount=20&showStats=true)](https://ci.appveyor.com/project/3Fs/vssolutionbuildevent/history)
 
@@ -34,32 +33,32 @@ Copyright (c) 2013-2022  Denis Kuzmin <x-3F@outlook.com> github/3F
 
 ## Why vsSolutionBuildEvent ?
 
-Advanced handler of the most events from MS Visual Studio & MSBuild tools. Full control and flexible multi-actions for basic pre/post events and other additional such as:
+Advanced handler of the most **events** from MS Visual Studio & MSBuild tools. Full control and flexible multi-**actions** for basic pre/post events and other additional such as:
 
-* [CommandEvent](https://vssbe.r-eg.net/doc/Events/CommandEvent/), Errors, Warnings, Cancel-Build, Output-Build, Transmitter, Logging
+* [CommandEvent](https://3F.github.io/web.vsSBE/doc/Events/CommandEvent/), Errors, Warnings, Cancel-Build, Output-Build, Transmitter, Logging
 
 Ability to handle events for all subprojects at once from the whole solution as an Solution-Events or individually for each separately.
 
 Various modes for everything:
 
-* Files Mode, Operation Mode, Interpreter Mode, [Script Mode](https://vssbe.r-eg.net/doc/Modes/Script/), [Targets Mode](https://vssbe.r-eg.net/doc/Modes/Targets/), [C# Mode](https://vssbe.r-eg.net/doc/Modes/CSharp/)
+* Files Mode, Operation Mode, Interpreter Mode, [Script Mode](https://3F.github.io/web.vsSBE/doc/Modes/Script/), [Targets Mode](https://3F.github.io/web.vsSBE/doc/Modes/Targets/), [C# Mode](https://3F.github.io/web.vsSBE/doc/Modes/CSharp/)
 
-Supports [Advanced MSBuild](https://vssbe.r-eg.net/doc/Scripts/MSBuild/) & [SBE-Scripts engine](https://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/) for your awesome ideas.
+Supports [Advanced MSBuild](https://3F.github.io/web.vsSBE/doc/Scripts/MSBuild/) & [SBE-Scripts engine](https://3F.github.io/web.vsSBE/doc/Scripts/SBE-Scripts/) for your awesome ideas.
 
 Provides CI support (TeamCity, AppVeyor, Azure DevOps, ...), Command-Line mode and lot of other features for convenient work with the builds, tests, versioning, IO operations, and so on. See the documentation.
 
-* [SBE-Scripts](https://vssbe.r-eg.net/doc/Scripts/SBE-Scripts/)
-* [MSBuild](https://vssbe.r-eg.net/doc/Scripts/MSBuild/)
-* **[Examples](https://vssbe.r-eg.net/doc/Examples/)** *- scripts, solutions, syntax etc.,*
-* [Continuous Integration (CI)](https://vssbe.r-eg.net/doc/CI/)
-* [Processing modes](https://vssbe.r-eg.net/doc/Modes/)
-* [API](https://vssbe.r-eg.net/doc/API/)
+* [SBE-Scripts](https://3F.github.io/web.vsSBE/doc/Scripts/SBE-Scripts/)
+* [MSBuild](https://3F.github.io/web.vsSBE/doc/Scripts/MSBuild/)
+* **[Examples](https://3F.github.io/web.vsSBE/doc/Examples/)** *- scripts, solutions, syntax etc.,*
+* [Continuous Integration (CI)](https://3F.github.io/web.vsSBE/doc/CI/)
+* [Processing modes](https://3F.github.io/web.vsSBE/doc/Modes/)
+* [API](https://3F.github.io/web.vsSBE/doc/API/)
 
-[![Scheme of vsSolutionBuildEvent projects](https://vssbe.r-eg.net/doc/Resources/scheme.png)](https://vssbe.r-eg.net/doc/Scheme/)
+[![Scheme of vsSolutionBuildEvent projects](https://3F.github.io/web.vsSBE/doc/Resources/scheme.png)](https://3F.github.io/web.vsSBE/doc/Scheme/)
 
 
-* [Install & Build](https://vssbe.r-eg.net/doc/Dev/How-to-build/) ([Developer Zone](https://vssbe.r-eg.net/doc/Dev/))
-* [Wiki](https://vssbe.r-eg.net/)
+* [Install & Build](https://3F.github.io/web.vsSBE/doc/Dev/How-to-build/) ([Developer Zone](https://3F.github.io/web.vsSBE/doc/Dev/))
+* [Wiki](https://3F.github.io/web.vsSBE/) - read or edit
 
 
 ## Advanced MSBuild 
@@ -187,11 +186,11 @@ else
 }]
 ```
 
-... [create **new** in 5 minutes](https://vssbe.r-eg.net/doc/Dev/New%20Component/)
+... [create **new** in 5 minutes](https://3F.github.io/web.vsSBE/doc/Dev/New%20Component/)
 
 ## Processing modes
 
-[https://vssbe.r-eg.net/doc/Modes/](https://vssbe.r-eg.net/doc/Modes/)
+[https://3F.github.io/web.vsSBE/doc/Modes/](https://3F.github.io/web.vsSBE/doc/Modes/)
 
 From simple commands to C# or even msbuild targets:
 
@@ -218,7 +217,7 @@ From simple commands to C# or even msbuild targets:
 
 ## CommandEvent (DTE)
 
-You can also use this to catch all command from VS IDE. [Samples:](https://vssbe.r-eg.net/doc/Events/CommandEvent/)
+You can also use this to catch all command from VS IDE. [Samples:](https://3F.github.io/web.vsSBE/doc/Events/CommandEvent/)
 
 ```js
 $(lcGuid = #[DTE events.LastCommand.Guid])
@@ -233,7 +232,7 @@ $(lcId   = #[DTE events.LastCommand.Id])
 
 ## Automatic Version Numbering
 
-See our [**Wizard** for automatic code generation **or** use any **custom scripts**.](https://vssbe.r-eg.net/doc/Examples/Version/)
+See our [**Wizard** for automatic code generation **or** use any **custom scripts**.](https://3F.github.io/web.vsSBE/doc/Examples/Version/)
 
 ![](https://3F.github.io/web.vsSBE/doc/Resources/examples/VersionClass.gif)
 
@@ -253,26 +252,26 @@ You can easily use this with TeamCity, Azure DevOps, AppVeyor, and any other aut
 
 ## Solution-wide Build events
 
-Pre-Build / Post-Build events for all projects at once or individually for each separately: [configure what you need.](https://vssbe.r-eg.net/doc/Features/Solution-wide/)
+Pre-Build / Post-Build events for all projects at once or individually for each separately: [configure what you need.](https://3F.github.io/web.vsSBE/doc/Features/Solution-wide/)
 
 ![](https://3F.github.io/web.vsSBE/doc/Resources/examples/obsolete/vbs_ext.jpg)
 
 ## Stop build on first error
 
-[Immediately stop](http://vssbe.r-eg.net/doc/Examples/Errors.Stop%20build/) (at the same time) after the first appearance (compared with StopOnFirstBuildError plugin [[?]](http://vssbe.r-eg.net/doc/Examples/Errors.Stop%20build/))
+[Immediately stop](https://3F.github.io/web.vsSBE/doc/Examples/Errors.Stop%20build/) (at the same time) after the first appearance (compared with StopOnFirstBuildError plugin [[?]](https://3F.github.io/web.vsSBE/doc/Examples/Errors.Stop%20build/))
 
 ![](https://3F.github.io/web.vsSBE/doc/Resources/examples/stop_build.png)
 
 ## Wiki
 
-[Wiki](http://vssbe.r-eg.net/) - Contains help for work with plugins, basic examples, syntax, information for develop, and lot of other...
+[Wiki](https://3F.github.io/web.vsSBE/) - Contains help for work with plugins, basic examples, syntax, information for develop, and lot of other...
 
-Feel free to improve any our pages. Click [Edit] button or [Start new here.](http://vssbe.r-eg.net/doc/New/)
+Feel free to improve any our pages. Click [Edit] button or [Start new here.](https://3F.github.io/web.vsSBE/doc/New/)
 
 
 ## Questions / Bugs / Suggestions / Source Code
 
-Welcome:
+Welcome to the new home (*\*since 2017; before, Bitbucket*):
 
 * [https://github.com/3F/vsSolutionBuildEvent](https://github.com/3F/vsSolutionBuildEvent)
 
@@ -286,6 +285,6 @@ Welcome:
 
 ![](media/scr/Automatic_Version_Numbering.png)
 
-[![Overview.VS2013](https://vssbe.r-eg.net/doc/Resources/examples/overview-youtube.png)](https://youtu.be/FX5GiMX0ulI)
+[![Overview.VS2013](https://3F.github.io/web.vsSBE/doc/Resources/examples/overview-youtube.png)](https://youtu.be/FX5GiMX0ulI)
 
-[**[. . .](https://vssbe.r-eg.net/Screenshots/)**]
+[**[. . .](https://3F.github.io/web.vsSBE/Screenshots/)**]

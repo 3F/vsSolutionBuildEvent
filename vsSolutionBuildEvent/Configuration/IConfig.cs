@@ -1,19 +1,8 @@
-﻿/*
- * Copyright (c) 2013-2021  Denis Kuzmin <x-3F@outlook.com> github/3F
- * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿/*!
+ * Copyright (c) 2013  Denis Kuzmin <x-3F@outlook.com> github/3F
+ * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent/graphs/contributors
+ * Licensed under the LGPLv3.
+ * See accompanying LICENSE file or visit https://github.com/3F/vsSolutionBuildEvent
 */
 
 using System;
@@ -46,12 +35,12 @@ namespace net.r_eg.vsSBE.Configuration
         bool InRAM { get; }
 
         /// <summary>
-        /// Load settings from file.
+        /// Load settings from path.
         /// </summary>
-        /// <param name="path">Path to configuration file.</param>
-        /// <param name="prefix">Special version of configuration file.</param>
+        /// <param name="path">Full path to directory where configuration file is located.</param>
+        /// <param name="prefix">Special version of configuration file if not null.</param>
         /// <returns>true value if loaded from existing file, otherwise loaded as new.</returns>
-        bool load(string path, string prefix);
+        bool loadPath(string path, string prefix = null);
 
         /// <summary>
         /// Load settings from other object.
@@ -60,17 +49,11 @@ namespace net.r_eg.vsSBE.Configuration
         void load(T data);
 
         /// <summary>
-        /// Use link from other configuration for loading new settings.
+        /// Load settings using direct link to the file.
         /// </summary>
-        /// <param name="link">Link from other configuration.</param>
+        /// <param name="link">Full path to.</param>
         /// <returns>true value if loaded from existing file, otherwise loaded as new.</returns>
         bool load(string link);
-
-        /// <summary>
-        /// Load settings from file with path by default.
-        /// </summary>
-        /// <returns>true value if loaded from existing file, otherwise loaded as new.</returns>
-        bool load();
 
         /// <summary>
         /// Save settings.

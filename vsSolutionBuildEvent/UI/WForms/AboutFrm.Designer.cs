@@ -43,8 +43,7 @@
             this.buttonOk = new System.Windows.Forms.Button();
             this.groupBoxThanks = new System.Windows.Forms.GroupBox();
             this.textBoxThanks = new System.Windows.Forms.TextBox();
-            this.labelDonation = new System.Windows.Forms.Label();
-            this.linkLabelDonationHelp = new System.Windows.Forms.LinkLabel();
+            this.linkLabelDonation = new System.Windows.Forms.LinkLabel();
             this.txtCopyright = new System.Windows.Forms.TextBox();
             this.btnDonate = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSpace)).BeginInit();
@@ -237,26 +236,17 @@
             this.textBoxThanks.Text = "* Rafael Cossovan (navossoc@gmail.com) - QA & testing (2014-2015)";
             this.textBoxThanks.WordWrap = false;
             // 
-            // labelDonation
+            // linkLabelDonation
             // 
-            this.labelDonation.AutoSize = true;
-            this.labelDonation.Location = new System.Drawing.Point(202, 301);
-            this.labelDonation.Name = "labelDonation";
-            this.labelDonation.Size = new System.Drawing.Size(42, 13);
-            this.labelDonation.TabIndex = 10;
-            this.labelDonation.Text = "Donate";
-            // 
-            // linkLabelDonationHelp
-            // 
-            this.linkLabelDonationHelp.AutoSize = true;
-            this.linkLabelDonationHelp.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.linkLabelDonationHelp.Location = new System.Drawing.Point(244, 301);
-            this.linkLabelDonationHelp.Name = "linkLabelDonationHelp";
-            this.linkLabelDonationHelp.Size = new System.Drawing.Size(114, 13);
-            this.linkLabelDonationHelp.TabIndex = 11;
-            this.linkLabelDonationHelp.TabStop = true;
-            this.linkLabelDonationHelp.Text = "[ Ko-fi / Patreaon / ... ]";
-            this.linkLabelDonationHelp.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDonationHelp_LinkClicked);
+            this.linkLabelDonation.AutoSize = true;
+            this.linkLabelDonation.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.linkLabelDonation.Location = new System.Drawing.Point(216, 301);
+            this.linkLabelDonation.Name = "linkLabelDonation";
+            this.linkLabelDonation.Size = new System.Drawing.Size(42, 13);
+            this.linkLabelDonation.TabIndex = 11;
+            this.linkLabelDonation.TabStop = true;
+            this.linkLabelDonation.Text = "Donate";
+            this.linkLabelDonation.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelDonation_LinkClicked);
             // 
             // txtCopyright
             // 
@@ -267,18 +257,18 @@
             this.txtCopyright.ReadOnly = true;
             this.txtCopyright.Size = new System.Drawing.Size(394, 13);
             this.txtCopyright.TabIndex = 6;
-            this.txtCopyright.Text = "Copyright (c) 2013-2022  Denis Kuzmin <x-3F@outlook.com> github/3F";
+            this.txtCopyright.Text = "Copyright (c) 2013-2023  Denis Kuzmin <x-3F@outlook.com> github/3F";
             // 
             // btnDonate
             // 
-            this.btnDonate.BackColor = System.Drawing.Color.FloralWhite;
+            this.btnDonate.BackColor = System.Drawing.Color.LightGoldenrodYellow;
             this.btnDonate.Cursor = System.Windows.Forms.Cursors.Hand;
             this.btnDonate.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnDonate.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDonate.ForeColor = System.Drawing.Color.Goldenrod;
-            this.btnDonate.Location = new System.Drawing.Point(364, 292);
+            this.btnDonate.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDonate.ForeColor = System.Drawing.Color.YellowGreen;
+            this.btnDonate.Location = new System.Drawing.Point(275, 292);
             this.btnDonate.Name = "btnDonate";
-            this.btnDonate.Size = new System.Drawing.Size(47, 32);
+            this.btnDonate.Size = new System.Drawing.Size(37, 32);
             this.btnDonate.TabIndex = 12;
             this.btnDonate.Text = "☕";
             this.btnDonate.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -287,12 +277,11 @@
             // 
             // AboutFrm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(600, 324);
             this.Controls.Add(this.btnDonate);
-            this.Controls.Add(this.linkLabelDonationHelp);
-            this.Controls.Add(this.labelDonation);
+            this.Controls.Add(this.linkLabelDonation);
             this.Controls.Add(this.groupBoxThanks);
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.groupBoxCopyright);
@@ -338,8 +327,7 @@
         private System.Windows.Forms.TextBox labelVersionVal;
         private System.Windows.Forms.GroupBox groupBoxThanks;
         private System.Windows.Forms.TextBox textBoxThanks;
-        private System.Windows.Forms.Label labelDonation;
-        private System.Windows.Forms.LinkLabel linkLabelDonationHelp;
+        private System.Windows.Forms.LinkLabel linkLabelDonation;
         private System.Windows.Forms.TextBox txtCopyright;
         private System.Windows.Forms.Button btnDonate;
     }

@@ -30,7 +30,7 @@
     </PackageReference>
   </ItemGroup>
   <Choose>
-    <When Condition="'$(VsSbeSdkBase)' >= '15' ">
+    <When Condition="'$(VsSbeSdkBase)' != '10' ">
       <ItemGroup>
         <PackageReference Include="Microsoft.Build" Version="$(MicrosoftBuildVersion)" />
       </ItemGroup>
@@ -57,25 +57,25 @@
       <Project>{e51d1ea3-f4a7-4f27-a941-e16d2b88d08a}</Project>
       <Name>E-MSBuild</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\inc\modules\Varhead\Varhead.csproj">
       <Project>{4670b9b4-1ba9-4cb2-bbfc-ec4ebeb40a42}</Project>
       <Name>Varhead</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\MvsSln\MvsSln\MvsSln.csproj">
       <Project>{F905DFB2-2E67-4FF7-9001-924F6F2D645D}</Project>
       <Name>MvsSln</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\inc\modules\SobaScript\SobaScript.csproj">
       <Project>{3a80b650-b457-4de4-b2d3-64191a20c6b7}</Project>
       <Name>SobaScript</Name>
       <AdditionalProperties Condition="'$(VsSbeSdkBase)' == '10'">TargetFramework=net40</AdditionalProperties>
-      <AdditionalProperties Condition="'$(VsSbeSdkBase)' >= '15'">TargetFramework=netstandard2.0</AdditionalProperties>
+      <AdditionalProperties Condition="'$(VsSbeSdkBase)' != '10'">TargetFramework=netstandard2.0</AdditionalProperties>
     </ProjectReference>
     <ProjectReference Include="..\vsSolutionBuildEvent\vsSolutionBuildEvent.csproj" />
   </ItemGroup>

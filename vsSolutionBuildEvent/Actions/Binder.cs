@@ -1,19 +1,8 @@
-﻿/*
- * Copyright (c) 2013-2021  Denis Kuzmin <x-3F@outlook.com> github/3F
- * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿/*!
+ * Copyright (c) 2013  Denis Kuzmin <x-3F@outlook.com> github/3F
+ * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent/graphs/contributors
+ * Licensed under the LGPLv3.
+ * See accompanying LICENSE file or visit https://github.com/3F/vsSolutionBuildEvent
 */
 
 using System;
@@ -81,10 +70,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// Access to available events.
         /// </summary>
-        protected ISolutionEvents SlnEvents
-        {
-            get { return Settings.Cfg; }
-        }
+        protected ISolutionEvents SlnEvents => Settings._.Config.Sln.Data;
 
         protected sealed class EOProject: ExecutionOrder
         {
@@ -281,7 +267,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="item">Name of item pane</param>
         public void bindBuildRaw(string data, string guid, string item = null)
         {
-            OWPItems._.getEW(new OWPIdent() { guid = guid, item = item ?? Settings._.DefaultOWPItem }).updateRaw(data); //TODO:
+            OWPItems._.getEW(new OWPIdent() { guid = guid, item = item ?? Settings.OWP_ITEM_BUILD }).updateRaw(data); //TODO:
             if(!IsAllowActions)
             {
                 if(!isDisabledAll(SlnEvents.Transmitter)) {
@@ -448,7 +434,7 @@ namespace net.r_eg.vsSBE.Actions
 
             try {
                 if(Cmd.exec(evt, SolutionEventType.OWP)) {
-                    Log.Info($"[{SolutionEventType.OWP}] finished '{evt.Name}'");
+                    Log.Debug($"[{SolutionEventType.OWP}] {evt.Name} completed successfully.");
                 }
                 return Codes.Success;
             }
@@ -509,9 +495,7 @@ namespace net.r_eg.vsSBE.Actions
                                 )
                             )).Select(f => f.Cancel);
 
-                if(Is.Count() < 1) {
-                    continue;
-                }
+                if(!Is.Any()) continue;
 
                 Log.Trace("[CommandEvent] catched: '{0}', '{1}', '{2}', '{3}', '{4}' /'{5}'",
                                                         guid, id, customIn, customOut, cancelDefault, pre);
@@ -520,7 +504,7 @@ namespace net.r_eg.vsSBE.Actions
 
                 if(pre && Is.Any(f => f)) {
                     cancelDefault = true;
-                    Log.Info("[CommandEvent] original command has been canceled for action: '{0}'", item.Caption);
+                    Log.Info($"[CommandEvent] command has been canceled by {item.Name} action.");
                 }
             }
             return Status._.contains(SolutionEventType.CommandEvent, StatusType.Fail)? Codes.Failed : Codes.Success;
@@ -531,7 +515,7 @@ namespace net.r_eg.vsSBE.Actions
             try
             {
                 if(Cmd.exec(item, SolutionEventType.CommandEvent)) {
-                    Log.Info("[CommandEvent] finished: '{0}'", item.Caption);
+                    Log.Debug($"[CommandEvent] {item.Name} action completed successfully.");
                 }
                 Status._.add(SolutionEventType.CommandEvent, StatusType.Success);
             }

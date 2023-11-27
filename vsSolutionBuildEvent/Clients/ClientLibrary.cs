@@ -1,19 +1,8 @@
-﻿/*
- * Copyright (c) 2013-2021  Denis Kuzmin <x-3F@outlook.com> github/3F
- * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿/*!
+ * Copyright (c) 2013  Denis Kuzmin <x-3F@outlook.com> github/3F
+ * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent/graphs/contributors
+ * Licensed under the LGPLv3.
+ * See accompanying LICENSE file or visit https://github.com/3F/vsSolutionBuildEvent
 */
 
 using System;
@@ -22,7 +11,6 @@ using System.IO;
 using System.Reflection;
 using net.r_eg.MvsSln.Extensions;
 using net.r_eg.vsSBE.Bridge;
-using net.r_eg.vsSBE.Extensions;
 
 namespace net.r_eg.vsSBE.Clients
 {
@@ -33,33 +21,11 @@ namespace net.r_eg.vsSBE.Clients
         /// </summary>
         public const string NAME = "client.vssbe.dll";
 
-        /// <summary>
-        /// Name of client library with full path.
-        /// </summary>
-        public string FullName
-        {
-            get { return Dllpath + NAME; }
-        }
+        public string FullName { get; }
 
-        /// <summary>
-        /// Absolute path to client library.
-        /// </summary>
-        public string Dllpath
-        {
-            get {
-                return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location).DirectoryPathFormat();
-            }
-        }
+        public string Dllpath { get; }
 
-        /// <summary>
-        /// Checking existence of client library.
-        /// </summary>
-        public bool Exists
-        {
-            get {
-                return File.Exists(FullName);
-            }
-        }
+        public bool Exists => File.Exists(FullName);
 
         /// <summary>
         /// Access to IEvent2 in client library.
@@ -135,10 +101,21 @@ namespace net.r_eg.vsSBE.Clients
             return init(true);
         }
 
-        /// <summary>
-        /// Initialize library
-        /// </summary>
-        /// <returns></returns>
+        public ClientLibrary()
+        {
+            string sys = Path.Combine(Settings._.CommonPath, NAME);
+            if(File.Exists(sys))
+            {
+                Dllpath = Settings._.CommonPath;
+                FullName = sys;
+            }
+            else
+            {
+                Dllpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location).DirectoryPathFormat();
+                FullName = Path.Combine(Dllpath, NAME);
+            }
+        }
+
         protected bool init()
         {
             if(!Exists) {

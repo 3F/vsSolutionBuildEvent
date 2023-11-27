@@ -1,19 +1,8 @@
-﻿/*
- * Copyright (c) 2013-2021  Denis Kuzmin <x-3F@outlook.com> github/3F
- * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿/*!
+ * Copyright (c) 2013  Denis Kuzmin <x-3F@outlook.com> github/3F
+ * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent/graphs/contributors
+ * Licensed under the LGPLv3.
+ * See accompanying LICENSE file or visit https://github.com/3F/vsSolutionBuildEvent
 */
 
 using System;
@@ -127,27 +116,28 @@ namespace net.r_eg.vsSBE.Extensions
         /// </summary>
         /// <param name="left">The first object to compare.</param>
         /// <param name="right">The second object to compare.</param>
+        /// <param name="nullAndEmptyStr">Compare null or empty strings as equal if true.</param>
         /// <returns>true value if the objects are considered equal.</returns>
-        public static bool EqualsMixedObjects(this object left, object right)
+        public static bool EqualsMixedObjects(this object left, object right, bool nullAndEmptyStr = false)
         {
-            if(left == null && right == null) {
-                return true;
+            if(left == null && right == null) return true;
+            if(left == null || right == null)
+            {
+                return nullAndEmptyStr 
+                        && 
+                        (
+                            (left == null && right is string rstr && rstr == string.Empty)
+                            || (right == null && left is string lstr && lstr == string.Empty)
+                        );
             }
-
-            if(left == null || right == null) {
-                return false;
-            }
-
-            if(Object.ReferenceEquals(left, right)) {
-                return true;
-            }
+            if(ReferenceEquals(left, right)) return true;
 
             if(left.GetType().IsArray && right.GetType().IsArray) {
                 return Enumerable.SequenceEqual((object[])left, (object[])right);
             }
 
             if(!left.GetType().IsArray && !right.GetType().IsArray) {
-                return Object.Equals(left, right);
+                return left.Equals(right);
             }
 
             return false;
@@ -160,7 +150,7 @@ namespace net.r_eg.vsSBE.Extensions
         /// <returns>true if null or empty string, otherwise false.</returns>
         public static bool IsNullOrEmptyString(this object obj)
         {
-            return (obj == null || obj is string && (string)obj == String.Empty);
+            return (obj == null || obj is string str && str == string.Empty);
         }
 
         /// <summary>

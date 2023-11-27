@@ -1,19 +1,8 @@
-﻿/*
- * Copyright (c) 2013-2021  Denis Kuzmin <x-3F@outlook.com> github/3F
- * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿/*!
+ * Copyright (c) 2013  Denis Kuzmin <x-3F@outlook.com> github/3F
+ * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent/graphs/contributors
+ * Licensed under the LGPLv3.
+ * See accompanying LICENSE file or visit https://github.com/3F/vsSolutionBuildEvent
 */
 
 using System;
@@ -63,31 +52,23 @@ namespace net.r_eg.vsSBE.API
 
         private readonly object sync = new object();
 
-        /// <inheritdoc/>
         public event CoreCommandHandler CoreCommand = delegate (object sender, CoreCommandArgs e) { };
 
-        /// <inheritdoc/>
         public event EventHandler OpenedSolution = delegate (object sender, EventArgs e) { };
 
-        /// <inheritdoc/>
         public event EventHandler ClosedSolution = delegate (object sender, EventArgs e) { };
 
-        /// <inheritdoc/>
         public Actions.Binder Action { get; protected set; }
 
-        /// <inheritdoc/>
         public IEnvironment Environment { get; protected set; }
 
-        /// <inheritdoc/>
-        public IManager ConfigManager => AppSettings.CfgManager;
+        public ConfManager Config => AppSettings._.Config;
 
-        /// <inheritdoc/>
         public void load(object dte2, bool debug = false)
         {
             load(dte2, new API.Settings() { DebugMode = debug });
         }
 
-        /// <inheritdoc/>
         public void load(object dte2, ISettings cfg)
         {
             configure(cfg);
@@ -304,10 +285,11 @@ namespace net.r_eg.vsSBE.API
             return Codes.Failed;
         }
 
-        /// <inheritdoc/>
-        /// <remarks>TODO: (string data, string guid, string item)</remarks>
+        //TODO: (string data, string guid, string item)
         public void onBuildRaw(string data)
         {
+            if(data == null) return; // L-704
+
             try
             {
                 Action.bindBuildRaw(data);
@@ -324,17 +306,15 @@ namespace net.r_eg.vsSBE.API
         /// <inheritdoc/>
         public int solutionOpened(object pUnkReserved, int fNewSolution)
         {
-            var config      = ConfigManager.Config;
-            var userConfig  = ConfigManager.UserConfig;
+            var config      = AppSettings._.Config.Sln;
+            var userConfig  = AppSettings._.Config.Usr;
 
-            if(config == null || userConfig == null) {
-                throw new ArgumentException($"Config is not ready for loading. User: {userConfig != null} / Main: {config != null}");
-            }
+            string path = Environment.SolutionPath;
+            AppSettings._.setWorkPath(path);
 
-            bool isNew = !config.load(Environment.SolutionPath, Environment.SolutionFileName);
+            bool isNew = !config.loadPath(path, Environment.SolutionFileName);
             userConfig.load(config.Link);
 
-            //ConfigManager.addAndUse(config, userConfig, ContextType.Solution);
             refreshComponents();
 
             UI.Plain.State.Print(config.Data);
@@ -385,8 +365,8 @@ namespace net.r_eg.vsSBE.API
 
             ClosedSolution(this, EventArgs.Empty);
 
-            ConfigManager.Config.unload();
-            ConfigManager.UserConfig.unload();
+            AppSettings._.Config.Sln.unload();
+            AppSettings._.Config.Usr.unload();
             return ret;
         }
 
@@ -429,7 +409,6 @@ namespace net.r_eg.vsSBE.API
 #if DEBUG
             Log.Warn($"Debug version");
 #endif
-            Log.Info($"Solution: {Environment.SolutionFile}");
 
             loader = Bootloader.Init(Environment);
 
@@ -468,25 +447,23 @@ namespace net.r_eg.vsSBE.API
         /// <param name="cfg"></param>
         protected void configure(ISettings cfg)
         {
-            ConfigManager.addAndUse(new Config(), new UserConfig(), ContextType.Static); //TODO: Solution & Common context
+            AppSettings._.DebugMode = cfg.DebugMode;
+
             (new Logger.Initializer()).configure();
 
             // TODO: event with common settings for IEntryPointCore
             AppSettings._.DebugModeUpdated -= onDebugModeUpdated;
             AppSettings._.DebugModeUpdated += onDebugModeUpdated;
-
-            AppSettings._.DebugMode = cfg.DebugMode;
-            // ...
         }
 
         protected void refreshComponents()
         {
-            if(loader == null || AppSettings.CfgManager.Config == null) {
-                Log.Debug("Changing of activation has been ignored.");
+            if(loader == null || !AppSettings._.Config.IsLoadedSln) {
+                Log.Debug($"Components activation are ignored due to {AppSettings._.Config}");
                 return;
             }
 
-            var data = AppSettings.CfgManager.Config.Data;
+            var data = AppSettings._.Config.Sln.Data;
 
             foreach(IComponent c in loader.Soba.Registered)
             {

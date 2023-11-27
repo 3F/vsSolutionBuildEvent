@@ -973,15 +973,15 @@
             this.dgvFields.RowHeadersVisible = false;
             this.dgvFields.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(248)))), ((int)(((byte)(252)))), ((int)(((byte)(248)))));
             this.dgvFields.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.dgvFields.RowTemplate.Height = 17;
             this.dgvFields.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dgvFields.Size = new System.Drawing.Size(586, 227);
             this.dgvFields.TabIndex = 8;
             // 
             // dgvFieldsEnabled
             // 
+            this.dgvFieldsEnabled.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
             this.dgvFieldsEnabled.FalseValue = "False";
-            this.dgvFieldsEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.dgvFieldsEnabled.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.dgvFieldsEnabled.HeaderText = "Use";
             this.dgvFieldsEnabled.IndeterminateValue = "False";
             this.dgvFieldsEnabled.MinimumWidth = 40;
@@ -1152,8 +1152,8 @@
             // 
             // VersionFrm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(594, 313);
             this.Controls.Add(this.panelMain);
             this.Controls.Add(this.panelBottom);

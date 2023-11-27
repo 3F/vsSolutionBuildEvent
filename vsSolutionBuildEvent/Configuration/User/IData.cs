@@ -1,19 +1,8 @@
-﻿/*
- * Copyright (c) 2013-2021  Denis Kuzmin <x-3F@outlook.com> github/3F
- * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿/*!
+ * Copyright (c) 2013  Denis Kuzmin <x-3F@outlook.com> github/3F
+ * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent/graphs/contributors
+ * Licensed under the LGPLv3.
+ * See accompanying LICENSE file or visit https://github.com/3F/vsSolutionBuildEvent
 */
 
 using System;
@@ -26,34 +15,32 @@ namespace net.r_eg.vsSBE.Configuration.User
     public interface IData
     {
         /// <summary>
-        /// Global settings.
-        /// </summary>
-        IGlobal Global { get; set; }
-
-        /// <summary>
-        /// Common settings for specific route.
+        /// The Common section in user configuration for a specifc <see cref="IRoute"/>.
         /// </summary>
         Dictionary<IRoute, ICommon> Common { get; set; }
 
         /// <summary>
-        /// Different headers of cache data.
+        /// Various cache information entries.
         /// </summary>
         Dictionary<string, ICacheHeader> Cache { get; set; }
 
         /// <summary>
-        /// Prepares data to removing from cache.
+        /// Prepares data for removing from cache.
         /// </summary>
-        /// <param name="item">Data that should be soon removed.</param>
-        void toRemoveFromCache(IUserValue item);
+        /// <param name="item">What to remove.</param>
+        void unsetFromCache(IUserValue item);
 
         /// <summary>
-        /// To avoid of planned removing data from cache.
+        /// Cancels a scheduled deletion from cache.
         /// </summary>
-        void avoidRemovingFromCache();
+        void cancelCacheRemoving();
 
         /// <summary>
-        /// Updating of the cache container from unused data etc.
+        /// Update actual cache data.
         /// </summary>
+        /// <remarks>
+        /// Apply scheduled deletion (<see cref="unsetFromCache"/>) etc.
+        /// </remarks>
         void updateCache();
     }
 }

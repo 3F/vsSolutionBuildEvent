@@ -1,19 +1,8 @@
-﻿/*
- * Copyright (c) 2013-2021  Denis Kuzmin <x-3F@outlook.com> github/3F
- * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+﻿/*!
+ * Copyright (c) 2013  Denis Kuzmin <x-3F@outlook.com> github/3F
+ * Copyright (c) vsSolutionBuildEvent contributors https://github.com/3F/vsSolutionBuildEvent/graphs/contributors
+ * Licensed under the LGPLv3.
+ * See accompanying LICENSE file or visit https://github.com/3F/vsSolutionBuildEvent
 */
 
 using System;
@@ -32,15 +21,9 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards
 {
     internal partial class VersionFrm: Form
     {
-        /// <summary>
-        /// Manager of steps.
-        /// </summary>
-        private Manager manager;
+        private readonly Manager manager;
 
-        /// <summary>
-        /// Transport support
-        /// </summary>
-        private ITransfer _pin;
+        private readonly ITransfer _pin;
 
         /// <param name="loader"></param>
         /// <param name="pin"></param>
@@ -62,8 +45,10 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards
             editorFinalScript.CodeCompletionEnabled = true;
             editorFinalScript._.WordWrap            = false;
 
-            tabControlMain.Top      = -22;
-            tabControlMain.Height   += 22;
+            int hidepx = this.GetValueUsingDpi(22);
+            tabControlMain.Top      = -hidepx;
+            tabControlMain.Height   += hidepx;
+
             tcRevNumber.SizeMode    = TabSizeMode.Fixed;
             tcReplType.SizeMode     = TabSizeMode.Fixed;
             btnPrevStep.Visible     = false;
@@ -644,7 +629,7 @@ namespace net.r_eg.vsSBE.UI.WForms.Wizards
 
         private void btnManually_Click(object sender, EventArgs e)
         {
-            Util.openUrl("http://vssbe.r-eg.net/doc/Examples/Version/Manually/");
+            Util.openUrl("https://3F.github.io/web.vsSBE/doc/Examples/Version/Manually/");
         }
 
         private void btnFinalCopy_Click(object sender, EventArgs e)
