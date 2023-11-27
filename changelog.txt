@@ -2,6 +2,36 @@
 vsSolutionBuildEvent - https://github.com/3F/vsSolutionBuildEvent
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
+[1.16] 2023.11.27
+
+    * FIXED: "Failed build-raw: Value cannot be null" in modern environments.
+
+    * FIXED: Incorrect selection of project in properties (name:project).
+
+    * FIXED: Issue #78 Visual Studio Setup Project (.vdproj) through ignoring unsupported types.
+             Contact https://github.com/3F/MvsSln to consider support for legacy types.
+
+    * FIXED: UI layout for high DPI options.
+
+    * NEW: Added loading ClientLibrary (API) via common path
+           - UserProfile\Documents\vsSolutionBuildEvent
+           
+           Find a new simplified implementation of ClientDemo here:
+           https://github.com/3F/vsSolutionBuildEvent/tree/master/ClientDemo
+           
+    * NEW: Implemented suppressing OWP Show() - See #76
+
+    * CHANGED: Updated the following references:
+
+        * MvsSln 2.6.2
+        * AvalonEdit:
+            * For SDK15 and SDK17: 6.3.0.90
+            * For SDK10: 6.1.3.50
+        * NewtonsoftJson 13.0.3
+        * NLog 5.2.5
+        * 7z.Libs 21.7.0
+
+
 [1.15] 2022.02.02
 
     * NEW: Visual Studio 2022 support. SDK17. PR #75
@@ -13,7 +43,7 @@ vsSolutionBuildEvent - https://github.com/3F/vsSolutionBuildEvent
     
     * FIXED: Fixed incorrect format of new generated .sln for CIM.
     
-    * CHANGED: Updated the follwoing references:
+    * CHANGED: Updated the following references:
     
         * MSBuild 17.0.0 for SDK15 and SDK17 only
           https://www.nuget.org/packages/Microsoft.Build/17.0.0
