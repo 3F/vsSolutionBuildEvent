@@ -11,6 +11,7 @@ using System.Linq;
 using net.r_eg.MvsSln;
 using net.r_eg.MvsSln.Core;
 using net.r_eg.MvsSln.Exceptions;
+using net.r_eg.MvsSln.Extensions;
 using net.r_eg.vsSBE.API.Commands;
 using BuildType = net.r_eg.vsSBE.Bridge.BuildType;
 using EProject = Microsoft.Build.Evaluation.Project;
@@ -102,16 +103,18 @@ namespace net.r_eg.vsSBE
             if(string.IsNullOrEmpty(name)) name = StartupProjectString;
 
             ProjectItem project = Sln.ProjectItems.FirstOrDefault(p => p.name == name);
-            if(project.fullPath == null) {
+            if(project.fullPath == null)
+            {
                 throw new NotFoundException($"Project '{name}' was not found. ['{project.name}', '{project.pGuid}']");
             }
 
-            IConfPlatformPrj cfg = Sln.ProjectItemsConfigs
-                .FirstOrDefault(p => p.project.name == name && ActiveSlnConf?.Equals(p.solutionConfig) == true)
-                .projectConfig;
-
-            return (cfg == null) ? SlnEnv?.GetOrLoadProject(project) 
-                                 : SlnEnv?.GetOrLoadProject(project, cfg);
+            return LoadOrReload
+            (
+                project,
+                Sln.ProjectItemsConfigs
+                    .FirstOrDefault(p => p.project.name == name && ActiveSlnConf?.Equals(p.solutionConfig) == true)
+                    .projectConfig
+            );
         }
 
         /// <summary>
@@ -119,15 +122,35 @@ namespace net.r_eg.vsSBE
         /// </summary>
         public string SolutionCfgFormat(EnvDTE80.SolutionConfiguration2 cfg)
         {
-            if(cfg == null) {
-                return formatCfg(PropertyNames.UNDEFINED);
-            }
-            return formatCfg(cfg.Name, cfg.PlatformName);
+            return (cfg == null) ? FormatConf(PropertyNames.UNDEFINED)
+                                 : FormatConf(cfg.Name, cfg.PlatformName);
         }
 
-        protected string formatCfg(string name, string platform = null)
+        protected static string FormatConf(string name, string platform = null)
+            => ConfigItem.Format(name, platform ?? name);
+
+        /// <summary>
+        /// Load or reload the project if necessary due to possible lag in early VS environment.
+        /// </summary>
+        /// <remarks>~ https://github.com/3F/vsSolutionBuildEvent/issues/80</remarks>
+        protected EProject LoadOrReload(ProjectItem item, IConfPlatformPrj cfg)
         {
-            return ConfigItem.Format(name, platform ?? name);
+            EProject loaded = LoadProject(item, cfg);
+
+            if(loaded == null
+                || loaded.GetPropertyValue(PropertyNames.SLN_DIR) == PropertyNames.UNDEFINED)
+            {
+                IXProjectEnv env = SlnEnv;
+
+                env?.Projects
+                    .Where(p => p.ProjectItem.project.fullPath == item.fullPath)
+                    .ToArray() // since we will change the collection below
+                    .ForEach(p => env.Unload(p));
+
+                return LoadProject(item, cfg);
+            }
+
+            return loaded;
         }
 
         protected void AssignEnv(IXProjectEnv env)
@@ -137,6 +160,12 @@ namespace net.r_eg.vsSBE
             }
             env.Assign();
             SlnEnv = env;
+        }
+
+        private EProject LoadProject(ProjectItem project, IConfPlatformPrj cfg)
+        {
+            return (cfg == null) ? SlnEnv?.GetOrLoadProject(project)
+                                 : SlnEnv?.GetOrLoadProject(project, cfg);
         }
 
         private ISlnResult UpdateSln()

@@ -74,7 +74,7 @@ namespace net.r_eg.vsSBE
         /// <summary>
         /// Formatted string with an active configuration for current solution.
         /// </summary>
-        public string SolutionActiveCfgString => formatCfg(slnProperties);
+        public string SolutionActiveCfgString => FormatConf(slnProperties);
 
         /// <summary>
         /// All configurations for current solution
@@ -301,18 +301,18 @@ namespace net.r_eg.vsSBE
             return currentSlnConf;
         }
 
-        protected string formatCfg(IDictionary<string, string> properties)
+        protected string FormatConf(IDictionary<string, string> properties)
         {
             IConfPlatform def = extractCfg(properties);
-            return formatCfg(def.Configuration, def.Platform);
+            return FormatConf(def.Configuration, def.Platform);
         }
 
-        private void __disabled(string name)
+        private static void __disabled(string name)
         {
             Log.Debug($"Accessing to '{name}' is disabled in Isolated environment.");
         }
 
-        private T __disabled<T>(string name, T val = default)
+        private static T __disabled<T>(string name, T val = default)
         {
             __disabled(name);
             return val;
