@@ -129,7 +129,7 @@
           "L-660 Your project does not reference \"...\" framework. Add a reference to ...",
           "#[File #[($(__p_call)){call}else{scall}]",
           "(",
-          "    \"tools\\hmsbuild.bat\",",
+          "    \".tools\\hmsbuild.bat\",",
           "    \"-t:restore /v:q /nologo /p:Configuration=$(Configuration) /p:Platform=\\\"Any CPU\\\"\",",
           "    300",
           ")]",
@@ -142,7 +142,7 @@
           "{",
           "    #[IO writeLine(STDOUT): Restoring packages. Please wait ...]    ",
           "",
-          "    #[NuGet gnt.raw(\"/p:ngconfig=\\\"tools/packages.config\\\" /nologo /v:m /m:6\")]",
+          "    #[NuGet gnt.raw(\"/p:ngconfig=\\\".tools/packages.config\\\" /nologo /v:m /m:6\")]",
           "    ",
           "    ",
           "    #[IO copy.directory(\"\", \"packages/\", true)]",
@@ -320,7 +320,7 @@
           "#[var netVerString  = $(TargetFrameworkVersion:vsSolutionBuildEvent)]",
           "#[var msbuildver    = v$(MSBuildToolsVersion)]",
           "",
-          "#[var tplNuspec = #[File get(\"tools/vsSolutionBuildEvent.nuspec\")]]",
+          "#[var tplNuspec = #[File get(\".tools/vsSolutionBuildEvent.nuspec\")]]",
           "",
           "#[IO delete.directory(\"$(odir)\", true)]",
           "#[IO copy.directory(\"\", \"$(odir)\", true)]"
@@ -519,7 +519,7 @@
           "#[IO delete.directory(\"$(nupCIMdir)\", true)]",
           "#[IO copy.directory(\"\", \"$(nupCIMdir)\", true)]",
           "",
-          "#[$(obinNupkg = \"$(nupCIMdir)\\tools\\\\\")]",
+          "#[$(obinNupkg = \"$(nupCIMdir)\\.tools\\\\\")]",
           "",
           "#[var nuspec = $(tplNuspec.Replace(\"%CIM%\", \"$(vsixvnum)\").Replace(\"%vsSBE%\", \"$(numSBE)\"))]",
           "#[File write(\"$(nupCIMdir)\\vsSolutionBuildEvent.nuspec\"):#[var nuspec]]",
@@ -605,10 +605,15 @@
         "$type": "net.r_eg.vsSBE.Events.ModeScript, vsSolutionBuildEvent",
         "Type": "Script",
         "Command__": [
-          "#[$(getcimName = 'get-vsSBE.$(vsixvnum).bat')]",
-          "#[IO copy.file(\"$(SolutionDir)\\tools\\gnt.bat\", \"$(odir)\\$(getcimName)\", true)]",
+          "#[$(getcimName = 'vsSolutionBuildEvent.$(vsixvnum).bat')]",
+          "#[IO copy.file(\"$(SolutionDir)\\.tools\\gnt.bat\", \"$(odir)\\$(getcimName)\", true)]",
           "",
-          "#[File replace(\"$(odir)\\$(getcimName)\", \"/nologo\", \"/nologo /p:ngpackages=\\\"vsSolutionBuildEvent/$(vsixvnum)\\\"\")]"
+          "#[var wrVSSBE =@call :GetNuTool vsSolutionBuildEvent/1.16 || ( echo Please contact support >&2 & exit /B 1 )",
+          "( if \"%~1\"==\"\" packages\\vsSolutionBuildEvent.1.16\\GUI ) & exit /B 0",
+          ":GetNuTool",
+          "@echo off]",
+          "",
+          "#[File replace(\"$(odir)\\$(getcimName)\", \"@echo off\", \"$(wrVSSBE.Replace(\\\"\\n\\\", \\\"\\r\\n\\\"))\")]"
         ]
       }
     }

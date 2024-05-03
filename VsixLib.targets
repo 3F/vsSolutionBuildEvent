@@ -20,8 +20,9 @@
     <ItemGroup>
 
         <!-- tools -->
-        <VsixLib Include="$(SolutionDir)\tools\gnt.bat" />
-        <VsixLib Include="$(SolutionDir)\tools\hMSBuild.bat" />
+        <VsixLib Include="$(SolutionDir)\.tools\gnt.bat" />
+        <VsixLib Include="$(SolutionDir)\.tools\hMSBuild.bat" />
+        <VsixLib Include="$(SolutionDir)\.tools\netfx4sdk.cmd" />
 
         <VsixLib Include="$(SolutionDir)packages\7z.Libs.*\bin\x86\7z.dll" />
 

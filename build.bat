@@ -1,12 +1,11 @@
-@echo off & echo Usage: %~nx0 [ DBG or REL or RCI [ SDKs numbers ] ]
+@echo off & call .tools\gnt & if [%~1]==[#] exit /B0
+
+echo Usage: %~n0 [ DBG or REL or RCI [ SDKs numbers ] ]
 
 ::::: Default :::::
 set SDKs=10,15,17
 set "cfg=%~1" & if not defined cfg set "cfg=REL"
 :::::
-
-set __p_call=1
-call tools\gnt /p:ngconfig="tools/packages.config" || goto err
 
 if "%cfg%"=="RCI" ( set "IsRCI=1" & set "cfg=REL" ) else set "IsRCI="
 
@@ -17,11 +16,11 @@ set "SDK=%~2" & if not defined SDK (
 :act
 set "SDK=%~2" & if not defined SDK goto ok
 
-call packages\vsSolutionBuildEvent\cim.cmd -vsw-priority Microsoft.NetCore.Component.SDK /m:7 /v:m /noautorsp /p:Configuration=%cfg%_SDK%~2 || goto err
+call packages\vsSolutionBuildEvent\cim.cmd -vsw-priority Microsoft.NetCore.Component.SDK /m:7 /v:m /p:Configuration=%cfg%_SDK%~2 || goto err
 shift & goto act
 
 :err
-echo. Build failed. 1>&2
+echo. Build failed>&2
 exit /B 1
 
 :ok

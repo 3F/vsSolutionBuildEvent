@@ -24,9 +24,9 @@
     
     Page on VisualStudio Marketplace: https://marketplace.visualstudio.com/items?itemName=GitHub3F.vsSolutionBuildEvent-11615
             
-    =======================================
-    gnt /p:ngpackages="vsSolutionBuildEvent/%CIM%"
-    ================== https://github.com/3F/GetNuTool
+    ==============================
+    gnt vsSolutionBuildEvent/%CIM%
+    ========= https://github.com/3F/GetNuTool
     
 {build_info}</description>
     <summary>Control everything: Visual Studio, MSBuild Tools, CI, and more …</summary>

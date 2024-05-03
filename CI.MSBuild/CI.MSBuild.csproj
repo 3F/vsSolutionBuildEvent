@@ -24,10 +24,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(SolutionDir)\tools\gnt.bat">
+    <None Include="$(SolutionDir)\.tools\gnt.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="$(SolutionDir)\tools\hMSBuild.bat">
+    <None Include="$(SolutionDir)\.tools\hMSBuild.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="$(SolutionDir)\.tools\netfx4sdk.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="cim.cmd">

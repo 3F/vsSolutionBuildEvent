@@ -40,11 +40,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{7ADBBB81-2
 		Version.tpl = Version.tpl
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{849DD790-F856-493C-A19E-2560A21F6AF1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".tools", ".tools", "{849DD790-F856-493C-A19E-2560A21F6AF1}"
 	ProjectSection(SolutionItems) = preProject
-		tools\gnt.bat = tools\gnt.bat
-		tools\hMSBuild.bat = tools\hMSBuild.bat
-		tools\vsSolutionBuildEvent.nuspec = tools\vsSolutionBuildEvent.nuspec
+		.tools\packages.config = .tools\packages.config
+		.tools\vsSolutionBuildEvent.nuspec = .tools\vsSolutionBuildEvent.nuspec
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VsixLib", "VsixLib", "{A6FD95A3-7093-47C2-9183-5629ABC4A955}"
