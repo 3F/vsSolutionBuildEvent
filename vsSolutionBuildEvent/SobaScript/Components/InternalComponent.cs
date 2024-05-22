@@ -334,7 +334,7 @@ namespace net.r_eg.vsSBE.SobaScript.Components
             Log.Info($"Execute action by user-script: '{evt.Name}'(context: {buildType}) /as '{type}' event");
 
             cmd.Env.BuildType = buildType;
-            return Value.From(cmd.exec(evt, type));
+            return Value.From(cmd.exec(evt, type, force: true));
         }
 
         protected virtual ISolutionEvent[] getEvent(SolutionEventType type)

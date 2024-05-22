@@ -23,65 +23,24 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// Predefined actions.
         /// </summary>
-        protected Dictionary<ModeType, IAction> actions = new Dictionary<ModeType, IAction>();
+        protected Dictionary<ModeType, IAction> actions = [];
 
-        /// <summary>
-        /// Work with SBE-Scripts
-        /// </summary>
-        public ISobaScript SBEScript
-        {
-            get;
-            protected set;
-        }
+        public ISobaScript SBEScript { get; protected set; }
 
-        /// <summary>
-        /// Work with MSBuild
-        /// </summary>
-        public IEvMSBuild MSBuild
-        {
-            get;
-            protected set;
-        }
+        public IEvMSBuild MSBuild { get; protected set; }
 
-        /// <summary>
-        /// Used environment
-        /// </summary>
-        public IEnvironment Env
-        {
-            get;
-            protected set;
-        }
+        public IEnvironment Env { get; protected set; }
 
-        /// <summary>
-        /// Specified Event type
-        /// </summary>
-        public SolutionEventType EventType
-        {
-            get;
-            protected set;
-        } = SolutionEventType.General;
+        public SolutionEventType EventType { get; protected set; } = SolutionEventType.General;
 
         /// <summary>
         /// Current context for actions.
         /// </summary>
-        protected BuildType CurrentContext
-        {
-            get {
-                return Env.BuildType;
-            }
-        }
+        protected BuildType CurrentContext => Env.BuildType;
 
-        /// <summary>
-        /// Find and execute action by specified event.
-        /// </summary>
-        /// <param name="evt">Configured event.</param>
-        /// <param name="type">The type of event.</param>
-        /// <returns>true value if it was handled.</returns>
-        public bool exec(ISolutionEvent evt, SolutionEventType type)
+        public bool exec(ISolutionEvent evt, SolutionEventType type, bool force = false)
         {
-            if(!evt.Enabled){
-                return false;
-            }
+            if(!force && !evt.Enabled) return false;
             EventType = type;
 
             if(!isContext(evt, type)) {
@@ -110,14 +69,9 @@ namespace net.r_eg.vsSBE.Actions
             return actionBy(evt.Mode.Type, evt);
         }
 
-        /// <summary>
-        /// Find and execute action with default event type.
-        /// </summary>
-        /// <param name="evt">Configured event.</param>
-        /// <returns>true value if it was handled.</returns>
-        public bool exec(ISolutionEvent evt)
+        public bool exec(ISolutionEvent evt, bool force = false)
         {
-            return exec(evt, SolutionEventType.General);
+            return exec(evt, SolutionEventType.General, force);
         }
 
         /// <param name="env">Used environment</param>
