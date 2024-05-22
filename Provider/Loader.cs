@@ -16,33 +16,11 @@ namespace net.r_eg.vsSBE.Provider
 {
     public class Loader: ILoader
     {
-        /// <summary>
-        /// Access to library connector
-        /// </summary>
-        public ILibrary Library
-        {
-            get;
-            protected set;
-        }
+        public ILibrary Library { get; protected set; }
 
-        /// <summary>
-        /// Minimum requirements for library
-        /// </summary>
-        public System.Version MinVersion
-        {
-            get {
-                return new System.Version(0, 12, 3);
-            }
-        }
+        public System.Version MinVersion { get; } = new(0, 12, 3);
 
-        /// <summary>
-        /// Provider settings
-        /// </summary>
-        public ISettings Settings
-        {
-            get;
-            set;
-        }
+        public ISettings Settings { get; set; }
 
         /// <summary>
         /// Additional domain for library if used

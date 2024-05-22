@@ -28,16 +28,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientDemo", "ClientDemo\Cl
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{7ADBBB81-2FA7-45CA-B97D-486C3A6624D3}"
 	ProjectSection(SolutionItems) = preProject
-		.gitignore = .gitignore
-		.vssbe = .vssbe
+		.version = .version
 		3rd-party = 3rd-party
-		AUTHORS = AUTHORS
+		appveyor-tests.bat = appveyor-tests.bat
 		build.bat = build.bat
 		changelog.txt = changelog.txt
+		common.props = common.props
 		LICENSE = LICENSE
-		LICENSE.vsixinfo = LICENSE.vsixinfo
 		README.md = README.md
-		Version.tpl = Version.tpl
+		redefine.props = redefine.props
+		versions.props = versions.props
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".tools", ".tools", "{849DD790-F856-493C-A19E-2560A21F6AF1}"

@@ -80,7 +80,7 @@ namespace ClientDemo
             }
         }
 
-        public void DetachCoreCommandListener()
+        protected void DetachCoreCommandListener()
         {
             lock(_lock)
             {

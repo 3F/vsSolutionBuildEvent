@@ -13,7 +13,7 @@
     <icon>tools\Resources\Package.png</icon>
     <iconUrl>https://raw.githubusercontent.com/3F/vsSolutionBuildEvent/master/vsSolutionBuildEvent/Resources/Package.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>🎚🎛 Event-Catcher with variety of advanced Actions to service projects, libraries, build processes, runtime environment of the Visual Studio, MSBuild Tools, and … 
+    <description>🎛 Event-Catcher with variety of advanced Actions to service projects, libraries, build processes, runtime environment of the Visual Studio, MSBuild Tools, and …
 
     Control everything: Visual Studio, MSBuild Tools, CI, and more …
 
@@ -31,7 +31,7 @@
 {build_info}</description>
     <summary>Control everything: Visual Studio, MSBuild Tools, CI, and more …</summary>
     <releaseNotes>changelog: https://github.com/3F/vsSolutionBuildEvent/blob/master/changelog.txt</releaseNotes>
-    <copyright>Copyright (c) 2013-2023  Denis Kuzmin &lt;x-3F@outlook.com&gt; github/3F</copyright>
+    <copyright>Copyright (c) 2013-2024  Denis Kuzmin &lt;x-3F@outlook.com&gt; github/3F</copyright>
     <tags>Build Tools automation Scripts DevOps Events CI DevTools SobaScript E-MSBuild Projects AppVeyor Azure TeamCity Continuous-Integration logger Build-automation Compiler AzureDevOps Version 7z 7zip post-build scripting Varhead EvMSBuild zip http Productivity sln Files ftp Commands NuGet MSBuild pre-build Versioning downloader archiver GetNuTool vsSBE vsSolutionBuildEvent</tags>
   </metadata>
 </package>

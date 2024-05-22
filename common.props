@@ -82,7 +82,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Copyright>Copyright (c) 2013-2021  Denis Kuzmin &lt;x-3F@outlook.com&gt; github/3F</Copyright>
+    <Copyright>Copyright (c) 2013-2024  Denis Kuzmin &lt;x-3F@outlook.com&gt; github/3F</Copyright>
     <PackageOwners>reg</PackageOwners>
     <PackageProjectUrl>https://github.com/3F/vsSolutionBuildEvent</PackageProjectUrl>
     <RepositoryUrl>https://github.com/3F/vsSolutionBuildEvent</RepositoryUrl>
