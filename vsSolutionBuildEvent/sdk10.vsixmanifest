@@ -4,7 +4,7 @@
     <Identifier Id="94ecd13f-15f3-4f51-9afd-17f0275c6266">
     <Name>vsSolutionBuildEvent</Name>
     <Author>GitHub3F</Author>
-    <Version>1.16.0</Version>
+    <Version>1.16.1</Version>
     <Description xml:space="preserve">Event-Catcher with variety of advanced Actions to service projects, libraries, build processes, runtime environment of the Visual Studio, MSBuild Tools, and ...</Description>
     <Locale>1033</Locale>
     <MoreInfoUrl>https://github.com/3F/vsSolutionBuildEvent</MoreInfoUrl>

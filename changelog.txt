@@ -2,6 +2,43 @@
 vsSolutionBuildEvent - https://github.com/3F/vsSolutionBuildEvent
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
+[1.16.1] 2024.05.22
+
+    * FIXED: An *undefined* MSBuild properties (e.g. SolutionDir, SolutionName, SolutionPath, ...)
+             when environment is not completely ready. Caused by, for example, third-party plugins like Telerik etc.
+             Issue #80.
+             
+    * FIXED: Broken caching for C# Mode since 1.16. +GenerateInMemory=true support.
+    
+    * FIXED: UI. Incorrect panel toggling in the main window.
+    
+    * FIXED: UI. Incorrect display of the scrollbar in the main editor when other actions are activated.
+    
+    * CHANGED: ISolutionEvent.Enabled option is no longer considered when executed from a script mode.
+               For example,
+               ```
+               #[Core events.Post.item("ShaList").run()]
+               ```
+               run an `ShaList` action like function regardless of its activity state from a specified script.
+    
+    * CHANGED: VS IDE Error List now redirects to the main window to the specified action if you click it.
+    
+    * CHANGED: Core. Updated MvsSln 2.7
+               https://github.com/3F/MvsSln/releases/tag/2.7
+               
+    * CHANGED: CIM. Updated hMSBuild 2.4.1
+               https://github.com/3F/hMSBuild/releases/tag/2.4.1
+               
+               cim.cmd now supports modern keys, like:
+               ```
+               cim.cmd -cs ~c Debug
+               ```
+               
+    * CHANGED: CI tools.
+                * netfx4sdk 1.2 https://github.com/3F/netfx4sdk/releases/tag/1.2
+                * GetNuTool 1.9 https://github.com/3F/GetNuTool/releases/tag/1.9
+
+
 [1.16] 2023.11.27
 
     * FIXED: "Failed build-raw: Value cannot be null" in modern environments.
