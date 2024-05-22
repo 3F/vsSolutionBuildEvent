@@ -11,54 +11,15 @@ namespace net.r_eg.vsSBE.Configuration.User
 {
     public class UserValue: IUserValue
     {
-        /// <summary>
-        /// Type of link to external value.
-        /// </summary>
-        public LinkType Type
-        {
-            get;
-            set;
-        }
+        public string Guid { get; set; }
 
-        /// <summary>
-        /// Guid of external node.
-        /// </summary>
-        public string Guid
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Manager of accessing to remote value.
-        /// </summary>
         [JsonIgnore]
-        public IManager Manager
-        {
-            get
-            {
-                if(manager == null) {
-                    manager = new Manager(this);
-                }
-                return manager;
-            }
-        }
-        private IManager manager;
-
-
-        /// <summary>
-        /// Initialize with new Guid and specific LinkType.
-        /// </summary>
-        /// <param name="Type">Type of link to external value.</param>
-        public UserValue(LinkType Type)
-        {
-            Guid        = System.Guid.NewGuid().ToString();
-            this.Type   = Type;
-        }
+        public IManager Manager { get; set; }
 
         public UserValue()
         {
-
+            Guid = System.Guid.NewGuid().ToString();
+            Manager = new Manager(this);
         }
     }
 }

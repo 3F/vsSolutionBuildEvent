@@ -40,7 +40,6 @@ namespace net.r_eg.vsSBE.Configuration
                 Log.Debug($"{GetType().Name} has been loaded from {link}");
 
                 ((IUserDataSvc)Data).updateCommon(isLoad: true);
-                User.Manager.update(Data);
             }
         );
     }

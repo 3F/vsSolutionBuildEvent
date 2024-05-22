@@ -205,7 +205,6 @@
     <Compile Include="Configuration\ConfManager.cs" />
     <Compile Include="Configuration\PackerAbstract.cs" />
     <Compile Include="Configuration\User\IDataSvc.cs" />
-    <Compile Include="Configuration\User\LinkType.cs" />
     <Compile Include="Configuration\User\IData.cs" />
     <Compile Include="Configuration\User\IManager.cs" />
     <Compile Include="Configuration\User\Manager.cs" />

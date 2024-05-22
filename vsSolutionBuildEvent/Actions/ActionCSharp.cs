@@ -7,6 +7,7 @@
 
 using System;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -41,7 +42,7 @@ namespace net.r_eg.vsSBE.Actions
         /// <summary>
         /// Prefix to cached bytecode.
         /// </summary>
-        protected const string PREFIX_CACHE = "cached_" + Settings.APP_NAME_SHORT + ".";
+        protected const string PREFIX_CACHE = Settings.APP_CFG + Settings.APP_CFG_USR + ".";
 
         /// <summary>
         /// Where to look cache.
@@ -102,22 +103,14 @@ namespace net.r_eg.vsSBE.Actions
         /// <returns>Result of handling.</returns>
         public override bool process(ISolutionEvent evt)
         {
-            Type type;
-            if(isRequiresCompilation(evt)) {
-                type = compileAndGetType(evt);
-            }
-            else {
-                type = load(outputCacheFile(evt), assemblyName(evt));
-            }
+            Type type = isRequiresCompilation(evt)
+                        ? compileAndGetType(evt)
+                        : findOrLoad(evt);
 
-            if(type == null) {
-                Log.Error($"Compiled type is null. Something went wrong for C# Action '{evt.Name}'");
-            }
+            if(type == null) Log.Error($"Compiled type is null. Something went wrong for C# Action '{evt.Name}'");
 
             int ret = run(type, cmd, evt);
-            if(ret == 0) {
-                return true;
-            }
+            if(ret == 0) return true;
 
             string retmsg = $"Return code '{ret}'";
 
@@ -145,28 +138,31 @@ namespace net.r_eg.vsSBE.Actions
         /// <returns>true value if needed compilation, otherwise we can use compiled version from cache.</returns>
         protected bool isRequiresCompilation(ISolutionEvent evt)
         {
-            IModeCSharp cfg = ((IModeCSharp)evt.Mode);
-            string cache    = fileName(evt);
+            IModeCSharp cfg = (IModeCSharp)evt.Mode;
 
-            Log.Trace("[Cache] Checks: '{0}','{1}','{2}','{3}'", cfg.GenerateInMemory, cfg.CachingBytecode, evt.Name, cache);
-            if(cfg.GenerateInMemory || !cfg.CachingBytecode || String.IsNullOrEmpty(cache)) {
+            if(cfg.CacheData == null) return true;
+            string cache = fileName(evt);
+
+            Log.Trace($"[Cache] Checks: '{cfg.CachingBytecode}','{evt.Name}','{cache}'");
+            if(!cfg.CachingBytecode || string.IsNullOrEmpty(cache)) return true;
+
+            ICacheHeader ch = cfg.CacheData.Manager.CacheHeader;
+
+            if(cfg.GenerateInMemory)
+            {
+                foreach(Assembly asm in iterateLoaded(evt))
+                {
+                    string hash = GetAsmHash(asm);
+                    if(hash != null && hash == ch.Hash) return false;
+                }
                 return true;
             }
 
-            if(cfg.CacheData == null) {
-                Log.Trace("[Cache] hash data is empty.");
-                return true;
-            }
+            FileInfo f = new(outputCacheFile(evt));
 
-            FileInfo f = new FileInfo(outputCacheFile(evt));
-            if(!f.Exists) {
-                Log.Info("[Cache] Binary '{0}' is not found in '{1}'. Compile new.", cache, f.FullName);
-                return true;
-            }
-
-            string actual = cfg.CacheData.Manager.CacheHeader.Hash;
-            if(!hashEquals(f.FullName, actual)) {
-                Log.Info("[Cache] hash code '{0}' is invalid. Compile new.", actual);
+            if(!f.Exists || !hashEquals(f.FullName, ch.Hash))
+            {
+                Log.Info($"[Cache] {f.FullName} or {ch.Hash} is outdated. Compile new.");
                 return true;
             }
 
@@ -179,14 +175,12 @@ namespace net.r_eg.vsSBE.Actions
         /// <param name="mode"></param>
         protected void updateHash(IModeCSharp mode)
         {
-            if(mode.CacheData == null) {
-                mode.CacheData = new UserValue(LinkType.CacheHeader);
-            }
+            mode.CacheData ??= new UserValue();
 
             // calculate hash only for objects below
 
-            object[] toHash = new object[]
-            {
+            object[] toHash =
+            [
                 mode.Command,
                 mode.References,
                 mode.OutputPath,
@@ -194,7 +188,7 @@ namespace net.r_eg.vsSBE.Actions
                 mode.TreatWarningsAsErrors,
                 mode.WarningLevel,
                 mode.FilesMode
-            };
+            ];
 
             mode.CacheData.Manager.CacheHeader.Hash         = toHash.MD5Hash();
             mode.CacheData.Manager.CacheHeader.Algorithm    = HashType.MD5;
@@ -223,35 +217,15 @@ namespace net.r_eg.vsSBE.Actions
         }
 
         /// <summary>
-        /// Loading of compiled user code if exists.
+        /// Load compiled user's code.
         /// </summary>
-        /// <param name="file">Compiled code.</param>
-        /// <param name="find">Search in already loaded assemblies. Use null value if needed to update assembly.</param>
-        /// <returns>The Type for work with user code.</returns>
-        protected Type load(string file, string find = null)
+        /// <param name="file">Path to module.</param>
+        /// <returns>The Type for work with user's code.</returns>
+        protected Type load(string file)
         {
-            Log.Trace("[load] started with: '{0}' /'{1}'", file, find);
+            Log.Trace($"[load] {file}");
 
-            if(find != null)
-            {
-                Assembly[] asm = AppDomain.CurrentDomain.GetAssemblies();
-                for(int i = asm.Length - 1; i > 0; --i)
-                {
-                    string a = asm[i].FullName;
-                    if(String.IsNullOrWhiteSpace(a)) {
-                        continue;
-                    }
-                    
-                    if(a.Substring(0, a.IndexOf(',')) == find) {
-                        Log.Trace("[load] use from loaded: '{0}'", a);
-                        return asm[i].GetType(MAIN_CLASS);
-                    }
-                }
-            }
-
-            if(!File.Exists(file)) {
-                throw new MismatchException($"oops., something went wrong... while we thought, cache '{file}' disappeared. Try again.");
-            }
+            if(!File.Exists(file)) throw new MismatchException($"the cache '{file}' has disappeared. Try again.");
 
             // into memory without blocking - it's important for CSharpCodeProvider with GenerateInMemory = false
             return Assembly.Load(File.ReadAllBytes(file)).GetType(MAIN_CLASS);
@@ -281,7 +255,7 @@ namespace net.r_eg.vsSBE.Actions
             IModeCSharp cfg = (IModeCSharp)evt.Mode;
             if(!cfg.GenerateInMemory) {
                 CompilerResults compiled = onlyCompile(evt);
-                return load(compiled.PathToAssembly, null);
+                return load(compiled.PathToAssembly);
             }
             Log.Trace("Uses memory for getting type.");
 
@@ -422,11 +396,12 @@ namespace net.r_eg.vsSBE.Actions
         /// <returns>Formatted hash value for assembly.</returns>
         protected virtual string formatHashForAsm(IModeCSharp cfg)
         {
-            if(!cfg.CachingBytecode) {
-                return String.Empty;
-            }
+            if(!cfg.CachingBytecode) return string.Empty;
 
-            if(cfg.CacheData == null || String.IsNullOrEmpty(cfg.CacheData.Manager.CacheHeader.Hash)) {
+            if(cfg.CacheData == null
+                || cfg.CacheData.Manager.CacheHeader.Updated == 0
+                || string.IsNullOrWhiteSpace(cfg.CacheData.Manager.CacheHeader.Hash))
+            {
                 updateHash(cfg);
             }
 
@@ -452,6 +427,57 @@ namespace net.r_eg.vsSBE.Actions
             }
             Log.Trace("[Cache] compare hash values '{0}' / '{1}'", h1, actual);
             return h1.Equals(actual, StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <returns>Returns the found type from already loaded assemblies. Or null if not.</returns>
+        protected Type findLoadedType(string ident, string hash)
+        {
+            Log.Trace($"Find loaded {ident} @{hash}");
+
+            foreach(Assembly asm in iterateLoaded(ident))
+            {
+                string actualHash = GetAsmHash(asm);
+                if(actualHash != null && actualHash == hash)
+                {
+                    Log.Debug($"[load] use from loaded: '{asm}' == {hash}");
+                    return asm.GetType(MAIN_CLASS);
+                }
+            }
+
+            return null;
+        }
+
+        protected Type findOrLoad(ISolutionEvent evt)
+        {
+            Type type = findLoadedType
+            (
+                assemblyName(evt),
+                ((IModeCSharp)evt.Mode).CacheData?.Manager?.CacheHeader.Hash
+            );
+            return type ?? load(outputCacheFile(evt));
+        }
+
+        protected IEnumerable<Assembly> iterateLoaded(ISolutionEvent evt)
+            => iterateLoaded(assemblyName(evt));
+
+        protected IEnumerable<Assembly> iterateLoaded(string ident)
+        {
+            Assembly[] asm = AppDomain.CurrentDomain.GetAssemblies();
+            for(int i = asm.Length - 1; i > 0; --i)
+            {
+                if(asm[i].GetName()?.Name == ident)
+                    yield return asm[i];
+            }
+        }
+
+        private static string GetAsmHash(Assembly input)
+        {
+#if !SDK10
+            IEnumerable<Attribute> attr = input.GetCustomAttributes(typeof(AssemblyProductAttribute));
+#else
+            object[] attr = input.GetCustomAttributes(typeof(AssemblyProductAttribute), inherit: false);
+#endif
+            return (attr.FirstOrDefault() as AssemblyProductAttribute)?.Product;
         }
 
         /// <summary>

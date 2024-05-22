@@ -64,13 +64,6 @@ namespace net.r_eg.vsSBE.Events
         bool CachingBytecode { get; set; }
 
         /// <summary>
-        /// When the binary data has been updated.
-        /// UTC
-        /// </summary>
-        [Obsolete("Deprecated and will be removed soon. Use CacheData instead.")]
-        long LastTime { get; set; }
-
-        /// <summary>
         /// Cache data from user settings.
         /// </summary>
         IUserValue CacheData { get; set; }

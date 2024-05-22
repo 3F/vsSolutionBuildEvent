@@ -5,7 +5,6 @@
  * See accompanying LICENSE file or visit https://github.com/3F/vsSolutionBuildEvent
 */
 
-using System;
 using System.ComponentModel;
 using net.r_eg.vsSBE.Configuration.User;
 using net.r_eg.vsSBE.Events.Mapping.Json;
@@ -133,18 +132,6 @@ namespace net.r_eg.vsSBE.Events
         [Category("Caching")]
         [Description("To cache bytecode if it's possible.")]
         public bool CachingBytecode
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// When the binary data has been updated.
-        /// UTC
-        /// </summary>
-        [Browsable(false)]
-        [Obsolete("Deprecated and will be removed soon. Use CacheData instead.")]
-        public long LastTime
         {
             get;
             set;
