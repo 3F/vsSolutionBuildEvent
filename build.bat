@@ -16,7 +16,7 @@ set "SDK=%~2" & if not defined SDK (
 :act
 set "SDK=%~2" & if not defined SDK goto ok
 
-call packages\vsSolutionBuildEvent\cim.cmd -vsw-priority Microsoft.NetCore.Component.SDK /m:7 /v:m /p:Configuration=%cfg%_SDK%~2 || goto err
+call packages\vsSolutionBuildEvent\cim.cmd -cs ~x ~c %cfg%_SDK%~2 || goto err
 shift & goto act
 
 :err

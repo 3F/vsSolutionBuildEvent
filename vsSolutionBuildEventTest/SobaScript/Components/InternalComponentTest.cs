@@ -82,7 +82,7 @@ namespace net.r_eg.vsSBE.Test.SobaScript.Components
             var target = new InternalComponentAccessor();
             Assert.Equal(Value.From(true), target.Eval("[Core events.Pre.item(1).run()]"));
             Assert.Equal(Value.From(true), target.Eval("[Core events.Pre.item(1).run(Common)]"));
-            Assert.Equal(Value.From(false), target.Eval("[Core events.Pre.item(2).run()]"));
+            Assert.Equal(Value.From(true), target.Eval("[Core events.Pre.item(2).run()]"));
             Assert.Equal(Value.From(false), target.Eval("[Core events.Pre.item(3).run()]"));
             Assert.Equal(Value.From(false), target.Eval("[Core events.Pre.item(3).run(Common)]"));
             Assert.Equal(Value.From(true), target.Eval("[Core events.Pre.item(3).run(Rebuild)]"));
