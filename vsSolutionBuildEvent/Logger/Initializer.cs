@@ -50,6 +50,8 @@ namespace net.r_eg.vsSBE.Logger
             t.Parameters.Add(new MethodCallParameter("${level:uppercase=true}"));
             t.Parameters.Add(new MethodCallParameter("${message}"));
             t.Parameters.Add(new MethodCallParameter("${ticks}"));
+            t.Parameters.Add(new MethodCallParameter("${event-properties:item=src}"));
+            t.Parameters.Add(new MethodCallParameter("${event-properties:item=type}"));
 
             configure(t);
         }
@@ -114,15 +116,9 @@ namespace net.r_eg.vsSBE.Logger
         /// </summary>
         private void initLoggerCfg()
         {
-            LoggingConfiguration config = LogManager.Configuration;
-            if(config == null) {
-                config = new LoggingConfiguration();
-            }
+            LoggingConfiguration config = LogManager.Configuration ?? new LoggingConfiguration();
 
-            NLog.Targets.Target t = config.FindTargetByName(GuidList.PACKAGE_LOGGER);
-            if(t != null) {
-                return; // the config is already contains our logger
-            }
+            if(config.FindTargetByName(GuidList.PACKAGE_LOGGER) != null) return;
 
             // configure entry point
 

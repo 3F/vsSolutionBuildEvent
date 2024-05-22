@@ -8,6 +8,8 @@
 using System;
 using System.Threading;
 using Microsoft.VisualStudio.Shell;
+using net.r_eg.vsSBE.Events;
+using net.r_eg.vsSBE.UI;
 
 #if !SDK15_OR_HIGH
 using System.Threading.Tasks;
@@ -16,46 +18,30 @@ using Task = System.Threading.Tasks.Task;
 
 namespace net.r_eg.vsSBE.VSTools.ErrorList
 {
-    public class Pane: IPane, IDisposable
+    public class Pane(IServiceProvider sp): IPane, IDisposable
     {
-        protected ErrorListProvider provider;
+        protected readonly ErrorListProvider provider = new(sp);
 
-        protected CancellationToken cancellationToken;
+        protected readonly CancellationToken cancellationToken;
 
-        /// <summary>
-        /// To add new error in ErrorList.
-        /// </summary>
-        /// <param name="message"></param>
-        public void error(string message)
+        private UI.WForms.EventsFrm frm;
+
+        public void error(string message, string src, string type)
         {
-            task(message, TaskErrorCategory.Error);
+            push(message, src, type, TaskErrorCategory.Error);
         }
 
-        /// <summary>
-        /// To add new warning in ErrorList.
-        /// </summary>
-        /// <param name="message"></param>
-        public void warn(string message)
+        public void warn(string message, string source, string type)
         {
-            task(message, TaskErrorCategory.Warning);
+            push(message, source, type, TaskErrorCategory.Warning);
         }
 
-        /// <summary>
-        /// To add new information in ErrorList.
-        /// </summary>
-        /// <param name="message"></param>
-        public void info(string message)
+        public void info(string message, string source, string type)
         {
-            task(message, TaskErrorCategory.Message);
+            push(message, source, type, TaskErrorCategory.Message);
         }
 
-        /// <summary>
-        /// To clear all messages.
-        /// </summary>
-        public void clear()
-        {
-            provider.Tasks.Clear();
-        }
+        public void clear() => provider.Tasks.Clear();
 
         public Pane(IServiceProvider sp, CancellationToken ct)
             : this(sp)
@@ -63,12 +49,7 @@ namespace net.r_eg.vsSBE.VSTools.ErrorList
             cancellationToken = ct;
         }
 
-        public Pane(IServiceProvider sp)
-        {
-            provider = new ErrorListProvider(sp);
-        }
-
-        protected void task(string msg, TaskErrorCategory type = TaskErrorCategory.Message)
+        protected void push(string msg, string src, string type, TaskErrorCategory level = TaskErrorCategory.Message)
         {
             // prevents possible bug from `Process.ErrorDataReceived` because of NLog
 
@@ -80,14 +61,39 @@ namespace net.r_eg.vsSBE.VSTools.ErrorList
             Task.Factory.StartNew(() =>
             {
 #endif
-                provider.Tasks.Add(new ErrorTask() {
+                string loc;
+
+                if(!string.IsNullOrEmpty(src))
+                {
+                    loc = $"{src}@{Settings.APP_CFG}";
+                }
+                else
+                {
+                    loc = Settings.APP_CFG;
+                }
+
+                ErrorTask err = new()
+                {
                     Text = msg,
-                    Document = Settings.APP_NAME_SHORT,
+                    Document = loc,
                     Category = TaskCategory.User,
                     Checked = true,
                     IsCheckedEditable = true,
-                    ErrorCategory = type,
-                });
+                    ErrorCategory = level,
+                };
+
+                err.Navigate += (sender, e) =>
+                {
+                    if(string.IsNullOrEmpty(src) || string.IsNullOrEmpty(type)) return;
+
+                    show().activateAction
+                    (
+                        src,
+                        (SolutionEventType)Enum.Parse(typeof(SolutionEventType), type)
+                    );
+                };
+
+                provider.Tasks.Add(err);
 
 #if SDK15_OR_HIGH
             });
@@ -97,6 +103,25 @@ namespace net.r_eg.vsSBE.VSTools.ErrorList
             TaskCreationOptions.None,
             TaskScheduler.Default);
 #endif
+        }
+
+        private ICodeInspector show()
+        {
+            try
+            {
+                if(UI.Util.focusForm(frm)) return frm;
+
+                frm = new UI.WForms.EventsFrm(Bootloader._);
+                frm.Show();
+
+                return frm;
+            }
+            catch(Exception ex)
+            {
+                Log.Error($"Failed UI: {ex.Message}");
+                Log.Debug(ex.StackTrace);
+            }
+            return null;
         }
 
         #region IDisposable
@@ -114,6 +139,12 @@ namespace net.r_eg.vsSBE.VSTools.ErrorList
             if(!disposed)
             {
                 provider?.Dispose();
+
+                if(frm?.IsDisposed == false)
+                {
+                    frm.Close();
+                }
+
                 disposed = true;
             }
         }

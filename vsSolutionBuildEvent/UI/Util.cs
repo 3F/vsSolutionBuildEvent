@@ -121,6 +121,17 @@ namespace net.r_eg.vsSBE.UI
             }
         }
 
+        public static int GetRowIndexByColumn(DataGridView dgv, DataGridViewColumn col, string name)
+        {
+            if(string.IsNullOrEmpty(name)) return -1;
+
+            for(int i = 0; i < dgv.Rows.Count; ++i)
+            {
+                if(dgv.Rows[i].Cells[col.Name].Value.ToString() == name) return i;
+            }
+            return -1;
+        }
+
         /// <summary>
         /// Open url in default web-browser
         /// </summary>

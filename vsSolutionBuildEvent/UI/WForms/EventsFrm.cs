@@ -33,7 +33,7 @@ namespace net.r_eg.vsSBE.UI.WForms
     //
     // Some IoC improvements here are needed but this is not what I want to spend my time for creating just a more scalable GUI here.
     // You can, however, try to change the rails below because here is still no logic of the model as noted.
-    internal partial class EventsFrm: Form, ITransfer
+    internal partial class EventsFrm: Form, ITransfer, ICodeInspector
     {
         public const int WM_SYSCOMMAND  = 0x0112;
         public const int SC_RESTORE     = 0xF120;
@@ -122,6 +122,19 @@ namespace net.r_eg.vsSBE.UI.WForms
                 textEditor.insertToSelection(name);
             }
             Focus();
+        }
+
+        public void activateAction(string name, SolutionEventType type)
+        {
+            if(!switchEvent(type)) return;
+
+            int index = Util.GetRowIndexByColumn(dgvActions, dgvActionName, name);
+            if(index == -1)
+            {
+                Log.Trace($"UI.Activation. the name: {name} = -1");
+                return;
+            }
+            selectAction(index, refreshSettings: true);
         }
 
         /// <summary>
@@ -1001,14 +1014,15 @@ namespace net.r_eg.vsSBE.UI.WForms
             metric.formCollapsed = new Size(Width - (metric.splitter), Height);
         }
 
-        protected void switchEvent(SolutionEventType type)
+        protected bool switchEvent(SolutionEventType type)
         {
             int pos = logic.getDefIndexByEventType(type);
             if(pos == -1) {
-                Log.Trace("UI.Activation the event `{0}`: -1", type);
-                return;
+                Log.Trace($"UI.Activation. the type {type} = -1");
+                return false;
             }
             comboBoxEvents.SelectedIndex = pos;
+            return true;
         }
 
         protected void fillEvents(ComboBox combo)

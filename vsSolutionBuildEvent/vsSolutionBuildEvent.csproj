@@ -168,6 +168,7 @@
     <Compile Include="Actions\ActionInterpreter.cs" />
     <Compile Include="Actions\Binder.cs" />
     <Compile Include="Actions\DTEOperation.cs" />
+    <Compile Include="Actions\ExecLocator.cs" />
     <Compile Include="Actions\IAction.cs" />
     <Compile Include="Actions\ICommand.cs" />
     <Compile Include="API\Commands\IFireCoreCommand.cs" />
@@ -196,6 +197,7 @@
     <Compile Include="MSBuild.cs" />
     <Compile Include="IPkg.cs" />
     <Compile Include="UI\ComponentExtension.cs" />
+    <Compile Include="UI\ICodeInspector.cs" />
     <Compile Include="UI\MetricDefault.cs" />
     <Compile Include="UI\EnumDecor.cs" />
     <Compile Include="UI\WForms\Controls\CompletionData.cs" />

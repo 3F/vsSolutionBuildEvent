@@ -13,21 +13,49 @@ namespace net.r_eg.vsSBE.Logger
     public class MessageArgs: EventArgs
     {
         /// <summary>
-        /// Received message.
+        /// Formatted message.
         /// </summary>
-        public string Message
-        {
-            get;
-            set;
-        }
+        public string Message { get; set; }
 
         /// <summary>
-        /// Received level.
+        /// Message level.
         /// </summary>
-        public string Level
+        public string Level { get; set; }
+
+        /// <summary>
+        /// Source name.
+        /// </summary>
+        public string Src { get; set; }
+
+        /// <summary>
+        /// Source type.
+        /// </summary>
+        public string SrcType { get; set; }
+
+        /// <summary>
+        /// Raw message without level, stamp etc.
+        /// </summary>
+        public string Raw { get; set; }
+
+        public MessageArgs
+        (
+            string message,
+            string level,
+            string src = null,
+            string type = null,
+            string raw = null
+        )
         {
-            get;
-            set;
+            Message = message;
+            Level = level;
+            Src = src;
+            SrcType = type;
+            Raw = raw;
+        }
+
+        public MessageArgs()
+        {
+
         }
     }
 }

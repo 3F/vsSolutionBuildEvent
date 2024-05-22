@@ -12,6 +12,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using net.r_eg.vsSBE.Actions;
 using net.r_eg.vsSBE.Events;
 using net.r_eg.vsSBE.Logger;
 using net.r_eg.vsSBE.VSTools.OW;
@@ -244,7 +245,7 @@ namespace net.r_eg.vsSBE
         /// Entry point for NLog messages.
         /// https://github.com/nlog/nlog/wiki/MethodCall-target
         /// </summary>
-        public static void nprint(string level, string message, string stamp)
+        public static void nprint(string level, string message, string stamp, string src, string type)
         {
             if(!Settings._.DebugMode
                 && LogLevel.FromString(level) < LogLevel.Info)
@@ -253,7 +254,7 @@ namespace net.r_eg.vsSBE
             }
 
             Log log = _lazy.Value;
-            log.write(log.format(level, message, stamp), level);
+            log.write(new(log.format(level, message, stamp), level, src, type, message));
         }
 
         /// <summary>
@@ -298,7 +299,17 @@ namespace net.r_eg.vsSBE
         internal static void Msg(LogLevel level, string message, params object[] args)
         {
             if(!Fallback(level, message))
-                _.NLog.Log(level, message, args);
+            {
+                LogEventInfo msg = new(level, _.NLog.Name, message);
+
+                if(args.Length == 1 && args[0] is ExecLocator el)
+                {
+                    msg.Properties.Add("src", el.Evt?.Name);
+                    msg.Properties.Add("type", el.EvtType);
+                }
+
+                _.NLog.Log(msg);
+            }
         }
 
         /// <remarks>
@@ -356,19 +367,19 @@ namespace net.r_eg.vsSBE
             return false;
         }
 
-        /// <summary>
-        /// Where to write.
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="level"></param>
-        protected virtual void write(string message, string level = null)
+        protected void write(MessageArgs args)
+            => write(args.Message, args.Level ?? string.Empty, args);
+
+        // TODO: combine MessageArgs and message
+        protected virtual void write(string message, string level = null, MessageArgs args = null)
         {
             if(ignoreLevel(level)) { //TODO: extract ignoreLevel() from here due to Fallback use etc.
                 return;
             }
 
-            if(Thread.CurrentThread.Name != LoggingEvent.IDENT_TH) {
-                Received(this, new MessageArgs() { Message =  message,  Level = (level)?? String.Empty });
+            if(Thread.CurrentThread.Name != LoggingEvent.IDENT_TH)
+            {
+                Received(this, args ?? new() { Message = message, Level = level ?? string.Empty });
             }
 
             try

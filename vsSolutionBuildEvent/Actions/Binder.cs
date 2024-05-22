@@ -32,6 +32,8 @@ namespace net.r_eg.vsSBE.Actions
     /// </summary>
     public class Binder
     {
+        private static readonly SemaphoreSlim semsync = new(initialCount: 1, maxCount: 1);
+
         internal readonly CancelBuildState buildState = new CancelBuildState();
 
         /// <summary>
@@ -47,7 +49,6 @@ namespace net.r_eg.vsSBE.Actions
 
         protected ISobaCLoader cLoader;
 
-        private readonly object sync = new object();
         private readonly object _plock = new object();
 
         /// <summary>
@@ -143,7 +144,7 @@ namespace net.r_eg.vsSBE.Actions
                     Status._.add(SolutionEventType.Post, StatusType.Success);
                 }
                 catch(Exception ex) {
-                    Log.Error($"[{SolutionEventType.Post}] error: {ex.Message}");
+                    Log.Error($"[{SolutionEventType.Post}] error: {ex.Message}", new ExecLocator(item, SolutionEventType.Post));
                     Log.Debug(ex.StackTrace);
                     Status._.add(SolutionEventType.Post, StatusType.Fail);
                 }
@@ -224,7 +225,7 @@ namespace net.r_eg.vsSBE.Actions
                     Status._.add(SolutionEventType.Cancel, StatusType.Success);
                 }
                 catch(Exception ex) {
-                    Log.Error($"[{SolutionEventType.Cancel}] error: {ex.Message}");
+                    Log.Error($"[{SolutionEventType.Cancel}] error: {ex.Message}", new ExecLocator(item, SolutionEventType.Cancel));
                     Log.Debug(ex.StackTrace);
                     Status._.add(SolutionEventType.Cancel, StatusType.Fail);
                 }
@@ -299,7 +300,7 @@ namespace net.r_eg.vsSBE.Actions
                         }
                     }
                     catch(Exception ex) {
-                        Log.Error($"[{SolutionEventType.Transmitter}] error: {ex.Message}");
+                        Log.Error($"[{SolutionEventType.Transmitter}] error: {ex.Message}", new ExecLocator(evt, SolutionEventType.Transmitter));
                         Log.Debug(ex.StackTrace);
                     }
                 }
@@ -401,14 +402,15 @@ namespace net.r_eg.vsSBE.Actions
                 return Codes.Success;
             }
 
+            SolutionEventType setype = (type == Receiver.Output.EWType.Warnings) ? SolutionEventType.Warnings : SolutionEventType.Errors;
             try {
-                if(Cmd.exec(evt, (type == Receiver.Output.EWType.Warnings)? SolutionEventType.Warnings : SolutionEventType.Errors)) {
+                if(Cmd.exec(evt, setype)) {
                     Log.Info($"[{type}] finished '{evt.Name}'");
                 }
                 return Codes.Success;
             }
             catch(Exception ex) {
-                Log.Error($"[{type}] error: {ex.Message}");
+                Log.Error($"[{type}] error: {ex.Message}", new ExecLocator(evt, setype));
                 Log.Debug(ex.StackTrace);
             }
             return Codes.Failed;
@@ -439,7 +441,7 @@ namespace net.r_eg.vsSBE.Actions
                 return Codes.Success;
             }
             catch(Exception ex) {
-                Log.Error($"[{SolutionEventType.OWP}] error: {ex.Message}");
+                Log.Error($"[{SolutionEventType.OWP}] error: {ex.Message}", new ExecLocator(evt, SolutionEventType.OWP));
                 Log.Debug(ex.StackTrace);
             }
             return Codes.Failed;
@@ -520,7 +522,7 @@ namespace net.r_eg.vsSBE.Actions
                 Status._.add(SolutionEventType.CommandEvent, StatusType.Success);
             }
             catch(Exception ex) {
-                Log.Error($"[{SolutionEventType.CommandEvent}] error: {ex.Message}");
+                Log.Error($"[{SolutionEventType.CommandEvent}] error: {ex.Message}", new ExecLocator(item, SolutionEventType.CommandEvent));
                 Log.Debug(ex.StackTrace);
             }
             Status._.add(SolutionEventType.CommandEvent, StatusType.Fail);
@@ -546,7 +548,7 @@ namespace net.r_eg.vsSBE.Actions
                     Status._.add(type, StatusType.Success);
                 }
                 catch(Exception ex) {
-                    Log.Error($"[{typeString}] error: {ex.Message}");
+                    Log.Error($"[{typeString}] error: {ex.Message}", new ExecLocator(item, SolutionEventType.SlnOpened));
                     Log.Debug(ex.StackTrace);
                     Status._.add(type, StatusType.Fail);
                 }
@@ -567,7 +569,7 @@ namespace net.r_eg.vsSBE.Actions
                 return Codes.Success;
             }
             catch(Exception ex) {
-                Log.Error($"[{SolutionEventType.Pre}] error: {ex.Message}");
+                Log.Error($"[{SolutionEventType.Pre}] error: {ex.Message}", new ExecLocator(evt, SolutionEventType.Pre));
                 Log.Debug(ex.StackTrace);
             }
             return Codes.Failed;
@@ -801,9 +803,15 @@ namespace net.r_eg.vsSBE.Actions
 
         protected void attachLoggingEvent()
         {
-            lock(sync) {
+            semsync.Wait();
+            try
+            {
                 detachLoggingEvent();
                 Log._.Received += onLogging;
+            }
+            finally
+            {
+                semsync.Release();
             }
         }
 
@@ -811,7 +819,7 @@ namespace net.r_eg.vsSBE.Actions
         {
             Log._.Received -= onLogging;
         }
-        
+
         /// <summary>
         /// Works with all processes of internal logging.
         /// </summary>
@@ -836,13 +844,15 @@ namespace net.r_eg.vsSBE.Actions
                 return;
             }
 
+            //FIXME
             (new Task(() =>
             {
                 if(Thread.CurrentThread.Name == null) {
                     Thread.CurrentThread.Name = LoggingEvent.IDENT_TH;
                 }
 
-                lock(sync)
+                semsync.Wait();
+                try
                 {
                     var ld = cLoader.GetComponent(typeof(OwpComponent)) as ILogInfo;
                     ld?.UpdateLogInfo(e.Message, e.Level);
@@ -861,11 +871,12 @@ namespace net.r_eg.vsSBE.Actions
                             }
                         }
                         catch(Exception ex) {
-                            Log.Error($"[{SolutionEventType.Logging}] error: {ex.Message}");
+                            Log.Error($"[{SolutionEventType.Logging}] error: {ex.Message}", new ExecLocator(evt, SolutionEventType.Logging));
                             Log.Debug(ex.StackTrace);
                         }
                     }
                 }
+                finally { semsync.Release(); }
 
             })).Start();
         }

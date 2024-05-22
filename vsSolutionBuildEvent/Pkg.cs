@@ -535,10 +535,10 @@ namespace net.r_eg.vsSBE
         private void onLogReceived(object sender, Logger.MessageArgs e)
         {
             if(Log._.isError(e.Level)) {
-                errorList.error(e.Message);
+                errorList.error(e.Raw, e.Src, e.SrcType);
             }
             else if(Log._.isWarn(e.Level)) {
-                errorList.warn(e.Message);
+                errorList.warn(e.Raw, e.Src, e.SrcType);
             }
         }
 
