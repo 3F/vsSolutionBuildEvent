@@ -369,6 +369,7 @@ namespace net.r_eg.vsSBE.UI.WForms
             groupBoxCommandEvents.Enabled   = false;
 
             textEditor._.Select(0, 0);
+            textEditor._.ScrollToHome();
             toolTip.SetToolTip(checkBoxWaitForExit, string.Empty);
             checkBoxWaitForExit.Cursor = Cursors.Default;
 
@@ -979,8 +980,8 @@ namespace net.r_eg.vsSBE.UI.WForms
             try
             {
                 if(!open) {
-                    splitContainer.SplitterDistance = splitContainer.Panel1MinSize; // yes, may exception, because Width may be unchangeable and equal to 160px see above
-                    Size = metric.formCollapsed;
+                    splitContainer.SplitterDistance = splitContainer.Panel1MinSize; // may be an exception due to immutable Width and 160px (n. above)
+                    Width = metric.formCollapsed.Width;
                     return;
                 }
                 Width = metric.form.Width;
