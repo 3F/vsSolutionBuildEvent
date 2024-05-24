@@ -98,7 +98,10 @@ https://github.com/3F/SobaScript -- Extensible Modular Scripting Programming Lan
 #["
     #SobaScript in action
 "]
-#[var v = 1.2.3]
+
+just a regular text between
+
+#[$(v = 1.2.3)]
 #[$(log = "$(TMP)/v.txt")]
 
 #[($(Configuration) ~= Deb || true)
@@ -130,9 +133,15 @@ catch(err, msg)
     $(err) - Type of Exception
     $(msg) - Error Message
 }]
+
+#[Box iterate(i = 0; $(loop); i += 1): #[try
+{
+    ...
+}
+catch { $(loop = false) }] ]
 ```
 
-For example, you can even exclude projects from build at runtime:
+For example, you can exclude projects from build at runtime:
 
 ```js
 #[Build projects.find("name").IsBuildable = false]
@@ -142,6 +151,13 @@ Capture data from external utilities:
 
 ```js
 #[var bSha1 = #[IO sout("git", "rev-parse --short HEAD")]]
+```
+
+Do callable actions with arguments:
+
+```js
+#[$(shaListDir = $(dbin))] #[$(searchSubDirs = '0')]
+#[Core events.Post.item("ShaList").run()]
 ```
 
 Work with files and archives:

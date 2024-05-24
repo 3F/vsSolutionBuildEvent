@@ -18,10 +18,7 @@ using net.r_eg.vsSBE.Events;
 
 namespace net.r_eg.vsSBE.SobaScript.Components
 {
-    /// <summary>
-    /// Internal operations with vsSBE.
-    /// </summary>
-    [Component("vsSBE", new[] { "Core" }, "Internal operations with vsSBE")]
+    [Component("vsSBE", ["Core"], "The plugin and its operations related to events and actions.")]
     public class InternalComponent: ComponentAbstract, IComponent
     {
         protected IEnvironment env;
